@@ -1,4 +1,4 @@
-# Live Streaming[README.md](..%2F..%2F..%2FREADME.md)
+# Live Streaming
 
 > This document introduces how to quickly run through <mark>Live Streaming</mark> sample project.
 
