@@ -1,0 +1,64 @@
+
+
+ext {
+    support_version = '29.0.0'
+    glide_version = '4.11.0'
+    retrofit2_version = '2.6.3'
+    deps = [
+            appcompat         : 'androidx.appcompat:appcompat:1.4.1',
+            annotation        : 'androidx.annotation:annotation:1.5.0',
+            coroutines_android: 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1',
+
+            glide             : "com.github.bumptech.glide:glide:$glide_version",
+            glide_compiler    : "com.github.bumptech.glide:compiler:$glide_version",
+
+            multidex          : 'androidx.multidex:multidex:2.0.0',
+            constraintlayout  : 'androidx.constraintlayout:constraintlayout:2.1.3',
+            v7                : "com.android.support:appcompat-v7:$support_version",
+            material          : 'com.google.android.material:material:1.5.0',
+
+            rxandroid2        : 'io.reactivex.rxjava2:rxandroid:2.1.1',
+            rxjava2           : 'io.reactivex.rxjava2:rxjava:2.2.16',
+            retrofit2         : "com.squareup.retrofit2:retrofit:$retrofit2_version",
+            retrofit2_adapter : "com.squareup.retrofit2:adapter-rxjava2:$retrofit2_version",
+            okhttp            : 'com.squareup.okhttp3:okhttp:3.12.0',
+            okhttp_logger     : 'com.squareup.okhttp3:logging-interceptor:4.10.0',
+
+            lifecycle         : 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1',
+            lifecycle_runtime : 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1',
+            fragment_ktx      : 'androidx.navigation:navigation-fragment-ktx:2.4.1',
+            ui_ktx            : 'androidx.navigation:navigation-ui-ktx:2.4.1',
+            palette_ktx       : 'androidx.palette:palette-ktx:1.0.0',
+            layout_kernel     : 'com.scwang.smart:refresh-layout-kernel:2.0.3',
+            header_classics   : 'com.scwang.smart:refresh-header-classics:2.0.3',
+
+            apng              : 'com.github.penfeizhou.android.animation:apng:2.7.0',
+            xlog              : 'com.elvishew:xlog:1.6.1',
+            logger            : 'com.orhanobut:logger:2.2.0',
+            gson              : 'com.google.code.gson:gson:2.9.0',
+            autosize          : 'com.github.JessYanCoding:AndroidAutoSize:v1.2.1',
+
+            rtc               : 'io.agora.rtc:agora-special-full:4.1.1.16',
+            rtm               : 'com.github.agorabuilder:rtm-sdk:1.4.10',
+            syncManager       : 'com.github.AgoraIO-Community:SyncManager-Android:2.2.7.1',
+            lyricsView        : 'com.github.AgoraIO-Community:LyricsView:1.1.1-beta.8',
+
+            // android native libraries
+            core_ktx           : "androidx.core:core-ktx:1.7.0",
+            recyclerview       : "androidx.recyclerview:recyclerview:1.2.1",
+            databinding_runtime: "androidx.databinding:databinding-runtime:4.2.2",
+
+            // im
+            agora_im           : 'io.agora.rtm:rtm-sdk:1.5.0',
+            svga_player        : 'com.github.yyued:SVGAPlayer-Android:2.6.1',
+            agora_chat         : 'io.agora.rtc:chat-sdk:1.1.0',
+            ok2curl            : 'com.github.mrmike:ok2curl:0.8.0',
+    ]
+    android = [
+            compileSdkVersion: 31,
+            minSdkVersion    : 21,
+            targetSdkVersion : 30,
+    ]
+}
+
+

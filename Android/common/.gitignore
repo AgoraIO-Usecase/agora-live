@@ -1,0 +1,4 @@
+/build
+strings_config.xml
+*.so
+/*-sdk

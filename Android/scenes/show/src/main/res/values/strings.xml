@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="show_create_room">Create</string>
+    <string name="show_create_tips1">Welcome to Live Streaming!</string>
+    <string name="show_living">LIVE</string>
+    <string name="show_room_id">ID: %s</string>
+    <string name="show_user_count">%d</string>
+    <string name="show_app_name">Live Streaming</string>
+    <string name="show_live_top_close">Close</string>
+    <string name="show_live_bottom_chat">Let\'s Chat</string>
+    <string name="show_live_perms_leak_tip" >Missing permissions required for live streaming. Would you like to reapply?</string>
+    <string name="show_live_yes">Yes</string>
+    <string name="show_live_no">No</string>
+    <string name="show_text_input_sent">Send</string>
+    <string name="show_text_input_hint">Pleae input...</string>
+    <string name="show_text_input_empty">Empty input</string>
+    <string name="show_setting_switch_camera">Flip</string>
+    <string name="show_setting_video_on">Camera On</string>
+    <string name="show_setting_video_off">Camera Off</string>
+    <string name="show_setting_mic_on">Mic On</string>
+    <string name="show_setting_mic_off">Mic Off</string>
+    <string name="show_setting_statistic">Stats for nerds</string>
+    <string name="show_setting_quality">Video Quality</string>
+    <string name="show_setting_advance_setting">Advanced Settings</string>
+    <string name="show_setting_quality_enhance_tip">Due to your device being a low-end model, the super-resolution feature has been disabled to ensure smooth device performance.</string>
+    <string name="show_setting_quality_enhance_tip2">Due to your device model or resolution settings, the super-resolution feature has been temporarily disabled to ensure smooth performance.</string>
+    <string name="show_picture_quality_title">Resolution</string>
+    <string name="show_picture_quality_1080p">1080P\nFHD</string>
+    <string name="show_picture_quality_720p">720P\nHD</string>
+    <string name="show_picture_quality_540p">540P\n</string>
+    <string name="show_picture_quality_360p">360P\nSD</string>
+    <string name="show_picture_quality_270p">270P\n</string>
+    <string name="show_picture_quality_180p">180P\n</string>
+    <string name="show_beauty_group_beauty">Beautification</string>
+    <string name="show_beauty_item_none">None</string>
+    <string name="show_beauty_item_beauty_smooth">Smooth</string>
+    <string name="show_music_effect_title">Music Effects</string>
+    <string name="show_music_effect_background">Background Music</string>
+    <string name="show_music_effect_voice">Vocal Enhancement</string>
+    <string name="show_music_effect_mixing">Reverb</string>
+    <string name="show_music_effect_back_music_joy">Joy</string>
+    <string name="show_music_effect_back_music_romantic">Romantic</string>
+    <string name="show_music_effect_back_music_joy2">Joy2</string>
+    <string name="show_music_effect_beauty_voice_original">Original</string>
+    <string name="show_music_effect_beauty_voice_sweet">Sweet</string>
+    <string name="show_music_effect_mixing_ktv">KTV</string>
+    <string name="show_music_effect_mixing_concert">Concert</string>
+    <string name="show_live_prepare_title">Live Streaming</string>
+    <string name="show_live_prepare_rotate">Flip</string>
+    <string name="show_live_prepare_beauty">Beautification</string>
+    <string name="show_live_prepare_hd">Video Quality</string>
+    <string name="show_live_prepare_tip">This product is intended for functional demo only, and the duration of a single live stream should not exceed 20 minutes.</string>
+    <string name="show_live_prepare_start_live">Go Live</string>
+    <string name="show_live_prepare_room_empty">Room name cannot be empty!</string>
+    <string name="show_live_prepare_room_clipboard_copyed">Room ID has been copied to the clipboard!</string>
+    <string name="show_live_prepare_room_name_hint">Please enter the room name</string>
+    <string name="show_beauty_item_beauty_whiten">Skin Tone</string>
+    <string name="show_beauty_item_beauty_overall">Cheek Thin</string>
+    <string name="show_beauty_item_beauty_vshape">V Shape</string>
+    <string name="show_beauty_item_beauty_upper_width">Cheek Narrow</string>
+    <string name="show_beauty_item_beauty_short_width">Cheek Small</string>
+    <string name="show_beauty_item_beauty_cheekbone">Cheek</string>
+    <string name="show_beauty_item_beauty_eye">Enlarge</string>
+    <string name="show_beauty_item_beauty_nose">Nose Size</string>
+    <string name="show_beauty_item_beauty_chin">Chin</string>
+    <string name="show_beauty_item_beauty_jawbone">Jaw</string>
+    <string name="show_beauty_item_beauty_forehead">Hairline</string>
+    <string name="show_beauty_item_beauty_mouth">Mouth</string>
+    <string name="show_beauty_item_beauty_thick_lips">Full Lip</string>
+    <string name="show_beauty_item_beauty_teeth">Tooth</string>
+    <string name="show_beauty_group_filter">Filter</string>
+    <string name="show_beauty_group_effect">Makeup</string>
+    <string name="show_beauty_group_style">Classic Style</string>
+    <string name="show_beauty_group_sticker">Sticker</string>
+    <string name="show_beauty_group_ar">AR Mask</string>
+    <string name="show_beauty_item_filter_cream">Creamy</string>
+    <string name="show_beauty_item_filter_mokalong">Macaroon</string>
+    <string name="show_beauty_item_filter_oxgen">Oxygen</string>
+    <string name="show_beauty_item_filter_wuyu">monogatari</string>
+    <string name="show_beauty_item_filter_po9">seaside characters</string>
+    <string name="show_beauty_item_filter_lolita">lolita</string>
+    <string name="show_beauty_item_filter_mitao">peach</string>
+    <string name="show_beauty_item_filter_yinhua">Cherry blossoms</string>
+    <string name="show_beauty_item_filter_beihaidao">Hokkaido</string>
+    <string name="show_beauty_item_filter_s3">journey</string>
+    <string name="show_beauty_item_effect_baixi">white</string>
+    <string name="show_beauty_item_effect_tianmei">Sweet</string>
+    <string name="show_beauty_item_effect_sexy">Sexy</string>
+    <string name="show_beauty_item_style_natural">Natural</string>
+    <string name="show_beauty_item_style_classic">Classic</string>
+    <string name="show_beauty_item_effect_cwei">C</string>
+    <string name="show_beauty_item_effect_yuanqi">Vitality</string>
+    <string name="show_beauty_item_sticker_biti">snot</string>
+    <string name="show_beauty_item_sticker_zhounian">anniversary carnival</string>
+    <string name="show_beauty_item_sticker_huahua">Flowers</string>
+    <string name="show_beauty_item_sticker_cat">Cat</string>
+    <string name="show_beauty_item_sticker_elk">Elk</string>
+    <string name="show_beauty_item_ar_kaola">Koala</string>
+    <string name="show_beauty_item_ar_hashiqi">Husky</string>
+    <string name="show_beauty_item_sticker_wochaotian">Sweet</string>
+    <string name="show_statistic_bitrate">Bitrate: %s kbps</string>
+    <string name="show_statistic_up_bitrate">Send Bitrate: %s kbps</string>
+    <string name="show_statistic_down_bitrate">Receive Bitrate: %s kbps</string>
+    <string name="show_statistic_fps">FPS: %s fps</string>
+    <string name="show_statistic_delay">Latency: %s ms</string>
+    <string name="show_statistic_loss_package">Packet Loss: %s ％</string>
+    <string name="show_statistic_up_net_speech">Uplink Speed: %s KB/s</string>
+    <string name="show_statistic_down_net_speech">Downlink Speed: %s KB/s</string>
+    <string name="show_statistic_resolution">Resolution: %s</string>
+    <string name="show_statistic_up">Sender</string>
+    <string name="show_statistic_encode_resolution">Encode Resolution: %s</string>
+    <string name="show_statistic_encode_fps">Encode FPS: %s fps</string>
+    <string name="show_statistic_up_loss_package">Uplink Packet Loss: %s ％</string>
+    <string name="show_statistic_down">Receiver</string>
+    <string name="show_statistic_receive_resolution">Received Resolution: %s</string>
+    <string name="show_statistic_receive_fps">Received FPS: %s fps</string>
+    <string name="show_statistic_down_loss_package">Downlink Packet Loss: %s ％</string>
+    <string name="show_statistic_else">Others</string>
+    <string name="show_statistic_quick_start_time">First Frame: %s ms</string>
+    <string name="show_device_grade">Device Level: %s</string>
+    <string name="show_statistic_sr">Super Resolution: %s</string>
+    <string name="show_statistic_pvc">PVC: %s</string>
+    <string name="show_statistic_low_stream">Low-quality Video Stream: %s</string>
+    <string name="show_statistic_svc">SVC: %s</string>
+    <string name="show_statistic_h265">H265: %s</string>
+    <string name="show_music_effect_beauty_voice_zhongxin">Neutral</string>
+    <string name="show_music_effect_beauty_voice_wenzhong">Steady</string>
+    <string name="show_music_effect_beauty_voice_mohuan">Magical</string>
+    <string name="show_music_effect_mixing_luyinpen">Studio</string>
+    <string name="show_music_effect_mixing_kongkuang">Spacious</string>
+
+    <!-- co-host  -->
+    <string name="show_linking_request_message">Application</string>
+    <string name="show_online_audience">Online Audience</string>
+    <string name="show_agree_onseat">Accept</string>
+    <string name="show_application">Invite</string>
+    <string name="show_application_waitting">Waiting</string>
+    <string name="show_empty_onseat_apply">No Application Yet</string>
+    <string name="show_apply_onseat">Apply Co-host</string>
+    <string name="show_stop_linking">End</string>
+    <string name="show_cancel_linking">Revoke</string>
+    <string name="show_linking">Co-hosting</string>
+    <string name="show_is_onseat">Co-host</string>
+    <string name="show_reject_onseat">Declined</string>
+    <string name="show_audience_settings">Audience Settings</string>
+    <string name="show_can_apply">Available for co-host</string>
+    <string name="show_link_is_stopped">Co-host ended.</string>
+    <string name="show_interacting">Engaging</string>
+    <string name="show_tip1">The host is busy and has declined your invitation.</string>
+    <string name="show_to_the_audience">To audience %s</string>
+    <string name="show_link_to">Co-hosting with %s</string>
+    <string name="show_get_in_line">Queue</string>
+
+
+
+    <!-- pk   -->
+    <string name="show_pk_to">PK with %s</string>
+    <string name="show_pking_request_message">PK List</string>
+    <string name="show_online_boardcaster">Online Host</string>
+    <string name="show_pking">In PK</string>
+    <string name="show_stop_pking">End</string>
+    <string name="show_empty_online_boardcaster">No online host</string>
+    <string name="show_empty_online_audience">No online audience</string>
+    <string name="show_pk">Co-host</string>
+    <string name="show_can_pk">Available for PK</string>
+
+    <string name="show_cannot_accept">You are currently engaged in an interaction. Please finish the interaction before accepting any request for co-host.</string>
+    <string name="show_cannot_invite">You are currently engaged in an interaction. Please finish the interaction before inviting audience for co-host.</string>
+    <string name="show_cannot_apply">You are currently engaged in an interaction. Please finish the interaction before applying for co-host.</string>
+    <string name="show_ask_for_link">Host %s invites you to co-host.</string>
+    <string name="show_ask_for_pk">Host %s invites you to co-host.</string>
+    <string name="show_count_time_for_pk">PK 0%s:%s</string>
+    <string name="show_pk_is_stopped">PK ended</string>
+    <string name="show_content">We have detected that the current content violates our guidelines.</string>
+
+
+
+    <string name="show_setting_preset">Preset</string>
+    <string name="show_setting_advance_video_setting">Video Settings</string>
+    <string name="show_setting_advance_audio_setting">Audio Settings</string>
+    <string name="show_setting_advance_quality_enhance">Super Resolution</string>
+    <string name="show_setting_advance_quality_h265">H265</string>
+    <string name="show_setting_advance_ok">OK</string>
+    <string name="show_setting_confirm">Save</string>
+    <string name="show_setting_preset_title">Video Preset</string>
+    <string name="show_setting_advance_quality_enhance_tip">After enabling the switch, a series of video enhancement strategies will be applied, including but not limited to super resolution. The main goal is to improve the visual experience while maintaining the same bitrate.</string>
+    <string name="show_setting_advance_quality_h265_tip">After enabling the switch, a series of video enhancement strategies will be applied, including but not limited to H.265. The main goal is to improve the visual experience while maintaining the same bitrate.</string>
+    <string name="show_setting_advance_color_enhance">Color Enhancement</string>
+    <string name="show_setting_advance_color_enhance_tip">fter enabling this switch, the video image\'s color saturation will be automatically adjusted to make the colors more vibrant and lifelike, enhancing the visual experience.</string>
+    <string name="show_setting_advance_dark_enhance">Low-light Enhancement</string>
+    <string name="show_setting_advance_dark_enhance_tip">After enabling this switch, the system will automatically process the video taken in low-light conditions. It will employ techniques such as intelligent fill light to enhance clarity and brightness, ultimately improving the video quality.</string>
+    <string name="show_setting_advance_video_noise_reduce">Video Noise Reduction</string>
+    <string name="show_setting_advance_video_noise_reduce_tip">After enabling this switch, it will automatically remove the noise from the video, making the video appear clearer.</string>
+    <string name="show_setting_advance_bitrate_save">PVC</string>
+    <string name="show_setting_advance_bitrate_save_tip">After enabling this switch, it will automatically achieve a reduction in bitrate while maintaining the same video quality.</string>
+    <string name="show_setting_advance_resolution">Resolution</string>
+    <string name="show_setting_advance_encode_resolution">Encode Resolution</string>
+    <string name="show_setting_advance_encode_resolution_tip">After modifying the encoding resolution, please check the quality change effect on the audience end.</string>
+    <string name="show_setting_advance_bitrate">Adaptive Bitrate</string>
+    <string name="show_setting_advance_bitrate_tips">After enabling this switch, the algorithm will automatically match the appropriate bitrate based on the current resolution and frame rate.</string>
+    <string name="show_setting_advance_ear_back">IEM</string>
+    <string name="show_setting_advance_ear_back_tip">In-Ear Monitoring</string>
+    <string name="show_setting_advance_vocal_volume">Vocal Volume</string>
+    <string name="show_setting_advance_music_volume">Music Volume</string>
+    <string name="show_bottom_list_cancel">Cancel</string>
+    <string name="show_setting_advance_framerate">Frame Rate</string>
+    <string name="show_setting_advance_encode_framerate">Encode FPS</string>
+    <string name="show_setting_advance_encode_framerate_tip">To ensure the best video quality, frame rates of 15fps and below will be effective by default for mid-to-low-end devices. Frame rates exceeding 15fps will not be effective.</string>
+    <string name="show_setting_preset_show_title">Live Streaming Mode</string>
+    <string name="show_setting_preset_show_description">Typically, hosts adopt a seated position from the upper body to engage in chat-based live streaming. The focus of the frame is primarily on the host\'s makeup, upper clothing, and low-frequency movements.</string>
+    <string name="show_setting_preset_device_low">Low-end</string>
+    <string name="show_setting_preset_device_medium">Mid-range</string>
+    <string name="show_setting_preset_device_high">High-end</string>
+    <string name="show_setting_preset_device_low_des">Below $350</string>
+    <string name="show_setting_preset_device_medium_des">$350 - $600</string>
+    <string name="show_setting_preset_device_high_des">Above $600</string>
+    <string name="show_setting_preset_recommend">Recommendation</string>
+    <string name="show_setting_preset_no_choise_tip">Please select a preset mode.</string>
+    <string name="show_tip">Tips</string>
+    <string name="show_setting_advance_preset_mode">The current preset mode is \"Live Streaming\" with optimal settings. Modifying the parameters will change the video experience.</string>
+    <string name="show_setting_cancel">Cancel</string>
+    <string name="show_setting_preset_done">The settings have been updated to the \"Live Streaming\" optimal configuration.</string>
+    <string name="show_setting_audience">Audience Settings</string>
+    <string name="show_living_end_title">Live Ended</string>
+    <string name="show_living_end_back_room_list">Return to the room list</string>
+    <string name="show_live_chat_coming">joined</string>
+    <string name="show_live_chat_leaving">left</string>
+    <string name="show_live_end_room_or_not">Do you want to end the live stream?</string>
+    <string name="show_setting_opened">On</string>
+    <string name="show_setting_closed">Off</string>
+    <string name="show_setting_preset_audience_title">Audience Settings</string>
+    <string name="show_setting_preset_audience_enhance_title">Super Resolution Mode</string>
+    <string name="show_setting_preset_audience_enhance_description">Corresponding image quality strategies have been adapted for different device models.</string>
+    <string name="show_setting_preset_audience_basic_title">Basic Mode</string>
+    <string name="show_setting_preset_audience_basic_description">No optimization</string>
+    <string name="show_live_prepare_setting">Settings</string>
+    <string name="show_beauty_group_adjust">Adjustment</string>
+    <string name="show_beauty_item_adjust_contrast">Contrast</string>
+    <string name="show_beauty_item_adjust_saturation">Saturation</string>
+    <string name="show_beauty_item_adjust_sharpen">Sharpen</string>
+    <string name="show_beauty_item_adjust_clarity">Clarity</string>
+    <string name="show_beauty_item_beauty_redden">Rosy</string>
+    <string name="show_beauty_item_beauty_contouring">Contouring</string>
+    <string name="show_beauty_item_beauty_bright_eye">Clarity</string>
+    <string name="show_beauty_item_beauty_round_eye">Pupils</string>
+    <string name="show_beauty_item_beauty_eye_distance">Eye Distance</string>
+    <string name="show_beauty_item_beauty_eye_downturn">Eyelid</string>
+    <string name="show_beauty_item_beauty_remove_dark_circles">Circles</string>
+    <string name="show_beauty_item_beauty_brow_position">Brow</string>
+    <string name="show_beauty_item_beauty_brow_thickness">Brow-trim</string>
+    <string name="show_beauty_item_beauty_remove_nasolabial_folds">Wrinkles</string>
+    <string name="show_beauty_item_beauty_mouth_position">Mouth Position</string>
+    <string name="show_beauty_item_beauty_nose_lift">Nose Lift</string>
+    <string name="show_beauty_group_virtual_bg">Virtual Background</string>
+    <string name="show_beauty_green_screen">Green Screen</string>
+    <string name="show_beauty_strength">Intensity</string>
+    <string name="show_beauty_item_virtual_bg_blur">Blur</string>
+    <string name="show_beauty_item_virtual_bg_mitao">Peach</string>
+    <string name="show_beauty_green_screen_tip">To ensure the best virtual background effect, please make sure you have set up a green screen in your actual environment. Otherwise, the virtual background will not take effect.</string>
+    <string name="show_live_detail_living_end">The live stream has ended.</string>
+    <string name="show_live_detail_try_to_move">Swipe to switch and try another host.</string>
+    <string name="show_broadcast_header">Suggestions: </string>
+    <string name="show_broadcast_tips">Please ensure that the network connection in the broadcasting environment is stable, and the upload bandwidth is equal to or greater than 3 Mbps.</string>
+    <string name="show_network_quailty">Network conditions of the target audience</string>
+    <string name="show_network_quailty_tips">Video strategy tailored to the network conditions of the target region</string>
+    <string name="show_network_quailty_good">Good</string>
+    <string name="show_network_quailty_good_tag">Stable and smooth network conditions</string>
+    <string name="show_network_quailty_normal">Unstable</string>
+    <string name="show_network_quailty_normal_tag">Unstable network conditions</string>
+    <string name="show_video_quailty">Video Quality</string>
+    <string name="show_video_quailty_smooth">Fluency First</string>
+    <string name="show_video_quailty_clear">Clarity First</string>
+    <string name="show_video_quailty_tips">Adaptive video quality strategies for different audience</string>
+    <string name="show_video_device_result">Device Level: %s (%d)</string>
+    <string name="show_video_device_high">High-end Device</string>
+    <string name="show_video_device_middle">Mid-range Device</string>
+    <string name="show_video_device_low">Low-end Device</string>
+    <string name="show_broadcaster_bad_exit">Detected an abnormal exit from the last live broadcast, please create a new live room to start broadcasting again.</string>
+
+    <string-array name="show_encoder">
+        <item>Hardware Encoder</item>
+        <item>Software Encoder</item>
+    </string-array>
+
+    <string-array name="show_codec">
+        <item>h265</item>
+        <item>h264</item>
+    </string-array>
+
+    <string-array name="show_render_mode">
+        <item>hidden</item>
+        <item>fix</item>
+    </string-array>
+
+    <string-array name="show_sr_type">
+        <item>1x SR</item>
+        <item>1.33x SR</item>
+        <item>1.5x SR</item>
+        <item>2x SR</item>
+    </string-array>
+
+</resources>

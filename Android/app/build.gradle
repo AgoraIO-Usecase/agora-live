@@ -1,0 +1,110 @@
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode Integer.parseInt(project.APP_VERSION_CODE)
+        versionName project.APP_VERSION_NAME
+        applicationId "io.agora.livestreaming"
+        ndk.abiFilters 'arm64-v8a', 'armeabi-v7a'//, 'arm64-v8a'//, 'x86', 'x86-64'
+    }
+
+    packagingOptions {
+        pickFirst 'lib/*/libc++_shared.so'
+    }
+
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
+
+    resourcePrefix "app"
+
+    signingConfigs {
+        myConfig {
+            storeFile new File(rootProject.rootDir.absolutePath + "/keystore.key")
+            storePassword "965606"
+            keyAlias "agora"
+            keyPassword "965606"
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.myConfig
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled true
+            signingConfig signingConfigs.myConfig
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    applicationVariants.all {
+        variant ->
+            variant.outputs.all { output ->
+                outputFileName = new File(rootProject.name + "_" +
+                        project.name + "_" +
+                        "v" + defaultConfig.versionName + "_" +
+                        new Date().format("yyyyMMddHHmm") + "_" +
+                        buildType.name + ".apk")
+            }
+    }
+}
+
+apply from: "${rootDir.absolutePath}/git-hooks.gradle"
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    implementation project(':common')
+
+    def showModule = ':scenes:show'
+    if (findProject(showModule) != null) {
+        runtimeOnly project(showModule)
+    }
+
+    //glide 图片加载
+    api rootProject.ext.deps.glide
+    kapt rootProject.ext.deps.glide_compiler
+
+    implementation rootProject.ext.deps.appcompat
+    implementation rootProject.ext.deps.multidex
+    implementation rootProject.ext.deps.constraintlayout
+    implementation rootProject.ext.deps.v7
+    implementation rootProject.ext.deps.material
+    implementation rootProject.ext.deps.rxjava2
+    implementation rootProject.ext.deps.rxandroid2
+    implementation rootProject.ext.deps.retrofit2
+    implementation rootProject.ext.deps.retrofit2_adapter
+
+    implementation rootProject.ext.deps.lifecycle
+    implementation rootProject.ext.deps.fragment_ktx
+    implementation rootProject.ext.deps.ui_ktx
+    implementation rootProject.ext.deps.palette_ktx
+    implementation rootProject.ext.deps.layout_kernel
+    implementation rootProject.ext.deps.header_classics
+
+    implementation rootProject.ext.deps.gson
+}
