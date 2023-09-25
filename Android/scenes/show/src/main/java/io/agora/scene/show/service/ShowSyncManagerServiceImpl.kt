@@ -499,7 +499,6 @@ class ShowSyncManagerServiceImpl constructor(
                         exception ?: return
                         if (exception.code == -2000 && roomInfo.isRobotRoom()) {
                             ShowLogger.d(TAG, "create robotRoom ${roomInfo.roomId}")
-                            // 房间不存在，并且是假数据：创建房间
                             createRoomInner(
                                 roomId,
                                 roomInfo.roomName,
@@ -554,7 +553,6 @@ class ShowSyncManagerServiceImpl constructor(
 
         sendChatMessage(roomId, context.getString(R.string.show_live_chat_leaving))
 
-        // 移除连麦申请
         val targetApply =
             roomInfoController.micSeatApplyList.filter { it.userId == UserManager.getInstance().user.id.toString() }
                 .getOrNull(0)
@@ -565,7 +563,6 @@ class ShowSyncManagerServiceImpl constructor(
             innerRemoveSeatApply(roomId, removedSeatApplyObjId, null, null)
         }
 
-        // 移除pk申请
         roomInfoController.pKCompetitorInvitationList.forEach {
             val index = roomInfoController.pKCompetitorInvitationList.indexOf(it)
             innerRemovePKInvitation(
@@ -1381,7 +1378,6 @@ class ShowSyncManagerServiceImpl constructor(
         val apply = roomInfoController.micSeatApplyList.filter { it.userId == interaction.userId }
             .getOrNull(0)
         if (apply != null) {
-            // 停止连麦者 移除连麦申请
             val index = roomInfoController.micSeatApplyList.indexOf(apply)
             innerRemoveSeatApply(roomId, roomInfoController.objIdOfSeatApply[index], {}, {})
         }
@@ -1389,7 +1385,6 @@ class ShowSyncManagerServiceImpl constructor(
         // pk
         if (interaction.interactStatus == ShowInteractionStatus.pking.value) {
             if (roomInfoController.pKCompetitorInvitationList.isEmpty()) {
-                // pk 对象
                 val invitation =
                     roomInfoController.pKInvitationList.filter { it.fromUserId == interaction.userId }
                         .getOrNull(0)
@@ -1400,7 +1395,6 @@ class ShowSyncManagerServiceImpl constructor(
                     innerRemovePKInvitation(roomInfoController.sceneReference, objId, null, null)
                 }
             } else {
-                // pk 发起者
                 val invitation =
                     roomInfoController.pKCompetitorInvitationList.filter { it.userId == interaction.userId }
                         .getOrNull(0)
@@ -2444,7 +2438,6 @@ class ShowSyncManagerServiceImpl constructor(
                     roomInfoController.pKCompetitorInvitationList.filter { it.status == ShowRoomRequestStatus.accepted.value }
                         .getOrNull(0)
                 if (acceptItem != null && acceptItem.userId != info.userId && info.status == ShowRoomRequestStatus.accepted.value) {
-                    // 已有其他主播接受， 删除PK邀请
                     innerRemovePKInvitation(roomInfoController.sceneReference, item.id, null, null)
                     return
                 }
