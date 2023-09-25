@@ -268,7 +268,7 @@
     <string name="show_network_quailty_normal">Unstable</string>
     <string name="show_network_quailty_normal_tag">Unstable network conditions</string>
     <string name="show_video_quailty">Video Quality</string>
-    <string name="show_video_quailty_smooth">Fluency First</string>
+    <string name="show_video_quailty_smooth">Smooth First</string>
     <string name="show_video_quailty_clear">Clarity First</string>
     <string name="show_video_quailty_tips">Adaptive video quality strategies for different audience</string>
     <string name="show_video_device_result">Device Level: %s (%d)</string>
