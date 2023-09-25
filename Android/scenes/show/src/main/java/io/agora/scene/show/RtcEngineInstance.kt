@@ -73,7 +73,9 @@ object RtcEngineInstance {
      * @param generalToken
      */
     fun setupGeneralToken(generalToken: String) {
-        this.generalToken = generalToken
+        if (generalToken.isEmpty()) {
+            this.generalToken = generalToken
+        }
     }
 
     /**
