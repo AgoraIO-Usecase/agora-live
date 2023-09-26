@@ -554,7 +554,7 @@ class VideoSwitcherImpl constructor(private val rtcEngine: RtcEngineEx) : VideoS
                 val ret = rtcEngine.joinChannelEx(token, connection, options, rtcConnectionWrap.rtcEventHandler)
                 ShowLogger.d(tag, "joinChannelEx3, connection:$connection, ret:$ret")
             }
-            roomStateMap[RtcConnectionWrap(connection)] = newState
+            roomStateMap[rtcConnectionWrap] = newState
             return
         }
 
