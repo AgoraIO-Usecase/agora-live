@@ -1,0 +1,30 @@
+apply from: 'config.gradle'
+
+
+buildscript {
+    ext.kotlin_version = "1.6.0"
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://repo1.maven.org/maven2/' }
+        maven { url 'https://www.jitpack.io' }
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.1"
+    }
+}
+
+allprojects {
+    apply from: "${rootDir.absolutePath}/checkstyle.gradle"
+    apply from: "${rootDir.absolutePath}/detekt.gradle"
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+

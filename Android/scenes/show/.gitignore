@@ -1,0 +1,5 @@
+*.aar
+*.so
+src/main/assets/resource
+\build
+authpack.java

@@ -1,0 +1,76 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+if (project.property("AGORA_APP_ID").toString().isEmpty()) {
+    println("Please config AGORA_APP_ID in gradle.properties")
+}
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        flavorDimensions ""
+
+        buildConfigField "String", "APP_VERSION_NAME", "\"${APP_VERSION_NAME}\""
+        buildConfigField "String", "APP_VERSION_CODE", "\"${APP_VERSION_CODE}\""
+
+        buildConfigField "String", "TOOLBOX_SERVER_HOST", "\"${TOOLBOX_SERVER_HOST}\""
+
+        buildConfigField "String", "AGORA_APP_ID", "\"${AGORA_APP_ID}\""
+        buildConfigField "String", "AGORA_APP_CERTIFICATE", "\"${AGORA_APP_CERTIFICATE}\""
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    implementation rootProject.ext.deps.appcompat
+    api rootProject.ext.deps.multidex
+    implementation rootProject.ext.deps.annotation
+    implementation rootProject.ext.deps.material
+
+    api rootProject.ext.deps.rxjava2
+    api rootProject.ext.deps.rxandroid2
+    api rootProject.ext.deps.okhttp
+    api rootProject.ext.deps.okhttp_logger
+    api rootProject.ext.deps.retrofit2
+    api rootProject.ext.deps.retrofit2_adapter
+    api rootProject.ext.deps.gson
+
+    implementation rootProject.ext.deps.logger
+
+    kapt rootProject.ext.deps.glide_compiler
+    implementation rootProject.ext.deps.glide
+
+    implementation rootProject.ext.deps.coroutines_android
+
+    implementation rootProject.ext.deps.appcompat
+    implementation rootProject.ext.deps.material
+    implementation rootProject.ext.deps.constraintlayout
+    implementation rootProject.ext.deps.glide
+    api rootProject.ext.deps.ok2curl
+
+    api rootProject.ext.deps.rtc
+}

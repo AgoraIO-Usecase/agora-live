@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="room_has_close">The host has disbanded the room. Please confirm your departure from the room.</string>
+    <string name="confirm_to_dismiss_room">Are you sure you want to disband this room?</string>
+    <string name="confirm_to_exit_room">Are you sure you want to leave this room?</string>
+    <string name="exit_room">Leave the room</string>
+    <string name="dismiss_room">Disband the room</string>
+    <string name="report_room">Report</string>
+    <string name="report_room_success">Reported</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="agree">Agree</string>
+    <string name="disagree">Disagree</string>
+    <string name="confirm">Confirm</string>
+    <!-- for invite -->
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+
+    <string name="edit_name">Edit Nickname</string>
+    <string name="input_edit_name">Please provide your nickname.</string>
+    <string name="input_password">Please enter the room password.</string>
+
+    <string name="i_know">Acknowledged</string>
+
+    <string name="avatar">Avatar</string>
+
+    <string name="select_from_album">Select from album</string>
+    <string name="photograph">Take a photo</string>
+    <string name="complete_validation">Complete the validation</string>
+    <string name="drag_complete">Drag the slider below to complete the puzzle.</string>
+
+    <string name="privacy_protection_tip1">This demo is a testing product designed to showcase the usage and effectiveness of the product to Agora clients. It is intended solely for testing the functionality, performance, and usability of the product and is not intended for public use as a formal product.\n1. We will assist you in understanding the collection, use, and storage of your personal information, as well as your related rights, based on the User Agreement and Privacy Policy.\n2. When you use this testing software, we will collect your device information, log information, etc. Additionally, depending on the specific usage scenarios, you may grant us permissions to access your device\'s microphone, camera, and other information.\n\nYou can learn more by reading the complete User Agreement and Privacy Policy.</string>
+    <string name="privacy_protection_tip2">Services will be provided by this demo only after you agree to the User Agreement and Privacy Policy.</string>
+
+    <string name="send_v_code">Send verification code</string>
+    <string name="i_agree">I have read and agreed</string>
+    <string name="ktv_online">Online KTV</string>
+
+    <string name="time_up_exit_room">You have exceeded the 20-minute limit, and the current room has expired. Please exit and create a new room.</string>
+    <string name="expire_exit_room">The current room has expired. Please exit.</string>
+    <string name="comm_permission_leak_auido_title">No microphone permission</string>
+    <string name="comm_permission_leak_auido_content">Please grant microphone permission in the settings.</string>
+    <string name="comm_permission_leak_camera_title">No camera permission</string>
+    <string name="comm_permission_leak_camera_content">Please grant camera permission in the settings.</string>
+    <string name="comm_permission_leak_sdcard_title">No photo and video permissions</string>
+    <string name="comm_permission_leak_sdcard_content">Please grant photo and video permissions in the settings.</string>
+    <string name="comm_permission_leak_other_title">No necessary permissions</string>
+    <string name="comm_permission_leak_other_content">Please grant necessary permissions in the settings.</string>
+    <string name="comm_setting">Settings</string>
+
+    <string name="comm_try_again">Please try again</string>
+
+    <string name="try_again_to_exit">Please try again to exit</string>
+    <string name="permission_leak_tip">The required permissions need to be granted.</string>
+
+    <string name="id_is_" translatable="false">ID: %s</string>
+
+</resources>

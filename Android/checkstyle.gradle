@@ -1,0 +1,17 @@
+apply plugin: 'checkstyle'
+
+checkstyle {
+    toolVersion = '10.12.3'
+}
+
+task checkstyle(type: Checkstyle) {
+    source 'src/main/java'
+    include '**/*.java'
+    include '**/*.kt'
+    exclude '**/gen/**'
+    exclude '**/R.java'
+    exclude '**/BuildConfig.java'
+    exclude '**/authpack.java'
+    configFile new File(rootDir, "checkstyle.xml")
+    classpath = files()
+}
