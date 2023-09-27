@@ -184,7 +184,7 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
             aMethod.setAccessible(true);
             return (byte[]) aMethod.invoke(null);
         } catch (Exception e) {
-            return null;
+            return new byte[0];
         }
     }
 
