@@ -42,7 +42,7 @@ public class WelcomeActivity extends BaseViewBindingActivity<AppActivityWelcomeB
         ClickableSpan policyClickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                WebViewActivity.launch(WelcomeActivity.this, "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/meta/demo/fulldemoStatic/privacy/privacy.html");
+                WebViewActivity.launch(WelcomeActivity.this, "https://www.agora.io/en/compliance/");
             }
         };
         ss.setSpan(policyClickableSpan, split[0].length(), split[0].length() + split[1].length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
