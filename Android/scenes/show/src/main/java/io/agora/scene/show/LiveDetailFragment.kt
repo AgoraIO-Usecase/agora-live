@@ -1009,7 +1009,7 @@ class LiveDetailFragment : Fragment() {
         AlertDialog.Builder(requireContext(), R.style.show_alert_dialog)
             .setTitle(R.string.show_tip)
             .setMessage(R.string.show_live_end_room_or_not)
-            .setPositiveButton(R.string.show_setting_confirm) { dialog, id ->
+            .setPositiveButton(R.string.show_setting_advance_ok) { dialog, id ->
                 activity?.finish()
                 dialog.dismiss()
             }
@@ -1933,7 +1933,7 @@ class LiveDetailFragment : Fragment() {
         channelMediaOptions.publishCustomAudioTrack = false
         channelMediaOptions.enableAudioRecordingOrPlayout = true
         channelMediaOptions.autoSubscribeVideo = true
-        channelMediaOptions.autoSubscribeAudio = false
+        channelMediaOptions.autoSubscribeAudio = true
         channelMediaOptions.clientRoleType = Constants.CLIENT_ROLE_BROADCASTER
 
         (activity as? LiveDetailActivity)?.let {

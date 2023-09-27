@@ -19,7 +19,7 @@
     <string name="show_setting_video_off">Camera Off</string>
     <string name="show_setting_mic_on">Mic On</string>
     <string name="show_setting_mic_off">Mic Off</string>
-    <string name="show_setting_statistic">Stats for nerds</string>
+    <string name="show_setting_statistic">Stats</string>
     <string name="show_setting_quality">Video Quality</string>
     <string name="show_setting_advance_setting">Advanced Settings</string>
     <string name="show_setting_quality_enhance_tip">Due to your device being a low-end model, the super-resolution feature has been disabled to ensure smooth device performance.</string>
@@ -49,16 +49,16 @@
     <string name="show_live_prepare_rotate">Flip</string>
     <string name="show_live_prepare_beauty">Beautification</string>
     <string name="show_live_prepare_hd">Video Quality</string>
-    <string name="show_live_prepare_tip">This product is intended for functional demo only, and the duration of a single live stream should not exceed 20 minutes.</string>
+    <string name="show_live_prepare_tip"> NOTE: For demo purposes only. Please limit live streams to 20 minutes or less.</string>
     <string name="show_live_prepare_start_live">Go Live</string>
     <string name="show_live_prepare_room_empty">Room name cannot be empty!</string>
     <string name="show_live_prepare_room_clipboard_copyed">Room ID has been copied to the clipboard!</string>
     <string name="show_live_prepare_room_name_hint">Please enter the room name</string>
     <string name="show_beauty_item_beauty_whiten">Skin Tone</string>
-    <string name="show_beauty_item_beauty_overall">Cheek Thin</string>
+    <string name="show_beauty_item_beauty_overall">Thin Cheek</string>
     <string name="show_beauty_item_beauty_vshape">V Shape</string>
-    <string name="show_beauty_item_beauty_upper_width">Cheek Narrow</string>
-    <string name="show_beauty_item_beauty_short_width">Cheek Small</string>
+    <string name="show_beauty_item_beauty_upper_width">Narrow Cheek</string>
+    <string name="show_beauty_item_beauty_short_width">Small Cheek</string>
     <string name="show_beauty_item_beauty_cheekbone">Cheek</string>
     <string name="show_beauty_item_beauty_eye">Enlarge</string>
     <string name="show_beauty_item_beauty_nose">Nose Size</string>
@@ -159,8 +159,8 @@
     <string name="show_online_boardcaster">Online Host</string>
     <string name="show_pking">In PK</string>
     <string name="show_stop_pking">End</string>
-    <string name="show_empty_online_boardcaster">No online host</string>
-    <string name="show_empty_online_audience">No online audience</string>
+    <string name="show_empty_online_boardcaster">No hosts online</string>
+    <string name="show_empty_online_audience">No audience online</string>
     <string name="show_pk">Co-host</string>
     <string name="show_can_pk">Available for PK</string>
 
@@ -268,7 +268,7 @@
     <string name="show_network_quailty_normal">Unstable</string>
     <string name="show_network_quailty_normal_tag">Unstable network conditions</string>
     <string name="show_video_quailty">Video Quality</string>
-    <string name="show_video_quailty_smooth">Fluency First</string>
+    <string name="show_video_quailty_smooth">Smooth First</string>
     <string name="show_video_quailty_clear">Clarity First</string>
     <string name="show_video_quailty_tips">Adaptive video quality strategies for different audience</string>
     <string name="show_video_device_result">Device Level: %s (%d)</string>

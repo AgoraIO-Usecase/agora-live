@@ -1,0 +1,115 @@
+/*
+  AGLocalizable.strings
+  AgoraEntScenarios
+
+  Created by CP on 2023/7/18.
+  
+*/
+
+"app_name"="Agora Live";
+"app_title_home"="Home";
+"app_title_find"="Find";
+"app_title_mine"="About";
+"app_action_settings"="Settings";
+
+"app_exit"="Exit";
+"app_user_agreement"="Terms of Service";
+"app_privacy_agreement"="Privacy Policy";
+"app_and"="and";
+
+"app_confirm_deletion"="Are you sure you want to delete it?";
+"app_about_us"="About Us";
+
+"app_finish"="Finish";
+"app_welcome_experience"="Start a new live experience with";
+
+"app_plus_86"="+86";
+"app_logout"="Log out";
+"app_logoff_account"="Delete account";
+"app_logoff"="Delete";
+"app_debug_mode"="Debug mode";
+
+"app_show_live"="Live Streaming";
+
+
+"app_about_app"="About App";
+"app_about_name"="Agora Live";
+"app_about_version"="Version";
+"app_about_scene_version"="Scene Version";
+"app_about_show"="Live Streaming";
+"app_about_customer_service"="Customer Service";
+"app_about_official_website"="Official Website";
+"app_about_phone_cancel"="Cancel";
+"app_mine_current_version"="Current Version: %s";
+
+"app_debug_open"="Debug Mode On";
+"app_debug_off"="Debug Mode Off";
+"app_exit_debug"="Are you sure you want to exit debug mode?";
+"app_exit_debug_tip"="After exiting debug mode, the settings page will return to its normal state.";
+"app_agree_tip"="Please agree to the User Agreement and Privacy Policy.";
+"app_input_vcode_tip"="Please enter the code";
+"app_vcode_wrong_tip"="Incorrect code";
+"app_login_success_tip"="Login Succeeded";
+"app_vcode_send_success_tip"="Code Sent";
+"app_edit_success"="Modified";
+
+"room_has_close" = "The host has disbanded the room. Please confirm your departure from the room.";
+"confirm_to_dismiss_room" = "Are you sure you want to disband this room?";
+"confirm_to_exit_room" = "Are you sure you want to leave this room?";
+"exit_room" = "Leave the room";
+"dismiss_room" = "Disband the room";
+
+"cancel" = "Cancel";
+"close" = "Close";
+"agree" = "Agree";
+"disagree" = "Disagree";
+"confirm" = "Confirm";
+
+"edit_name" = "Edit Nickname";
+"input_edit_name" = "Please provide your nickname.";
+"input_password" = "Please enter the room password.";
+
+"i_know" = "Acknowledged";
+
+"avatar" = "Avatar";
+
+"select_from_album" = "Select from album";
+"photograph" = "Take a photo";
+"complete_validation" = "Complete the validation";
+"drag_complete" = "Drag the slider below to complete the puzzle.";
+
+"privacy_protection_tip1" = "This demo is a testing product designed to showcase the usage and effectiveness of the product to Agora clients. It is intended solely for testing the functionality, performance, and usability of the product and is not intended for public use as a formal product.\n1. We will assist you in understanding the collection, use, and storage of your personal information, as well as your related rights, based on the User Agreement and Privacy Policy.\n2. When you use this testing software, we will collect your device information, log information, etc. Additionally, depending on the specific usage scenarios, you may grant us permissions to access your device's microphone, camera, and other information.\n\nYou can learn more by reading the complete User Agreement and Privacy Policy.";
+"privacy_protection_tip2" = "Services will be provided by this demo only after you agree to the User Agreement and Privacy Policy.";
+
+"send_v_code" = "Send verification code";
+"i_agree" = "I have read and agreed.";
+"ktv_online" = "Online KTV";
+
+"time_up_exit_room" = "You have exceeded the 20-minute limit, and the current room has expired. Please exit and create a new room.";
+"expire_exit_room" = "The current room has expired. Please exit.";
+
+"comm_permission_leak_auido_title" = "No microphone permission";
+"comm_permission_leak_auido_content" = "Please grant microphone permission in the settings.";
+"comm_permission_leak_camera_title" = "No camera permission";
+"comm_permission_leak_camera_content" = "Please grant camera permission in the settings.";
+"comm_permission_leak_sdcard_title" = "No photo and video permissions";
+"comm_permission_leak_sdcard_content" = "Please grant photo and video permissions in the settings.";
+"comm_permission_leak_other_title" = "No necessary permissions";
+"comm_permission_leak_other_content" = "Please grant necessary permissions in the settings.";
+"comm_setting" = "Settings";
+"comm_try_again" = "Please try again";
+"app_expire" = "Token expired. Please log in again";
+"agora" = "Agora";
+"userName" = "User Name";
+"app_need_request_photo" = "SE Full Demo would like to get access your album";
+"app_need_request_photo and upload avatar" = "Agora requires you to enable access to the photo library in order to upload an avatar.";
+"app_upload_avatar" = "Upload avatar";
+"take_photo_and_upload" = "Take a photo";
+"local_upload" = "Upload from album";
+"agree_and_goon" = "Agree and continue";
+"disagree_and_exit" = "Disagree and exit";
+"logout_tips" = "After deleting of your account, you will be unable to access our services using that account. Are you sure you want to proceed with the account logout?";
+"confirm_logout" = "Are you sure you want to log out?";
+"logout_tips" = "After logging out, we will continue to retain your account data. Remember to come back and experience our services again!";
+"not_allowed" = "Do not allow";
+"requset_ok" = "Allow";

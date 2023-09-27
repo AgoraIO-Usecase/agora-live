@@ -19,6 +19,7 @@ import androidx.core.view.isVisible
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.CameraCapturerConfiguration
+import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.manager.UserManager
@@ -296,18 +297,49 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
         }
 
         binding.btnStartLive.isEnabled = false
-        mService.createRoom(mRoomId, roomName, mThumbnailId, {
-            runOnUiThread {
-                isFinishToLiveDetail = true
-                LiveDetailActivity.launch(this@LivePrepareActivity, it)
-                finish()
-            }
-        }, {
-            runOnUiThread {
-                ToastUtils.showToast(it.message)
-                binding.btnStartLive.isEnabled = true
-            }
-        })
+
+        mayFetchUniversalToken {
+            mService.createRoom(mRoomId, roomName, mThumbnailId, {
+                runOnUiThread {
+                    isFinishToLiveDetail = true
+                    LiveDetailActivity.launch(this@LivePrepareActivity, it)
+                    finish()
+                }
+            }, {
+                runOnUiThread {
+                    ToastUtils.showToast(it.message)
+                    binding.btnStartLive.isEnabled = true
+                }
+            })
+        }
+    }
+
+    /**
+     * Fetch universal token
+     *
+     * @param complete
+     * @receiver
+     */
+    private fun mayFetchUniversalToken(
+        complete: () -> Unit
+    ) {
+        if(RtcEngineInstance.generalToken().isNotEmpty()){
+            complete.invoke()
+            return
+        }
+        val localUId = UserManager.getInstance().user.id
+        TokenGenerator.generateToken("", localUId.toString(),
+            TokenGenerator.TokenGeneratorType.Token007,
+            TokenGenerator.AgoraTokenType.Rtc,
+            success = {
+                ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
+                RtcEngineInstance.setupGeneralToken(it)
+                complete.invoke()
+            },
+            failure = {
+                ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
+                ToastUtils.showToast(it?.message ?: "generate token failure")
+            })
     }
 
 

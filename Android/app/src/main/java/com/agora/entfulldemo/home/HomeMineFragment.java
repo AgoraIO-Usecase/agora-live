@@ -54,7 +54,7 @@ public class HomeMineFragment extends BaseViewBindingFragment<AppFragmentHomeMin
     @Override
     public void initListener() {
         getBinding().tvUserAgreement.setOnClickListener(view -> {
-            WebViewActivity.launch(getContext(), "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/meta/demo/fulldemoStatic/privacy/service.html");
+            WebViewActivity.launch(getContext(), "https://www.agora.io/en/compliance/");
         });
         getBinding().tvAbout.setOnClickListener(view -> {
             startActivity(new Intent(getActivity(), AboutUsActivity.class));

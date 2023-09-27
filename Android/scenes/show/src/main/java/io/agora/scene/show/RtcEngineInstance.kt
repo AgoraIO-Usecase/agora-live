@@ -65,6 +65,7 @@ object RtcEngineInstance {
             return innerBeautyProcessor!!
         }
 
+    @Volatile
     private var generalToken: String = ""
 
     /**
@@ -73,7 +74,13 @@ object RtcEngineInstance {
      * @param generalToken
      */
     fun setupGeneralToken(generalToken: String) {
-        this.generalToken = generalToken
+        if (generalToken.isEmpty()) {
+            this.generalToken = ""
+        } else {
+            if (this.generalToken.isEmpty()) {
+                this.generalToken = generalToken
+            }
+        }
     }
 
     /**

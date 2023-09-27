@@ -116,7 +116,7 @@ interface ShowServiceProtocol {
      * @param roomId
      * @param onUpdate
      * @receiver
-     */// 订阅当前加入的房间的更新删除事件
+     */
     fun subscribeCurrRoomEvent(roomId: String, onUpdate: (status: ShowSubscribeStatus, roomInfo: ShowRoomDetailModel?) -> Unit)
 
     /**

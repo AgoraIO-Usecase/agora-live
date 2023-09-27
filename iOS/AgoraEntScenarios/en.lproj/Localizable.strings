@@ -1,0 +1,17 @@
+/* 
+  Localizable.strings
+  AgoraEntScenarios
+
+  Created by 朱继超 on 2023/2/9.
+  
+*/
+"AboutAgoraEntertainment" = "About Agora Entertainment";
+"AgoraEntertainment" = "Agora Entertainment";
+"Version" = "Version";
+"SceneVersion" = "Scene Version";
+"ContactCustomerService" = "Contact Customer Service";
+"OfficialWebsiteAddress" = "Official Website Address";
+"语聊房"="Chat Room";
+"语聊房-空间音频模式"="Chat Room SA Mode";
+"在线K歌"="Karaoke";
+"秀场直播"="Show";
