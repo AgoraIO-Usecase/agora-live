@@ -344,7 +344,7 @@ extension ShowLiveViewController {
                     }
                 } else {
                     self._subscribeServiceEvent()
-                    self.updateLoadingType(playState: .joined, roomId: roomId)
+                    self.updateLoadingType(playState: .joined, roomId: room.roomId)
                 }
             }
         } else {
@@ -824,9 +824,6 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
             }
         }
         panelPresenter.updateVideoStats(stats)
-        if let ts = ShowAgoraKitManager.shared.callTimestampEnd() {
-            panelPresenter.updateTimestamp(ts)
-        }
         throttleRefreshRealTimeInfo()
     }
     
