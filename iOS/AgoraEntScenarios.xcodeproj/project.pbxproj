@@ -265,6 +265,7 @@
 		E72F624D2A8097DF00C963D2 /* VLLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72F624C2A8097DF00C963D2 /* VLLoginViewController.swift */; };
 		E72F62562A822D3500C963D2 /* FUManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E72F62532A822D3500C963D2 /* FUManager.m */; };
 		E72F62582A823B5000C963D2 /* FUBeautyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72F62572A823B5000C963D2 /* FUBeautyManager.swift */; };
+		E76F80142AF2417800CCB9D6 /* ShowLiveMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -649,6 +650,7 @@
 		E72F62512A822D3500C963D2 /* FUManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUManager.h; sourceTree = "<group>"; };
 		E72F62532A822D3500C963D2 /* FUManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUManager.m; sourceTree = "<group>"; };
 		E72F62572A823B5000C963D2 /* FUBeautyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FUBeautyManager.swift; sourceTree = "<group>"; };
+		E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowLiveMoreDialog.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -1005,6 +1007,7 @@
 				DD36103929B70CDC00CE7984 /* ShowChatInputView.swift */,
 				DD36103A29B70CDC00CE7984 /* ShowRoomChatCell.swift */,
 				DD36103B29B70CDC00CE7984 /* ShowRoomInfoView.swift */,
+				E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */,
 			);
 			path = Live;
 			sourceTree = "<group>";
@@ -2178,6 +2181,7 @@
 				DDA199EC28FFE579009D3E61 /* VLAPIRequest.m in Sources */,
 				DDA19A0828FFE579009D3E61 /* GCDTimer.swift in Sources */,
 				E3735C962A5E7E75004737EF /* BEHttpRequestProvider.mm in Sources */,
+				E76F80142AF2417800CCB9D6 /* ShowLiveMoreDialog.swift in Sources */,
 				E3735CA22A5E7E75004737EF /* BeautyAPI.m in Sources */,
 				DD36109629B70CDC00CE7984 /* ShowAdvancedSettingVC.swift in Sources */,
 				DD36106429B70CDC00CE7984 /* ShowAgoraKitManager.swift in Sources */,

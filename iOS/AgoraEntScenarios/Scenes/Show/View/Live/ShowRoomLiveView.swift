@@ -10,10 +10,10 @@ import UIKit
 private let kTableViewBottomOffset: CGFloat = Screen.safeAreaBottomHeight() + 109
 private let kChatInputViewHeight: CGFloat = 56
 
-
 protocol ShowRoomLiveViewDelegate: ShowRoomBottomBarDelegate, ShowCanvasViewDelegate {
     func onClickSendMsgButton(text: String)
     func onClickCloseButton()
+    func onClickMoreButton()
 }
 
 class ShowRoomLiveView: UIView {
@@ -56,6 +56,14 @@ class ShowRoomLiveView: UIView {
     private lazy var countView: ShowRoomMembersCountView = {
         let countView = ShowRoomMembersCountView()
         return countView
+    }()
+    
+    private lazy var moreBtn: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage.sceneImage(name: "icon_live_more"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.addTarget(self, action: #selector(clickMore), for: .touchUpInside)
+        return button
     }()
     
     private lazy var closeButton: UIButton = {
@@ -140,10 +148,17 @@ class ShowRoomLiveView: UIView {
             make.centerY.equalTo(roomInfoView)
         }
         
+        addSubview(moreBtn)
+        moreBtn.snp.makeConstraints { make in
+            make.trailing.equalTo(closeButton.snp_leadingMargin).offset(-18)
+            make.centerY.equalTo(closeButton.snp.centerY)
+            make.width.equalTo(24)
+        }
+        
         addSubview(countView)
         countView.snp.makeConstraints { make in
             make.centerY.equalTo(roomInfoView)
-            make.right.equalTo(closeButton.snp.left).offset(-10)
+            make.right.equalTo(moreBtn.snp.left).offset(-10)
         }
         
         addSubview(tableView)
@@ -227,10 +242,14 @@ class ShowRoomLiveView: UIView {
         delegate?.onClickCloseButton()
     }
     
+    @objc
+    private func clickMore() {
+        delegate?.onClickMoreButton()
+    }
+    
     private func sendMessage(){
         
     }
-
 }
 
 extension ShowRoomLiveView {
