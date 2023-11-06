@@ -16,8 +16,7 @@ static NSString * const kURLPathGetUserInfo = @"/api-login/users/getUserInfo"; /
 static NSString * const kURLPathUploadUserInfo = @"/api-login/users/update";  //Modifying User Information
 
 #pragma mark - H5
-static NSString * const kURLPathH5UserAgreement = @"https://agora.io/en/compliance/";
-static NSString * const kURLPathH5Privacy = @"https://fullapp.oss-cn-beijing.aliyuncs.com/scenarios/privacy.html";
+static NSString * const kURLPathH5TermsOfService = @"https://www.agora.io/en/terms-of-service/";
 static NSString * const kURLPathH5AboutUS = @"https://www.agora.io/cn/about-us/";
 static NSString * const kURLPathH5PersonInfo = @"http://fullapp.oss-cn-beijing.aliyuncs.com/ent-scenarios/pages/manifest/index.html";
 static NSString * const kURLPathH5ThirdInfoShared = @"https://fullapp.oss-cn-beijing.aliyuncs.com/scenarios/libraries.html";
