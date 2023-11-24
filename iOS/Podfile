@@ -32,7 +32,7 @@ def all_pods
   # FU
   pod 'fuLib', :path => 'fu.podspec'
   
-  pod 'AgoraSyncManager-overseas', '~> 3.0.6'
+  pod 'AgoraSyncManager-overseas', '~> 3.0.8'
 
 #  pod 'sdk', :path => 'sdk.podspec'
 #  pod 'AgoraRtcEngine_iOS', '~> 4.2.2'
