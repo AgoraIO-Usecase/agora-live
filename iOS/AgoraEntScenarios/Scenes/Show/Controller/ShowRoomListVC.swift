@@ -133,8 +133,8 @@ class ShowRoomListVC: UIViewController {
     
     private func fetchRoomList() {
         AppContext.showServiceImp("")?.getRoomList(page: 1) { [weak self] error, roomList in
+            self?.refreshControl.endRefreshing()
             guard let self = self else { return }
-            self.refreshControl.endRefreshing()
             if let error = error {
                 LogUtil.log(error.localizedDescription)
                 return

@@ -41,7 +41,6 @@ class ShowLivePagesViewController: ViewController {
     deinit {
         showLogger.info("deinit-- ShowLivePagesViewController", context: kPagesVCTag)
         ShowAgoraKitManager.shared.leaveAllRoom()
-        AppContext.unloadShowServiceImp()
     }
     
     override func viewDidLoad() {

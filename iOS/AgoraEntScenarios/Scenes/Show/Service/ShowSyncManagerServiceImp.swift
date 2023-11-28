@@ -201,7 +201,10 @@ class ShowSyncManagerServiceImp: NSObject, ShowServiceProtocol {
     //MARK: ShowServiceProtocol
     func getRoomList(page: Int, completion: @escaping (NSError?, [ShowRoomListModel]?) -> Void) {
         _getRoomList(page: page) { [weak self] error, list in
-            guard let self = self else { return }
+            guard let self = self else {
+                completion(error, nil)
+                return
+            }
             if let error = error {
                 completion(error, nil)
                 return

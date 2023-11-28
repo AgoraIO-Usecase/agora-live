@@ -932,6 +932,9 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
         dialog.onClickDislikeClosure = { [weak self] in
             guard let self = self else { return }
             AppContext.shared.addDislikeRoom(at: self.room?.roomId)
+            if let room = self.room {
+                self._leavRoom(room)
+            }
             self.updateLoadingType(playState: .idle, roomId: self.roomId)
             self.onClickDislikeClosure?()
             self.dismiss(animated: true)

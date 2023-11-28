@@ -40,7 +40,7 @@ extension AppContext {
     }
     
     static func unloadShowServiceImp(_ roomId: String) {
-        _showServiceImpMap[roomId] = nil
+        _showServiceImpMap.removeValue(forKey: roomId)
     }
     
     static func unloadShowServiceImp() {
