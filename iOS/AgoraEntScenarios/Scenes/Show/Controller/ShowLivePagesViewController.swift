@@ -10,7 +10,7 @@ import UIKit
 
 private let kPagesVCTag = "PagesVC"
 class ShowLivePagesViewController: ViewController {
-    
+    var onClickDislikeClosure: (() -> Void)?
     var roomList: [ShowRoomListModel]?
     
     var focusIndex: Int = 0
@@ -34,6 +34,7 @@ class ShowLivePagesViewController: ViewController {
         collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.bounces = false
         collectionView.showsVerticalScrollIndicator = false
+        collectionView.backgroundColor = .clear
         return collectionView
     }()
     
@@ -45,6 +46,7 @@ class ShowLivePagesViewController: ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.layer.contents = UIImage.show_sceneImage(name: "show_list_Bg")?.cgImage
         self.navigationController?.setNavigationBarHidden(true, animated: true)
         self.view.addSubview(collectionView)
         collectionView.isScrollEnabled = roomList?.count ?? 0 > 1 ? true : false
@@ -182,6 +184,7 @@ extension ShowLivePagesViewController: UICollectionViewDelegate, UICollectionVie
         vc.delegate = self
         vc.view.frame = self.view.bounds
         vc.view.tag = kShowLiveRoomViewTag
+        vc.onClickDislikeClosure = onClickDislikeClosure
         cell.contentView.addSubview(vc.view)
         self.addChild(vc)
         return cell

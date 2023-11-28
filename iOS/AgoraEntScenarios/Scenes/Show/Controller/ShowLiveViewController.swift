@@ -17,6 +17,7 @@ protocol ShowLiveViewControllerDelegate: NSObjectProtocol {
 
 class ShowLiveViewController: UIViewController {
     weak var delegate: ShowLiveViewControllerDelegate?
+    var onClickDislikeClosure: (() -> Void)?
     var room: ShowRoomListModel? {
         didSet{
             if oldValue?.roomId != room?.roomId {
@@ -928,6 +929,13 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
     
     func onClickMoreButton() {
         let dialog = ShowLiveMoreDialog(frame: view.bounds)
+        dialog.onClickDislikeClosure = { [weak self] in
+            guard let self = self else { return }
+            AppContext.shared.addDislikeRoom(at: self.room?.roomId)
+            self.updateLoadingType(playState: .idle, roomId: self.roomId)
+            self.onClickDislikeClosure?()
+            self.dismiss(animated: true)
+        }
         view.addSubview(dialog)
         dialog.show()
     }
