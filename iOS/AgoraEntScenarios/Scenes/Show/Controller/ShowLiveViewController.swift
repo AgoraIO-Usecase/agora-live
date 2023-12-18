@@ -253,7 +253,7 @@ class ShowLiveViewController: UIViewController {
     }
         
     private func setupUI(){
-        view.layer.contents = UIImage.show_sceneImage(name: "show_live_pkbg")?.cgImage
+        view.layer.contents = UIImage.show_sceneImage(name: "show_live_room_bg")?.cgImage
         navigationController?.isNavigationBarHidden = true
         liveView.room = room
         view.addSubview(liveView)
@@ -345,7 +345,7 @@ extension ShowLiveViewController {
                     }
                 } else {
                     self._subscribeServiceEvent()
-                    self.updateLoadingType(playState: .joined, roomId: roomId)
+                    self.updateLoadingType(playState: .joined, roomId: room.roomId)
                 }
             }
         } else {
@@ -728,6 +728,7 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
     private func _onStopInteraction(interaction: ShowInteractionInfo) {
         switch interaction.interactStatus {
         case .pking:
+            view.layer.contents = UIImage.show_sceneImage(name: "show_live_room_bg")?.cgImage
             ShowAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: interaction.roomId)
             
             self.muteLocalVideo = false
@@ -823,9 +824,6 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
             }
         }
         panelPresenter.updateVideoStats(stats)
-        if let ts = ShowAgoraKitManager.shared.callTimestampEnd() {
-            panelPresenter.updateTimestamp(ts)
-        }
         throttleRefreshRealTimeInfo()
     }
     

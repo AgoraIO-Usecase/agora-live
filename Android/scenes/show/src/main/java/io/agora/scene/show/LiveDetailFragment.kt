@@ -1932,8 +1932,7 @@ class LiveDetailFragment : Fragment() {
         channelMediaOptions.publishMicrophoneTrack = false
         channelMediaOptions.publishCustomAudioTrack = false
         channelMediaOptions.enableAudioRecordingOrPlayout = true
-        channelMediaOptions.autoSubscribeVideo = true
-        channelMediaOptions.autoSubscribeAudio = false
+        channelMediaOptions.autoSubscribeAudio = true
         channelMediaOptions.clientRoleType = Constants.CLIENT_ROLE_BROADCASTER
 
         (activity as? LiveDetailActivity)?.let {

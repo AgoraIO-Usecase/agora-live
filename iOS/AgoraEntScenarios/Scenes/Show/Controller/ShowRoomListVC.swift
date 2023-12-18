@@ -29,8 +29,7 @@ class ShowRoomListVC: UIViewController {
     
     private lazy var emptyView = ShowEmptyView()
     
-    private lazy var createButton = UIButton(type: .custom)
-    
+    private lazy var createButton = UIButton(type: .custom)    
     
     private var roomList = [ShowRoomListModel]() {
         didSet {
