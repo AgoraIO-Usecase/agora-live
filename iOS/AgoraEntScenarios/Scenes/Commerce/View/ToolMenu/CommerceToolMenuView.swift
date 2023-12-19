@@ -15,7 +15,6 @@ enum CommerceToolMenuType: CaseIterable {
     case real_time_data
     case setting
     case mute_mic
-    case end_pk
     
     var imageName: String {
         switch self {
@@ -24,7 +23,6 @@ enum CommerceToolMenuType: CaseIterable {
         case .mic, .mute_mic: return "show_mic"
         case .real_time_data: return "show_realtime"
         case .setting: return "show_setting"
-        case .end_pk: return "show_end_pk"
         }
     }
     
@@ -44,7 +42,6 @@ enum CommerceToolMenuType: CaseIterable {
         case .real_time_data: return "show_setting_statistic".commerce_localized
         case .setting: return "show_setting_advance_setting".commerce_localized
         case .mute_mic: return "show_setting_mute".commerce_localized
-        case .end_pk: return "show_setting_end_mic_seat".commerce_localized
         }
     }
     var selectedTitle: String? {
@@ -109,9 +106,9 @@ class CommerceToolMenuView: UIView {
             case .idle_broadcaster:
                 updateToolType(type: [.switch_camera, .camera, .mic, .real_time_data, .setting])
             case .pking:
-                updateToolType(type: [.switch_camera, .camera, .mute_mic, .end_pk, .real_time_data])
+                updateToolType(type: [.switch_camera, .camera, .mute_mic, .real_time_data])
             case .managerMic:
-                updateToolType(type: [.mute_mic, .end_pk, .real_time_data])
+                updateToolType(type: [.mute_mic, .real_time_data])
             case .idle_audience:
                 updateToolType(type: [.real_time_data, .setting])
             }

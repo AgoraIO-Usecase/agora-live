@@ -87,7 +87,7 @@ class CommerceLiveViewController: UIViewController {
         return room?.ownerId == VLUserCenter.user.id ? .broadcaster : .audience
     }
     
-    let channelOptions:AgoraRtcChannelMediaOptions = AgoraRtcChannelMediaOptions()
+    let channelOptions: AgoraRtcChannelMediaOptions = AgoraRtcChannelMediaOptions()
     
     private lazy var musicPresenter: CommerceMusicPresenter? = {
         return CommerceMusicPresenter()
@@ -109,94 +109,9 @@ class CommerceLiveViewController: UIViewController {
         return realTimeView
     }()
     
-    private lazy var applyAndInviteView = CommerceApplyAndInviteView(roomId: roomId)
-    private lazy var applyView = CommerceApplyView(roomId: roomId)
-    
-    //PK popup list view
-    private lazy var pkInviteView = CommercePKInviteView(roomId: roomId)
-    
     private lazy var panelPresenter = CommerceDataPanelPresenter()
     
     private var finishView: CommerceReceiveFinishView?
-    
-    //pk user list (room list)
-    private var pkUserInvitationList: [CommercePKUserInfo]? {
-        didSet {
-            self.pkInviteView.pkUserInvitationList = pkUserInvitationList ?? []
-        }
-    }
-    
-    //interaction list
-    private var interactionList: [CommerceInteractionInfo]? {
-        didSet {
-            self.pkInviteView.interactionList = interactionList ?? []
-            self.currentInteraction = interactionList?.first
-        }
-    }
-    
-    //pk invitation request map
-    private var createPKInvitationMap: [String: CommercePKInvitation] = [String: CommercePKInvitation]()
-    
-    //get current interaction status
-    private var interactionStatus: CommerceInteractionStatus {
-        return currentInteraction?.interactStatus ?? .idle
-    }
-    
-    private var seatInteraction: CommerceInteractionInfo? {
-        get {
-            if currentInteraction?.interactStatus == .onSeat {
-                return currentInteraction
-            }
-            return nil
-        }
-    }
-    
-    private var currentInteraction: CommerceInteractionInfo? {
-        didSet {
-            //update audio status
-            if let interaction = currentInteraction {
-                liveView.canvasView.setLocalUserInfo(name: room?.ownerName ?? "")
-                liveView.canvasView.setRemoteUserInfo(name: interaction.userName ?? "")
-                liveView.canvasView.isLocalMuteMic = interaction.ownerMuteAudio
-                liveView.canvasView.isRemoteMuteMic = interaction.muteAudio
-                
-                if role == .broadcaster {
-                    self.muteLocalAudio = interaction.ownerMuteAudio
-                } else if interaction.userId == VLUserCenter.user.id {
-                    self.muteLocalAudio = interaction.muteAudio
-                }
-            } else if role == .broadcaster {
-                //unmute if interaction did stop
-                self.muteLocalAudio = false
-            }
-            
-            //update menu
-            if role == .broadcaster {
-                applyAndInviteView.seatMicModel = seatInteraction
-                applyView.interactionModel = nil
-            } else {
-                if currentInteraction?.userId == VLUserCenter.user.id {
-                    applyView.interactionModel = seatInteraction
-                } else {
-                    applyView.interactionModel = nil
-                }
-                applyAndInviteView.seatMicModel = nil
-            }
-            
-            //stop or start interaction
-            if currentInteraction == oldValue {
-                return
-            }
-            
-            if let info = oldValue {
-                _onStopInteraction(interaction: info)
-            }
-            if let info = currentInteraction {
-                _onStartInteraction(interaction: info)
-            }
-            
-        }
-    }
     
     private var muteLocalAudio: Bool = false {
         didSet {
@@ -230,8 +145,8 @@ class CommerceLiveViewController: UIViewController {
         guard let room = room else {return}
         setupUI()
         if room.ownerId == VLUserCenter.user.id {
-            self.joinChannel()
-            self._subscribeServiceEvent()
+            joinChannel()
+            _subscribeServiceEvent()
             AgoraEntAuthorizedManager.checkMediaAuthorized(parent: self)
         }
     }
@@ -314,18 +229,6 @@ class CommerceLiveViewController: UIViewController {
 
 //MARK: private
 extension CommerceLiveViewController {
-    private func _updateApplyMenu() {
-        if role == .broadcaster {
-            applyAndInviteView.reloadData()
-            serviceImp?.getAllMicSeatApplyList {[weak self] _, list in
-                guard let list = list?.filterDuplicates({ $0.userId }) else { return }
-                self?.liveView.bottomBar.linkButton.isShowRedDot = list.count > 0
-            }
-        } else {
-            applyView.getAllMicSeatList(autoApply: false)
-        }
-    }
-    
     func _joinRoom(_ room: CommerceRoomListModel){
         finishView?.removeFromSuperview()
         CommerceAgoraKitManager.shared.addRtcDelegate(delegate: self, roomId: room.roomId)
@@ -359,9 +262,6 @@ extension CommerceLiveViewController {
     
     func updateLoadingType(playState: RoomStatus, roomId: String) {
         CommerceAgoraKitManager.shared.updateLoadingType(roomId: roomId, channelId: roomId, playState: playState)
-        if let targetRoomId = currentInteraction?.roomId, targetRoomId != roomId {
-            CommerceAgoraKitManager.shared.updateLoadingType(roomId: roomId, channelId: targetRoomId, playState: playState)
-        }
         if playState == .joined {
             serviceImp?.initRoom(roomId: roomId) { error in }
         } else if playState == .prejoined {
@@ -377,12 +277,6 @@ extension CommerceLiveViewController {
         CommerceAgoraKitManager.shared.setupRemoteVideo(channelId: roomId,
                                                     uid: uid,
                                                     canvasView: liveView.canvasView.localView)
-        if let targetRoomId = currentInteraction?.roomId, targetRoomId != roomId {
-            let uid = UInt(currentInteraction?.userId ?? "")!
-            CommerceAgoraKitManager.shared.setupRemoteVideo(channelId: targetRoomId,
-                                                        uid: uid,
-                                                        canvasView: liveView.canvasView.remoteView)
-        }
     }
 }
 
@@ -390,47 +284,14 @@ extension CommerceLiveViewController {
 extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     private func _subscribeServiceEvent() {
         serviceImp?.subscribeEvent(delegate: self)
-        //TODO: migration
-        applyAndInviteView.applyStatusClosure = { [weak self] status in
-            self?.liveView.canvasView.canvasType = status == .onSeat ? .joint_broadcasting : .none
-        }
+    }
         
-        _refreshPKUserList()
-        _refreshInteractionList()
-    }
-    
-    private func _refreshPKUserList() {
-        serviceImp?.getAllPKUserList { [weak self] (error, pkUserList) in
-            self?.pkUserInvitationList = pkUserList
-        }
-    }
-    
-    private func _refreshInteractionList() {
-        serviceImp?.getAllInterationList { [weak self] (error, interactionList) in
-            guard let self = self, error == nil else { return }
-            if self.interactionList == nil, let interaction = interactionList?.first {
-                // first load
-                if self.role == .broadcaster {
-                    self.serviceImp?.stopInteraction(interaction: interaction) { err in
-                    }
-                } else {
-                    self.onInteractionBegan(interaction: interaction)
-                }
-            }
-            
-            self.interactionList = interactionList
-        }
-    }
-    
     //MARK: ShowSubscribeServiceProtocol
     func onConnectStateChanged(state: CommerceServiceConnectState) {
         guard state == .open else {
 //            ToastView.show(text: "net work error: \(state)")
             return
         }
-        
-        _refreshPKUserList()
-        _refreshInteractionList()
     }
     
     func onRoomExpired() {
@@ -468,291 +329,6 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
             self.liveView.addChatModel(model)
         }
     }
-    
-    func onMicSeatApplyUpdated(apply: CommerceMicSeatApply) {
-        _updateApplyMenu()
-        if apply.status == .waitting, role == .broadcaster {
-            liveView.bottomBar.linkButton.isShowRedDot = true
-        }
-        guard apply.userId == VLUserCenter.user.id else { return }
-        //TODO: migration to interaction did start
-        if apply.status == .accepted {
-            liveView.canvasView.canvasType = .joint_broadcasting
-            liveView.canvasView.setRemoteUserInfo(name: apply.userName ?? "", img: apply.avatar)
-            liveView.bottomBar.linkButton.isSelected = true
-            liveView.bottomBar.linkButton.isShowRedDot = false
-        } else if apply.status == .rejected {
-            applyView.getAllMicSeatList(autoApply: false)
-            liveView.bottomBar.linkButton.isShowRedDot = false
-            liveView.bottomBar.linkButton.isSelected = false
-            
-        } else {
-//            liveView.canvasView.canvasType = .none
-            liveView.bottomBar.linkButton.isSelected = false
-        }
-    }
-    
-    func onMicSeatApplyDeleted(apply: CommerceMicSeatApply) {
-        _updateApplyMenu()
-    }
-    
-    func onMicSeatApplyAccepted(apply: CommerceMicSeatApply) {
-        _updateApplyMenu()
-    }
-    
-    func onMicSeatApplyRejected(apply: CommerceMicSeatApply) {
-        _updateApplyMenu()
-    }
-    
-    func onMicSeatInvitationUpdated(invitation: CommerceMicSeatInvitation) {
-        guard invitation.userId == VLUserCenter.user.id else { return }
-        if invitation.status == .waitting {
-            CommerceAgoraKitManager.shared.updateMediaOptions(publishCamera: true)
-            CommerceReceivePKAlertVC.present(name: invitation.userName, style: .mic) { result in
-                switch result {
-                case .accept:
-                    ToastView.showWait(text: "show_is_onseat_doing".commerce_localized)
-                    // Solve the problem caused by multiple people clicking agree to Connect at the same time, normal projects should be handled by the background
-                    DispatchQueue.global().asyncAfter(deadline: .now() + Double.random(in: 0.1...2.0)) {
-                        self.serviceImp?.getAllInterationList { _, list in
-                            ToastView.hidden()
-                            guard let list = list?.filterDuplicates({ $0.userId }) else { return }
-                            let isLink = !list.filter({ $0.interactStatus == .onSeat }).isEmpty
-                            if isLink {
-                                self.serviceImp?.rejectMicSeatInvitation { _ in }
-                                ToastView.show(text: "show_broadcastor_is_onseat".commerce_localized)
-                                return
-                            }
-                            self.serviceImp?.acceptMicSeatInvitation { error in }
-                        }
-                    }
-
-                default:
-                    ShowAgoraKitManager.shared.updateMediaOptions(publishCamera: false)
-                    self.serviceImp?.rejectMicSeatInvitation { error in
-                    }
-                    break
-                }
-            }
-        }
-    }
-    
-    func onMicSeatInvitationDeleted(invitation: CommerceMicSeatInvitation) {
-        guard "\(roomOwnerId)" == invitation.userId else { return }
-//        ToastView.show(text: "seat invitation \(invitation.userName ?? "") did reject")
-    }
-
-    func onMicSeatInvitationAccepted(invitation: CommerceMicSeatInvitation) {
-        liveView.canvasView.setRemoteUserInfo(name: invitation.userName ?? "", img: invitation.avatar)
-    }
-    
-    func onMicSeatInvitationRejected(invitation: CommerceMicSeatInvitation) {
-        guard role == .broadcaster else { return }
-        AlertManager.hiddenView()
-        let alertVC = UIAlertController(title: "\(invitation.userName ?? "")" + "show_reject_broadcasting".commerce_localized, message: nil, preferredStyle: .alert)
-        let agree = UIAlertAction(title: "show_sure".commerce_localized, style: .default, handler: nil)
-        alertVC.addAction(agree)
-        present(alertVC, animated: true, completion: nil)
-    }
-    
-    func onPKInvitationUpdated(invitation: CommercePKInvitation) {
-        if invitation.status == .ended, invitation.userId == VLUserCenter.user.id {
-            ToastView.show(text: "show_end_broadcasting".commerce_localized)
-        }
-        if invitation.fromRoomId == room?.roomId {
-            //send invitation
-            createPKInvitationMap[invitation.roomId] = invitation
-            pkInviteView.createPKInvitationMap = createPKInvitationMap
-            
-            return
-        }
-        
-        //recv invitation
-        if invitation.status == .waitting {
-            let uid = UInt(VLUserCenter.user.id)!
-            CommerceAgoraKitManager.shared.joinChannelEx(currentChannelId: roomId,
-                                                     targetChannelId: invitation.fromRoomId,
-                                                     ownerId: uid,
-                                                     options: self.channelOptions,
-                                                     role: .audience) {
-                commerceLogger.info("\(self.roomId) updateLoadingType _onStartInteraction---------- \(self.roomId)")
-                CommerceAgoraKitManager.shared.updateMediaOptionsEx(channelId: invitation.fromRoomId, publishCamera: true, publishMic: false)
-            }
-            CommerceReceivePKAlertVC.present(name: invitation.fromName) { result in
-                switch result {
-                case .accept:
-                    self.serviceImp?.acceptPKInvitation { error in
-                        
-                    }
-                    break
-                default:
-                    self.serviceImp?.rejectPKInvitation { error in
-                        
-                    }
-                    CommerceAgoraKitManager.shared.updateMediaOptionsEx(channelId: invitation.fromRoomId, publishCamera: false, publishMic: false)
-                    CommerceAgoraKitManager.shared.leaveChannelEx(roomId: invitation.fromRoomId, channelId: self.roomId)
-                    break
-                }
-            }
-        }
-    }
-    
-    func onPKInvitationAccepted(invitation: CommercePKInvitation) {
-        //nothing todo, see onInteractionBegan
-        guard  invitation.fromUserId == VLUserCenter.user.id else { return }
-        
-        if invitation.fromRoomId == room?.roomId {
-            //send invitation
-            createPKInvitationMap[invitation.roomId] = invitation
-            pkInviteView.createPKInvitationMap = createPKInvitationMap
-            
-            return
-        }
-        
-        //recv invitation
-//        ToastView.show(text: "pk invitation \(invitation.roomId ?? "") did accept")
-        _refreshPKUserList()
-    }
-    
-    func onPKInvitationRejected(invitation: CommercePKInvitation) {
-        guard  invitation.fromUserId == VLUserCenter.user.id else { return }
-        
-        if invitation.fromRoomId == room?.roomId {
-            //send invitation
-            createPKInvitationMap[invitation.roomId] = nil
-            pkInviteView.createPKInvitationMap = createPKInvitationMap
-            return
-        }
-        
-        //recv invitation
-//        ToastView.show(text: "pk invitation \(invitation.roomId ?? "") did reject")
-        //TODO:
-        _refreshPKUserList()
-    }
-    
-    func onInterationUpdated(interaction: CommerceInteractionInfo) {
-        guard let index = interactionList?.firstIndex(where: { $0.objectId == interaction.objectId}) else {
-            return
-        }
-        var list = interactionList
-        list?.remove(at: index)
-        list?.insert(interaction, at: index)
-        interactionList = list
-    }
-    
-    func onInteractionBegan(interaction: CommerceInteractionInfo) {
-        self.currentInteraction = interaction
-        
-        _refreshPKUserList()
-        _refreshInteractionList()
-    }
-    
-    func onInterationEnded(interaction: CommerceInteractionInfo) {
-        if let toastStr = currentInteraction?.interactStatus.toastTitle ?? interruptInteractionReason {
-            ToastView.show(text: toastStr)
-        }
-        interruptInteractionReason = nil
-        
-        self.currentInteraction = nil
-        
-        _refreshPKUserList()
-        _refreshInteractionList()
-    }
-    
-    private func _onStartInteraction(interaction: CommerceInteractionInfo) {
-        switch interaction.interactStatus {
-        case .pking:
-            self.muteLocalVideo = false
-            self.muteLocalAudio = false
-            let interactionRoomId = interaction.roomId
-            if interactionRoomId.isEmpty { return }
-            if roomId != interaction.roomId {
-                CommerceAgoraKitManager.shared.addRtcDelegate(delegate: self, roomId: interactionRoomId)
-                
-                let uid = UInt(interaction.userId)!
-                CommerceAgoraKitManager.shared.updateVideoProfileForMode(.pk)
-                currentChannelId = roomId
-                CommerceAgoraKitManager.shared.joinChannelEx(currentChannelId: roomId,
-                                              targetChannelId: interactionRoomId,
-                                              ownerId: uid,
-                                              options: self.channelOptions,
-                                                         role: .audience) {
-                    showLogger.info("\(self.roomId) updateLoadingType _onStartInteraction---------- \(self.roomId)")
-                    if self.role == .broadcaster {
-                        CommerceAgoraKitManager.shared.setupRemoteVideo(channelId: interactionRoomId,
-                                                              uid: uid,
-                                                              canvasView: self.liveView.canvasView.remoteView)
-                    }else{
-                        self.updateLoadingType(playState: self.loadingType, roomId: self.roomId)
-                    }
-                }
-                liveView.canvasView.canvasType = .pk
-                liveView.canvasView.setRemoteUserInfo(name: interaction.userName ?? "")
-            }
-        case .onSeat:
-            self.muteLocalVideo = false
-            self.muteLocalAudio = false
-            liveView.canvasView.canvasType = .joint_broadcasting
-            liveView.canvasView.setRemoteUserInfo(name: interaction.userName ?? "")
-            if role == .audience {
-                CommerceAgoraKitManager.shared.setPVCon(true)
-                CommerceAgoraKitManager.shared.setSuperResolutionOn(false)
-            }
-            let toRole: AgoraClientRole = (role == .broadcaster || interaction.userId == VLUserCenter.user.id) ? .broadcaster : .audience
-            CommerceAgoraKitManager.shared.switchRole(role: toRole,
-                                       channelId: roomId,
-                                       options: self.channelOptions,
-                                       uid: interaction.userId,
-                                       canvasView: liveView.canvasView.remoteView)
-            liveView.bottomBar.linkButton.isSelected = true
-            liveView.bottomBar.linkButton.isShowRedDot = false
-            AlertManager.hiddenView()
-            if toRole == .broadcaster {
-                self.delegate?.currentUserIsOnSeat()
-            }
-        default:
-            break
-        }
-    }
-    
-    private func _onStopInteraction(interaction: CommerceInteractionInfo) {
-        switch interaction.interactStatus {
-        case .pking:
-            view.layer.contents = UIImage.commerce_sceneImage(name: "show_live_room_bg")?.cgImage
-            CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: interaction.roomId)
-            
-            self.muteLocalVideo = false
-            self.muteLocalAudio = false
-            CommerceAgoraKitManager.shared.updateVideoProfileForMode(.single)
-            CommerceAgoraKitManager.shared.leaveChannelEx(roomId: self.roomId, channelId: interaction.roomId)
-            liveView.canvasView.canvasType = .none
-            liveView.canvasView.setRemoteUserInfo(name: interaction.userName ?? "")
-        case .onSeat:
-            self.muteLocalVideo = false
-            self.muteLocalAudio = false
-            liveView.canvasView.setRemoteUserInfo(name: interaction.userName ?? "")
-            liveView.canvasView.canvasType = .none
-            liveView.bottomBar.linkButton.isShowRedDot = false
-            liveView.bottomBar.linkButton.isSelected = false
-            currentInteraction?.ownerMuteAudio = false
-            if role == .audience {
-                CommerceAgoraKitManager.shared.setPVCon(false)
-                CommerceAgoraKitManager.shared.setSuperResolutionOn(true)
-            } else {
-                CommerceAgoraKitManager.shared.updateVideoProfileForMode(.single)
-            }
-            let canvasView = role == .broadcaster ? nil : UIView()
-            let uid = role == .broadcaster ? VLUserCenter.user.id : interaction.userId
-            CommerceAgoraKitManager.shared.switchRole(role: role,
-                                       channelId: room?.roomId ?? "",
-                                       options: self.channelOptions,
-                                       uid: uid,
-                                       canvasView: canvasView)
-            self.delegate?.currentUserIsOffSeat()
-        default:
-            break
-        }
-    }
 }
 
 
@@ -775,20 +351,6 @@ extension CommerceLiveViewController: AgoraRtcEngineDelegate {
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
         commerceLogger.info("rtcEngine didOfflineOfUid === \(uid)")
-        if let interaction = self.currentInteraction {
-            let isRoomOwner: Bool = role == .broadcaster
-            let isInteractionLeave: Bool = interaction.userId == "\(uid)"
-            let roomOwnerExit: Bool = room?.ownerId ?? "" == "\(uid)"
-            if roomOwnerExit {
-                //room owner exit
-                serviceImp?.stopInteraction(interaction: interaction) { err in
-                }
-            } else if isRoomOwner, isInteractionLeave {
-                //room owner found interaction(pk/onseat) user offline
-                serviceImp?.stopInteraction(interaction: interaction) { err in
-                }
-            }
-        }
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, reportRtcStats stats: AgoraChannelStats) {
@@ -878,27 +440,6 @@ extension CommerceLiveViewController: AgoraRtcEngineDelegate {
 
 
 extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
-    func onPKDidTimeout() {
-        guard let info = currentInteraction else { return }
-        serviceImp?.stopInteraction(interaction: info) { _ in
-        }
-        
-        interruptInteractionReason = "show_pk_end_timeout".commerce_localized
-    }
-    
-    func onClickRemoteCanvas() {
-        guard let info = currentInteraction else { return }
-        if role == .audience, info.userId != VLUserCenter.user.id {
-            return
-        }
-        let menuVC = CommerceToolMenuViewController()
-        menuVC.type = CommerceMenuType.managerMic
-        menuVC.selectedMap = [.mute_mic: info.muteAudio]
-        menuVC.menuTitle = "To the audience \(info.userName ?? "")"
-        menuVC.delegate = self
-        present(menuVC, animated: true)
-    }
-    
     func onClickSendMsgButton(text: String) {
         sendMessageWithText(text)
     }
@@ -930,28 +471,7 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
         view.addSubview(dialog)
         dialog.show()
     }
-    
-    func onClickPKButton(_ button: CommerceRedDotButton) {
-        AlertManager.show(view: pkInviteView, alertPostion: .bottom)
-        _refreshPKUserList()
-    }
-    
-    func onClickLinkButton(_ button: CommerceRedDotButton) {
-        if role == .broadcaster {
-            applyAndInviteView.reloadData()
-            AlertManager.show(view: applyAndInviteView, alertPostion: .bottom)
-            
-        } else {
-            AgoraEntAuthorizedManager.checkMediaAuthorized(parent: self) { granted in
-                guard granted else { return }
-                self.applyView.getAllMicSeatList(autoApply: self.role == .audience)
-                AlertManager.show(view: self.applyView, alertPostion: .bottom)
-                guard self.role == .audience else { return }
-                CommerceAgoraKitManager.shared.updateMediaOptions(publishCamera: true)
-            }
-        }
-    }
-    
+        
     func onClickMusicButton() {
         let vc = CommerceMusicEffectVC()
         vc.musicManager = musicPresenter
@@ -960,18 +480,9 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
     }
     
     func onClickSettingButton() {
-        var muteAudio: Bool = self.muteLocalAudio
-        if let info = currentInteraction, info.userId == VLUserCenter.user.id {
-            muteAudio = info.muteAudio
-        }
+        let muteAudio: Bool = self.muteLocalAudio
         settingMenuVC.selectedMap = [.camera: self.muteLocalVideo, .mic: muteAudio, .mute_mic: muteAudio]
-        
-        if interactionStatus == .idle {
-            settingMenuVC.type = role == .broadcaster ? .idle_broadcaster : .idle_audience
-        }else{
-            settingMenuVC.type = role == .broadcaster ? .pking : (currentInteraction?.userId == VLUserCenter.user.id ? .pking : .idle_audience)
-            settingMenuVC.menuTitle = "show_setting_menu_on_pk_title".commerce_localized
-        }
+        settingMenuVC.type = role == .broadcaster ? .idle_broadcaster : .idle_audience
         present(settingMenuVC, animated: true)
     }
     
@@ -985,14 +496,8 @@ extension CommerceLiveViewController {
                 return
             }
             DispatchQueue.main.async {
-                var receive = true
-                var send = true
-                if self.role == .broadcaster && self.interactionStatus != .pking && self.interactionStatus != .onSeat {
-                    receive = false
-                }
-                if self.role == .audience && self.currentInteraction?.userId != VLUserCenter.user.id {
-                    send = false
-                }
+                let receive = true
+                let send = true
                 let data = self.panelPresenter.generatePanelData(send: send, receive: receive, audience: (self.role == .audience))
                 self.realTimeView.update(left: data.left, right: data.right)
             }
@@ -1025,29 +530,16 @@ extension CommerceLiveViewController: CommerceToolMenuViewControllerDelegate {
         }
     }
     
-    // End wheat connection
-    func onClickEndPkButtonSelected(_ menu: CommerceToolMenuViewController, _ selected: Bool) {
-        guard let info = currentInteraction else { return }
-        serviceImp?.stopInteraction(interaction: info) { _ in
-        }
-    }
-    
     // Microphone switch
     func onClickMicButtonSelected(_ menu: CommerceToolMenuViewController, _ selected: Bool) {
         AgoraEntAuthorizedManager.checkAudioAuthorized(parent: self) { granted in
             guard granted else { return }
-            let uid = menu.type == .managerMic ? self.currentInteraction?.userId ?? "" : VLUserCenter.user.id
-            self.serviceImp?.muteAudio(mute: selected, userId: uid) { err in
-            }
             self.muteLocalAudio = selected
         }
     }
     
     // Sound off
     func onClickMuteMicButtonSelected(_ menu: CommerceToolMenuViewController, _ selected: Bool) {
-        let uid = menu.type == .managerMic ? currentInteraction?.userId ?? "" : VLUserCenter.user.id
-        serviceImp?.muteAudio(mute: selected, userId: uid) { err in
-        }
         self.muteLocalAudio = selected
     }
     
@@ -1075,7 +567,7 @@ extension CommerceLiveViewController: CommerceToolMenuViewControllerDelegate {
                 wSelf.navigationController?.pushViewController(vc, animated: true)
             }else {
                 let vc = CommerceAdvancedSettingVC()
-                vc.mode = wSelf.interactionStatus == .pking ? .pk : .single
+                vc.mode = .single
                 vc.isBroadcaster = wSelf.role == .broadcaster
                 vc.musicManager = wSelf.musicPresenter
                 vc.currentChannelId = wSelf.currentChannelId

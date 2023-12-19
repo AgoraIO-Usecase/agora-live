@@ -36,73 +36,7 @@ protocol CommerceSubscribeServiceProtocol: NSObject {
     /// - Parameter user: <#user description#>
     func onUserLeftRoom(user: CommerceUser)
     
-    
-    
     /// A new message was received
     /// - Parameter message: <#message description#>
     func onMessageDidAdded(message: CommerceMessage)
-    
-    
-    
-    /// The application for Line was received
-    /// - Parameter apply: <#apply description#>
-    func onMicSeatApplyUpdated(apply: CommerceMicSeatApply)
-    
-    /// Cancel the connection request
-    /// - Parameter apply: <#apply description#>
-    func onMicSeatApplyDeleted(apply: CommerceMicSeatApply)
-    
-    /// Agree to Line's application
-    /// - Parameter apply: <#apply description#>
-    func onMicSeatApplyAccepted(apply: CommerceMicSeatApply)
-    
-    /// The application for line was denied
-    /// - Parameter apply: <#apply description#>
-    func onMicSeatApplyRejected(apply: CommerceMicSeatApply)
-    
-    
-    /// Received a Lien invitation/Invitation was updated
-    /// - Parameter invitation: <#invitation description#>
-    func onMicSeatInvitationUpdated(invitation: CommerceMicSeatInvitation)
-    
-    /// Cancel the Link invitation
-    /// - Parameter invitation: <#invitation description#>
-    func onMicSeatInvitationDeleted(invitation: CommerceMicSeatInvitation)
-    
-    /// Agree to Line's invitation
-    /// - Parameter invitation: <#invitation description#>
-    func onMicSeatInvitationAccepted(invitation: CommerceMicSeatInvitation)
-    
-    /// Turn down an invitation to Line
-    /// - Parameter invitation: <#invitation description#>
-    func onMicSeatInvitationRejected(invitation: CommerceMicSeatInvitation)
-    
-    
-    
-    /// PK invitation received/Invitation updated
-    /// - Parameter invitation: <#invitation description#>
-    func onPKInvitationUpdated(invitation: CommercePKInvitation)
-
-    /// Agree to PK invitation
-    /// - Parameter invitation: <#invitation description#>
-    func onPKInvitationAccepted(invitation: CommercePKInvitation)
-    
-    /// Decline PK invitation
-    /// - Parameter invitation: <#invitation description#>
-    func onPKInvitationRejected(invitation: CommercePKInvitation)
-    
-    
-    
-    /// Receive a pk/ Lien interaction/update
-    /// - Parameter interation: <#interation description#>
-    func onInteractionBegan(interaction: CommerceInteractionInfo)
-    
-    /// pk/ Connect is stopped
-    /// - Parameter interaction: <#interaction description#>
-    func onInterationEnded(interaction: CommerceInteractionInfo)
-    
-    
-    /// pk/ Lien was updated (muted, etc.)
-    /// - Parameter interaction: <#interaction description#>
-    func onInterationUpdated(interaction: CommerceInteractionInfo)
 }

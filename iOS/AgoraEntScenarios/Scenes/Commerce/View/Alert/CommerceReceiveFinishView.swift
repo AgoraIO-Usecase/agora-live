@@ -66,7 +66,7 @@ class CommerceReceiveFinishView: UIView {
     lazy var subTitleLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(hex: "C6C4DD")
-        label.font = .show_R_14
+        label.font = .commerce_R_14
         label.text = "show_alert_live_finish_subtitle".commerce_localized
         return label
     }()

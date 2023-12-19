@@ -10,8 +10,6 @@ import UIKit
 private let dotWidth: CGFloat = 5
 
 protocol CommerceRoomBottomBarDelegate: NSObjectProtocol {
-    func onClickPKButton(_ button: CommerceRedDotButton)
-    func onClickLinkButton(_ button: CommerceRedDotButton)
     func onClickMusicButton()
     func onClickSettingButton()
 }
@@ -55,24 +53,6 @@ class CommerceRedDotButton: UIButton {
 class CommerceRoomBottomBar: UIView {
     
     weak var delegate: CommerceRoomBottomBarDelegate?
-    
-    // pk
-    private lazy var pkButton: CommerceRedDotButton = {
-        let button = CommerceRedDotButton(type: .custom)
-        button.setImage(UIImage.commerce_sceneImage(name: "show_live_PK"), for: .normal)
-        button.setImage(UIImage.commerce_sceneImage(name: "show_live_pk_disable"), for: .disabled)
-        button.addTarget(self, action: #selector(didClickPKButton), for: .touchUpInside)
-        return button
-    }()
-    
-    lazy var linkButton: CommerceRedDotButton = {
-        let button = CommerceRedDotButton(type: .custom)
-        button.setImage(UIImage.commerce_sceneImage(name: "show_live_link"), for: .selected)
-        button.setImage(UIImage.commerce_sceneImage(name: "show_live_link_disable"), for: .normal)
-        button.addTarget(self, action: #selector(didClickLinkButton), for: .touchUpInside)
-        return button
-    }()
-    
     private lazy var musicButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage.commerce_sceneImage(name: "show_live_music"), for: .normal)
@@ -102,9 +82,9 @@ class CommerceRoomBottomBar: UIView {
     
     private func createSubviews(){
         if isBroadcastor {
-            buttonArray = [pkButton, linkButton, musicButton, settingButton]
+            buttonArray = [musicButton, settingButton]
         }else{
-            buttonArray = [linkButton,settingButton]
+            buttonArray = [settingButton]
         }
         
         var i = 0
@@ -124,14 +104,6 @@ class CommerceRoomBottomBar: UIView {
             }
             i += 1
         }
-    }
-    
-    @objc private func didClickPKButton() {
-        delegate?.onClickPKButton(pkButton)
-    }
-    
-    @objc private func didClickLinkButton() {
-        delegate?.onClickLinkButton(linkButton)
     }
     
     @objc private func didClickMusicButton() {

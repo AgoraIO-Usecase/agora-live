@@ -9,7 +9,6 @@ import UIKit
 
 protocol CommerceToolMenuViewControllerDelegate: NSObjectProtocol {
     func onClickCameraButtonSelected(_ menu:CommerceToolMenuViewController, _ selected: Bool)
-    func onClickEndPkButtonSelected(_ menu:CommerceToolMenuViewController, _ selected: Bool)
     func onClickMicButtonSelected(_ menu:CommerceToolMenuViewController, _ selected: Bool)
     func onClickMuteMicButtonSelected(_ menu:CommerceToolMenuViewController, _ selected: Bool)
     func onClickRealTimeDataButtonSelected(_ menu:CommerceToolMenuViewController, _ selected: Bool)
@@ -72,10 +71,6 @@ class CommerceToolMenuViewController: UIViewController {
             switch modelType {
             case .camera:
                 self.delegate?.onClickCameraButtonSelected(self, isSelected)
-                break
-            case .end_pk:
-                self.dismiss(animated: true)
-                self.delegate?.onClickEndPkButtonSelected(self, isSelected)
                 break
             case .mic:
                 self.delegate?.onClickMicButtonSelected(self, isSelected)

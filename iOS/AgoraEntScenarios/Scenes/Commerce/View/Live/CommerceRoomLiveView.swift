@@ -10,7 +10,7 @@ import UIKit
 private let kTableViewBottomOffset: CGFloat = Screen.safeAreaBottomHeight() + 109
 private let kChatInputViewHeight: CGFloat = 56
 
-protocol CommerceRoomLiveViewDelegate: CommerceRoomBottomBarDelegate, CommerceCanvasViewDelegate {
+protocol CommerceRoomLiveViewDelegate: CommerceRoomBottomBarDelegate {
     func onClickSendMsgButton(text: String)
     func onClickCloseButton()
     func onClickMoreButton()
@@ -38,7 +38,6 @@ class CommerceRoomLiveView: UIView {
     weak var delegate: CommerceRoomLiveViewDelegate? {
         didSet{
             bottomBar.delegate = delegate
-            canvasView.delegate = delegate
         }
     }
     lazy var canvasView: CommerceCanvasView = {

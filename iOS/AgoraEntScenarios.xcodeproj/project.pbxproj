@@ -292,7 +292,6 @@
 		E75B49332B3029B7005E925A /* SamplePicture2.png in Resources */ = {isa = PBXBuildFile; fileRef = E75B48BA2B3029B6005E925A /* SamplePicture2.png */; };
 		E75B49342B3029B7005E925A /* SamplePicture4.png in Resources */ = {isa = PBXBuildFile; fileRef = E75B48BB2B3029B6005E925A /* SamplePicture4.png */; };
 		E75B49352B3029B7005E925A /* CommerceRoomListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48BD2B3029B6005E925A /* CommerceRoomListVC.swift */; };
-		E75B49362B3029B7005E925A /* CommerceReceivePKAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48BF2B3029B6005E925A /* CommerceReceivePKAlertVC.swift */; };
 		E75B49372B3029B7005E925A /* CommerceMusicEffectVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C02B3029B6005E925A /* CommerceMusicEffectVC.swift */; };
 		E75B49382B3029B7005E925A /* CommerceSelectQualityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C22B3029B6005E925A /* CommerceSelectQualityVC.swift */; };
 		E75B493B2B3029B7005E925A /* CommerceCreateLiveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C52B3029B6005E925A /* CommerceCreateLiveVC.swift */; };
@@ -319,9 +318,7 @@
 		E75B49512B3029B7005E925A /* CommerceMusicTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48E42B3029B6005E925A /* CommerceMusicTableHeaderView.swift */; };
 		E75B49522B3029B7005E925A /* CommerceMusicItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48E52B3029B6005E925A /* CommerceMusicItemCell.swift */; };
 		E75B49532B3029B7005E925A /* CommerceReceiveFinishView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48E72B3029B6005E925A /* CommerceReceiveFinishView.swift */; };
-		E75B49542B3029B7005E925A /* CommerceReceivePKView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48E82B3029B6005E925A /* CommerceReceivePKView.swift */; };
 		E75B49552B3029B7005E925A /* CommerceCreateLiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48EA2B3029B6005E925A /* CommerceCreateLiveView.swift */; };
-		E75B49562B3029B7005E925A /* CommerceBeautyFaceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48EB2B3029B6005E925A /* CommerceBeautyFaceCell.swift */; };
 		E75B49572B3029B7005E925A /* CommerceSelectQualityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48EC2B3029B6005E925A /* CommerceSelectQualityCell.swift */; };
 		E75B49582B3029B7005E925A /* CommerceDataPanelPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48EE2B3029B6005E925A /* CommerceDataPanelPresenter.swift */; };
 		E75B49592B3029B7005E925A /* CommerceRealTimeDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48EF2B3029B6005E925A /* CommerceRealTimeDataView.swift */; };
@@ -350,11 +347,6 @@
 		E75B49702B3029B7005E925A /* CommerceSettingSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49092B3029B6005E925A /* CommerceSettingSliderCell.swift */; };
 		E75B49712B3029B7005E925A /* CommerceSettingActionSheetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B490A2B3029B6005E925A /* CommerceSettingActionSheetCell.swift */; };
 		E75B49722B3029B7005E925A /* CommerceSettingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B490B2B3029B6005E925A /* CommerceSettingHeaderView.swift */; };
-		E75B49732B3029B7005E925A /* CommerceSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B490D2B3029B6005E925A /* CommerceSegmentView.swift */; };
-		E75B49742B3029B7005E925A /* CommerceInviteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B490E2B3029B6005E925A /* CommerceInviteCell.swift */; };
-		E75B49752B3029B7005E925A /* CommerceApplyAndInviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B490F2B3029B6005E925A /* CommerceApplyAndInviteView.swift */; };
-		E75B49762B3029B7005E925A /* CommerceApplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49102B3029B6005E925A /* CommerceApplyView.swift */; };
-		E75B49772B3029B7005E925A /* CommercePKInviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49112B3029B6005E925A /* CommercePKInviteView.swift */; };
 		E75B49782B3029B7005E925A /* CommerceToolMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49132B3029B6005E925A /* CommerceToolMenuView.swift */; };
 		E75B49792B3029B7005E925A /* CommerceSubscribeServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49152B3029B6005E925A /* CommerceSubscribeServiceProtocol.swift */; };
 		E75B497A2B3029B7005E925A /* CommerceRobotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49162B3029B6005E925A /* CommerceRobotService.swift */; };
@@ -774,7 +766,6 @@
 		E75B48BA2B3029B6005E925A /* SamplePicture2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture2.png; sourceTree = "<group>"; };
 		E75B48BB2B3029B6005E925A /* SamplePicture4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture4.png; sourceTree = "<group>"; };
 		E75B48BD2B3029B6005E925A /* CommerceRoomListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomListVC.swift; sourceTree = "<group>"; };
-		E75B48BF2B3029B6005E925A /* CommerceReceivePKAlertVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceReceivePKAlertVC.swift; sourceTree = "<group>"; };
 		E75B48C02B3029B6005E925A /* CommerceMusicEffectVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicEffectVC.swift; sourceTree = "<group>"; };
 		E75B48C22B3029B6005E925A /* CommerceSelectQualityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSelectQualityVC.swift; sourceTree = "<group>"; };
 		E75B48C52B3029B6005E925A /* CommerceCreateLiveVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCreateLiveVC.swift; sourceTree = "<group>"; };
@@ -804,9 +795,7 @@
 		E75B48E42B3029B6005E925A /* CommerceMusicTableHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicTableHeaderView.swift; sourceTree = "<group>"; };
 		E75B48E52B3029B6005E925A /* CommerceMusicItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicItemCell.swift; sourceTree = "<group>"; };
 		E75B48E72B3029B6005E925A /* CommerceReceiveFinishView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceReceiveFinishView.swift; sourceTree = "<group>"; };
-		E75B48E82B3029B6005E925A /* CommerceReceivePKView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceReceivePKView.swift; sourceTree = "<group>"; };
 		E75B48EA2B3029B6005E925A /* CommerceCreateLiveView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCreateLiveView.swift; sourceTree = "<group>"; };
-		E75B48EB2B3029B6005E925A /* CommerceBeautyFaceCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceBeautyFaceCell.swift; sourceTree = "<group>"; };
 		E75B48EC2B3029B6005E925A /* CommerceSelectQualityCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSelectQualityCell.swift; sourceTree = "<group>"; };
 		E75B48EE2B3029B6005E925A /* CommerceDataPanelPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDataPanelPresenter.swift; sourceTree = "<group>"; };
 		E75B48EF2B3029B6005E925A /* CommerceRealTimeDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRealTimeDataView.swift; sourceTree = "<group>"; };
@@ -835,11 +824,6 @@
 		E75B49092B3029B6005E925A /* CommerceSettingSliderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingSliderCell.swift; sourceTree = "<group>"; };
 		E75B490A2B3029B6005E925A /* CommerceSettingActionSheetCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingActionSheetCell.swift; sourceTree = "<group>"; };
 		E75B490B2B3029B6005E925A /* CommerceSettingHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingHeaderView.swift; sourceTree = "<group>"; };
-		E75B490D2B3029B6005E925A /* CommerceSegmentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSegmentView.swift; sourceTree = "<group>"; };
-		E75B490E2B3029B6005E925A /* CommerceInviteCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceInviteCell.swift; sourceTree = "<group>"; };
-		E75B490F2B3029B6005E925A /* CommerceApplyAndInviteView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceApplyAndInviteView.swift; sourceTree = "<group>"; };
-		E75B49102B3029B6005E925A /* CommerceApplyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceApplyView.swift; sourceTree = "<group>"; };
-		E75B49112B3029B6005E925A /* CommercePKInviteView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommercePKInviteView.swift; sourceTree = "<group>"; };
 		E75B49132B3029B6005E925A /* CommerceToolMenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceToolMenuView.swift; sourceTree = "<group>"; };
 		E75B49152B3029B6005E925A /* CommerceSubscribeServiceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSubscribeServiceProtocol.swift; sourceTree = "<group>"; };
 		E75B49162B3029B6005E925A /* CommerceRobotService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRobotService.swift; sourceTree = "<group>"; };
@@ -2139,7 +2123,6 @@
 			isa = PBXGroup;
 			children = (
 				E75B48BD2B3029B6005E925A /* CommerceRoomListVC.swift */,
-				E75B48BE2B3029B6005E925A /* Alert */,
 				E75B48C02B3029B6005E925A /* CommerceMusicEffectVC.swift */,
 				E75B48C12B3029B6005E925A /* CreateLive */,
 				E75B48C52B3029B6005E925A /* CommerceCreateLiveVC.swift */,
@@ -2149,14 +2132,6 @@
 				E75B48C92B3029B6005E925A /* Setting */,
 			);
 			path = Controller;
-			sourceTree = "<group>";
-		};
-		E75B48BE2B3029B6005E925A /* Alert */ = {
-			isa = PBXGroup;
-			children = (
-				E75B48BF2B3029B6005E925A /* CommerceReceivePKAlertVC.swift */,
-			);
-			path = Alert;
 			sourceTree = "<group>";
 		};
 		E75B48C12B3029B6005E925A /* CreateLive */ = {
@@ -2225,7 +2200,6 @@
 				E75B48F02B3029B6005E925A /* RoomList */,
 				E75B48F42B3029B6005E925A /* Live */,
 				E75B48FD2B3029B6005E925A /* Setting */,
-				E75B490C2B3029B6005E925A /* PKInvite */,
 				E75B49122B3029B6005E925A /* ToolMenu */,
 			);
 			path = View;
@@ -2245,7 +2219,6 @@
 			isa = PBXGroup;
 			children = (
 				E75B48E72B3029B6005E925A /* CommerceReceiveFinishView.swift */,
-				E75B48E82B3029B6005E925A /* CommerceReceivePKView.swift */,
 			);
 			path = Alert;
 			sourceTree = "<group>";
@@ -2254,7 +2227,6 @@
 			isa = PBXGroup;
 			children = (
 				E75B48EA2B3029B6005E925A /* CommerceCreateLiveView.swift */,
-				E75B48EB2B3029B6005E925A /* CommerceBeautyFaceCell.swift */,
 				E75B48EC2B3029B6005E925A /* CommerceSelectQualityCell.swift */,
 			);
 			path = CreateLive;
@@ -2313,18 +2285,6 @@
 				E75B490B2B3029B6005E925A /* CommerceSettingHeaderView.swift */,
 			);
 			path = Setting;
-			sourceTree = "<group>";
-		};
-		E75B490C2B3029B6005E925A /* PKInvite */ = {
-			isa = PBXGroup;
-			children = (
-				E75B490D2B3029B6005E925A /* CommerceSegmentView.swift */,
-				E75B490E2B3029B6005E925A /* CommerceInviteCell.swift */,
-				E75B490F2B3029B6005E925A /* CommerceApplyAndInviteView.swift */,
-				E75B49102B3029B6005E925A /* CommerceApplyView.swift */,
-				E75B49112B3029B6005E925A /* CommercePKInviteView.swift */,
-			);
-			path = PKInvite;
 			sourceTree = "<group>";
 		};
 		E75B49122B3029B6005E925A /* ToolMenu */ = {
@@ -2587,7 +2547,6 @@
 				DDA199DD28FFE579009D3E61 /* ToastView.swift in Sources */,
 				DDA199E528FFE579009D3E61 /* UILabel+Font.m in Sources */,
 				DDA199F528FFE579009D3E61 /* AgoraExtension.swift in Sources */,
-				E75B49732B3029B7005E925A /* CommerceSegmentView.swift in Sources */,
 				DDA199E128FFE579009D3E61 /* VLToast.m in Sources */,
 				E75B492D2B3029B7005E925A /* CommerceDebug1TFModel.swift in Sources */,
 				DD619C0929E3E84D008F63E4 /* AboutAgoraHeader.swift in Sources */,
@@ -2634,7 +2593,6 @@
 				DDA199E328FFE579009D3E61 /* VLLocalWebViewController.m in Sources */,
 				E75B49582B3029B7005E925A /* CommerceDataPanelPresenter.swift in Sources */,
 				E75B493E2B3029B7005E925A /* CommerceLiveViewController.swift in Sources */,
-				E75B49362B3029B7005E925A /* CommerceReceivePKAlertVC.swift in Sources */,
 				DD84177E29090C520026B624 /* VLHomeView.m in Sources */,
 				DD36108C29B70CDC00CE7984 /* ShowMusicEffectVC.swift in Sources */,
 				DDA199E428FFE579009D3E61 /* VLDeviceUtils.m in Sources */,
@@ -2726,7 +2684,6 @@
 				E3735CA12A5E7E75004737EF /* FUBeautyRender.m in Sources */,
 				DD619C0829E3E84D008F63E4 /* SceneVersionCell.swift in Sources */,
 				DDA19A0B28FFE579009D3E61 /* JSONObject.swift in Sources */,
-				E75B49762B3029B7005E925A /* CommerceApplyView.swift in Sources */,
 				E3735CA52A5E7E75004737EF /* SenseBeautyManager.swift in Sources */,
 				DDA19A0C28FFE579009D3E61 /* SyncUtil.swift in Sources */,
 				E75B49372B3029B7005E925A /* CommerceMusicEffectVC.swift in Sources */,
@@ -2743,7 +2700,6 @@
 				DD2A43CB28FFCEE7004CEDCF /* AppDelegate.swift in Sources */,
 				E75B49452B3029B7005E925A /* CommerceCunstomNaviBar.swift in Sources */,
 				DD64C68C295C142A00EAB750 /* UIButton+EntLayout.swift in Sources */,
-				E75B49742B3029B7005E925A /* CommerceInviteCell.swift in Sources */,
 				DDA199E828FFE579009D3E61 /* UITextField+Font.m in Sources */,
 				DDA199DF28FFE579009D3E61 /* VLHotSpotBtn.m in Sources */,
 				DDA19A0128FFE579009D3E61 /* NSObject+Extension.m in Sources */,
@@ -2795,7 +2751,6 @@
 				E75B496D2B3029B7005E925A /* CommercePresettingHeaderView.swift in Sources */,
 				DD3610CB29B70CDC00CE7984 /* ShowServiceProtocol.swift in Sources */,
 				E75B496F2B3029B7005E925A /* CommercePresettingCell.swift in Sources */,
-				E75B49562B3029B7005E925A /* CommerceBeautyFaceCell.swift in Sources */,
 				DDA19A0728FFE579009D3E61 /* Config.swift in Sources */,
 				DD36105A29B70CDC00CE7984 /* UIFont+Show.swift in Sources */,
 				E75B495A2B3029B7005E925A /* CommerceEmptyView.swift in Sources */,
@@ -2817,7 +2772,6 @@
 				DD3610A929B70CDC00CE7984 /* ShowRealTimeDataView.swift in Sources */,
 				E75B49622B3029B7005E925A /* CommerceRoomChatCell.swift in Sources */,
 				E75B49702B3029B7005E925A /* CommerceSettingSliderCell.swift in Sources */,
-				E75B49772B3029B7005E925A /* CommercePKInviteView.swift in Sources */,
 				DDDDDC3828FFD78C005F4E8B /* SceneLocalizedString.swift in Sources */,
 				DD619B9B29E3E262008F63E4 /* UIViewToastExtension.swift in Sources */,
 				DDA199FB28FFE579009D3E61 /* UIColor+JKGradient.m in Sources */,
@@ -2832,7 +2786,6 @@
 				DD84178229090C520026B624 /* VLDiscoveryView.m in Sources */,
 				DD3610C429B70CDC00CE7984 /* ShowApplyView.swift in Sources */,
 				AB4746E72A5E82AB00E68FBA /* ShowRobotService.swift in Sources */,
-				E75B49542B3029B7005E925A /* CommerceReceivePKView.swift in Sources */,
 				E75B495C2B3029B7005E925A /* CommerceRoomListCell.swift in Sources */,
 				DD3610C329B70CDC00CE7984 /* ShowApplyAndInviteView.swift in Sources */,
 				DDA19A0A28FFE579009D3E61 /* Screen.swift in Sources */,
@@ -2860,7 +2813,6 @@
 				E3735C342A5E4AFF004737EF /* UITextView+Extension.swift in Sources */,
 				DDA19A0628FFE579009D3E61 /* NSObject+JKAutoCoding.m in Sources */,
 				ABE4B37A2A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift in Sources */,
-				E75B49752B3029B7005E925A /* CommerceApplyAndInviteView.swift in Sources */,
 				E75B49412B3029B7005E925A /* CommerceAdvancedSettingVC.swift in Sources */,
 				E3735C9C2A5E7E75004737EF /* BundleUtil.m in Sources */,
 				E75B495E2B3029B7005E925A /* CommerceRoomMembersCountView.swift in Sources */,
