@@ -471,13 +471,6 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
         view.addSubview(dialog)
         dialog.show()
     }
-        
-    func onClickMusicButton() {
-        let vc = CommerceMusicEffectVC()
-        vc.musicManager = musicPresenter
-        vc.currentChannelId = currentChannelId
-        present(vc, animated: true)
-    }
     
     func onClickSettingButton() {
         let muteAudio: Bool = self.muteLocalAudio

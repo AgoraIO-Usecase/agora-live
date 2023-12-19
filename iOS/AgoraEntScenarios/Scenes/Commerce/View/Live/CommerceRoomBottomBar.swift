@@ -10,7 +10,6 @@ import UIKit
 private let dotWidth: CGFloat = 5
 
 protocol CommerceRoomBottomBarDelegate: NSObjectProtocol {
-    func onClickMusicButton()
     func onClickSettingButton()
 }
 
@@ -53,13 +52,6 @@ class CommerceRedDotButton: UIButton {
 class CommerceRoomBottomBar: UIView {
     
     weak var delegate: CommerceRoomBottomBarDelegate?
-    private lazy var musicButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage.commerce_sceneImage(name: "show_live_music"), for: .normal)
-        button.addTarget(self, action: #selector(didClickMusicButton), for: .touchUpInside)
-        return button
-    }()
-    
     private lazy var settingButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage.commerce_sceneImage(name: "show_live_setting"), for: .normal)
@@ -82,7 +74,7 @@ class CommerceRoomBottomBar: UIView {
     
     private func createSubviews(){
         if isBroadcastor {
-            buttonArray = [musicButton, settingButton]
+            buttonArray = [settingButton]
         }else{
             buttonArray = [settingButton]
         }
@@ -104,10 +96,6 @@ class CommerceRoomBottomBar: UIView {
             }
             i += 1
         }
-    }
-    
-    @objc private func didClickMusicButton() {
-        delegate?.onClickMusicButton()
     }
     
     @objc private func didClickSettingButton() {

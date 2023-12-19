@@ -292,7 +292,6 @@
 		E75B49332B3029B7005E925A /* SamplePicture2.png in Resources */ = {isa = PBXBuildFile; fileRef = E75B48BA2B3029B6005E925A /* SamplePicture2.png */; };
 		E75B49342B3029B7005E925A /* SamplePicture4.png in Resources */ = {isa = PBXBuildFile; fileRef = E75B48BB2B3029B6005E925A /* SamplePicture4.png */; };
 		E75B49352B3029B7005E925A /* CommerceRoomListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48BD2B3029B6005E925A /* CommerceRoomListVC.swift */; };
-		E75B49372B3029B7005E925A /* CommerceMusicEffectVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C02B3029B6005E925A /* CommerceMusicEffectVC.swift */; };
 		E75B49382B3029B7005E925A /* CommerceSelectQualityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C22B3029B6005E925A /* CommerceSelectQualityVC.swift */; };
 		E75B493B2B3029B7005E925A /* CommerceCreateLiveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C52B3029B6005E925A /* CommerceCreateLiveVC.swift */; };
 		E75B493C2B3029B7005E925A /* CommerceToolMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C62B3029B6005E925A /* CommerceToolMenuViewController.swift */; };
@@ -767,7 +766,6 @@
 		E75B48BA2B3029B6005E925A /* SamplePicture2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture2.png; sourceTree = "<group>"; };
 		E75B48BB2B3029B6005E925A /* SamplePicture4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture4.png; sourceTree = "<group>"; };
 		E75B48BD2B3029B6005E925A /* CommerceRoomListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomListVC.swift; sourceTree = "<group>"; };
-		E75B48C02B3029B6005E925A /* CommerceMusicEffectVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicEffectVC.swift; sourceTree = "<group>"; };
 		E75B48C22B3029B6005E925A /* CommerceSelectQualityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSelectQualityVC.swift; sourceTree = "<group>"; };
 		E75B48C52B3029B6005E925A /* CommerceCreateLiveVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCreateLiveVC.swift; sourceTree = "<group>"; };
 		E75B48C62B3029B6005E925A /* CommerceToolMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceToolMenuViewController.swift; sourceTree = "<group>"; };
@@ -2126,7 +2124,6 @@
 			isa = PBXGroup;
 			children = (
 				E75B48BD2B3029B6005E925A /* CommerceRoomListVC.swift */,
-				E75B48C02B3029B6005E925A /* CommerceMusicEffectVC.swift */,
 				E75B48C12B3029B6005E925A /* CreateLive */,
 				E75B48C52B3029B6005E925A /* CommerceCreateLiveVC.swift */,
 				E75B48C62B3029B6005E925A /* CommerceToolMenuViewController.swift */,
@@ -2692,7 +2689,6 @@
 				DDA19A0B28FFE579009D3E61 /* JSONObject.swift in Sources */,
 				E3735CA52A5E7E75004737EF /* SenseBeautyManager.swift in Sources */,
 				DDA19A0C28FFE579009D3E61 /* SyncUtil.swift in Sources */,
-				E75B49372B3029B7005E925A /* CommerceMusicEffectVC.swift in Sources */,
 				DD84178829090C520026B624 /* VLMineViewController.m in Sources */,
 				DD619C0A29E3E84D008F63E4 /* ContactInfoCell.swift in Sources */,
 				DDA199FA28FFE579009D3E61 /* UIColor+JKWeb.m in Sources */,
