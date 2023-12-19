@@ -99,7 +99,6 @@ class CommerceLiveViewController: UIViewController {
         return view
     }()
     
-    private lazy var beautyVC = CommerceBeautySettingVC()
     private lazy var realTimeView: CommerceRealTimeDataView = {
         let realTimeView = CommerceRealTimeDataView(isLocal: role == .broadcaster)
         view.addSubview(realTimeView)
@@ -265,16 +264,12 @@ class CommerceLiveViewController: UIViewController {
     func leaveRoom(){
         CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
         CommerceAgoraKitManager.shared.cleanCapture()
-        CommerceBeautyFaceVC.resetData()
         CommerceAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
         serviceImp?.unsubscribeEvent(delegate: self)
         
         serviceImp?.leaveRoom {_ in
         }
         serviceImp?.unsubscribeEvent(delegate: self)
-        if role == .broadcaster {
-            BeautyManager.shareManager.destroy()
-        }
     }
     
     private func joinChannel(needUpdateCavans: Bool = true) {
@@ -714,11 +709,6 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
             AlertManager.hiddenView()
             if toRole == .broadcaster {
                 self.delegate?.currentUserIsOnSeat()
-                CommerceBeautyFaceVC.beautyData.forEach({
-                    BeautyManager.shareManager.setBeauty(path: $0.path,
-                                                             key: $0.key,
-                                                             value: $0.value)
-                })
             }
         default:
             break
@@ -960,10 +950,6 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
                 CommerceAgoraKitManager.shared.updateMediaOptions(publishCamera: true)
             }
         }
-    }
-    
-    func onClickBeautyButton() {
-        present(beautyVC, animated: true)
     }
     
     func onClickMusicButton() {

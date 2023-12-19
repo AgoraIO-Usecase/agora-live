@@ -9,7 +9,6 @@ import UIKit
 
 protocol CommerceCreateLiveViewDelegate: NSObjectProtocol {
     func onClickCameraBtnAction()
-    func onClickBeautyBtnAction()
     func onClickSettingBtnAction()
     func onClickStartBtnAction()
 }
@@ -191,13 +190,10 @@ class CommerceCreateLiveView: UIView {
         let cameraButton = createButton(imgName: "show_create_camera", title: "create_button_switch".commerce_localized)
         cameraButton.addTarget(self, action: #selector(didClickCameraButton), for: .touchUpInside)
         
-        let beautyButton = createButton(imgName: "show_create_beauty", title: "create_button_beauty".commerce_localized)
-        beautyButton.addTarget(self, action: #selector(didClickBeautyButton), for: .touchUpInside)
-        
         let settingButton = createButton(imgName: "show_setting", title: "create_button_settings".commerce_localized)
         settingButton.addTarget(self, action: #selector(didClickSettingButton), for: .touchUpInside)
         
-        let buttonArray = [cameraButton, beautyButton, settingButton]
+        let buttonArray = [cameraButton, settingButton]
         
         let stackView = UIStackView(arrangedSubviews: buttonArray)
         stackView.spacing = 25
@@ -222,9 +218,6 @@ extension CommerceCreateLiveView {
         delegate?.onClickCameraBtnAction()
     }
     
-    @objc private func didClickBeautyButton(){
-        delegate?.onClickBeautyBtnAction()
-    }
     @objc private func didClickSettingButton(){
         delegate?.onClickSettingBtnAction()
     }

@@ -13,8 +13,6 @@ class CommerceCreateLiveVC: UIViewController {
 
     private var createView: CommerceCreateLiveView!
     private var localView: UIView!
-        
-    private lazy var beautyVC = CommerceBeautySettingVC()
     
     deinit {
         commerceLogger.info("deinit-- ShowCreateLiveVC")
@@ -25,9 +23,6 @@ class CommerceCreateLiveVC: UIViewController {
         setUpUI()
         configNaviBar()
         
-        if let e = CommerceAgoraKitManager.shared.engine {
-            BeautyManager.shareManager.configBeautyAPIWithRtcEngine(engine: e)
-        }
         CommerceAgoraKitManager.shared.startPreview(canvasView: self.localView)
         CommerceNetStateSelectViewController.showInViewController(self)
     }
@@ -68,16 +63,6 @@ class CommerceCreateLiveVC: UIViewController {
         createView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
-        beautyVC.dismissed = { [weak self] in
-            self?.createView.hideBottomViews = false
-        }
-        
-        CommerceBeautyFaceVC.beautyData.forEach({
-            BeautyManager.shareManager.setBeauty(path: $0.path,
-                                                     key: $0.key,
-                                                     value: $0.value)
-        })
     }
     
     private func showPreset() {
@@ -91,9 +76,7 @@ class CommerceCreateLiveVC: UIViewController {
     }
     
     @objc func didClickCancelButton(){
-        BeautyManager.shareManager.destroy()
         CommerceAgoraKitManager.shared.cleanCapture()
-        CommerceBeautyFaceVC.resetData()
         dismiss(animated: true)
     }
 }
@@ -106,11 +89,6 @@ extension CommerceCreateLiveVC: CommerceCreateLiveViewDelegate {
     
     func onClickCameraBtnAction() {
         CommerceAgoraKitManager.shared.switchCamera()
-    }
-    
-    func onClickBeautyBtnAction() {
-        createView.hideBottomViews = true
-        present(beautyVC, animated: true)
     }
     
     func onClickStartBtnAction() {

@@ -245,13 +245,17 @@ class CommerceAgoraKitManager: NSObject {
         engine.setClientRole(.broadcaster)
         engine.setVideoEncoderConfiguration(encoderConfig)
         engine.setCameraCapturerConfiguration(captureConfig)
-        BeautyManager.shareManager.beautyAPI.setupLocalVideo(canvasView, renderMode: .hidden)
+        let canvas = AgoraRtcVideoCanvas()
+        canvas.view = canvasView
+        canvas.uid = 0
+        canvas.renderMode = .hidden
+        engine.setupLocalVideo(canvas)
         engine.enableVideo()
         engine.startPreview()
     }
     
     func switchCamera(_ channelId: String? = nil) {
-        BeautyManager.shareManager.beautyAPI.switchCamera()
+        engine?.switchCamera()
     }
     
     func enableVirtualBackground(isOn: Bool, greenCapacity: Float = 0) {
@@ -367,7 +371,6 @@ class CommerceAgoraKitManager: NSObject {
             assert(true, "rtc engine not initlized")
             return
         }
-//        ByteBeautyManager.shareManager.destroy()
 //        setupContentInspectConfig(false)
         engine.stopPreview()
     }

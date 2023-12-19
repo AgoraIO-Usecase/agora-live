@@ -295,8 +295,6 @@
 		E75B49362B3029B7005E925A /* CommerceReceivePKAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48BF2B3029B6005E925A /* CommerceReceivePKAlertVC.swift */; };
 		E75B49372B3029B7005E925A /* CommerceMusicEffectVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C02B3029B6005E925A /* CommerceMusicEffectVC.swift */; };
 		E75B49382B3029B7005E925A /* CommerceSelectQualityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C22B3029B6005E925A /* CommerceSelectQualityVC.swift */; };
-		E75B49392B3029B7005E925A /* CommerceBeautySettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C32B3029B6005E925A /* CommerceBeautySettingVC.swift */; };
-		E75B493A2B3029B7005E925A /* CommerceBeautyFaceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C42B3029B6005E925A /* CommerceBeautyFaceVC.swift */; };
 		E75B493B2B3029B7005E925A /* CommerceCreateLiveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C52B3029B6005E925A /* CommerceCreateLiveVC.swift */; };
 		E75B493C2B3029B7005E925A /* CommerceToolMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C62B3029B6005E925A /* CommerceToolMenuViewController.swift */; };
 		E75B493D2B3029B7005E925A /* CommerceLivePagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C72B3029B6005E925A /* CommerceLivePagesViewController.swift */; };
@@ -779,8 +777,6 @@
 		E75B48BF2B3029B6005E925A /* CommerceReceivePKAlertVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceReceivePKAlertVC.swift; sourceTree = "<group>"; };
 		E75B48C02B3029B6005E925A /* CommerceMusicEffectVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicEffectVC.swift; sourceTree = "<group>"; };
 		E75B48C22B3029B6005E925A /* CommerceSelectQualityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSelectQualityVC.swift; sourceTree = "<group>"; };
-		E75B48C32B3029B6005E925A /* CommerceBeautySettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceBeautySettingVC.swift; sourceTree = "<group>"; };
-		E75B48C42B3029B6005E925A /* CommerceBeautyFaceVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceBeautyFaceVC.swift; sourceTree = "<group>"; };
 		E75B48C52B3029B6005E925A /* CommerceCreateLiveVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCreateLiveVC.swift; sourceTree = "<group>"; };
 		E75B48C62B3029B6005E925A /* CommerceToolMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceToolMenuViewController.swift; sourceTree = "<group>"; };
 		E75B48C72B3029B6005E925A /* CommerceLivePagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceLivePagesViewController.swift; sourceTree = "<group>"; };
@@ -2167,8 +2163,6 @@
 			isa = PBXGroup;
 			children = (
 				E75B48C22B3029B6005E925A /* CommerceSelectQualityVC.swift */,
-				E75B48C32B3029B6005E925A /* CommerceBeautySettingVC.swift */,
-				E75B48C42B3029B6005E925A /* CommerceBeautyFaceVC.swift */,
 			);
 			path = CreateLive;
 			sourceTree = "<group>";
@@ -2735,7 +2729,6 @@
 				E75B49762B3029B7005E925A /* CommerceApplyView.swift in Sources */,
 				E3735CA52A5E7E75004737EF /* SenseBeautyManager.swift in Sources */,
 				DDA19A0C28FFE579009D3E61 /* SyncUtil.swift in Sources */,
-				E75B49392B3029B7005E925A /* CommerceBeautySettingVC.swift in Sources */,
 				E75B49372B3029B7005E925A /* CommerceMusicEffectVC.swift in Sources */,
 				DD84178829090C520026B624 /* VLMineViewController.m in Sources */,
 				DD619C0A29E3E84D008F63E4 /* ContactInfoCell.swift in Sources */,
@@ -2769,7 +2762,6 @@
 				DD8417CC29090C520026B624 /* TemplateServiceProtocol.swift in Sources */,
 				E72F62492A7CEE5900C963D2 /* VRVerifyCodeNumberView.swift in Sources */,
 				DD3610B729B70CDC00CE7984 /* ShowDebugSetting2TFCell.swift in Sources */,
-				E75B493A2B3029B7005E925A /* CommerceBeautyFaceVC.swift in Sources */,
 				ABA095902A8373F400A54FCC /* ShowSettingBitrateCell.swift in Sources */,
 				DD619B8429E3E262008F63E4 /* VerifyCodeView.swift in Sources */,
 				DD3610A129B70CDC00CE7984 /* ShowMusicTableHeaderView.swift in Sources */,
