@@ -62,7 +62,7 @@ extension ShowMusicEffectVC {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        tableView.setRoundingCorners([.topLeft,.topRight], radius: 20)
+        tableView.show_setRoundingCorners([.topLeft,.topRight], radius: 20)
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {

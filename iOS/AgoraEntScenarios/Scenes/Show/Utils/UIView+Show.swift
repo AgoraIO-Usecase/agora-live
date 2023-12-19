@@ -12,7 +12,7 @@ extension UIView {
     /// - Parameters:
     /// - corners: specifies the rounded corners
     /// -radius: indicates the radius of a rounded corner
-    func setRoundingCorners(_ corners: UIRectCorner, rect: CGRect? = nil, radius: CGFloat) {
+    func show_setRoundingCorners(_ corners: UIRectCorner, rect: CGRect? = nil, radius: CGFloat) {
         let path = UIBezierPath(roundedRect: rect ?? bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
         let shapeLayer = CAShapeLayer()
         shapeLayer.path = path.cgPath

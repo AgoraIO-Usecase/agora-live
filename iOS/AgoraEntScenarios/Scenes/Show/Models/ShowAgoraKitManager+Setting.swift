@@ -24,7 +24,7 @@ private let fpsItems: [AgoraVideoFrameRate] = [
 ]
 
 // overfraction
-enum SRType: Int {
+enum ShowSRType: Int {
     case none = -1
     case x1 = 6
     case x1_33 = 7
@@ -39,7 +39,7 @@ class ShowRTCParams {
     var suggested = true
     
     var sr = false
-    var srType: SRType = .x1_33
+    var srType: ShowSRType = .x1_33
     var dualStream: AgoraSimulcastStreamConfig?
     var pvc = false
     var svc = false
@@ -66,7 +66,7 @@ extension ShowAgoraKitManager {
     /// - Parameters:
     /// -isOn: switch
     /// -srType: The default value is 1.5 times
-    func setDebugSuperResolutionOn(_ isOn: Bool, srType:SRType = .none) {
+    func setDebugSuperResolutionOn(_ isOn: Bool, srType:ShowSRType = .none) {
         // Avoid duplicate Settings
         if isOn == self.rtcParam.sr && srType == self.rtcParam.srType {
             return

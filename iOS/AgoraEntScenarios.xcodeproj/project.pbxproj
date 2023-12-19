@@ -265,6 +265,105 @@
 		E72F624D2A8097DF00C963D2 /* VLLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72F624C2A8097DF00C963D2 /* VLLoginViewController.swift */; };
 		E72F62562A822D3500C963D2 /* FUManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E72F62532A822D3500C963D2 /* FUManager.m */; };
 		E72F62582A823B5000C963D2 /* FUBeautyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72F62572A823B5000C963D2 /* FUBeautyManager.swift */; };
+		E75B491B2B3029B6005E925A /* CommerceResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E75B489D2B3029B6005E925A /* CommerceResource.bundle */; };
+		E75B491C2B3029B6005E925A /* NSString+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B489F2B3029B6005E925A /* NSString+Commerce.swift */; };
+		E75B491D2B3029B6005E925A /* CommerceThrottle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48A02B3029B6005E925A /* CommerceThrottle.swift */; };
+		E75B491E2B3029B6005E925A /* UIFont+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48A12B3029B6005E925A /* UIFont+Commerce.swift */; };
+		E75B491F2B3029B6005E925A /* Date+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48A22B3029B6005E925A /* Date+Commerce.swift */; };
+		E75B49202B3029B6005E925A /* UIViewController+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48A32B3029B6005E925A /* UIViewController+Commerce.swift */; };
+		E75B49212B3029B6005E925A /* UIColor+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48A42B3029B6005E925A /* UIColor+Commerce.swift */; };
+		E75B49222B3029B6005E925A /* UIImage+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48A52B3029B6005E925A /* UIImage+Commerce.swift */; };
+		E75B49232B3029B6005E925A /* UIView+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48A62B3029B6005E925A /* UIView+Commerce.swift */; };
+		E75B49242B3029B6005E925A /* CommerceMusicModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48A92B3029B6005E925A /* CommerceMusicModel.swift */; };
+		E75B49252B3029B6005E925A /* CommerceMusicPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48AA2B3029B6005E925A /* CommerceMusicPresenter.swift */; };
+		E75B49262B3029B6005E925A /* CommerceAgoraKitManager+Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48AB2B3029B6005E925A /* CommerceAgoraKitManager+Setting.swift */; };
+		E75B49272B3029B6005E925A /* CommerceAgoraKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48AC2B3029B6005E925A /* CommerceAgoraKitManager.swift */; };
+		E75B49282B3029B7005E925A /* CommerceChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48AD2B3029B6005E925A /* CommerceChatModel.swift */; };
+		E75B49292B3029B7005E925A /* CommerceAgoraKitManager+DebugSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48AE2B3029B6005E925A /* CommerceAgoraKitManager+DebugSetting.swift */; };
+		E75B492A2B3029B7005E925A /* CommerceDebug2TFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48B02B3029B6005E925A /* CommerceDebug2TFModel.swift */; };
+		E75B492B2B3029B7005E925A /* CommerceSettingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48B12B3029B6005E925A /* CommerceSettingKey.swift */; };
+		E75B492C2B3029B7005E925A /* CommerceDebugPrivateParamsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48B22B3029B6005E925A /* CommerceDebugPrivateParamsVC.swift */; };
+		E75B492D2B3029B7005E925A /* CommerceDebug1TFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48B32B3029B6005E925A /* CommerceDebug1TFModel.swift */; };
+		E75B492E2B3029B7005E925A /* SensemeLicFile.png in Resources */ = {isa = PBXBuildFile; fileRef = E75B48B52B3029B6005E925A /* SensemeLicFile.png */; };
+		E75B492F2B3029B7005E925A /* SenseLibPath.png in Resources */ = {isa = PBXBuildFile; fileRef = E75B48B62B3029B6005E925A /* SenseLibPath.png */; };
+		E75B49302B3029B7005E925A /* KeyCenter.png in Resources */ = {isa = PBXBuildFile; fileRef = E75B48B72B3029B6005E925A /* KeyCenter.png */; };
+		E75B49312B3029B7005E925A /* podinstallError.png in Resources */ = {isa = PBXBuildFile; fileRef = E75B48B82B3029B6005E925A /* podinstallError.png */; };
+		E75B49322B3029B7005E925A /* SamplePicture3.png in Resources */ = {isa = PBXBuildFile; fileRef = E75B48B92B3029B6005E925A /* SamplePicture3.png */; };
+		E75B49332B3029B7005E925A /* SamplePicture2.png in Resources */ = {isa = PBXBuildFile; fileRef = E75B48BA2B3029B6005E925A /* SamplePicture2.png */; };
+		E75B49342B3029B7005E925A /* SamplePicture4.png in Resources */ = {isa = PBXBuildFile; fileRef = E75B48BB2B3029B6005E925A /* SamplePicture4.png */; };
+		E75B49352B3029B7005E925A /* CommerceRoomListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48BD2B3029B6005E925A /* CommerceRoomListVC.swift */; };
+		E75B49362B3029B7005E925A /* CommerceReceivePKAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48BF2B3029B6005E925A /* CommerceReceivePKAlertVC.swift */; };
+		E75B49372B3029B7005E925A /* CommerceMusicEffectVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C02B3029B6005E925A /* CommerceMusicEffectVC.swift */; };
+		E75B49382B3029B7005E925A /* CommerceSelectQualityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C22B3029B6005E925A /* CommerceSelectQualityVC.swift */; };
+		E75B49392B3029B7005E925A /* CommerceBeautySettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C32B3029B6005E925A /* CommerceBeautySettingVC.swift */; };
+		E75B493A2B3029B7005E925A /* CommerceBeautyFaceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C42B3029B6005E925A /* CommerceBeautyFaceVC.swift */; };
+		E75B493B2B3029B7005E925A /* CommerceCreateLiveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C52B3029B6005E925A /* CommerceCreateLiveVC.swift */; };
+		E75B493C2B3029B7005E925A /* CommerceToolMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C62B3029B6005E925A /* CommerceToolMenuViewController.swift */; };
+		E75B493D2B3029B7005E925A /* CommerceLivePagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C72B3029B6005E925A /* CommerceLivePagesViewController.swift */; };
+		E75B493E2B3029B7005E925A /* CommerceLiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48C82B3029B6005E925A /* CommerceLiveViewController.swift */; };
+		E75B493F2B3029B7005E925A /* CommerceSettingActionSheetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48CA2B3029B6005E925A /* CommerceSettingActionSheetVC.swift */; };
+		E75B49402B3029B7005E925A /* CommerceDebugSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48CB2B3029B6005E925A /* CommerceDebugSettingVC.swift */; };
+		E75B49412B3029B7005E925A /* CommerceAdvancedSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48CC2B3029B6005E925A /* CommerceAdvancedSettingVC.swift */; };
+		E75B49432B3029B7005E925A /* CommerceVideoSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48CE2B3029B6005E925A /* CommerceVideoSettingVC.swift */; };
+		E75B49442B3029B7005E925A /* CommerceNetStateSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48CF2B3029B6005E925A /* CommerceNetStateSelectViewController.swift */; };
+		E75B49452B3029B7005E925A /* CommerceCunstomNaviBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48D02B3029B6005E925A /* CommerceCunstomNaviBar.swift */; };
+		E75B49462B3029B7005E925A /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = E75B48D12B3029B6005E925A /* README.md */; };
+		E75B49472B3029B7005E925A /* CommercePresentTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48D32B3029B6005E925A /* CommercePresentTransitioningDelegate.swift */; };
+		E75B49482B3029B7005E925A /* CommerceAEACategoryTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48D52B3029B6005E925A /* CommerceAEACategoryTitleCell.swift */; };
+		E75B49492B3029B7005E925A /* CommerceAEAListContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48D62B3029B6005E925A /* CommerceAEAListContainerView.swift */; };
+		E75B494A2B3029B7005E925A /* CommerceAEACategoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = E75B48D92B3029B6005E925A /* CommerceAEACategoryView.m */; };
+		E75B494B2B3029B7005E925A /* CommerceAEAListContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = E75B48DA2B3029B6005E925A /* CommerceAEAListContainerView.m */; };
+		E75B494C2B3029B7005E925A /* CommerceAEACategoryTitleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E75B48DB2B3029B6005E925A /* CommerceAEACategoryTitleCell.m */; };
+		E75B494D2B3029B7005E925A /* CommerceAEACategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48DC2B3029B6005E925A /* CommerceAEACategoryView.swift */; };
+		E75B494E2B3029B7005E925A /* CommerceNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48DE2B3029B6005E925A /* CommerceNavigationBar.swift */; };
+		E75B494F2B3029B7005E925A /* CommerceBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48E02B3029B6005E925A /* CommerceBaseViewController.swift */; };
+		E75B49502B3029B7005E925A /* CommerceMusicEffectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48E32B3029B6005E925A /* CommerceMusicEffectCell.swift */; };
+		E75B49512B3029B7005E925A /* CommerceMusicTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48E42B3029B6005E925A /* CommerceMusicTableHeaderView.swift */; };
+		E75B49522B3029B7005E925A /* CommerceMusicItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48E52B3029B6005E925A /* CommerceMusicItemCell.swift */; };
+		E75B49532B3029B7005E925A /* CommerceReceiveFinishView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48E72B3029B6005E925A /* CommerceReceiveFinishView.swift */; };
+		E75B49542B3029B7005E925A /* CommerceReceivePKView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48E82B3029B6005E925A /* CommerceReceivePKView.swift */; };
+		E75B49552B3029B7005E925A /* CommerceCreateLiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48EA2B3029B6005E925A /* CommerceCreateLiveView.swift */; };
+		E75B49562B3029B7005E925A /* CommerceBeautyFaceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48EB2B3029B6005E925A /* CommerceBeautyFaceCell.swift */; };
+		E75B49572B3029B7005E925A /* CommerceSelectQualityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48EC2B3029B6005E925A /* CommerceSelectQualityCell.swift */; };
+		E75B49582B3029B7005E925A /* CommerceDataPanelPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48EE2B3029B6005E925A /* CommerceDataPanelPresenter.swift */; };
+		E75B49592B3029B7005E925A /* CommerceRealTimeDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48EF2B3029B6005E925A /* CommerceRealTimeDataView.swift */; };
+		E75B495A2B3029B7005E925A /* CommerceEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48F12B3029B6005E925A /* CommerceEmptyView.swift */; };
+		E75B495B2B3029B7005E925A /* CommerceRoomListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48F22B3029B6005E925A /* CommerceRoomListView.swift */; };
+		E75B495C2B3029B7005E925A /* CommerceRoomListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48F32B3029B6005E925A /* CommerceRoomListCell.swift */; };
+		E75B495D2B3029B7005E925A /* CommerceRoomBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48F52B3029B6005E925A /* CommerceRoomBottomBar.swift */; };
+		E75B495E2B3029B7005E925A /* CommerceRoomMembersCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48F62B3029B6005E925A /* CommerceRoomMembersCountView.swift */; };
+		E75B495F2B3029B7005E925A /* CommerceRoomLiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48F72B3029B6005E925A /* CommerceRoomLiveView.swift */; };
+		E75B49602B3029B7005E925A /* CommerceCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48F82B3029B6005E925A /* CommerceCanvasView.swift */; };
+		E75B49612B3029B7005E925A /* CommerceChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48F92B3029B6005E925A /* CommerceChatInputView.swift */; };
+		E75B49622B3029B7005E925A /* CommerceRoomChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48FA2B3029B6005E925A /* CommerceRoomChatCell.swift */; };
+		E75B49632B3029B7005E925A /* CommerceLiveMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48FB2B3029B6005E925A /* CommerceLiveMoreDialog.swift */; };
+		E75B49642B3029B7005E925A /* CommerceRoomInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48FC2B3029B6005E925A /* CommerceRoomInfoView.swift */; };
+		E75B49652B3029B7005E925A /* CommercePresettingFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48FE2B3029B6005E925A /* CommercePresettingFooterView.swift */; };
+		E75B49662B3029B7005E925A /* CommerceSettingLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B48FF2B3029B6005E925A /* CommerceSettingLabelCell.swift */; };
+		E75B49672B3029B7005E925A /* CommerceDebugSetting1TFCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49002B3029B6005E925A /* CommerceDebugSetting1TFCell.swift */; };
+		E75B49682B3029B7005E925A /* CommerceSettingBitrateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49012B3029B6005E925A /* CommerceSettingBitrateCell.swift */; };
+		E75B49692B3029B7005E925A /* CommerceDebugSetting2TFCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49022B3029B6005E925A /* CommerceDebugSetting2TFCell.swift */; };
+		E75B496A2B3029B7005E925A /* CommerceSettingBaseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49032B3029B6005E925A /* CommerceSettingBaseCell.swift */; };
+		E75B496B2B3029B7005E925A /* CommerceSettingSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49042B3029B6005E925A /* CommerceSettingSwitchCell.swift */; };
+		E75B496C2B3029B7005E925A /* CommerceSettingSegmentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49052B3029B6005E925A /* CommerceSettingSegmentCell.swift */; };
+		E75B496D2B3029B7005E925A /* CommercePresettingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49062B3029B6005E925A /* CommercePresettingHeaderView.swift */; };
+		E75B496E2B3029B7005E925A /* CommerceSettingActionSheetFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49072B3029B6005E925A /* CommerceSettingActionSheetFooterView.swift */; };
+		E75B496F2B3029B7005E925A /* CommercePresettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49082B3029B6005E925A /* CommercePresettingCell.swift */; };
+		E75B49702B3029B7005E925A /* CommerceSettingSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49092B3029B6005E925A /* CommerceSettingSliderCell.swift */; };
+		E75B49712B3029B7005E925A /* CommerceSettingActionSheetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B490A2B3029B6005E925A /* CommerceSettingActionSheetCell.swift */; };
+		E75B49722B3029B7005E925A /* CommerceSettingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B490B2B3029B6005E925A /* CommerceSettingHeaderView.swift */; };
+		E75B49732B3029B7005E925A /* CommerceSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B490D2B3029B6005E925A /* CommerceSegmentView.swift */; };
+		E75B49742B3029B7005E925A /* CommerceInviteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B490E2B3029B6005E925A /* CommerceInviteCell.swift */; };
+		E75B49752B3029B7005E925A /* CommerceApplyAndInviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B490F2B3029B6005E925A /* CommerceApplyAndInviteView.swift */; };
+		E75B49762B3029B7005E925A /* CommerceApplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49102B3029B6005E925A /* CommerceApplyView.swift */; };
+		E75B49772B3029B7005E925A /* CommercePKInviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49112B3029B6005E925A /* CommercePKInviteView.swift */; };
+		E75B49782B3029B7005E925A /* CommerceToolMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49132B3029B6005E925A /* CommerceToolMenuView.swift */; };
+		E75B49792B3029B7005E925A /* CommerceSubscribeServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49152B3029B6005E925A /* CommerceSubscribeServiceProtocol.swift */; };
+		E75B497A2B3029B7005E925A /* CommerceRobotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49162B3029B6005E925A /* CommerceRobotService.swift */; };
+		E75B497B2B3029B7005E925A /* CommerceServiceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49172B3029B6005E925A /* CommerceServiceModel.swift */; };
+		E75B497C2B3029B7005E925A /* AppContext+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49182B3029B6005E925A /* AppContext+Commerce.swift */; };
+		E75B497D2B3029B7005E925A /* CommerceSyncManagerServiceImp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49192B3029B6005E925A /* CommerceSyncManagerServiceImp.swift */; };
+		E75B497E2B3029B7005E925A /* CommerceServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B491A2B3029B6005E925A /* CommerceServiceProtocol.swift */; };
 		E76F80142AF2417800CCB9D6 /* ShowLiveMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */; };
 /* End PBXBuildFile section */
 
@@ -650,6 +749,108 @@
 		E72F62512A822D3500C963D2 /* FUManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUManager.h; sourceTree = "<group>"; };
 		E72F62532A822D3500C963D2 /* FUManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUManager.m; sourceTree = "<group>"; };
 		E72F62572A823B5000C963D2 /* FUBeautyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FUBeautyManager.swift; sourceTree = "<group>"; };
+		E75B489D2B3029B6005E925A /* CommerceResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CommerceResource.bundle; sourceTree = "<group>"; };
+		E75B489F2B3029B6005E925A /* NSString+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+Commerce.swift"; sourceTree = "<group>"; };
+		E75B48A02B3029B6005E925A /* CommerceThrottle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceThrottle.swift; sourceTree = "<group>"; };
+		E75B48A12B3029B6005E925A /* UIFont+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Commerce.swift"; sourceTree = "<group>"; };
+		E75B48A22B3029B6005E925A /* Date+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Commerce.swift"; sourceTree = "<group>"; };
+		E75B48A32B3029B6005E925A /* UIViewController+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Commerce.swift"; sourceTree = "<group>"; };
+		E75B48A42B3029B6005E925A /* UIColor+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Commerce.swift"; sourceTree = "<group>"; };
+		E75B48A52B3029B6005E925A /* UIImage+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Commerce.swift"; sourceTree = "<group>"; };
+		E75B48A62B3029B6005E925A /* UIView+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Commerce.swift"; sourceTree = "<group>"; };
+		E75B48A92B3029B6005E925A /* CommerceMusicModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicModel.swift; sourceTree = "<group>"; };
+		E75B48AA2B3029B6005E925A /* CommerceMusicPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicPresenter.swift; sourceTree = "<group>"; };
+		E75B48AB2B3029B6005E925A /* CommerceAgoraKitManager+Setting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommerceAgoraKitManager+Setting.swift"; sourceTree = "<group>"; };
+		E75B48AC2B3029B6005E925A /* CommerceAgoraKitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAgoraKitManager.swift; sourceTree = "<group>"; };
+		E75B48AD2B3029B6005E925A /* CommerceChatModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceChatModel.swift; sourceTree = "<group>"; };
+		E75B48AE2B3029B6005E925A /* CommerceAgoraKitManager+DebugSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommerceAgoraKitManager+DebugSetting.swift"; sourceTree = "<group>"; };
+		E75B48B02B3029B6005E925A /* CommerceDebug2TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebug2TFModel.swift; sourceTree = "<group>"; };
+		E75B48B12B3029B6005E925A /* CommerceSettingKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingKey.swift; sourceTree = "<group>"; };
+		E75B48B22B3029B6005E925A /* CommerceDebugPrivateParamsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebugPrivateParamsVC.swift; sourceTree = "<group>"; };
+		E75B48B32B3029B6005E925A /* CommerceDebug1TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebug1TFModel.swift; sourceTree = "<group>"; };
+		E75B48B52B3029B6005E925A /* SensemeLicFile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SensemeLicFile.png; sourceTree = "<group>"; };
+		E75B48B62B3029B6005E925A /* SenseLibPath.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SenseLibPath.png; sourceTree = "<group>"; };
+		E75B48B72B3029B6005E925A /* KeyCenter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = KeyCenter.png; sourceTree = "<group>"; };
+		E75B48B82B3029B6005E925A /* podinstallError.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = podinstallError.png; sourceTree = "<group>"; };
+		E75B48B92B3029B6005E925A /* SamplePicture3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture3.png; sourceTree = "<group>"; };
+		E75B48BA2B3029B6005E925A /* SamplePicture2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture2.png; sourceTree = "<group>"; };
+		E75B48BB2B3029B6005E925A /* SamplePicture4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture4.png; sourceTree = "<group>"; };
+		E75B48BD2B3029B6005E925A /* CommerceRoomListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomListVC.swift; sourceTree = "<group>"; };
+		E75B48BF2B3029B6005E925A /* CommerceReceivePKAlertVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceReceivePKAlertVC.swift; sourceTree = "<group>"; };
+		E75B48C02B3029B6005E925A /* CommerceMusicEffectVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicEffectVC.swift; sourceTree = "<group>"; };
+		E75B48C22B3029B6005E925A /* CommerceSelectQualityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSelectQualityVC.swift; sourceTree = "<group>"; };
+		E75B48C32B3029B6005E925A /* CommerceBeautySettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceBeautySettingVC.swift; sourceTree = "<group>"; };
+		E75B48C42B3029B6005E925A /* CommerceBeautyFaceVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceBeautyFaceVC.swift; sourceTree = "<group>"; };
+		E75B48C52B3029B6005E925A /* CommerceCreateLiveVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCreateLiveVC.swift; sourceTree = "<group>"; };
+		E75B48C62B3029B6005E925A /* CommerceToolMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceToolMenuViewController.swift; sourceTree = "<group>"; };
+		E75B48C72B3029B6005E925A /* CommerceLivePagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceLivePagesViewController.swift; sourceTree = "<group>"; };
+		E75B48C82B3029B6005E925A /* CommerceLiveViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceLiveViewController.swift; sourceTree = "<group>"; };
+		E75B48CA2B3029B6005E925A /* CommerceSettingActionSheetVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingActionSheetVC.swift; sourceTree = "<group>"; };
+		E75B48CB2B3029B6005E925A /* CommerceDebugSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebugSettingVC.swift; sourceTree = "<group>"; };
+		E75B48CC2B3029B6005E925A /* CommerceAdvancedSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAdvancedSettingVC.swift; sourceTree = "<group>"; };
+		E75B48CE2B3029B6005E925A /* CommerceVideoSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceVideoSettingVC.swift; sourceTree = "<group>"; };
+		E75B48CF2B3029B6005E925A /* CommerceNetStateSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceNetStateSelectViewController.swift; sourceTree = "<group>"; };
+		E75B48D02B3029B6005E925A /* CommerceCunstomNaviBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCunstomNaviBar.swift; sourceTree = "<group>"; };
+		E75B48D12B3029B6005E925A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		E75B48D32B3029B6005E925A /* CommercePresentTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommercePresentTransitioningDelegate.swift; sourceTree = "<group>"; };
+		E75B48D52B3029B6005E925A /* CommerceAEACategoryTitleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAEACategoryTitleCell.swift; sourceTree = "<group>"; };
+		E75B48D62B3029B6005E925A /* CommerceAEAListContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAEAListContainerView.swift; sourceTree = "<group>"; };
+		E75B48D72B3029B6005E925A /* CommerceAEACategoryTitleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommerceAEACategoryTitleCell.h; sourceTree = "<group>"; };
+		E75B48D82B3029B6005E925A /* CommerceAEAListContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommerceAEAListContainerView.h; sourceTree = "<group>"; };
+		E75B48D92B3029B6005E925A /* CommerceAEACategoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommerceAEACategoryView.m; sourceTree = "<group>"; };
+		E75B48DA2B3029B6005E925A /* CommerceAEAListContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommerceAEAListContainerView.m; sourceTree = "<group>"; };
+		E75B48DB2B3029B6005E925A /* CommerceAEACategoryTitleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommerceAEACategoryTitleCell.m; sourceTree = "<group>"; };
+		E75B48DC2B3029B6005E925A /* CommerceAEACategoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAEACategoryView.swift; sourceTree = "<group>"; };
+		E75B48DD2B3029B6005E925A /* CommerceAEACategoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommerceAEACategoryView.h; sourceTree = "<group>"; };
+		E75B48DE2B3029B6005E925A /* CommerceNavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceNavigationBar.swift; sourceTree = "<group>"; };
+		E75B48E02B3029B6005E925A /* CommerceBaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceBaseViewController.swift; sourceTree = "<group>"; };
+		E75B48E32B3029B6005E925A /* CommerceMusicEffectCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicEffectCell.swift; sourceTree = "<group>"; };
+		E75B48E42B3029B6005E925A /* CommerceMusicTableHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicTableHeaderView.swift; sourceTree = "<group>"; };
+		E75B48E52B3029B6005E925A /* CommerceMusicItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicItemCell.swift; sourceTree = "<group>"; };
+		E75B48E72B3029B6005E925A /* CommerceReceiveFinishView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceReceiveFinishView.swift; sourceTree = "<group>"; };
+		E75B48E82B3029B6005E925A /* CommerceReceivePKView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceReceivePKView.swift; sourceTree = "<group>"; };
+		E75B48EA2B3029B6005E925A /* CommerceCreateLiveView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCreateLiveView.swift; sourceTree = "<group>"; };
+		E75B48EB2B3029B6005E925A /* CommerceBeautyFaceCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceBeautyFaceCell.swift; sourceTree = "<group>"; };
+		E75B48EC2B3029B6005E925A /* CommerceSelectQualityCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSelectQualityCell.swift; sourceTree = "<group>"; };
+		E75B48EE2B3029B6005E925A /* CommerceDataPanelPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDataPanelPresenter.swift; sourceTree = "<group>"; };
+		E75B48EF2B3029B6005E925A /* CommerceRealTimeDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRealTimeDataView.swift; sourceTree = "<group>"; };
+		E75B48F12B3029B6005E925A /* CommerceEmptyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceEmptyView.swift; sourceTree = "<group>"; };
+		E75B48F22B3029B6005E925A /* CommerceRoomListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomListView.swift; sourceTree = "<group>"; };
+		E75B48F32B3029B6005E925A /* CommerceRoomListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomListCell.swift; sourceTree = "<group>"; };
+		E75B48F52B3029B6005E925A /* CommerceRoomBottomBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomBottomBar.swift; sourceTree = "<group>"; };
+		E75B48F62B3029B6005E925A /* CommerceRoomMembersCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomMembersCountView.swift; sourceTree = "<group>"; };
+		E75B48F72B3029B6005E925A /* CommerceRoomLiveView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomLiveView.swift; sourceTree = "<group>"; };
+		E75B48F82B3029B6005E925A /* CommerceCanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCanvasView.swift; sourceTree = "<group>"; };
+		E75B48F92B3029B6005E925A /* CommerceChatInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceChatInputView.swift; sourceTree = "<group>"; };
+		E75B48FA2B3029B6005E925A /* CommerceRoomChatCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomChatCell.swift; sourceTree = "<group>"; };
+		E75B48FB2B3029B6005E925A /* CommerceLiveMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceLiveMoreDialog.swift; sourceTree = "<group>"; };
+		E75B48FC2B3029B6005E925A /* CommerceRoomInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomInfoView.swift; sourceTree = "<group>"; };
+		E75B48FE2B3029B6005E925A /* CommercePresettingFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommercePresettingFooterView.swift; sourceTree = "<group>"; };
+		E75B48FF2B3029B6005E925A /* CommerceSettingLabelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingLabelCell.swift; sourceTree = "<group>"; };
+		E75B49002B3029B6005E925A /* CommerceDebugSetting1TFCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebugSetting1TFCell.swift; sourceTree = "<group>"; };
+		E75B49012B3029B6005E925A /* CommerceSettingBitrateCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingBitrateCell.swift; sourceTree = "<group>"; };
+		E75B49022B3029B6005E925A /* CommerceDebugSetting2TFCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebugSetting2TFCell.swift; sourceTree = "<group>"; };
+		E75B49032B3029B6005E925A /* CommerceSettingBaseCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingBaseCell.swift; sourceTree = "<group>"; };
+		E75B49042B3029B6005E925A /* CommerceSettingSwitchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingSwitchCell.swift; sourceTree = "<group>"; };
+		E75B49052B3029B6005E925A /* CommerceSettingSegmentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingSegmentCell.swift; sourceTree = "<group>"; };
+		E75B49062B3029B6005E925A /* CommercePresettingHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommercePresettingHeaderView.swift; sourceTree = "<group>"; };
+		E75B49072B3029B6005E925A /* CommerceSettingActionSheetFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingActionSheetFooterView.swift; sourceTree = "<group>"; };
+		E75B49082B3029B6005E925A /* CommercePresettingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommercePresettingCell.swift; sourceTree = "<group>"; };
+		E75B49092B3029B6005E925A /* CommerceSettingSliderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingSliderCell.swift; sourceTree = "<group>"; };
+		E75B490A2B3029B6005E925A /* CommerceSettingActionSheetCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingActionSheetCell.swift; sourceTree = "<group>"; };
+		E75B490B2B3029B6005E925A /* CommerceSettingHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingHeaderView.swift; sourceTree = "<group>"; };
+		E75B490D2B3029B6005E925A /* CommerceSegmentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSegmentView.swift; sourceTree = "<group>"; };
+		E75B490E2B3029B6005E925A /* CommerceInviteCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceInviteCell.swift; sourceTree = "<group>"; };
+		E75B490F2B3029B6005E925A /* CommerceApplyAndInviteView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceApplyAndInviteView.swift; sourceTree = "<group>"; };
+		E75B49102B3029B6005E925A /* CommerceApplyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceApplyView.swift; sourceTree = "<group>"; };
+		E75B49112B3029B6005E925A /* CommercePKInviteView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommercePKInviteView.swift; sourceTree = "<group>"; };
+		E75B49132B3029B6005E925A /* CommerceToolMenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceToolMenuView.swift; sourceTree = "<group>"; };
+		E75B49152B3029B6005E925A /* CommerceSubscribeServiceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSubscribeServiceProtocol.swift; sourceTree = "<group>"; };
+		E75B49162B3029B6005E925A /* CommerceRobotService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRobotService.swift; sourceTree = "<group>"; };
+		E75B49172B3029B6005E925A /* CommerceServiceModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceServiceModel.swift; sourceTree = "<group>"; };
+		E75B49182B3029B6005E925A /* AppContext+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppContext+Commerce.swift"; sourceTree = "<group>"; };
+		E75B49192B3029B6005E925A /* CommerceSyncManagerServiceImp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSyncManagerServiceImp.swift; sourceTree = "<group>"; };
+		E75B491A2B3029B6005E925A /* CommerceServiceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceServiceProtocol.swift; sourceTree = "<group>"; };
 		E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowLiveMoreDialog.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -1305,6 +1506,7 @@
 		DD8416E429090C520026B624 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				E75B489C2B3029B6005E925A /* Commerce */,
 				DD360FAC29B70CDC00CE7984 /* Show */,
 				DD84175A29090C520026B624 /* Template */,
 			);
@@ -1858,6 +2060,300 @@
 			path = FUBeauty;
 			sourceTree = "<group>";
 		};
+		E75B489C2B3029B6005E925A /* Commerce */ = {
+			isa = PBXGroup;
+			children = (
+				E75B489D2B3029B6005E925A /* CommerceResource.bundle */,
+				E75B489E2B3029B6005E925A /* Utils */,
+				E75B48A72B3029B6005E925A /* Models */,
+				E75B48B42B3029B6005E925A /* image */,
+				E75B48BC2B3029B6005E925A /* Controller */,
+				E75B48D12B3029B6005E925A /* README.md */,
+				E75B48D22B3029B6005E925A /* Common */,
+				E75B48E12B3029B6005E925A /* View */,
+				E75B49142B3029B6005E925A /* Service */,
+			);
+			name = Commerce;
+			path = AgoraEntScenarios/Scenes/Commerce;
+			sourceTree = SOURCE_ROOT;
+		};
+		E75B489E2B3029B6005E925A /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				E75B489F2B3029B6005E925A /* NSString+Commerce.swift */,
+				E75B48A02B3029B6005E925A /* CommerceThrottle.swift */,
+				E75B48A12B3029B6005E925A /* UIFont+Commerce.swift */,
+				E75B48A22B3029B6005E925A /* Date+Commerce.swift */,
+				E75B48A32B3029B6005E925A /* UIViewController+Commerce.swift */,
+				E75B48A42B3029B6005E925A /* UIColor+Commerce.swift */,
+				E75B48A52B3029B6005E925A /* UIImage+Commerce.swift */,
+				E75B48A62B3029B6005E925A /* UIView+Commerce.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		E75B48A72B3029B6005E925A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48A82B3029B6005E925A /* Music */,
+				E75B48AB2B3029B6005E925A /* CommerceAgoraKitManager+Setting.swift */,
+				E75B48AC2B3029B6005E925A /* CommerceAgoraKitManager.swift */,
+				E75B48AD2B3029B6005E925A /* CommerceChatModel.swift */,
+				E75B48AE2B3029B6005E925A /* CommerceAgoraKitManager+DebugSetting.swift */,
+				E75B48AF2B3029B6005E925A /* Setting */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		E75B48A82B3029B6005E925A /* Music */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48A92B3029B6005E925A /* CommerceMusicModel.swift */,
+				E75B48AA2B3029B6005E925A /* CommerceMusicPresenter.swift */,
+			);
+			path = Music;
+			sourceTree = "<group>";
+		};
+		E75B48AF2B3029B6005E925A /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48B02B3029B6005E925A /* CommerceDebug2TFModel.swift */,
+				E75B48B12B3029B6005E925A /* CommerceSettingKey.swift */,
+				E75B48B22B3029B6005E925A /* CommerceDebugPrivateParamsVC.swift */,
+				E75B48B32B3029B6005E925A /* CommerceDebug1TFModel.swift */,
+			);
+			path = Setting;
+			sourceTree = "<group>";
+		};
+		E75B48B42B3029B6005E925A /* image */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48B52B3029B6005E925A /* SensemeLicFile.png */,
+				E75B48B62B3029B6005E925A /* SenseLibPath.png */,
+				E75B48B72B3029B6005E925A /* KeyCenter.png */,
+				E75B48B82B3029B6005E925A /* podinstallError.png */,
+				E75B48B92B3029B6005E925A /* SamplePicture3.png */,
+				E75B48BA2B3029B6005E925A /* SamplePicture2.png */,
+				E75B48BB2B3029B6005E925A /* SamplePicture4.png */,
+			);
+			path = image;
+			sourceTree = "<group>";
+		};
+		E75B48BC2B3029B6005E925A /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48BD2B3029B6005E925A /* CommerceRoomListVC.swift */,
+				E75B48BE2B3029B6005E925A /* Alert */,
+				E75B48C02B3029B6005E925A /* CommerceMusicEffectVC.swift */,
+				E75B48C12B3029B6005E925A /* CreateLive */,
+				E75B48C52B3029B6005E925A /* CommerceCreateLiveVC.swift */,
+				E75B48C62B3029B6005E925A /* CommerceToolMenuViewController.swift */,
+				E75B48C72B3029B6005E925A /* CommerceLivePagesViewController.swift */,
+				E75B48C82B3029B6005E925A /* CommerceLiveViewController.swift */,
+				E75B48C92B3029B6005E925A /* Setting */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		E75B48BE2B3029B6005E925A /* Alert */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48BF2B3029B6005E925A /* CommerceReceivePKAlertVC.swift */,
+			);
+			path = Alert;
+			sourceTree = "<group>";
+		};
+		E75B48C12B3029B6005E925A /* CreateLive */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48C22B3029B6005E925A /* CommerceSelectQualityVC.swift */,
+				E75B48C32B3029B6005E925A /* CommerceBeautySettingVC.swift */,
+				E75B48C42B3029B6005E925A /* CommerceBeautyFaceVC.swift */,
+			);
+			path = CreateLive;
+			sourceTree = "<group>";
+		};
+		E75B48C92B3029B6005E925A /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48CA2B3029B6005E925A /* CommerceSettingActionSheetVC.swift */,
+				E75B48CB2B3029B6005E925A /* CommerceDebugSettingVC.swift */,
+				E75B48CC2B3029B6005E925A /* CommerceAdvancedSettingVC.swift */,
+				E75B48CE2B3029B6005E925A /* CommerceVideoSettingVC.swift */,
+				E75B48CF2B3029B6005E925A /* CommerceNetStateSelectViewController.swift */,
+				E75B48D02B3029B6005E925A /* CommerceCunstomNaviBar.swift */,
+			);
+			path = Setting;
+			sourceTree = "<group>";
+		};
+		E75B48D22B3029B6005E925A /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48D32B3029B6005E925A /* CommercePresentTransitioningDelegate.swift */,
+				E75B48D42B3029B6005E925A /* View */,
+				E75B48DF2B3029B6005E925A /* ViewController */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		E75B48D42B3029B6005E925A /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48D52B3029B6005E925A /* CommerceAEACategoryTitleCell.swift */,
+				E75B48D62B3029B6005E925A /* CommerceAEAListContainerView.swift */,
+				E75B48D72B3029B6005E925A /* CommerceAEACategoryTitleCell.h */,
+				E75B48DB2B3029B6005E925A /* CommerceAEACategoryTitleCell.m */,
+				E75B48D82B3029B6005E925A /* CommerceAEAListContainerView.h */,
+				E75B48DA2B3029B6005E925A /* CommerceAEAListContainerView.m */,
+				E75B48DC2B3029B6005E925A /* CommerceAEACategoryView.swift */,
+				E75B48DD2B3029B6005E925A /* CommerceAEACategoryView.h */,
+				E75B48D92B3029B6005E925A /* CommerceAEACategoryView.m */,
+				E75B48DE2B3029B6005E925A /* CommerceNavigationBar.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		E75B48DF2B3029B6005E925A /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48E02B3029B6005E925A /* CommerceBaseViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		E75B48E12B3029B6005E925A /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48E22B3029B6005E925A /* Music */,
+				E75B48E62B3029B6005E925A /* Alert */,
+				E75B48E92B3029B6005E925A /* CreateLive */,
+				E75B48ED2B3029B6005E925A /* RealTime */,
+				E75B48F02B3029B6005E925A /* RoomList */,
+				E75B48F42B3029B6005E925A /* Live */,
+				E75B48FD2B3029B6005E925A /* Setting */,
+				E75B490C2B3029B6005E925A /* PKInvite */,
+				E75B49122B3029B6005E925A /* ToolMenu */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		E75B48E22B3029B6005E925A /* Music */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48E32B3029B6005E925A /* CommerceMusicEffectCell.swift */,
+				E75B48E42B3029B6005E925A /* CommerceMusicTableHeaderView.swift */,
+				E75B48E52B3029B6005E925A /* CommerceMusicItemCell.swift */,
+			);
+			path = Music;
+			sourceTree = "<group>";
+		};
+		E75B48E62B3029B6005E925A /* Alert */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48E72B3029B6005E925A /* CommerceReceiveFinishView.swift */,
+				E75B48E82B3029B6005E925A /* CommerceReceivePKView.swift */,
+			);
+			path = Alert;
+			sourceTree = "<group>";
+		};
+		E75B48E92B3029B6005E925A /* CreateLive */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48EA2B3029B6005E925A /* CommerceCreateLiveView.swift */,
+				E75B48EB2B3029B6005E925A /* CommerceBeautyFaceCell.swift */,
+				E75B48EC2B3029B6005E925A /* CommerceSelectQualityCell.swift */,
+			);
+			path = CreateLive;
+			sourceTree = "<group>";
+		};
+		E75B48ED2B3029B6005E925A /* RealTime */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48EE2B3029B6005E925A /* CommerceDataPanelPresenter.swift */,
+				E75B48EF2B3029B6005E925A /* CommerceRealTimeDataView.swift */,
+			);
+			path = RealTime;
+			sourceTree = "<group>";
+		};
+		E75B48F02B3029B6005E925A /* RoomList */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48F12B3029B6005E925A /* CommerceEmptyView.swift */,
+				E75B48F22B3029B6005E925A /* CommerceRoomListView.swift */,
+				E75B48F32B3029B6005E925A /* CommerceRoomListCell.swift */,
+			);
+			path = RoomList;
+			sourceTree = "<group>";
+		};
+		E75B48F42B3029B6005E925A /* Live */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48F52B3029B6005E925A /* CommerceRoomBottomBar.swift */,
+				E75B48F62B3029B6005E925A /* CommerceRoomMembersCountView.swift */,
+				E75B48F72B3029B6005E925A /* CommerceRoomLiveView.swift */,
+				E75B48F82B3029B6005E925A /* CommerceCanvasView.swift */,
+				E75B48F92B3029B6005E925A /* CommerceChatInputView.swift */,
+				E75B48FA2B3029B6005E925A /* CommerceRoomChatCell.swift */,
+				E75B48FB2B3029B6005E925A /* CommerceLiveMoreDialog.swift */,
+				E75B48FC2B3029B6005E925A /* CommerceRoomInfoView.swift */,
+			);
+			path = Live;
+			sourceTree = "<group>";
+		};
+		E75B48FD2B3029B6005E925A /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				E75B48FE2B3029B6005E925A /* CommercePresettingFooterView.swift */,
+				E75B48FF2B3029B6005E925A /* CommerceSettingLabelCell.swift */,
+				E75B49002B3029B6005E925A /* CommerceDebugSetting1TFCell.swift */,
+				E75B49012B3029B6005E925A /* CommerceSettingBitrateCell.swift */,
+				E75B49022B3029B6005E925A /* CommerceDebugSetting2TFCell.swift */,
+				E75B49032B3029B6005E925A /* CommerceSettingBaseCell.swift */,
+				E75B49042B3029B6005E925A /* CommerceSettingSwitchCell.swift */,
+				E75B49052B3029B6005E925A /* CommerceSettingSegmentCell.swift */,
+				E75B49062B3029B6005E925A /* CommercePresettingHeaderView.swift */,
+				E75B49072B3029B6005E925A /* CommerceSettingActionSheetFooterView.swift */,
+				E75B49082B3029B6005E925A /* CommercePresettingCell.swift */,
+				E75B49092B3029B6005E925A /* CommerceSettingSliderCell.swift */,
+				E75B490A2B3029B6005E925A /* CommerceSettingActionSheetCell.swift */,
+				E75B490B2B3029B6005E925A /* CommerceSettingHeaderView.swift */,
+			);
+			path = Setting;
+			sourceTree = "<group>";
+		};
+		E75B490C2B3029B6005E925A /* PKInvite */ = {
+			isa = PBXGroup;
+			children = (
+				E75B490D2B3029B6005E925A /* CommerceSegmentView.swift */,
+				E75B490E2B3029B6005E925A /* CommerceInviteCell.swift */,
+				E75B490F2B3029B6005E925A /* CommerceApplyAndInviteView.swift */,
+				E75B49102B3029B6005E925A /* CommerceApplyView.swift */,
+				E75B49112B3029B6005E925A /* CommercePKInviteView.swift */,
+			);
+			path = PKInvite;
+			sourceTree = "<group>";
+		};
+		E75B49122B3029B6005E925A /* ToolMenu */ = {
+			isa = PBXGroup;
+			children = (
+				E75B49132B3029B6005E925A /* CommerceToolMenuView.swift */,
+			);
+			path = ToolMenu;
+			sourceTree = "<group>";
+		};
+		E75B49142B3029B6005E925A /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				E75B49152B3029B6005E925A /* CommerceSubscribeServiceProtocol.swift */,
+				E75B49162B3029B6005E925A /* CommerceRobotService.swift */,
+				E75B49172B3029B6005E925A /* CommerceServiceModel.swift */,
+				E75B49182B3029B6005E925A /* AppContext+Commerce.swift */,
+				E75B49192B3029B6005E925A /* CommerceSyncManagerServiceImp.swift */,
+				E75B491A2B3029B6005E925A /* CommerceServiceProtocol.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1967,10 +2463,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E75B491B2B3029B6005E925A /* CommerceResource.bundle in Resources */,
 				DD36105829B70CDC00CE7984 /* showResource.bundle in Resources */,
 				DD84176529090C520026B624 /* public.css in Resources */,
 				DD84176429090C520026B624 /* intro.css in Resources */,
 				DD84177229090C520026B624 /* ic_chat.png in Resources */,
+				E75B49332B3029B7005E925A /* SamplePicture2.png in Resources */,
+				E75B492E2B3029B7005E925A /* SensemeLicFile.png in Resources */,
 				DD84176329090C520026B624 /* util.js in Resources */,
 				DD84176C29090C520026B624 /* ic_game.png in Resources */,
 				DD84176E29090C520026B624 /* tab_discover.png in Resources */,
@@ -1978,21 +2477,27 @@
 				DD8417C929090C520026B624 /* Template.bundle in Resources */,
 				DD84177629090C520026B624 /* product4.png in Resources */,
 				DD84177129090C520026B624 /* ic_play.png in Resources */,
+				E75B492F2B3029B7005E925A /* SenseLibPath.png in Resources */,
+				E75B49312B3029B7005E925A /* podinstallError.png in Resources */,
 				DD84177529090C520026B624 /* product1.png in Resources */,
 				DD84176929090C520026B624 /* banner1.png in Resources */,
 				DD84176B29090C520026B624 /* tab_home.png in Resources */,
+				E75B49322B3029B7005E925A /* SamplePicture3.png in Resources */,
 				DD84176829090C520026B624 /* ic_back_b.png in Resources */,
 				DD84177329090C520026B624 /* product2.png in Resources */,
 				DD2A43D728FFCEE7004CEDCF /* LaunchScreen.storyboard in Resources */,
 				DD84177929090C520026B624 /* product.html in Resources */,
+				E75B49462B3029B7005E925A /* README.md in Resources */,
 				DD84177429090C520026B624 /* product3.png in Resources */,
 				DD84177729090C520026B624 /* entertainment.html in Resources */,
 				DD84176229090C520026B624 /* index.html in Resources */,
 				DD2A43D428FFCEE7004CEDCF /* Assets.xcassets in Resources */,
+				E75B49342B3029B7005E925A /* SamplePicture4.png in Resources */,
 				DD84177829090C520026B624 /* entertainment.js in Resources */,
 				E3735C9F2A5E7E75004737EF /* BeautyResource.bundle in Resources */,
 				E358F800293494BC00A7EBD1 /* InfoPlist.strings in Resources */,
 				DD84176729090C520026B624 /* tab_profile.png in Resources */,
+				E75B49302B3029B7005E925A /* KeyCenter.png in Resources */,
 				DD2A43D228FFCEE7004CEDCF /* Main.storyboard in Resources */,
 				DD84176629090C520026B624 /* index.js in Resources */,
 				DD84176A29090C520026B624 /* ic_k.png in Resources */,
@@ -2084,21 +2589,30 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3735C9A2A5E7E75004737EF /* ByteBeautyManager.swift in Sources */,
+				E75B494F2B3029B7005E925A /* CommerceBaseViewController.swift in Sources */,
 				DDA199DD28FFE579009D3E61 /* ToastView.swift in Sources */,
 				DDA199E528FFE579009D3E61 /* UILabel+Font.m in Sources */,
 				DDA199F528FFE579009D3E61 /* AgoraExtension.swift in Sources */,
+				E75B49732B3029B7005E925A /* CommerceSegmentView.swift in Sources */,
 				DDA199E128FFE579009D3E61 /* VLToast.m in Sources */,
+				E75B492D2B3029B7005E925A /* CommerceDebug1TFModel.swift in Sources */,
 				DD619C0929E3E84D008F63E4 /* AboutAgoraHeader.swift in Sources */,
 				DDA199F028FFE579009D3E61 /* BaseViewController.m in Sources */,
 				E3735C852A5E7E75004737EF /* EffectsAttribute.m in Sources */,
 				E72F62472A7CEE3E00C963D2 /* VRVerifyCodeTextView.swift in Sources */,
+				E75B49262B3029B6005E925A /* CommerceAgoraKitManager+Setting.swift in Sources */,
 				DD619C0429E3E81D008F63E4 /* AboutAgoraEntertainmentViewController.swift in Sources */,
 				DDA199ED28FFE579009D3E61 /* VLBaseView.m in Sources */,
 				DD3610CD29B70F3300CE7984 /* VLMineSwitchCell.swift in Sources */,
+				E75B49612B3029B7005E925A /* CommerceChatInputView.swift in Sources */,
 				E36EC8B72A663B880089A374 /* AEACategoryTitleCell.swift in Sources */,
+				E75B49472B3029B7005E925A /* CommercePresentTransitioningDelegate.swift in Sources */,
 				DD3610C229B70CDC00CE7984 /* ShowInviteCell.swift in Sources */,
 				DD8417CA29090C520026B624 /* TemplateServiceModel.swift in Sources */,
+				E75B49282B3029B7005E925A /* CommerceChatModel.swift in Sources */,
+				E75B49712B3029B7005E925A /* CommerceSettingActionSheetCell.swift in Sources */,
 				E3735C8C2A5E7E75004737EF /* EFMotionManager.m in Sources */,
+				E75B492B2B3029B7005E925A /* CommerceSettingKey.swift in Sources */,
 				DDA199F328FFE579009D3E61 /* UIColor+Extension.swift in Sources */,
 				DD3610B929B70CDC00CE7984 /* ShowSettingSwitchCell.swift in Sources */,
 				DD3610B529B70CDC00CE7984 /* ShowSettingLabelCell.swift in Sources */,
@@ -2106,12 +2620,14 @@
 				DD36108B29B70CDC00CE7984 /* ShowReceivePKAlertVC.swift in Sources */,
 				DD3610BC29B70CDC00CE7984 /* ShowSettingActionSheetFooterView.swift in Sources */,
 				DD36109529B70CDC00CE7984 /* ShowDebugSettingVC.swift in Sources */,
+				E75B49652B3029B7005E925A /* CommercePresettingFooterView.swift in Sources */,
 				DDA199FD28FFE579009D3E61 /* UIView+VL.m in Sources */,
 				DD36105E29B70CDC00CE7984 /* ShowThrottle.swift in Sources */,
 				DDA199E928FFE579009D3E61 /* VLResponseDataModel.m in Sources */,
 				E3735CA72A5E8023004737EF /* VRBaseViewController.swift in Sources */,
 				DD3610BB29B70CDC00CE7984 /* ShowPresettingHeaderView.swift in Sources */,
 				E3735C972A5E7E75004737EF /* BEPixelBufferInfo.m in Sources */,
+				E75B49292B3029B7005E925A /* CommerceAgoraKitManager+DebugSetting.swift in Sources */,
 				DDA199EF28FFE579009D3E61 /* VLBaseTableView.m in Sources */,
 				DD84177C29090C520026B624 /* VLHomeItemView.m in Sources */,
 				E3735C9D2A5E7E75004737EF /* BeautyLoad.m in Sources */,
@@ -2122,43 +2638,60 @@
 				E3735C952A5E7E75004737EF /* BEGLTexture.m in Sources */,
 				DD36105C29B70CDC00CE7984 /* UIViewController+Show.swift in Sources */,
 				DDA199E328FFE579009D3E61 /* VLLocalWebViewController.m in Sources */,
+				E75B49582B3029B7005E925A /* CommerceDataPanelPresenter.swift in Sources */,
+				E75B493E2B3029B7005E925A /* CommerceLiveViewController.swift in Sources */,
+				E75B49362B3029B7005E925A /* CommerceReceivePKAlertVC.swift in Sources */,
 				DD84177E29090C520026B624 /* VLHomeView.m in Sources */,
 				DD36108C29B70CDC00CE7984 /* ShowMusicEffectVC.swift in Sources */,
 				DDA199E428FFE579009D3E61 /* VLDeviceUtils.m in Sources */,
+				E75B49662B3029B7005E925A /* CommerceSettingLabelCell.swift in Sources */,
 				DD84177D29090C520026B624 /* VLHomeItemModel.m in Sources */,
+				E75B49642B3029B7005E925A /* CommerceRoomInfoView.swift in Sources */,
 				DD84178429090C520026B624 /* VLDiscoveryViewController.m in Sources */,
+				E75B493D2B3029B7005E925A /* CommerceLivePagesViewController.swift in Sources */,
 				DD3610C629B70CDC00CE7984 /* ShowToolMenuView.swift in Sources */,
+				E75B495F2B3029B7005E925A /* CommerceRoomLiveView.swift in Sources */,
 				DDA199F628FFE579009D3E61 /* UIImage+Color.swift in Sources */,
 				DDA19A0D28FFE579009D3E61 /* NetworkManager.swift in Sources */,
 				E357353E29EFD631009D54E1 /* VLAlert.m in Sources */,
 				DDA199F928FFE579009D3E61 /* NSDictionary+dictToModel.m in Sources */,
 				DDA19A0428FFE579009D3E61 /* CALayer+JKBorderColor.m in Sources */,
 				DD36105F29B70CDC00CE7984 /* UIImage+Show.swift in Sources */,
+				E75B494E2B3029B7005E925A /* CommerceNavigationBar.swift in Sources */,
 				DD36106729B70CDC00CE7984 /* ShowAgoraKitManager+DebugSetting.swift in Sources */,
 				DD36106129B70CDC00CE7984 /* ShowMusicPresenter.swift in Sources */,
+				E75B49722B3029B7005E925A /* CommerceSettingHeaderView.swift in Sources */,
 				DD36106129B70CDC00CE7984 /* ShowMusicPresenter.swift in Sources */,
 				DD36109429B70CDC00CE7984 /* ShowSettingActionSheetVC.swift in Sources */,
 				DD3610B329B70CDC00CE7984 /* ShowRoomInfoView.swift in Sources */,
+				E75B495D2B3029B7005E925A /* CommerceRoomBottomBar.swift in Sources */,
 				DD36109A29B70CDC00CE7984 /* ShowPresentTransitioningDelegate.swift in Sources */,
 				DD3610B029B70CDC00CE7984 /* ShowCanvasView.swift in Sources */,
 				DD3610A229B70CDC00CE7984 /* ShowMusicItemCell.swift in Sources */,
 				E3735C892A5E7E75004737EF /* EffectsProcess.m in Sources */,
 				E3735CA42A5E7E75004737EF /* BytesBeautyRender.m in Sources */,
 				DD84178629090C520026B624 /* VLMineView.m in Sources */,
+				E75B49482B3029B7005E925A /* CommerceAEACategoryTitleCell.swift in Sources */,
 				DDA199E728FFE579009D3E61 /* VLFontUtils.m in Sources */,
 				DD36109029B70CDC00CE7984 /* ShowCreateLiveVC.swift in Sources */,
 				DD8417C829090C520026B624 /* TemplateSceneCreateController.swift in Sources */,
 				E3735C872A5E7E75004737EF /* EffectsDetector.m in Sources */,
 				DD3610A429B70CDC00CE7984 /* ShowReceivePKView.swift in Sources */,
+				E75B497C2B3029B7005E925A /* AppContext+Commerce.swift in Sources */,
 				E3735C8A2A5E7E75004737EF /* VideoProcessingManager.m in Sources */,
 				E3735CA32A5E7E75004737EF /* SenseBeautyRender.m in Sources */,
 				DDA199F228FFE579009D3E61 /* UIViewController+VL.m in Sources */,
+				E75B491F2B3029B6005E925A /* Date+Commerce.swift in Sources */,
 				DD8417CB29090C520026B624 /* TemplateServiceImp.swift in Sources */,
+				E75B495B2B3029B7005E925A /* CommerceRoomListView.swift in Sources */,
 				DD36109229B70CDC00CE7984 /* ShowLivePagesViewController.swift in Sources */,
 				DD2A43CF28FFCEE7004CEDCF /* ViewController.swift in Sources */,
+				E75B49522B3029B7005E925A /* CommerceMusicItemCell.swift in Sources */,
 				DD84178129090C520026B624 /* VLDiscoveryItemTCell.m in Sources */,
+				E75B49782B3029B7005E925A /* CommerceToolMenuView.swift in Sources */,
 				DDA199F428FFE579009D3E61 /* String+Extension.swift in Sources */,
 				DD3610BF29B70CDC00CE7984 /* ShowSettingActionSheetCell.swift in Sources */,
+				E75B496E2B3029B7005E925A /* CommerceSettingActionSheetFooterView.swift in Sources */,
 				DDA199DE28FFE579009D3E61 /* AlertManager.swift in Sources */,
 				DDA199EE28FFE579009D3E61 /* VLUIView.m in Sources */,
 				DD3610C829B70CDC00CE7984 /* ShowServiceModel.swift in Sources */,
@@ -2166,16 +2699,21 @@
 				DD36109829B70CDC00CE7984 /* ShowVideoSettingVC.swift in Sources */,
 				DD84177B29090C520026B624 /* VLHomeViewController.m in Sources */,
 				E357353F29EFD631009D54E1 /* VLKTVAlert.m in Sources */,
+				E75B493F2B3029B7005E925A /* CommerceSettingActionSheetVC.swift in Sources */,
+				E75B494B2B3029B7005E925A /* CommerceAEAListContainerView.m in Sources */,
 				DD3610B629B70CDC00CE7984 /* ShowDebugSetting1TFCell.swift in Sources */,
 				DDDDDC3628FFD78C005F4E8B /* UIImage+Scene.swift in Sources */,
 				DDA19A0328FFE579009D3E61 /* NSArray+JKSafeAccess.m in Sources */,
 				053998C5290A83E0005143C7 /* HomeMenuCell.swift in Sources */,
 				DD3610BD29B70CDC00CE7984 /* ShowPresettingCell.swift in Sources */,
+				E75B493B2B3029B7005E925A /* CommerceCreateLiveVC.swift in Sources */,
 				DD84178929090C520026B624 /* VLMainTabBarController.m in Sources */,
 				DD3610AC29B70CDC00CE7984 /* ShowRoomListCell.swift in Sources */,
 				DDA199F828FFE579009D3E61 /* NSDictionary+JKSafeAccess.m in Sources */,
 				DD36109E29B70CDC00CE7984 /* ShowNavigationBar.swift in Sources */,
+				E75B49232B3029B6005E925A /* UIView+Commerce.swift in Sources */,
 				DD36106829B70CDC00CE7984 /* ShowDebug2TFModel.swift in Sources */,
+				E75B497A2B3029B7005E925A /* CommerceRobotService.swift in Sources */,
 				E3735C8F2A5E7E75004737EF /* BEOpenGLRenderHelper.m in Sources */,
 				DD3610C029B70CDC00CE7984 /* ShowSettingHeaderView.swift in Sources */,
 				DDA199EC28FFE579009D3E61 /* VLAPIRequest.m in Sources */,
@@ -2185,66 +2723,94 @@
 				E3735CA22A5E7E75004737EF /* BeautyAPI.m in Sources */,
 				DD36109629B70CDC00CE7984 /* ShowAdvancedSettingVC.swift in Sources */,
 				DD36106429B70CDC00CE7984 /* ShowAgoraKitManager.swift in Sources */,
+				E75B496C2B3029B7005E925A /* CommerceSettingSegmentCell.swift in Sources */,
+				E75B49212B3029B6005E925A /* UIColor+Commerce.swift in Sources */,
 				E72F624D2A8097DF00C963D2 /* VLLoginViewController.swift in Sources */,
+				E75B49692B3029B7005E925A /* CommerceDebugSetting2TFCell.swift in Sources */,
 				E3735C932A5E7E75004737EF /* BEResourceHelper.m in Sources */,
+				E75B49672B3029B7005E925A /* CommerceDebugSetting1TFCell.swift in Sources */,
 				E3735CA12A5E7E75004737EF /* FUBeautyRender.m in Sources */,
 				DD619C0829E3E84D008F63E4 /* SceneVersionCell.swift in Sources */,
 				DDA19A0B28FFE579009D3E61 /* JSONObject.swift in Sources */,
+				E75B49762B3029B7005E925A /* CommerceApplyView.swift in Sources */,
 				E3735CA52A5E7E75004737EF /* SenseBeautyManager.swift in Sources */,
 				DDA19A0C28FFE579009D3E61 /* SyncUtil.swift in Sources */,
+				E75B49392B3029B7005E925A /* CommerceBeautySettingVC.swift in Sources */,
+				E75B49372B3029B7005E925A /* CommerceMusicEffectVC.swift in Sources */,
 				DD84178829090C520026B624 /* VLMineViewController.m in Sources */,
 				DD619C0A29E3E84D008F63E4 /* ContactInfoCell.swift in Sources */,
 				DDA199FA28FFE579009D3E61 /* UIColor+JKWeb.m in Sources */,
 				DDA19A0528FFE579009D3E61 /* NSObject+JKAppInfo.m in Sources */,
 				E36EC8B32A6638440089A374 /* AEAListContainerView.swift in Sources */,
+				E75B49432B3029B7005E925A /* CommerceVideoSettingVC.swift in Sources */,
 				E36BE99729656C43003FCFBF /* AttributedTextView.m in Sources */,
 				DD3610B129B70CDC00CE7984 /* ShowChatInputView.swift in Sources */,
 				DD84178529090C520026B624 /* VLUploadImageResModel.m in Sources */,
 				DDA199E228FFE579009D3E61 /* VLCommonWebViewController.m in Sources */,
 				DD2A43CB28FFCEE7004CEDCF /* AppDelegate.swift in Sources */,
+				E75B49452B3029B7005E925A /* CommerceCunstomNaviBar.swift in Sources */,
 				DD64C68C295C142A00EAB750 /* UIButton+EntLayout.swift in Sources */,
+				E75B49742B3029B7005E925A /* CommerceInviteCell.swift in Sources */,
 				DDA199E828FFE579009D3E61 /* UITextField+Font.m in Sources */,
 				DDA199DF28FFE579009D3E61 /* VLHotSpotBtn.m in Sources */,
 				DDA19A0128FFE579009D3E61 /* NSObject+Extension.m in Sources */,
 				E3735C912A5E7E75004737EF /* BEFrameProcessor.mm in Sources */,
+				E75B49512B3029B7005E925A /* CommerceMusicTableHeaderView.swift in Sources */,
+				E75B494A2B3029B7005E925A /* CommerceAEACategoryView.m in Sources */,
 				DD3610C729B70CDC00CE7984 /* ShowSubscribeServiceProtocol.swift in Sources */,
 				DDA199E028FFE579009D3E61 /* VLEmptyView.m in Sources */,
+				E75B49352B3029B7005E925A /* CommerceRoomListVC.swift in Sources */,
 				E72F624B2A7CEE7700C963D2 /* BaseNavigationView.swift in Sources */,
 				DD36109929B70CDC00CE7984 /* ShowCunstomNaviBar.swift in Sources */,
 				DD84177F29090C520026B624 /* UIWindow+Router.m in Sources */,
 				DD3610AA29B70CDC00CE7984 /* ShowEmptyView.swift in Sources */,
 				DD84178729090C520026B624 /* VLMineTCell.m in Sources */,
+				E75B497D2B3029B7005E925A /* CommerceSyncManagerServiceImp.swift in Sources */,
 				DD8417CC29090C520026B624 /* TemplateServiceProtocol.swift in Sources */,
 				E72F62492A7CEE5900C963D2 /* VRVerifyCodeNumberView.swift in Sources */,
 				DD3610B729B70CDC00CE7984 /* ShowDebugSetting2TFCell.swift in Sources */,
+				E75B493A2B3029B7005E925A /* CommerceBeautyFaceVC.swift in Sources */,
 				ABA095902A8373F400A54FCC /* ShowSettingBitrateCell.swift in Sources */,
 				DD619B8429E3E262008F63E4 /* VerifyCodeView.swift in Sources */,
 				DD3610A129B70CDC00CE7984 /* ShowMusicTableHeaderView.swift in Sources */,
+				E75B494D2B3029B7005E925A /* CommerceAEACategoryView.swift in Sources */,
 				DD36109129B70CDC00CE7984 /* ShowToolMenuViewController.swift in Sources */,
 				DD84178029090C520026B624 /* VLDiscoveryHeaderView.m in Sources */,
+				E75B49682B3029B7005E925A /* CommerceSettingBitrateCell.swift in Sources */,
 				DD36105B29B70CDC00CE7984 /* Date+Show.swift in Sources */,
 				DDDDDC3728FFD78C005F4E8B /* AppContext.swift in Sources */,
+				E75B49552B3029B7005E925A /* CommerceCreateLiveView.swift in Sources */,
 				DDA19A0228FFE579009D3E61 /* UIGestureRecognizer+VL.m in Sources */,
 				DD3610A829B70CDC00CE7984 /* ShowDataPanelPresenter.swift in Sources */,
+				E75B49532B3029B7005E925A /* CommerceReceiveFinishView.swift in Sources */,
 				DD36108D29B70CDC00CE7984 /* ShowSelectQualityVC.swift in Sources */,
 				DD36108E29B70CDC00CE7984 /* ShowBeautySettingVC.swift in Sources */,
 				DD3610C529B70CDC00CE7984 /* ShowPKInviteView.swift in Sources */,
+				E75B49402B3029B7005E925A /* CommerceDebugSettingVC.swift in Sources */,
 				E3735C8D2A5E7E75004737EF /* EffectsCommonObject.m in Sources */,
 				DD3610A629B70CDC00CE7984 /* ShowBeautyFaceCell.swift in Sources */,
 				DDA19A0028FFE579009D3E61 /* NSString+Emoji.m in Sources */,
 				DDA199EB28FFE579009D3E61 /* VLRequestRoute.m in Sources */,
+				E75B496B2B3029B7005E925A /* CommerceSettingSwitchCell.swift in Sources */,
 				DD36106529B70CDC00CE7984 /* ShowChatModel.swift in Sources */,
 				DD3610C129B70CDC00CE7984 /* ShowSegmentView.swift in Sources */,
 				DD6199CC29E3D36D008F63E4 /* AgoraEntAuthorizedManager.swift in Sources */,
 				E3735C902A5E7E75004737EF /* BEEffectManager.mm in Sources */,
 				DDA199FC28FFE579009D3E61 /* UISplitViewController+JKQuickAccess.m in Sources */,
+				E75B491E2B3029B6005E925A /* UIFont+Commerce.swift in Sources */,
 				DD36108929B70CDC00CE7984 /* ShowRoomListVC.swift in Sources */,
 				DD36108F29B70CDC00CE7984 /* ShowBeautyFaceVC.swift in Sources */,
+				E75B496D2B3029B7005E925A /* CommercePresettingHeaderView.swift in Sources */,
 				DD3610CB29B70CDC00CE7984 /* ShowServiceProtocol.swift in Sources */,
+				E75B496F2B3029B7005E925A /* CommercePresettingCell.swift in Sources */,
+				E75B49562B3029B7005E925A /* CommerceBeautyFaceCell.swift in Sources */,
 				DDA19A0728FFE579009D3E61 /* Config.swift in Sources */,
 				DD36105A29B70CDC00CE7984 /* UIFont+Show.swift in Sources */,
+				E75B495A2B3029B7005E925A /* CommerceEmptyView.swift in Sources */,
 				DD3610AD29B70CDC00CE7984 /* ShowRoomBottomBar.swift in Sources */,
 				DD3610A329B70CDC00CE7984 /* ShowReceiveFinishView.swift in Sources */,
+				E75B496A2B3029B7005E925A /* CommerceSettingBaseCell.swift in Sources */,
+				E75B49252B3029B6005E925A /* CommerceMusicPresenter.swift in Sources */,
 				DDA19A0F28FFE579009D3E61 /* VLUserCenter.m in Sources */,
 				DD3610A729B70CDC00CE7984 /* ShowSelectQualityCell.swift in Sources */,
 				DDA199F728FFE579009D3E61 /* Array+Extension.swift in Sources */,
@@ -2257,6 +2823,9 @@
 				DD1603442963CAFD00182A04 /* AgoraEntLog.swift in Sources */,
 				DD3610A529B70CDC00CE7984 /* ShowCreateLiveView.swift in Sources */,
 				DD3610A929B70CDC00CE7984 /* ShowRealTimeDataView.swift in Sources */,
+				E75B49622B3029B7005E925A /* CommerceRoomChatCell.swift in Sources */,
+				E75B49702B3029B7005E925A /* CommerceSettingSliderCell.swift in Sources */,
+				E75B49772B3029B7005E925A /* CommercePKInviteView.swift in Sources */,
 				DDDDDC3828FFD78C005F4E8B /* SceneLocalizedString.swift in Sources */,
 				DD619B9B29E3E262008F63E4 /* UIViewToastExtension.swift in Sources */,
 				DDA199FB28FFE579009D3E61 /* UIColor+JKGradient.m in Sources */,
@@ -2265,47 +2834,73 @@
 				E3735C9E2A5E7E75004737EF /* BeautyModel.swift in Sources */,
 				DD619B9629E3E262008F63E4 /* Notification+Presentation.swift in Sources */,
 				E36EC8B52A663A600089A374 /* AEACategoryView.swift in Sources */,
+				E75B49442B3029B7005E925A /* CommerceNetStateSelectViewController.swift in Sources */,
 				DD3610A029B70CDC00CE7984 /* ShowMusicEffectCell.swift in Sources */,
+				E75B49592B3029B7005E925A /* CommerceRealTimeDataView.swift in Sources */,
 				DD84178229090C520026B624 /* VLDiscoveryView.m in Sources */,
 				DD3610C429B70CDC00CE7984 /* ShowApplyView.swift in Sources */,
 				AB4746E72A5E82AB00E68FBA /* ShowRobotService.swift in Sources */,
+				E75B49542B3029B7005E925A /* CommerceReceivePKView.swift in Sources */,
+				E75B495C2B3029B7005E925A /* CommerceRoomListCell.swift in Sources */,
 				DD3610C329B70CDC00CE7984 /* ShowApplyAndInviteView.swift in Sources */,
 				DDA19A0A28FFE579009D3E61 /* Screen.swift in Sources */,
 				DD84178329090C520026B624 /* VLAmusementTCell.m in Sources */,
 				DD3610BE29B70CDC00CE7984 /* ShowSettingSliderCell.swift in Sources */,
 				DDA199F128FFE579009D3E61 /* BaseNavigationController.m in Sources */,
+				E75B491D2B3029B6005E925A /* CommerceThrottle.swift in Sources */,
+				E75B492C2B3029B7005E925A /* CommerceDebugPrivateParamsVC.swift in Sources */,
+				E75B49382B3029B7005E925A /* CommerceSelectQualityVC.swift in Sources */,
+				E75B497B2B3029B7005E925A /* CommerceServiceModel.swift in Sources */,
 				E3735C8E2A5E7E75004737EF /* BELicenseHelper.mm in Sources */,
+				E75B492A2B3029B7005E925A /* CommerceDebug2TFModel.swift in Sources */,
 				E3735C862A5E7E75004737EF /* Effects.m in Sources */,
 				DD36105D29B70CDC00CE7984 /* UIColor+Show.swift in Sources */,
+				E75B497E2B3029B7005E925A /* CommerceServiceProtocol.swift in Sources */,
 				DD3610AB29B70CDC00CE7984 /* ShowRoomListView.swift in Sources */,
 				E3735C922A5E7E75004737EF /* BEEffectResourceHelper.m in Sources */,
 				E3735C942A5E7E75004737EF /* BERenderHelper.m in Sources */,
 				E3735C882A5E7E75004737EF /* EffectsAnimal.m in Sources */,
 				DD36106929B70CDC00CE7984 /* ShowSettingKey.swift in Sources */,
+				E75B49602B3029B7005E925A /* CommerceCanvasView.swift in Sources */,
 				DD3610B829B70CDC00CE7984 /* ShowSettingBaseCell.swift in Sources */,
+				E75B49492B3029B7005E925A /* CommerceAEAListContainerView.swift in Sources */,
 				DD36109F29B70CDC00CE7984 /* ShowBaseViewController.swift in Sources */,
 				E3735C342A5E4AFF004737EF /* UITextView+Extension.swift in Sources */,
 				DDA19A0628FFE579009D3E61 /* NSObject+JKAutoCoding.m in Sources */,
 				ABE4B37A2A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift in Sources */,
+				E75B49752B3029B7005E925A /* CommerceApplyAndInviteView.swift in Sources */,
+				E75B49412B3029B7005E925A /* CommerceAdvancedSettingVC.swift in Sources */,
 				E3735C9C2A5E7E75004737EF /* BundleUtil.m in Sources */,
+				E75B495E2B3029B7005E925A /* CommerceRoomMembersCountView.swift in Sources */,
 				DDA199EA28FFE579009D3E61 /* VLBaseModel.m in Sources */,
+				E75B494C2B3029B7005E925A /* CommerceAEACategoryTitleCell.m in Sources */,
+				E75B49792B3029B7005E925A /* CommerceSubscribeServiceProtocol.swift in Sources */,
 				DD36109329B70CDC00CE7984 /* ShowLiveViewController.swift in Sources */,
 				E72F62582A823B5000C963D2 /* FUBeautyManager.swift in Sources */,
 				DD3610CA29B70CDC00CE7984 /* ShowSyncManagerServiceImp.swift in Sources */,
 				DD3610AF29B70CDC00CE7984 /* ShowRoomLiveView.swift in Sources */,
+				E75B49222B3029B6005E925A /* UIImage+Commerce.swift in Sources */,
+				E75B49272B3029B6005E925A /* CommerceAgoraKitManager.swift in Sources */,
+				E75B491C2B3029B6005E925A /* NSString+Commerce.swift in Sources */,
 				DD3610B429B70CDC00CE7984 /* ShowPresettingFooterView.swift in Sources */,
 				DD3610D029B70F3800CE7984 /* VLMineCellModel.m in Sources */,
 				DD36106229B70CDC00CE7984 /* ShowMusicModel.swift in Sources */,
 				DDA19A1028FFE579009D3E61 /* VLGlobalHelper.m in Sources */,
 				DDA199E628FFE579009D3E61 /* UIButton+Font.m in Sources */,
 				DD36105929B70CDC00CE7984 /* NSString+Show.swift in Sources */,
+				E75B49572B3029B7005E925A /* CommerceSelectQualityCell.swift in Sources */,
 				DD84178A29090C520026B624 /* VLMainRootViewController.m in Sources */,
 				DD220BC9295B48FD00F57F30 /* QMUIHelper.m in Sources */,
 				DD619B8C29E3E262008F63E4 /* Throttle.swift in Sources */,
+				E75B493C2B3029B7005E925A /* CommerceToolMenuViewController.swift in Sources */,
+				E75B49242B3029B6005E925A /* CommerceMusicModel.swift in Sources */,
 				E3735C8B2A5E7E75004737EF /* EffectsLicense.m in Sources */,
+				E75B49632B3029B7005E925A /* CommerceLiveMoreDialog.swift in Sources */,
 				DD3610C929B70CDC00CE7984 /* AppContext+Show.swift in Sources */,
 				DDA199FF28FFE579009D3E61 /* NSString+Helper.m in Sources */,
 				DD36106029B70CDC00CE7984 /* UIView+Show.swift in Sources */,
+				E75B49202B3029B6005E925A /* UIViewController+Commerce.swift in Sources */,
+				E75B49502B3029B7005E925A /* CommerceMusicEffectCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

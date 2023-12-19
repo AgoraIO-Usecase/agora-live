@@ -9,7 +9,7 @@ import Foundation
 
 extension UIViewController {
     
-    func showAlert(title: String? = nil, message: String, confirmTitle: String? = "show_alert_confirm_btn_title".show_localized, cancelTitle: String? = "show_alert_cancel_btn_title".show_localized, confirm: (()->Void)? = nil ) {
+    func show_showAlert(title: String? = nil, message: String, confirmTitle: String? = "show_alert_confirm_btn_title".show_localized, cancelTitle: String? = "show_alert_cancel_btn_title".show_localized, confirm: (()->Void)? = nil ) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         if confirmTitle != nil {
             let action = UIAlertAction(title: confirmTitle, style: .default) { _ in

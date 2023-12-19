@@ -915,7 +915,7 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
     
     func onClickCloseButton() {
         if role == .broadcaster {
-            showAlert(message: "show_alert_live_end_title".show_localized) {[weak self] in
+            show_showAlert(message: "show_alert_live_end_title".show_localized) {[weak self] in
                 self?.leaveRoom()
                 self?.dismiss(animated: true)
             }
@@ -1017,7 +1017,7 @@ extension ShowLiveViewController {
 
 extension ShowLiveViewController {
     private func showError(title: String, errMsg: String) {
-        showAlert(title: title, message: errMsg) { [weak self] in
+        show_showAlert(title: title, message: errMsg) { [weak self] in
             self?.leaveRoom()
             self?.dismiss(animated: true)
         }

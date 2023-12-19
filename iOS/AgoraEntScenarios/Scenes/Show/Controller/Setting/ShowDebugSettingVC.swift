@@ -144,7 +144,7 @@ extension ShowDebugSettingVC: UITableViewDelegate, UITableViewDataSource {
             cell.setTitle(data.title,enable:true, isOn: data.boolValue) {[weak self] isOn in
                 self?.changeValue(isOn, forSettingKey: data)
             } detailButtonAction: {[weak self] in
-                self?.showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
+                self?.show_showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
             }
             return cell
         }else if data.type == .label {
@@ -166,7 +166,7 @@ extension ShowDebugSettingVC: UITableViewDelegate, UITableViewDataSource {
                     vc.showBgView()
                 })
             } detailButtonAction: {[weak self] in
-                self?.showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
+                self?.show_showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
             }
 
             return cell

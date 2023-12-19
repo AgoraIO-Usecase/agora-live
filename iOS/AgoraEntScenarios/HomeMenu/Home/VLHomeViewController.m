@@ -57,12 +57,23 @@
 
 
 - (void)itemClickAction:(int)tagValue {
-    NSArray* sceneNames = @[@"LiveShow"];
+    NSArray* sceneNames = @[@"LiveShow", @"E-Commerce"];
     [[NetworkManager shared] reportSceneClickWithSceneName:sceneNames[tagValue]];
     [[NetworkManager shared] reportDeviceInfoWithSceneName:sceneNames[tagValue]];
     [[NetworkManager shared] reportUserBehaviorWithSceneName:sceneNames[tagValue]];
-    ShowRoomListVC *vc = [ShowRoomListVC new];
-    [self.navigationController pushViewController:vc animated:YES];
+    switch (tagValue) {
+        case 0: {
+            ShowRoomListVC *vc = [ShowRoomListVC new];
+            [self.navigationController pushViewController:vc animated:YES];
+            break;
+        }
+        case 1: {
+            CommerceRoomListVC *vc = [CommerceRoomListVC new];
+            [self.navigationController pushViewController:vc animated:YES];
+            break;
+        }
+        default: break;
+    }
 }
 
 @end
