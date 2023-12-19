@@ -354,6 +354,7 @@
 		E75B497C2B3029B7005E925A /* AppContext+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49182B3029B6005E925A /* AppContext+Commerce.swift */; };
 		E75B497D2B3029B7005E925A /* CommerceSyncManagerServiceImp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49192B3029B6005E925A /* CommerceSyncManagerServiceImp.swift */; };
 		E75B497E2B3029B7005E925A /* CommerceServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B491A2B3029B6005E925A /* CommerceServiceProtocol.swift */; };
+		E75B49812B31920F005E925A /* CommerceGradualTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = E75B49802B31920F005E925A /* CommerceGradualTableView.m */; };
 		E76F80142AF2417800CCB9D6 /* ShowLiveMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */; };
 /* End PBXBuildFile section */
 
@@ -831,6 +832,8 @@
 		E75B49182B3029B6005E925A /* AppContext+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppContext+Commerce.swift"; sourceTree = "<group>"; };
 		E75B49192B3029B6005E925A /* CommerceSyncManagerServiceImp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSyncManagerServiceImp.swift; sourceTree = "<group>"; };
 		E75B491A2B3029B6005E925A /* CommerceServiceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceServiceProtocol.swift; sourceTree = "<group>"; };
+		E75B497F2B31920F005E925A /* CommerceGradualTableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommerceGradualTableView.h; sourceTree = "<group>"; };
+		E75B49802B31920F005E925A /* CommerceGradualTableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CommerceGradualTableView.m; sourceTree = "<group>"; };
 		E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowLiveMoreDialog.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -2257,6 +2260,8 @@
 				E75B48F52B3029B6005E925A /* CommerceRoomBottomBar.swift */,
 				E75B48F62B3029B6005E925A /* CommerceRoomMembersCountView.swift */,
 				E75B48F72B3029B6005E925A /* CommerceRoomLiveView.swift */,
+				E75B497F2B31920F005E925A /* CommerceGradualTableView.h */,
+				E75B49802B31920F005E925A /* CommerceGradualTableView.m */,
 				E75B48F82B3029B6005E925A /* CommerceCanvasView.swift */,
 				E75B48F92B3029B6005E925A /* CommerceChatInputView.swift */,
 				E75B48FA2B3029B6005E925A /* CommerceRoomChatCell.swift */,
@@ -2593,6 +2598,7 @@
 				DDA199E328FFE579009D3E61 /* VLLocalWebViewController.m in Sources */,
 				E75B49582B3029B7005E925A /* CommerceDataPanelPresenter.swift in Sources */,
 				E75B493E2B3029B7005E925A /* CommerceLiveViewController.swift in Sources */,
+				E75B49812B31920F005E925A /* CommerceGradualTableView.m in Sources */,
 				DD84177E29090C520026B624 /* VLHomeView.m in Sources */,
 				DD36108C29B70CDC00CE7984 /* ShowMusicEffectVC.swift in Sources */,
 				DDA199E428FFE579009D3E61 /* VLDeviceUtils.m in Sources */,

@@ -34,6 +34,8 @@ class CommerceChatInputView: UIView {
         textField.font = .commerce_R_14
         textField.textColor = .commerce_chat_input_text
         textField.returnKeyType = .send
+        textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return textField
     }()
     
@@ -53,6 +55,8 @@ class CommerceChatInputView: UIView {
         button.setBackgroundImage(UIImage.commerce_sceneImage(name: "show_live_chat_bar_send"), for: .normal)
         button.setTitle("show_live_chat_bar_send".commerce_localized, for: .normal)
         button.addTarget(self, action: #selector(didClickSendButton), for: .touchUpInside)
+        button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         return button
     }()
         

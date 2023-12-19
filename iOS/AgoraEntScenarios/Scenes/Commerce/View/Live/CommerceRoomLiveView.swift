@@ -7,7 +7,7 @@
 
 import UIKit
 
-private let kTableViewBottomOffset: CGFloat = Screen.safeAreaBottomHeight() + 109
+private let kTableViewBottomOffset: CGFloat = Screen.safeAreaBottomHeight() + 54
 private let kChatInputViewHeight: CGFloat = 56
 
 protocol CommerceRoomLiveViewDelegate: CommerceRoomBottomBarDelegate {
@@ -83,9 +83,10 @@ class CommerceRoomLiveView: UIView {
         let view = CommerceRoomBottomBar(isBroadcastor: isBroadcastor)
         return view
     }()
-    
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView()
+    private lazy var tableView: CommerceGradualTableView = {
+        let tableView = CommerceGradualTableView(frame: .zero,
+                                                 direction: [.top, .bottom],
+                                                 gradualValue: 0.3)
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.delegate = self
@@ -106,10 +107,15 @@ class CommerceRoomLiveView: UIView {
     }()
     
     private lazy var chatButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setBackgroundImage(UIImage.commerce_sceneImage(name: "show_live_chat"), for: .normal)
+        let button = UIButton()
         button.setTitle("create_live_chat_title".commerce_localized, for: .normal)
-        button.titleLabel?.font = UIFont.commerce_R_12
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont.commerce_R_13
+        button.layer.cornerRadius = 19
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor(hex: "#FFFFFF", alpha: 0.6).cgColor
+        button.backgroundColor = UIColor(hex: "#000000", alpha: 0.25)
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(didClickChatButton), for: .touchUpInside)
         return button
     }()
@@ -162,18 +168,18 @@ class CommerceRoomLiveView: UIView {
         
         addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            let bottomOffset = Screen.safeAreaBottomHeight() + 109
             make.left.equalTo(15)
             make.bottom.equalTo(-kTableViewBottomOffset)
             make.right.equalTo(-70)
             make.height.equalTo(168)
         }
-    
-        chatButton.isHidden = true
+        
         addSubview(chatButton)
         chatButton.snp.makeConstraints { make in
             let bottomOffset = Screen.safeAreaBottomHeight() + 4
             make.left.equalTo(15)
+            make.width.equalTo(134)
+            make.height.equalTo(38)
             make.bottom.equalTo(-max(10, bottomOffset))
         }
         
@@ -216,11 +222,15 @@ class CommerceRoomLiveView: UIView {
         
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: nil) {[weak self] notify in
             guard let self = self else {return}
+            guard let duration = notify.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
             self.chatInputView.snp.updateConstraints { make in
                 make.bottom.equalToSuperview()
             }
             self.tableView.snp.updateConstraints { make in
                 make.bottom.equalTo(-kTableViewBottomOffset)
+            }
+            UIView.animate(withDuration: duration) {
+                self.layoutIfNeeded()
             }
             self.coverView.removeFromSuperview()
         }
@@ -246,8 +256,12 @@ class CommerceRoomLiveView: UIView {
         delegate?.onClickMoreButton()
     }
     
-    private func sendMessage(){
-        
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let view = super.hitTest(point, with: event)
+        if view is UITableViewCell || view?.superview is UITableViewCell || view?.superview?.superview is UITableViewCell {
+            return tableView
+        }
+        return view
     }
 }
 
