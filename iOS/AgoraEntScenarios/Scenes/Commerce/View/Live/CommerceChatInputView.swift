@@ -20,44 +20,26 @@ class CommerceChatInputView: UIView {
     
     weak var delegate: CommerceChatInputViewDelegate?
     
-    private lazy var bgView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .commerce_chat_input_bg
-        view.layer.cornerRadius = kTextFiledHeight * 0.5
-        view.layer.masksToBounds = true
-        return view
-    }()
-    
     lazy var textField: UITextField = {
         let textField = UITextField()
+        let attributes = [
+            NSAttributedString.Key.foregroundColor: UIColor(hex: "#FFFFFF", alpha: 0.5),
+            NSAttributedString.Key.font: UIFont.commerce_R_13
+        ]
+        textField.attributedPlaceholder = NSAttributedString(string: "create_live_chat_title".commerce_localized,
+                                                             attributes: attributes as [NSAttributedString.Key : Any])
         textField.delegate = self
-        textField.font = .commerce_R_14
-        textField.textColor = .commerce_chat_input_text
+        textField.font = .commerce_R_13
+        textField.textColor = UIColor(hex: "#FFFFFF", alpha: 1.0)
+        textField.leftView = UIView(frame: CGRect(origin: .zero, size: CGSize(width: 16, height: 10)))
+        textField.leftViewMode = .always
+        textField.backgroundColor = UIColor(hex: "#000000", alpha: 0.25)
         textField.returnKeyType = .send
-        textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        textField.layer.borderWidth = 1
+        textField.layer.borderColor = UIColor(hex: "#FFFFFF", alpha: 0.6).cgColor
+        textField.layer.cornerRadius = 22
+        textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
-    }()
-    
-    private lazy var emojiButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage.commerce_sceneImage(name: "show_live_chat_bar_emoji_nor"), for: .normal)
-        button.setImage(UIImage.commerce_sceneImage(name: "show_live_chat_bar_emoji_nor"), for: .selected)
-        button.addTarget(self, action: #selector(didClickEmojiButton), for: .touchUpInside)
-        button.isHidden = true
-        return button
-    }()
-    
-    private lazy var sendButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.titleLabel?.font = .commerce_R_14
-        button.setTitleColor(.commerce_main_text, for: .normal)
-        button.setBackgroundImage(UIImage.commerce_sceneImage(name: "show_live_chat_bar_send"), for: .normal)
-        button.setTitle("show_live_chat_bar_send".commerce_localized, for: .normal)
-        button.addTarget(self, action: #selector(didClickSendButton), for: .touchUpInside)
-        button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        return button
     }()
         
     override init(frame: CGRect) {
@@ -70,35 +52,14 @@ class CommerceChatInputView: UIView {
     }
     
     private func createSubviews(){
-        backgroundColor = .white
+        backgroundColor = .clear
         
-        addSubview(sendButton)
-        sendButton.snp.makeConstraints { make in
-            make.right.equalTo(-15)
-            make.centerY.equalToSuperview()
-        }
-        
-        addSubview(bgView)
-        bgView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.height.equalTo(kTextFiledHeight)
-            make.left.equalTo(15)
-            make.right.equalTo(sendButton.snp.left).offset(-20)
-        }
-        
-        bgView.addSubview(emojiButton)
-        emojiButton.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.right.equalTo(-10)
-            make.width.height.equalTo(30)
-        }
-        
-        bgView.addSubview(textField)
-        textField.snp.makeConstraints { make in
-            make.left.equalTo(10)
-            make.top.bottom.equalToSuperview()
-            make.right.equalTo(emojiButton.snp.left).offset(-5)
-        }
+        addSubview(textField)
+        textField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12).isActive = true
+        textField.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        textField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12).isActive = true
+        textField.heightAnchor.constraint(equalToConstant: 38).isActive = true
+        textField.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
     }
     
     @objc private func didClickEmojiButton(){
