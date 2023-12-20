@@ -472,6 +472,11 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
         dialog.show()
     }
     
+    func onClickShoppingButton() {
+        let shoppingListView = CommerceShoppingListView(isBroadcaster: role == .broadcaster)
+        AlertManager.show(view: shoppingListView, alertPostion: .bottom)
+    }
+    
     func onClickSettingButton() {
         let muteAudio: Bool = self.muteLocalAudio
         settingMenuVC.selectedMap = [.camera: self.muteLocalVideo, .mic: muteAudio, .mute_mic: muteAudio]
