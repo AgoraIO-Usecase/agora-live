@@ -91,7 +91,6 @@ class CommerceRoomLiveView: UIView {
         tableView.separatorStyle = .none
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.allowsSelection = false
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 46
         tableView.showsVerticalScrollIndicator = false
@@ -295,6 +294,22 @@ extension CommerceRoomLiveView: UITableViewDelegate, UITableViewDataSource {
         let chatModel = chatArray[indexPath.row]
         cell?.setUserName(chatModel.userName, msg: chatModel.text)
         return cell!
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let chatModel = chatArray[indexPath.row]
+        let cell = tableView.cellForRow(at: indexPath) as? CommerceRoomChatCell
+        
+        let alertVC = UIAlertController(title: cell?.msgLabel.text, message: nil, preferredStyle: .actionSheet)
+        let report = UIAlertAction(title: "Report", style: .default) { _ in
+            ToastView.show(text: "Report Susccessful")
+        }
+        let cancel = UIAlertAction(title: "show_advance_setting_action_sheet_cancel".commerce_localized,
+                                   style: .cancel,
+                                   handler: nil)
+        alertVC.addAction(report)
+        alertVC.addAction(cancel)
+        UIViewController.cl_topViewController()?.present(alertVC, animated: true)
     }
 }
 

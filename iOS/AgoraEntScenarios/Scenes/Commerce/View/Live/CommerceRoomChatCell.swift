@@ -17,7 +17,7 @@ class CommerceRoomChatCell: UITableViewCell {
         return bgView
     }()
     
-    private lazy var msgLabel: UILabel = {
+    lazy var msgLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 0
