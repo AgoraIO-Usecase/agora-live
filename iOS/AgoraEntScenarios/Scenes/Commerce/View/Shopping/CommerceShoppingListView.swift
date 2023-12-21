@@ -69,7 +69,7 @@ class CommerceShoppingListViewCell: UITableViewCell {
         let label = UILabel()
         label.text = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
         label.textColor = UIColor(hex: "#191919", alpha: 1.0)
-        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.font = .systemFont(ofSize: 16, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -85,7 +85,7 @@ class CommerceShoppingListViewCell: UITableViewCell {
         let label = UILabel()
         label.text = "$20"
         label.textColor = UIColor(hex: "#5C1300", alpha: 1.0)
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
+        label.font = .systemFont(ofSize: 18, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -93,7 +93,7 @@ class CommerceShoppingListViewCell: UITableViewCell {
         let button = UIButton()
         button.setTitle("Buy", for: .normal)
         button.setTitleColor(UIColor(hex: "#191919", alpha: 1.0), for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
+        button.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
         button.cornerRadius(20)
         button.backgroundColor = UIColor(hex: "#DFE1E6", alpha: 1.0)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -128,6 +128,19 @@ class CommerceShoppingListViewCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setShoppingData(model: CommerceShoppingBuyModel?, isBroadcaster: Bool) {
+        guard let model = model else { return }
+        coverImageView.sd_setImage(with: URL(string: model.imageName ?? ""),
+                                   placeholderImage: UIImage.commerce_sceneImage(name: model.imageName ?? ""))
+        titleLabel.text = model.title
+        numberLabel.text = "Qty: \(model.inventory)"
+        priceLabel.text = "$\(model.price)"
+        statusButton.setTitleColor(model.status.titleColor, for: .normal)
+        statusButton.setBackgroundImage(createGradientImage(colors: model.status.backgroundColor), for: .normal)
+        statusButton.isHidden = isBroadcaster
+        numberButton.isHidden = !isBroadcaster
     }
     
     private func setupUI() {

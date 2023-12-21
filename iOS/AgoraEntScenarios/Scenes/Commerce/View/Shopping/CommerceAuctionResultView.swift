@@ -32,7 +32,7 @@ class CommerceAuctionResultView: UIView {
         let label = UILabel()
         label.text = "armanikid"
         label.textColor = UIColor(hex: "#5C1300", alpha: 1.0)
-        label.font = .systemFont(ofSize: 32, weight: .semibold)
+        label.font = .systemFont(ofSize: 32, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -40,7 +40,7 @@ class CommerceAuctionResultView: UIView {
         let label = UILabel()
         label.text = "won"
         label.textColor = UIColor(hex: "#191919", alpha: 1.0)
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
+        label.font = .systemFont(ofSize: 18, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -48,7 +48,7 @@ class CommerceAuctionResultView: UIView {
         let label = UILabel()
         label.text = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
         label.textColor = UIColor(hex: "#191919", alpha: 1.0)
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
+        label.font = .systemFont(ofSize: 18, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

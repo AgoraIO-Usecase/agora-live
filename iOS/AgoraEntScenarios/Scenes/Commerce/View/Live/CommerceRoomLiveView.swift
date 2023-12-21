@@ -202,11 +202,12 @@ class CommerceRoomLiveView: UIView {
             guard let keyboardRect = (notify.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
             guard let duration = notify.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
             let keyboradHeight = keyboardRect.size.height
+            let height = Screen.height == self.height ? 0 : Screen.height - self.height
             self.chatInputView.snp.updateConstraints { make in
-                make.bottom.equalToSuperview().offset(-keyboradHeight)
+                make.bottom.equalToSuperview().offset(-(keyboradHeight - height))
             }
             self.tableView.snp.updateConstraints { make in
-                make.bottom.equalTo(-kTableViewBottomOffset - keyboradHeight)
+                make.bottom.equalTo(-kTableViewBottomOffset - (keyboradHeight - height))
             }
             UIView.animate(withDuration: duration) {
                 self.layoutIfNeeded()

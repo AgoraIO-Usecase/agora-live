@@ -357,6 +357,8 @@
 		E75B49842B328ADA005E925A /* CommerceShoppingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49832B328ADA005E925A /* CommerceShoppingListView.swift */; };
 		E75B49862B329A53005E925A /* CommerceNumberButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49852B329A52005E925A /* CommerceNumberButton.swift */; };
 		E75B49882B32F150005E925A /* CommerceAuctionResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49872B32F150005E925A /* CommerceAuctionResultView.swift */; };
+		E75B498A2B33DD1F005E925A /* CommerceAuctionShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49892B33DD1F005E925A /* CommerceAuctionShoppingView.swift */; };
+		E75B498D2B34102E005E925A /* CommerceShoppingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B498C2B34102E005E925A /* CommerceShoppingModel.swift */; };
 		E76F80142AF2417800CCB9D6 /* ShowLiveMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */; };
 /* End PBXBuildFile section */
 
@@ -838,6 +840,8 @@
 		E75B49832B328ADA005E925A /* CommerceShoppingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceShoppingListView.swift; sourceTree = "<group>"; };
 		E75B49852B329A52005E925A /* CommerceNumberButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceNumberButton.swift; sourceTree = "<group>"; };
 		E75B49872B32F150005E925A /* CommerceAuctionResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceAuctionResultView.swift; sourceTree = "<group>"; };
+		E75B49892B33DD1F005E925A /* CommerceAuctionShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceAuctionShoppingView.swift; sourceTree = "<group>"; };
+		E75B498C2B34102E005E925A /* CommerceShoppingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceShoppingModel.swift; sourceTree = "<group>"; };
 		E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowLiveMoreDialog.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -2082,6 +2086,7 @@
 		E75B48A72B3029B6005E925A /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				E75B498B2B340FBF005E925A /* ShoppingModels */,
 				E75B48A82B3029B6005E925A /* Music */,
 				E75B48AB2B3029B6005E925A /* CommerceAgoraKitManager+Setting.swift */,
 				E75B48AC2B3029B6005E925A /* CommerceAgoraKitManager.swift */,
@@ -2323,8 +2328,17 @@
 				E75B49832B328ADA005E925A /* CommerceShoppingListView.swift */,
 				E75B49852B329A52005E925A /* CommerceNumberButton.swift */,
 				E75B49872B32F150005E925A /* CommerceAuctionResultView.swift */,
+				E75B49892B33DD1F005E925A /* CommerceAuctionShoppingView.swift */,
 			);
 			path = Shopping;
+			sourceTree = "<group>";
+		};
+		E75B498B2B340FBF005E925A /* ShoppingModels */ = {
+			isa = PBXGroup;
+			children = (
+				E75B498C2B34102E005E925A /* CommerceShoppingModel.swift */,
+			);
+			path = ShoppingModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2628,6 +2642,7 @@
 				DDA19A0D28FFE579009D3E61 /* NetworkManager.swift in Sources */,
 				E357353E29EFD631009D54E1 /* VLAlert.m in Sources */,
 				DDA199F928FFE579009D3E61 /* NSDictionary+dictToModel.m in Sources */,
+				E75B498A2B33DD1F005E925A /* CommerceAuctionShoppingView.swift in Sources */,
 				DDA19A0428FFE579009D3E61 /* CALayer+JKBorderColor.m in Sources */,
 				DD36105F29B70CDC00CE7984 /* UIImage+Show.swift in Sources */,
 				E75B494E2B3029B7005E925A /* CommerceNavigationBar.swift in Sources */,
@@ -2686,6 +2701,7 @@
 				DDA199F828FFE579009D3E61 /* NSDictionary+JKSafeAccess.m in Sources */,
 				DD36109E29B70CDC00CE7984 /* ShowNavigationBar.swift in Sources */,
 				E75B49232B3029B6005E925A /* UIView+Commerce.swift in Sources */,
+				E75B498D2B34102E005E925A /* CommerceShoppingModel.swift in Sources */,
 				DD36106829B70CDC00CE7984 /* ShowDebug2TFModel.swift in Sources */,
 				E75B497A2B3029B7005E925A /* CommerceRobotService.swift in Sources */,
 				E3735C8F2A5E7E75004737EF /* BEOpenGLRenderHelper.m in Sources */,

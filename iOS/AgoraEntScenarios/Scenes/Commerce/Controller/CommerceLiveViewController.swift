@@ -96,6 +96,12 @@ class CommerceLiveViewController: UIViewController {
     private lazy var liveView: CommerceRoomLiveView = {
         let view = CommerceRoomLiveView(isBroadcastor: role == .broadcaster)
         view.delegate = self
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    private lazy var auctionView: CommerceAuctionShoppingView = {
+        let view = CommerceAuctionShoppingView(isBroadcastor: role == .broadcaster)
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -108,6 +114,7 @@ class CommerceLiveViewController: UIViewController {
         }
         return realTimeView
     }()
+    private var liveViewBottomCons: NSLayoutConstraint?
     
     private lazy var panelPresenter = CommerceDataPanelPresenter()
     
@@ -171,9 +178,16 @@ class CommerceLiveViewController: UIViewController {
         navigationController?.isNavigationBarHidden = true
         liveView.room = room
         view.addSubview(liveView)
-        liveView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
+        liveView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        liveView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        liveView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        liveViewBottomCons = liveView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        liveViewBottomCons?.isActive = true
+        
+        view.addSubview(auctionView)
+        auctionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        auctionView.topAnchor.constraint(equalTo: liveView.bottomAnchor).isActive = true
+        auctionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
     }
     
     func leaveRoom(){
@@ -473,8 +487,13 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
     }
     
     func onClickShoppingButton() {
-        let shoppingListView = CommerceShoppingListView(isBroadcaster: role == .broadcaster)
-        AlertManager.show(view: shoppingListView, alertPostion: .bottom)
+//        let shoppingListView = CommerceShoppingListView(isBroadcaster: role == .broadcaster)
+//        AlertManager.show(view: shoppingListView, alertPostion: .bottom)
+        liveViewBottomCons?.constant = -(auctionView.height + Screen.safeAreaBottomHeight() + 6)
+        liveViewBottomCons?.isActive = true
+        UIView.animate(withDuration: 0.25) {
+            self.view.layoutIfNeeded()
+        }
     }
     
     func onClickSettingButton() {
