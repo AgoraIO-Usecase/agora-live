@@ -118,6 +118,14 @@ class CommerceRoomLiveView: UIView {
         button.addTarget(self, action: #selector(didClickChatButton), for: .touchUpInside)
         return button
     }()
+    private lazy var upvoteButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage.commerce_sceneImage(name: "commerce_upvote_icon"), for: .normal)
+        button.isHidden = isBroadcastor
+        button.addTarget(self, action: #selector(onClickUpvoteButton(sender:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     
     private var isBroadcastor = false
     
@@ -194,6 +202,12 @@ class CommerceRoomLiveView: UIView {
             make.height.equalTo(kChatInputViewHeight)
             make.bottom.equalToSuperview()
         }
+        
+        addSubview(upvoteButton)
+        upvoteButton.snp.makeConstraints { make in
+            make.trailing.equalTo(bottomBar)
+            make.bottom.equalTo(bottomBar.snp.top).offset(-16)
+        }
     }
     
     private func addObserver(){
@@ -256,12 +270,28 @@ class CommerceRoomLiveView: UIView {
         delegate?.onClickMoreButton()
     }
     
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let view = super.hitTest(point, with: event)
-        if view is UITableViewCell || view?.superview is UITableViewCell || view?.superview?.superview is UITableViewCell {
-            return tableView
-        }
-        return view
+    @objc
+    private func onClickUpvoteButton(sender: UIButton) {
+        showHeartAnimation(at: CGPoint(x: sender.centerX, y: sender.origin.y))
+    }
+
+    func showHeartAnimation(at location: CGPoint) {
+        let images = (0...5).compactMap({ UIImage.commerce_sceneImage(name: "commerce_smiley_\($0)") })
+        let animationLayer = CommerceEmitterLayer.emitterLayer(size: CGSize.init(width: 32, height: 32),
+                                                               center: location,
+                                                               image: images.randomElement() ?? UIImage())
+        animationLayer.cm_delegate = self
+        animationLayer.fromAlpha = 1.0
+        animationLayer.toAlpha = 0
+        animationLayer.fromScale = 0.5
+        animationLayer.toScale = 1.2
+        animationLayer.roateRange = Double.pi / 4
+        animationLayer.startAnimation()
+    }
+}
+extension CommerceRoomLiveView: CommerceEmitterLayerDelegate {
+    func displayViewForEmitter() -> UIView {
+        self
     }
 }
 

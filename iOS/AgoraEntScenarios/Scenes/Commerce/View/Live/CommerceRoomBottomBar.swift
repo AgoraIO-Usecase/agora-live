@@ -89,7 +89,7 @@ class CommerceRoomBottomBar: UIView {
         var i = 0
         let btnWidth: CGFloat = 38
         let btnHeight: CGFloat = 38
-        let spacing: CGFloat = 4
+        let spacing: CGFloat = 12
         for button in buttonArray {
             addSubview(button)
             button.snp.makeConstraints { make in

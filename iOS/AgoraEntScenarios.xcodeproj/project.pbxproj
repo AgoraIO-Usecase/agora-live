@@ -359,6 +359,7 @@
 		E75B49882B32F150005E925A /* CommerceAuctionResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49872B32F150005E925A /* CommerceAuctionResultView.swift */; };
 		E75B498A2B33DD1F005E925A /* CommerceAuctionShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B49892B33DD1F005E925A /* CommerceAuctionShoppingView.swift */; };
 		E75B498D2B34102E005E925A /* CommerceShoppingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B498C2B34102E005E925A /* CommerceShoppingModel.swift */; };
+		E75B498F2B34304B005E925A /* CommerceEmitterLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75B498E2B34304B005E925A /* CommerceEmitterLayer.swift */; };
 		E76F80142AF2417800CCB9D6 /* ShowLiveMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */; };
 /* End PBXBuildFile section */
 
@@ -842,6 +843,7 @@
 		E75B49872B32F150005E925A /* CommerceAuctionResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceAuctionResultView.swift; sourceTree = "<group>"; };
 		E75B49892B33DD1F005E925A /* CommerceAuctionShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceAuctionShoppingView.swift; sourceTree = "<group>"; };
 		E75B498C2B34102E005E925A /* CommerceShoppingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceShoppingModel.swift; sourceTree = "<group>"; };
+		E75B498E2B34304B005E925A /* CommerceEmitterLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceEmitterLayer.swift; sourceTree = "<group>"; };
 		E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowLiveMoreDialog.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -2269,6 +2271,7 @@
 				E75B48F52B3029B6005E925A /* CommerceRoomBottomBar.swift */,
 				E75B48F62B3029B6005E925A /* CommerceRoomMembersCountView.swift */,
 				E75B48F72B3029B6005E925A /* CommerceRoomLiveView.swift */,
+				E75B498E2B34304B005E925A /* CommerceEmitterLayer.swift */,
 				E75B497F2B31920F005E925A /* CommerceGradualTableView.h */,
 				E75B49802B31920F005E925A /* CommerceGradualTableView.m */,
 				E75B48F82B3029B6005E925A /* CommerceCanvasView.swift */,
@@ -2644,6 +2647,7 @@
 				DDA199F928FFE579009D3E61 /* NSDictionary+dictToModel.m in Sources */,
 				E75B498A2B33DD1F005E925A /* CommerceAuctionShoppingView.swift in Sources */,
 				DDA19A0428FFE579009D3E61 /* CALayer+JKBorderColor.m in Sources */,
+				E75B498F2B34304B005E925A /* CommerceEmitterLayer.swift in Sources */,
 				DD36105F29B70CDC00CE7984 /* UIImage+Show.swift in Sources */,
 				E75B494E2B3029B7005E925A /* CommerceNavigationBar.swift in Sources */,
 				DD36106729B70CDC00CE7984 /* ShowAgoraKitManager+DebugSetting.swift in Sources */,
