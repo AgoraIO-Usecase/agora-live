@@ -58,20 +58,19 @@ class CommerceAuctionShoppingView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    private lazy var avatarImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage.sceneImage(name: ""))
-        imageView.cornerRadius(7)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+    private lazy var bidUserView: BidUserView = {
+        let bidUserView = BidUserView()
+        bidUserView.translatesAutoresizingMaskIntoConstraints = false
+        return bidUserView
     }()
-    private lazy var nickNameLabel: UILabel = {
-        let label = UILabel()
-        label.text = "a**"
-        label.textColor = UIColor(hex: "#BBBEBF", alpha: 1.0)
-        label.font = .systemFont(ofSize: 15)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private lazy var bidUserTransition: CATransition = {
+        let transition = CATransition()
+        transition.duration = 0.5
+        transition.type = CATransitionType(rawValue: "cube")
+        transition.subtype = .fromTop
+        return transition
     }()
+    
     private lazy var statusButton: UIButton = {
         let button = UIButton()
         button.setTitle("Start", for: .normal)
@@ -113,7 +112,7 @@ class CommerceAuctionShoppingView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setData(model: CommerceShoppingAuctionModel, isBroadcaster: Bool) {
+    func setShoppingData(model: CommerceShoppingAuctionModel, isBroadcaster: Bool) {
         coverImageView.sd_setImage(with: URL(string: model.imageName ?? ""),
                                    placeholderImage: UIImage.commerce_sceneImage(name: model.imageName ?? ""))
         titleLabel.text = model.title
@@ -123,15 +122,9 @@ class CommerceAuctionShoppingView: UIView {
         statusButton.isUserInteractionEnabled = model.status == .idle
         bidContainerView.isHidden = isBroadcaster
         shoppingContainerView.layer.maskedCorners = isBroadcaster ? [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner] : [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        avatarImageView.sd_setImage(with: URL(string: model.bidUser?.headUrl ?? ""),
-                                    placeholderImage: UIImage.commerce_sceneImage(name: model.bidUser?.headUrl ?? ""))
-        let nickName = model.bidUser?.name.prefix(1) ?? ""
-        nickNameLabel.text = "\(String(describing: nickName))**"
-        if model.bidUser?.id == VLUserCenter.user.id {
-            nickNameLabel.text = "You"
-        }
-        avatarImageView.isHidden = model.bidUser == nil
-        nickNameLabel.isHidden = model.bidUser == nil
+        
+        bidUserView.isHidden = model.bidUser == nil
+        bidUserView.setShoppingData(model: model)
         statusButton.setTitleColor(model.status.statusTitleColor, for: .normal)
         statusButton.setBackgroundImage(createGradientImage(colors: model.status.statusBackgroundColor), for: .normal)
         bidButton.setTitleColor(model.status.bidTitleColor, for: .normal)
@@ -184,16 +177,10 @@ class CommerceAuctionShoppingView: UIView {
         priceLabel.leadingAnchor.constraint(equalTo: descLabel.leadingAnchor).isActive = true
         priceLabel.topAnchor.constraint(equalTo: descLabel.bottomAnchor, constant: 2).isActive = true
         
-        shoppingContainerView.addSubview(avatarImageView)
-        avatarImageView.leadingAnchor.constraint(equalTo: priceLabel.trailingAnchor, constant: 8).isActive = true
-        avatarImageView.centerYAnchor.constraint(equalTo: priceLabel.centerYAnchor).isActive = true
-        avatarImageView.widthAnchor.constraint(equalToConstant: 14).isActive = true
-        avatarImageView.heightAnchor.constraint(equalToConstant: 14).isActive = true
-        
-        shoppingContainerView.addSubview(nickNameLabel)
-        nickNameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 4).isActive = true
-        nickNameLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor).isActive = true
-        
+        shoppingContainerView.addSubview(bidUserView)
+        bidUserView.leadingAnchor.constraint(equalTo: priceLabel.trailingAnchor, constant: 8).isActive = true
+        bidUserView.centerYAnchor.constraint(equalTo: priceLabel.centerYAnchor).isActive = true
+                        
         shoppingContainerView.addSubview(statusButton)
         statusButton.bottomAnchor.constraint(equalTo: priceLabel.bottomAnchor).isActive = true
         statusButton.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
@@ -210,15 +197,70 @@ class CommerceAuctionShoppingView: UIView {
     
     @objc
     private func onClickStartAuctionButton(sender: UIButton) {
-        sender.isUserInteractionEnabled = false
-        var count: Int = 30
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-            sender.setTitle(String(format: "00:%02d", count), for: .normal)
-            if count <= 0 {
-                timer.invalidate()
-                //TODO: 待刷新
-            }
-            count -= 1
+        bidUserView.layer.add(bidUserTransition, forKey: nil)
+        
+//        sender.isUserInteractionEnabled = false
+//        var count: Int = 30
+//        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+//            sender.setTitle(String(format: "00:%02d", count), for: .normal)
+//            if count <= 0 {
+//                timer.invalidate()
+//                sender.isUserInteractionEnabled = true
+//                //TODO: 待刷新
+//            }
+//            count -= 1
+//        }
+    }
+}
+
+
+class BidUserView: UIView {
+    private lazy var avatarImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage.commerce_sceneImage(name: "show_default_avatar"))
+        imageView.cornerRadius(7)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    private lazy var nickNameLabel: UILabel = {
+        let label = UILabel()
+        label.text = "a**"
+        label.textColor = UIColor(hex: "#BBBEBF", alpha: 1.0)
+        label.font = .systemFont(ofSize: 15)
+        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setShoppingData(model: CommerceShoppingAuctionModel) {
+        avatarImageView.sd_setImage(with: URL(string: model.bidUser?.headUrl ?? ""),
+                                    placeholderImage: UIImage.commerce_sceneImage(name: model.bidUser?.headUrl ?? ""))
+        let nickName = model.bidUser?.name.prefix(1) ?? ""
+        nickNameLabel.text = "\(String(describing: nickName))**"
+        if model.bidUser?.id == VLUserCenter.user.id {
+            nickNameLabel.text = "You"
         }
+    }
+    
+    private func setupUI() {
+        addSubview(avatarImageView)
+        avatarImageView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        avatarImageView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        avatarImageView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        avatarImageView.widthAnchor.constraint(equalToConstant: 14).isActive = true
+        avatarImageView.heightAnchor.constraint(equalToConstant: 14).isActive = true
+        
+        addSubview(nickNameLabel)
+        nickNameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 4).isActive = true
+        nickNameLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor).isActive = true
+        nickNameLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
     }
 }

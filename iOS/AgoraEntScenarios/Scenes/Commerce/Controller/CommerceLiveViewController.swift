@@ -101,6 +101,7 @@ class CommerceLiveViewController: UIViewController {
     }()
     private lazy var auctionView: CommerceAuctionShoppingView = {
         let view = CommerceAuctionShoppingView(isBroadcastor: role == .broadcaster)
+        view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -491,6 +492,7 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
 //        AlertManager.show(view: shoppingListView, alertPostion: .bottom)
         liveViewBottomCons?.constant = -(auctionView.height + Screen.safeAreaBottomHeight() + 6)
         liveViewBottomCons?.isActive = true
+        auctionView.isHidden = false
         UIView.animate(withDuration: 0.25) {
             self.view.layoutIfNeeded()
         }

@@ -126,6 +126,11 @@ class CommerceRoomLiveView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    private lazy var userJoinView: CommerceUserJoinView = {
+        let view = CommerceUserJoinView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     private var isBroadcastor = false
     
@@ -208,6 +213,10 @@ class CommerceRoomLiveView: UIView {
             make.trailing.equalTo(bottomBar)
             make.bottom.equalTo(bottomBar.snp.top).offset(-16)
         }
+        
+        addSubview(userJoinView)
+        userJoinView.trailingAnchor.constraint(equalTo: tableView.leadingAnchor, constant: -16).isActive = true
+        userJoinView.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: -5).isActive = true
     }
     
     private func addObserver(){
@@ -297,6 +306,9 @@ extension CommerceRoomLiveView: CommerceEmitterLayerDelegate {
 
 extension CommerceRoomLiveView {
     func addChatModel(_ chatModel: CommerceChatModel) {
+        if chatModel.text == "join_live_room".commerce_localized && chatModel.userName != VLUserCenter.user.name {
+            userJoinView.joinHandler(nickName: chatModel.userName)
+        }
         chatArray.insert(chatModel, at: 0)
         tableView.reloadData()
         tableView.scrollToTop()
