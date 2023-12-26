@@ -130,13 +130,13 @@ class CommerceShoppingListViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setShoppingData(model: CommerceShoppingBuyModel?, isBroadcaster: Bool) {
+    func setShoppingData(model: CommerceGoodsBuyModel?, isBroadcaster: Bool) {
         guard let model = model else { return }
-        coverImageView.sd_setImage(with: URL(string: model.imageName ?? ""),
-                                   placeholderImage: UIImage.commerce_sceneImage(name: model.imageName ?? ""))
-        titleLabel.text = model.title
-        numberLabel.text = "Qty: \(model.inventory)"
-        priceLabel.text = "$\(model.price)"
+        coverImageView.sd_setImage(with: URL(string: model.goods?.imageName ?? ""),
+                                   placeholderImage: UIImage.commerce_sceneImage(name: model.goods?.imageName ?? ""))
+        titleLabel.text = model.goods?.title
+        numberLabel.text = "Qty: \(model.goods?.quantity ?? 0)"
+        priceLabel.text = "$\(model.goods?.price ?? 0)"
         statusButton.setTitleColor(model.status.titleColor, for: .normal)
         statusButton.setBackgroundImage(createGradientImage(colors: model.status.backgroundColor), for: .normal)
         statusButton.isHidden = isBroadcaster

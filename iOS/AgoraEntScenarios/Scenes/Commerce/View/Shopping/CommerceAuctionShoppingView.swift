@@ -112,12 +112,12 @@ class CommerceAuctionShoppingView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setShoppingData(model: CommerceShoppingAuctionModel, isBroadcaster: Bool) {
-        coverImageView.sd_setImage(with: URL(string: model.imageName ?? ""),
-                                   placeholderImage: UIImage.commerce_sceneImage(name: model.imageName ?? ""))
-        titleLabel.text = model.title
+    func setShoppingData(model: CommerceGoodsAuctionModel, isBroadcaster: Bool) {
+        coverImageView.sd_setImage(with: URL(string: model.goods?.imageName ?? ""),
+                                   placeholderImage: UIImage.commerce_sceneImage(name: model.goods?.imageName ?? ""))
+        titleLabel.text = model.goods?.title
         descLabel.text = model.bidUser == nil ? "Start from" : "Current Bid:"
-        priceLabel.text = "$\(model.price)"
+        priceLabel.text = "$\(model.goods?.price ?? 0)"
         statusButton.isHidden = !isBroadcaster
         statusButton.isUserInteractionEnabled = model.status == .idle
         bidContainerView.isHidden = isBroadcaster
@@ -130,11 +130,11 @@ class CommerceAuctionShoppingView: UIView {
         bidButton.setTitleColor(model.status.bidTitleColor, for: .normal)
         bidButton.setBackgroundImage(createGradientImage(colors: model.status.bidBackgroundColor), for: .normal)
         switch model.status {
-        case .idle:
+        case .idle, .completion:
             bidButton.setTitle("Auction Not Started", for: .normal)
             
         case .started:
-            bidButton.setTitle("Bid: $\(model.bidPrice)", for: .normal)
+            bidButton.setTitle("Bid: $\(model.bid)", for: .normal)
             
         case .top_price:
             bidButton.setTitle("You are the leading bidder.", for: .normal)
@@ -240,7 +240,7 @@ class BidUserView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setShoppingData(model: CommerceShoppingAuctionModel) {
+    func setShoppingData(model: CommerceGoodsAuctionModel) {
         avatarImageView.sd_setImage(with: URL(string: model.bidUser?.headUrl ?? ""),
                                     placeholderImage: UIImage.commerce_sceneImage(name: model.bidUser?.headUrl ?? ""))
         let nickName = model.bidUser?.name.prefix(1) ?? ""
