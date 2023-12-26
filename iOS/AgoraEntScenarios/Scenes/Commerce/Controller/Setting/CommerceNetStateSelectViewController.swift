@@ -123,10 +123,10 @@ extension CommerceNetStateSelectViewController: UITableViewDelegate, UITableView
             switch a {
             case .smooth:
                 cell.setTitle("show_presetting_performances_smooth".commerce_localized,
-                              desc: "show_presetting_performances_smooth".commerce_localized)
+                              desc: "")
             case .fluent:
                 cell.setTitle("show_presetting_performances_fluent".commerce_localized,
-                              desc: "show_presetting_performances_fluent".commerce_localized)
+                              desc: "")
             }
             cell.aSelected = (aPerformance == a)
         } else {

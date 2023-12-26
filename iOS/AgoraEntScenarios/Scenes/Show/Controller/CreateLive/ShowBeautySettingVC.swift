@@ -124,7 +124,7 @@ class ShowBeautySettingVC: UIViewController {
             beautyFaceVC?.selectedItemClosure = { [weak self] value, isHiddenValue, isShowSegSwitch in
                 guard let self = self else { return }
                 self.slider.isHidden = isShowSegSwitch ? !ShowAgoraKitManager.isOpenGreen : isHiddenValue
-                self.compareButton.isHidden = isShowSegSwitch ? true : isHiddenValue
+                self.compareButton.isHidden = isShowSegSwitch //? true : isHiddenValue
                 self.segSwitch.isHidden = !isShowSegSwitch
                 self.segSwitch.isOn = isShowSegSwitch == false ? ShowAgoraKitManager.isOpenGreen : self.segSwitch.isOn
                 self.segLabel.isHidden = !isShowSegSwitch

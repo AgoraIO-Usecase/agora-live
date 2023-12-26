@@ -123,10 +123,10 @@ extension ShowNetStateSelectViewController: UITableViewDelegate, UITableViewData
             switch a {
             case .smooth:
                 cell.setTitle("show_presetting_performances_smooth".show_localized,
-                              desc: "show_presetting_performances_smooth".show_localized)
+                              desc: "")
             case .fluent:
                 cell.setTitle("show_presetting_performances_fluent".show_localized,
-                              desc: "show_presetting_performances_fluent".show_localized)
+                              desc: "")
             }
             cell.aSelected = (aPerformance == a)
         } else {
