@@ -7,14 +7,14 @@
 
 import UIKit
 
-class CommerceShoppingListView: UIView {
+class CommerceGoodsListView: UIView {
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .clear
-        tableView.register(CommerceShoppingListViewCell.self, forCellReuseIdentifier: "shoppingCell")
+        tableView.register(CommerceGoodsListViewCell.self, forCellReuseIdentifier: "shoppingCell")
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -47,18 +47,18 @@ class CommerceShoppingListView: UIView {
     }
 }
 
-extension CommerceShoppingListView: UITableViewDelegate, UITableViewDataSource {
+extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         10
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "shoppingCell", for: indexPath) as! CommerceShoppingListViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shoppingCell", for: indexPath) as! CommerceGoodsListViewCell
         
         return cell
     }
 }
 
-class CommerceShoppingListViewCell: UITableViewCell {
+class CommerceGoodsListViewCell: UITableViewCell {
     private lazy var coverImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage.sceneImage(name: ""))
         imageView.translatesAutoresizingMaskIntoConstraints = false

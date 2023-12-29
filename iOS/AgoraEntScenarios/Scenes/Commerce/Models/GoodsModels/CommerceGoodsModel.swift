@@ -1,5 +1,5 @@
 //
-//  CommerceShoppingModel.swift
+//  CommerceGoodsModel.swift
 //  AgoraEntScenarios
 //
 //  Created by zhaoyongqiang on 2023/12/21.
