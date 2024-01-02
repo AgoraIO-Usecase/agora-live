@@ -758,7 +758,7 @@ class LiveDetailFragment : Fragment() {
             topBinding.tvQuickStartTime.text = getString(R.string.show_statistic_quick_start_time, "--")
         } else {
             topBinding.tvQuickStartTime.text = getString(R.string.show_statistic_quick_start_time,
-                mRtcVideoSwitcher.getFirstVideoFrameTime())
+                mRtcVideoSwitcher.getFirstVideoFrameTime().toString())
         }
         topBinding.tvStatisticDeviceGrade.isVisible = true
         val score = mRtcEngine.queryDeviceScore()

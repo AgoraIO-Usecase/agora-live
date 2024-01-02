@@ -85,6 +85,11 @@ dependencies {
         runtimeOnly project(showModule)
     }
 
+    def eCommerceModule = ':scenes:eCommerce'
+    if (findProject(eCommerceModule) != null) {
+        runtimeOnly project(eCommerceModule)
+    }
+
     //glide 图片加载
     api rootProject.ext.deps.glide
     kapt rootProject.ext.deps.glide_compiler

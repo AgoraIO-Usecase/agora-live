@@ -23,5 +23,7 @@ include ':common'
 
 include ':scenes:show'
 
+include ':scenes:eCommerce'
+
 
 
