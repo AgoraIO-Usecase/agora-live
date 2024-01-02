@@ -79,7 +79,7 @@ class ShowSyncManagerServiceImpl constructor(
     /**
      * K robot video room ids
      */
-    private val kRobotVideoRoomIds = arrayListOf(2023001, 2023002, 2023003)
+    private val kRobotVideoRoomIds = arrayListOf(2024001, 2024002, 2024003)
 
     /**
      * K robot video stream urls
@@ -310,7 +310,7 @@ class ShowSyncManagerServiceImpl constructor(
         retRoomList.addAll(roomList)
 
         val expireRoomList = roomList.filter {
-            (TimeUtils.currentTimeMillis() - it.createdAt.toLong() > ROOM_AVAILABLE_DURATION) && !it.isRobotRoom()
+            (TimeUtils.currentTimeMillis() - it.createdAt.toLong() > ShowServiceProtocol.ROOM_AVAILABLE_DURATION) && !it.isRobotRoom()
         }
         if (expireRoomList.isNotEmpty()) {
             val expireLetchCount = CountDownLatch(expireRoomList.size)
@@ -589,7 +589,7 @@ class ShowSyncManagerServiceImpl constructor(
         if (roomDetail.isRobotRoom()) {
             // nothing
         } else if (roomDetail.ownerId == UserManager.getInstance().user.id.toString()
-            || TimeUtils.currentTimeMillis() - roomDetail.createdAt.toLong() >= ROOM_AVAILABLE_DURATION
+            || TimeUtils.currentTimeMillis() - roomDetail.createdAt.toLong() >= ShowServiceProtocol.ROOM_AVAILABLE_DURATION
         ) {
             ShowLogger.d(TAG, "leaveRoom delete room")
             sceneReference.delete(object : Sync.Callback {

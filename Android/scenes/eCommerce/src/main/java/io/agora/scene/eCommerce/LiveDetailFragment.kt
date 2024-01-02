@@ -1,10 +1,10 @@
 package io.agora.scene.eCommerce
 
 import android.content.Context
+import android.content.DialogInterface
+import android.content.res.ColorStateList
 import android.graphics.Color
-import android.os.Build
-import android.os.Bundle
-import android.os.Looper
+import android.os.*
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.util.Log
@@ -19,13 +19,19 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import io.agora.mediaplayer.IMediaPlayer
+import io.agora.mediaplayer.IMediaPlayerObserver
+import io.agora.mediaplayer.data.PlayerUpdatedInfo
+import io.agora.mediaplayer.data.SrcInfo
 import io.agora.rtc2.ChannelMediaOptions
 import io.agora.rtc2.Constants
 import io.agora.rtc2.Constants.AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
+import io.agora.rtc2.IRtcEngineEventHandler
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoCanvas
@@ -39,12 +45,12 @@ import io.agora.scene.eCommerce.databinding.CommerceLiveDetailMessageItemBinding
 import io.agora.scene.eCommerce.databinding.CommerceLivingEndDialogBinding
 import io.agora.scene.eCommerce.debugSettings.DebugAudienceSettingDialog
 import io.agora.scene.eCommerce.debugSettings.DebugSettingDialog
-import io.agora.scene.eCommerce.service.ROOM_AVAILABLE_DURATION
-import io.agora.scene.eCommerce.videoSwitcherAPI.VideoSwitcher
 import io.agora.scene.eCommerce.service.ShowMessage
 import io.agora.scene.eCommerce.service.ShowRoomDetailModel
 import io.agora.scene.eCommerce.service.ShowServiceProtocol
 import io.agora.scene.eCommerce.shop.GoodsListDialog
+import io.agora.scene.eCommerce.videoLoaderAPI.OnPageScrollEventHandler
+import io.agora.scene.eCommerce.videoLoaderAPI.VideoLoader
 import io.agora.scene.eCommerce.widget.AdvanceSettingAudienceDialog
 import io.agora.scene.eCommerce.widget.AdvanceSettingDialog
 import io.agora.scene.eCommerce.widget.PictureQualityDialog
@@ -52,6 +58,8 @@ import io.agora.scene.eCommerce.widget.SettingDialog
 import io.agora.scene.eCommerce.widget.TextInputDialog
 import io.agora.scene.widget.basic.BindingSingleAdapter
 import io.agora.scene.widget.basic.BindingViewHolder
+import org.json.JSONException
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -77,18 +85,29 @@ class LiveDetailFragment : Fragment() {
          *
          * @param roomDetail
          */
-        fun newInstance(roomDetail: ShowRoomDetailModel) = LiveDetailFragment().apply {
+        fun newInstance(roomDetail: ShowRoomDetailModel, handler: OnPageScrollEventHandler, position: Int) = LiveDetailFragment().apply {
             arguments = Bundle().apply {
                 putParcelable(EXTRA_ROOM_DETAIL_INFO, roomDetail)
             }
+            mHandler = handler
+            mPosition = position
         }
-
     }
 
     /**
      * M room info
      */
     val mRoomInfo by lazy { (arguments?.getParcelable(EXTRA_ROOM_DETAIL_INFO) as? ShowRoomDetailModel)!! }
+
+    /**
+     * Page scroll event handler
+     */
+    private lateinit var mHandler: OnPageScrollEventHandler
+
+    /**
+     * M position
+     */
+    private var mPosition: Int = 0
 
     /**
      * M binding
@@ -125,9 +144,9 @@ class LiveDetailFragment : Fragment() {
     private val mRtcEngine by lazy { RtcEngineInstance.rtcEngine }
 
     /**
-     * M rtc video switcher
+     * M rtc video loader api
      */
-    private val mRtcVideoSwitcher by lazy { VideoSwitcher.getImplInstance(mRtcEngine) }
+    private val mRtcVideoLoaderApi by lazy { VideoLoader.getImplInstance(mRtcEngine) }
 
     /**
      * Show debug mode dialog
@@ -195,11 +214,7 @@ class LiveDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ShowLogger.d(TAG, "Fragment Lifecycle: onViewCreated")
-        initLivingEndLayout()
-        initTopLayout()
-        initBottomLayout()
-        initMessageLayout()
-        initAuctionLayout()
+        initView()
         activity?.onBackPressedDispatcher?.addCallback(enabled = isVisible) {
             onBackPressed()
         }
@@ -214,9 +229,8 @@ class LiveDetailFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         ShowLogger.d(TAG, "Fragment Lifecycle: onAttach")
-        onMeLinkingListener = (activity as? LiveDetailActivity)
         if (isPageLoaded) {
-            startLoadPage(false)
+            startLoadPage()
         }
     }
 
@@ -250,17 +264,15 @@ class LiveDetailFragment : Fragment() {
     fun startLoadPageSafely(){
         isPageLoaded = true
         activity ?: return
-        startLoadPage(true)
+        startLoadPage()
     }
 
     /**
      * Re load page
      *
      */
-    fun reLoadPage() {
-        if (!isRoomOwner) {
-            mRtcVideoSwitcher.preJoinChannel(mMainRtcConnection)
-        }
+    fun onPageLoaded() {
+
     }
 
     /**
@@ -268,19 +280,19 @@ class LiveDetailFragment : Fragment() {
      *
      * @param isScrolling
      */
-    private fun startLoadPage(isScrolling: Boolean){
+    private fun startLoadPage() {
         ShowLogger.d(TAG, "Fragment PageLoad start load, roomId=${mRoomInfo.roomId}")
         isPageLoaded = true
-
+        subscribeMediaTime = SystemClock.elapsedRealtime()
         if (mRoomInfo.isRobotRoom()) {
-            initRtcEngine(isScrolling) {}
+            initRtcEngine()
             initServiceWithJoinRoom()
         } else {
             val roomLeftTime =
-                ROOM_AVAILABLE_DURATION - (TimeUtils.currentTimeMillis() - mRoomInfo.createdAt.toLong())
+                ShowServiceProtocol.ROOM_AVAILABLE_DURATION - (TimeUtils.currentTimeMillis() - mRoomInfo.createdAt.toLong())
             if (roomLeftTime > 0) {
-                mBinding.root.postDelayed(timerRoomEndRun, ROOM_AVAILABLE_DURATION)
-                initRtcEngine(isScrolling) {}
+                mBinding.root.postDelayed(timerRoomEndRun, ShowServiceProtocol.ROOM_AVAILABLE_DURATION)
+                initRtcEngine()
                 initServiceWithJoinRoom()
             }
         }
@@ -307,7 +319,6 @@ class LiveDetailFragment : Fragment() {
      */
     private fun destroy(isScrolling: Boolean): Boolean {
         mBinding.root.removeCallbacks(timerRoomEndRun)
-        releaseCountdown()
         destroyService()
         return destroyRtcEngine(isScrolling)
     }
@@ -320,11 +331,41 @@ class LiveDetailFragment : Fragment() {
         if (isRoomOwner) {
             showEndRoomDialog()
         } else {
+            stopLoadPage(false)
             activity?.finish()
         }
     }
 
     //================== UI Operation ===============
+
+    /**
+     * Init view
+     *
+     */
+    private fun initView() {
+        initLivingEndLayout()
+        initTopLayout()
+        initBottomLayout()
+        initMessageLayout()
+
+        // Render host video
+        if (needRender) {
+            mRtcVideoLoaderApi.renderVideo(
+                VideoLoader.AnchorInfo(
+                    mRoomInfo.roomId,
+                    mRoomInfo.ownerId.toInt(),
+                    RtcEngineInstance.generalToken()
+                ),
+                UserManager.getInstance().user.id.toInt(),
+                VideoLoader.VideoCanvasContainer(
+                    viewLifecycleOwner,
+                    mBinding.videoLinkingLayout.videoContainer,
+                    mRoomInfo.ownerId.toInt()
+                )
+            )
+        }
+    }
+
     /**
      * Init video view
      *
@@ -333,23 +374,34 @@ class LiveDetailFragment : Fragment() {
         activity?.let {
             if (isRoomOwner) {
                 setupLocalVideo(
-                    VideoSwitcher.VideoCanvasContainer(
+                    VideoLoader.VideoCanvasContainer(
                         it,
                         mBinding.videoLinkingLayout.videoContainer,
                         0
                     )
                 )
-            } else {
-                mRtcVideoSwitcher.setupRemoteVideo(
-                    mMainRtcConnection,
-                    VideoSwitcher.VideoCanvasContainer(
-                        it,
-                        mBinding.videoLinkingLayout.videoContainer,
-                        mRoomInfo.ownerId.toInt()
-                    )
-                )
             }
         }
+    }
+
+    /**
+     * need render
+     */
+    private var needRender = false
+
+    /**
+     * Init anchor video view
+     */
+    fun initAnchorVideoView(info: VideoLoader.AnchorInfo) : VideoLoader.VideoCanvasContainer? {
+        needRender = activity == null
+        activity?.let {
+            return VideoLoader.VideoCanvasContainer(
+                viewLifecycleOwner,
+                mBinding.videoLinkingLayout.videoContainer,
+                mRoomInfo.ownerId.toInt()
+            )
+        }
+        return null
     }
 
     /**
@@ -358,7 +410,7 @@ class LiveDetailFragment : Fragment() {
      */
     private fun initLivingEndLayout() {
         val livingEndLayout = mBinding.livingEndLayout
-        livingEndLayout.root.isVisible = ROOM_AVAILABLE_DURATION < (TimeUtils.currentTimeMillis() - mRoomInfo.createdAt.toLong()) && !isRoomOwner && !mRoomInfo.isRobotRoom()
+        livingEndLayout.root.isVisible = ShowServiceProtocol.ROOM_AVAILABLE_DURATION < (TimeUtils.currentTimeMillis() - mRoomInfo.createdAt.toLong()) && !isRoomOwner && !mRoomInfo.isRobotRoom()
         livingEndLayout.tvUserName.text = mRoomInfo.ownerName
         Glide.with(this@LiveDetailFragment)
             .load(mRoomInfo.getOwnerAvatarFullUrl())
@@ -595,8 +647,7 @@ class LiveDetailFragment : Fragment() {
         if (isRoomOwner) {
             topBinding.tvQuickStartTime.text = getString(R.string.commerce_statistic_quick_start_time, "--")
         } else {
-            topBinding.tvQuickStartTime.text = getString(R.string.commerce_statistic_quick_start_time,
-                mRtcVideoSwitcher.getFirstVideoFrameTime().toString())
+            topBinding.tvQuickStartTime.text = getString(R.string.commerce_statistic_quick_start_time, quickStartTime)
         }
         topBinding.tvStatisticDeviceGrade.isVisible = true
         val score = mRtcEngine.queryDeviceScore()
@@ -854,6 +905,9 @@ class LiveDetailFragment : Fragment() {
 
     //================== RTC Operation ===================
 
+    private var quickStartTime = 0L
+    private var subscribeMediaTime = 0L
+
     /**
      * Init rtc engine
      *
@@ -861,21 +915,51 @@ class LiveDetailFragment : Fragment() {
      * @param onJoinChannelSuccess
      * @receiver
      */
-    private fun initRtcEngine(isScrolling: Boolean, onJoinChannelSuccess: () -> Unit) {
-        val eventListener = VideoSwitcher.IChannelEventListener(
-            onUserOffline = { uid ->
-            },
-            onLocalVideoStateChanged = { state ->
+    private fun initRtcEngine() {
+        val eventListener = object : IRtcEngineEventHandler() {
+            override fun onLocalVideoStateChanged(
+                source: Constants.VideoSourceType?,
+                state: Int,
+                error: Int
+            ) {
+                super.onLocalVideoStateChanged(source, state, error)
                 if (isRoomOwner) {
                     isAudioOnlyMode = state == Constants.LOCAL_VIDEO_STREAM_STATE_STOPPED
                 }
-            },
-            onRemoteVideoStateChanged = { uid, state ->
+            }
+
+            override fun onRemoteVideoStateChanged(
+                uid: Int,
+                state: Int,
+                reason: Int,
+                elapsed: Int
+            ) {
+                super.onRemoteVideoStateChanged(uid, state, reason, elapsed)
                 if (uid == mRoomInfo.ownerId.toInt()) {
                     isAudioOnlyMode = state == Constants.REMOTE_VIDEO_STATE_STOPPED
+
+                    runOnUiThread {
+                        if (reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_MUTED) {
+                            //enableComeBackSoonView(true)
+                        } else if (reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_UNMUTED) {
+                            //enableComeBackSoonView(false)
+                        }
+                    }
                 }
-            },
-            onLocalVideoStats = { stats ->
+
+                if (state == Constants.REMOTE_VIDEO_STATE_PLAYING
+                    && (reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_UNMUTED || reason == Constants.REMOTE_VIDEO_STATE_REASON_LOCAL_UNMUTED)
+                ) {
+                    val durationFromSubscribe = SystemClock.elapsedRealtime() - subscribeMediaTime
+                    quickStartTime = durationFromSubscribe
+                }
+            }
+
+            override fun onLocalVideoStats(
+                source: Constants.VideoSourceType,
+                stats: LocalVideoStats
+            ) {
+                super.onLocalVideoStats(source, stats)
                 runOnUiThread {
                     refreshStatisticInfo(
                         upBitrate = stats.sentBitrate,
@@ -884,9 +968,11 @@ class LiveDetailFragment : Fragment() {
                         encodeVideoSize = Size(stats.encodedFrameWidth, stats.encodedFrameHeight)
                     )
                 }
-            },
-            onRemoteVideoStats = { stats ->
-                if (stats.uid == mRoomInfo.ownerId.toInt() || isRoomOwner) {
+            }
+
+            override fun onRemoteVideoStats(stats: RemoteVideoStats) {
+                super.onRemoteVideoStats(stats)
+                if (stats.uid == mRoomInfo.ownerId.toInt()) {
                     runOnUiThread {
                         refreshStatisticInfo(
                             downBitrate = stats.receivedBitrate,
@@ -897,46 +983,30 @@ class LiveDetailFragment : Fragment() {
                         )
                     }
                 }
-            },
-            onUplinkNetworkInfoUpdated = { info ->
+            }
+
+            override fun onUplinkNetworkInfoUpdated(info: UplinkNetworkInfo) {
+                super.onUplinkNetworkInfoUpdated(info)
                 runOnUiThread {
                     refreshStatisticInfo(
                         upLinkBps = info.video_encoder_target_bitrate_bps
                     )
                 }
-            },
-            onDownlinkNetworkInfoUpdated = { info ->
+            }
+
+            override fun onDownlinkNetworkInfoUpdated(info: DownlinkNetworkInfo) {
+                super.onDownlinkNetworkInfoUpdated(info)
                 runOnUiThread {
                     refreshStatisticInfo(
                         downLinkBps = info.bandwidth_estimation_bps
                     )
                 }
-            },
-            onContentInspectResult = { result ->
-                if (result > 1) {
-                    ToastUtils.showToast(R.string.commerce_content)
-                }
-            },
-            onChannelJoined = {
-                onJoinChannelSuccess.invoke()
-            },
-            onFirstRemoteVideoFrame = { uid, width, height, elapsed ->
             }
-        )
+        }
 
-        if (activity is LiveDetailActivity){
+        if (activity is LiveDetailActivity) {
             (activity as LiveDetailActivity).toggleSelfVideo(isRoomOwner, callback = {
-                // Render host video
-                if (isScrolling || isRoomOwner) {
-                    ShowLogger.d("hugo", "joinRoom from scroll")
-                    joinChannel(eventListener)
-                } else {
-                    ShowLogger.d("hugo", "joinRoom from click")
-                    mRtcVideoSwitcher.setChannelEvent(mRoomInfo.roomId, UserManager.getInstance().user.id.toInt(), eventListener)
-                }
-                if (!isRoomOwner) {
-                    mRtcEngine.adjustUserPlaybackSignalVolumeEx(mRoomInfo.ownerId.toInt(), 100, mMainRtcConnection)
-                }
+                joinChannel(eventListener)
                 initVideoView()
             })
             (activity as LiveDetailActivity).toggleSelfAudio(isRoomOwner, callback = {
@@ -953,8 +1023,11 @@ class LiveDetailFragment : Fragment() {
      * @return
      */
     private fun destroyRtcEngine(isScrolling: Boolean): Boolean {
-        if (isRoomOwner) mRtcEngine.stopPreview()
-        return mRtcVideoSwitcher.leaveChannel(mMainRtcConnection, !isScrolling)
+        if (isRoomOwner) {
+            mRtcEngine.stopPreview()
+            mRtcEngine.leaveChannelEx(mMainRtcConnection)
+        }
+        return true
     }
 
     /**
@@ -990,9 +1063,7 @@ class LiveDetailFragment : Fragment() {
      *
      * @param eventListener
      */
-    private fun joinChannel(eventListener: VideoSwitcher.IChannelEventListener) {
-        val rtcConnection = mMainRtcConnection
-
+    private fun joinChannel(eventListener: IRtcEngineEventHandler) {
         if (!isRoomOwner && mRtcEngine.queryDeviceScore() < 75) {
             mRtcEngine.setParameters("{\"che.hardware_decoding\": 1}")
             mRtcEngine.setParameters("{\"rtc.video.decoder_out_byte_frame\": true}")
@@ -1009,15 +1080,13 @@ class LiveDetailFragment : Fragment() {
         channelMediaOptions.publishMicrophoneTrack = isRoomOwner
         if (!isRoomOwner) {
             channelMediaOptions.audienceLatencyLevel = AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
-            mRtcEngine.setParameters("{\"rtc.video.jb_smooth_scene\":1}")
         }
-        mRtcVideoSwitcher.joinChannel(
-            rtcConnection,
-            channelMediaOptions,
-            RtcEngineInstance.generalToken(),
-            eventListener,
-            !isRoomOwner
-        )
+
+        if (isRoomOwner) {
+            mRtcEngine.joinChannelEx(RtcEngineInstance.generalToken(), mMainRtcConnection, channelMediaOptions, eventListener)
+        } else {
+            mRtcEngine.addHandlerEx(eventListener, mMainRtcConnection)
+        }
     }
 
     /**
@@ -1025,7 +1094,7 @@ class LiveDetailFragment : Fragment() {
      *
      * @param container
      */
-    private fun setupLocalVideo(container: VideoSwitcher.VideoCanvasContainer) {
+    private fun setupLocalVideo(container: VideoLoader.VideoCanvasContainer) {
         localVideoCanvas?.let {
             if (it.lifecycleOwner == container.lifecycleOwner && it.renderMode == container.renderMode && it.uid == container.uid) {
                 val videoView = it.view
@@ -1057,143 +1126,6 @@ class LiveDetailFragment : Fragment() {
         )
         local.mirrorMode = Constants.VIDEO_MIRROR_MODE_DISABLED
         mRtcEngine.setupLocalVideo(local)
-    }
-
-    /**
-     * Update idle mode
-     *
-     */
-    private fun updateIdleMode() {
-        ShowLogger.d(TAG, "Interaction >> updateIdleMode")
-        if (prepareRkRoomId.isNotEmpty()) {
-            mRtcVideoSwitcher.leaveChannel(
-                RtcConnection(prepareRkRoomId, UserManager.getInstance().user.id.toInt()),
-                isRoomOwner
-            )
-        }
-        prepareRkRoomId = ""
-
-        if (isRoomOwner) {
-            enableLocalAudio(true)
-            activity?.let {
-                setupLocalVideo(VideoSwitcher.VideoCanvasContainer(it, mBinding.videoLinkingLayout.videoContainer, 0))
-            }
-            refreshStatisticInfo(
-                receiveVideoSize = Size(0, 0),
-                downBitrate = 0
-            )
-        } else {
-            val channelMediaOptions = ChannelMediaOptions()
-            val rtcConnection = mMainRtcConnection
-            channelMediaOptions.publishCameraTrack = false
-            channelMediaOptions.publishMicrophoneTrack = false
-            channelMediaOptions.publishCustomAudioTrack = false
-            channelMediaOptions.enableAudioRecordingOrPlayout = true
-            channelMediaOptions.autoSubscribeVideo = true
-            channelMediaOptions.autoSubscribeAudio = true
-            channelMediaOptions.clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
-            channelMediaOptions.audienceLatencyLevel = Constants.AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
-            mRtcEngine.updateChannelMediaOptionsEx(channelMediaOptions, rtcConnection)
-            activity?.let {
-                mRtcVideoSwitcher.setupRemoteVideo(
-                    rtcConnection,
-                    VideoSwitcher.VideoCanvasContainer(it, mBinding.videoLinkingLayout.videoContainer, mRoomInfo.ownerId.toInt())
-                )
-            }
-            refreshStatisticInfo(
-                encodeVideoSize = Size(0, 0),
-                upBitrate = 0,
-            )
-        }
-    }
-
-    /**
-     * Prepare linking mode
-     *
-     */
-    private fun prepareLinkingMode(){
-        ShowLogger.d(TAG, "Interaction >> prepareLinkingMode")
-
-        val channelMediaOptions = ChannelMediaOptions()
-        channelMediaOptions.publishCameraTrack = true
-        channelMediaOptions.publishMicrophoneTrack = false
-        channelMediaOptions.publishCustomAudioTrack = false
-        channelMediaOptions.enableAudioRecordingOrPlayout = true
-        channelMediaOptions.autoSubscribeVideo = true
-        channelMediaOptions.autoSubscribeAudio = true
-        channelMediaOptions.clientRoleType = Constants.CLIENT_ROLE_BROADCASTER
-
-        (activity as? io.agora.scene.eCommerce.LiveDetailActivity)?.let {
-            it.toggleSelfVideo(true) { hasPermission ->
-                if (hasPermission) {
-                    mRtcEngine.updateChannelMediaOptionsEx(
-                        channelMediaOptions,
-                        mMainRtcConnection
-                    )
-                }
-            }
-        }
-    }
-
-    /**
-     * Prepare rk room id
-     */
-    private var prepareRkRoomId = ""
-
-    /**
-     * Prepare p king mode
-     *
-     * @param pkRoomId
-     */
-    private fun preparePKingMode(pkRoomId: String){
-        ShowLogger.d(TAG, "Interaction >> preparePKingMode pkRoomId=$pkRoomId")
-        val channelMediaOptions = ChannelMediaOptions()
-        channelMediaOptions.publishCameraTrack = false
-        channelMediaOptions.publishMicrophoneTrack = false
-        channelMediaOptions.publishCustomAudioTrack = false
-        channelMediaOptions.autoSubscribeVideo = true
-        channelMediaOptions.autoSubscribeAudio = false
-        channelMediaOptions.clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
-        channelMediaOptions.audienceLatencyLevel = Constants.AUDIENCE_LATENCY_LEVEL_ULTRA_LOW_LATENCY
-        channelMediaOptions.isInteractiveAudience = true
-        val pkRtcConnection = RtcConnection(
-            pkRoomId,
-            UserManager.getInstance().user.id.toInt()
-        )
-        mRtcVideoSwitcher.preJoinChannel(
-            pkRtcConnection, channelMediaOptions, RtcEngineInstance.generalToken(), null
-        )
-        prepareRkRoomId = pkRoomId
-    }
-    /**
-     * Release countdown
-     *
-     */
-    private fun releaseCountdown() {
-        (mBinding.topLayout.tvTimer.tag as? Runnable)?.let {
-            it.run()
-            mBinding.topLayout.tvTimer.removeCallbacks(it)
-            mBinding.topLayout.tvTimer.tag = null
-        }
-    }
-
-    /**
-     * On me linking listener
-     */
-    private var onMeLinkingListener: OnMeLinkingListener? = null
-
-    /**
-     * On me linking listener
-     *
-     * @constructor Create empty On me linking listener
-     */
-    interface OnMeLinkingListener {
-        /**
-         * On me linking
-         *
-         * @param isLinking
-         */
-        fun onMeLinking(isLinking: Boolean)
     }
 
     /**

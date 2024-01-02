@@ -12,7 +12,6 @@ import io.agora.scene.base.Constant
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.utils.GsonUtils
 import io.agora.scene.base.utils.SPUtil
-import io.agora.scene.show.videoSwitcherAPI.VideoSwitcher
 
 /**
  * Video setting
@@ -1124,7 +1123,6 @@ object VideoSetting {
         ShowLogger.d("VideoSettings", "updateRTCBroadcastSetting, frameRate:$frameRate")
         val rtcEngine = RtcEngineInstance.rtcEngine
         val videoEncoderConfiguration = RtcEngineInstance.videoEncoderConfiguration
-        val videoSwitcher = VideoSwitcher.getImplInstance(rtcEngine)
         h265?.let {
             if (!isJoinedRoom) {
                 rtcEngine.setParameters("{\"engine.video.enable_hw_encoder\":${it}}")
@@ -1197,7 +1195,7 @@ object VideoSetting {
         }
         audioMixingVolume?.let {
             if (rtcConnection != null) {
-                videoSwitcher.adjustAudioMixingVolume(rtcConnection, it)
+                //videoSwitcher.adjustAudioMixingVolume(rtcConnection, it)
             } else {
                 rtcEngine.adjustAudioMixingVolume(it)
             }

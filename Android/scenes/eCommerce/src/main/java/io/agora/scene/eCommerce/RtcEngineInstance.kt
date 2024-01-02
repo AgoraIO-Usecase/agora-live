@@ -6,10 +6,9 @@ import io.agora.rtc2.RtcEngineConfig
 import io.agora.rtc2.RtcEngineEx
 import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoEncoderConfiguration
-import io.agora.rtc2.video.VirtualBackgroundSource
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.eCommerce.debugSettings.DebugSettingModel
-import io.agora.scene.eCommerce.videoSwitcherAPI.VideoSwitcher
+import io.agora.scene.eCommerce.videoLoaderAPI.VideoLoader
 import java.util.concurrent.Executors
 
 /**
@@ -96,7 +95,7 @@ object RtcEngineInstance {
      *
      */
     fun cleanCache() {
-        VideoSwitcher.getImplInstance(rtcEngine).unloadConnections()
+        VideoLoader.getImplInstance(rtcEngine).cleanCache()
     }
 
 
@@ -105,6 +104,7 @@ object RtcEngineInstance {
      *
      */
     fun destroy() {
+        VideoLoader.release()
         innerRtcEngine?.let {
             workingExecutor.execute { RtcEngineEx.destroy() }
             innerRtcEngine = null
