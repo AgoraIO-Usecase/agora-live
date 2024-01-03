@@ -245,6 +245,8 @@ class CommerceLiveToolViewCell: UICollectionViewCell {
         label.text = "Switch_Camera"
         label.textColor = UIColor(hex: "#C6C4DD")
         label.font = .systemFont(ofSize: 12)
+        label.textAlignment = .center
+        label.numberOfLines = 2
         return label
     }()
     
@@ -269,7 +271,8 @@ class CommerceLiveToolViewCell: UICollectionViewCell {
         iconButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         iconButton.bottomAnchor.constraint(equalTo: titleLabel.topAnchor, constant: -5).isActive = true
         
-        titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+        titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
     }
     

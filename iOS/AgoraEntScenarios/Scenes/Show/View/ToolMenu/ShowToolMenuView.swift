@@ -248,6 +248,7 @@ class LiveToolViewCell: UICollectionViewCell {
         label.text = "Switch_Camera"
         label.textColor = UIColor(hex: "#C6C4DD")
         label.font = .systemFont(ofSize: 12)
+        label.numberOfLines = 2
         return label
     }()
     
