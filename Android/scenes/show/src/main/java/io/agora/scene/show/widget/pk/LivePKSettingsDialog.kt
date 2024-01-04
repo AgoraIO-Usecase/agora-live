@@ -187,7 +187,7 @@ class LivePKSettingsDialog(context: Context) : BottomDarkDialog(context) {
         setBottomView(mBinding.root)
         mBinding.recycleView.adapter = mAdapter
         mAdapter.resetAll(mHostItemList)
-        mBinding.userName.setText(R.string.show_pk)
+        mBinding.userName.setText(R.string.show_pk_dialog_header)
     }
 
     /**
@@ -202,29 +202,6 @@ class LivePKSettingsDialog(context: Context) : BottomDarkDialog(context) {
      */
     fun resetSettingsItem(mute: Boolean) {
         val itemList = listOf(
-            SettingItem(
-                ITEM_ID_SWITCH_CAMERA,
-                R.mipmap.show_setting_ic_camera,
-                R.mipmap.show_setting_ic_camera,
-                R.string.show_setting_switch_camera,
-                R.string.show_setting_switch_camera
-            ),
-            SettingItem(
-                ITEM_ID_CAMERA,
-                R.mipmap.show_setting_ic_video_off,
-                R.mipmap.show_setting_ic_video_on,
-                R.string.show_setting_video_off,
-                R.string.show_setting_video_on,
-                isVideoActivated
-            ),
-            SettingItem(
-                ITEM_ID_MIC,
-                R.mipmap.show_setting_ic_mic_off,
-                R.mipmap.show_setting_ic_mic_on,
-                R.string.show_setting_mic_off,
-                R.string.show_setting_mic_on,
-                !mute
-            ),
             SettingItem(
                 ITEM_ID_STOP_PK,
                 R.mipmap.show_stop_link,
@@ -256,6 +233,16 @@ class LivePKSettingsDialog(context: Context) : BottomDarkDialog(context) {
                 }
             }
         }
+    }
+
+    /**
+     * Set PK info
+     *
+     * @param userName
+     * @receiver
+     */
+    fun setPKInfo(userName : String) {
+        mBinding.userName.text = context.getString(R.string.show_pk_dialog_header, userName)
     }
 
     /**

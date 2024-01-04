@@ -553,11 +553,7 @@ class LiveDetailFragment : Fragment() {
             showMessageInputDialog()
         }
         bottomLayout.ivSetting.setOnClickListener {
-            if (interactionInfo != null && interactionInfo!!.interactStatus == ShowInteractionStatus.pking.value && isRoomOwner) {
-                showPKSettingsDialog()
-            } else {
-                showSettingDialog()
-            }
+            showSettingDialog()
         }
         bottomLayout.ivBeauty.setOnClickListener {
             showBeautyDialog()
@@ -962,6 +958,10 @@ class LiveDetailFragment : Fragment() {
             if (isMeLinking()) {
                 resetSettingsItem(interactionInfo!!.muteAudio)
             }
+
+            if (isRoomOwner && isPKing()) {
+                resetSettingsItem(interactionInfo!!.ownerMuteAudio)
+            }
             setOnItemActivateChangedListener { _, itemId, activated ->
                 when (itemId) {
                     SettingDialog.ITEM_ID_CAMERA -> mRtcEngine.switchCamera()
@@ -980,7 +980,11 @@ class LiveDetailFragment : Fragment() {
                                 if (!isRoomOwner) {
                                     mService.muteAudio(mRoomInfo.roomId, !activated, interactionInfo!!.userId)
                                 } else {
+                                    mService.muteAudio(mRoomInfo.roomId, !activated, mRoomInfo.ownerId)
                                     enableLocalAudio(activated)
+                                    if (isPKing()) {
+                                        mBinding.videoPKLayout.userNameA.isActivated = activated
+                                    }
                                 }
                             })
                         }
@@ -1355,6 +1359,7 @@ class LiveDetailFragment : Fragment() {
     private fun showPKSettingsDialog() {
         mPKSettingsDialog.apply {
             resetSettingsItem(interactionInfo!!.ownerMuteAudio)
+            setPKInfo(interactionInfo!!.userName)
             setOnItemActivateChangedListener { _, itemId, activated ->
                 when (itemId) {
                     LivePKSettingsDialog.ITEM_ID_CAMERA -> {
