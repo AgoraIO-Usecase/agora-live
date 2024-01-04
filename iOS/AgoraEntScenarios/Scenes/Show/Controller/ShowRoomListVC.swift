@@ -68,6 +68,13 @@ class ShowRoomListVC: UIViewController {
         ShowRobotService.shared.startCloudPlayers()
         preGenerateToken()
         checkDevice()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard roomList.isEmpty else { return }
+        refreshControl.beginRefreshing()
+        collectionView.setContentOffset(CGPoint(x: 0, y: -refreshControl.frame.size.height), animated: true)
         fetchRoomList()
     }
     
