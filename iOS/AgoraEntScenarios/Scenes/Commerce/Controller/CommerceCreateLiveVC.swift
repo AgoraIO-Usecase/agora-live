@@ -76,7 +76,9 @@ class CommerceCreateLiveVC: UIViewController {
     }
     
     @objc func didClickCancelButton(){
+        SVProgressHUD.dismiss()
         CommerceAgoraKitManager.shared.cleanCapture()
+        AppContext.commerceServiceImp(createView.roomNo)?.leaveRoom(completion: { _ in })
         dismiss(animated: true)
     }
 }
