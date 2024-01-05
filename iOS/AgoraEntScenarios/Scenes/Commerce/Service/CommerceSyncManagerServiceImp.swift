@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import AgoraSyncManager_overseas
 
-private let kSceneId = "scene_commerce_1.0.0"
+private let kSceneId = "scene_ecommerce_0.2.0"
 
 private let SYNC_MANAGER_MESSAGE_COLLECTION = "commerce_message_collection"
 private let SYNC_MANAGER_SEAT_APPLY_COLLECTION = "commerce_seat_apply_collection"

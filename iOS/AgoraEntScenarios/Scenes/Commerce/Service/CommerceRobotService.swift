@@ -11,7 +11,7 @@ class CommerceRobotService {
     
     static let shared = CommerceRobotService()
     
-    private let kRobotRoomStartId = 2023000
+    private let kRobotRoomStartId = 2024000
     private let kRobotUid = 2000000001
 
     private let robotStreamURL = [
