@@ -39,7 +39,7 @@ class ShowSyncManagerServiceImpl constructor(
     /**
      * K scene id
      */
-    private val kSceneId = "scene_show_1.0.0"
+    private val kSceneId = "scene_show_0.2.0"
 
     /**
      * K collection id user
