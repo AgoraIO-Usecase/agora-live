@@ -110,7 +110,12 @@ class RoomListActivity : AppCompatActivity() {
      */
     private fun initView() {
         onRoomListScrollEventHandler = object: OnRoomListScrollEventHandler(mRtcEngine, UserManager.getInstance().user.id.toInt()) {}
-        mBinding.titleView.setLeftClick { finish() }
+        mBinding.titleView.setLeftClick {
+            mService.destroy()
+            RtcEngineInstance.destroy()
+            RtcEngineInstance.setupGeneralToken("")
+            finish()
+        }
         mBinding.titleView.setRightIconClick {
             showAudienceSetting()
         }
@@ -282,14 +287,14 @@ class RoomListActivity : AppCompatActivity() {
     }
 
     /**
-     * On destroy
+     * On back pressed
      *
      */
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onBackPressed() {
         mService.destroy()
         RtcEngineInstance.destroy()
         RtcEngineInstance.setupGeneralToken("")
+        finish()
     }
 
     /**
