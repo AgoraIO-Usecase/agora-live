@@ -208,4 +208,11 @@ typedef NS_ENUM(NSInteger, LogLevel) {
 
 @end
 
+@interface Throttler : NSObject
+
+- (instancetype)initWithTimeInterval:(NSTimeInterval)interval;
+- (void)throttleBlock:(void(^)(void))block;
+
+@end
+
 NS_ASSUME_NONNULL_END

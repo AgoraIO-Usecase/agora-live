@@ -111,7 +111,8 @@ class ShowBeautyFaceVC: UIViewController {
             }
             BeautyManager.shareManager.setStyle(path: model.path,
                                                 key: model.key,
-                                                value: model.value)
+                                                value: model.value,
+                                                isCombined: false)
             
         case .sticker:
             BeautyManager.shareManager.setSticker(path: model.path)
