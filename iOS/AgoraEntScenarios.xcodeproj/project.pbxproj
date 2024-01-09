@@ -296,7 +296,6 @@
 		A8F9048D2B4BDE1700A4C5A7 /* ShowDebugPrivateParamsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebugPrivateParamsVC.swift; sourceTree = "<group>"; };
 		A8F9048E2B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebug1TFModel.swift; sourceTree = "<group>"; };
 		A8F904942B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowThumnbnailCanvasView.swift; sourceTree = "<group>"; };
-		A8F904982B4BFFD000A4C5A7 /* authpack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = authpack.h; sourceTree = "<group>"; };
 		AB4746E62A5E82AB00E68FBA /* ShowRobotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowRobotService.swift; sourceTree = "<group>"; };
 		ABA0958F2A8373F300A54FCC /* ShowSettingBitrateCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowSettingBitrateCell.swift; sourceTree = "<group>"; };
 		ABE4B3792A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowNetStateSelectViewController.swift; sourceTree = "<group>"; };
@@ -1864,7 +1863,6 @@
 		E72F624E2A822D3500C963D2 /* FUBeauty */ = {
 			isa = PBXGroup;
 			children = (
-				A8F904982B4BFFD000A4C5A7 /* authpack.h */,
 				E72F62512A822D3500C963D2 /* FUManager.h */,
 				E72F62532A822D3500C963D2 /* FUManager.m */,
 			);
@@ -2726,7 +2724,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
