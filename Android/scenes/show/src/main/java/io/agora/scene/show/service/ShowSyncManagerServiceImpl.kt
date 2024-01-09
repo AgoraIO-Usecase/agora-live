@@ -8,6 +8,7 @@ import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.show.R
 import io.agora.scene.show.ShowLogger
+import io.agora.scene.show.utils.ShowConstants
 import io.agora.syncmanager.rtm.IObject
 import io.agora.syncmanager.rtm.RethinkConfig
 import io.agora.syncmanager.rtm.Scene
@@ -231,6 +232,8 @@ class ShowSyncManagerServiceImpl constructor(
 
                         roomList = appendRobotRooms(roomList)
 
+                        roomList = removeReportRooms(roomList)
+
                         val sortedBy = roomList.sortedByDescending { it.createdAt }
                         runOnMainThread { success.invoke(sortedBy) }
                     }
@@ -347,6 +350,21 @@ class ShowSyncManagerServiceImpl constructor(
                 expireLetchCount.await()
             } catch (e: Exception) {
                 ShowLogger.e(TAG, e)
+            }
+        }
+        return retRoomList
+    }
+
+    private fun removeReportRooms(roomList: List<ShowRoomDetailModel>): List<ShowRoomDetailModel> {
+        val retRoomList = mutableListOf<ShowRoomDetailModel>()
+        retRoomList.addAll(roomList)
+
+        val reportRoomList = roomList.filter {
+            (ShowConstants.reportContents.contains(it.roomName) || ShowConstants.reportUsers.contains(it.ownerId))
+        }
+        if (reportRoomList.isNotEmpty()) {
+            reportRoomList.forEach {
+                retRoomList.remove(it)
             }
         }
         return retRoomList

@@ -50,7 +50,7 @@
     <string name="app_edit_success">Modified</string>
 
     <string name="app_enter_now">Enter Now</string>
-    <string name="app_policy_accept">I accept the #Privacy Policy#</string>
+    <string name="app_policy_accept">I accept the #Terms of Service#</string>
     <string name="app_check_tip">Please check</string>
 
 </resources>
