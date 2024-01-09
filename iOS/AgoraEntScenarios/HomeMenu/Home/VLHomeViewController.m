@@ -68,8 +68,9 @@
             break;
         }
         case 1: {
-            CommerceRoomListVC *vc = [CommerceRoomListVC new];
-            [self.navigationController pushViewController:vc animated:YES];
+            // TODO: Commerce场景报错先去掉
+//            CommerceRoomListVC *vc = [CommerceRoomListVC new];
+//            [self.navigationController pushViewController:vc animated:YES];
             break;
         }
         default: break;

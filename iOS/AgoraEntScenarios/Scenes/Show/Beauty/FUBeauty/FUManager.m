@@ -7,10 +7,10 @@
 //
 
 #import "FUManager.h"
-#import "authpack.h"
 #import "BundleUtil.h"
 #if __has_include(<FURenderKit/FURenderKit.h>)
 #import <FURenderKit/FURenderKit.h>
+#import "authpack.h"
 #endif
 
 static FUManager *shareManager = NULL;
