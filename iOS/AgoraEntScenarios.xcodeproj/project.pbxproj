@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		053998C5290A83E0005143C7 /* HomeMenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053998C4290A83E0005143C7 /* HomeMenuCell.swift */; };
+		A8F9048F2B4BDE1700A4C5A7 /* ShowDebug2TFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9048A2B4BDE1700A4C5A7 /* ShowDebug2TFModel.swift */; };
+		A8F904902B4BDE1700A4C5A7 /* ShowDebugAgoraKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9048B2B4BDE1700A4C5A7 /* ShowDebugAgoraKitManager.swift */; };
+		A8F904912B4BDE1700A4C5A7 /* ShowDebugSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9048C2B4BDE1700A4C5A7 /* ShowDebugSettingVC.swift */; };
+		A8F904922B4BDE1700A4C5A7 /* ShowDebugPrivateParamsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9048D2B4BDE1700A4C5A7 /* ShowDebugPrivateParamsVC.swift */; };
+		A8F904932B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9048E2B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift */; };
+		A8F904952B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904942B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift */; };
 		AB4746E72A5E82AB00E68FBA /* ShowRobotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB4746E62A5E82AB00E68FBA /* ShowRobotService.swift */; };
 		ABA095902A8373F400A54FCC /* ShowSettingBitrateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABA0958F2A8373F300A54FCC /* ShowSettingBitrateCell.swift */; };
 		ABE4B37A2A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE4B3792A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift */; };
@@ -36,10 +42,7 @@
 		DD36106329B70CDC00CE7984 /* ShowAgoraKitManager+Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD360FBB29B70CDC00CE7984 /* ShowAgoraKitManager+Setting.swift */; };
 		DD36106429B70CDC00CE7984 /* ShowAgoraKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD360FBC29B70CDC00CE7984 /* ShowAgoraKitManager.swift */; };
 		DD36106529B70CDC00CE7984 /* ShowChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD360FBD29B70CDC00CE7984 /* ShowChatModel.swift */; };
-		DD36106729B70CDC00CE7984 /* ShowAgoraKitManager+DebugSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD360FBF29B70CDC00CE7984 /* ShowAgoraKitManager+DebugSetting.swift */; };
-		DD36106829B70CDC00CE7984 /* ShowDebug2TFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD360FC129B70CDC00CE7984 /* ShowDebug2TFModel.swift */; };
 		DD36106929B70CDC00CE7984 /* ShowSettingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD360FC229B70CDC00CE7984 /* ShowSettingKey.swift */; };
-		DD36106B29B70CDC00CE7984 /* ShowDebug1TFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD360FC429B70CDC00CE7984 /* ShowDebug1TFModel.swift */; };
 		DD36108929B70CDC00CE7984 /* ShowRoomListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36100129B70CDC00CE7984 /* ShowRoomListVC.swift */; };
 		DD36108B29B70CDC00CE7984 /* ShowReceivePKAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36100429B70CDC00CE7984 /* ShowReceivePKAlertVC.swift */; };
 		DD36108C29B70CDC00CE7984 /* ShowMusicEffectVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36100529B70CDC00CE7984 /* ShowMusicEffectVC.swift */; };
@@ -51,7 +54,6 @@
 		DD36109229B70CDC00CE7984 /* ShowLivePagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36100C29B70CDC00CE7984 /* ShowLivePagesViewController.swift */; };
 		DD36109329B70CDC00CE7984 /* ShowLiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36100D29B70CDC00CE7984 /* ShowLiveViewController.swift */; };
 		DD36109429B70CDC00CE7984 /* ShowSettingActionSheetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36100F29B70CDC00CE7984 /* ShowSettingActionSheetVC.swift */; };
-		DD36109529B70CDC00CE7984 /* ShowDebugSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36101029B70CDC00CE7984 /* ShowDebugSettingVC.swift */; };
 		DD36109629B70CDC00CE7984 /* ShowAdvancedSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36101129B70CDC00CE7984 /* ShowAdvancedSettingVC.swift */; };
 		DD36109829B70CDC00CE7984 /* ShowVideoSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36101329B70CDC00CE7984 /* ShowVideoSettingVC.swift */; };
 		DD36109929B70CDC00CE7984 /* ShowCunstomNaviBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36101429B70CDC00CE7984 /* ShowCunstomNaviBar.swift */; };
@@ -216,7 +218,6 @@
 		DDDDDC3628FFD78C005F4E8B /* UIImage+Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDDDB3328FFD78B005F4E8B /* UIImage+Scene.swift */; };
 		DDDDDC3728FFD78C005F4E8B /* AppContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDDDB3428FFD78B005F4E8B /* AppContext.swift */; };
 		DDDDDC3828FFD78C005F4E8B /* SceneLocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDDDB3528FFD78B005F4E8B /* SceneLocalizedString.swift */; };
-		E32C7EA92A20B03F00512523 /* ShowDebugPrivateParamsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32C7EA82A20B03F00512523 /* ShowDebugPrivateParamsVC.swift */; };
 		E357353E29EFD631009D54E1 /* VLAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = E357353C29EFD631009D54E1 /* VLAlert.m */; };
 		E357353F29EFD631009D54E1 /* VLKTVAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = E357353D29EFD631009D54E1 /* VLKTVAlert.m */; };
 		E358F800293494BC00A7EBD1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E358F802293494BC00A7EBD1 /* InfoPlist.strings */; };
@@ -536,6 +537,13 @@
 		053998C4290A83E0005143C7 /* HomeMenuCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMenuCell.swift; sourceTree = "<group>"; };
 		4A3B186B38A56ACA440591ED /* Pods-AgoraEntScenarios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraEntScenarios.debug.xcconfig"; path = "Target Support Files/Pods-AgoraEntScenarios/Pods-AgoraEntScenarios.debug.xcconfig"; sourceTree = "<group>"; };
 		563C78B601810D421A3F783A /* Pods-AgoraEntScenarios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraEntScenarios.release.xcconfig"; path = "Target Support Files/Pods-AgoraEntScenarios/Pods-AgoraEntScenarios.release.xcconfig"; sourceTree = "<group>"; };
+		A8F9048A2B4BDE1700A4C5A7 /* ShowDebug2TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebug2TFModel.swift; sourceTree = "<group>"; };
+		A8F9048B2B4BDE1700A4C5A7 /* ShowDebugAgoraKitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebugAgoraKitManager.swift; sourceTree = "<group>"; };
+		A8F9048C2B4BDE1700A4C5A7 /* ShowDebugSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebugSettingVC.swift; sourceTree = "<group>"; };
+		A8F9048D2B4BDE1700A4C5A7 /* ShowDebugPrivateParamsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebugPrivateParamsVC.swift; sourceTree = "<group>"; };
+		A8F9048E2B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebug1TFModel.swift; sourceTree = "<group>"; };
+		A8F904942B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowThumnbnailCanvasView.swift; sourceTree = "<group>"; };
+		A8F904982B4BFFD000A4C5A7 /* authpack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = authpack.h; sourceTree = "<group>"; };
 		AB4746E62A5E82AB00E68FBA /* ShowRobotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowRobotService.swift; sourceTree = "<group>"; };
 		ABA0958F2A8373F300A54FCC /* ShowSettingBitrateCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowSettingBitrateCell.swift; sourceTree = "<group>"; };
 		ABE4B3792A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowNetStateSelectViewController.swift; sourceTree = "<group>"; };
@@ -569,10 +577,7 @@
 		DD360FBB29B70CDC00CE7984 /* ShowAgoraKitManager+Setting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShowAgoraKitManager+Setting.swift"; sourceTree = "<group>"; };
 		DD360FBC29B70CDC00CE7984 /* ShowAgoraKitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowAgoraKitManager.swift; sourceTree = "<group>"; };
 		DD360FBD29B70CDC00CE7984 /* ShowChatModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowChatModel.swift; sourceTree = "<group>"; };
-		DD360FBF29B70CDC00CE7984 /* ShowAgoraKitManager+DebugSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShowAgoraKitManager+DebugSetting.swift"; sourceTree = "<group>"; };
-		DD360FC129B70CDC00CE7984 /* ShowDebug2TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebug2TFModel.swift; sourceTree = "<group>"; };
 		DD360FC229B70CDC00CE7984 /* ShowSettingKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowSettingKey.swift; sourceTree = "<group>"; };
-		DD360FC429B70CDC00CE7984 /* ShowDebug1TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebug1TFModel.swift; sourceTree = "<group>"; };
 		DD36100129B70CDC00CE7984 /* ShowRoomListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowRoomListVC.swift; sourceTree = "<group>"; };
 		DD36100429B70CDC00CE7984 /* ShowReceivePKAlertVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowReceivePKAlertVC.swift; sourceTree = "<group>"; };
 		DD36100529B70CDC00CE7984 /* ShowMusicEffectVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowMusicEffectVC.swift; sourceTree = "<group>"; };
@@ -584,7 +589,6 @@
 		DD36100C29B70CDC00CE7984 /* ShowLivePagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowLivePagesViewController.swift; sourceTree = "<group>"; };
 		DD36100D29B70CDC00CE7984 /* ShowLiveViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowLiveViewController.swift; sourceTree = "<group>"; };
 		DD36100F29B70CDC00CE7984 /* ShowSettingActionSheetVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowSettingActionSheetVC.swift; sourceTree = "<group>"; };
-		DD36101029B70CDC00CE7984 /* ShowDebugSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebugSettingVC.swift; sourceTree = "<group>"; };
 		DD36101129B70CDC00CE7984 /* ShowAdvancedSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowAdvancedSettingVC.swift; sourceTree = "<group>"; };
 		DD36101329B70CDC00CE7984 /* ShowVideoSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowVideoSettingVC.swift; sourceTree = "<group>"; };
 		DD36101429B70CDC00CE7984 /* ShowCunstomNaviBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowCunstomNaviBar.swift; sourceTree = "<group>"; };
@@ -810,7 +814,6 @@
 		DDDDDB3328FFD78B005F4E8B /* UIImage+Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Scene.swift"; sourceTree = "<group>"; };
 		DDDDDB3428FFD78B005F4E8B /* AppContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppContext.swift; sourceTree = "<group>"; };
 		DDDDDB3528FFD78B005F4E8B /* SceneLocalizedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneLocalizedString.swift; sourceTree = "<group>"; };
-		E32C7EA82A20B03F00512523 /* ShowDebugPrivateParamsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebugPrivateParamsVC.swift; sourceTree = "<group>"; };
 		E357353A29EFD631009D54E1 /* VLAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLAlert.h; sourceTree = "<group>"; };
 		E357353B29EFD631009D54E1 /* VLKTVAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLKTVAlert.h; sourceTree = "<group>"; };
 		E357353C29EFD631009D54E1 /* VLAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLAlert.m; sourceTree = "<group>"; };
@@ -1204,6 +1207,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		A8F904892B4BDE1700A4C5A7 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				A8F9048A2B4BDE1700A4C5A7 /* ShowDebug2TFModel.swift */,
+				A8F9048B2B4BDE1700A4C5A7 /* ShowDebugAgoraKitManager.swift */,
+				A8F9048C2B4BDE1700A4C5A7 /* ShowDebugSettingVC.swift */,
+				A8F9048D2B4BDE1700A4C5A7 /* ShowDebugPrivateParamsVC.swift */,
+				A8F9048E2B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift */,
+			);
+			path = Debug;
+			sourceTree = "<group>";
+		};
 		DD220BC2295B48FD00F57F30 /* QMUI */ = {
 			isa = PBXGroup;
 			children = (
@@ -1278,6 +1293,7 @@
 		DD360FAC29B70CDC00CE7984 /* Show */ = {
 			isa = PBXGroup;
 			children = (
+				A8F904892B4BDE1700A4C5A7 /* Debug */,
 				DD360FAD29B70CDC00CE7984 /* showResource.bundle */,
 				DD360FAE29B70CDC00CE7984 /* Utils */,
 				DD360FB729B70CDC00CE7984 /* Models */,
@@ -1312,7 +1328,6 @@
 				DD360FBB29B70CDC00CE7984 /* ShowAgoraKitManager+Setting.swift */,
 				DD360FBC29B70CDC00CE7984 /* ShowAgoraKitManager.swift */,
 				DD360FBD29B70CDC00CE7984 /* ShowChatModel.swift */,
-				DD360FBF29B70CDC00CE7984 /* ShowAgoraKitManager+DebugSetting.swift */,
 				DD360FC029B70CDC00CE7984 /* Setting */,
 			);
 			path = Models;
@@ -1330,10 +1345,7 @@
 		DD360FC029B70CDC00CE7984 /* Setting */ = {
 			isa = PBXGroup;
 			children = (
-				E32C7EA82A20B03F00512523 /* ShowDebugPrivateParamsVC.swift */,
-				DD360FC129B70CDC00CE7984 /* ShowDebug2TFModel.swift */,
 				DD360FC229B70CDC00CE7984 /* ShowSettingKey.swift */,
-				DD360FC429B70CDC00CE7984 /* ShowDebug1TFModel.swift */,
 			);
 			path = Setting;
 			sourceTree = "<group>";
@@ -1394,7 +1406,6 @@
 			isa = PBXGroup;
 			children = (
 				DD36100F29B70CDC00CE7984 /* ShowSettingActionSheetVC.swift */,
-				DD36101029B70CDC00CE7984 /* ShowDebugSettingVC.swift */,
 				DD36101129B70CDC00CE7984 /* ShowAdvancedSettingVC.swift */,
 				DD36101329B70CDC00CE7984 /* ShowVideoSettingVC.swift */,
 				DD36101429B70CDC00CE7984 /* ShowCunstomNaviBar.swift */,
@@ -1507,6 +1518,7 @@
 				DD36103A29B70CDC00CE7984 /* ShowRoomChatCell.swift */,
 				DD36103B29B70CDC00CE7984 /* ShowRoomInfoView.swift */,
 				E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */,
+				A8F904942B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift */,
 			);
 			path = Live;
 			sourceTree = "<group>";
@@ -2358,6 +2370,7 @@
 		E72F624E2A822D3500C963D2 /* FUBeauty */ = {
 			isa = PBXGroup;
 			children = (
+				A8F904982B4BFFD000A4C5A7 /* authpack.h */,
 				E72F62512A822D3500C963D2 /* FUManager.h */,
 				E72F62532A822D3500C963D2 /* FUManager.m */,
 			);
@@ -3079,13 +3092,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E75B491B2B3029B6005E925A /* CommerceResource.bundle in Resources */,
 				DD36105829B70CDC00CE7984 /* showResource.bundle in Resources */,
 				DD84176529090C520026B624 /* public.css in Resources */,
 				DD84176429090C520026B624 /* intro.css in Resources */,
 				DD84177229090C520026B624 /* ic_chat.png in Resources */,
-				E75B49332B3029B7005E925A /* SamplePicture2.png in Resources */,
-				E75B492E2B3029B7005E925A /* SensemeLicFile.png in Resources */,
 				DD84176329090C520026B624 /* util.js in Resources */,
 				DD84176C29090C520026B624 /* ic_game.png in Resources */,
 				DD84176E29090C520026B624 /* tab_discover.png in Resources */,
@@ -3093,12 +3103,9 @@
 				DD8417C929090C520026B624 /* Template.bundle in Resources */,
 				DD84177629090C520026B624 /* product4.png in Resources */,
 				DD84177129090C520026B624 /* ic_play.png in Resources */,
-				E75B492F2B3029B7005E925A /* SenseLibPath.png in Resources */,
-				E75B49312B3029B7005E925A /* podinstallError.png in Resources */,
 				DD84177529090C520026B624 /* product1.png in Resources */,
 				DD84176929090C520026B624 /* banner1.png in Resources */,
 				DD84176B29090C520026B624 /* tab_home.png in Resources */,
-				E75B49322B3029B7005E925A /* SamplePicture3.png in Resources */,
 				DD84176829090C520026B624 /* ic_back_b.png in Resources */,
 				DD84177329090C520026B624 /* product2.png in Resources */,
 				DD2A43D728FFCEE7004CEDCF /* LaunchScreen.storyboard in Resources */,
@@ -3108,12 +3115,10 @@
 				DD84177729090C520026B624 /* entertainment.html in Resources */,
 				DD84176229090C520026B624 /* index.html in Resources */,
 				DD2A43D428FFCEE7004CEDCF /* Assets.xcassets in Resources */,
-				E75B49342B3029B7005E925A /* SamplePicture4.png in Resources */,
 				DD84177829090C520026B624 /* entertainment.js in Resources */,
 				E3735C9F2A5E7E75004737EF /* BeautyResource.bundle in Resources */,
 				E358F800293494BC00A7EBD1 /* InfoPlist.strings in Resources */,
 				DD84176729090C520026B624 /* tab_profile.png in Resources */,
-				E75B49302B3029B7005E925A /* KeyCenter.png in Resources */,
 				DD2A43D228FFCEE7004CEDCF /* Main.storyboard in Resources */,
 				DD84176629090C520026B624 /* index.js in Resources */,
 				DD84176A29090C520026B624 /* ic_k.png in Resources */,
@@ -3213,7 +3218,6 @@
 				DDA199E528FFE579009D3E61 /* UILabel+Font.m in Sources */,
 				DDA199F528FFE579009D3E61 /* AgoraExtension.swift in Sources */,
 				DDA199E128FFE579009D3E61 /* VLToast.m in Sources */,
-				E75B492D2B3029B7005E925A /* CommerceDebug1TFModel.swift in Sources */,
 				DD619C0929E3E84D008F63E4 /* AboutAgoraHeader.swift in Sources */,
 				E732CD572B47EC6D004D6FB9 /* VoiceRoomAudienceCell.swift in Sources */,
 				DDA199F028FFE579009D3E61 /* BaseViewController.m in Sources */,
@@ -3229,9 +3233,7 @@
 				E732CD562B47EC6D004D6FB9 /* VMMuteView.swift in Sources */,
 				E732CD622B47EC6D004D6FB9 /* VRCreateRoomInputView.swift in Sources */,
 				DD3610CD29B70F3300CE7984 /* VLMineSwitchCell.swift in Sources */,
-				E75B49612B3029B7005E925A /* CommerceChatInputView.swift in Sources */,
 				E36EC8B72A663B880089A374 /* AEACategoryTitleCell.swift in Sources */,
-				E75B49472B3029B7005E925A /* CommercePresentTransitioningDelegate.swift in Sources */,
 				DD3610C229B70CDC00CE7984 /* ShowInviteCell.swift in Sources */,
 				DD8417CA29090C520026B624 /* TemplateServiceModel.swift in Sources */,
 				E732CD062B47EC6D004D6FB9 /* VoiceRoomViewController+Mic.swift in Sources */,
@@ -3242,6 +3244,7 @@
 				E732CD7C2B47F654004D6FB9 /* AUINetworking.swift in Sources */,
 				E75B492B2B3029B7005E925A /* CommerceSettingKey.swift in Sources */,
 				E732CD052B47EC6D004D6FB9 /* VoiceRoomViewController+ChatBar.swift in Sources */,
+				E3735C8C2A5E7E75004737EF /* EFMotionManager.m in Sources */,
 				DDA199F328FFE579009D3E61 /* UIColor+Extension.swift in Sources */,
 				DD3610B929B70CDC00CE7984 /* ShowSettingSwitchCell.swift in Sources */,
 				DD3610B529B70CDC00CE7984 /* ShowSettingLabelCell.swift in Sources */,
@@ -3249,17 +3252,16 @@
 				DD36106329B70CDC00CE7984 /* ShowAgoraKitManager+Setting.swift in Sources */,
 				DD36108B29B70CDC00CE7984 /* ShowReceivePKAlertVC.swift in Sources */,
 				DD3610BC29B70CDC00CE7984 /* ShowSettingActionSheetFooterView.swift in Sources */,
-				DD36109529B70CDC00CE7984 /* ShowDebugSettingVC.swift in Sources */,
-				E75B49652B3029B7005E925A /* CommercePresettingFooterView.swift in Sources */,
 				DDA199FD28FFE579009D3E61 /* UIView+VL.m in Sources */,
 				DD36105E29B70CDC00CE7984 /* ShowThrottle.swift in Sources */,
+				A8F904912B4BDE1700A4C5A7 /* ShowDebugSettingVC.swift in Sources */,
 				DDA199E928FFE579009D3E61 /* VLResponseDataModel.m in Sources */,
 				E732CCF72B47EC6D004D6FB9 /* VoiceRoomRTCManager.swift in Sources */,
 				E75B49842B328ADA005E925A /* CommerceGoodsListView.swift in Sources */,
 				E3735CA72A5E8023004737EF /* VRBaseViewController.swift in Sources */,
 				DD3610BB29B70CDC00CE7984 /* ShowPresettingHeaderView.swift in Sources */,
 				E3735C972A5E7E75004737EF /* BEPixelBufferInfo.m in Sources */,
-				E75B49292B3029B7005E925A /* CommerceAgoraKitManager+DebugSetting.swift in Sources */,
+				A8F9048F2B4BDE1700A4C5A7 /* ShowDebug2TFModel.swift in Sources */,
 				DDA199EF28FFE579009D3E61 /* VLBaseTableView.m in Sources */,
 				DD84177C29090C520026B624 /* VLHomeItemView.m in Sources */,
 				E3735C9D2A5E7E75004737EF /* BeautyLoad.m in Sources */,
@@ -3268,14 +3270,10 @@
 				E732CD072B47EC6D004D6FB9 /* VoiceRoomApplyUsersViewController.swift in Sources */,
 				E732CD6F2B47F4A4004D6FB9 /* SAAlertViewController.swift in Sources */,
 				E72F62562A822D3500C963D2 /* FUManager.m in Sources */,
-				DD36106B29B70CDC00CE7984 /* ShowDebug1TFModel.swift in Sources */,
 				E3735C952A5E7E75004737EF /* BEGLTexture.m in Sources */,
 				DD36105C29B70CDC00CE7984 /* UIViewController+Show.swift in Sources */,
 				E732CCEB2B47EC6D004D6FB9 /* PresentationSegue.swift in Sources */,
 				DDA199E328FFE579009D3E61 /* VLLocalWebViewController.m in Sources */,
-				E75B49582B3029B7005E925A /* CommerceDataPanelPresenter.swift in Sources */,
-				E75B493E2B3029B7005E925A /* CommerceLiveViewController.swift in Sources */,
-				E75B49812B31920F005E925A /* CommerceGradualTableView.m in Sources */,
 				DD84177E29090C520026B624 /* VLHomeView.m in Sources */,
 				E732CD082B47EC6D004D6FB9 /* VoiceRoomHelpViewController.swift in Sources */,
 				DD36108C29B70CDC00CE7984 /* ShowMusicEffectVC.swift in Sources */,
@@ -3289,13 +3287,13 @@
 				DD84178429090C520026B624 /* VLDiscoveryViewController.m in Sources */,
 				E732CD282B47EC6D004D6FB9 /* AgoraChatRoomBaseAlienCollectionViewCell.swift in Sources */,
 				E75B493D2B3029B7005E925A /* CommerceLivePagesViewController.swift in Sources */,
+				DD84177D29090C520026B624 /* VLHomeItemModel.m in Sources */,
+				DD84178429090C520026B624 /* VLDiscoveryViewController.m in Sources */,
 				DD3610C629B70CDC00CE7984 /* ShowToolMenuView.swift in Sources */,
-				E75B495F2B3029B7005E925A /* CommerceRoomLiveView.swift in Sources */,
 				DDA199F628FFE579009D3E61 /* UIImage+Color.swift in Sources */,
 				DDA19A0D28FFE579009D3E61 /* NetworkManager.swift in Sources */,
 				E357353E29EFD631009D54E1 /* VLAlert.m in Sources */,
 				DDA199F928FFE579009D3E61 /* NSDictionary+dictToModel.m in Sources */,
-				E75B498A2B33DD1F005E925A /* CommerceAuctionShoppingView.swift in Sources */,
 				DDA19A0428FFE579009D3E61 /* CALayer+JKBorderColor.m in Sources */,
 				E75B498F2B34304B005E925A /* CommerceEmitterLayer.swift in Sources */,
 				E732CD522B47EC6D004D6FB9 /* VMANISSetTableViewCell.swift in Sources */,
@@ -3311,6 +3309,11 @@
 				DD3610B329B70CDC00CE7984 /* ShowRoomInfoView.swift in Sources */,
 				E75B495D2B3029B7005E925A /* CommerceRoomBottomBar.swift in Sources */,
 				E732CD452B47EC6D004D6FB9 /* VMUpstageView.swift in Sources */,
+				DD36105F29B70CDC00CE7984 /* UIImage+Show.swift in Sources */,
+				DD36106129B70CDC00CE7984 /* ShowMusicPresenter.swift in Sources */,
+				DD36106129B70CDC00CE7984 /* ShowMusicPresenter.swift in Sources */,
+				DD36109429B70CDC00CE7984 /* ShowSettingActionSheetVC.swift in Sources */,
+				DD3610B329B70CDC00CE7984 /* ShowRoomInfoView.swift in Sources */,
 				DD36109A29B70CDC00CE7984 /* ShowPresentTransitioningDelegate.swift in Sources */,
 				DD3610B029B70CDC00CE7984 /* ShowCanvasView.swift in Sources */,
 				E732CD642B47EC6D004D6FB9 /* VRRoomListView.swift in Sources */,
@@ -3326,7 +3329,6 @@
 				DD8417C829090C520026B624 /* TemplateSceneCreateController.swift in Sources */,
 				E3735C872A5E7E75004737EF /* EffectsDetector.m in Sources */,
 				DD3610A429B70CDC00CE7984 /* ShowReceivePKView.swift in Sources */,
-				E75B497C2B3029B7005E925A /* AppContext+Commerce.swift in Sources */,
 				E3735C8A2A5E7E75004737EF /* VideoProcessingManager.m in Sources */,
 				E3735CA32A5E7E75004737EF /* SenseBeautyRender.m in Sources */,
 				DDA199F228FFE579009D3E61 /* UIViewController+VL.m in Sources */,
@@ -3339,11 +3341,10 @@
 				E75B495B2B3029B7005E925A /* CommerceRoomListView.swift in Sources */,
 				E75B49882B32F150005E925A /* CommerceAuctionResultView.swift in Sources */,
 				E732CD502B47EC6D004D6FB9 /* PopTip+Transitions.swift in Sources */,
+				DD8417CB29090C520026B624 /* TemplateServiceImp.swift in Sources */,
 				DD36109229B70CDC00CE7984 /* ShowLivePagesViewController.swift in Sources */,
 				DD2A43CF28FFCEE7004CEDCF /* ViewController.swift in Sources */,
-				E75B49522B3029B7005E925A /* CommerceMusicItemCell.swift in Sources */,
 				DD84178129090C520026B624 /* VLDiscoveryItemTCell.m in Sources */,
-				E75B49782B3029B7005E925A /* CommerceToolMenuView.swift in Sources */,
 				DDA199F428FFE579009D3E61 /* String+Extension.swift in Sources */,
 				DD3610BF29B70CDC00CE7984 /* ShowSettingActionSheetCell.swift in Sources */,
 				E732CD512B47EC6D004D6FB9 /* VoiceMusicPlayingView.swift in Sources */,
@@ -3403,6 +3404,8 @@
 				E732CD4E2B47EC6D004D6FB9 /* VMNorSetTableViewCell.swift in Sources */,
 				E732CD4D2B47EC6D004D6FB9 /* VMManagerView.swift in Sources */,
 				E75B49672B3029B7005E925A /* CommerceDebugSetting1TFCell.swift in Sources */,
+				E72F624D2A8097DF00C963D2 /* VLLoginViewController.swift in Sources */,
+				E3735C932A5E7E75004737EF /* BEResourceHelper.m in Sources */,
 				E3735CA12A5E7E75004737EF /* FUBeautyRender.m in Sources */,
 				DD619C0829E3E84D008F63E4 /* SceneVersionCell.swift in Sources */,
 				DDA19A0B28FFE579009D3E61 /* JSONObject.swift in Sources */,
@@ -3411,6 +3414,7 @@
 				DDA19A0C28FFE579009D3E61 /* SyncUtil.swift in Sources */,
 				DD84178829090C520026B624 /* VLMineViewController.m in Sources */,
 				DD619C0A29E3E84D008F63E4 /* ContactInfoCell.swift in Sources */,
+				A8F904952B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift in Sources */,
 				DDA199FA28FFE579009D3E61 /* UIColor+JKWeb.m in Sources */,
 				E732CD272B47EC6D004D6FB9 /* VoiceCreateRoomView.swift in Sources */,
 				DDA19A0528FFE579009D3E61 /* NSObject+JKAppInfo.m in Sources */,
@@ -3418,6 +3422,7 @@
 				E732CD7F2B47F654004D6FB9 /* NetworkManagerModel.swift in Sources */,
 				E75B49432B3029B7005E925A /* CommerceVideoSettingVC.swift in Sources */,
 				E36BE99729656C43003FCFBF /* AttributedTextView.m in Sources */,
+				A8F904902B4BDE1700A4C5A7 /* ShowDebugAgoraKitManager.swift in Sources */,
 				DD3610B129B70CDC00CE7984 /* ShowChatInputView.swift in Sources */,
 				DD84178529090C520026B624 /* VLUploadImageResModel.m in Sources */,
 				DDA199E228FFE579009D3E61 /* VLCommonWebViewController.m in Sources */,
@@ -3441,13 +3446,14 @@
 				DDA199E028FFE579009D3E61 /* VLEmptyView.m in Sources */,
 				E75B49352B3029B7005E925A /* CommerceRoomListVC.swift in Sources */,
 				E732CD042B47EC6D004D6FB9 /* VoiceRoomAudiencesViewController.swift in Sources */,
+				DD3610C729B70CDC00CE7984 /* ShowSubscribeServiceProtocol.swift in Sources */,
+				DDA199E028FFE579009D3E61 /* VLEmptyView.m in Sources */,
 				E72F624B2A7CEE7700C963D2 /* BaseNavigationView.swift in Sources */,
 				DD36109929B70CDC00CE7984 /* ShowCunstomNaviBar.swift in Sources */,
 				DD84177F29090C520026B624 /* UIWindow+Router.m in Sources */,
 				DD3610AA29B70CDC00CE7984 /* ShowEmptyView.swift in Sources */,
 				E732CD0A2B47EC6D004D6FB9 /* VoiceRoomViewController.swift in Sources */,
 				DD84178729090C520026B624 /* VLMineTCell.m in Sources */,
-				E75B497D2B3029B7005E925A /* CommerceSyncManagerServiceImp.swift in Sources */,
 				DD8417CC29090C520026B624 /* TemplateServiceProtocol.swift in Sources */,
 				E732CD432B47EC6D004D6FB9 /* VRCreateRoomPresentView.swift in Sources */,
 				E732CD712B47F4FB004D6FB9 /* SAPresentedViewType.swift in Sources */,
@@ -3457,17 +3463,16 @@
 				ABA095902A8373F400A54FCC /* ShowSettingBitrateCell.swift in Sources */,
 				DD619B8429E3E262008F63E4 /* VerifyCodeView.swift in Sources */,
 				DD3610A129B70CDC00CE7984 /* ShowMusicTableHeaderView.swift in Sources */,
-				E75B494D2B3029B7005E925A /* CommerceAEACategoryView.swift in Sources */,
 				DD36109129B70CDC00CE7984 /* ShowToolMenuViewController.swift in Sources */,
 				DD84178029090C520026B624 /* VLDiscoveryHeaderView.m in Sources */,
 				E732CCF02B47EC6D004D6FB9 /* AppContext+VR.swift in Sources */,
 				E75B49682B3029B7005E925A /* CommerceSettingBitrateCell.swift in Sources */,
 				E732CD002B47EC6D004D6FB9 /* ChatRoomServiceImp.swift in Sources */,
+				A8F904932B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift in Sources */,
 				DD36105B29B70CDC00CE7984 /* Date+Show.swift in Sources */,
 				E732CD0C2B47EC6D004D6FB9 /* VoiceRoomViewController+SoundCard.swift in Sources */,
 				E732CD392B47EC6D004D6FB9 /* VoiceMusicListView.swift in Sources */,
 				DDDDDC3728FFD78C005F4E8B /* AppContext.swift in Sources */,
-				E75B49552B3029B7005E925A /* CommerceCreateLiveView.swift in Sources */,
 				DDA19A0228FFE579009D3E61 /* UIGestureRecognizer+VL.m in Sources */,
 				E732CCE02B47EC6D004D6FB9 /* HeadSetUtil.swift in Sources */,
 				E732CD0F2B47EC6D004D6FB9 /* VoiceRoomAudioSettingDetailViewController.swift in Sources */,
@@ -3505,9 +3510,9 @@
 				DDA199FC28FFE579009D3E61 /* UISplitViewController+JKQuickAccess.m in Sources */,
 				E75B491E2B3029B6005E925A /* UIFont+Commerce.swift in Sources */,
 				E732CCFF2B47EC6D004D6FB9 /* VoiceRoomChatModel.swift in Sources */,
+				DDA199FC28FFE579009D3E61 /* UISplitViewController+JKQuickAccess.m in Sources */,
 				DD36108929B70CDC00CE7984 /* ShowRoomListVC.swift in Sources */,
 				DD36108F29B70CDC00CE7984 /* ShowBeautyFaceVC.swift in Sources */,
-				E75B496D2B3029B7005E925A /* CommercePresettingHeaderView.swift in Sources */,
 				DD3610CB29B70CDC00CE7984 /* ShowServiceProtocol.swift in Sources */,
 				E75B496F2B3029B7005E925A /* CommercePresettingCell.swift in Sources */,
 				E732CCE32B47EC6D004D6FB9 /* VoiceRoomEmojiManager.swift in Sources */,
@@ -3521,6 +3526,10 @@
 				E732CCFE2B47EC6D004D6FB9 /* VoiceRoomAudiencesEntity.swift in Sources */,
 				E732CD1A2B47EC6D004D6FB9 /* VRSoundEffectsCell.swift in Sources */,
 				E75B49252B3029B6005E925A /* CommerceMusicPresenter.swift in Sources */,
+				DDA19A0728FFE579009D3E61 /* Config.swift in Sources */,
+				DD36105A29B70CDC00CE7984 /* UIFont+Show.swift in Sources */,
+				DD3610AD29B70CDC00CE7984 /* ShowRoomBottomBar.swift in Sources */,
+				DD3610A329B70CDC00CE7984 /* ShowReceiveFinishView.swift in Sources */,
 				DDA19A0F28FFE579009D3E61 /* VLUserCenter.m in Sources */,
 				DD3610A729B70CDC00CE7984 /* ShowSelectQualityCell.swift in Sources */,
 				E732CD2C2B47EC6D004D6FB9 /* VoiceRoomEndLiveAlert.swift in Sources */,
@@ -3546,7 +3555,6 @@
 				DDDDDC3828FFD78C005F4E8B /* SceneLocalizedString.swift in Sources */,
 				DD619B9B29E3E262008F63E4 /* UIViewToastExtension.swift in Sources */,
 				DDA199FB28FFE579009D3E61 /* UIColor+JKGradient.m in Sources */,
-				E32C7EA92A20B03F00512523 /* ShowDebugPrivateParamsVC.swift in Sources */,
 				DD3610B229B70CDC00CE7984 /* ShowRoomChatCell.swift in Sources */,
 				E3735C9E2A5E7E75004737EF /* BeautyModel.swift in Sources */,
 				DD619B9629E3E262008F63E4 /* Notification+Presentation.swift in Sources */,
@@ -3569,8 +3577,11 @@
 				E732CD5B2B47EC6D004D6FB9 /* VoiceRoomInviteCell.swift in Sources */,
 				E732CD7E2B47F654004D6FB9 /* AgoraEntCommonLogger.swift in Sources */,
 				E732CD232B47EC6D004D6FB9 /* VoiceRealInEarView.swift in Sources */,
+				DD3610A029B70CDC00CE7984 /* ShowMusicEffectCell.swift in Sources */,
+				DD84178229090C520026B624 /* VLDiscoveryView.m in Sources */,
+				DD3610C429B70CDC00CE7984 /* ShowApplyView.swift in Sources */,
+				AB4746E72A5E82AB00E68FBA /* ShowRobotService.swift in Sources */,
 				DD3610C329B70CDC00CE7984 /* ShowApplyAndInviteView.swift in Sources */,
-				E75B49CC2B396495005E925A /* CommerceUserJoinView.swift in Sources */,
 				DDA19A0A28FFE579009D3E61 /* Screen.swift in Sources */,
 				DD84178329090C520026B624 /* VLAmusementTCell.m in Sources */,
 				DD3610BE29B70CDC00CE7984 /* ShowSettingSliderCell.swift in Sources */,
@@ -3591,6 +3602,7 @@
 				E732CD5C2B47EC6D004D6FB9 /* VoiceRoomPraiseEmitterView.swift in Sources */,
 				E75B492A2B3029B7005E925A /* CommerceDebug2TFModel.swift in Sources */,
 				E732CCF12B47EC6D004D6FB9 /* ResourceBundleExtension.swift in Sources */,
+				E3735C8E2A5E7E75004737EF /* BELicenseHelper.mm in Sources */,
 				E3735C862A5E7E75004737EF /* Effects.m in Sources */,
 				E732CD2D2B47EC6D004D6FB9 /* VRSoundCardMicTypeView.swift in Sources */,
 				DD36105D29B70CDC00CE7984 /* UIColor+Show.swift in Sources */,
@@ -3610,6 +3622,7 @@
 				DD3610B829B70CDC00CE7984 /* ShowSettingBaseCell.swift in Sources */,
 				E75B49492B3029B7005E925A /* CommerceAEAListContainerView.swift in Sources */,
 				E732CD342B47EC6D004D6FB9 /* VoiceRoomEmojiListView.swift in Sources */,
+				DD3610B829B70CDC00CE7984 /* ShowSettingBaseCell.swift in Sources */,
 				DD36109F29B70CDC00CE7984 /* ShowBaseViewController.swift in Sources */,
 				E732CD4A2B47EC6D004D6FB9 /* VoiceRoomPopView.swift in Sources */,
 				E3735C342A5E4AFF004737EF /* UITextView+Extension.swift in Sources */,
@@ -3626,6 +3639,8 @@
 				E75B494C2B3029B7005E925A /* CommerceAEACategoryTitleCell.m in Sources */,
 				E75B49792B3029B7005E925A /* CommerceSubscribeServiceProtocol.swift in Sources */,
 				E732CD2E2B47EC6D004D6FB9 /* VRSoundCardMicTypeCell.swift in Sources */,
+				E3735C9C2A5E7E75004737EF /* BundleUtil.m in Sources */,
+				DDA199EA28FFE579009D3E61 /* VLBaseModel.m in Sources */,
 				DD36109329B70CDC00CE7984 /* ShowLiveViewController.swift in Sources */,
 				E72F62582A823B5000C963D2 /* FUBeautyManager.swift in Sources */,
 				DD3610CA29B70CDC00CE7984 /* ShowSyncManagerServiceImp.swift in Sources */,
@@ -3638,6 +3653,7 @@
 				E732CD252B47EC6D004D6FB9 /* VMUserListView.swift in Sources */,
 				E75B49272B3029B6005E925A /* CommerceAgoraKitManager.swift in Sources */,
 				E75B491C2B3029B6005E925A /* NSString+Commerce.swift in Sources */,
+				A8F904922B4BDE1700A4C5A7 /* ShowDebugPrivateParamsVC.swift in Sources */,
 				DD3610B429B70CDC00CE7984 /* ShowPresettingFooterView.swift in Sources */,
 				DD3610D029B70F3800CE7984 /* VLMineCellModel.m in Sources */,
 				DD36106229B70CDC00CE7984 /* ShowMusicModel.swift in Sources */,
@@ -3645,7 +3661,6 @@
 				E732CCFA2B47EC6D004D6FB9 /* VoiceRoomGiftEntity.swift in Sources */,
 				DDA199E628FFE579009D3E61 /* UIButton+Font.m in Sources */,
 				DD36105929B70CDC00CE7984 /* NSString+Show.swift in Sources */,
-				E75B49572B3029B7005E925A /* CommerceSelectQualityCell.swift in Sources */,
 				DD84178A29090C520026B624 /* VLMainRootViewController.m in Sources */,
 				E732CD5A2B47EC6D004D6FB9 /* VoiceRoomUserView.swift in Sources */,
 				DD220BC9295B48FD00F57F30 /* QMUIHelper.m in Sources */,
@@ -3656,6 +3671,7 @@
 				E3735C8B2A5E7E75004737EF /* EffectsLicense.m in Sources */,
 				E75B49632B3029B7005E925A /* CommerceLiveMoreDialog.swift in Sources */,
 				E732CD3C2B47EC6D004D6FB9 /* PopTip+Draw.swift in Sources */,
+				E3735C8B2A5E7E75004737EF /* EffectsLicense.m in Sources */,
 				DD3610C929B70CDC00CE7984 /* AppContext+Show.swift in Sources */,
 				DDA199FF28FFE579009D3E61 /* NSString+Helper.m in Sources */,
 				E732CD8D2B47F72B004D6FB9 /* UIImage+Resize.swift in Sources */,
@@ -3864,9 +3880,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -3887,9 +3905,170 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"iconv\"",
+					"-l\"icucore\"",
+					"-l\"z\"",
+					"-framework",
+					"\"AFNetworking\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"Accelerate\"",
+					"-framework",
+					"\"AgoraAiEchoCancellationExtension\"",
+					"-framework",
+					"\"AgoraAiNoiseSuppressionExtension\"",
+					"-framework",
+					"\"AgoraAudioBeautyExtension\"",
+					"-framework",
+					"\"AgoraChat\"",
+					"-framework",
+					"\"AgoraClearVisionExtension\"",
+					"-framework",
+					"\"AgoraContentInspectExtension\"",
+					"-framework",
+					"\"AgoraDav1d\"",
+					"-framework",
+					"\"AgoraDrmLoaderExtension\"",
+					"-framework",
+					"\"AgoraFaceDetectionExtension\"",
+					"-framework",
+					"\"AgoraReplayKitExtension\"",
+					"-framework",
+					"\"AgoraRtcKit\"",
+					"-framework",
+					"\"AgoraSoundTouch\"",
+					"-framework",
+					"\"AgoraSpatialAudioExtension\"",
+					"-framework",
+					"\"AgoraSyncManager_overseas\"",
+					"-framework",
+					"\"AgoraVideoDecoderExtension\"",
+					"-framework",
+					"\"AgoraVideoEncoderExtension\"",
+					"-framework",
+					"\"AgoraVideoQualityAnalyzerExtension\"",
+					"-framework",
+					"\"AgoraVideoSegmentationExtension\"",
+					"-framework",
+					"\"Agora_Scene_Utils\"",
+					"-framework",
+					"\"Agorafdkaac\"",
+					"-framework",
+					"\"Agoraffmpeg\"",
+					"-framework",
+					"\"AssetsLibrary\"",
+					"-framework",
+					"\"CFNetwork\"",
+					"-framework",
+					"\"CoreFoundation\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreImage\"",
+					"-framework",
+					"\"CoreMedia\"",
+					"-framework",
+					"\"CoreMotion\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"CoreVideo\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"HWWeakTimer\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"JXCategoryView\"",
+					"-framework",
+					"\"KakaJSON\"",
+					"-framework",
+					"\"LEEAlert\"",
+					"-framework",
+					"\"MJRefresh\"",
+					"-framework",
+					"\"Masonry\"",
+					"-framework",
+					"\"Protobuf\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"SDWebImage\"",
+					"-framework",
+					"\"SDWebImageAPNGCoder\"",
+					"-framework",
+					"\"SSZipArchive\"",
+					"-framework",
+					"\"SVGAPlayer\"",
+					"-framework",
+					"\"SVProgressHUD\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SnapKit\"",
+					"-framework",
+					"\"SocketRocket\"",
+					"-framework",
+					"\"SwiftyBeaver\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"VideoLoaderAPI\"",
+					"-framework",
+					"\"YYCategories\"",
+					"-framework",
+					"\"YYModel\"",
+					"-framework",
+					"\"ZSwiftBaseLib\"",
+					"-framework",
+					"\"video_dec\"",
+					"-framework",
+					"\"video_enc\"",
+					"-weak_framework",
+					"\"AgoraAiEchoCancellationExtension\"",
+					"-weak_framework",
+					"\"AgoraAiNoiseSuppressionExtension\"",
+					"-weak_framework",
+					"\"AgoraAudioBeautyExtension\"",
+					"-weak_framework",
+					"\"AgoraClearVisionExtension\"",
+					"-weak_framework",
+					"\"AgoraContentInspectExtension\"",
+					"-weak_framework",
+					"\"AgoraDrmLoaderExtension\"",
+					"-weak_framework",
+					"\"AgoraFaceDetectionExtension\"",
+					"-weak_framework",
+					"\"AgoraReplayKitExtension\"",
+					"-weak_framework",
+					"\"AgoraSpatialAudioExtension\"",
+					"-weak_framework",
+					"\"AgoraVideoDecoderExtension\"",
+					"-weak_framework",
+					"\"AgoraVideoEncoderExtension\"",
+					"-weak_framework",
+					"\"AgoraVideoQualityAnalyzerExtension\"",
+					"-weak_framework",
+					"\"AgoraVideoSegmentationExtension\"",
+					"-weak_framework",
+					"\"CoreML\"",
+					"-weak_framework",
+					"\"Metal\"",
+					"-weak_framework",
+					"\"MetalPerformanceShaders\"",
+					"-weak_framework",
+					"\"Photos\"",
+					"-ld64",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -3929,6 +4108,166 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"iconv\"",
+					"-l\"icucore\"",
+					"-l\"z\"",
+					"-framework",
+					"\"AFNetworking\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"Accelerate\"",
+					"-framework",
+					"\"AgoraAiEchoCancellationExtension\"",
+					"-framework",
+					"\"AgoraAiNoiseSuppressionExtension\"",
+					"-framework",
+					"\"AgoraAudioBeautyExtension\"",
+					"-framework",
+					"\"AgoraChat\"",
+					"-framework",
+					"\"AgoraClearVisionExtension\"",
+					"-framework",
+					"\"AgoraContentInspectExtension\"",
+					"-framework",
+					"\"AgoraDav1d\"",
+					"-framework",
+					"\"AgoraDrmLoaderExtension\"",
+					"-framework",
+					"\"AgoraFaceDetectionExtension\"",
+					"-framework",
+					"\"AgoraReplayKitExtension\"",
+					"-framework",
+					"\"AgoraRtcKit\"",
+					"-framework",
+					"\"AgoraSoundTouch\"",
+					"-framework",
+					"\"AgoraSpatialAudioExtension\"",
+					"-framework",
+					"\"AgoraSyncManager_overseas\"",
+					"-framework",
+					"\"AgoraVideoDecoderExtension\"",
+					"-framework",
+					"\"AgoraVideoEncoderExtension\"",
+					"-framework",
+					"\"AgoraVideoQualityAnalyzerExtension\"",
+					"-framework",
+					"\"AgoraVideoSegmentationExtension\"",
+					"-framework",
+					"\"Agora_Scene_Utils\"",
+					"-framework",
+					"\"Agorafdkaac\"",
+					"-framework",
+					"\"Agoraffmpeg\"",
+					"-framework",
+					"\"AssetsLibrary\"",
+					"-framework",
+					"\"CFNetwork\"",
+					"-framework",
+					"\"CoreFoundation\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreImage\"",
+					"-framework",
+					"\"CoreMedia\"",
+					"-framework",
+					"\"CoreMotion\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"CoreVideo\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"HWWeakTimer\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"JXCategoryView\"",
+					"-framework",
+					"\"KakaJSON\"",
+					"-framework",
+					"\"LEEAlert\"",
+					"-framework",
+					"\"MJRefresh\"",
+					"-framework",
+					"\"Masonry\"",
+					"-framework",
+					"\"Protobuf\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"SDWebImage\"",
+					"-framework",
+					"\"SDWebImageAPNGCoder\"",
+					"-framework",
+					"\"SSZipArchive\"",
+					"-framework",
+					"\"SVGAPlayer\"",
+					"-framework",
+					"\"SVProgressHUD\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SnapKit\"",
+					"-framework",
+					"\"SocketRocket\"",
+					"-framework",
+					"\"SwiftyBeaver\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"VideoLoaderAPI\"",
+					"-framework",
+					"\"YYCategories\"",
+					"-framework",
+					"\"YYModel\"",
+					"-framework",
+					"\"ZSwiftBaseLib\"",
+					"-framework",
+					"\"video_dec\"",
+					"-framework",
+					"\"video_enc\"",
+					"-weak_framework",
+					"\"AgoraAiEchoCancellationExtension\"",
+					"-weak_framework",
+					"\"AgoraAiNoiseSuppressionExtension\"",
+					"-weak_framework",
+					"\"AgoraAudioBeautyExtension\"",
+					"-weak_framework",
+					"\"AgoraClearVisionExtension\"",
+					"-weak_framework",
+					"\"AgoraContentInspectExtension\"",
+					"-weak_framework",
+					"\"AgoraDrmLoaderExtension\"",
+					"-weak_framework",
+					"\"AgoraFaceDetectionExtension\"",
+					"-weak_framework",
+					"\"AgoraReplayKitExtension\"",
+					"-weak_framework",
+					"\"AgoraSpatialAudioExtension\"",
+					"-weak_framework",
+					"\"AgoraVideoDecoderExtension\"",
+					"-weak_framework",
+					"\"AgoraVideoEncoderExtension\"",
+					"-weak_framework",
+					"\"AgoraVideoQualityAnalyzerExtension\"",
+					"-weak_framework",
+					"\"AgoraVideoSegmentationExtension\"",
+					"-weak_framework",
+					"\"CoreML\"",
+					"-weak_framework",
+					"\"Metal\"",
+					"-weak_framework",
+					"\"MetalPerformanceShaders\"",
+					"-weak_framework",
+					"\"Photos\"",
+					"-ld64",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

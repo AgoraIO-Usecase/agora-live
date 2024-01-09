@@ -8,9 +8,14 @@
 import Foundation
 import AgoraRtcKit
 
+private let kEncodeWidth = "kEncodeWidth"
+private let kEncodeHeight = "kEncodeHeight"
+private let kEncodeFPS = "kEncodeFPS"
+private let kEncodeBitrate = "kEncodeBitrate"
+
 enum ShowMode {
-    case single
-    case pk
+    case single // 单主播模式
+    case pk // pk模式
 }
 
 private let fpsItems: [AgoraVideoFrameRate] = [
@@ -49,6 +54,10 @@ class ShowRTCParams {
 
 // MARK: - Extension
 extension ShowAgoraKitManager {
+    
+    func updateAudienceProfile() {
+        _presetValuesWith(encodeSize: ._360x640, fps: .fps15, bitRate: 0, h265On: true)
+    }
     
     func setupAudienceProfile() {
         setSuperResolutionOn(true)
@@ -118,7 +127,7 @@ extension ShowAgoraKitManager {
         engine?.setVideoDenoiserOptions(isOn, options: option)
     }
     
-    /** Set small stream parameters
+    /** 设置小流参数
      */
     private func setSimulcastStream(isOn: Bool, dimensions: CGSize = CGSizeMake(360, 640), fps: Int32 = 5, bitrate: Int = 680, svc: Bool = false) {
         if isOn {
@@ -157,6 +166,9 @@ extension ShowAgoraKitManager {
     
     // Default mode
     private func _presetValuesWith(encodeSize: ShowAgoraVideoDimensions, fps: AgoraVideoFrameRate, bitRate: Float, h265On: Bool) {
+        if AppContext.shared.isDebugMode {
+            return
+        }
         ShowSettingKey.videoEncodeSize.writeValue(ShowAgoraVideoDimensions.values().firstIndex(of: encodeSize.sizeValue))
         ShowSettingKey.FPS.writeValue(fpsItems.firstIndex(of: fps))
         ShowSettingKey.videoBitRate.writeValue(bitRate)
@@ -312,6 +324,8 @@ extension ShowAgoraKitManager {
             let dimensions = ShowAgoraVideoDimensions.values()
             let index = indexValue % dimensions.count
             let size = dimensions[index]
+            let encoderConfig = getEncoderConfig()
+            let captureConfig = getCaptureConfig()
             encoderConfig.dimensions = size
             captureConfig.dimensions = size
             
@@ -324,6 +338,7 @@ extension ShowAgoraKitManager {
             }
         case .videoBitRate:
             let sliderValue = key.floatValue
+            let encoderConfig = getEncoderConfig()
             encoderConfig.bitrate = Int(sliderValue)
             if let currentChannelId = currentChannelId {
                 updateVideoEncoderConfigurationForConnenction(currentChannelId: currentChannelId)
@@ -333,6 +348,8 @@ extension ShowAgoraKitManager {
         case .FPS:
             let indexValue = key.intValue
             let index = indexValue % fpsItems.count
+            let encoderConfig = getEncoderConfig()
+            let captureConfig = getCaptureConfig()
             encoderConfig.frameRate = fpsItems[index]
             captureConfig.frameRate = Int32(fpsItems[index].rawValue)
             engine?.setCameraCapturerConfiguration(captureConfig)
@@ -343,6 +360,7 @@ extension ShowAgoraKitManager {
             }
         case .H265:
             let isOn = key.boolValue
+            let encoderConfig = getEncoderConfig()
             encoderConfig.codecType = isOn ? .H265 : .H264
             if let channelId = currentChannelId {
                 updateVideoEncoderConfigurationForConnenction(currentChannelId: channelId)
@@ -361,7 +379,67 @@ extension ShowAgoraKitManager {
         }
     }
 
+    func getEncoderConfig() -> AgoraVideoEncoderConfiguration {
+        let encoderConfig = AgoraVideoEncoderConfiguration()
+        if AppContext.shared.isDebugMode {
+            if let encodeWidth: CGFloat = UserDefaults.standard.value(forKey: kEncodeWidth) as? CGFloat ,let encodeHeight: CGFloat = UserDefaults.standard.value(forKey: kEncodeHeight) as? CGFloat {
+                encoderConfig.dimensions = CGSize(width: encodeWidth, height: encodeHeight)
+            }
+            if let fps: Int = UserDefaults.standard.value(forKey: kEncodeFPS) as? Int {
+                encoderConfig.frameRate =  AgoraVideoFrameRate(rawValue: fps) ?? .fps15
+            }
+            if let bitrate: Int = UserDefaults.standard.value(forKey: kEncodeBitrate) as? Int {
+                encoderConfig.bitrate = bitrate
+            }
+            return encoderConfig
+        }
+        let indexValue = ShowSettingKey.videoEncodeSize.intValue
+        let dimensions = ShowAgoraVideoDimensions.values()
+        let index = indexValue % dimensions.count
+        let size = dimensions[index]
+        encoderConfig.dimensions = size
+        
+        let sliderValue = ShowSettingKey.videoBitRate.floatValue
+        encoderConfig.bitrate = Int(sliderValue)
+        
+        let fpsIndex = ShowSettingKey.FPS.intValue
+        let idx = fpsIndex % fpsItems.count
+        encoderConfig.frameRate = fpsItems[idx]
+        
+        let isOn = ShowSettingKey.H265.boolValue
+        encoderConfig.codecType = isOn ? .H265 : .H264
+        return encoderConfig
+    }
+    
+    func getCaptureConfig() -> AgoraCameraCapturerConfiguration {
+        let config = AgoraCameraCapturerConfiguration()
+        config.followEncodeDimensionRatio = true
+        config.cameraDirection = .front
+        
+        if AppContext.shared.isDebugMode {
+            if let encodeWidth: CGFloat = UserDefaults.standard.value(forKey: kEncodeWidth) as? CGFloat ,let encodeHeight: CGFloat = UserDefaults.standard.value(forKey: kEncodeHeight) as? CGFloat {
+                config.dimensions = CGSize(width: encodeWidth, height: encodeHeight)
+            }
+            if let fps: Int = UserDefaults.standard.value(forKey: kEncodeFPS) as? Int {
+                config.frameRate = Int32(fps)
+            }
+            return config
+        }
+       
+        let indexValue = ShowSettingKey.videoEncodeSize.intValue
+        let dimensions = ShowAgoraVideoDimensions.values()
+        let index = indexValue % dimensions.count
+        let size = dimensions[index]
+        config.dimensions = size
+        
+        let fpsIndex = ShowSettingKey.FPS.intValue
+        let idx = fpsIndex % fpsItems.count
+        config.frameRate = Int32(fpsItems[idx].rawValue)
+        
+        return config
+    }
 }
+    
 // MARK: - Presetting options
 extension ShowAgoraKitManager {
     // Default value: Network status
