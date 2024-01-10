@@ -75,7 +75,7 @@ class CommerceLivePagesViewController: ViewController {
         }
         
         let superbutton = UIButton(type: .custom)
-        superbutton.setTitle("超分", for: .normal)
+        superbutton.setTitle("show_super_resolution".commerce_localized, for: .normal)
         superbutton.addTarget(self, action: #selector(didClickDebugSuperButton), for: .touchUpInside)
         view.addSubview(superbutton)
         superbutton.snp.makeConstraints { make in
