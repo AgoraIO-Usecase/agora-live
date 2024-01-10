@@ -11,6 +11,11 @@ import VideoLoaderAPI
 class CommerceRoomListVC: UIViewController {
     
     let backgroundView = UIImageView()
+    private lazy var delegateHandler = {
+        let handler = CommerceCollectionLoadingDelegateHandler(localUid: UInt(UserInfo.userId)!)
+        return handler
+    }()
+    
     private var preloadRoom: CommerceRoomListModel?
     
     private let collectionView: UICollectionView = {
@@ -79,21 +84,11 @@ class CommerceRoomListVC: UIViewController {
     }
     
     @objc private func didClickCreateButton(){
-        if let token = AppContext.shared.rtcToken, token.count > 0 {
-            let preVC = CommerceCreateLiveVC()
-            let preNC = UINavigationController(rootViewController: preVC)
-            preNC.navigationBar.setBackgroundImage(UIImage(), for: .default)
-            preNC.modalPresentationStyle = .fullScreen
-            present(preNC, animated: true)
-            isHasToken = true
-            
-        } else {
-            guard isHasToken == true else { return }
-            generateToken { [weak self] in
-                self?.didClickCreateButton()
-            }
-            isHasToken = false
-        }
+        let preVC = CommerceCreateLiveVC()
+        let preNC = UINavigationController(rootViewController: preVC)
+        preNC.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        preNC.modalPresentationStyle = .fullScreen
+        present(preNC, animated: true)
     }
     
     @objc private func refreshControlValueChanged() {
@@ -115,7 +110,7 @@ class CommerceRoomListVC: UIViewController {
     private func joinRoom(_ room: CommerceRoomListModel){
         CommerceAgoraKitManager.shared.callTimestampStart()
         CommerceAgoraKitManager.shared.setupAudienceProfile()
-        CommerceAgoraKitManager.shared.updateLoadingType(roomId: room.roomId, channelId: room.roomId, playState: .joined)
+        CommerceAgoraKitManager.shared.updateLoadingType(roomId: room.roomId, channelId: room.roomId, playState: .joinedWithAudioVideo)
         
         if room.ownerId == VLUserCenter.user.id {
             ToastView.show(text: "show_join_own_room_error".commerce_localized)
@@ -148,49 +143,23 @@ class CommerceRoomListVC: UIViewController {
             let dislikeRooms = AppContext.shared.dislikeRooms()
             
             self.roomList = list.filter({ !dislikeRooms.contains($0.roomId) })
-            self.preLoadVisibleItems()
         }
-    }
-    
-    private func preLoadVisibleItems() {
-        guard let token = AppContext.shared.rtcToken, token.count > 0, roomList.count > 0 else {
-            return
-        }
-        let firstItem = collectionView.indexPathsForVisibleItems.first?.item ?? 0
-        let start = firstItem - 7 < 0 ? 0 : firstItem - 7
-        let end = start + 19 >= roomList.count ? roomList.count - 1 : start + 19
-        var preloadRoomList: [RoomInfo] = []
-        for i in start...end {
-            let room = roomList[i]
-            let preloadItem = RoomInfo()
-            preloadItem.channelName = room.roomId
-            preloadItem.uid = UInt(VLUserCenter.user.id) ?? 0
-            preloadItem.token = token
-            preloadRoomList.append(preloadItem)
-        }
-        CommerceAgoraKitManager.shared.preloadRoom(preloadRoomList: preloadRoomList)
     }
 
     private func preGenerateToken() {
         AppContext.shared.rtcToken = nil
-        generateToken { [weak self] in
-            self?.preLoadVisibleItems()
-        }
-    }
-    
-    private func generateToken(completion: (() -> Void)?) {
         NetworkManager.shared.generateToken(
             channelName: "",
             uid: "\(UserInfo.userId)",
             tokenType: .token007,
             type: .rtc,
             expire: 24 * 60 * 60
-        ) { token in
-            guard let rtcToken = token else {
+        ) {[weak self] token in
+            guard let self = self, let rtcToken = token, rtcToken.count > 0 else {
                 return
             }
             AppContext.shared.rtcToken = rtcToken
-            completion?()
+            self.delegateHandler.preLoadVisibleItems(scrollView: self.collectionView)
         }
     }
 }
@@ -209,39 +178,22 @@ extension CommerceRoomListVC: UICollectionViewDataSource, UICollectionViewDelega
                        name: room.roomName,
                        id: room.roomId,
                        count: room.roomUserCount)
+        cell.ag_addPreloadTap(roomInfo: room, localUid: delegateHandler.localUid) {[weak self] state in
+            if AppContext.shared.rtcToken?.count ?? 0 == 0 {
+                if state == .began {
+                    self?.preGenerateToken()
+                } else if state == .ended {
+                    ToastView.show(text: "Token is not exit, try again!")
+                }
+                return false
+            }
+            
+            return true
+        } completion: { [weak self] in
+            self?.joinRoom(room)
+        }
+
         return cell
-    }
-    
-    
-    func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
-        commerceLogger.info("didHighlightItemAt: \(indexPath.row)", context: "collectionView")
-        let room = roomList[indexPath.item]
-        if let token = AppContext.shared.rtcToken, token.count > 0 {
-            CommerceAgoraKitManager.shared.updateLoadingType(roomId: room.roomId, channelId: room.roomId, playState: .prejoined)
-            preloadRoom = room
-        } else { // fetch token when token is not exist
-            generateToken(completion: nil)
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        commerceLogger.info("didSelectItemAt: \(indexPath.row)", context: "collectionView")
-        if let token = AppContext.shared.rtcToken, token.count > 0 {
-            let room = roomList[indexPath.item]
-            joinRoom(room)
-        } else {
-            ToastView.show(text: "Token is not exit, try again!")
-        }
-    }
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        preLoadVisibleItems()
-    }
-    
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-//        commerceLogger.info("scrollViewWillBeginDragging", context: "collectionView")
-        guard let room = preloadRoom else {return}
-        CommerceAgoraKitManager.shared.updateLoadingType(roomId: room.roomId, channelId: room.roomId, playState: .idle)
     }
 }
 
@@ -298,3 +250,11 @@ extension CommerceRoomListVC {
     }
 }
 
+class CommerceCollectionLoadingDelegateHandler: AGCollectionLoadingDelegateHandler {
+    var didSelected: ((ShowRoomListModel) -> Void)?
+    
+    open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = roomList?[indexPath.row] as? ShowRoomListModel else {return}
+        didSelected?(item)
+    }
+}

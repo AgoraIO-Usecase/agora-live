@@ -13,6 +13,7 @@ import VideoLoaderAPI
 protocol CommerceLiveViewControllerDelegate: NSObjectProtocol {
     func currentUserIsOnSeat()
     func currentUserIsOffSeat()
+    func interactionDidChange(roomInfo: CommerceRoomListModel)
 }
 
 class CommerceLiveViewController: UIViewController {
@@ -21,7 +22,9 @@ class CommerceLiveViewController: UIViewController {
     var room: CommerceRoomListModel? {
         didSet{
             if oldValue?.roomId != room?.roomId {
+                oldValue?.interactionAnchorInfoList.removeAll()
                 liveView.room = room
+                liveView.canvasView.canvasType = .none
                 if let oldRoom = oldValue {
                     _leavRoom(oldRoom)
                 }
@@ -34,11 +37,12 @@ class CommerceLiveViewController: UIViewController {
         }
     }
     
-    private var loadingType: RoomStatus = .prejoined {
+    var loadingType: AnchorState = .prejoined {
         didSet {
             if loadingType == oldValue {
                 return
             }
+            updateLoadingType(playState: loadingType)
             remoteVideoWidth = nil
             currentMode = nil
         }
@@ -258,7 +262,8 @@ extension CommerceLiveViewController {
                     }
                 } else {
                     self._subscribeServiceEvent()
-                    self.updateLoadingType(playState: .joined, roomId: room.roomId)
+
+                    self.updateLoadingType(playState: self.loadingType)
                 }
             }
         } else {
@@ -275,23 +280,14 @@ extension CommerceLiveViewController {
     }
     
     
-    func updateLoadingType(playState: RoomStatus, roomId: String) {
-        CommerceAgoraKitManager.shared.updateLoadingType(roomId: roomId, channelId: roomId, playState: playState)
-        if playState == .joined {
-            serviceImp?.initRoom(roomId: roomId) { error in }
+    func updateLoadingType(playState: AnchorState) {
+        if playState == .joinedWithVideo {
+            serviceImp?.initRoom(roomId: roomId, completion: { error in
+            })
         } else if playState == .prejoined {
             serviceImp?.deinitRoom(roomId: roomId) { error in }
-        } else {}
-        loadingType = playState
-        updateRemoteCavans()
-    }
-    
-    func updateRemoteCavans() {
-        guard role == .audience, loadingType == .joined else { return }
-        let uid: UInt = UInt(room?.ownerId ?? "0") ?? 0
-        CommerceAgoraKitManager.shared.setupRemoteVideo(channelId: roomId,
-                                                    uid: uid,
-                                                    canvasView: liveView.canvasView.localView)
+        } else {
+        }
     }
 }
 
@@ -431,10 +427,11 @@ extension CommerceLiveViewController: AgoraRtcEngineDelegate {
             if state == .decoding /*2*/,
                ( reason == .remoteUnmuted /*6*/ || reason == .localUnmuted /*4*/ || reason == .localMuted /*3*/ )   {
                 commerceLogger.info("show first frame (\(channelId))", context: kShowLogBaseContext)
-                if let ts = ShowAgoraKitManager.shared.callTimestampEnd() {
-                    self.panelPresenter.updateTimestamp(ts)
-                    self.throttleRefreshRealTimeInfo()
-                }
+                // TODO: FAPNGEG
+//                if let ts = ShowAgoraKitManager.shared.callTimestampEnd() {
+//                    self.panelPresenter.updateTimestamp(ts)
+//                    self.throttleRefreshRealTimeInfo()
+//                }
             }
         }
     }
@@ -466,7 +463,7 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
                 self?.dismiss(animated: true)
             }
         }else {
-            updateLoadingType(playState: .idle, roomId: roomId)
+            updateLoadingType(playState: .idle)
             dismiss(animated: true)
         }
     }
@@ -479,7 +476,7 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
             if let room = self.room {
                 self._leavRoom(room)
             }
-            self.updateLoadingType(playState: .idle, roomId: self.roomId)
+            self.updateLoadingType(playState: .idle)
             self.onClickDislikeClosure?()
             self.dismiss(animated: true)
         }

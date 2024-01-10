@@ -23,5 +23,4 @@
 #import "VLCommonWebViewController.h"
 #import "VLURLPathConfig.h"
 #import "VLLoginModel.h"
-// TODO: Commerce场景报错先去掉
-//#import "CommerceGradualTableView.h"
+#import "CommerceGradualTableView.h"

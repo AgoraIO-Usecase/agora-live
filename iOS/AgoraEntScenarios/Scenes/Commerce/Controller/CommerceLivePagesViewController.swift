@@ -7,9 +7,36 @@
 
 import Foundation
 import UIKit
+import VideoLoaderAPI
 
 private let kPagesVCTag = "CommercePagesVC"
 class CommerceLivePagesViewController: ViewController {
+    
+    private lazy var delegateHandler = {
+        let localUid = UInt(UserInfo.userId)!
+        let handler = CommerceLivePagesSlicingDelegateHandler(localUid: localUid)
+        handler.parentVC = self
+        handler.vcDelegate = self
+        handler.onRequireRenderVideo = {[weak self] info, cell, indexPath in
+            guard let vc = cell.contentView.viewWithTag(kShowLiveRoomViewTag)?.next as? ShowLiveViewController,
+                  let room = vc.room,
+                  localUid != info.uid else {
+                return nil
+            }
+            showLogger.info("[\(room.roomId)]onRequireRenderVideo: \(info.channelName)  \(vc.liveView.canvasView.localView)", context: kPagesVCTag)
+            if room.channelName() == info.channelName, room.userId() == "\(info.uid)" {
+                return vc.liveView.canvasView.localView
+            } else {
+                if let _ = room.interactionAnchorInfoList.filter({ $0.uid == info.uid && $0.channelName == info.channelName }).first {
+                    return vc.liveView.canvasView.remoteView
+                }
+                showLogger.info("onRequireRenderVideo fail: \(info.channelName)/\(room.roomId)", context: kPagesVCTag)
+                return nil
+            }
+        }
+        return handler
+    }()
+    
     var onClickDislikeClosure: (() -> Void)?
     var roomList: [CommerceRoomListModel]?
     
@@ -28,8 +55,8 @@ class CommerceLivePagesViewController: ViewController {
         let collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(UICollectionViewCell.self))
         collectionView.scrollsToTop = false
-        collectionView.delegate = self
-        collectionView.dataSource = self
+        collectionView.delegate = delegateHandler
+        collectionView.dataSource = delegateHandler
         collectionView.isPagingEnabled = true
         collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.bounces = false
@@ -159,117 +186,6 @@ extension CommerceLivePagesViewController {
     }
 }
 
-let kCommerceLiveRoomViewTag = 12345
-//MARK: UICollectionViewDelegate & UICollectionViewDataSource
-extension CommerceLivePagesViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell: UICollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(UICollectionViewCell.self),
-                                                                            for: indexPath)
-        let idx = realCellIndex(with: indexPath.row)
-        defer {
-            commerceLogger.info("collectionView cellForItemAt: \(idx)/\(indexPath.row)  cache vc count: \(self.children.count)", context: kPagesVCTag)
-        }
-        
-        guard let room = self.roomList?[idx]  else {
-            return cell
-        }
-        
-        if let origVC = cell.contentView.viewWithTag(kCommerceLiveRoomViewTag)?.next as? CommerceLiveViewController {
-            origVC.room = room
-            return cell
-        }
-        
-        let vc = CommerceLiveViewController()
-        vc.room = room
-        vc.delegate = self
-        vc.view.frame = self.view.bounds
-        vc.view.tag = kCommerceLiveRoomViewTag
-        vc.onClickDislikeClosure = onClickDislikeClosure
-        cell.contentView.addSubview(vc.view)
-        self.addChild(vc)
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return fakeCellCount()
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let idx = realCellIndex(with: indexPath.row)
-        guard let room = self.roomList?[idx], let vc = cell.contentView.viewWithTag(kCommerceLiveRoomViewTag)?.next as? CommerceLiveViewController else {
-//            assert(false, "room at index \(idx) not found")
-            return
-        }
-        CommerceRobotService.shared.startCloudPlayers()
-        commerceLogger.info("willDisplay[\(room.roomId)]: \(idx)/\(indexPath.row)  cache vc count: \(self.children.count)", context: kPagesVCTag)
-        vc.updateLoadingType(playState: .joined, roomId: room.roomId)
-        currentVC = vc
-        self.view.endEditing(true)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let idx = realCellIndex(with: indexPath.row)
-        if let visibleCellIndex = _getVisibleCellTuple().0, idx == realCellIndex(with: visibleCellIndex) {
-            commerceLogger.info("didEndDisplaying break: \(idx)/\(indexPath.row)", context: kPagesVCTag)
-            return
-        }
-        guard let room = self.roomList?[idx], let vc = cell.contentView.viewWithTag(kCommerceLiveRoomViewTag)?.next as? CommerceLiveViewController else {
-//            assert(false, "room at index \(idx) not found")
-            return
-        }
-        commerceLogger.info("didEndDisplaying[\(room.roomId)]: \(idx)/\(indexPath.row)  cache vc count: \(self.children.count)", context: kPagesVCTag)
-        vc.updateLoadingType(playState: .prejoined, roomId: room.roomId)
-        self.view.endEditing(true)
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let currentIndex = Int(scrollView.contentOffset.y / scrollView.height)
-        cleanIdleRoom()
-        if currentIndex > 0, currentIndex < fakeCellCount() - 1 {return}
-        let realIndex = realCellIndex(with: currentIndex)
-        let toIndex = fakeCellIndex(with: realIndex)
-        commerceLogger.info("scrollViewDidEndDecelerating: from: \(currentIndex) to: \(toIndex) real: \(realIndex)", context: kPagesVCTag)
-        
-        scroll(to: toIndex)
-    }
-    
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        CommerceAgoraKitManager.shared.callTimestampStart()
-    }
-    
-    private func _getVisibleCellTuple() -> (Int?, UICollectionViewCell?) {
-        for (i, cell) in collectionView.visibleCells.enumerated() {
-            if cell.convert(cell.bounds.origin, from: self.view) == .zero {
-                return (collectionView.indexPathsForVisibleItems[i].row, cell)
-            }
-        }
-        return (nil, nil)
-    }
-    
-    private func cleanIdleRoom() {
-        let tuple = _getVisibleCellTuple()
-        let visibleCell: UICollectionViewCell? = tuple.1
-        let visibleIndex: Int? = tuple.0
-        
-        guard let visibleCellIndex = visibleIndex, let roomList = roomList else {return}
-        let visibleIndexs = [visibleCellIndex + roomList.count - 1, visibleCellIndex, visibleCellIndex + 1]
-        var visibleRoomIds: [String] = []
-        visibleIndexs.forEach { index in
-            let realIndex = self.realCellIndex(with: index)
-            let room = self.roomList?[realIndex]
-            visibleRoomIds.append(room?.roomId ?? "")
-        }
-        
-        commerceLogger.info("cleanIdleRoom without \(visibleRoomIds))", context: kPagesVCTag)
-        ShowAgoraKitManager.shared.cleanChannel(without: visibleRoomIds)
-        
-        //refresh visibleCell canvas after scroll to prevent adjacent rooms of pk from causing no display of images
-        commerceLogger.info("updateRemoteCavans: \(currentVC?.room?.roomId ?? "")", context: kPagesVCTag)
-        let currentVC = visibleCell?.contentView.viewWithTag(kShowLiveRoomViewTag)?.next as? CommerceLiveViewController
-        currentVC?.updateRemoteCavans()
-    }
-}
-
 extension CommerceLivePagesViewController {
     var isScrollEnable: Bool {
         set{
@@ -282,6 +198,17 @@ extension CommerceLivePagesViewController {
 }
 
 extension CommerceLivePagesViewController: CommerceLiveViewControllerDelegate {
+    
+    func interactionDidChange(roomInfo: CommerceRoomListModel) {
+        //连麦中一方有自己则不走api
+        if roomInfo.anchorInfoList.count == 2,
+           roomInfo.anchorInfoList.first?.channelName == roomInfo.anchorInfoList.last?.channelName,
+            let _ = roomInfo.anchorInfoList.filter({ return UserInfo.userId == "\($0.uid)" && $0.channelName == roomInfo.channelName()}).first {
+            return
+        }
+        delegateHandler.roomList = delegateHandler.roomList
+    }
+    
     func currentUserIsOnSeat() {
         isScrollEnable = false
     }
@@ -290,3 +217,126 @@ extension CommerceLivePagesViewController: CommerceLiveViewControllerDelegate {
         isScrollEnable = true
     }
 }
+
+class CommerceCycleRoomArray: AGRoomArray {
+    private var halfCount: Int = 9999999
+    fileprivate func fakeCellCount() -> Int {
+        return roomList.count > 2 ? roomList.count + halfCount * 2 : roomList.count
+    }
+    
+    required init(roomList: [IVideoLoaderRoomInfo]?) {
+        super.init(roomList: roomList)
+        let count = max(roomList?.count ?? 0, 1)
+        halfCount = (9999999 / count) * count
+    }
+
+    fileprivate func realCellIndex(with fakeIndex: Int) -> Int {
+        if fakeCellCount() < 3 {
+            return fakeIndex
+        }
+
+        let realCount = roomList.count
+        let offset = halfCount
+        var realIndex = fakeIndex + realCount * max(1 + offset / realCount, 2) - offset
+        realIndex = realIndex % realCount
+
+        return realIndex
+    }
+
+    fileprivate func fakeCellIndex(with realIndex: Int) -> Int {
+        if fakeCellCount() < 3 {
+            return realIndex
+        }
+
+        let offset = halfCount
+        let fakeIndex = realIndex + offset
+
+        return fakeIndex
+    }
+    
+    override subscript(index: Int) -> IVideoLoaderRoomInfo? {
+        let realIndex = realCellIndex(with: index)
+        if realIndex < roomList.count && realIndex >= 0 {
+            return roomList[realIndex]
+        } else {
+            return nil
+        }
+    }
+    
+    override func count() -> Int {
+        return fakeCellCount()
+    }
+}
+
+
+let kCommerceLiveRoomViewTag = 12345
+class CommerceLivePagesSlicingDelegateHandler: AGCollectionSlicingDelegateHandler {
+    weak var parentVC: UIViewController?
+    weak var vcDelegate: CommerceLiveViewControllerDelegate?
+    var currentVC: CommerceLiveViewController?
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
+        let idx = indexPath.row
+        defer {
+            showLogger.info("collectionView cellForItemAt: \(idx)/\(indexPath.row)", context: kPagesVCTag)
+        }
+        
+        guard let room = roomList?[idx] as? CommerceRoomListModel else {
+            return cell
+        }
+        
+        if let origVC = cell.contentView.viewWithTag(kCommerceLiveRoomViewTag)?.next as? CommerceLiveViewController {
+            origVC.room = room
+            return cell
+        }
+        
+        let vc = CommerceLiveViewController()
+        vc.room = room
+        vc.delegate = vcDelegate
+        vc.view.frame = parentVC!.view.bounds
+        vc.view.tag = kShowLiveRoomViewTag
+        vc.loadingType = .joinedWithVideo
+        cell.contentView.addSubview(vc.view)
+        parentVC!.addChild(vc)
+        return cell
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let vc = cell.contentView.viewWithTag(kCommerceLiveRoomViewTag)?.next as? CommerceLiveViewController,
+              vc.room?.ownerId != UserInfo.userId else {
+            return
+        }
+
+        super.collectionView(collectionView, willDisplay: cell, forItemAt: indexPath)
+        vc.loadingType = .joinedWithVideo
+        currentVC = vc
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let vc = cell.contentView.viewWithTag(kCommerceLiveRoomViewTag)?.next as? CommerceLiveViewController,
+              vc.room?.ownerId != UserInfo.userId else {
+//            assert(false, "room at index \(idx) not found")
+            return
+        }
+        super.collectionView(collectionView, didEndDisplaying: cell, forItemAt: indexPath)
+        vc.loadingType = .prejoined
+    }
+    
+    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        super.scrollViewDidEndDecelerating(scrollView)
+        let currentIndex = Int(scrollView.contentOffset.y / scrollView.height)
+        if currentIndex > 0, currentIndex < (roomList?.count() ?? 0) - 1 {return}
+        let toIndex = currentIndex
+        if let cycleArray = roomList as? CommerceCycleRoomArray {
+            let realIndex = cycleArray.realCellIndex(with: toIndex)
+            let fakeIndex = cycleArray.fakeCellIndex(with: realIndex)
+            showLogger.info("scrollViewDidEndDecelerating: from: \(currentIndex) to: \(fakeIndex)", context: kPagesVCTag)
+            self.scrollView = nil
+            (scrollView as? UICollectionView)?.scrollToItem(at: IndexPath(row: fakeIndex, section: 0),
+                                                            at: .centeredVertically,
+                                                            animated: false)
+        }
+    }
+}
+

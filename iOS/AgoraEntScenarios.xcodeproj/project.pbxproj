@@ -14,6 +14,102 @@
 		A8F904922B4BDE1700A4C5A7 /* ShowDebugPrivateParamsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9048D2B4BDE1700A4C5A7 /* ShowDebugPrivateParamsVC.swift */; };
 		A8F904932B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9048E2B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift */; };
 		A8F904952B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904942B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift */; };
+		A8F905162B4E396C00A4C5A7 /* CommerceResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A8F9049B2B4E396B00A4C5A7 /* CommerceResource.bundle */; };
+		A8F905172B4E396C00A4C5A7 /* NSString+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9049D2B4E396B00A4C5A7 /* NSString+Commerce.swift */; };
+		A8F905182B4E396C00A4C5A7 /* UIColor+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9049E2B4E396B00A4C5A7 /* UIColor+Commerce.swift */; };
+		A8F905192B4E396C00A4C5A7 /* CommerceThrottle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9049F2B4E396B00A4C5A7 /* CommerceThrottle.swift */; };
+		A8F9051A2B4E396C00A4C5A7 /* UIView+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904A02B4E396B00A4C5A7 /* UIView+Commerce.swift */; };
+		A8F9051B2B4E396C00A4C5A7 /* UIViewController+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904A12B4E396B00A4C5A7 /* UIViewController+Commerce.swift */; };
+		A8F9051C2B4E396C00A4C5A7 /* UIFont+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904A22B4E396B00A4C5A7 /* UIFont+Commerce.swift */; };
+		A8F9051D2B4E396C00A4C5A7 /* UIImage+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904A32B4E396B00A4C5A7 /* UIImage+Commerce.swift */; };
+		A8F9051E2B4E396C00A4C5A7 /* Date+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904A42B4E396B00A4C5A7 /* Date+Commerce.swift */; };
+		A8F9051F2B4E396C00A4C5A7 /* CommerceAgoraKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904A62B4E396B00A4C5A7 /* CommerceAgoraKitManager.swift */; };
+		A8F905202B4E396C00A4C5A7 /* CommerceMusicPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904A82B4E396B00A4C5A7 /* CommerceMusicPresenter.swift */; };
+		A8F905212B4E396C00A4C5A7 /* CommerceMusicModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904A92B4E396B00A4C5A7 /* CommerceMusicModel.swift */; };
+		A8F905222B4E396C00A4C5A7 /* CommerceAgoraKitManager+DebugSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904AA2B4E396B00A4C5A7 /* CommerceAgoraKitManager+DebugSetting.swift */; };
+		A8F905232B4E396C00A4C5A7 /* CommerceGoodsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904AC2B4E396B00A4C5A7 /* CommerceGoodsModel.swift */; };
+		A8F905242B4E396C00A4C5A7 /* CommerceAgoraKitManager+Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904AD2B4E396B00A4C5A7 /* CommerceAgoraKitManager+Setting.swift */; };
+		A8F905252B4E396C00A4C5A7 /* CommerceChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904AE2B4E396B00A4C5A7 /* CommerceChatModel.swift */; };
+		A8F905262B4E396C00A4C5A7 /* CommerceDebug2TFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904B02B4E396B00A4C5A7 /* CommerceDebug2TFModel.swift */; };
+		A8F905272B4E396C00A4C5A7 /* CommerceSettingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904B12B4E396B00A4C5A7 /* CommerceSettingKey.swift */; };
+		A8F905282B4E396C00A4C5A7 /* CommerceDebugPrivateParamsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904B22B4E396B00A4C5A7 /* CommerceDebugPrivateParamsVC.swift */; };
+		A8F905292B4E396C00A4C5A7 /* CommerceDebug1TFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904B32B4E396B00A4C5A7 /* CommerceDebug1TFModel.swift */; };
+		A8F9052A2B4E396C00A4C5A7 /* SensemeLicFile.png in Resources */ = {isa = PBXBuildFile; fileRef = A8F904B52B4E396B00A4C5A7 /* SensemeLicFile.png */; };
+		A8F9052B2B4E396C00A4C5A7 /* SenseLibPath.png in Resources */ = {isa = PBXBuildFile; fileRef = A8F904B62B4E396B00A4C5A7 /* SenseLibPath.png */; };
+		A8F9052C2B4E396C00A4C5A7 /* KeyCenter.png in Resources */ = {isa = PBXBuildFile; fileRef = A8F904B72B4E396B00A4C5A7 /* KeyCenter.png */; };
+		A8F9052D2B4E396C00A4C5A7 /* podinstallError.png in Resources */ = {isa = PBXBuildFile; fileRef = A8F904B82B4E396B00A4C5A7 /* podinstallError.png */; };
+		A8F9052E2B4E396C00A4C5A7 /* SamplePicture3.png in Resources */ = {isa = PBXBuildFile; fileRef = A8F904B92B4E396B00A4C5A7 /* SamplePicture3.png */; };
+		A8F9052F2B4E396C00A4C5A7 /* SamplePicture2.png in Resources */ = {isa = PBXBuildFile; fileRef = A8F904BA2B4E396B00A4C5A7 /* SamplePicture2.png */; };
+		A8F905302B4E396C00A4C5A7 /* SamplePicture4.png in Resources */ = {isa = PBXBuildFile; fileRef = A8F904BB2B4E396B00A4C5A7 /* SamplePicture4.png */; };
+		A8F905312B4E396C00A4C5A7 /* CommerceLiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904BD2B4E396C00A4C5A7 /* CommerceLiveViewController.swift */; };
+		A8F905322B4E396C00A4C5A7 /* CommerceToolMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904BE2B4E396C00A4C5A7 /* CommerceToolMenuViewController.swift */; };
+		A8F905332B4E396C00A4C5A7 /* CommerceRoomListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904BF2B4E396C00A4C5A7 /* CommerceRoomListVC.swift */; };
+		A8F905342B4E396C00A4C5A7 /* CommerceLivePagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904C02B4E396C00A4C5A7 /* CommerceLivePagesViewController.swift */; };
+		A8F905352B4E396C00A4C5A7 /* CommerceSelectQualityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904C22B4E396C00A4C5A7 /* CommerceSelectQualityVC.swift */; };
+		A8F905362B4E396C00A4C5A7 /* CommerceAdvancedSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904C42B4E396C00A4C5A7 /* CommerceAdvancedSettingVC.swift */; };
+		A8F905372B4E396C00A4C5A7 /* CommerceNetStateSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904C52B4E396C00A4C5A7 /* CommerceNetStateSelectViewController.swift */; };
+		A8F905382B4E396C00A4C5A7 /* CommerceSettingActionSheetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904C62B4E396C00A4C5A7 /* CommerceSettingActionSheetVC.swift */; };
+		A8F905392B4E396C00A4C5A7 /* CommerceVideoSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904C72B4E396C00A4C5A7 /* CommerceVideoSettingVC.swift */; };
+		A8F9053A2B4E396C00A4C5A7 /* CommerceCunstomNaviBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904C82B4E396C00A4C5A7 /* CommerceCunstomNaviBar.swift */; };
+		A8F9053B2B4E396C00A4C5A7 /* CommerceDebugSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904C92B4E396C00A4C5A7 /* CommerceDebugSettingVC.swift */; };
+		A8F9053C2B4E396C00A4C5A7 /* CommerceCreateLiveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904CA2B4E396C00A4C5A7 /* CommerceCreateLiveVC.swift */; };
+		A8F9053D2B4E396C00A4C5A7 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A8F904CB2B4E396C00A4C5A7 /* README.md */; };
+		A8F9053E2B4E396C00A4C5A7 /* CommercePresentTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904CD2B4E396C00A4C5A7 /* CommercePresentTransitioningDelegate.swift */; };
+		A8F9053F2B4E396C00A4C5A7 /* CommerceAEAListContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904D12B4E396C00A4C5A7 /* CommerceAEAListContainerView.swift */; };
+		A8F905402B4E396C00A4C5A7 /* CommerceAEACategoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8F904D22B4E396C00A4C5A7 /* CommerceAEACategoryView.m */; };
+		A8F905412B4E396C00A4C5A7 /* CommerceAEACategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904D32B4E396C00A4C5A7 /* CommerceAEACategoryView.swift */; };
+		A8F905422B4E396C00A4C5A7 /* CommerceAEACategoryTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904D42B4E396C00A4C5A7 /* CommerceAEACategoryTitleCell.swift */; };
+		A8F905432B4E396C00A4C5A7 /* CommerceAEACategoryTitleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8F904D62B4E396C00A4C5A7 /* CommerceAEACategoryTitleCell.m */; };
+		A8F905442B4E396C00A4C5A7 /* CommerceNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904D72B4E396C00A4C5A7 /* CommerceNavigationBar.swift */; };
+		A8F905452B4E396C00A4C5A7 /* CommerceAEAListContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8F904D82B4E396C00A4C5A7 /* CommerceAEAListContainerView.m */; };
+		A8F905462B4E396C00A4C5A7 /* CommerceBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904DA2B4E396C00A4C5A7 /* CommerceBaseViewController.swift */; };
+		A8F905472B4E396C00A4C5A7 /* CommerceMusicTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904DD2B4E396C00A4C5A7 /* CommerceMusicTableHeaderView.swift */; };
+		A8F905482B4E396C00A4C5A7 /* CommerceMusicEffectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904DE2B4E396C00A4C5A7 /* CommerceMusicEffectCell.swift */; };
+		A8F905492B4E396C00A4C5A7 /* CommerceMusicItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904DF2B4E396C00A4C5A7 /* CommerceMusicItemCell.swift */; };
+		A8F9054A2B4E396C00A4C5A7 /* CommerceReceiveFinishView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904E12B4E396C00A4C5A7 /* CommerceReceiveFinishView.swift */; };
+		A8F9054B2B4E396C00A4C5A7 /* CommerceCreateLiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904E32B4E396C00A4C5A7 /* CommerceCreateLiveView.swift */; };
+		A8F9054C2B4E396C00A4C5A7 /* CommerceSelectQualityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904E42B4E396C00A4C5A7 /* CommerceSelectQualityCell.swift */; };
+		A8F9054D2B4E396C00A4C5A7 /* CommerceDataPanelPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904E62B4E396C00A4C5A7 /* CommerceDataPanelPresenter.swift */; };
+		A8F9054E2B4E396C00A4C5A7 /* CommerceRealTimeDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904E72B4E396C00A4C5A7 /* CommerceRealTimeDataView.swift */; };
+		A8F9054F2B4E396C00A4C5A7 /* CommerceRoomListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904E92B4E396C00A4C5A7 /* CommerceRoomListView.swift */; };
+		A8F905502B4E396C00A4C5A7 /* CommerceRoomListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904EA2B4E396C00A4C5A7 /* CommerceRoomListCell.swift */; };
+		A8F905512B4E396C00A4C5A7 /* CommerceEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904EB2B4E396C00A4C5A7 /* CommerceEmptyView.swift */; };
+		A8F905522B4E396C00A4C5A7 /* CommerceRoomLiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904ED2B4E396C00A4C5A7 /* CommerceRoomLiveView.swift */; };
+		A8F905532B4E396C00A4C5A7 /* CommerceCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904EE2B4E396C00A4C5A7 /* CommerceCanvasView.swift */; };
+		A8F905542B4E396C00A4C5A7 /* CommerceRoomChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904EF2B4E396C00A4C5A7 /* CommerceRoomChatCell.swift */; };
+		A8F905552B4E396C00A4C5A7 /* CommerceRoomMembersCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904F02B4E396C00A4C5A7 /* CommerceRoomMembersCountView.swift */; };
+		A8F905562B4E396C00A4C5A7 /* CommerceRoomBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904F22B4E396C00A4C5A7 /* CommerceRoomBottomBar.swift */; };
+		A8F905572B4E396C00A4C5A7 /* CommerceLiveMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904F32B4E396C00A4C5A7 /* CommerceLiveMoreDialog.swift */; };
+		A8F905582B4E396C00A4C5A7 /* CommerceUserJoinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904F42B4E396C00A4C5A7 /* CommerceUserJoinView.swift */; };
+		A8F905592B4E396C00A4C5A7 /* CommerceChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904F52B4E396C00A4C5A7 /* CommerceChatInputView.swift */; };
+		A8F9055A2B4E396C00A4C5A7 /* CommerceEmitterLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904F62B4E396C00A4C5A7 /* CommerceEmitterLayer.swift */; };
+		A8F9055B2B4E396C00A4C5A7 /* CommerceRoomInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904F72B4E396C00A4C5A7 /* CommerceRoomInfoView.swift */; };
+		A8F9055C2B4E396C00A4C5A7 /* CommerceGradualTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8F904F82B4E396C00A4C5A7 /* CommerceGradualTableView.m */; };
+		A8F9055D2B4E396C00A4C5A7 /* CommerceNumberButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904FA2B4E396C00A4C5A7 /* CommerceNumberButton.swift */; };
+		A8F9055E2B4E396C00A4C5A7 /* CommerceAuctionShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904FB2B4E396C00A4C5A7 /* CommerceAuctionShoppingView.swift */; };
+		A8F9055F2B4E396C00A4C5A7 /* CommerceGoodsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904FC2B4E396C00A4C5A7 /* CommerceGoodsListView.swift */; };
+		A8F905602B4E396C00A4C5A7 /* CommerceAuctionResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904FD2B4E396C00A4C5A7 /* CommerceAuctionResultView.swift */; };
+		A8F905612B4E396C00A4C5A7 /* CommerceSettingBaseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904FF2B4E396C00A4C5A7 /* CommerceSettingBaseCell.swift */; };
+		A8F905622B4E396C00A4C5A7 /* CommerceSettingActionSheetFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905002B4E396C00A4C5A7 /* CommerceSettingActionSheetFooterView.swift */; };
+		A8F905632B4E396C00A4C5A7 /* CommercePresettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905012B4E396C00A4C5A7 /* CommercePresettingCell.swift */; };
+		A8F905642B4E396C00A4C5A7 /* CommerceSettingActionSheetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905022B4E396C00A4C5A7 /* CommerceSettingActionSheetCell.swift */; };
+		A8F905652B4E396C00A4C5A7 /* CommerceSettingSegmentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905032B4E396C00A4C5A7 /* CommerceSettingSegmentCell.swift */; };
+		A8F905662B4E396C00A4C5A7 /* CommerceSettingLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905042B4E396C00A4C5A7 /* CommerceSettingLabelCell.swift */; };
+		A8F905672B4E396C00A4C5A7 /* CommercePresettingFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905052B4E396C00A4C5A7 /* CommercePresettingFooterView.swift */; };
+		A8F905682B4E396C00A4C5A7 /* CommerceDebugSetting1TFCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905062B4E396C00A4C5A7 /* CommerceDebugSetting1TFCell.swift */; };
+		A8F905692B4E396C00A4C5A7 /* CommerceSettingSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905072B4E396C00A4C5A7 /* CommerceSettingSwitchCell.swift */; };
+		A8F9056A2B4E396C00A4C5A7 /* CommercePresettingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905082B4E396C00A4C5A7 /* CommercePresettingHeaderView.swift */; };
+		A8F9056B2B4E396C00A4C5A7 /* CommerceSettingBitrateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905092B4E396C00A4C5A7 /* CommerceSettingBitrateCell.swift */; };
+		A8F9056C2B4E396C00A4C5A7 /* CommerceSettingSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9050A2B4E396C00A4C5A7 /* CommerceSettingSliderCell.swift */; };
+		A8F9056D2B4E396C00A4C5A7 /* CommerceSettingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9050B2B4E396C00A4C5A7 /* CommerceSettingHeaderView.swift */; };
+		A8F9056E2B4E396C00A4C5A7 /* CommerceDebugSetting2TFCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9050C2B4E396C00A4C5A7 /* CommerceDebugSetting2TFCell.swift */; };
+		A8F9056F2B4E396C00A4C5A7 /* CommerceToolMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9050E2B4E396C00A4C5A7 /* CommerceToolMenuView.swift */; };
+		A8F905702B4E396C00A4C5A7 /* AppContext+Commerce.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905102B4E396C00A4C5A7 /* AppContext+Commerce.swift */; };
+		A8F905712B4E396C00A4C5A7 /* CommerceSubscribeServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905112B4E396C00A4C5A7 /* CommerceSubscribeServiceProtocol.swift */; };
+		A8F905722B4E396C00A4C5A7 /* CommerceServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905122B4E396C00A4C5A7 /* CommerceServiceProtocol.swift */; };
+		A8F905732B4E396C00A4C5A7 /* CommerceSyncManagerServiceImp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905132B4E396C00A4C5A7 /* CommerceSyncManagerServiceImp.swift */; };
+		A8F905742B4E396C00A4C5A7 /* CommerceRobotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905142B4E396C00A4C5A7 /* CommerceRobotService.swift */; };
+		A8F905752B4E396C00A4C5A7 /* CommerceServiceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F905152B4E396C00A4C5A7 /* CommerceServiceModel.swift */; };
 		AB4746E72A5E82AB00E68FBA /* ShowRobotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB4746E62A5E82AB00E68FBA /* ShowRobotService.swift */; };
 		ABA095902A8373F400A54FCC /* ShowSettingBitrateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABA0958F2A8373F300A54FCC /* ShowSettingBitrateCell.swift */; };
 		ABE4B37A2A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE4B3792A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift */; };
@@ -296,6 +392,106 @@
 		A8F9048D2B4BDE1700A4C5A7 /* ShowDebugPrivateParamsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebugPrivateParamsVC.swift; sourceTree = "<group>"; };
 		A8F9048E2B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebug1TFModel.swift; sourceTree = "<group>"; };
 		A8F904942B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowThumnbnailCanvasView.swift; sourceTree = "<group>"; };
+		A8F9049B2B4E396B00A4C5A7 /* CommerceResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CommerceResource.bundle; sourceTree = "<group>"; };
+		A8F9049D2B4E396B00A4C5A7 /* NSString+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+Commerce.swift"; sourceTree = "<group>"; };
+		A8F9049E2B4E396B00A4C5A7 /* UIColor+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Commerce.swift"; sourceTree = "<group>"; };
+		A8F9049F2B4E396B00A4C5A7 /* CommerceThrottle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceThrottle.swift; sourceTree = "<group>"; };
+		A8F904A02B4E396B00A4C5A7 /* UIView+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Commerce.swift"; sourceTree = "<group>"; };
+		A8F904A12B4E396B00A4C5A7 /* UIViewController+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Commerce.swift"; sourceTree = "<group>"; };
+		A8F904A22B4E396B00A4C5A7 /* UIFont+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Commerce.swift"; sourceTree = "<group>"; };
+		A8F904A32B4E396B00A4C5A7 /* UIImage+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Commerce.swift"; sourceTree = "<group>"; };
+		A8F904A42B4E396B00A4C5A7 /* Date+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Commerce.swift"; sourceTree = "<group>"; };
+		A8F904A62B4E396B00A4C5A7 /* CommerceAgoraKitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAgoraKitManager.swift; sourceTree = "<group>"; };
+		A8F904A82B4E396B00A4C5A7 /* CommerceMusicPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicPresenter.swift; sourceTree = "<group>"; };
+		A8F904A92B4E396B00A4C5A7 /* CommerceMusicModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicModel.swift; sourceTree = "<group>"; };
+		A8F904AA2B4E396B00A4C5A7 /* CommerceAgoraKitManager+DebugSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommerceAgoraKitManager+DebugSetting.swift"; sourceTree = "<group>"; };
+		A8F904AC2B4E396B00A4C5A7 /* CommerceGoodsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceGoodsModel.swift; sourceTree = "<group>"; };
+		A8F904AD2B4E396B00A4C5A7 /* CommerceAgoraKitManager+Setting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommerceAgoraKitManager+Setting.swift"; sourceTree = "<group>"; };
+		A8F904AE2B4E396B00A4C5A7 /* CommerceChatModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceChatModel.swift; sourceTree = "<group>"; };
+		A8F904B02B4E396B00A4C5A7 /* CommerceDebug2TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebug2TFModel.swift; sourceTree = "<group>"; };
+		A8F904B12B4E396B00A4C5A7 /* CommerceSettingKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingKey.swift; sourceTree = "<group>"; };
+		A8F904B22B4E396B00A4C5A7 /* CommerceDebugPrivateParamsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebugPrivateParamsVC.swift; sourceTree = "<group>"; };
+		A8F904B32B4E396B00A4C5A7 /* CommerceDebug1TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebug1TFModel.swift; sourceTree = "<group>"; };
+		A8F904B52B4E396B00A4C5A7 /* SensemeLicFile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SensemeLicFile.png; sourceTree = "<group>"; };
+		A8F904B62B4E396B00A4C5A7 /* SenseLibPath.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SenseLibPath.png; sourceTree = "<group>"; };
+		A8F904B72B4E396B00A4C5A7 /* KeyCenter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = KeyCenter.png; sourceTree = "<group>"; };
+		A8F904B82B4E396B00A4C5A7 /* podinstallError.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = podinstallError.png; sourceTree = "<group>"; };
+		A8F904B92B4E396B00A4C5A7 /* SamplePicture3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture3.png; sourceTree = "<group>"; };
+		A8F904BA2B4E396B00A4C5A7 /* SamplePicture2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture2.png; sourceTree = "<group>"; };
+		A8F904BB2B4E396B00A4C5A7 /* SamplePicture4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture4.png; sourceTree = "<group>"; };
+		A8F904BD2B4E396C00A4C5A7 /* CommerceLiveViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceLiveViewController.swift; sourceTree = "<group>"; };
+		A8F904BE2B4E396C00A4C5A7 /* CommerceToolMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceToolMenuViewController.swift; sourceTree = "<group>"; };
+		A8F904BF2B4E396C00A4C5A7 /* CommerceRoomListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomListVC.swift; sourceTree = "<group>"; };
+		A8F904C02B4E396C00A4C5A7 /* CommerceLivePagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceLivePagesViewController.swift; sourceTree = "<group>"; };
+		A8F904C22B4E396C00A4C5A7 /* CommerceSelectQualityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSelectQualityVC.swift; sourceTree = "<group>"; };
+		A8F904C42B4E396C00A4C5A7 /* CommerceAdvancedSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAdvancedSettingVC.swift; sourceTree = "<group>"; };
+		A8F904C52B4E396C00A4C5A7 /* CommerceNetStateSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceNetStateSelectViewController.swift; sourceTree = "<group>"; };
+		A8F904C62B4E396C00A4C5A7 /* CommerceSettingActionSheetVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingActionSheetVC.swift; sourceTree = "<group>"; };
+		A8F904C72B4E396C00A4C5A7 /* CommerceVideoSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceVideoSettingVC.swift; sourceTree = "<group>"; };
+		A8F904C82B4E396C00A4C5A7 /* CommerceCunstomNaviBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCunstomNaviBar.swift; sourceTree = "<group>"; };
+		A8F904C92B4E396C00A4C5A7 /* CommerceDebugSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebugSettingVC.swift; sourceTree = "<group>"; };
+		A8F904CA2B4E396C00A4C5A7 /* CommerceCreateLiveVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCreateLiveVC.swift; sourceTree = "<group>"; };
+		A8F904CB2B4E396C00A4C5A7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		A8F904CD2B4E396C00A4C5A7 /* CommercePresentTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommercePresentTransitioningDelegate.swift; sourceTree = "<group>"; };
+		A8F904CF2B4E396C00A4C5A7 /* CommerceAEAListContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommerceAEAListContainerView.h; sourceTree = "<group>"; };
+		A8F904D02B4E396C00A4C5A7 /* CommerceAEACategoryTitleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommerceAEACategoryTitleCell.h; sourceTree = "<group>"; };
+		A8F904D12B4E396C00A4C5A7 /* CommerceAEAListContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAEAListContainerView.swift; sourceTree = "<group>"; };
+		A8F904D22B4E396C00A4C5A7 /* CommerceAEACategoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommerceAEACategoryView.m; sourceTree = "<group>"; };
+		A8F904D32B4E396C00A4C5A7 /* CommerceAEACategoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAEACategoryView.swift; sourceTree = "<group>"; };
+		A8F904D42B4E396C00A4C5A7 /* CommerceAEACategoryTitleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAEACategoryTitleCell.swift; sourceTree = "<group>"; };
+		A8F904D52B4E396C00A4C5A7 /* CommerceAEACategoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommerceAEACategoryView.h; sourceTree = "<group>"; };
+		A8F904D62B4E396C00A4C5A7 /* CommerceAEACategoryTitleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommerceAEACategoryTitleCell.m; sourceTree = "<group>"; };
+		A8F904D72B4E396C00A4C5A7 /* CommerceNavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceNavigationBar.swift; sourceTree = "<group>"; };
+		A8F904D82B4E396C00A4C5A7 /* CommerceAEAListContainerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommerceAEAListContainerView.m; sourceTree = "<group>"; };
+		A8F904DA2B4E396C00A4C5A7 /* CommerceBaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceBaseViewController.swift; sourceTree = "<group>"; };
+		A8F904DD2B4E396C00A4C5A7 /* CommerceMusicTableHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicTableHeaderView.swift; sourceTree = "<group>"; };
+		A8F904DE2B4E396C00A4C5A7 /* CommerceMusicEffectCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicEffectCell.swift; sourceTree = "<group>"; };
+		A8F904DF2B4E396C00A4C5A7 /* CommerceMusicItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceMusicItemCell.swift; sourceTree = "<group>"; };
+		A8F904E12B4E396C00A4C5A7 /* CommerceReceiveFinishView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceReceiveFinishView.swift; sourceTree = "<group>"; };
+		A8F904E32B4E396C00A4C5A7 /* CommerceCreateLiveView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCreateLiveView.swift; sourceTree = "<group>"; };
+		A8F904E42B4E396C00A4C5A7 /* CommerceSelectQualityCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSelectQualityCell.swift; sourceTree = "<group>"; };
+		A8F904E62B4E396C00A4C5A7 /* CommerceDataPanelPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDataPanelPresenter.swift; sourceTree = "<group>"; };
+		A8F904E72B4E396C00A4C5A7 /* CommerceRealTimeDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRealTimeDataView.swift; sourceTree = "<group>"; };
+		A8F904E92B4E396C00A4C5A7 /* CommerceRoomListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomListView.swift; sourceTree = "<group>"; };
+		A8F904EA2B4E396C00A4C5A7 /* CommerceRoomListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomListCell.swift; sourceTree = "<group>"; };
+		A8F904EB2B4E396C00A4C5A7 /* CommerceEmptyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceEmptyView.swift; sourceTree = "<group>"; };
+		A8F904ED2B4E396C00A4C5A7 /* CommerceRoomLiveView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomLiveView.swift; sourceTree = "<group>"; };
+		A8F904EE2B4E396C00A4C5A7 /* CommerceCanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCanvasView.swift; sourceTree = "<group>"; };
+		A8F904EF2B4E396C00A4C5A7 /* CommerceRoomChatCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomChatCell.swift; sourceTree = "<group>"; };
+		A8F904F02B4E396C00A4C5A7 /* CommerceRoomMembersCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomMembersCountView.swift; sourceTree = "<group>"; };
+		A8F904F12B4E396C00A4C5A7 /* CommerceGradualTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommerceGradualTableView.h; sourceTree = "<group>"; };
+		A8F904F22B4E396C00A4C5A7 /* CommerceRoomBottomBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomBottomBar.swift; sourceTree = "<group>"; };
+		A8F904F32B4E396C00A4C5A7 /* CommerceLiveMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceLiveMoreDialog.swift; sourceTree = "<group>"; };
+		A8F904F42B4E396C00A4C5A7 /* CommerceUserJoinView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceUserJoinView.swift; sourceTree = "<group>"; };
+		A8F904F52B4E396C00A4C5A7 /* CommerceChatInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceChatInputView.swift; sourceTree = "<group>"; };
+		A8F904F62B4E396C00A4C5A7 /* CommerceEmitterLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceEmitterLayer.swift; sourceTree = "<group>"; };
+		A8F904F72B4E396C00A4C5A7 /* CommerceRoomInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomInfoView.swift; sourceTree = "<group>"; };
+		A8F904F82B4E396C00A4C5A7 /* CommerceGradualTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommerceGradualTableView.m; sourceTree = "<group>"; };
+		A8F904FA2B4E396C00A4C5A7 /* CommerceNumberButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceNumberButton.swift; sourceTree = "<group>"; };
+		A8F904FB2B4E396C00A4C5A7 /* CommerceAuctionShoppingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAuctionShoppingView.swift; sourceTree = "<group>"; };
+		A8F904FC2B4E396C00A4C5A7 /* CommerceGoodsListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceGoodsListView.swift; sourceTree = "<group>"; };
+		A8F904FD2B4E396C00A4C5A7 /* CommerceAuctionResultView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAuctionResultView.swift; sourceTree = "<group>"; };
+		A8F904FF2B4E396C00A4C5A7 /* CommerceSettingBaseCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingBaseCell.swift; sourceTree = "<group>"; };
+		A8F905002B4E396C00A4C5A7 /* CommerceSettingActionSheetFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingActionSheetFooterView.swift; sourceTree = "<group>"; };
+		A8F905012B4E396C00A4C5A7 /* CommercePresettingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommercePresettingCell.swift; sourceTree = "<group>"; };
+		A8F905022B4E396C00A4C5A7 /* CommerceSettingActionSheetCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingActionSheetCell.swift; sourceTree = "<group>"; };
+		A8F905032B4E396C00A4C5A7 /* CommerceSettingSegmentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingSegmentCell.swift; sourceTree = "<group>"; };
+		A8F905042B4E396C00A4C5A7 /* CommerceSettingLabelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingLabelCell.swift; sourceTree = "<group>"; };
+		A8F905052B4E396C00A4C5A7 /* CommercePresettingFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommercePresettingFooterView.swift; sourceTree = "<group>"; };
+		A8F905062B4E396C00A4C5A7 /* CommerceDebugSetting1TFCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebugSetting1TFCell.swift; sourceTree = "<group>"; };
+		A8F905072B4E396C00A4C5A7 /* CommerceSettingSwitchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingSwitchCell.swift; sourceTree = "<group>"; };
+		A8F905082B4E396C00A4C5A7 /* CommercePresettingHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommercePresettingHeaderView.swift; sourceTree = "<group>"; };
+		A8F905092B4E396C00A4C5A7 /* CommerceSettingBitrateCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingBitrateCell.swift; sourceTree = "<group>"; };
+		A8F9050A2B4E396C00A4C5A7 /* CommerceSettingSliderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingSliderCell.swift; sourceTree = "<group>"; };
+		A8F9050B2B4E396C00A4C5A7 /* CommerceSettingHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingHeaderView.swift; sourceTree = "<group>"; };
+		A8F9050C2B4E396C00A4C5A7 /* CommerceDebugSetting2TFCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebugSetting2TFCell.swift; sourceTree = "<group>"; };
+		A8F9050E2B4E396C00A4C5A7 /* CommerceToolMenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceToolMenuView.swift; sourceTree = "<group>"; };
+		A8F905102B4E396C00A4C5A7 /* AppContext+Commerce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppContext+Commerce.swift"; sourceTree = "<group>"; };
+		A8F905112B4E396C00A4C5A7 /* CommerceSubscribeServiceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSubscribeServiceProtocol.swift; sourceTree = "<group>"; };
+		A8F905122B4E396C00A4C5A7 /* CommerceServiceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceServiceProtocol.swift; sourceTree = "<group>"; };
+		A8F905132B4E396C00A4C5A7 /* CommerceSyncManagerServiceImp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSyncManagerServiceImp.swift; sourceTree = "<group>"; };
+		A8F905142B4E396C00A4C5A7 /* CommerceRobotService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRobotService.swift; sourceTree = "<group>"; };
+		A8F905152B4E396C00A4C5A7 /* CommerceServiceModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceServiceModel.swift; sourceTree = "<group>"; };
 		AB4746E62A5E82AB00E68FBA /* ShowRobotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowRobotService.swift; sourceTree = "<group>"; };
 		ABA0958F2A8373F300A54FCC /* ShowSettingBitrateCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowSettingBitrateCell.swift; sourceTree = "<group>"; };
 		ABE4B3792A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowNetStateSelectViewController.swift; sourceTree = "<group>"; };
@@ -717,6 +913,297 @@
 				A8F9048E2B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift */,
 			);
 			path = Debug;
+			sourceTree = "<group>";
+		};
+		A8F9049A2B4E396B00A4C5A7 /* Commerce */ = {
+			isa = PBXGroup;
+			children = (
+				A8F9049B2B4E396B00A4C5A7 /* CommerceResource.bundle */,
+				A8F9049C2B4E396B00A4C5A7 /* Utils */,
+				A8F904A52B4E396B00A4C5A7 /* Models */,
+				A8F904B42B4E396B00A4C5A7 /* image */,
+				A8F904BC2B4E396C00A4C5A7 /* Controller */,
+				A8F904CB2B4E396C00A4C5A7 /* README.md */,
+				A8F904CC2B4E396C00A4C5A7 /* Common */,
+				A8F904DB2B4E396C00A4C5A7 /* View */,
+				A8F9050F2B4E396C00A4C5A7 /* Service */,
+			);
+			path = Commerce;
+			sourceTree = "<group>";
+		};
+		A8F9049C2B4E396B00A4C5A7 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				A8F9049D2B4E396B00A4C5A7 /* NSString+Commerce.swift */,
+				A8F9049E2B4E396B00A4C5A7 /* UIColor+Commerce.swift */,
+				A8F9049F2B4E396B00A4C5A7 /* CommerceThrottle.swift */,
+				A8F904A02B4E396B00A4C5A7 /* UIView+Commerce.swift */,
+				A8F904A12B4E396B00A4C5A7 /* UIViewController+Commerce.swift */,
+				A8F904A22B4E396B00A4C5A7 /* UIFont+Commerce.swift */,
+				A8F904A32B4E396B00A4C5A7 /* UIImage+Commerce.swift */,
+				A8F904A42B4E396B00A4C5A7 /* Date+Commerce.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		A8F904A52B4E396B00A4C5A7 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904A62B4E396B00A4C5A7 /* CommerceAgoraKitManager.swift */,
+				A8F904A72B4E396B00A4C5A7 /* Music */,
+				A8F904AA2B4E396B00A4C5A7 /* CommerceAgoraKitManager+DebugSetting.swift */,
+				A8F904AB2B4E396B00A4C5A7 /* GoodsModels */,
+				A8F904AD2B4E396B00A4C5A7 /* CommerceAgoraKitManager+Setting.swift */,
+				A8F904AE2B4E396B00A4C5A7 /* CommerceChatModel.swift */,
+				A8F904AF2B4E396B00A4C5A7 /* Setting */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A8F904A72B4E396B00A4C5A7 /* Music */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904A82B4E396B00A4C5A7 /* CommerceMusicPresenter.swift */,
+				A8F904A92B4E396B00A4C5A7 /* CommerceMusicModel.swift */,
+			);
+			path = Music;
+			sourceTree = "<group>";
+		};
+		A8F904AB2B4E396B00A4C5A7 /* GoodsModels */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904AC2B4E396B00A4C5A7 /* CommerceGoodsModel.swift */,
+			);
+			path = GoodsModels;
+			sourceTree = "<group>";
+		};
+		A8F904AF2B4E396B00A4C5A7 /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904B02B4E396B00A4C5A7 /* CommerceDebug2TFModel.swift */,
+				A8F904B12B4E396B00A4C5A7 /* CommerceSettingKey.swift */,
+				A8F904B22B4E396B00A4C5A7 /* CommerceDebugPrivateParamsVC.swift */,
+				A8F904B32B4E396B00A4C5A7 /* CommerceDebug1TFModel.swift */,
+			);
+			path = Setting;
+			sourceTree = "<group>";
+		};
+		A8F904B42B4E396B00A4C5A7 /* image */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904B52B4E396B00A4C5A7 /* SensemeLicFile.png */,
+				A8F904B62B4E396B00A4C5A7 /* SenseLibPath.png */,
+				A8F904B72B4E396B00A4C5A7 /* KeyCenter.png */,
+				A8F904B82B4E396B00A4C5A7 /* podinstallError.png */,
+				A8F904B92B4E396B00A4C5A7 /* SamplePicture3.png */,
+				A8F904BA2B4E396B00A4C5A7 /* SamplePicture2.png */,
+				A8F904BB2B4E396B00A4C5A7 /* SamplePicture4.png */,
+			);
+			path = image;
+			sourceTree = "<group>";
+		};
+		A8F904BC2B4E396C00A4C5A7 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904BD2B4E396C00A4C5A7 /* CommerceLiveViewController.swift */,
+				A8F904BE2B4E396C00A4C5A7 /* CommerceToolMenuViewController.swift */,
+				A8F904BF2B4E396C00A4C5A7 /* CommerceRoomListVC.swift */,
+				A8F904C02B4E396C00A4C5A7 /* CommerceLivePagesViewController.swift */,
+				A8F904C12B4E396C00A4C5A7 /* CreateLive */,
+				A8F904C32B4E396C00A4C5A7 /* Setting */,
+				A8F904CA2B4E396C00A4C5A7 /* CommerceCreateLiveVC.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		A8F904C12B4E396C00A4C5A7 /* CreateLive */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904C22B4E396C00A4C5A7 /* CommerceSelectQualityVC.swift */,
+			);
+			path = CreateLive;
+			sourceTree = "<group>";
+		};
+		A8F904C32B4E396C00A4C5A7 /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904C42B4E396C00A4C5A7 /* CommerceAdvancedSettingVC.swift */,
+				A8F904C52B4E396C00A4C5A7 /* CommerceNetStateSelectViewController.swift */,
+				A8F904C62B4E396C00A4C5A7 /* CommerceSettingActionSheetVC.swift */,
+				A8F904C72B4E396C00A4C5A7 /* CommerceVideoSettingVC.swift */,
+				A8F904C82B4E396C00A4C5A7 /* CommerceCunstomNaviBar.swift */,
+				A8F904C92B4E396C00A4C5A7 /* CommerceDebugSettingVC.swift */,
+			);
+			path = Setting;
+			sourceTree = "<group>";
+		};
+		A8F904CC2B4E396C00A4C5A7 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904CD2B4E396C00A4C5A7 /* CommercePresentTransitioningDelegate.swift */,
+				A8F904CE2B4E396C00A4C5A7 /* View */,
+				A8F904D92B4E396C00A4C5A7 /* ViewController */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		A8F904CE2B4E396C00A4C5A7 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904CF2B4E396C00A4C5A7 /* CommerceAEAListContainerView.h */,
+				A8F904D02B4E396C00A4C5A7 /* CommerceAEACategoryTitleCell.h */,
+				A8F904D12B4E396C00A4C5A7 /* CommerceAEAListContainerView.swift */,
+				A8F904D22B4E396C00A4C5A7 /* CommerceAEACategoryView.m */,
+				A8F904D32B4E396C00A4C5A7 /* CommerceAEACategoryView.swift */,
+				A8F904D42B4E396C00A4C5A7 /* CommerceAEACategoryTitleCell.swift */,
+				A8F904D52B4E396C00A4C5A7 /* CommerceAEACategoryView.h */,
+				A8F904D62B4E396C00A4C5A7 /* CommerceAEACategoryTitleCell.m */,
+				A8F904D72B4E396C00A4C5A7 /* CommerceNavigationBar.swift */,
+				A8F904D82B4E396C00A4C5A7 /* CommerceAEAListContainerView.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		A8F904D92B4E396C00A4C5A7 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904DA2B4E396C00A4C5A7 /* CommerceBaseViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		A8F904DB2B4E396C00A4C5A7 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904DC2B4E396C00A4C5A7 /* Music */,
+				A8F904E02B4E396C00A4C5A7 /* Alert */,
+				A8F904E22B4E396C00A4C5A7 /* CreateLive */,
+				A8F904E52B4E396C00A4C5A7 /* RealTime */,
+				A8F904E82B4E396C00A4C5A7 /* RoomList */,
+				A8F904EC2B4E396C00A4C5A7 /* Live */,
+				A8F904F92B4E396C00A4C5A7 /* Goods */,
+				A8F904FE2B4E396C00A4C5A7 /* Setting */,
+				A8F9050D2B4E396C00A4C5A7 /* ToolMenu */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		A8F904DC2B4E396C00A4C5A7 /* Music */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904DD2B4E396C00A4C5A7 /* CommerceMusicTableHeaderView.swift */,
+				A8F904DE2B4E396C00A4C5A7 /* CommerceMusicEffectCell.swift */,
+				A8F904DF2B4E396C00A4C5A7 /* CommerceMusicItemCell.swift */,
+			);
+			path = Music;
+			sourceTree = "<group>";
+		};
+		A8F904E02B4E396C00A4C5A7 /* Alert */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904E12B4E396C00A4C5A7 /* CommerceReceiveFinishView.swift */,
+			);
+			path = Alert;
+			sourceTree = "<group>";
+		};
+		A8F904E22B4E396C00A4C5A7 /* CreateLive */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904E32B4E396C00A4C5A7 /* CommerceCreateLiveView.swift */,
+				A8F904E42B4E396C00A4C5A7 /* CommerceSelectQualityCell.swift */,
+			);
+			path = CreateLive;
+			sourceTree = "<group>";
+		};
+		A8F904E52B4E396C00A4C5A7 /* RealTime */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904E62B4E396C00A4C5A7 /* CommerceDataPanelPresenter.swift */,
+				A8F904E72B4E396C00A4C5A7 /* CommerceRealTimeDataView.swift */,
+			);
+			path = RealTime;
+			sourceTree = "<group>";
+		};
+		A8F904E82B4E396C00A4C5A7 /* RoomList */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904E92B4E396C00A4C5A7 /* CommerceRoomListView.swift */,
+				A8F904EA2B4E396C00A4C5A7 /* CommerceRoomListCell.swift */,
+				A8F904EB2B4E396C00A4C5A7 /* CommerceEmptyView.swift */,
+			);
+			path = RoomList;
+			sourceTree = "<group>";
+		};
+		A8F904EC2B4E396C00A4C5A7 /* Live */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904ED2B4E396C00A4C5A7 /* CommerceRoomLiveView.swift */,
+				A8F904EE2B4E396C00A4C5A7 /* CommerceCanvasView.swift */,
+				A8F904EF2B4E396C00A4C5A7 /* CommerceRoomChatCell.swift */,
+				A8F904F02B4E396C00A4C5A7 /* CommerceRoomMembersCountView.swift */,
+				A8F904F12B4E396C00A4C5A7 /* CommerceGradualTableView.h */,
+				A8F904F22B4E396C00A4C5A7 /* CommerceRoomBottomBar.swift */,
+				A8F904F32B4E396C00A4C5A7 /* CommerceLiveMoreDialog.swift */,
+				A8F904F42B4E396C00A4C5A7 /* CommerceUserJoinView.swift */,
+				A8F904F52B4E396C00A4C5A7 /* CommerceChatInputView.swift */,
+				A8F904F62B4E396C00A4C5A7 /* CommerceEmitterLayer.swift */,
+				A8F904F72B4E396C00A4C5A7 /* CommerceRoomInfoView.swift */,
+				A8F904F82B4E396C00A4C5A7 /* CommerceGradualTableView.m */,
+			);
+			path = Live;
+			sourceTree = "<group>";
+		};
+		A8F904F92B4E396C00A4C5A7 /* Goods */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904FA2B4E396C00A4C5A7 /* CommerceNumberButton.swift */,
+				A8F904FB2B4E396C00A4C5A7 /* CommerceAuctionShoppingView.swift */,
+				A8F904FC2B4E396C00A4C5A7 /* CommerceGoodsListView.swift */,
+				A8F904FD2B4E396C00A4C5A7 /* CommerceAuctionResultView.swift */,
+			);
+			path = Goods;
+			sourceTree = "<group>";
+		};
+		A8F904FE2B4E396C00A4C5A7 /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				A8F904FF2B4E396C00A4C5A7 /* CommerceSettingBaseCell.swift */,
+				A8F905002B4E396C00A4C5A7 /* CommerceSettingActionSheetFooterView.swift */,
+				A8F905012B4E396C00A4C5A7 /* CommercePresettingCell.swift */,
+				A8F905022B4E396C00A4C5A7 /* CommerceSettingActionSheetCell.swift */,
+				A8F905032B4E396C00A4C5A7 /* CommerceSettingSegmentCell.swift */,
+				A8F905042B4E396C00A4C5A7 /* CommerceSettingLabelCell.swift */,
+				A8F905052B4E396C00A4C5A7 /* CommercePresettingFooterView.swift */,
+				A8F905062B4E396C00A4C5A7 /* CommerceDebugSetting1TFCell.swift */,
+				A8F905072B4E396C00A4C5A7 /* CommerceSettingSwitchCell.swift */,
+				A8F905082B4E396C00A4C5A7 /* CommercePresettingHeaderView.swift */,
+				A8F905092B4E396C00A4C5A7 /* CommerceSettingBitrateCell.swift */,
+				A8F9050A2B4E396C00A4C5A7 /* CommerceSettingSliderCell.swift */,
+				A8F9050B2B4E396C00A4C5A7 /* CommerceSettingHeaderView.swift */,
+				A8F9050C2B4E396C00A4C5A7 /* CommerceDebugSetting2TFCell.swift */,
+			);
+			path = Setting;
+			sourceTree = "<group>";
+		};
+		A8F9050D2B4E396C00A4C5A7 /* ToolMenu */ = {
+			isa = PBXGroup;
+			children = (
+				A8F9050E2B4E396C00A4C5A7 /* CommerceToolMenuView.swift */,
+			);
+			path = ToolMenu;
+			sourceTree = "<group>";
+		};
+		A8F9050F2B4E396C00A4C5A7 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				A8F905102B4E396C00A4C5A7 /* AppContext+Commerce.swift */,
+				A8F905112B4E396C00A4C5A7 /* CommerceSubscribeServiceProtocol.swift */,
+				A8F905122B4E396C00A4C5A7 /* CommerceServiceProtocol.swift */,
+				A8F905132B4E396C00A4C5A7 /* CommerceSyncManagerServiceImp.swift */,
+				A8F905142B4E396C00A4C5A7 /* CommerceRobotService.swift */,
+				A8F905152B4E396C00A4C5A7 /* CommerceServiceModel.swift */,
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 		DD220BC2295B48FD00F57F30 /* QMUI */ = {
@@ -1316,6 +1803,7 @@
 		DD8416E429090C520026B624 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				A8F9049A2B4E396B00A4C5A7 /* Commerce */,
 				DD360FAC29B70CDC00CE7984 /* Show */,
 				DD84175A29090C520026B624 /* Template */,
 			);
@@ -1978,10 +2466,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A8F905162B4E396C00A4C5A7 /* CommerceResource.bundle in Resources */,
 				DD36105829B70CDC00CE7984 /* showResource.bundle in Resources */,
 				DD84176529090C520026B624 /* public.css in Resources */,
 				DD84176429090C520026B624 /* intro.css in Resources */,
 				DD84177229090C520026B624 /* ic_chat.png in Resources */,
+				A8F9052F2B4E396C00A4C5A7 /* SamplePicture2.png in Resources */,
+				A8F9052A2B4E396C00A4C5A7 /* SensemeLicFile.png in Resources */,
 				DD84176329090C520026B624 /* util.js in Resources */,
 				DD84176C29090C520026B624 /* ic_game.png in Resources */,
 				DD84176E29090C520026B624 /* tab_discover.png in Resources */,
@@ -1989,21 +2480,27 @@
 				DD8417C929090C520026B624 /* Template.bundle in Resources */,
 				DD84177629090C520026B624 /* product4.png in Resources */,
 				DD84177129090C520026B624 /* ic_play.png in Resources */,
+				A8F9052B2B4E396C00A4C5A7 /* SenseLibPath.png in Resources */,
+				A8F9052D2B4E396C00A4C5A7 /* podinstallError.png in Resources */,
 				DD84177529090C520026B624 /* product1.png in Resources */,
 				DD84176929090C520026B624 /* banner1.png in Resources */,
 				DD84176B29090C520026B624 /* tab_home.png in Resources */,
+				A8F9052E2B4E396C00A4C5A7 /* SamplePicture3.png in Resources */,
 				DD84176829090C520026B624 /* ic_back_b.png in Resources */,
 				DD84177329090C520026B624 /* product2.png in Resources */,
 				DD2A43D728FFCEE7004CEDCF /* LaunchScreen.storyboard in Resources */,
 				DD84177929090C520026B624 /* product.html in Resources */,
+				A8F9053D2B4E396C00A4C5A7 /* README.md in Resources */,
 				DD84177429090C520026B624 /* product3.png in Resources */,
 				DD84177729090C520026B624 /* entertainment.html in Resources */,
 				DD84176229090C520026B624 /* index.html in Resources */,
 				DD2A43D428FFCEE7004CEDCF /* Assets.xcassets in Resources */,
+				A8F905302B4E396C00A4C5A7 /* SamplePicture4.png in Resources */,
 				DD84177829090C520026B624 /* entertainment.js in Resources */,
 				E3735C9F2A5E7E75004737EF /* BeautyResource.bundle in Resources */,
 				E358F800293494BC00A7EBD1 /* InfoPlist.strings in Resources */,
 				DD84176729090C520026B624 /* tab_profile.png in Resources */,
+				A8F9052C2B4E396C00A4C5A7 /* KeyCenter.png in Resources */,
 				DD2A43D228FFCEE7004CEDCF /* Main.storyboard in Resources */,
 				DD84176629090C520026B624 /* index.js in Resources */,
 				DD84176A29090C520026B624 /* ic_k.png in Resources */,
@@ -2096,47 +2593,81 @@
 			files = (
 				E3735C9A2A5E7E75004737EF /* ByteBeautyManager.swift in Sources */,
 				DDA199DD28FFE579009D3E61 /* ToastView.swift in Sources */,
+				A8F905192B4E396C00A4C5A7 /* CommerceThrottle.swift in Sources */,
+				A8F9056F2B4E396C00A4C5A7 /* CommerceToolMenuView.swift in Sources */,
+				A8F9051A2B4E396C00A4C5A7 /* UIView+Commerce.swift in Sources */,
+				A8F905182B4E396C00A4C5A7 /* UIColor+Commerce.swift in Sources */,
+				A8F905262B4E396C00A4C5A7 /* CommerceDebug2TFModel.swift in Sources */,
 				DDA199E528FFE579009D3E61 /* UILabel+Font.m in Sources */,
 				DDA199F528FFE579009D3E61 /* AgoraExtension.swift in Sources */,
+				A8F905522B4E396C00A4C5A7 /* CommerceRoomLiveView.swift in Sources */,
+				A8F905392B4E396C00A4C5A7 /* CommerceVideoSettingVC.swift in Sources */,
 				DDA199E128FFE579009D3E61 /* VLToast.m in Sources */,
+				A8F9055F2B4E396C00A4C5A7 /* CommerceGoodsListView.swift in Sources */,
+				A8F905292B4E396C00A4C5A7 /* CommerceDebug1TFModel.swift in Sources */,
 				DD619C0929E3E84D008F63E4 /* AboutAgoraHeader.swift in Sources */,
+				A8F905612B4E396C00A4C5A7 /* CommerceSettingBaseCell.swift in Sources */,
 				DDA199F028FFE579009D3E61 /* BaseViewController.m in Sources */,
+				A8F9054B2B4E396C00A4C5A7 /* CommerceCreateLiveView.swift in Sources */,
 				E3735C852A5E7E75004737EF /* EffectsAttribute.m in Sources */,
 				E72F62472A7CEE3E00C963D2 /* VRVerifyCodeTextView.swift in Sources */,
 				DD619C0429E3E81D008F63E4 /* AboutAgoraEntertainmentViewController.swift in Sources */,
 				DDA199ED28FFE579009D3E61 /* VLBaseView.m in Sources */,
 				DD3610CD29B70F3300CE7984 /* VLMineSwitchCell.swift in Sources */,
+				A8F905502B4E396C00A4C5A7 /* CommerceRoomListCell.swift in Sources */,
+				A8F9053F2B4E396C00A4C5A7 /* CommerceAEAListContainerView.swift in Sources */,
 				E36EC8B72A663B880089A374 /* AEACategoryTitleCell.swift in Sources */,
+				A8F9055E2B4E396C00A4C5A7 /* CommerceAuctionShoppingView.swift in Sources */,
 				DD3610C229B70CDC00CE7984 /* ShowInviteCell.swift in Sources */,
 				DD8417CA29090C520026B624 /* TemplateServiceModel.swift in Sources */,
+				A8F9053E2B4E396C00A4C5A7 /* CommercePresentTransitioningDelegate.swift in Sources */,
 				E3735C8C2A5E7E75004737EF /* EFMotionManager.m in Sources */,
 				DDA199F328FFE579009D3E61 /* UIColor+Extension.swift in Sources */,
 				DD3610B929B70CDC00CE7984 /* ShowSettingSwitchCell.swift in Sources */,
 				DD3610B529B70CDC00CE7984 /* ShowSettingLabelCell.swift in Sources */,
+				A8F905752B4E396C00A4C5A7 /* CommerceServiceModel.swift in Sources */,
 				DD36106329B70CDC00CE7984 /* ShowAgoraKitManager+Setting.swift in Sources */,
+				A8F905172B4E396C00A4C5A7 /* NSString+Commerce.swift in Sources */,
+				A8F905592B4E396C00A4C5A7 /* CommerceChatInputView.swift in Sources */,
 				DD36108B29B70CDC00CE7984 /* ShowReceivePKAlertVC.swift in Sources */,
 				DD3610BC29B70CDC00CE7984 /* ShowSettingActionSheetFooterView.swift in Sources */,
+				A8F905332B4E396C00A4C5A7 /* CommerceRoomListVC.swift in Sources */,
 				DDA199FD28FFE579009D3E61 /* UIView+VL.m in Sources */,
 				DD36105E29B70CDC00CE7984 /* ShowThrottle.swift in Sources */,
+				A8F905432B4E396C00A4C5A7 /* CommerceAEACategoryTitleCell.m in Sources */,
 				A8F904912B4BDE1700A4C5A7 /* ShowDebugSettingVC.swift in Sources */,
 				DDA199E928FFE579009D3E61 /* VLResponseDataModel.m in Sources */,
 				E3735CA72A5E8023004737EF /* VRBaseViewController.swift in Sources */,
 				DD3610BB29B70CDC00CE7984 /* ShowPresettingHeaderView.swift in Sources */,
 				E3735C972A5E7E75004737EF /* BEPixelBufferInfo.m in Sources */,
+				A8F9054A2B4E396C00A4C5A7 /* CommerceReceiveFinishView.swift in Sources */,
+				A8F905532B4E396C00A4C5A7 /* CommerceCanvasView.swift in Sources */,
 				A8F9048F2B4BDE1700A4C5A7 /* ShowDebug2TFModel.swift in Sources */,
+				A8F9053A2B4E396C00A4C5A7 /* CommerceCunstomNaviBar.swift in Sources */,
 				DDA199EF28FFE579009D3E61 /* VLBaseTableView.m in Sources */,
+				A8F905732B4E396C00A4C5A7 /* CommerceSyncManagerServiceImp.swift in Sources */,
+				A8F905562B4E396C00A4C5A7 /* CommerceRoomBottomBar.swift in Sources */,
 				DD84177C29090C520026B624 /* VLHomeItemView.m in Sources */,
+				A8F905552B4E396C00A4C5A7 /* CommerceRoomMembersCountView.swift in Sources */,
 				E3735C9D2A5E7E75004737EF /* BeautyLoad.m in Sources */,
 				E3735C992A5E7E75004737EF /* BERender.mm in Sources */,
+				A8F9055B2B4E396C00A4C5A7 /* CommerceRoomInfoView.swift in Sources */,
 				DD3610AE29B70CDC00CE7984 /* ShowRoomMembersCountView.swift in Sources */,
+				A8F905252B4E396C00A4C5A7 /* CommerceChatModel.swift in Sources */,
 				E72F62562A822D3500C963D2 /* FUManager.m in Sources */,
 				E3735C952A5E7E75004737EF /* BEGLTexture.m in Sources */,
 				DD36105C29B70CDC00CE7984 /* UIViewController+Show.swift in Sources */,
+				A8F905702B4E396C00A4C5A7 /* AppContext+Commerce.swift in Sources */,
 				DDA199E328FFE579009D3E61 /* VLLocalWebViewController.m in Sources */,
+				A8F9051C2B4E396C00A4C5A7 /* UIFont+Commerce.swift in Sources */,
 				DD84177E29090C520026B624 /* VLHomeView.m in Sources */,
+				A8F905402B4E396C00A4C5A7 /* CommerceAEACategoryView.m in Sources */,
 				DD36108C29B70CDC00CE7984 /* ShowMusicEffectVC.swift in Sources */,
 				DDA199E428FFE579009D3E61 /* VLDeviceUtils.m in Sources */,
+				A8F905492B4E396C00A4C5A7 /* CommerceMusicItemCell.swift in Sources */,
 				DD84177D29090C520026B624 /* VLHomeItemModel.m in Sources */,
+				A8F905342B4E396C00A4C5A7 /* CommerceLivePagesViewController.swift in Sources */,
+				A8F905742B4E396C00A4C5A7 /* CommerceRobotService.swift in Sources */,
 				DD84178429090C520026B624 /* VLDiscoveryViewController.m in Sources */,
 				DD3610C629B70CDC00CE7984 /* ShowToolMenuView.swift in Sources */,
 				DDA199F628FFE579009D3E61 /* UIImage+Color.swift in Sources */,
@@ -2153,38 +2684,52 @@
 				DD3610B029B70CDC00CE7984 /* ShowCanvasView.swift in Sources */,
 				DD3610A229B70CDC00CE7984 /* ShowMusicItemCell.swift in Sources */,
 				E3735C892A5E7E75004737EF /* EffectsProcess.m in Sources */,
+				A8F905722B4E396C00A4C5A7 /* CommerceServiceProtocol.swift in Sources */,
+				A8F905672B4E396C00A4C5A7 /* CommercePresettingFooterView.swift in Sources */,
 				E3735CA42A5E7E75004737EF /* BytesBeautyRender.m in Sources */,
 				DD84178629090C520026B624 /* VLMineView.m in Sources */,
 				DDA199E728FFE579009D3E61 /* VLFontUtils.m in Sources */,
+				A8F9055A2B4E396C00A4C5A7 /* CommerceEmitterLayer.swift in Sources */,
 				DD36109029B70CDC00CE7984 /* ShowCreateLiveVC.swift in Sources */,
+				A8F905322B4E396C00A4C5A7 /* CommerceToolMenuViewController.swift in Sources */,
 				DD8417C829090C520026B624 /* TemplateSceneCreateController.swift in Sources */,
 				E3735C872A5E7E75004737EF /* EffectsDetector.m in Sources */,
+				A8F905232B4E396C00A4C5A7 /* CommerceGoodsModel.swift in Sources */,
 				DD3610A429B70CDC00CE7984 /* ShowReceivePKView.swift in Sources */,
 				E3735C8A2A5E7E75004737EF /* VideoProcessingManager.m in Sources */,
+				A8F905272B4E396C00A4C5A7 /* CommerceSettingKey.swift in Sources */,
 				E3735CA32A5E7E75004737EF /* SenseBeautyRender.m in Sources */,
 				DDA199F228FFE579009D3E61 /* UIViewController+VL.m in Sources */,
 				DD8417CB29090C520026B624 /* TemplateServiceImp.swift in Sources */,
+				A8F9054E2B4E396C00A4C5A7 /* CommerceRealTimeDataView.swift in Sources */,
+				A8F9053C2B4E396C00A4C5A7 /* CommerceCreateLiveVC.swift in Sources */,
 				DD36109229B70CDC00CE7984 /* ShowLivePagesViewController.swift in Sources */,
 				DD2A43CF28FFCEE7004CEDCF /* ViewController.swift in Sources */,
+				A8F9054D2B4E396C00A4C5A7 /* CommerceDataPanelPresenter.swift in Sources */,
 				DD84178129090C520026B624 /* VLDiscoveryItemTCell.m in Sources */,
 				DDA199F428FFE579009D3E61 /* String+Extension.swift in Sources */,
 				DD3610BF29B70CDC00CE7984 /* ShowSettingActionSheetCell.swift in Sources */,
 				DDA199DE28FFE579009D3E61 /* AlertManager.swift in Sources */,
+				A8F905462B4E396C00A4C5A7 /* CommerceBaseViewController.swift in Sources */,
 				DDA199EE28FFE579009D3E61 /* VLUIView.m in Sources */,
 				DD3610C829B70CDC00CE7984 /* ShowServiceModel.swift in Sources */,
 				DDDDDB9E28FFD78C005F4E8B /* KeyCenter.swift in Sources */,
 				DD36109829B70CDC00CE7984 /* ShowVideoSettingVC.swift in Sources */,
 				DD84177B29090C520026B624 /* VLHomeViewController.m in Sources */,
+				A8F9053B2B4E396C00A4C5A7 /* CommerceDebugSettingVC.swift in Sources */,
 				E357353F29EFD631009D54E1 /* VLKTVAlert.m in Sources */,
 				DD3610B629B70CDC00CE7984 /* ShowDebugSetting1TFCell.swift in Sources */,
 				DDDDDC3628FFD78C005F4E8B /* UIImage+Scene.swift in Sources */,
+				A8F905312B4E396C00A4C5A7 /* CommerceLiveViewController.swift in Sources */,
 				DDA19A0328FFE579009D3E61 /* NSArray+JKSafeAccess.m in Sources */,
 				053998C5290A83E0005143C7 /* HomeMenuCell.swift in Sources */,
 				DD3610BD29B70CDC00CE7984 /* ShowPresettingCell.swift in Sources */,
 				DD84178929090C520026B624 /* VLMainTabBarController.m in Sources */,
 				DD3610AC29B70CDC00CE7984 /* ShowRoomListCell.swift in Sources */,
 				DDA199F828FFE579009D3E61 /* NSDictionary+JKSafeAccess.m in Sources */,
+				A8F905422B4E396C00A4C5A7 /* CommerceAEACategoryTitleCell.swift in Sources */,
 				DD36109E29B70CDC00CE7984 /* ShowNavigationBar.swift in Sources */,
+				A8F905542B4E396C00A4C5A7 /* CommerceRoomChatCell.swift in Sources */,
 				E3735C8F2A5E7E75004737EF /* BEOpenGLRenderHelper.m in Sources */,
 				DD3610C029B70CDC00CE7984 /* ShowSettingHeaderView.swift in Sources */,
 				DDA199EC28FFE579009D3E61 /* VLAPIRequest.m in Sources */,
@@ -2197,26 +2742,37 @@
 				E72F624D2A8097DF00C963D2 /* VLLoginViewController.swift in Sources */,
 				E3735C932A5E7E75004737EF /* BEResourceHelper.m in Sources */,
 				E3735CA12A5E7E75004737EF /* FUBeautyRender.m in Sources */,
+				A8F9056A2B4E396C00A4C5A7 /* CommercePresettingHeaderView.swift in Sources */,
+				A8F905372B4E396C00A4C5A7 /* CommerceNetStateSelectViewController.swift in Sources */,
 				DD619C0829E3E84D008F63E4 /* SceneVersionCell.swift in Sources */,
+				A8F905632B4E396C00A4C5A7 /* CommercePresettingCell.swift in Sources */,
 				DDA19A0B28FFE579009D3E61 /* JSONObject.swift in Sources */,
 				E3735CA52A5E7E75004737EF /* SenseBeautyManager.swift in Sources */,
 				DDA19A0C28FFE579009D3E61 /* SyncUtil.swift in Sources */,
 				DD84178829090C520026B624 /* VLMineViewController.m in Sources */,
+				A8F9054F2B4E396C00A4C5A7 /* CommerceRoomListView.swift in Sources */,
+				A8F905452B4E396C00A4C5A7 /* CommerceAEAListContainerView.m in Sources */,
 				DD619C0A29E3E84D008F63E4 /* ContactInfoCell.swift in Sources */,
 				A8F904952B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift in Sources */,
 				DDA199FA28FFE579009D3E61 /* UIColor+JKWeb.m in Sources */,
 				DDA19A0528FFE579009D3E61 /* NSObject+JKAppInfo.m in Sources */,
+				A8F905472B4E396C00A4C5A7 /* CommerceMusicTableHeaderView.swift in Sources */,
+				A8F905412B4E396C00A4C5A7 /* CommerceAEACategoryView.swift in Sources */,
+				A8F9051D2B4E396C00A4C5A7 /* UIImage+Commerce.swift in Sources */,
 				E36EC8B32A6638440089A374 /* AEAListContainerView.swift in Sources */,
 				E36BE99729656C43003FCFBF /* AttributedTextView.m in Sources */,
 				A8F904902B4BDE1700A4C5A7 /* ShowDebugAgoraKitManager.swift in Sources */,
 				DD3610B129B70CDC00CE7984 /* ShowChatInputView.swift in Sources */,
 				DD84178529090C520026B624 /* VLUploadImageResModel.m in Sources */,
 				DDA199E228FFE579009D3E61 /* VLCommonWebViewController.m in Sources */,
+				A8F905382B4E396C00A4C5A7 /* CommerceSettingActionSheetVC.swift in Sources */,
 				DD2A43CB28FFCEE7004CEDCF /* AppDelegate.swift in Sources */,
 				DD64C68C295C142A00EAB750 /* UIButton+EntLayout.swift in Sources */,
 				DDA199E828FFE579009D3E61 /* UITextField+Font.m in Sources */,
+				A8F905442B4E396C00A4C5A7 /* CommerceNavigationBar.swift in Sources */,
 				DDA199DF28FFE579009D3E61 /* VLHotSpotBtn.m in Sources */,
 				DDA19A0128FFE579009D3E61 /* NSObject+Extension.m in Sources */,
+				A8F905652B4E396C00A4C5A7 /* CommerceSettingSegmentCell.swift in Sources */,
 				E3735C912A5E7E75004737EF /* BEFrameProcessor.mm in Sources */,
 				DD3610C729B70CDC00CE7984 /* ShowSubscribeServiceProtocol.swift in Sources */,
 				DDA199E028FFE579009D3E61 /* VLEmptyView.m in Sources */,
@@ -2224,22 +2780,30 @@
 				DD36109929B70CDC00CE7984 /* ShowCunstomNaviBar.swift in Sources */,
 				DD84177F29090C520026B624 /* UIWindow+Router.m in Sources */,
 				DD3610AA29B70CDC00CE7984 /* ShowEmptyView.swift in Sources */,
+				A8F905242B4E396C00A4C5A7 /* CommerceAgoraKitManager+Setting.swift in Sources */,
 				DD84178729090C520026B624 /* VLMineTCell.m in Sources */,
+				A8F9056D2B4E396C00A4C5A7 /* CommerceSettingHeaderView.swift in Sources */,
+				A8F905512B4E396C00A4C5A7 /* CommerceEmptyView.swift in Sources */,
 				DD8417CC29090C520026B624 /* TemplateServiceProtocol.swift in Sources */,
+				A8F9051E2B4E396C00A4C5A7 /* Date+Commerce.swift in Sources */,
 				E72F62492A7CEE5900C963D2 /* VRVerifyCodeNumberView.swift in Sources */,
 				DD3610B729B70CDC00CE7984 /* ShowDebugSetting2TFCell.swift in Sources */,
 				ABA095902A8373F400A54FCC /* ShowSettingBitrateCell.swift in Sources */,
+				A8F9056B2B4E396C00A4C5A7 /* CommerceSettingBitrateCell.swift in Sources */,
 				DD619B8429E3E262008F63E4 /* VerifyCodeView.swift in Sources */,
+				A8F905362B4E396C00A4C5A7 /* CommerceAdvancedSettingVC.swift in Sources */,
 				DD3610A129B70CDC00CE7984 /* ShowMusicTableHeaderView.swift in Sources */,
 				DD36109129B70CDC00CE7984 /* ShowToolMenuViewController.swift in Sources */,
 				DD84178029090C520026B624 /* VLDiscoveryHeaderView.m in Sources */,
 				A8F904932B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift in Sources */,
 				DD36105B29B70CDC00CE7984 /* Date+Show.swift in Sources */,
+				A8F905282B4E396C00A4C5A7 /* CommerceDebugPrivateParamsVC.swift in Sources */,
 				DDDDDC3728FFD78C005F4E8B /* AppContext.swift in Sources */,
 				DDA19A0228FFE579009D3E61 /* UIGestureRecognizer+VL.m in Sources */,
 				DD3610A829B70CDC00CE7984 /* ShowDataPanelPresenter.swift in Sources */,
 				DD36108D29B70CDC00CE7984 /* ShowSelectQualityVC.swift in Sources */,
 				DD36108E29B70CDC00CE7984 /* ShowBeautySettingVC.swift in Sources */,
+				A8F905642B4E396C00A4C5A7 /* CommerceSettingActionSheetCell.swift in Sources */,
 				DD3610C529B70CDC00CE7984 /* ShowPKInviteView.swift in Sources */,
 				E3735C8D2A5E7E75004737EF /* EffectsCommonObject.m in Sources */,
 				DD3610A629B70CDC00CE7984 /* ShowBeautyFaceCell.swift in Sources */,
@@ -2249,23 +2813,34 @@
 				DD3610C129B70CDC00CE7984 /* ShowSegmentView.swift in Sources */,
 				DD6199CC29E3D36D008F63E4 /* AgoraEntAuthorizedManager.swift in Sources */,
 				E3735C902A5E7E75004737EF /* BEEffectManager.mm in Sources */,
+				A8F905352B4E396C00A4C5A7 /* CommerceSelectQualityVC.swift in Sources */,
 				DDA199FC28FFE579009D3E61 /* UISplitViewController+JKQuickAccess.m in Sources */,
 				DD36108929B70CDC00CE7984 /* ShowRoomListVC.swift in Sources */,
 				DD36108F29B70CDC00CE7984 /* ShowBeautyFaceVC.swift in Sources */,
+				A8F905602B4E396C00A4C5A7 /* CommerceAuctionResultView.swift in Sources */,
 				DD3610CB29B70CDC00CE7984 /* ShowServiceProtocol.swift in Sources */,
 				DDA19A0728FFE579009D3E61 /* Config.swift in Sources */,
 				DD36105A29B70CDC00CE7984 /* UIFont+Show.swift in Sources */,
+				A8F9051F2B4E396C00A4C5A7 /* CommerceAgoraKitManager.swift in Sources */,
 				DD3610AD29B70CDC00CE7984 /* ShowRoomBottomBar.swift in Sources */,
 				DD3610A329B70CDC00CE7984 /* ShowReceiveFinishView.swift in Sources */,
 				DDA19A0F28FFE579009D3E61 /* VLUserCenter.m in Sources */,
+				A8F905482B4E396C00A4C5A7 /* CommerceMusicEffectCell.swift in Sources */,
 				DD3610A729B70CDC00CE7984 /* ShowSelectQualityCell.swift in Sources */,
+				A8F9055C2B4E396C00A4C5A7 /* CommerceGradualTableView.m in Sources */,
+				A8F9056C2B4E396C00A4C5A7 /* CommerceSettingSliderCell.swift in Sources */,
+				A8F9056E2B4E396C00A4C5A7 /* CommerceDebugSetting2TFCell.swift in Sources */,
 				DDA199F728FFE579009D3E61 /* Array+Extension.swift in Sources */,
 				E3735C982A5E7E75004737EF /* BEImageUtils.m in Sources */,
 				DD3610BA29B70CDC00CE7984 /* ShowSettingSegmentCell.swift in Sources */,
 				DDA199FE28FFE579009D3E61 /* UIDevice+JKHardware.m in Sources */,
+				A8F905202B4E396C00A4C5A7 /* CommerceMusicPresenter.swift in Sources */,
+				A8F9055D2B4E396C00A4C5A7 /* CommerceNumberButton.swift in Sources */,
 				DDA19A0928FFE579009D3E61 /* DeviceAssistant.swift in Sources */,
+				A8F905682B4E396C00A4C5A7 /* CommerceDebugSetting1TFCell.swift in Sources */,
 				DD84178C29090C520026B624 /* VLLoginModel.m in Sources */,
 				E3735C9B2A5E7E75004737EF /* BeautyManager.swift in Sources */,
+				A8F905222B4E396C00A4C5A7 /* CommerceAgoraKitManager+DebugSetting.swift in Sources */,
 				DD1603442963CAFD00182A04 /* AgoraEntLog.swift in Sources */,
 				DD3610A529B70CDC00CE7984 /* ShowCreateLiveView.swift in Sources */,
 				DD3610A929B70CDC00CE7984 /* ShowRealTimeDataView.swift in Sources */,
@@ -2277,9 +2852,14 @@
 				DD619B9629E3E262008F63E4 /* Notification+Presentation.swift in Sources */,
 				E36EC8B52A663A600089A374 /* AEACategoryView.swift in Sources */,
 				DD3610A029B70CDC00CE7984 /* ShowMusicEffectCell.swift in Sources */,
+				A8F9054C2B4E396C00A4C5A7 /* CommerceSelectQualityCell.swift in Sources */,
 				DD84178229090C520026B624 /* VLDiscoveryView.m in Sources */,
 				DD3610C429B70CDC00CE7984 /* ShowApplyView.swift in Sources */,
 				AB4746E72A5E82AB00E68FBA /* ShowRobotService.swift in Sources */,
+				A8F905712B4E396C00A4C5A7 /* CommerceSubscribeServiceProtocol.swift in Sources */,
+				A8F905582B4E396C00A4C5A7 /* CommerceUserJoinView.swift in Sources */,
+				A8F905572B4E396C00A4C5A7 /* CommerceLiveMoreDialog.swift in Sources */,
+				A8F905622B4E396C00A4C5A7 /* CommerceSettingActionSheetFooterView.swift in Sources */,
 				DD3610C329B70CDC00CE7984 /* ShowApplyAndInviteView.swift in Sources */,
 				DDA19A0A28FFE579009D3E61 /* Screen.swift in Sources */,
 				DD84178329090C520026B624 /* VLAmusementTCell.m in Sources */,
@@ -2293,12 +2873,14 @@
 				E3735C942A5E7E75004737EF /* BERenderHelper.m in Sources */,
 				E3735C882A5E7E75004737EF /* EffectsAnimal.m in Sources */,
 				DD36106929B70CDC00CE7984 /* ShowSettingKey.swift in Sources */,
+				A8F905692B4E396C00A4C5A7 /* CommerceSettingSwitchCell.swift in Sources */,
 				DD3610B829B70CDC00CE7984 /* ShowSettingBaseCell.swift in Sources */,
 				DD36109F29B70CDC00CE7984 /* ShowBaseViewController.swift in Sources */,
 				E3735C342A5E4AFF004737EF /* UITextView+Extension.swift in Sources */,
 				DDA19A0628FFE579009D3E61 /* NSObject+JKAutoCoding.m in Sources */,
 				ABE4B37A2A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift in Sources */,
 				E3735C9C2A5E7E75004737EF /* BundleUtil.m in Sources */,
+				A8F905662B4E396C00A4C5A7 /* CommerceSettingLabelCell.swift in Sources */,
 				DDA199EA28FFE579009D3E61 /* VLBaseModel.m in Sources */,
 				DD36109329B70CDC00CE7984 /* ShowLiveViewController.swift in Sources */,
 				E72F62582A823B5000C963D2 /* FUBeautyManager.swift in Sources */,
@@ -2306,10 +2888,12 @@
 				DD3610AF29B70CDC00CE7984 /* ShowRoomLiveView.swift in Sources */,
 				A8F904922B4BDE1700A4C5A7 /* ShowDebugPrivateParamsVC.swift in Sources */,
 				DD3610B429B70CDC00CE7984 /* ShowPresettingFooterView.swift in Sources */,
+				A8F905212B4E396C00A4C5A7 /* CommerceMusicModel.swift in Sources */,
 				DD3610D029B70F3800CE7984 /* VLMineCellModel.m in Sources */,
 				DD36106229B70CDC00CE7984 /* ShowMusicModel.swift in Sources */,
 				DDA19A1028FFE579009D3E61 /* VLGlobalHelper.m in Sources */,
 				DDA199E628FFE579009D3E61 /* UIButton+Font.m in Sources */,
+				A8F9051B2B4E396C00A4C5A7 /* UIViewController+Commerce.swift in Sources */,
 				DD36105929B70CDC00CE7984 /* NSString+Show.swift in Sources */,
 				DD84178A29090C520026B624 /* VLMainRootViewController.m in Sources */,
 				DD220BC9295B48FD00F57F30 /* QMUIHelper.m in Sources */,
@@ -2722,9 +3306,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = JDPG69R49Z;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = JDPG69R49Z;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -2908,6 +3494,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = AgoraLab2020;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
