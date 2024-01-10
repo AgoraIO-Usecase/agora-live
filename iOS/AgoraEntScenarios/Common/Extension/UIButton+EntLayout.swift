@@ -37,6 +37,7 @@ extension UIButton {
 }
 
 // MARK: - tap range expand
+private var expandSizeKey = "expandSizeKey"
 extension UIButton {
     private struct AssociatedKeys {
         static var touchAreaEdgeInsets = UIEdgeInsets.zero
@@ -53,10 +54,37 @@ extension UIButton {
             objc_setAssociatedObject(self, &AssociatedKeys.touchAreaEdgeInsets, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
+    
+    public func vm_expandSize(size: CGFloat) {
+        objc_setAssociatedObject(self, 
+                                 expandSizeKey,
+                                 size,
+                                 objc_AssociationPolicy.OBJC_ASSOCIATION_COPY)
+    }
 
-    open override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        let rect = bounds.inset(by: touchAreaEdgeInsets)
-        return rect.contains(point)
+    private func expandRect() -> CGRect {
+        let expandSize = objc_getAssociatedObject(self, expandSizeKey)
+        if expandSize != nil && !isHidden {
+            return CGRect(x: bounds.origin.x - (expandSize as! CGFloat), 
+                          y: bounds.origin.y - (expandSize as! CGFloat),
+                          width: bounds.size.width + 2 * (expandSize as! CGFloat),
+                          height: bounds.size.height + 2 * (expandSize as! CGFloat))
+        } else {
+            return bounds
+        }
+    }
+    override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        if touchAreaEdgeInsets == .zero {
+            let buttonRect = expandRect()
+            if buttonRect.equalTo(bounds) {
+                return super.point(inside: point, with: event)
+            } else {
+                return buttonRect.contains(point)
+            }
+        } else {
+            let rect = bounds.inset(by: touchAreaEdgeInsets)
+            return rect.contains(point)
+        }
     }
 }
 

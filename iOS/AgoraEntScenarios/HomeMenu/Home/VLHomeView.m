@@ -112,6 +112,12 @@
                 @"titleStr":NSLocalizedString(@"app_e_commerce", nil),
                 @"subTitleStr":@""
             },
+            @{
+                @"bgImgStr":@"home_talk_bg",
+                @"iconImgStr":@"home_talk_icon",
+                @"titleStr":NSLocalizedString(@"app_voice_chat", nil),
+                @"subTitleStr":@""
+            }
         ];
     }
     return _itemsArray;

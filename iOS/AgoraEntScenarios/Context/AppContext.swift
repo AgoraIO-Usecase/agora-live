@@ -16,6 +16,7 @@ import Foundation
     @objc var imageCahe = [String: AnyObject]()
     @objc var localizedCache = [String: String]()
     private var dislikeRoomCache: [String :String] = [:]
+    @objc var sceneConfig: VLSceneConfigsModel?
     
     @objc var isAgreeLicense: Bool = false {
         didSet {
