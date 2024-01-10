@@ -3125,7 +3125,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -3152,8 +3152,6 @@
 					"\"AgoraContentInspectExtension\"",
 					"-framework",
 					"\"AgoraDav1d\"",
-					"-framework",
-					"\"AgoraDrmLoaderExtension\"",
 					"-framework",
 					"\"AgoraFaceDetectionExtension\"",
 					"-framework",
@@ -3260,8 +3258,6 @@
 					"\"AgoraClearVisionExtension\"",
 					"-weak_framework",
 					"\"AgoraContentInspectExtension\"",
-					"-weak_framework",
-					"\"AgoraDrmLoaderExtension\"",
 					"-weak_framework",
 					"\"AgoraFaceDetectionExtension\"",
 					"-weak_framework",
@@ -3330,7 +3326,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -3357,8 +3353,6 @@
 					"\"AgoraContentInspectExtension\"",
 					"-framework",
 					"\"AgoraDav1d\"",
-					"-framework",
-					"\"AgoraDrmLoaderExtension\"",
 					"-framework",
 					"\"AgoraFaceDetectionExtension\"",
 					"-framework",
@@ -3465,8 +3459,6 @@
 					"\"AgoraClearVisionExtension\"",
 					"-weak_framework",
 					"\"AgoraContentInspectExtension\"",
-					"-weak_framework",
-					"\"AgoraDrmLoaderExtension\"",
 					"-weak_framework",
 					"\"AgoraFaceDetectionExtension\"",
 					"-weak_framework",

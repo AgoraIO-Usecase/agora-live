@@ -43,21 +43,21 @@ class CommerceRoomListVC: UIViewController {
         }
     }
     
-    private lazy var naviBar = ShowNavigationBar()
+    private lazy var naviBar = CommerceNavigationBar()
     
     private var needUpdateAudiencePresetType = false
     private var isHasToken: Bool = true
     
     deinit {
-        AppContext.unloadShowServiceImp()
+        AppContext.unloadCommerceServiceImp()
         CommerceAgoraKitManager.shared.destoryEngine()
-        commerceLogger.info("deinit-- ShowRoomListVC")
+        commerceLogger.info("deinit-- CommerceRoomListVC")
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         hidesBottomBarWhenPushed = true
-        commerceLogger.info("init-- ShowRoomListVC")
+        commerceLogger.info("init-- CommerceRoomListVC")
     }
     
     required init?(coder: NSCoder) {
@@ -251,10 +251,10 @@ extension CommerceRoomListVC {
 }
 
 class CommerceCollectionLoadingDelegateHandler: AGCollectionLoadingDelegateHandler {
-    var didSelected: ((ShowRoomListModel) -> Void)?
+    var didSelected: ((CommerceRoomListModel) -> Void)?
     
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = roomList?[indexPath.row] as? ShowRoomListModel else {return}
+        guard let item = roomList?[indexPath.row] as? CommerceRoomListModel else {return}
         didSelected?(item)
     }
 }

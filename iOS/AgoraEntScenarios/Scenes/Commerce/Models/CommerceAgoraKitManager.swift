@@ -1,5 +1,5 @@
 //
-//  ShowAgoraKitManager.swift
+//  CommerceAgoraKitManager.swift
 //  AgoraEntScenarios
 //
 //  Created by FanPengpeng on 2022/11/22.
@@ -14,8 +14,6 @@ import VideoLoaderAPI
 class CommerceAgoraKitManager: NSObject {
     
     static let shared = CommerceAgoraKitManager()
-    
-    private var videoLoader: IVideoLoaderApi?
     
     // Whether to enable the green screen function
     static var isOpenGreen: Bool = false
@@ -67,16 +65,16 @@ class CommerceAgoraKitManager: NSObject {
         config.rtcEngine = engine
         loader.setup(config: config)
         
-        commerceLogger.info("load AgoraRtcEngineKit, sdk version: \(AgoraRtcEngineKit.getSdkVersion())", context: kShowLogBaseContext)
+        commerceLogger.info("load AgoraRtcEngineKit, sdk version: \(AgoraRtcEngineKit.getSdkVersion())", context: kCommerceLogBaseContext)
     }
     
     func destoryEngine() {
         AgoraRtcEngineKit.destroy()
-        commerceLogger.info("deinit-- ShowAgoraKitManager")
+        commerceLogger.info("deinit-- CommerceAgoraKitManager")
     }
 
     func leaveAllRoom() {
-        videoLoader?.cleanCache()
+        VideoLoaderApiImpl.shared.cleanCache()
         if let p = player {
             engine?.destroyMediaPlayer(p)
             player = nil
@@ -96,7 +94,7 @@ class CommerceAgoraKitManager: NSObject {
         let config = AgoraContentInspectConfig()
         let dic: [String: String] = [
             "id": VLUserCenter.user.id,
-            "sceneName": "show",
+            "sceneName": "commerce",
             "userNo": VLUserCenter.user.userNo
         ]
         
@@ -152,14 +150,14 @@ class CommerceAgoraKitManager: NSObject {
 
         let proxy = VideoLoaderApiImpl.shared.getRTCListener(anchorId: currentChannelId)
         let date = Date()
-        commerceLogger.info("try to join room[\(connection.channelId)] ex uid: \(connection.localUid)", context: kShowLogBaseContext)
+        commerceLogger.info("try to join room[\(connection.channelId)] ex uid: \(connection.localUid)", context: kCommerceLogBaseContext)
         let ret =
         engine.joinChannelEx(byToken: token,
                                connection: connection,
                                delegate: proxy,
                                mediaOptions: mediaOptions) {[weak self] channelName, uid, elapsed in
             let cost = Int(-date.timeIntervalSinceNow * 1000)
-            commerceLogger.info("join room[\(channelName)] ex success uid: \(uid) cost \(cost) ms", context: kShowLogBaseContext)
+            commerceLogger.info("join room[\(channelName)] ex success uid: \(uid) cost \(cost) ms", context: kCommerceLogBaseContext)
             self?.setupContentInspectConfig(true, connection: connection)
 
 //            self?.moderationAudio(channelName: targetChannelId, role: role)
@@ -173,7 +171,7 @@ class CommerceAgoraKitManager: NSObject {
                             context: "AgoraKitManager")
         }else{
             commerceLogger.error("join room ex fail: channelId: \(targetChannelId) ownerId: \(ownerId) token = \(token), \(ret)",
-                             context: kShowLogBaseContext)
+                             context: kCommerceLogBaseContext)
         }
     }
     
@@ -186,7 +184,7 @@ class CommerceAgoraKitManager: NSObject {
         connection.channelId = currentChannelId
         connection.localUid = UInt(VLUserCenter.user.id) ?? 0
         let encoderRet = engine.setVideoEncoderConfigurationEx(encoderConfig, connection: connection)
-        commerceLogger.info("setVideoEncoderConfigurationEx  dimensions = \(encoderConfig.dimensions), bitrate = \(encoderConfig.bitrate), fps = \(encoderConfig.frameRate),  encoderRet = \(encoderRet)", context: kShowLogBaseContext)
+        commerceLogger.info("setVideoEncoderConfigurationEx  dimensions = \(encoderConfig.dimensions), bitrate = \(encoderConfig.bitrate), fps = \(encoderConfig.frameRate),  encoderRet = \(encoderRet)", context: kCommerceLogBaseContext)
     }
     
     //MARK: public method
@@ -200,7 +198,7 @@ class CommerceAgoraKitManager: NSObject {
     
     func renewToken(channelId: String) {
         commerceLogger.info("renewToken with channelId: \(channelId)",
-                        context: kShowLogBaseContext)
+                        context: kCommerceLogBaseContext)
         NetworkManager.shared.generateToken(channelName: channelId,
                                             uid: UserInfo.userId,
                                             tokenType: .token007,
@@ -266,7 +264,7 @@ class CommerceAgoraKitManager: NSObject {
         source.backgroundSourceType = .blur
         source.blurDegree = .high
         var seg: AgoraSegmentationProperty?
-        if ShowAgoraKitManager.isOpenGreen {
+        if CommerceAgoraKitManager.isOpenGreen {
             seg = AgoraSegmentationProperty()
             seg?.modelType = .agoraGreen
             seg?.greenCapacity = greenCapacity
@@ -276,14 +274,14 @@ class CommerceAgoraKitManager: NSObject {
     }
     
     func seVirtualtBackgoundImage(imagePath: String?, isOn: Bool, greenCapacity: Float = 0) {
-        guard let bundlePath = Bundle.main.path(forResource: "showResource", ofType: "bundle"),
+        guard let bundlePath = Bundle.main.path(forResource: "CommerceResource", ofType: "bundle"),
               let bundle = Bundle(path: bundlePath) else { return }
         let imgPath = bundle.path(forResource: imagePath, ofType: "jpg")
         let source = AgoraVirtualBackgroundSource()
         source.backgroundSourceType = .img
         source.source = imgPath
         var seg: AgoraSegmentationProperty?
-        if ShowAgoraKitManager.isOpenGreen {
+        if CommerceAgoraKitManager.isOpenGreen {
             seg = AgoraSegmentationProperty()
             seg?.modelType = .agoraGreen
             seg?.greenCapacity = greenCapacity
@@ -298,7 +296,7 @@ class CommerceAgoraKitManager: NSObject {
     
     func updateChannelEx(channelId: String, options: AgoraRtcChannelMediaOptions) {
         guard let engine = engine,
-              let connection = (broadcasterConnection?.channelId == channelId ? broadcasterConnection : nil) ?? videoLoader?.getConnectionMap()[channelId] else {
+              let connection = (broadcasterConnection?.channelId == channelId ? broadcasterConnection : nil) ?? VideoLoaderApiImpl.shared.getConnectionMap()[channelId] else {
             commerceLogger.error("updateChannelEx fail: connection is empty")
             return
         }
@@ -431,7 +429,7 @@ class CommerceAgoraKitManager: NSObject {
         engine.setDefaultAudioRouteToSpeakerphone(true)
         engine.enableLocalAudio(true)
         engine.enableLocalVideo(true)
-        commerceLogger.info("setupLocalVideo target uid:\(uid), user uid\(UserInfo.userId)", context: kShowLogBaseContext)
+        commerceLogger.info("setupLocalVideo target uid:\(uid), user uid\(UserInfo.userId)", context: kCommerceLogBaseContext)
     }
     
     func setupRemoteVideo(channelId: String, uid: UInt, canvasView: UIView?) {
@@ -442,7 +440,7 @@ class CommerceAgoraKitManager: NSObject {
             videoCanvas.renderMode = .hidden
             let ret = engine?.setupRemoteVideoEx(videoCanvas, connection: connection)
                     
-            commerceLogger.info("setupRemoteVideoEx ret = \(ret ?? -1), uid:\(uid) localuid: \(UserInfo.userId) channelId: \(channelId)", context: kShowLogBaseContext)
+            commerceLogger.info("setupRemoteVideoEx ret = \(ret ?? -1), uid:\(uid) localuid: \(UserInfo.userId) channelId: \(channelId)", context: kCommerceLogBaseContext)
             return
         }
         let anchorInfo = getAnchorInfo(channelId: channelId, uid: uid)
@@ -518,7 +516,7 @@ extension CommerceAgoraKitManager {
     }
     
     func setOffMediaOptionsVideo(roomid: String) {
-        guard let connection = videoLoader?.getConnectionMap()[roomid] else {
+        guard let connection = VideoLoaderApiImpl.shared.getConnectionMap()[roomid] else {
             commerceLogger.info("setOffMediaOptionsVideo  connection 不存在 \(roomid)")
             return
         }
@@ -529,7 +527,7 @@ extension CommerceAgoraKitManager {
     }
     
     func setOffMediaOptionsAudio() {
-        videoLoader?.getConnectionMap().forEach { _, connention in
+        VideoLoaderApiImpl.shared.getConnectionMap().forEach { _, connention in
             let mediaOptions = AgoraRtcChannelMediaOptions()
             mediaOptions.autoSubscribeAudio = false
             engine?.updateChannelEx(with: mediaOptions, connection: connention)

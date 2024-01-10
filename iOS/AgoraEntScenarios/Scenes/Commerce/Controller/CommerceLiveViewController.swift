@@ -1,5 +1,5 @@
 //
-//  ShowLiveViewController.swift
+//  CommerceLiveViewController.swift
 //  AgoraEntScenarios
 //
 //  Created by FanPengpeng on 2022/11/7.
@@ -61,7 +61,7 @@ class CommerceLiveViewController: UIViewController {
     }
     
     private var remoteVideoWidth: UInt?
-    private var currentMode: ShowMode?
+    private var currentMode: CommerceMode?
     
     private var joinRetry = 0
     
@@ -97,7 +97,7 @@ class CommerceLiveViewController: UIViewController {
         return CommerceMusicPresenter()
     }()
     
-    private lazy var liveView: CommerceRoomLiveView = {
+    private(set) lazy var liveView: CommerceRoomLiveView = {
         let view = CommerceRoomLiveView(isBroadcastor: role == .broadcaster)
         view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -146,8 +146,8 @@ class CommerceLiveViewController: UIViewController {
     deinit {
         let roomId = room?.roomId ?? ""
         leaveRoom()
-        AppContext.unloadShowServiceImp(roomId)
-        commerceLogger.info("deinit-- ShowLiveViewController \(roomId)")
+        AppContext.unloadCommerceServiceImp(roomId)
+        commerceLogger.info("deinit-- CommerceLiveViewController \(roomId)")
 //        musicManager?.destory()
     }
     
@@ -256,7 +256,7 @@ extension CommerceLiveViewController {
                 guard let self = self else {return}
                 guard self.room?.roomId == room.roomId else { return }
                 if let err = error {
-                    showLogger.info("joinRoom[\(room.roomId)] error: \(error?.code ?? 0)")
+                    commerceLogger.info("joinRoom[\(room.roomId)] error: \(error?.code ?? 0)")
                     if err.code == -1 {
                         self.onRoomExpired()
                     }
@@ -276,7 +276,7 @@ extension CommerceLiveViewController {
         AppContext.commerceServiceImp(room.roomId)?.unsubscribeEvent(delegate: self)
         AppContext.commerceServiceImp(room.roomId)?.leaveRoom { error in
         }
-        AppContext.unloadShowServiceImp(room.roomId)
+        AppContext.unloadCommerceServiceImp(room.roomId)
     }
     
     
@@ -288,6 +288,15 @@ extension CommerceLiveViewController {
             serviceImp?.deinitRoom(roomId: roomId) { error in }
         } else {
         }
+        updateRemoteCavans()
+    }
+    
+    func updateRemoteCavans() {
+        guard role == .audience, loadingType == .joinedWithVideo else { return }
+        let uid: UInt = UInt(room?.ownerId ?? "0") ?? 0
+        CommerceAgoraKitManager.shared.setupRemoteVideo(channelId: roomId,
+                                                        uid: uid,
+                                                        canvasView: liveView.canvasView.localView)
     }
 }
 
@@ -297,7 +306,7 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
         serviceImp?.subscribeEvent(delegate: self)
     }
         
-    //MARK: ShowSubscribeServiceProtocol
+    //MARK: CommerceSubscribeServiceProtocol
     func onConnectStateChanged(state: CommerceServiceConnectState) {
         guard state == .open else {
 //            ToastView.show(text: "net work error: \(state)")
@@ -306,7 +315,7 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     }
     
     func onRoomExpired() {
-        AppContext.expireShowImp(roomId)
+        AppContext.expireCommerceImp(roomId)
         serviceImp = nil
         finishView?.removeFromSuperview()
         finishView = CommerceReceiveFinishView()
@@ -329,7 +338,7 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     
     func onUserLeftRoom(user: CommerceUser) {
         if user.userId == room?.ownerId {
-            showLogger.info(" finishAlertVC onUserLeftRoom : roomid = \(roomId)")
+            commerceLogger.info(" finishAlertVC onUserLeftRoom : roomid = \(roomId)")
             onRoomExpired()
         }
     }
@@ -357,7 +366,7 @@ extension CommerceLiveViewController: AgoraRtcEngineDelegate {
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
-        commerceLogger.info("rtcEngine didJoinedOfUid \(uid) channelId: \(roomId)", context: kShowLogBaseContext)
+        commerceLogger.info("rtcEngine didJoinedOfUid \(uid) channelId: \(roomId)", context: kCommerceLogBaseContext)
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
@@ -377,7 +386,6 @@ extension CommerceLiveViewController: AgoraRtcEngineDelegate {
     func rtcEngine(_ engine: AgoraRtcEngineKit, localVideoStats stats: AgoraRtcLocalVideoStats, sourceType: AgoraVideoSourceType) {
         panelPresenter.updateLocalVideoStats(stats)
         throttleRefreshRealTimeInfo()
-//        showLogger.info("localVideoStats  width = \(stats.encodedFrameWidth), height = \(stats.encodedFrameHeight)")
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, remoteVideoStats stats: AgoraRtcRemoteVideoStats) {
@@ -423,10 +431,10 @@ extension CommerceLiveViewController: AgoraRtcEngineDelegate {
         DispatchQueue.main.async {
             let channelId = self.room?.roomId ?? ""
             commerceLogger.info("didLiveRtcRemoteVideoStateChanged channelId: \(channelId) uid: \(uid) state: \(state.rawValue) reason: \(reason.rawValue)",
-                            context: kShowLogBaseContext)
+                            context: kCommerceLogBaseContext)
             if state == .decoding /*2*/,
                ( reason == .remoteUnmuted /*6*/ || reason == .localUnmuted /*4*/ || reason == .localMuted /*3*/ )   {
-                commerceLogger.info("show first frame (\(channelId))", context: kShowLogBaseContext)
+                commerceLogger.info("show first frame (\(channelId))", context: kCommerceLogBaseContext)
                 // TODO: FAPNGEG
 //                if let ts = ShowAgoraKitManager.shared.callTimestampEnd() {
 //                    self.panelPresenter.updateTimestamp(ts)
@@ -438,12 +446,12 @@ extension CommerceLiveViewController: AgoraRtcEngineDelegate {
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstLocalVideoFramePublishedWithElapsed elapsed: Int, sourceType: AgoraVideoSourceType) {
         commerceLogger.info("firstLocalVideoFramePublishedWithElapsed: \(elapsed)ms \(sourceType.rawValue)",
-                        context: kShowLogBaseContext)
+                        context: kCommerceLogBaseContext)
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, tokenPrivilegeWillExpire token: String) {
         commerceLogger.warning("tokenPrivilegeWillExpire: \(roomId)",
-                           context: kShowLogBaseContext)
+                           context: kCommerceLogBaseContext)
         if let channelId = currentChannelId {
             CommerceAgoraKitManager.shared.renewToken(channelId: channelId)
         }
@@ -592,7 +600,7 @@ extension CommerceLiveViewController: CommerceToolMenuViewControllerDelegate {
         }
     }
 }
-// MARK: - ShowReceiveFinishViewDelegate
+// MARK: - CommerceReceiveFinishViewDelegate
 extension CommerceLiveViewController: CommerceReceiveFinishViewDelegate {
     func onClickFinishButton() {
         onClickCloseButton()

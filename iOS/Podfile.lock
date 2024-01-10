@@ -16,7 +16,7 @@ PODS:
     - AFNetworking/NSURLSession
   - Agora-Scene-Utils (1.1.0)
   - Agora_Chat_iOS (1.0.8)
-  - AgoraRtcEngine_Special_iOS (4.1.1.16)
+  - AgoraRtcEngine_Special_iOS (4.1.1.23)
   - AgoraSyncManager-overseas (3.0.8):
     - SocketRocket
   - fuLib (1.0):
@@ -59,7 +59,7 @@ DEPENDENCIES:
   - AFNetworking (= 4.0.1)
   - Agora-Scene-Utils (= 1.1.0)
   - Agora_Chat_iOS (= 1.0.8)
-  - AgoraRtcEngine_Special_iOS (= 4.1.1.16)
+  - AgoraRtcEngine_Special_iOS (= 4.1.1.23)
   - AgoraSyncManager-overseas (~> 3.0.8)
   - fuLib (from `fu.podspec`)
   - HWWeakTimer (= 1.0)
@@ -118,7 +118,7 @@ SPEC CHECKSUMS:
   AFNetworking: 3bd23d814e976cd148d7d44c3ab78017b744cd58
   Agora-Scene-Utils: 3f9b1c422cfdda4a7051cf4cffdd0cfef80c9c89
   Agora_Chat_iOS: fcd8afa4f1cff55da59535a6ed573594ace3c169
-  AgoraRtcEngine_Special_iOS: 7f0f588069121c157995503593a7ba6df37691cb
+  AgoraRtcEngine_Special_iOS: 6a3f7814058f819b374cec3037cbbf7c4de519a5
   AgoraSyncManager-overseas: 4dddc7d8cd336e257adaac5e278e6cbcfaf1e954
   fuLib: a59e706f8b8a3826dcbe93d427fba2bcafc643aa
   FURenderKit: bcff9889dbbafcd12839d57ee85d03b466e1a6fb
@@ -142,6 +142,6 @@ SPEC CHECKSUMS:
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: 94e79ced91290683b5130debbaddeafa0c712a96
+PODFILE CHECKSUM: 2477a5003c91216ab3d85f62519ee7b4ec70f7c2
 
 COCOAPODS: 1.14.3
