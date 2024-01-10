@@ -9,7 +9,6 @@ import UIKit
 
 class ShowDebugPrivateParamsVC: UIViewController {
     
-    // 自定义导航栏
     private let naviBar = ShowNavigationBar()
     
     private let textView = UITextView()
@@ -36,8 +35,7 @@ class ShowDebugPrivateParamsVC: UIViewController {
     }
     
     private func configCustomNaviBar(){
-        // 标题
-        naviBar.title = "设置私参"
+        naviBar.title = "Set private parameter"
         naviBar.backgroundColor = .white
         view.addSubview(naviBar)
         naviBar.setLeftButtonTarget(self, action: #selector(didClickCanelButton))
@@ -48,7 +46,7 @@ class ShowDebugPrivateParamsVC: UIViewController {
     @objc private func didClickSaveButton() {
         let text = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard text.count > 0, let engine = ShowAgoraKitManager.shared.engine else {
-            ToastView.show(text: "不能为空")
+            ToastView.show(text: "Cannot be empty")
             return
         }
 //        settingManager?.privateParams = text
