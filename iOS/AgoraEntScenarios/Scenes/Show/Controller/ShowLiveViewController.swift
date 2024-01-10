@@ -822,7 +822,8 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
     func rtcEngine(_ engine: AgoraRtcEngineKit, remoteVideoStateChangedOfUid uid: UInt, state: AgoraVideoRemoteState, reason: AgoraVideoRemoteReason, elapsed: Int) {
         if uid == roomOwnerId {
             if reason == .remoteMuted , currentInteraction?.interactStatus != .pking{
-                liveView.showThumnbnailCanvasView = true
+                // TODO: 暂时隐藏
+                liveView.showThumnbnailCanvasView = false
             }else if reason == .remoteUnmuted {
                 liveView.showThumnbnailCanvasView = false
             }
@@ -1029,7 +1030,8 @@ extension ShowLiveViewController: ShowToolMenuViewControllerDelegate {
             if selected {
                 ShowAgoraKitManager.shared.engine?.stopPreview()
                 if let ownerId = self.room?.userId(), ownerId == self.currentUserId, self.currentInteraction?.interactStatus != .pking {
-                    self.liveView.showThumnbnailCanvasView = true
+                    // TODO: 暂时隐藏
+                    self.liveView.showThumnbnailCanvasView = false
                 }
             } else {
                 ShowAgoraKitManager.shared.engine?.startPreview()
