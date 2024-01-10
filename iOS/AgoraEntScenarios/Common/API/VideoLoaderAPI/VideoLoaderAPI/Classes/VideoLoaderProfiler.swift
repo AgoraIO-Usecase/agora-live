@@ -8,44 +8,14 @@
 import Foundation
 import AgoraRtcKit
 
-
-func apiPrint(_ message: String) {
-    #if DEBUG
-    print("\(formatter.string(from: Date()))[VideoLoaderApi]\(message)")
-    #endif
-}
-
-public func debugLoaderPrint(_ message: String) {
-    if let closure = VideoLoaderApiImpl.shared.printClosure {
-        closure(message)
-        return
-    }
-    apiPrint(message)
-}
-
-public func warningLoaderPrint(_ message: String) {
-    if let closure = VideoLoaderApiImpl.shared.warningClosure {
-        closure(message)
-        return
-    }
-    apiPrint("[Warning]\(message)")
-}
-
-public func errorLoaderPrint(_ message: String) {
-    if let closure = VideoLoaderApiImpl.shared.errorClosure {
-        closure(message)
-        return
-    }
-    apiPrint("[Error]\(message)")
-}
-
 class VideoLoaderProfiler: NSObject, AgoraRtcEngineDelegate {
-    var anchorId: String!
-    public internal(set) var startTime: Int64 = 0
-    var firstFrameCompletion: ((Int64, UInt)->())?
+    var roomId: String!
+    var startTime: Int64 = 0
     
-    init(anchorId: String) {
-        self.anchorId = anchorId
+    var printClosure: ((String)->())?
+    
+    init(roomId: String) {
+        self.roomId = roomId
     }
     public func rtcEngine(_ engine: AgoraRtcEngineKit,
                           remoteVideoStateChangedOfUid uid: UInt,
@@ -54,15 +24,14 @@ class VideoLoaderProfiler: NSObject, AgoraRtcEngineDelegate {
                           elapsed: Int) {
         let channelId = ""//self.room?.roomId ?? ""
         let cost = Int64(Date().timeIntervalSince1970 * 1000) - startTime
-        let anchorId = anchorId ?? ""
+        let roomId = roomId ?? ""
         #if DEBUG
-        debugLoaderPrint("remoteVideoStateChangedOfUid[\(anchorId)]: \(uid) state: \(state.rawValue) reason: \(reason.rawValue)")
+        printClosure?("remoteVideoStateChangedOfUid[\(roomId)]: \(uid) state: \(state.rawValue) reason: \(reason.rawValue)")
         #endif
         DispatchQueue.main.async {
             if state == .decoding /*2*/,
                ( reason == .remoteUnmuted /*6*/ || reason == .localUnmuted /*4*/ || reason == .localMuted /*3*/ )   {
-                debugLoaderPrint("anchorId[\(anchorId)] uid[\(uid)] show first frame! cost: \(cost) ms")
-                self.firstFrameCompletion?(cost, uid)
+                self.printClosure?("room[\(roomId)] show first frame cost: \(cost) ms")
             }
         }
     }

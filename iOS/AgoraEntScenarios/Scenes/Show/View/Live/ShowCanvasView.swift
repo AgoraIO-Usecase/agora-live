@@ -22,12 +22,6 @@ protocol ShowCanvasViewDelegate: NSObjectProtocol {
 class ShowCanvasView: UIView {
     weak var delegate: ShowCanvasViewDelegate?
     
-    lazy var thumnbnailCanvasView: ShowThumnbnailCanvasView = {
-        let view = ShowThumnbnailCanvasView(frame: self.bounds)
-        view.isHidden = true
-        return view
-    }()
-    
     lazy var localView = UIView()
     lazy var remoteView: UIView = {
         let view = UIView()
@@ -233,24 +227,27 @@ class ShowCanvasView: UIView {
     func setLocalUserInfo(name: String, img: String? = nil) {
         localUser.setTitle(name, for: .normal)
         if let img = img {
-            broadcastorImgView.sd_setImage(with: URL(string: img))
+            if img.hasPrefix("http") {
+                broadcastorImgView.sd_setImage(with: URL(string: img))
+            } else {
+                broadcastorImgView.image = UIImage(named: img)
+            }
         }
     }
     
     func setRemoteUserInfo(name: String, img: String? = nil) {
         remoteUser.setTitle(name, for: .normal)
         if let img = img {
-            audienceImgView.sd_setImage(with: URL(string: img))
+            if img.hasPrefix("http") {
+                audienceImgView.sd_setImage(with: URL(string: img))
+            } else {
+                audienceImgView.image = UIImage(named: img)
+            }
         }
     }
     
     private func setupUI() {
         addSubview(localView)
-        addSubview(thumnbnailCanvasView)
-        thumnbnailCanvasView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
         addSubview(remoteView)
         addSubview(timerView)
         addSubview(pkView)

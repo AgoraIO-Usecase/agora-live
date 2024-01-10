@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import VideoLoaderAPI
+
 
 @objc enum ShowRoomStatus: Int {
     case activity = 0
@@ -51,30 +51,7 @@ class ShowBaseInfo: NSObject {
 
 /// Room list information
 @objcMembers
-class ShowRoomListModel: ShowBaseInfo, IVideoLoaderRoomInfo {
-    func channelName() -> String {
-        return roomId
-    }
-    
-    func userId() -> String {
-        return ownerId
-    }
-    
-    var anchorInfoList: [AnchorInfo] {
-        get {
-            let anchorInfo = AnchorInfo()
-            anchorInfo.channelName = roomId
-            if !ownerId.isEmpty {
-                anchorInfo.uid = UInt(ownerId)!
-            }
-            anchorInfo.token = AppContext.shared.rtcToken ?? ""
-            
-            return [anchorInfo] + interactionAnchorInfoList
-        }
-    }
-    
-    var interactionAnchorInfoList: [AnchorInfo] = []
-    
+class ShowRoomListModel: ShowBaseInfo {
     var roomId: String = ""
     var roomName: String?
     var roomUserCount: Int = 1
@@ -114,10 +91,6 @@ class ShowMessage: ShowBaseInfo {
 }
 
 class ShowMicSeatApply: ShowUser {
-//    var userId: String?
-//    var avatar: String?
-//    var userName: String?
-//    var status: ShowRoomRequestStatus = .idle
     var createdAt: Int64 = 0
     
     #if DEBUG
