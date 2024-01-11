@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func applicationDidEnterBackground(_ application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
         AgoraRtcEngineKit.destroy()
     }
 }
