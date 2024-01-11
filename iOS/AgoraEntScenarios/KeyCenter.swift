@@ -18,7 +18,7 @@ class KeyCenter: NSObject {
      In order to get the APP ID, you can open the agora console (https://console.agora.io/) to create a project,
      then the APP ID can be found in the project detail page.
      */
-    static let AppId: String = "72d8d5c7b38445e5bb26f1f270ee4649"
+    static let AppId: String = <#AppId#>
     /**
      Certificate.
      Agora provides App certificate to generate Token. You can deploy and generate a token on your server,
@@ -52,7 +52,7 @@ class KeyCenter: NSObject {
      If you need to use Chat Room, you must to set this parameter.
      Please refer to the information on obtaining instant messaging IM from EaseMob for more information(http://docs-im-beta.easemob.com/product/enable_and_configure_IM.html#%E8%8E%B7%E5%8F%96%E7%8E%AF%E4%BF%A1%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF-im-%E7%9A%84%E4%BF%A1%E6%81%AF).
      */
-    static var IMAppKey: String? = "81399972#1019272"
+    static var IMAppKey: String? = <#IMAppKey#>
     /**
      EaseMob Client ID.
      Client id of EaseMob, used to generate app tokens to call REST API.
