@@ -741,6 +741,9 @@ object VideoSetting {
         if (currAudienceDeviceLevel != DeviceLevel.Low) {
             setCurrAudienceEnhanceSwitch(true)
             updateAudioSetting(SR = SuperResolution.SR_AUTO)
+        } else {
+            setCurrAudienceEnhanceSwitch(false)
+            updateAudioSetting(SR = SuperResolution.SR_NONE)
         }
     }
 

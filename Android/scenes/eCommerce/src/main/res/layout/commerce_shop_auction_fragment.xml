@@ -17,7 +17,7 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/commerce_auction_goods"
+            android:background="@drawable/commerce_shop_auction_item"
             />
     </androidx.cardview.widget.CardView>
 
@@ -94,12 +94,11 @@
         android:layout_height="36dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/ivCommodity"
-        android:background="@drawable/commerce_btn_gradient_orange"
+        android:background="@drawable/commerce_corner_radius_gradient_orange"
         android:text="@string/commerce_shop_auction_start"
         android:textAllCaps="false"
         android:textColor="@color/black"
         android:textSize="15sp"
-        android:visibility="invisible"
         />
     
     <com.google.android.material.textview.MaterialTextView
@@ -114,6 +113,7 @@
         android:textStyle="bold"
         android:textSize="15sp"
         android:text="00:26"
+        android:visibility="invisible"
         />
 
     <Button
@@ -123,7 +123,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivCommodity"
-        android:background="@drawable/commerce_btn_gradient_orange"
+        android:background="@drawable/commerce_corner_radius_gradient_orange"
         android:text="@string/commerce_shop_auction_start"
         android:textAllCaps="false"
         android:textColor="@color/black"

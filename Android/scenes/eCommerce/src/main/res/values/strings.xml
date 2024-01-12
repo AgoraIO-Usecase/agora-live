@@ -5,7 +5,7 @@
     <string name="commerce_living">LIVE</string>
     <string name="commerce_room_id">ID: %s</string>
     <string name="commerce_user_count">%d</string>
-    <string name="commerce_app_name">Live Streaming</string>
+    <string name="commerce_app_name">E-Commerce</string>
     <string name="commerce_live_top_close">Close</string>
     <string name="commerce_live_bottom_chat">Say something...</string>
     <string name="commerce_live_perms_leak_tip" >Missing permissions required for live streaming. Would you like to reapply?</string>
@@ -85,7 +85,15 @@
     <string name="commerce_shop_auction_start_from">Start from</string>
     <string name="commerce_shop_auction_start">Start</string>
     <string name="commerce_shop_auction_buy">Buy</string>
-    <string name="commerce_shop_auction_current_bid">Current Bid:</string>
+    <string name="commerce_shop_auction_not_start">Auction Not Started</string>
+    <string name="commerce_shop_auction_leading_bidder">You are the leading bidder.</string>
+    <string name="commerce_shop_auction_bid">Bid: $%s</string>
+    <string name="commerce_shop_auction_won">Won</string>
+    <string name="commerce_shop_item_qty">Qty: %s</string>
+    <string name="commerce_shop_item_sold_out">Sold Out</string>
+    <string name="commerce_shop_alert_bought">Bought!</string>
+    <string name="commerce_shop_alert_sold_out">Sold Out!</string>
+    <string name="commerce_shop_alert_submit">OK</string>
 
     <!-- co-host  -->
     <string name="commerce_linking_request_message">Application</string>

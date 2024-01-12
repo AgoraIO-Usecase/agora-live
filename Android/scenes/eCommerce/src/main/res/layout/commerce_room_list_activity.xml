@@ -9,7 +9,7 @@
     <io.agora.scene.widget.CommonTitleView
         android:id="@+id/title_view"
         style="@style/title_view"
-        app:ctv_centerText="@string/show_app_name"
+        app:ctv_centerText="@string/commerce_app_name"
         tools:ignore="MissingConstraints" />
 
 
@@ -54,7 +54,7 @@
         android:drawableStart="@mipmap/icon_create_room"
         android:gravity="center"
         android:paddingHorizontal="50dp"
-        android:text="@string/show_create_room"
+        android:text="@string/commerce_create_room"
         android:textColor="@color/white"
         android:visibility="gone"
         tools:visibility="visible"
@@ -71,7 +71,7 @@
         android:layout_marginHorizontal="47dp"
         android:layout_marginTop="60dp"
         android:gravity="center"
-        android:text="@string/show_create_tips1"
+        android:text="@string/commerce_create_tips1"
         android:textColor="@color/def_text_color_3c4"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -97,7 +97,7 @@
         android:drawableStart="@mipmap/icon_create_room"
         android:gravity="center"
         android:paddingHorizontal="50dp"
-        android:text="@string/show_create_room"
+        android:text="@string/commerce_create_room"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

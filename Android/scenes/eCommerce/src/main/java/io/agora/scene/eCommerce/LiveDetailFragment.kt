@@ -347,6 +347,7 @@ class LiveDetailFragment : Fragment() {
         initTopLayout()
         initBottomLayout()
         initMessageLayout()
+        initAuctionLayout()
 
         // Render host video
         if (needRender) {
@@ -511,10 +512,10 @@ class LiveDetailFragment : Fragment() {
     private fun initAuctionLayout() {
         val layoutParams = mBinding.flAuction.layoutParams
         if (isRoomOwner) {
-            layoutParams.height = UiUtil.dp2px(140)
+            layoutParams.height = UiUtil.dp2px(88)
             mBinding.flAuction.setBackgroundResource(R.drawable.commerce_auction_bg_owner)
         } else {
-            layoutParams.height = UiUtil.dp2px(88)
+            layoutParams.height = UiUtil.dp2px(140)
             mBinding.flAuction.setBackgroundResource(R.drawable.commerce_auction_bg_user)
         }
         mBinding.flAuction.layoutParams = layoutParams
@@ -647,7 +648,7 @@ class LiveDetailFragment : Fragment() {
         if (isRoomOwner) {
             topBinding.tvQuickStartTime.text = getString(R.string.commerce_statistic_quick_start_time, "--")
         } else {
-            topBinding.tvQuickStartTime.text = getString(R.string.commerce_statistic_quick_start_time, quickStartTime)
+            topBinding.tvQuickStartTime.text = getString(R.string.commerce_statistic_quick_start_time, quickStartTime.toString())
         }
         topBinding.tvStatisticDeviceGrade.isVisible = true
         val score = mRtcEngine.queryDeviceScore()
