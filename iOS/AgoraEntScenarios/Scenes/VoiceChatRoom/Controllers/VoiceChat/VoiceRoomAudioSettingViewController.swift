@@ -54,7 +54,7 @@ class VoiceRoomAudioSettingViewController: VRBaseViewController {
     [
         [.AINS, .AIAEC, .AGC, .EarBack, .SoundCard],
         [.Robots, .RobotsVolume],
-        [.BesetSoundEffect, .BGM, .Engine]
+        [.BesetSoundEffect, .BGM]
     ]
 
     private var soundTitle: [String] = []
@@ -236,7 +236,6 @@ class VoiceRoomAudioSettingViewController: VRBaseViewController {
         tableView.registerCell(VMSwitchTableViewCell.self, forCellReuseIdentifier: swIdentifier)
         tableView.registerCell(VMSliderTableViewCell.self, forCellReuseIdentifier: slIdentifier)
         tableView.registerCell(VMNorSetTableViewCell.self, forCellReuseIdentifier: nIdentifier)
-        tableView.registerCell(VMAudioSetEngineSurpportCell.self, forCellReuseIdentifier: spdentifier)
         tableView.dataSource = self
         tableView.delegate = self
         view.addSubview(tableView)
@@ -450,10 +449,6 @@ extension VoiceRoomAudioSettingViewController: UITableViewDelegate, UITableViewD
             let singerName = roomInfo?.room?.backgroundMusic?.singer
             let text = musicName == nil ? "" : "\(musicName ?? "")-\(singerName ?? "")"
             cell.contentLabel.text = text
-            return cell
-        } else if (type == .Engine) {
-            let cell = tableView.dequeueReusableCell(withIdentifier: spdentifier) ?? UITableViewCell()
-            cell.accessibilityIdentifier = "voice_chat_room_audio_setting_\(indexPath.section)_\(indexPath.row)"
             return cell
         }
         return UITableViewCell()
