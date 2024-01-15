@@ -8,7 +8,7 @@
 import UIKit
 import ZSwiftBaseLib
 
-public class VRSoundEffectsCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
+public class VRSoundEffectsCell: UITableViewCell {
     var entity: VRRoomMenuBarEntity?
 
     private var images = [["wangyi", "momo", "pipi", "yinyu"], ["wangyi", "jiamian", "yinyu", "paipaivoice", "wanba", "qingtian", "skr", "soul"], ["yalla-ludo", "jiamian"], ["qingmang", "cowLive", "yuwan", "weibo"]]
@@ -20,20 +20,6 @@ public class VRSoundEffectsCell: UITableViewCell, UICollectionViewDelegate, UICo
     lazy var effectName: UILabel = .init(frame: CGRect(x: 20, y: 17.5, width: self.background.frame.width - 40, height: 20)).textColor(UIColor(0x156EF3)).font(.systemFont(ofSize: 16, weight: .semibold))
 
     lazy var effectDesc: UILabel = .init(frame: CGRect(x: 20, y: self.effectName.frame.maxY + 4, width: self.effectName.frame.width, height: 60)).font(.systemFont(ofSize: 13, weight: .regular)).textColor(UIColor(0x3C4267)).numberOfLines(0)
-
-    lazy var line: UIView = .init(frame: CGRect(x: 20, y: self.effectDesc.frame.maxY + 6, width: self.effectDesc.frame.width, height: 1)).backgroundColor(UIColor(0xF6F6F6))
-
-    lazy var customUsage: UILabel = .init(frame: CGRect(x: 20, y: self.effectDesc.frame.maxY + 10, width: 200, height: 15)).font(.systemFont(ofSize: 11, weight: .regular)).textColor(UIColor(0xD8D8D8)).text("voice_current_customer_usage".voice_localized)
-
-    lazy var flowLayout: UICollectionViewFlowLayout = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumInteritemSpacing = 10
-        layout.itemSize = CGSize(width: 20, height: 20)
-        return layout
-    }()
-
-    lazy var iconList: UICollectionView = .init(frame: CGRect(x: 20, y: self.customUsage.frame.maxY + 5, width: self.effectName.frame.width, height: 20), collectionViewLayout: self.flowLayout).delegate(self).dataSource(self).registerCell(VRIconCell.self, forCellReuseIdentifier: "VRIconCell").showsVerticalScrollIndicator(false).showsHorizontalScrollIndicator(false).isUserInteractionEnabled(false).backgroundColor(.white)
 
     lazy var chooseSymbol: UIImageView = .init(frame: CGRect(x: self.background.frame.width - 32, y: self.frame.height - 31, width: 32, height: 31)).image(UIImage.sceneImage(name: "dan-check", bundleName: "VoiceChatRoomResource")!).contentMode(.scaleAspectFit)
 
@@ -47,8 +33,7 @@ public class VRSoundEffectsCell: UITableViewCell, UICollectionViewDelegate, UICo
         shaodw.layer.shadowOffset = CGSize(width: 0, height: 2)
         shaodw.layer.shadowColor = UIColor(red: 0.04, green: 0.1, blue: 0.16, alpha: 0.12).cgColor
         shaodw.layer.shadowOpacity = 1
-        background.addSubViews([effectName, effectDesc, line, customUsage, iconList, chooseSymbol])
-        iconList.isScrollEnabled = false
+        background.addSubViews([effectName, effectDesc, chooseSymbol])
     }
 
     @available(*, unavailable)
@@ -72,16 +57,6 @@ extension VRSoundEffectsCell {
         return items
     }
 
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        images[entity?.index ?? 0].count
-    }
-
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VRIconCell", for: indexPath) as? VRIconCell
-        cell?.imageView.image = UIImage.voice_image(images[entity?.index ?? 0][indexPath.row])
-        return cell ?? UICollectionViewCell()
-    }
-
     func refresh(item: VRRoomMenuBarEntity) {
         entity = item
         effectName.text = item.title
@@ -96,11 +71,7 @@ extension VRSoundEffectsCell {
         shaodw.frame = CGRect(x: 35, y: 15, width: contentView.frame.width - 70, height: frame.height - 16)
         effectName.frame = CGRect(x: 20, y: 15, width: background.frame.width - 40, height: 22)
         effectDesc.frame = CGRect(x: 20, y: effectName.frame.maxY + 4, width: effectName.frame.width, height: VRSoundEffectsList.heightMap[item.title] ?? 60)
-        line.frame = CGRect(x: 20, y: effectDesc.frame.maxY + 6, width: effectDesc.frame.width, height: 1)
-        customUsage.frame = CGRect(x: 20, y: effectDesc.frame.maxY + 10, width: 200, height: 15)
-        iconList.frame = CGRect(x: 20, y: Int(customUsage.frame.maxY) + 5, width: Int(background.frame.width) - 40, height: 20)
         chooseSymbol.frame = CGRect(x: background.frame.width - 32, y: background.frame.height - 31, width: 32, height: 31)
-        iconList.reloadData()
     }
 }
 

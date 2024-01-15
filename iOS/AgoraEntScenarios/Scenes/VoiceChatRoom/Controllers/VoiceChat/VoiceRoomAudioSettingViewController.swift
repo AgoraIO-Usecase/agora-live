@@ -54,7 +54,7 @@ class VoiceRoomAudioSettingViewController: VRBaseViewController {
     [
         [.AINS, .AIAEC, .AGC, .EarBack, .SoundCard],
         [.Robots, .RobotsVolume],
-        [.BesetSoundEffect, .BGM]
+        [.BesetSoundEffect]
     ]
 
     private var soundTitle: [String] = []

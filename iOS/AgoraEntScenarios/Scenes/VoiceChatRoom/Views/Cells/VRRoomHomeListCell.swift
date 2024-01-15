@@ -20,8 +20,12 @@ class VRRoomHomeListCell: UICollectionViewCell {
     var roomOwnerLabel: UILabel!
     var roomEntity: VRRoomEntity? {
         didSet {
-            if let avatarURL = URL(string: roomEntity?.owner?.portrait ?? "") {
-                iconImgView.sd_setImage(with: avatarURL)
+            if (roomEntity?.owner?.portrait ?? "").hasPrefix("http") {
+                if let avatarURL = URL(string: roomEntity?.owner?.portrait ?? "") {
+                    iconImgView.sd_setImage(with: avatarURL)
+                }
+            } else {
+                iconImgView.image = UIImage(named: roomEntity?.owner?.portrait ?? "")
             }
             lockImgView.isHidden = !(roomEntity?.is_private ?? false)
             titleLabel.text = roomEntity?.name

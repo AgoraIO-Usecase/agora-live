@@ -140,7 +140,6 @@
 "voice_multi_audio_chat_scenario_where_anyone_can_unmute_their_mic_and_speak"="多人语音互动场景，观众可以自由上麦进行语音交流";
 "voice_standard" = "标准";
 "voice_spatial_audio" = "空间音频";
-"voice_current_customer_usage" = "以下客户都在用";
 "voice_end_live" = "结束直播";
 "voice_please_set_a_name" = "请输入房间名称";
 "voice_visit_more" = "获取最多更加音效,请访问";

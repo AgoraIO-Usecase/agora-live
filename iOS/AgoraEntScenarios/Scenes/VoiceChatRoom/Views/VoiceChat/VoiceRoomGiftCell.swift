@@ -53,7 +53,11 @@ public class VoiceRoomGiftCell: UITableViewCell {
         if gift == nil {
             gift = item
         }
-        avatar.sd_setImage(with: URL(string: item.portrait ?? "")!, placeholderImage: UIImage(named: "mine_avatar_placeHolder"))
+        if let portrait = item.portrait, portrait.hasSuffix("http") {
+            avatar.sd_setImage(with: URL(string: item.portrait ?? "")!, placeholderImage: UIImage(named: "mine_avatar_placeHolder"))
+        } else {
+            avatar.image = UIImage(named: item.portrait ?? "")
+        }
         userName.text = gift?.userName ?? ""
         giftName.text = "voice_sent".voice_localized + (gift?.gift_name ?? "")
         giftIcon.image = UIImage.sceneImage(name: "\(gift?.gift_id ?? "")", bundleName: "VoiceChatRoomResource")

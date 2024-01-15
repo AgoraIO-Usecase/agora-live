@@ -186,9 +186,9 @@ extension VMEQSettingView: UITableViewDelegate, UITableViewDataSource {
         switch settingType {
         case .effect:
             if indexPath.section == 0 {
-                return effectHeight[0] + 132
+                return effectHeight[0] + 70
             } else {
-                return effectHeight[indexPath.row + 1] + 132
+                return effectHeight[indexPath.row + 1] + 70
             }
 
         case .Noise:
@@ -531,7 +531,9 @@ extension VMEQSettingView: UITableViewDelegate, UITableViewDataSource {
     }
 
     func textHeight(text: String, fontSize: CGFloat, width: CGFloat) -> CGFloat {
-        return text.boundingRect(with: CGSize(width: width, height: CGFloat(MAXFLOAT)), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.systemFont(ofSize: fontSize)], context: nil).size.height + 5
+        return text.boundingRect(with: CGSize(width: width, height: CGFloat(MAXFLOAT)),
+                                 options: .usesLineFragmentOrigin,
+                                 attributes: [.font: UIFont.systemFont(ofSize: fontSize)], context: nil).size.height + 5
     }
 
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {

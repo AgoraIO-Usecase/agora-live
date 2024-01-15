@@ -47,7 +47,11 @@ public class VoiceRoomAudienceCell: UITableViewCell {
         self.item = user
         self.userName.text = user?.name
         self.operation.isHidden = (VoiceRoomUserInfo.shared.currentRoomOwner?.chat_uid ?? "") != (VoiceRoomUserInfo.shared.user?.chat_uid ?? "")
-        self.avatar.sd_setImage(with: URL(string: user?.portrait ?? "")!, placeholderImage: UIImage(named: "mine_avatar_placeHolder"))
+        if let portrait = user?.portrait, portrait.hasPrefix("http") {
+            self.avatar.sd_setImage(with: URL(string: user?.portrait ?? "")!, placeholderImage: UIImage(named: "mine_avatar_placeHolder"))
+        } else {
+            avatar.image = UIImage(named: user?.portrait ?? "")
+        }
     }
     @MainActor
     @objc func kick() {

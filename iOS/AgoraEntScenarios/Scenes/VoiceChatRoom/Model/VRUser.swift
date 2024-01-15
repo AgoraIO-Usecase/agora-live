@@ -13,7 +13,7 @@ import KakaJSON
     public var chat_uid: String?
     public var channel_id: String?
     public var name: String?
-    public var portrait: String?
+    public var portrait: String? 
     public var invited = false
     public var amount: Int? = 0
     public var mic_index: Int?

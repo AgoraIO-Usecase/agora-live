@@ -17,12 +17,6 @@ class VMSoundView: UIView {
     private var screenWidth: CGFloat = UIScreen.main.bounds.size.width - 40
     private var typeLabel: UILabel = .init()
     private var detailLabel: UILabel = .init()
-    private var usageLabel: UILabel = .init()
-    private var yallaView: UIImageView = .init()
-    private var soulView: UIImageView = .init()
-    private var selView: UIImageView = .init()
-    private var iconBgView: UIView = .init()
-    private var lineImgView: UIImageView = .init()
 
     private var soundEffect: Int = 1
     private var typeStr: String = ""
@@ -54,9 +48,6 @@ class VMSoundView: UIView {
 
         bgView.addSubview(cover)
 
-        lineImgView.image = UIImage.sceneImage(name: "pop_indicator", bundleName: "VoiceChatRoomResource")
-        bgView.addSubview(lineImgView)
-
         typeLabel.text = typeStr
         typeLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         typeLabel.textColor = UIColor(red: 0.016, green: 0.035, blue: 0.145, alpha: 1)
@@ -70,16 +61,6 @@ class VMSoundView: UIView {
         detailLabel.font = UIFont.systemFont(ofSize: 13)
         detailLabel.lineBreakMode = .byCharWrapping
         bgView.addSubview(detailLabel)
-
-        iconBgView.backgroundColor = UIColor(red: 241 / 255.0, green: 243 / 255.0, blue: 248 / 255.0, alpha: 1)
-        iconBgView.layer.cornerRadius = 10
-        iconBgView.layer.masksToBounds = true
-        bgView.addSubview(iconBgView)
-
-        usageLabel.text = "voice_CUS_use".voice_localized
-        usageLabel.font = UIFont.systemFont(ofSize: 12)
-        usageLabel.textColor = UIColor(red: 0.593, green: 0.612, blue: 0.732, alpha: 1)
-        bgView.addSubview(usageLabel)
 
         guard let iconImgs = iconImgs else {
             return
@@ -106,21 +87,8 @@ class VMSoundView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         bgView.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height)
-        lineImgView.frame = CGRect(x: bounds.size.width / 2.0 - 20, y: 8, width: 40, height: 4)
         typeLabel.frame = CGRect(x: 20, y: 32, width: bounds.size.width - 40, height: 18)
         detailLabel.frame = CGRect(x: 20, y: 60, width: bounds.size.width - 40, height: cellHeight)
-        iconBgView.frame = CGRect(x: 20, y: bounds.size.height - 94, width: bounds.size.width - 40, height: 60)
-        yallaView.frame = CGRect(x: 30, y: bounds.size.height - 62, width: 20, height: 20)
-        soulView.frame = CGRect(x: 60, y: bounds.size.height - 62, width: 20, height: 20)
-        usageLabel.frame = CGRect(x: 30, y: bounds.size.height - 84, width: 300, height: 12)
-        for view in subviews {
-            if view.isKind(of: UIImageView.self) {
-                if view.tag >= 110 && view.tag <= 150 {
-                    let index = view.tag % 10
-                    view.frame = CGRect(x: 30 + 30 * CGFloat(index), y: bounds.size.height - 65, width: 20, height: 20)
-                }
-            }
-        }
     }
 
     func textHeight(text: String, fontSize: CGFloat, width: CGFloat) -> CGFloat {
