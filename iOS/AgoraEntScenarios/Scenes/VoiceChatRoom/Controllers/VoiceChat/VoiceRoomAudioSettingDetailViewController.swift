@@ -232,9 +232,9 @@ extension VoiceRoomAudioSettingDetailViewController: UITableViewDelegate, UITabl
         switch settingType {
         case .effect:
             if indexPath.section == 0 {
-                return effectHeight[0] + 132
+                return effectHeight[0] + 70
             } else {
-                return effectHeight[indexPath.row + 1] + 132
+                return effectHeight[indexPath.row + 1] + 70
             }
 
         case .Noise:

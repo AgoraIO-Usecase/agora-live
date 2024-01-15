@@ -82,13 +82,21 @@ class VMManagerView: UIView {
                 nameLabel.text = username
             } else if m_type == 0 {
                 iconView.isHidden = false
-                iconView.sd_setImage(with: URL(string: iconStr), placeholderImage: UIImage.sceneImage(name: "mine_avatar_placeHolder", bundleName: "VoiceChatRoomResource"))
+                if iconStr.hasPrefix("http") {
+                    iconView.sd_setImage(with: URL(string: iconStr), placeholderImage: UIImage.sceneImage(name: "mine_avatar_placeHolder", bundleName: "VoiceChatRoomResource"))
+                } else {
+                    iconView.image = UIImage(named: iconStr)
+                }
                 nameLabel.text = username
                 micView.isHidden = true
                 inviteBtn.setTitle("voice_kick_mic".voice_localized, for: .normal)
             } else if m_type == 2 {
                 iconView.isHidden = false
-                iconView.sd_setImage(with: URL(string: iconStr), placeholderImage: UIImage.sceneImage(name: "mine_avatar_placeHolder", bundleName: "VoiceChatRoomResource"))
+                if iconStr.hasPrefix("http") {
+                    iconView.sd_setImage(with: URL(string: iconStr), placeholderImage: UIImage.sceneImage(name: "mine_avatar_placeHolder", bundleName: "VoiceChatRoomResource"))
+                } else {
+                    iconView.image = UIImage(named: iconStr)
+                }
                 nameLabel.text = username
                 micView.isHidden = false
                 inviteBtn.setTitle(micInfo?.member != nil ? "voice_kick_mic".voice_localized : "voice_invite".voice_localized, for: .normal)

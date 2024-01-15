@@ -44,7 +44,11 @@ public class VoiceRoomInviteCell: UITableViewCell {
         user = item
         userName.text = item?.name
         item?.invited = (item?.mic_index ?? 0 != -1)
-        avatar.sd_setImage(with: URL(string: item?.portrait ?? "")!, placeholderImage: UIImage(named: "mine_avatar_placeHolder"))
+        if let portrait = item?.portrait, portrait.hasPrefix("http") {
+            avatar.sd_setImage(with: URL(string: item?.portrait ?? "")!, placeholderImage: UIImage(named: "mine_avatar_placeHolder"))
+        } else {
+            avatar.image = UIImage(named: item?.portrait ?? "")
+        }
         operation.setTitle(item?.invited == true ? "voice_invited".voice_localized : "voice_invite".voice_localized, for: .normal)
         operation.setBackgroundImage(UIImage.voice_image(item?.invited == true ? "" : "blue_btn_bg")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20), resizingMode: .stretch), for: .normal)
         var color = UIColor.white

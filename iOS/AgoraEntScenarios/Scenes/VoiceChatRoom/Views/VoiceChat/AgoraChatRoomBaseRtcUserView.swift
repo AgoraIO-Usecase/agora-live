@@ -399,8 +399,10 @@ extension AgoraChatRoomBaseRtcUserView {
             bgIconView.image = UIImage.sceneImage(name: "voice_wuren", bundleName: "VoiceChatRoomResource")
         }
         iconView.isHidden = mic.member == nil
-        if mic.member?.portrait != nil {
-            iconView.sd_setImage(with: URL(string: mic.member?.portrait ?? ""), placeholderImage: UIImage.sceneImage(name: "", bundleName: "VoiceChatRoomResource"))
+        if let portrait = mic.member?.portrait, portrait.hasPrefix("http") {
+            iconView.sd_setImage(with: URL(string: portrait), placeholderImage: UIImage.sceneImage(name: "", bundleName: "VoiceChatRoomResource"))
+        } else {
+            iconView.image = UIImage(named: mic.member?.portrait ?? "")
         }
         nameBtn.setImage(UIImage.voice_image(mic.mic_index == 0 ? "Landlord" : ""), for: .normal)
         let text = "voice_mic_num".voice_localized

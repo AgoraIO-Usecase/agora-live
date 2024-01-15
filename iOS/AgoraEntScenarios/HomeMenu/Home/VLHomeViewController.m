@@ -74,7 +74,7 @@
             break;
         }
         case 2: {
-            VRRoomsViewController *vc = [[VRRoomsViewController alloc] initWithUser:[VLUserCenter user]];
+            VRRoomsViewController *vc = [[VRRoomsViewController alloc] initWithUser:VLUserCenter.user];
             [self.navigationController pushViewController:vc animated:YES];
             break;
         }

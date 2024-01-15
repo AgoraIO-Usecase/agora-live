@@ -576,8 +576,8 @@ extension VoiceRoomViewController {
     }
 
     func showSoundView() {
-        let soundView = VMSoundView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 180 + getDetailTextHeight(roomInfo?.room?.sound_effect ?? 1)), soundEffect: roomInfo?.room?.sound_effect ?? 1)
-        let vc = VoiceRoomAlertViewController(compent: PresentedViewComponent(contentSize: CGSize(width: ScreenWidth, height: 180 + getDetailTextHeight(roomInfo?.room?.sound_effect ?? 1))), custom: soundView)
+        let soundView = VMSoundView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 80 + getDetailTextHeight(roomInfo?.room?.sound_effect ?? 1)), soundEffect: roomInfo?.room?.sound_effect ?? 1)
+        let vc = VoiceRoomAlertViewController(compent: PresentedViewComponent(contentSize: CGSize(width: ScreenWidth, height: 80 + getDetailTextHeight(roomInfo?.room?.sound_effect ?? 1))), custom: soundView)
         presentViewController(vc)
     }
 

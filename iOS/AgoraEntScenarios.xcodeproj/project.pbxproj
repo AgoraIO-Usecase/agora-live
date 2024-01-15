@@ -319,7 +319,6 @@
 		E732CD132B47EC6D004D6FB9 /* VRRoomsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC802B47EC6D004D6FB9 /* VRRoomsViewController.swift */; };
 		E732CD142B47EC6D004D6FB9 /* VRSoundCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC812B47EC6D004D6FB9 /* VRSoundCardViewController.swift */; };
 		E732CD152B47EC6D004D6FB9 /* VRSoundEffectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC822B47EC6D004D6FB9 /* VRSoundEffectViewController.swift */; };
-		E732CD162B47EC6D004D6FB9 /* VRSpatialSoundViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC832B47EC6D004D6FB9 /* VRSpatialSoundViewController.swift */; };
 		E732CD182B47EC6D004D6FB9 /* VRNormalRoomsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC852B47EC6D004D6FB9 /* VRNormalRoomsViewController.swift */; };
 		E732CD192B47EC6D004D6FB9 /* VRSoundEffectsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC862B47EC6D004D6FB9 /* VRSoundEffectsViewController.swift */; };
 		E732CD1A2B47EC6D004D6FB9 /* VRSoundEffectsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC892B47EC6D004D6FB9 /* VRSoundEffectsCell.swift */; };
@@ -952,7 +951,6 @@
 		E732CC802B47EC6D004D6FB9 /* VRRoomsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VRRoomsViewController.swift; sourceTree = "<group>"; };
 		E732CC812B47EC6D004D6FB9 /* VRSoundCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VRSoundCardViewController.swift; sourceTree = "<group>"; };
 		E732CC822B47EC6D004D6FB9 /* VRSoundEffectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VRSoundEffectViewController.swift; sourceTree = "<group>"; };
-		E732CC832B47EC6D004D6FB9 /* VRSpatialSoundViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VRSpatialSoundViewController.swift; sourceTree = "<group>"; };
 		E732CC852B47EC6D004D6FB9 /* VRNormalRoomsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VRNormalRoomsViewController.swift; sourceTree = "<group>"; };
 		E732CC862B47EC6D004D6FB9 /* VRSoundEffectsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VRSoundEffectsViewController.swift; sourceTree = "<group>"; };
 		E732CC892B47EC6D004D6FB9 /* VRSoundEffectsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VRSoundEffectsCell.swift; sourceTree = "<group>"; };
@@ -2519,7 +2517,6 @@
 				E732CC802B47EC6D004D6FB9 /* VRRoomsViewController.swift */,
 				E732CC812B47EC6D004D6FB9 /* VRSoundCardViewController.swift */,
 				E732CC822B47EC6D004D6FB9 /* VRSoundEffectViewController.swift */,
-				E732CC832B47EC6D004D6FB9 /* VRSpatialSoundViewController.swift */,
 				E732CC852B47EC6D004D6FB9 /* VRNormalRoomsViewController.swift */,
 				E732CC862B47EC6D004D6FB9 /* VRSoundEffectsViewController.swift */,
 			);
@@ -3482,7 +3479,6 @@
 				DD36108E29B70CDC00CE7984 /* ShowBeautySettingVC.swift in Sources */,
 				E732CD302B47EC6D004D6FB9 /* VRSoundCardSwitchCell.swift in Sources */,
 				DD3610C529B70CDC00CE7984 /* ShowPKInviteView.swift in Sources */,
-				E732CD162B47EC6D004D6FB9 /* VRSpatialSoundViewController.swift in Sources */,
 				E75B49402B3029B7005E925A /* CommerceDebugSettingVC.swift in Sources */,
 				E3735C8D2A5E7E75004737EF /* EffectsCommonObject.m in Sources */,
 				DD3610A629B70CDC00CE7984 /* ShowBeautyFaceCell.swift in Sources */,
