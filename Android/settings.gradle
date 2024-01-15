@@ -25,5 +25,8 @@ include ':scenes:show'
 
 include ':scenes:eCommerce'
 
+include ':scenes:voice'
+include ':scenes:voice:common'
+
 
 
