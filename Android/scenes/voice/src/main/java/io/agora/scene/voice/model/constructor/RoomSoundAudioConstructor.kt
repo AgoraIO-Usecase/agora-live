@@ -586,7 +586,7 @@ object RoomSoundAudioConstructor {
     }
 
     private fun getAINSSoundUrl(audioPathPrefix: String, audioPath: String, ainsMode: Int): String {
-        val local = if (ResourcesTools.getIsZh()) CN else EN
+        val local = EN
 
         val audioPathP = when (ainsMode) {
             ConfigConstants.AINSMode.AINS_High -> "$audioPathPrefix/$local/High"

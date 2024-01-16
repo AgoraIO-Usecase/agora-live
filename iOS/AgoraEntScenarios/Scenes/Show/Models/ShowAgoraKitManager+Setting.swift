@@ -184,6 +184,12 @@ extension ShowAgoraKitManager {
         let performance = performanceMode
         
         rtcParam.suggested = true
+        if (performance == .clearMode) {
+            // apply ClearMode params
+            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: true)
+            setSimulcastStream(isOn: false)
+            return
+        }
         if (machine == .high && net == .good && performance == .smooth && showMode == .single) {
             // High-end machine, good network, clear, unicast
             _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: true)
@@ -376,6 +382,8 @@ extension ShowAgoraKitManager {
         case smooth
         // Fluency strategy
         case fluent
+        
+        case clearMode
     }
     
     // Default value: Device status
