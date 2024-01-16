@@ -63,6 +63,7 @@ class ShowRoomListModel: ShowBaseInfo {
     var interactStatus: ShowInteractionStatus = .idle
     var createdAt: Int64 = 0
     var updatedAt: Int64 = 0
+    var isPureMode: Bool = false
 }
 
 //PK Invite objects

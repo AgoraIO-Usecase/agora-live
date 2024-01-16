@@ -18,6 +18,8 @@ class ShowVideoSettingVC: UIViewController {
 
     private let transDelegate = ShowPresentTransitioningDelegate()
     
+    var isPureMode = false
+    
     var dataArray = [ShowSettingKey]()
     
     var musicManager: ShowMusicPresenter!
@@ -177,7 +179,7 @@ extension ShowVideoSettingVC: UITableViewDelegate, UITableViewDataSource {
             } else if data == .SR {
                 let cell = tableView.dequeueReusableCell(withIdentifier: kSwitchCell, for: indexPath) as! ShowSettingSwitchCell
                 let value = ShowAgoraKitManager.shared.rtcParam.sr
-                cell.setTitle(data.title, enable:true, isOn: value) {[weak self] isOn in
+                cell.setTitle(data.title, enable:!isPureMode, isOn: value) {[weak self] isOn in
                     self?.barrierValueChange(complete: {
                         ShowAgoraKitManager.shared.rtcParam.sr = isOn
                         ShowAgoraKitManager.shared.updateSettingForkey(.SR, currentChannelId: self?.currentChannelId)

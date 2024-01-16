@@ -1089,7 +1089,8 @@ extension ShowLiveViewController: ShowToolMenuViewControllerDelegate {
                 wSelf.navigationController?.pushViewController(vc, animated: true)
             }else {
                 let vc = ShowAdvancedSettingVC()
-                vc.mode = wSelf.interactionStatus == .pking ? .pk : .single 
+                vc.isPureMode = self?.room?.isPureMode ?? false
+                vc.mode = wSelf.interactionStatus == .pking ? .pk : .single
                 vc.isBroadcaster = wSelf.role == .broadcaster
                 vc.musicManager = wSelf.musicPresenter
                 vc.currentChannelId = wSelf.currentChannelId

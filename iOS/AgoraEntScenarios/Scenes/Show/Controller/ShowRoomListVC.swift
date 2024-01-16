@@ -116,7 +116,12 @@ class ShowRoomListVC: UIViewController {
         ShowAgoraKitManager.shared.callTimestampStart()
         ShowAgoraKitManager.shared.setupAudienceProfile()
         ShowAgoraKitManager.shared.updateLoadingType(roomId: room.roomId, channelId: room.roomId, playState: .joined)
-        
+        if (room.isPureMode) {
+            ShowAgoraKitManager.shared.setSuperResolutionOn(false)
+        } else {
+            ShowAgoraKitManager.shared.setSuperResolutionOn(true)
+        }
+
         if room.ownerId == VLUserCenter.user.id {
             ToastView.show(text: "show_join_own_room_error".show_localized)
         } else {
@@ -208,7 +213,8 @@ extension ShowRoomListVC: UICollectionViewDataSource, UICollectionViewDelegateFl
         cell.setBgImge((room.thumbnailId?.isEmpty ?? true) ? "0" : room.thumbnailId ?? "0",
                        name: room.roomName,
                        id: room.roomId,
-                       count: room.roomUserCount)
+                       count: room.roomUserCount,
+                       pureMode: room.isPureMode)
         return cell
     }
     

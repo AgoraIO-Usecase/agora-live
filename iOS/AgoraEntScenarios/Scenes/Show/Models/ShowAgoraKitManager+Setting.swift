@@ -51,7 +51,6 @@ class ShowRTCParams {
 extension ShowAgoraKitManager {
     
     func setupAudienceProfile() {
-        setSuperResolutionOn(true)
         setPVCon(false)
         _presetValuesWith(encodeSize: ._360x640, fps: .fps15, bitRate: 0, h265On: true)
     }
@@ -184,10 +183,10 @@ extension ShowAgoraKitManager {
         let performance = performanceMode
         
         rtcParam.suggested = true
-        if (performance == .clearMode) {
-            // apply ClearMode params
-            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: true)
-            setSimulcastStream(isOn: false)
+        if (performance == .pure) {
+            // apply pure mode params
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0, h265On: false)
+            setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
             return
         }
         if (machine == .high && net == .good && performance == .smooth && showMode == .single) {
@@ -383,7 +382,7 @@ extension ShowAgoraKitManager {
         // Fluency strategy
         case fluent
         
-        case clearMode
+        case pure
     }
     
     // Default value: Device status

@@ -22,6 +22,8 @@ class ShowRoomListCell: UICollectionViewCell {
         return label
     }()
     
+    private let pureModeLabel = UILabel()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         createSubviews()
@@ -31,7 +33,7 @@ class ShowRoomListCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setBgImge(_ img: String, name: String?, id: String?, count: Int) {
+    func setBgImge(_ img: String, name: String?, id: String?, count: Int, pureMode: Bool) {
         imageView.image = UIImage.show_sceneImage(name: "show_room_bg_\(img)")
         nameLabel.text = name
         idLablel.text = "ID: \(id ?? "0")"
@@ -46,6 +48,7 @@ class ShowRoomListCell: UICollectionViewCell {
         let attriTips = NSMutableAttributedString(attributedString: attriTipsImg)
         attriTips.append(NSAttributedString(string: "  \(count)"))
         numberLabel.attributedText = attriTips
+        pureModeLabel.isHidden = !pureMode
     }
     
     private func createSubviews(){
@@ -71,6 +74,22 @@ class ShowRoomListCell: UICollectionViewCell {
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().offset(-10)
             make.leading.equalToSuperview().offset(27)
+        }
+        
+        pureModeLabel.text = "show_pure_mode".show_localized
+        pureModeLabel.font = .systemFont(ofSize: 10)
+        pureModeLabel.textColor = .white
+        pureModeLabel.backgroundColor = UIColor(white: 0, alpha: 0.65)
+        pureModeLabel.textAlignment = .center
+        pureModeLabel.layer.cornerRadius = 4
+        pureModeLabel.clipsToBounds = true
+        pureModeLabel.isHidden = true
+        contentView.addSubview(pureModeLabel)
+        pureModeLabel.snp.makeConstraints { make in
+            make.right.equalTo(indicatorImgView.snp.left)
+            make.centerY.equalTo(liveStatusLabel)
+            make.width.equalTo(40)
+            make.height.equalTo(18)
         }
         
         let coverImgView = UIImageView()
