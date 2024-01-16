@@ -9,7 +9,7 @@ import io.agora.scene.base.EntLogger
  */
 object ShowLogger {
 
-    private val entLogger = EntLogger(EntLogger.Config("ShowLive"))
+    private val entLogger = EntLogger(EntLogger.Config("eCommerce"))
 
     /**
      * D

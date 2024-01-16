@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-//    implementation project(":common:base")
+    implementation project(":common")
     api rootProject.ext.deps.core_ktx
     api rootProject.ext.deps.lifecycle
     api rootProject.ext.deps.appcompat

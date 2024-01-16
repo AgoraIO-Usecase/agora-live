@@ -10,7 +10,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:background="@drawable/voice_bg_gift_top_layout"
-        android:layout_height="59dp">
+        android:layout_height="60dp">
 
         <View
             android:layout_marginTop="8dp"

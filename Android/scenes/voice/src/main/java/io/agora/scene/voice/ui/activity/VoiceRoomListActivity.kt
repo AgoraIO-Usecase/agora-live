@@ -11,11 +11,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.alibaba.android.arouter.facade.annotation.Route
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
-import io.agora.scene.base.PagePathConstant
 import io.agora.scene.voice.BuildConfig
 import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceAgoraRoomListLayoutBinding
@@ -26,7 +24,6 @@ import io.agora.scene.voice.ui.fragment.VoiceRoomListFragment
 import io.agora.voice.common.ui.BaseUiActivity
 import io.agora.voice.common.utils.*
 
-@Route(path = PagePathConstant.pageVoiceChat)
 class VoiceRoomListActivity : BaseUiActivity<VoiceAgoraRoomListLayoutBinding>(){
 
     private var title: TextView? = null
@@ -40,14 +37,10 @@ class VoiceRoomListActivity : BaseUiActivity<VoiceAgoraRoomListLayoutBinding>(){
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (BuildConfig.is_modular){
-            // nothing
-        }else{
-            // library 初始化
-            ResourcesTools.isZh(this)
-            voiceServiceProtocol.reset()
-            VoiceConfigManager.initMain()
-        }
+        // library 初始化
+        ResourcesTools.isZh(this)
+        voiceServiceProtocol.reset()
+        VoiceConfigManager.initMain()
     }
 
     override fun onDestroy() {

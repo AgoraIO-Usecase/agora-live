@@ -63,12 +63,12 @@ class AgoraRtcEngineController {
         TokenGenerator.generateTokens(
             channelId,
             rtcUid.toString(),
-            TokenGenerator.TokenGeneratorType.token006,
+            TokenGenerator.TokenGeneratorType.Token006,
             arrayOf(
-                TokenGenerator.AgoraTokenType.rtm
+                TokenGenerator.AgoraTokenType.Rtm
             ),
             { ret ->
-                mRtmToken = ret[TokenGenerator.AgoraTokenType.rtm] ?: ""
+                mRtmToken = ret[TokenGenerator.AgoraTokenType.Rtm] ?: ""
 
                 initRtcEngine(context)
                 this.mLocalUid = rtcUid
