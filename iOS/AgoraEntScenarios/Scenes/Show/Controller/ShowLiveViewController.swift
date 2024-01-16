@@ -17,6 +17,7 @@ protocol ShowLiveViewControllerDelegate: NSObjectProtocol {
 
 class ShowLiveViewController: UIViewController {
     weak var delegate: ShowLiveViewControllerDelegate?
+    var onClickDislikeClosure: (() -> Void)?
     var room: ShowRoomListModel? {
         didSet{
             if oldValue?.roomId != room?.roomId {
@@ -666,7 +667,6 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
     private func _onStartInteraction(interaction: ShowInteractionInfo) {
         switch interaction.interactStatus {
         case .pking:
-            view.layer.contents = UIImage.show_sceneImage(name: "show_live_pk_bg")?.cgImage
             self.muteLocalVideo = false
             self.muteLocalAudio = false
             let interactionRoomId = interaction.roomId
@@ -915,7 +915,7 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
     
     func onClickCloseButton() {
         if role == .broadcaster {
-            showAlert(message: "show_alert_live_end_title".show_localized) {[weak self] in
+            show_showAlert(message: "show_alert_live_end_title".show_localized) {[weak self] in
                 self?.leaveRoom()
                 self?.dismiss(animated: true)
             }
@@ -923,6 +923,22 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
             updateLoadingType(playState: .idle, roomId: roomId)
             dismiss(animated: true)
         }
+    }
+    
+    func onClickMoreButton() {
+        let dialog = ShowLiveMoreDialog(frame: view.bounds)
+        dialog.onClickDislikeClosure = { [weak self] in
+            guard let self = self else { return }
+            AppContext.shared.addDislikeRoom(at: self.room?.roomId)
+            if let room = self.room {
+                self._leavRoom(room)
+            }
+            self.updateLoadingType(playState: .idle, roomId: self.roomId)
+            self.onClickDislikeClosure?()
+            self.dismiss(animated: true)
+        }
+        view.addSubview(dialog)
+        dialog.show()
     }
     
     func onClickPKButton(_ button: ShowRedDotButton) {
@@ -1001,7 +1017,7 @@ extension ShowLiveViewController {
 
 extension ShowLiveViewController {
     private func showError(title: String, errMsg: String) {
-        showAlert(title: title, message: errMsg) { [weak self] in
+        show_showAlert(title: title, message: errMsg) { [weak self] in
             self?.leaveRoom()
             self?.dismiss(animated: true)
         }

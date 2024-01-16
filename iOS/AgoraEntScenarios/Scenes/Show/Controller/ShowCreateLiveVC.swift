@@ -91,9 +91,11 @@ class ShowCreateLiveVC: UIViewController {
     }
     
     @objc func didClickCancelButton(){
+        SVProgressHUD.dismiss()
         BeautyManager.shareManager.destroy()
         ShowAgoraKitManager.shared.cleanCapture()
         ShowBeautyFaceVC.resetData()
+        AppContext.showServiceImp(createView.roomNo)?.leaveRoom(completion: { _ in })
         dismiss(animated: true)
     }
 }

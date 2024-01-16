@@ -27,10 +27,9 @@ class ShowRoomListVC: UIViewController {
         return ctrl
     }()
     
-    private let emptyView = ShowEmptyView()
+    private lazy var emptyView = ShowEmptyView()
     
-    private let createButton = UIButton(type: .custom)
-    
+    private lazy var createButton = UIButton(type: .custom)    
     
     private var roomList = [ShowRoomListModel]() {
         didSet {
@@ -39,7 +38,7 @@ class ShowRoomListVC: UIViewController {
         }
     }
     
-    private let naviBar = ShowNavigationBar()
+    private lazy var naviBar = ShowNavigationBar()
     
     private var needUpdateAudiencePresetType = false
     private var isHasToken: Bool = true
@@ -71,9 +70,11 @@ class ShowRoomListVC: UIViewController {
         checkDevice()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard roomList.isEmpty else { return }
+        refreshControl.beginRefreshing()
+        collectionView.setContentOffset(CGPoint(x: 0, y: -refreshControl.frame.size.height), animated: true)
         fetchRoomList()
     }
     
@@ -124,20 +125,30 @@ class ShowRoomListVC: UIViewController {
             nc.modalPresentationStyle = .fullScreen
             vc.roomList = roomList.filter({ $0.ownerId != VLUserCenter.user.id })
             vc.focusIndex = vc.roomList?.firstIndex(where: { $0.roomId == room.roomId }) ?? 0
-            self.present(nc, animated: true)
+            vc.onClickDislikeClosure = { [weak self] in
+                guard let self = self else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15, execute: DispatchWorkItem(block: {
+                    self.refreshControl.beginRefreshing()
+                    self.collectionView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.size.height), animated: true)
+                    self.fetchRoomList()
+                }))
+            }
+            present(nc, animated: true)
         }
     }
     
     private func fetchRoomList() {
         AppContext.showServiceImp("")?.getRoomList(page: 1) { [weak self] error, roomList in
-            guard let self = self else {return}
-            self.refreshControl.endRefreshing()
+            self?.refreshControl.endRefreshing()
+            guard let self = self else { return }
             if let error = error {
                 LogUtil.log(error.localizedDescription)
                 return
             }
             let list = roomList ?? []
-            self.roomList = list
+            let dislikeRooms = AppContext.shared.dislikeRooms()
+            
+            self.roomList = list.filter({ !dislikeRooms.contains($0.roomId) })
             self.preLoadVisibleItems()
         }
     }

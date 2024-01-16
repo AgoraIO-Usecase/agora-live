@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import AgoraSyncManager_overseas
 
-private let kSceneId = "scene_show_1.0.0"
+private let kSceneId = "scene_show_0.2.0"
 
 private let SYNC_MANAGER_MESSAGE_COLLECTION = "show_message_collection"
 private let SYNC_MANAGER_SEAT_APPLY_COLLECTION = "show_seat_apply_collection"
@@ -201,7 +201,10 @@ class ShowSyncManagerServiceImp: NSObject, ShowServiceProtocol {
     //MARK: ShowServiceProtocol
     func getRoomList(page: Int, completion: @escaping (NSError?, [ShowRoomListModel]?) -> Void) {
         _getRoomList(page: page) { [weak self] error, list in
-            guard let self = self else { return }
+            guard let self = self else {
+                completion(error, nil)
+                return
+            }
             if let error = error {
                 completion(error, nil)
                 return

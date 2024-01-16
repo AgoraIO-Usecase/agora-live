@@ -285,7 +285,7 @@ class NetworkManager:NSObject {
                                      "src": "iOS",
                                      "traceId": NSString.withUUID().md5() ?? ""]
                       
-        NetworkManager.shared.postRequest(urlString: "\(baseServerUrl)cloud-player/start",
+        NetworkManager.shared.postRequest(urlString: "\(baseServerUrl)rte-cloud-player/start",
                                           params: params,
                                           success: { response in
             let code = response["code"] as? Int

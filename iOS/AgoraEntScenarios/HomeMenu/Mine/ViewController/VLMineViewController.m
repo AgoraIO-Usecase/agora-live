@@ -64,7 +64,7 @@ typedef NS_ENUM(NSUInteger, AVAuthorizationRequestType){
 - (void)mineViewDidCick:(VLMineViewClickType)type {
     switch (type) {
         case VLMineViewClickTypeUserProtocol:
-            [self pushWebView:kURLPathH5UserAgreement];
+            [self pushWebView:kURLPathH5TermsOfService];
             break;
         case VLMineViewClickTypeAboutUS:
             [self about];
