@@ -449,7 +449,7 @@ class RoomObservableViewDelegate constructor(
     fun onClickSoundSocial(soundSelection: Int, finishBack: () -> Unit) {
         val curSoundSelection = RoomSoundSelectionConstructor.builderCurSoundSelection(activity, soundSelection)
         val socialDialog = RoomSocialChatSheetDialog().titleText(curSoundSelection.soundName)
-            .contentText(curSoundSelection.soundIntroduce).customers(curSoundSelection.customer ?: mutableListOf())
+            .contentText(curSoundSelection.soundIntroduce).customers(mutableListOf())
         socialDialog.onClickSocialChatListener = object : RoomSocialChatSheetDialog.OnClickSocialChatListener {
 
             override fun onMoreSound() {

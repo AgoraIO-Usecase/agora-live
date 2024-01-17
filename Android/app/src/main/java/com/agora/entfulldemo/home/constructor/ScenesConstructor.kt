@@ -38,8 +38,8 @@ object ScenesConstructor {
                 AgoraScenes.ChatRoom,
                 "io.agora.scene.voice.ui.activity.VoiceRoomListActivity",
                 context.getString(R.string.app_chat_room),
-                R.mipmap.bg_btn_home_e_commerce,
-                0,
+                R.mipmap.bg_btn_home3,
+                R.mipmap.bg_btn_home_chat,
                 true
             )
         )

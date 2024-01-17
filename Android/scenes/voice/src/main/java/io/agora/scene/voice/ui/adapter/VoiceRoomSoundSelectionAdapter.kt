@@ -40,17 +40,6 @@ class VoiceRoomSoundSelectionAdapter constructor(
             binding.soundName.text = bean.soundName
             binding.soundDesc.text = bean.soundIntroduce
             val context = binding.item.context
-            bean.customer?.forEach { customerBean ->
-                val imageView = ImageView(context)
-                val marginLayoutParams =
-                    LinearLayoutCompat.LayoutParams(DeviceTools.dp2px(context, 20f), DeviceTools.dp2px(context, 20f))
-                marginLayoutParams.rightMargin = DeviceTools.dp2px(context, 10f)
-                imageView.setImageResource(customerBean.avatar)
-                imageView.layoutParams = marginLayoutParams
-                if (binding.llSoundCustomerUsage.childCount < bean.customer.size) {
-                    binding.llSoundCustomerUsage.addView(imageView)
-                }
-            }
             if (selectedPosition == bindingAdapterPosition) {
                 binding.ivSoundSelected.visibility = View.VISIBLE
                 binding.mcvSoundSelectionContent.strokeColor =

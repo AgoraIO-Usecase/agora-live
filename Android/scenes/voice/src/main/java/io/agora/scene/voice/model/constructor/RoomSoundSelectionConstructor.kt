@@ -17,54 +17,28 @@ object RoomSoundSelectionConstructor {
                 index = 0,
                 soundName = context.getString(R.string.voice_chatroom_social_chat),
                 soundIntroduce = context.getString(R.string.voice_chatroom_social_chat_introduce),
-                isCurrentUsing = curSoundSelectionType == ConfigConstants.SoundSelection.Social_Chat,
-                customer = mutableListOf(
-                    CustomerUsageBean("netease", R.drawable.voice_icon_room_netease),
-                    CustomerUsageBean("momo", R.drawable.voice_icon_room_momo),
-                    CustomerUsageBean("yinyu", R.drawable.voice_icon_room_yinyu),
-                    CustomerUsageBean("pipi", R.drawable.voice_icon_room_pipi),
-                )
+                isCurrentUsing = curSoundSelectionType == ConfigConstants.SoundSelection.Social_Chat
             ),
             SoundSelectionBean(
                 soundSelectionType =  ConfigConstants.SoundSelection.Karaoke,
                 index = 1,
                 soundName = context.getString(R.string.voice_chatroom_karaoke),
                 soundIntroduce = context.getString(R.string.voice_chatroom_karaoke_introduce),
-                isCurrentUsing = curSoundSelectionType ==  ConfigConstants.SoundSelection.Karaoke,
-                customer = mutableListOf(
-                    CustomerUsageBean("netease", R.drawable.voice_icon_room_netease),
-                    CustomerUsageBean("jiamian", R.drawable.voice_icon_room_jiamian),
-                    CustomerUsageBean("yinyu", R.drawable.voice_icon_room_yinyu),
-                    CustomerUsageBean("poaipai", R.drawable.voice_icon_room_poaipai),
-                    CustomerUsageBean("lets_play", R.drawable.voice_icon_room_lets_play),
-                    CustomerUsageBean("qingtian", R.drawable.voice_icon_room_qingtian),
-                    CustomerUsageBean("skr", R.drawable.voice_icon_room_skr),
-                    CustomerUsageBean("soul", R.drawable.voice_icon_room_soul_launcher),
-                )
+                isCurrentUsing = curSoundSelectionType ==  ConfigConstants.SoundSelection.Karaoke
             ),
             SoundSelectionBean(
                 soundSelectionType = ConfigConstants.SoundSelection.Gaming_Buddy,
                 index = 2,
                 soundName = context.getString(R.string.voice_chatroom_gaming_buddy),
                 soundIntroduce = context.getString(R.string.voice_chatroom_gaming_buddy_introduce),
-                isCurrentUsing = curSoundSelectionType == ConfigConstants.SoundSelection.Gaming_Buddy,
-                customer = mutableListOf(
-                    CustomerUsageBean("yalla_ludo", R.drawable.voice_icon_room_yalla_ludo),
-                    CustomerUsageBean("jiamian", R.drawable.voice_icon_room_jiamian),
-                )
+                isCurrentUsing = curSoundSelectionType == ConfigConstants.SoundSelection.Gaming_Buddy
             ),
             SoundSelectionBean(
                 soundSelectionType = ConfigConstants.SoundSelection.Professional_Broadcaster,
                 index = 2,
                 soundName = context.getString(R.string.voice_chatroom_professional_broadcaster),
                 soundIntroduce = context.getString(R.string.voice_chatroom_professional_broadcaster_introduce),
-                isCurrentUsing = curSoundSelectionType == ConfigConstants.SoundSelection.Professional_Broadcaster,
-                customer = mutableListOf(
-                    CustomerUsageBean("qingmang", R.drawable.voice_icon_room_qingmang),
-                    CustomerUsageBean("calf", R.drawable.voice_icon_room_calf),
-                    CustomerUsageBean("yuwanxingqiu", R.drawable.voice_icon_room_yuwanxingqiu),
-                    CustomerUsageBean("yizhibo", R.drawable.voice_icon_room_yizhibo),
-                )
+                isCurrentUsing = curSoundSelectionType == ConfigConstants.SoundSelection.Professional_Broadcaster
             )
         )
         val comparator: Comparator<SoundSelectionBean> = Comparator { o1, o2 ->
@@ -82,7 +56,6 @@ object RoomSoundSelectionConstructor {
             soundName = soundNameBySoundSelectionType(context, soundSelectionType),
             soundIntroduce = soundIntroduceBySoundSelectionType(context, soundSelectionType),
             isCurrentUsing = true,
-            customer = soundSelectionCustomer(soundSelectionType),
         )
     }
 
@@ -116,45 +89,6 @@ object RoomSoundSelectionConstructor {
             }
             else -> {
                 context.getString(R.string.voice_chatroom_social_chat_introduce)
-            }
-        }
-    }
-
-    private fun soundSelectionCustomer(soundSelectionType: Int): List<CustomerUsageBean> {
-        return  when (soundSelectionType) {
-            ConfigConstants.SoundSelection.Karaoke -> {
-                mutableListOf(
-                    CustomerUsageBean("netease", R.drawable.voice_icon_room_netease),
-                    CustomerUsageBean("jiamian", R.drawable.voice_icon_room_jiamian),
-                    CustomerUsageBean("yinyu", R.drawable.voice_icon_room_yinyu),
-                    CustomerUsageBean("poaipai", R.drawable.voice_icon_room_poaipai),
-                    CustomerUsageBean("lets_play", R.drawable.voice_icon_room_lets_play),
-                    CustomerUsageBean("qingtian", R.drawable.voice_icon_room_qingtian),
-                    CustomerUsageBean("skr", R.drawable.voice_icon_room_skr),
-                    CustomerUsageBean("soul", R.drawable.voice_icon_room_soul_launcher),
-                )
-            }
-            ConfigConstants.SoundSelection.Gaming_Buddy -> {
-                mutableListOf(
-                    CustomerUsageBean("yalla_ludo", R.drawable.voice_icon_room_yalla_ludo),
-                    CustomerUsageBean("jiamian", R.drawable.voice_icon_room_jiamian),
-                )
-            }
-            ConfigConstants.SoundSelection.Professional_Broadcaster -> {
-                mutableListOf(
-                    CustomerUsageBean("qingmang", R.drawable.voice_icon_room_qingmang),
-                    CustomerUsageBean("calf", R.drawable.voice_icon_room_calf),
-                    CustomerUsageBean("yuwanxingqiu", R.drawable.voice_icon_room_yuwanxingqiu),
-                    CustomerUsageBean("yizhibo", R.drawable.voice_icon_room_yizhibo),
-                )
-            }
-            else -> {
-                mutableListOf(
-                    CustomerUsageBean("netease", R.drawable.voice_icon_room_netease),
-                    CustomerUsageBean("momo", R.drawable.voice_icon_room_momo),
-                    CustomerUsageBean("yinyu", R.drawable.voice_icon_room_yinyu),
-                    CustomerUsageBean("pipi", R.drawable.voice_icon_room_pipi),
-                )
             }
         }
     }

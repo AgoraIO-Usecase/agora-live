@@ -67,7 +67,6 @@ class RoomAudioSettingsSheetDialog : BaseSheetDialog<VoiceDialogAudioSettingBind
             updateAIAECView()
             updateAIAGCView()
             updateBotStateView()
-            updateBGMView()
             updateEarBackState()
             updateSoundCardState()
 
@@ -98,9 +97,6 @@ class RoomAudioSettingsSheetDialog : BaseSheetDialog<VoiceDialogAudioSettingBind
             }
             tvSoundCardArrow.setOnClickListener {
                 audioSettingsListener?.onVirtualSoundCardSetting()
-            }
-            tvBGMArrow.setOnClickListener {
-                audioSettingsListener?.onBGMSetting()
             }
             mtBestSoundEffectArrow.setOnClickListener {
                 audioSettingsListener?.onSoundEffect(audioSettingsInfo.soundSelection, audioSettingsInfo.enable)
@@ -146,15 +142,6 @@ class RoomAudioSettingsSheetDialog : BaseSheetDialog<VoiceDialogAudioSettingBind
             } else {
                 mtAGCArrow.text = view?.context?.getString(R.string.voice_chatroom_off)
             }
-        }
-    }
-
-    fun updateBGMView() {
-        val params = AgoraRtcEngineController.get().bgmManager().params
-        if (params.song.isNotEmpty()) {
-            binding?.tvBGMArrow?.text = "${params.song}-${params.singer}"
-        } else {
-            binding?.tvBGMArrow?.text = ""
         }
     }
 

@@ -69,7 +69,6 @@
 		DD3610A829B70CDC00CE7984 /* ShowDataPanelPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36102E29B70CDC00CE7984 /* ShowDataPanelPresenter.swift */; };
 		DD3610A929B70CDC00CE7984 /* ShowRealTimeDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36102F29B70CDC00CE7984 /* ShowRealTimeDataView.swift */; };
 		DD3610AA29B70CDC00CE7984 /* ShowEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36103129B70CDC00CE7984 /* ShowEmptyView.swift */; };
-		DD3610AB29B70CDC00CE7984 /* ShowRoomListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36103229B70CDC00CE7984 /* ShowRoomListView.swift */; };
 		DD3610AC29B70CDC00CE7984 /* ShowRoomListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36103329B70CDC00CE7984 /* ShowRoomListCell.swift */; };
 		DD3610AD29B70CDC00CE7984 /* ShowRoomBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36103529B70CDC00CE7984 /* ShowRoomBottomBar.swift */; };
 		DD3610AE29B70CDC00CE7984 /* ShowRoomMembersCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD36103629B70CDC00CE7984 /* ShowRoomMembersCountView.swift */; };
@@ -601,7 +600,6 @@
 		DD36102E29B70CDC00CE7984 /* ShowDataPanelPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDataPanelPresenter.swift; sourceTree = "<group>"; };
 		DD36102F29B70CDC00CE7984 /* ShowRealTimeDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowRealTimeDataView.swift; sourceTree = "<group>"; };
 		DD36103129B70CDC00CE7984 /* ShowEmptyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowEmptyView.swift; sourceTree = "<group>"; };
-		DD36103229B70CDC00CE7984 /* ShowRoomListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowRoomListView.swift; sourceTree = "<group>"; };
 		DD36103329B70CDC00CE7984 /* ShowRoomListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowRoomListCell.swift; sourceTree = "<group>"; };
 		DD36103529B70CDC00CE7984 /* ShowRoomBottomBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowRoomBottomBar.swift; sourceTree = "<group>"; };
 		DD36103629B70CDC00CE7984 /* ShowRoomMembersCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowRoomMembersCountView.swift; sourceTree = "<group>"; };
@@ -1488,7 +1486,6 @@
 			isa = PBXGroup;
 			children = (
 				DD36103129B70CDC00CE7984 /* ShowEmptyView.swift */,
-				DD36103229B70CDC00CE7984 /* ShowRoomListView.swift */,
 				DD36103329B70CDC00CE7984 /* ShowRoomListCell.swift */,
 			);
 			path = RoomList;
@@ -3593,7 +3590,6 @@
 				E732CD322B47EC6D004D6FB9 /* VRSoundCardSettingView.swift in Sources */,
 				E75B497E2B3029B7005E925A /* CommerceServiceProtocol.swift in Sources */,
 				E732CCE42B47EC6D004D6FB9 /* PresentationAnimation.swift in Sources */,
-				DD3610AB29B70CDC00CE7984 /* ShowRoomListView.swift in Sources */,
 				E3735C922A5E7E75004737EF /* BEEffectResourceHelper.m in Sources */,
 				E3735C942A5E7E75004737EF /* BERenderHelper.m in Sources */,
 				E3735C882A5E7E75004737EF /* EffectsAnimal.m in Sources */,
@@ -3862,7 +3858,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -3904,7 +3900,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;

@@ -74,7 +74,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="15dp">
+            android:paddingVertical="15dp">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/mtSoundSelectionName"
@@ -116,53 +116,15 @@
                 app:layout_constraintTop_toBottomOf="@+id/mtSoundSelectionName"
                 tools:text="This scenario focuses on echo cancellation, noise reduction in a multi-person chat setting, creating a quiet chat atmosphere" />
 
-            <com.google.android.material.divider.MaterialDivider
-                android:id="@+id/mdSoundSelectionDivider"
-                style="@style/voice_bottom_sheet_divider_style"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="6dp"
-                android:layout_marginEnd="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mtSoundSelectionContent" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/mtSoundSelectionCustomerUsage"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="6dp"
-                android:layout_marginEnd="20dp"
-                android:text="@string/voice_room_social_chat_following_customers"
-                android:textColor="@color/voice_dark_grey_color_979cbb"
-                android:textSize="@dimen/voice_sp_11"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mdSoundSelectionDivider" />
-
-            <LinearLayout
-                android:id="@+id/llSoundCustomerUsage"
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="6dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="15dp"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mtSoundSelectionCustomerUsage" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivSoundSelected"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/voice_icon_room_sound_selected"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivSoundSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/voice_icon_room_sound_selected"
+            android:layout_gravity="bottom|right" />
+
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

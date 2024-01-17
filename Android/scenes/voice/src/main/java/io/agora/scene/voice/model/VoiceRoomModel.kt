@@ -94,7 +94,6 @@ data class SoundSelectionBean constructor(
     val soundName: String = "",
     val soundIntroduce: String = "",
     var isCurrentUsing: Boolean = false,
-    val customer: List<CustomerUsageBean>? = null
 ) :BaseRoomBean
 
 data class CustomerUsageBean constructor(

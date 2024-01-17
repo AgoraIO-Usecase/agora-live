@@ -17,8 +17,8 @@ import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceDialogRoomSoundSelectionBinding
 import io.agora.scene.voice.databinding.VoiceItemRoomSoundSelectionBinding
 import io.agora.scene.voice.model.constructor.RoomSoundSelectionConstructor
-import io.agora.scene.voice.ui.soundselection.RoomSoundSelectionFooterViewHolder
-import io.agora.scene.voice.ui.soundselection.RoomSoundSelectionViewHolder
+import io.agora.scene.voice.ui.adapter.viewholder.RoomSoundSelectionFooterViewHolder
+import io.agora.scene.voice.ui.adapter.viewholder.RoomSoundSelectionViewHolder
 
 class RoomSoundSelectionSheetDialog constructor(
     private val isEnable: Boolean = true,

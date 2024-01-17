@@ -1,11 +1,9 @@
-package io.agora.scene.voice.ui.soundselection
+package io.agora.scene.voice.ui.adapter.viewholder
 
 import android.os.Build
 import android.text.Html
 import android.view.View
 import android.widget.LinearLayout
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import io.agora.scene.voice.model.SoundSelectionBean
 import io.agora.voice.common.ui.adapter.BaseRecyclerViewAdapter
@@ -41,23 +39,6 @@ class RoomSoundSelectionViewHolder(binding: VoiceItemRoomSoundSelectionBinding) 
             }
             mBinding.mtSoundSelectionName.text = it.soundName
             mBinding.mtSoundSelectionContent.text = it.soundIntroduce
-            if (it.customer.isNullOrEmpty()) {
-                mBinding.llSoundCustomerUsage.removeAllViews()
-                mBinding.llSoundCustomerUsage.isInvisible = true
-            } else {
-                mBinding.llSoundCustomerUsage.removeAllViews()
-                mBinding.llSoundCustomerUsage.isInvisible = false
-                it.customer.forEach { customerBean ->
-                    val customerImage = AppCompatImageView(context)
-                    customerImage.setImageResource(customerBean.avatar)
-                    val ivSize = 20.dp.toInt()
-                    mBinding.llSoundCustomerUsage.addView(customerImage, LinearLayout.LayoutParams(ivSize, ivSize))
-                    addCustomerMargin(customerImage)
-                }
-            }
-//            mBinding.ivSoundSelectionToggle.setOnClickListener { view ->
-//                onItemChildClick(it.isCurrentUsing, view)
-//            }
         }
     }
 

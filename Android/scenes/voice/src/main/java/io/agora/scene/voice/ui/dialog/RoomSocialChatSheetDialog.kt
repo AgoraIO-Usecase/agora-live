@@ -29,8 +29,6 @@ class RoomSocialChatSheetDialog constructor() : BaseSheetDialog<VoiceDialogRoomS
             customers?.forEach { customerBean ->
                 val customerImage = AppCompatImageView(root.context)
                 customerImage.setImageResource(customerBean.avatar)
-                val ivSize = 20.dp.toInt()
-                llSocialChatCustomers.addView(customerImage, LinearLayout.LayoutParams(ivSize, ivSize))
                 addCustomerMargin(customerImage)
             }
         }
