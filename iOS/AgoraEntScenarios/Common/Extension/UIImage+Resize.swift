@@ -2,10 +2,10 @@
 import UIKit
 
 extension UIImage {
-    // 图片压缩
+    // Image compression
     func resetSizeOfImageData(maxSize: NSInteger) -> Data? {
         let sourceImage = self
-        //先判断当前质量是否满足要求，不满足再进行压缩
+        // First determine whether the current quality meets the requirements, and if not, proceed with compression
         var finalImageData = sourceImage.jpegData(compressionQuality: 1.0)
         guard let sizeOrigin = finalImageData?.count else {
             return nil
@@ -14,14 +14,14 @@ extension UIImage {
         if sizeOriginKB <= maxSize {
             return finalImageData
         }
-        // 获取原图片宽高比
+        // Obtain the original image aspect ratio
         let sourceImageAepectRatio = sourceImage.size.width / sourceImage.size.height
-        // 先调整分辨率
+        // Adjust the resolution first
         var defaultSize = CGSize(width: 1024, height: 1024 / sourceImageAepectRatio)
         guard let newImage = newSizeImage(defaultSize, sourceImage: sourceImage) else { return nil }
         finalImageData = newImage.jpegData(compressionQuality: 1.0)
         
-        // 保存压缩系数
+        // Save compression factor
         var compressionQualityArr: [CGFloat] = []
         let avg: CGFloat = 1.0 / 250
         var value = avg
@@ -33,14 +33,14 @@ extension UIImage {
          调整大小
          说明：压缩系数数组compressionQualityArr是从大到小存储。
          */
-        //思路：使用二分法搜索
+        // Approach: Use binary search
         guard let imageData = halfFunction(compressionQualityArr, image: newImage, finalImageData: finalImageData, maxSize: maxSize) else {
             return nil
         }
         finalImageData = imageData
-        //如果还是未能压缩到指定大小，则进行降分辨率
+        // If it still fails to compress to the specified size, perform a resolution reduction
         while imageData.count == 0 {
-            // 每次降100分辨率
+            // Reduce resolution by 100 each time
             let reduceW: CGFloat = 100.0
             let reduceH = 100.0 / sourceImageAepectRatio
             if defaultSize.width - reduceW <= 0 || defaultSize.height - reduceH <= 0 {
@@ -66,7 +66,7 @@ extension UIImage {
         return finalImageData
     }
 
-    // 调整图片分辨率/尺寸（等比例缩放）
+    // Adjust image resolution/size (proportional scaling)
     private func newSizeImage(_ size: CGSize, sourceImage: UIImage) -> UIImage? {
         var newSize = CGSize(width: sourceImage.size.width, height: sourceImage.size.height)
         let tempH = newSize.height / size.height
@@ -94,8 +94,8 @@ extension UIImage {
             if let img = image, let finalImageData = img.jpegData(compressionQuality: arr[index]) {
                 let sizeOrigin = finalImageData.count
                 let sizeOriginKB = sizeOrigin / 1024
-//                print("当前降到质量\(sizeOriginKB)")
-//                print("\nstart：\(start)\nend：\(end)\nindex：\(index)\n压缩系数：\(String(format: "%f", arr[index]))")
+// print("Currently downgraded to quality \(sizeOriginKB)")
+// print("\ nstart: \(start) \ nend: \(end) \ nindex: \ (index) \ ncompression factor: \ (String (format:"% f ", arr [index])")
                 if sizeOriginKB > maxSize {
                     start = index + 1
                 } else if sizeOriginKB < maxSize {

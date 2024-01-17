@@ -3,7 +3,7 @@
 //  dajiaochong
 //
 //  Created by kidstone_test on 16/4/20.
-//  Copyright © 2016年 王春景. All rights reserved.
+// Copyright ©  2016 Wang Chunjing All rights reserved
 //
 
 #import "NSString+Helper.h"

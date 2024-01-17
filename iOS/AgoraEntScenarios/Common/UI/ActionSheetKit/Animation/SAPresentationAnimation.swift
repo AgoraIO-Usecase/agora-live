@@ -2,13 +2,13 @@
 //  VoiceRoomAlertViewController.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/8/30.
+// Created by Zhu Jichao on August 30, 2022
 //
 
 import Foundation
 import UIKit
 
-/// 动画上下文
+// /Animation context
 public struct SAAnimationContext {
     public let containerView: UIView
 
@@ -31,7 +31,7 @@ public struct SAAnimationContext {
     public let animatingView: UIView?
 }
 
-/// 转场动画类，可继承此类自定转场动画
+// /Transition animation class, can inherit this type of custom transition animation
 open class SAPresentationAnimation: NSObject {
     public var options: SAAnimationOptions
     public var origin: SAPresentationOrigin?
@@ -41,12 +41,12 @@ open class SAPresentationAnimation: NSObject {
         self.origin = origin
     }
 
-    /// 计算动画view初始Frame
+    // /Calculate the initial frame of the animation view
     ///
     /// - Parameters:
-    ///   - containerFrame: 容器view的frame
-    ///   - finalFrame: 动画view最终frame
-    /// - Returns: 动画view初始Frame
+    // /- containerFrame: The frame of the container view
+    // /- finalFrame: Animation view final frame
+    // /- Returns: Animation view initial Frame
     open func transformInitialFrame(containerFrame: CGRect, finalFrame: CGRect) -> CGRect {
         guard let origin = origin else { return finalFrame }
         var initialFrame = finalFrame
@@ -67,9 +67,9 @@ open class SAPresentationAnimation: NSObject {
         return initialFrame
     }
 
-    /// 动画开始前（做动画开始前的准备工作，子类可覆写）
+    // /Before the animation starts (do the preparation work before the animation starts, subclasses can be rewritten)
     ///
-    /// - Parameter animationContext: 动画上下文
+    // /- Parameter animationContext: Animation context
     open func beforeAnimation(animationContext: SAAnimationContext) {
         var initialFrame = animationContext.finalFrame
         if animationContext.isPresenting {
@@ -78,9 +78,9 @@ open class SAPresentationAnimation: NSObject {
         animationContext.animatingView?.frame = initialFrame
     }
 
-    /// 动画执行（做动画的具体执行动作，子类可覆写）
+    // /Animation execution (specific execution actions for animation, subclasses can be overridden)
     ///
-    /// - Parameter animationContext:  动画上下文
+    // /- Parameter animationContext: Animation context
     open func performAnimation(animationContext: SAAnimationContext) {
         var finalFrame = animationContext.finalFrame
         if !animationContext.isPresenting {
@@ -89,9 +89,9 @@ open class SAPresentationAnimation: NSObject {
         animationContext.animatingView?.frame = finalFrame
     }
 
-    /// 动画完成后（做动画完成的清理工作，子类可覆写）
+    // /After completing the animation (clean up the completed animation, subclasses can be overwritten)
     ///
-    /// - Parameter animationContext: 动画上下文
+    // /- Parameter animationContext: Animation context
     open func afterAnimation(animationContext: SAAnimationContext) {}
 }
 

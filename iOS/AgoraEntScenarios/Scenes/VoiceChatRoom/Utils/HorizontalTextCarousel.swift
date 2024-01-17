@@ -2,7 +2,7 @@
 //  HorizontalTextCarousel.swift
 //  AgoraEntScenarios
 //
-//  Created by 朱继超 on 2023/1/18.
+//Created by Zhu Jichao on January 18, 2023
 //
 
 import UIKit

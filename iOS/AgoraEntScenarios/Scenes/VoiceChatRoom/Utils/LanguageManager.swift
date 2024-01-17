@@ -2,7 +2,7 @@
 //  LanguageManager.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/9/1.
+//Created by Zhu Jichao on September 1, 2022
 //
 
 import Foundation
@@ -52,7 +52,7 @@ public final class LanguageManager: NSObject {
 
     private func setLanguage(_ type: LanguageType) {
         lanuage = type.rawValue
-        // 返回项目中 en.lproj 文件的路径
+        //Return the path to the en.lproj file in the project
         let path = bundle.path(forResource: type.rawValue, ofType: "lproj")
         bundle = Bundle(path: path!)!
         if type == .Auto {

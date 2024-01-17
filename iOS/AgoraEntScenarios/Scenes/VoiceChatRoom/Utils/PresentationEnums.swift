@@ -2,17 +2,17 @@
 //  VoiceRoomAlertViewController.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/8/30.
+//Created by Zhu Jichao on August 30, 2022
 //
 
 import Foundation
 
-/// pan手势滑动方向
+///Pan gesture sliding direction
 ///
-/// - bottom: 向下
-/// - top: 向上
-/// - left: 向左
-/// - right: 向右
+///- Bottom: Down
+///- Top: Up
+///- left: Left
+///- Right: To the right
 public enum PanDismissDirection {
     case down
     case up
@@ -20,14 +20,14 @@ public enum PanDismissDirection {
     case right
 }
 
-/// present的起始位置
+///The starting position of the presentation
 ///
-/// - center: 屏幕中心
-/// - bottomOutOfLine: 屏幕底部以下
-/// - leftOutOfLine: 屏幕左边以外
-/// - rightOutOfLine: 屏幕右边以外
-/// - topOutOfLine: 屏幕上部以上
-/// - custom: 自定义中心点
+///- Center: Screen center
+///- bottomOutOfLine: Below the bottom of the screen
+///- leftOutOfLine: Outside the left side of the screen
+///- rightOutOfLine: Outside the right side of the screen
+///- topOutOfLine: Above the top of the screen
+///- custom: custom center point
 public enum PresentationOrigin: Equatable {
     case center
     case bottomOutOfLine
@@ -58,14 +58,14 @@ public enum PresentationOrigin: Equatable {
     }
 }
 
-/// present的最终的位置
+///The final position of the presentation
 ///
-/// - center: 屏幕中心
-/// - bottomBaseline: 基于屏幕底部
-/// - leftBaseline: 基于屏幕左边
-/// - rightBaseline: 基于屏幕右边
-/// - topBaseline: 基于屏幕上部
-/// - custom: 自定义中心点
+///- Center: Screen center
+///- bottomBaseline: Based on the bottom of the screen
+///- leftBaseline: Based on the left side of the screen
+///- rightBaseline: Based on the right side of the screen
+///- topBaseline: Based on the upper part of the screen
+///- custom: custom center point
 public enum PresentationDestination: Equatable {
     case center
     case bottomBaseline
@@ -74,7 +74,7 @@ public enum PresentationDestination: Equatable {
     case topBaseline
     case custom(center: CGPoint)
 
-    /// pan手势方向
+    ///Pan gesture direction
     var panDirection: PanDismissDirection {
         switch self {
         case .center, .bottomBaseline, .custom:
@@ -88,7 +88,7 @@ public enum PresentationDestination: Equatable {
         }
     }
 
-    /// 默认的起始位置
+    ///Default starting position
     var defaultOrigin: PresentationOrigin {
         switch self {
         case .center:
@@ -126,13 +126,13 @@ public enum PresentationDestination: Equatable {
     }
 }
 
-/// 转场动画类型
+///Transition animation types
 ///
-/// - translation: 平移
-/// - crossDissolve: 淡入淡出
-/// - crossZoom: 缩放
-/// - flipHorizontal: 水平翻转
-/// - custom: 自定义动画
+///- Translation: Translation
+///- crossDissolve: Fade in/out
+///- crossZoom: Zoom
+///- FlipHorizontal: Flip horizontally
+///- custom: custom animation
 public enum TransitionType: Equatable {
     case translation(origin: PresentationOrigin)
     case crossDissolve
@@ -175,10 +175,10 @@ public enum TransitionType: Equatable {
     }
 }
 
-/// 动画选项设置
+///Animation Options Settings
 ///
-/// - normal: 正常类型
-/// - spring: 弹簧类型
+///- normal: Normal type
+///- Spring: Spring type
 public enum AnimationOptions {
     case normal(duration: TimeInterval)
     case spring(duration: TimeInterval, delay: TimeInterval, damping: CGFloat, velocity: CGFloat)
@@ -193,10 +193,10 @@ public enum AnimationOptions {
     }
 }
 
-/// 键盘出现的平移方式
+///The translation method of the keyboard
 ///
-/// - unabgeschirmt: 不遮挡PresentedView，compress: 键盘是否贴近PresentedView
-/// - compressInputView: 贴近输入框
+///- unabgeshirmt: does not obscure PresentedView, compress: does the keyboard fit close to PresentedView
+///- compressInputView: Close to input box
 public enum KeyboardTranslationType {
     case unabgeschirmt(compress: Bool)
     case compressInputView

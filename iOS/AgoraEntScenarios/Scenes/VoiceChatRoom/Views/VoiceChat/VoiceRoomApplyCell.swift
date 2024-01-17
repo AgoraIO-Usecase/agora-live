@@ -2,7 +2,7 @@
 //  VoiceRoomApplyCell.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/9/13.
+//Created by Zhu Jichao on September 13, 2022
 //
 
 import UIKit

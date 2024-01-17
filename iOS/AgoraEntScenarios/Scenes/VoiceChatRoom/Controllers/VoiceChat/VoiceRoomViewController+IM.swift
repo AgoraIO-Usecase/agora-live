@@ -2,7 +2,7 @@
 //  VoiceRoomViewController+IM.swift
 //  AgoraScene_iOS
 //
-//  Created by 朱继超 on 2022/10/11.
+//Created by Zhu Jichao on October 11, 2022
 //
 
 import AgoraChat
@@ -45,7 +45,7 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
                 VoiceRoomIMManager.shared?.setChatroomAttributes(attributes: ["gift_amount":"\(gift_amount)"], completion: { error in })
             }
         }
-        //刷新礼物贡献总数，头部
+        //Refresh the total number of gift contributions, top
 //        self.requestRankList()
     }
         
@@ -71,8 +71,8 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
         self.refreshApplicants(chat_uid: chat_uid)
     }
     
-    /// Description 刷新申请人列表
-    /// - Parameter chat_uid: 环信userName
+    ///Description Refresh applicant list
+    ///-Parameter chat_ Uid: Huanxin username
     func refreshApplicants(chat_uid: String) {
         ChatRoomServiceImp.getSharedInstance().applicants = ChatRoomServiceImp.getSharedInstance().applicants.filter({
             ($0.member?.chat_uid ?? "") != chat_uid
@@ -89,7 +89,7 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
     }
     
     func onUserJoinedRoom(roomId: String, user: VRUser) {
-        // 更新用户人数
+        //Update the number of users
         let info = roomInfo
         info?.room?.member_count = (info?.room?.member_count ?? 0) + 1
         info?.room?.click_count = (info?.room?.click_count ?? 0) + 1
@@ -193,7 +193,7 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
         for mic in mics {
             ChatRoomServiceImp.getSharedInstance().mics[mic.mic_index] = mic
         }
-        //如果有两个mic对象来自同一个人证明是换麦 否则是上下麦或者被禁用静音等
+        //If there are two mic objects from the same person, it proves that the microphone has been switched, otherwise it is switched on and off, or the microphone has been muted, etc
         if mics.count == 2,let first = mics.first,let last = mics.last {
             ChatRoomServiceImp.getSharedInstance().mics[first.mic_index] = first
             ChatRoomServiceImp.getSharedInstance().mics[last.mic_index] = last
@@ -226,9 +226,7 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
                         local_index = nil
                     }
                 }
-                /**
-                 如果房主踢用户下麦
-                 */
+                /**If the homeowner kicks the user off the microphone*/
                 if let host: VRUser = roomInfo?.room?.owner {
                     if host.chat_uid == fromId, first.member == nil,changeMic.member?.uid ?? "" == VoiceRoomUserInfo.shared.user?.uid ?? "" {
                         if status == -1 || status == 3 || status == 4 {
@@ -244,7 +242,7 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
                     self.refreshApplicants(chat_uid: fromId)
                 }
 
-                // 刷新普通用户
+                //Refresh regular users
                 if first.member != nil {
                     first.member?.mic_index = mic_index
                 }
@@ -268,7 +266,7 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
                         
                     }
                 }
-                //刷新底部✋🏻状态
+                //Refresh bottom ✋🏻 state
                 if !isOwner {
                     if first.member != nil {
                         if self.local_index != nil {

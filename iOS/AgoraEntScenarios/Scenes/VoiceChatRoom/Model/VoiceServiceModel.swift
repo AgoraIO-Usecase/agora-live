@@ -57,8 +57,8 @@ class VoiceRoomDetailModel: VoiceBaseRoomModel {
     var channelId: String = ""
     var chatroomId: String = ""
     var createdAt: UInt64  = 0
-    var memberCount: Int = 0 // 房间人数
-    var giftAmount: Int = 0 // 礼物数
+    var memberCount: Int = 0 //Number of people in the room
+    var giftAmount: Int = 0 //Number of gifts
     var announcement: String?
     var useRobot: Bool = false
     var robotVolume: UInt = 50

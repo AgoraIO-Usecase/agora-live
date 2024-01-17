@@ -410,7 +410,7 @@ extension VMAudioSettingView: UITableViewDelegate, UITableViewDataSource {
             guard let block = resBlock else { return }
             switch indexPath.row {
             case 0:
-                //最佳音效
+                //Best Sound Effects
                 block(.effect)
                 state = .effect
             default:

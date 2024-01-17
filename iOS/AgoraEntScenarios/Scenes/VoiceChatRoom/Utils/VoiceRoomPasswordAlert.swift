@@ -2,7 +2,7 @@
 //  VoiceRoomPasswordAlert.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/9/11.
+//Created by Zhu Jichao on September 11, 2022
 //
 
 import UIKit

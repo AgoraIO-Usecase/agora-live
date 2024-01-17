@@ -2,7 +2,7 @@
 //  VoiceRoomViewController+Mic.swift
 //  AgoraEntScenarios
 //
-//  Created by 朱继超 on 2022/12/6.
+//Created by Zhu Jichao on December 6, 2022
 //
 
 import Foundation
@@ -10,7 +10,7 @@ import Foundation
 // MARK: - about mic 
 extension VoiceRoomViewController {
     
-    // 禁言指定麦位
+    //Prohibition of designated microphone positions
     func mute(with index: Int) {
         ChatRoomServiceImp.getSharedInstance().forbidMic(mic_index: index) { error, mic in
             if error == nil,let mic = mic {
@@ -19,7 +19,7 @@ extension VoiceRoomViewController {
         }
     }
 
-    // 取消禁言指定麦位
+    //Cancel the ban on designated microphone slots
     func unMute(with index: Int) {
         if let user = roomInfo?.mic_info?[index] {
             if user.status == 1 && index != 0 && isOwner { return }
@@ -34,7 +34,7 @@ extension VoiceRoomViewController {
         }
     }
 
-    // 踢用户下麦
+    //Kicking users off the microphone
     func kickoff(with index: Int) {
         ChatRoomServiceImp.getSharedInstance().kickOff(mic_index: index) { error, mic in
             if error == nil,let mic = mic {
@@ -43,7 +43,7 @@ extension VoiceRoomViewController {
         }
     }
 
-    // 锁麦
+    //Lock wheat
     func lock(with index: Int) {
         ChatRoomServiceImp.getSharedInstance().lockMic(mic_index: index) { error, mic in
             if error == nil,let mic = mic {
@@ -53,7 +53,7 @@ extension VoiceRoomViewController {
 
     }
 
-    // 取消锁麦
+    //Unlock microphone
     func unLock(with index: Int) {
         ChatRoomServiceImp.getSharedInstance().unLockMic(mic_index: index) { error, mic in
             if error == nil,let mic = mic {
@@ -62,7 +62,7 @@ extension VoiceRoomViewController {
         }
     }
 
-    // 下麦
+    //Xiamai
     func leaveMic(with index: Int) {
         ChatRoomServiceImp.getSharedInstance().leaveMic(mic_index: index) { error, mic in
             if error == nil,let mic = mic {
@@ -76,7 +76,7 @@ extension VoiceRoomViewController {
 
     }
 
-    // mute自己
+    //Mute himself
     func muteLocal(with index: Int) {
         ChatRoomServiceImp.getSharedInstance().muteLocal(mic_index: index) { error, mic in
             if error == nil,let mic = mic {
@@ -90,12 +90,9 @@ extension VoiceRoomViewController {
         }
     }
 
-    // unmute自己
+    //Unmute himself
     func unmuteLocal(with index: Int) {
-        /**
-         1.如果房主禁言了用户，用户没办法解除禁言
-         2.如果客户mute了自己，房主没办法打开用户
-         */
+        /**If the homeowner has banned the user, the user cannot lift the ban*/
         if let mic = roomInfo?.mic_info?[index] {
             if mic.status == 2 && isOwner == false {
                 view.makeToast("voice_banned".voice_localized)

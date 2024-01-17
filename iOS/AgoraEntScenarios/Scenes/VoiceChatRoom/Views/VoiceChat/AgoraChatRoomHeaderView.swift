@@ -40,9 +40,9 @@ class AgoraChatRoomHeaderView: UIView {
     private var configView: UIView = .init()
     private var soundClickBtn: UIButton = .init()
 
-    private var rankFBtn: UIButton = .init() // 榜一大哥
-    private var rankSBtn: UIButton = .init() // 榜二土豪
-    private var rankTBtn: UIButton = .init() // 榜三小弟
+    private var rankFBtn: UIButton = .init() //Rank One Big Brother
+    private var rankSBtn: UIButton = .init() //Ranked second tycoon
+    private var rankTBtn: UIButton = .init() //Ranking Three Little Brother
 
     var completeBlock: resBlock?
     
@@ -313,7 +313,7 @@ class AgoraChatRoomHeaderView: UIView {
     }
 
     private func updateGiftList(with room: VRRoomEntity) {
-        // 土豪榜展示逻辑
+        //Display logic of the tycoon list
         if let rankList = room.ranking_list {
             if rankList.count == 0 { return }
 

@@ -10,7 +10,7 @@ import AVFoundation
 class HeadSetUtil: NSObject {
     private static var headsetStatusCallBack: ((Bool) -> Void)?
     private static var soundCardStatusCallBack: ((Bool) -> Void)?
-    // 是否插入耳机
+    //Whether to insert headphones
     static func hasHeadset() -> Bool {
         let audioSession = AVAudioSession.sharedInstance()
         let currentRoute = audioSession.currentRoute
@@ -78,11 +78,11 @@ class HeadSetUtil: NSObject {
         }
         
         if reason == .oldDeviceUnavailable {
-            // 设备断开
+            //Device disconnection
             print("Old device is unavailable")
             soundCardStatusCallBack?(false)
         } else if reason == .newDeviceAvailable {
-            // 有新设备连接
+            //There is a new device connected
             let session = AVAudioSession.sharedInstance()
             let inputs = session.currentRoute.inputs
             if let input = inputs.first,
@@ -90,7 +90,7 @@ class HeadSetUtil: NSObject {
                 soundCardStatusCallBack?(true)
                 print("Connected a wired headset with microphone")
             } else if let _ = session.currentRoute.outputs.first {
-                // 连接的是不带麦克风的有线耳机
+                //Connected to wired headphones without a microphone
                 soundCardStatusCallBack?(false)
                 print("Connected a wired headset without microphone")
             }

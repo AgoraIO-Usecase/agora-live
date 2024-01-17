@@ -9,11 +9,11 @@ import AgoraRtcKit
 import Foundation
 
 /**
- * 用户角色枚举
- * unknown 未知角色，异常
- * owner 主播，老师
- * coHost 合唱 ，学生
- * audience  观众 ，旁听
+ *User role enumeration
+ *Unknown unknown role, exception
+ *Owner anchor, teacher
+ *CoHost Chorus, Students
+ *Audience
  */
 @objc public enum ASRoleType: Int, Codable {
     case unknown = -1
@@ -23,7 +23,7 @@ import Foundation
 }
 
 /**
- * AI降噪等级
+ *AI noise reduction level
  *
  */
 public enum AINS_STATE {
@@ -33,7 +33,7 @@ public enum AINS_STATE {
 }
 
 /**
- * 耳返模式
+ *Ear return mode
  *
  */
 public enum INEAR_MODE: Int {
@@ -43,7 +43,7 @@ public enum INEAR_MODE: Int {
 }
 
 /**
- * 机器人类型
+ *Robot type
  *
  */
 @objc public enum ALIEN_TYPE: Int, Codable {
@@ -70,9 +70,9 @@ public enum INEAR_MODE: Int {
 }
 
 /**
- * 场景枚举
- * VoiceChat 语聊房2.0
- * KTV KTV场景
+ *Scene enumeration
+ *VoiceChat chatroom 2.0
+ *KTV KTV Scene
  */
 @objc public enum ASManagerType: Int {
     case VoiceChat = 1
@@ -80,13 +80,13 @@ public enum INEAR_MODE: Int {
 }
 
 /**
- * 回声消除等级
- * NoEcho 对应UI上的零回声
- * Standard 对应UI上的标准
- * Fluent 对应UI上的流畅
+ *Echo cancellation level
+ *NoEcho corresponds to zero echo on the UI
+ *Standard corresponds to the standard on the UI
+ *Fluent corresponds to smoothness on the UI
  */
 @objc public enum AECGrade: Int {
-    // FIXME: 枚举值首字母小写
+    //FIXME: lowercase first letter of enumeration value
     case NoEcho = 1
     case Standard = 3
     case Fluent = 5
@@ -103,58 +103,58 @@ public enum INEAR_MODE: Int {
 
 @objc public protocol VMMusicPlayerDelegate: NSObjectProtocol {
     /**
-     * datastream消息消息回调
-     * @param uid 用户的Uid
-     * @param data 用户收到的消息
+     *Datastream message callback
+     *@ param uid User's Uid
+     *Message received by @ param data user
      */
     @objc optional func didReceiveStreamMsgOfUid(uid: UInt, data: Data) -> Void
 
     /**
-     * MPK的seek进度
-     * @param position MPK当前修改的进度
+     *Progress of MPK's seek
+     *@ param position MPK current modification progress
      */
     @objc optional func didMPKChangedToPosition(position: Int) -> Void
 
     /**
-     * MPK 当前状态回调
-     * @param state MPK当前的状态
-     * @param error MPK当前的错误码
+     *MPK current state callback
+     *@ param state MPK's current state
+     *@ param error MPK current error code
      */
-    @objc optional func didMPKChangedTo(state: AgoraMediaPlayerState, error: AgoraMediaPlayerError) -> Void // MPK 状态回调
+    @objc optional func didMPKChangedTo(state: AgoraMediaPlayerState, error: AgoraMediaPlayerError) -> Void //MPK status callback
 }
 
 // MARK: - VMManagerDelegate
 
 @objc public protocol VMManagerDelegate: NSObjectProtocol {
     /**
-     * RTC远端用户下线
-     * @param uid 远端下线用户Uid
+     *RTC remote user offline
+     *@ param uid Remote Offline User Uid
      */
     @objc optional func didRtcUserOfflineOfUid(uid: UInt) -> Void
 
     /**
-     * RTC当前用户加入频道
-     * @param uid 当前用户Uid
+     *RTC current user joining channel
+     *@ param uid Current user Uid
      */
     @objc optional func didRtcLocalUserJoinedOfUid(uid: UInt) -> Void
 
     /**
-     * RTC远端用户加入频道
-     * @param uid 远端上线用户Uid
+     *RTC remote user joining channel
+     *@ param uid Remote Online User Uid
      */
     @objc optional func didRtcRemoteUserJoinedOfUid(uid: UInt) -> Void
 
     /**
-     * 实时音量返回
-     * @param speakers 返回的用户声音信息
-     * @param totalVolume 返回当前的总音量
+     *Real time volume return
+     *User voice information returned by @ param speakers
+     *@ param totalVolume Returns the current total volume
      */
     @objc optional func reportAudioVolumeIndicationOfSpeakers(speakers: [AgoraRtcAudioVolumeInfo]) -> Void
 
     /**
-     * 用户视频第一帧
-     * @param size 渲染的视频尺寸（宽度和高度）
-     * @param elapsed 视频显示出来第一帧的时间
+     *First frame of user video
+     *@ param size Rendered video size (width and height)
+     *@ param elapsed The time when the first frame of the video is displayed
      */
     // @objc optional func didUserFirstVideoFrameWith(uid: UInt) -> Void
 
@@ -164,10 +164,10 @@ public enum INEAR_MODE: Int {
     @objc optional func reportAlien(with type: ALIEN_TYPE, musicType: VMMUSIC_TYPE) -> Void
     
     /**
-     * 加载歌曲
-     * @param songCode code
-     * @param progress 进度
-     * @param status 状态
+     *Load songs
+     *@ param songCode code
+     *@ param progress progress
+     *@ param status status
      */
     @objc optional func downloadBackgroundMusicStatus(songCode: Int, progress: Int, status: AgoraMusicContentCenterPreloadStatus)
 }
@@ -206,7 +206,7 @@ public let kMPK_RTC_UID: UInt = 1
     var downloadBackgroundMusicStatusClosure: ((_ songCode: Int, _ progress: Int, _ status: AgoraMusicContentCenterPreloadStatus) -> Void)?
     var backgroundMusicPlayingStatusClosure: ((_ state: AgoraMediaPlayerState) -> Void)?
 
-    // 单例
+    //Single example
     @objc public class func getSharedInstance() -> VoiceRoomRTCManager {
         guard let instance = _sharedInstance else {
             _sharedInstance = VoiceRoomRTCManager()
@@ -279,8 +279,8 @@ public let kMPK_RTC_UID: UInt = 1
     let rtcKit: AgoraRtcEngineKit = AgoraRtcEngineKit.sharedEngine(withAppId: KeyCenter.AppId, delegate: nil)
 
     /**
-     * 设置RTC角色
-     * @param role RMCRoleType
+     *Set up RTC roles
+     *@ param role RMCRoleType
      */
     @objc public func setClientRole(role: ASRoleType) {
         rtcKit.setClientRole(role == .audience ? .audience : .broadcaster)
@@ -288,11 +288,11 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 加入语聊房
-     * @param channelName 频道名称
-     * @param rtcUid RTCUid 如果传0，大网会自动分配
-     * @param rtmUid 可选，如果不使用RTM，使用自己的IM，这个值不用传
-     * @param type 有四种 social，ktv，game， anchor
+     *Join the chat room
+     *@ param channelName Channel Name
+     *@ param rtcUid RTCUid If 0 is passed, the big network will automatically allocate it
+     *@ param rtmUid is optional. If RTM is not used, use your own IM, and this value does not need to be passed
+     *@ param type has four types: social, ktv, game, and anchor
      */
     public func joinVoicRoomWith(with channelName: String,token: String?, rtcUid: Int?, type: VMMUSIC_TYPE) -> Int32 {
         self.type = .VoiceChat
@@ -330,9 +330,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 加载RTC
-     * @param channelName 频道名称
-     * @param rtcUid RTCUid 如果传0，大网会自动分配
+     *Load RTC
+     *@ param channelName Channel Name
+     *@ param rtcUid RTCUid If 0 is passed, the big network will automatically allocate it
      */
     private func loadKit(with channelName: String, rtcUid: Int?) {
         rtcKit.delegate = self
@@ -347,14 +347,14 @@ public let kMPK_RTC_UID: UInt = 1
         rtcKit.setParameters(string)
     }
     
-    //Dump 全链路音频数据收集
+    //Dump full link audio data collection
     public func setAPMOn(isOn: Bool){
         rtcKit.setParameters("{\"rtc.debug.enable\": \(isOn)}")
         rtcKit.setParameters("{\"che.audio.frame_dump\":{\"location\":\"all\",\"action\":\"start\",\"max_size_bytes\":\"120000000\",\"uuid\":\"123456789\",\"duration\":\"1200000\"}}");
     }
     
     /**
-     * 加载RTC
+     *Load RTC
      */
     private func loadRTC(with channalName: String, uid: Int) {
         rtcKit.enableVideo()
@@ -362,9 +362,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 开启/关闭 本地音频
-     * @param enable 是否开启音频
-     * @return 开启/关闭音频的结果
+     *Turn on/off local audio
+     *Does @ param enable enable audio
+     *@ return The result of turning on/off audio
      */
     @discardableResult
     public func enableLocalAudio(enable: Bool) -> Int32 {
@@ -419,7 +419,7 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 停止播放歌曲
+     *Stop playing songs
      */
     @objc public func stopMusic() {
         let mediaOption = AgoraRtcChannelMediaOptions()
@@ -431,7 +431,7 @@ public let kMPK_RTC_UID: UInt = 1
     }
     
     /**
-     * 恢复播放
+     *Resume playback
      */
     public func resumeMusic() {
         if musicPlayer?.getPlayerState() == .paused {
@@ -442,14 +442,14 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 暂停播放
+     *Pause playback
      */
     public func pauseMusic() {
         musicPlayer?.pause()
     }
 
     /**
-     * 调整进度
+     *Adjusting progress
      */
     public func seekMusic(time: NSInteger) {
        musicPlayer?.seek(toPosition: time)
@@ -457,7 +457,7 @@ public let kMPK_RTC_UID: UInt = 1
     }
     
     /**
-     * 调整音量
+     *Adjusting volume
      */
     public func adjustMusicVolume(volume: Int) {
         musicPlayer?.adjustPlayoutVolume(Int32(volume))
@@ -465,7 +465,7 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 选择音轨，原唱、伴唱
+     *Select audio tracks, original and backing vocals
      */
     public func selectPlayerTrackMode(isOrigin: Bool) {
         musicPlayer?.selectAudioTrack(isOrigin ? 1: 0)
@@ -526,16 +526,16 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 开启/关闭 回声消除
-     * @param enable 是否开启回声消除
-     * @return 开启/关闭回声消除的结果
+     *Turn on/off echo cancellation
+     *Does @ param enable enable echo cancellation
+     *@ return The result of turning on/off echo cancellation
      */
     @discardableResult
     public func enableAEC(with grade: AECGrade) -> Int32 {
         return rtcKit.setParameters("{\"rtc.audio.music_mode\": \(grade.rawValue)}")
     }
     
-    //AIAEC-AI回声消除
+    //AIAEC-AI Echo Cancellation
     public func setAIAECOn(isOn:Bool){
         //agora_ai_echo_cancellation
 //        rtcKit.enableExtension(withVendor: "agora_ai_echo_cancellation", extension: "", enabled: true)
@@ -549,7 +549,7 @@ public let kMPK_RTC_UID: UInt = 1
         }
     }
 
-    //AGC-新增人声自动增益开关
+    //AGC - Added automatic vocal gain switch
     public func setAGCOn(isOn:Bool){
         if (isOn) {
             rtcKit.setParameters("{\"che.audio.agc.enable\":true}")
@@ -561,9 +561,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
     
     /**
-     * 开启/关闭 AI降噪
-     * @param
-     * @return 开启/关闭回声消除的结果
+     *Turn AI noise reduction on/off
+     *@ param
+     *@ return The result of turning on/off echo cancellation
      */
     public func setAINS(with level: AINS_STATE) {
         switch level {
@@ -592,9 +592,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 开启/关闭 耳返
-     * @param
-     * @return 开启/关闭耳返的结果
+     *Turn on/off ear return
+     *@ param
+     * @Return The result of turning on/off the earlobe
      */
     public func setInEarMode(with mode: INEAR_MODE) {
         switch mode {
@@ -609,9 +609,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
     
     /**
-     * 开启/关闭 本地视频
-     * @param enable 是否开启视频
-     * @return 开启/关闭视频的结果
+     * Turn on/off local videos
+     * @Does param enable enable video
+     * @Return The result of turning on/off the video
      */
     @discardableResult
     public func enableLocalVideo(enable: Bool) -> Int32 {
@@ -619,9 +619,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 取消或恢复发布本地音频流
-     * @param enable 是否发布本地音频流
-     * @return 取消或恢复发布本地音频流的结果
+     * Cancel or resume publishing local audio streams
+     * @Does param enable publish local audio streams
+     * @Return Cancel or restore the result of publishing local audio streams
      */
     @discardableResult
     public func muteLocalAudioStream(mute: Bool) -> Int32 {
@@ -631,9 +631,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 取消或恢复发布本地视频流
-     * @param enable 是否发布本地视频流
-     * @return 取消或恢复发布本地视频流的结果
+     * Cancel or resume publishing local video streams
+     * @Does param enable publish local video streams
+     * @Return Cancel or restore the result of publishing local video streams
      */
     @discardableResult
     public func muteLocalVideoStream(mute: Bool) -> Int32 {
@@ -643,9 +643,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 开启耳返
-     * @param enable 是否开启耳返
-     * @return 开启/关闭耳返的结果
+     * Open ear return
+     * @Does param enable enable ear return
+     * @Return The result of turning on/off the earlobe
      */
     @discardableResult
     public func enableinearmonitoring(enable: Bool) -> Int32 {
@@ -653,9 +653,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 设置耳返音量
-     * @param volume 耳返音量值
-     * @return 设置耳返音量的结果
+     * Set ear return volume
+     * @Param volume earlobe volume value
+     * @Return The result of setting the early volume
      */
     @discardableResult
     public func setInEarMonitoringVolume(with volume: Int) -> Int32 {
@@ -663,9 +663,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 设置用户本地采集音量
-     * @param volume 音量值
-     * @return 设置用户本地采集音量的结果
+     * Set user's local collection volume
+     * @Param volume volume value
+     * @Return Set the result of the user's local collection volume
      */
     @discardableResult
     public func adjustRecordingSignalVolume(with volume: Int) -> Int32 {
@@ -673,10 +673,10 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 设置本地播放的指定远端用户的音量
-     * @param volume 音量值
-     * @param uid 需要设置的用户的uid
-     * @return 设置本地播放的指定远端用户的音量的结果
+     * Set the volume of the specified remote user for local playback
+     * @Param volume volume value
+     * @The user's UID that needs to be set for the param UID
+     * @Return The result of setting the volume of the specified remote user for local playback
      */
     @discardableResult
     public func adjustUserPlaybackSignalVolume(with uid: UInt, volume: Int32) -> Int32 {
@@ -684,9 +684,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 设置美声
-     * @param params 美声的参数配置
-     * @return 设置美声的结果
+     * Set up bel canto
+     * @Parameter configuration of params bel canto
+     * @Return Set the result of bel canto
      */
     @discardableResult
     public func setVoiceBeautifierParameters(with preset: AgoraVoiceBeautifierPreset) -> Int32 {
@@ -694,17 +694,17 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 设置预设美声效果
-     * @param preset 美声的参数配置
-     * @param param1 歌声的性别特征：
-        1: 男声
-        2: 女声
-     *  @param param2 歌声的混响效果：
-        1: 歌声在小房间的混响效果。
-        2: 歌声在大房间的混响效果。
-        3: 歌声在大厅的混响效果。
+     * Set preset bel canto effects
+     * @Param preset parameter configuration for bel canto
+     * @The gender characteristics of param param1 singing:
+        1: Male voice
+        2: Female voice
+     * The reversal effect of @ param param2 singing:
+        1: The reversal effect of singing in a small room
+        2: The reversal effect of singing in a large room
+        3: The reversal effect of singing in the hall
 
-     * @return 设置预设美声效果的结果
+     * @Return The result of setting the preset bel canto effect
      */
     @discardableResult
     public func setVoiceBeautifierParameters(with preset: AgoraVoiceBeautifierPreset, param1: Int32, param2: Int32) -> Int32 {
@@ -712,9 +712,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 设置变声
-     * @param params 变声的参数配置
-     * @return 设置变声的结果
+     * Set voice change
+     * @Parameter Configuration of Param Params Sound Transformation
+     * @Return Set the result of voice change
      */
     //   @discardableResult
 //    public func setLocalVoiceChanger(with voiceChanger: AgoraAudioVoiceChanger) -> Int32 {
@@ -722,9 +722,9 @@ public let kMPK_RTC_UID: UInt = 1
 //    }
 
     /**
-     * 设置本地视频视图
-     * @param local 本地canvas的参数配置
-     * @return 设置本地视频视图的结果
+     * Set local video view
+     * @Parameter configuration for param local local canvas
+     * @Return The result of setting the local video view
      */
     @discardableResult
     public func setupLocalVideo(local: AgoraRtcVideoCanvas?) -> Int32 {
@@ -732,9 +732,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 设置远端视频视图
-     * @param remote 远端canvas的参数配置
-     * @return 设置远端视频视图的结果
+     * Set remote video view
+     * @Param remote parameter configuration for remote canvas
+     * @Return The result of setting the remote video view
      */
     @discardableResult
     public func setupRemoteVideo(remote: AgoraRtcVideoCanvas?) -> Int32 {
@@ -742,9 +742,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 发送dataStream消息
-     * @param data 发送的data
-     * @return 发送dataStream消息的结果
+     * Send dataStream message
+     * @Param data sent data
+     * @Return The result of sending a dataStream message
      */
     @discardableResult
     @objc public func sendStreamMessage(with data: Data) -> Int32 {
@@ -752,10 +752,10 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 打开音乐
-     * @param url 音乐的本地或者线上地址
-     * @param startPos 音乐从哪里开始播放 毫秒
-     * @return 打开音乐的结果
+     * Open music
+     * @The local or online address of the param URL music
+     * @Where does param startPos music start playing in milliseconds
+     * @Return The result of opening the music
      */
     @discardableResult
     @objc public func open(with url: String, startPos: Int) -> Int32 {
@@ -764,8 +764,8 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 播放音乐
-     * @return 播放音乐的结果
+     *Play music
+     *@ return The result of playing music
      */
     @discardableResult
     @objc public func play() -> Int32 {
@@ -774,8 +774,8 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 暂停播放
-     * @return 暂停播放的结果
+     *Pause playback
+     *@ return The result of pausing playback
      */
     @discardableResult
     @objc public func pause() -> Int32 {
@@ -783,8 +783,8 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 停止播放
-     * @return 停止播放的结果
+     *Stop playing
+     *@ return The result of stopping playback
      */
     @discardableResult
     @objc public func stop() -> Int32 {
@@ -792,8 +792,8 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 设置音乐声道
-     * @return 设置音乐声道的结果
+     *Set up music channels
+     *@ return The result of setting the music channel
      */
     @discardableResult
     @objc public func setAudioDualMonoMode(with mode: AgoraAudioDualMonoMode) -> Int32 {
@@ -801,9 +801,9 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 老师，学生设置伴奏音量
-     * @param volume 伴奏音量值
-     * @return 设置伴奏音量的结果
+     * Teacher, students set the accounting volume
+     * @Param volume accompaniment volume value
+     * @Return The result of setting the accounting volume
      */
     @discardableResult
     public func adjustPlayoutVolume(with volume: Int32) -> Int32 {
@@ -816,8 +816,8 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 获取MPK的播放状态
-     * @return MPK的播放状态的结果
+     *Get the playback status of MPK
+     *The result of @ return MPK's playback status
      */
     @discardableResult
     public func getPlayerState() -> AgoraMediaPlayerState {
@@ -825,8 +825,8 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 获取播放进度
-     * @return 获取播放进度的结果
+     *Get playback progress
+     *@ return Get the result of playback progress
      */
     @discardableResult
     public func getPosition() -> Int {
@@ -834,8 +834,8 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 获取歌曲总时长
-     * @return 获取歌曲总时长的结果
+     *Obtain the total duration of the song
+     *@ return Get the result of the total duration of the song
      */
     @discardableResult
     public func getDuration() -> Int {
@@ -843,8 +843,8 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 设置歌曲播放进度
-     * @return 设置歌曲播放进度的结果
+     *Set song playback progress
+     *@ return The result of setting the playback progress of the song
      */
     @discardableResult
     public func seek(to position: Int) -> Int32 {
@@ -852,7 +852,7 @@ public let kMPK_RTC_UID: UInt = 1
     }
 
     /**
-     * 离开频道，释放资源
+     *Leave the channel and release resources
      */
     @objc public func leaveChannel() {
         rtcKit.stopPreview()
@@ -867,7 +867,7 @@ public let kMPK_RTC_UID: UInt = 1
         }
         AgoraMusicContentCenter.destroy()
         AgoraRtcEngineKit.destroy()
-        VoiceRoomRTCManager._sharedInstance = nil // 释放单例
+        VoiceRoomRTCManager._sharedInstance = nil //Release singleton
     }
 }
 
@@ -930,7 +930,7 @@ extension VoiceRoomRTCManager: AgoraRtcEngineDelegate {
             return
         }
 
-        // 如果Uid = 0，表示是本地用户的声音
+        //If Uid=0, it means it is the voice of a local user
         var real_speakers: [AgoraRtcAudioVolumeInfo] = speakers
         for (index, value) in speakers.enumerated() {
             if value.uid == kMPK_RTC_UID {

@@ -254,7 +254,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         self.roomServiceDelegate = nil
     }
     
-    // 单例
+    //Single example
     @objc public class func getSharedInstance() -> ChatRoomServiceImp {
         guard let instance = _sharedInstance else {
             _sharedInstance = ChatRoomServiceImp()
@@ -624,10 +624,10 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         })
     }
     
-    /// Description 提交上麦申请
+    ///Description: Submit the application for online streaming
     /// - Parameters:
-    ///   - chat_user: 提交的用户模型，包含申请的麦位信息，若没有顺序分配
-    ///   - completion: 回调
+    ///- Chat_ User: The submitted user model contains the requested slot information, if there is no sequential allocation
+    ///- completion: Callback
     func startMicSeatApply(index: Int?,completion: @escaping (Error?, Bool) -> Void) {
         if !self.checkWhetherApplyMic() {
             completion(nil,false)
@@ -641,7 +641,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         } else {
             apply.index = self.findMicIndex()
         }
-        apply.member?.mic_index = apply.index//专门用于安卓那边数据模型复用
+        apply.member?.mic_index = apply.index//Specially used for Android data model reuse
         VoiceRoomIMManager.shared?.sendChatCustomMessage(to_uid: VoiceRoomUserInfo.shared.currentRoomOwner?.rtc_uid ?? "", event: VoiceRoomSubmitApplySite, customExt: ["user" : apply.kj.JSONString(),"chatroomId":VoiceRoomIMManager.shared?.currentRoomId ?? ""], completion: { message, error in
             completion(self.convertError(error: error),error == nil)
         })
@@ -755,10 +755,10 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         }
     }
     
-    /// 获取房间列表
+    ///Get room list
     /// - Parameters:
-    ///   - page: 分页索引，从0开始(由于SyncManager无法进行分页，这个属性暂时无效)
-    ///   - completion: 完成回调   (错误信息， 房间列表)
+    ///- Page: pagination index, starting from 0 (this attribute is temporarily invalid due to SyncManager's inability to perform pagination)
+    ///- completion: Complete callback (error message, room list)
     func fetchRoomList(page: Int,
                      completion: @escaping (Error?, [VRRoomEntity]?) -> Void) {
         initScene { [weak self] in
@@ -797,10 +797,10 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
     }
 
     
-    /// 创建房间
+    ///Create a room
     /// - Parameters:
-    ///   - room: 房间对象信息
-    ///   - completion: 完成回调   (错误信息)
+    ///- room: Room object information
+    ///- completion: Complete callback (error message)
     func createRoom(room: VRRoomEntity, completion: @escaping (SyncError?, VRRoomEntity?) -> Void) {
         
         let owner: VRUser = VRUser()
@@ -824,7 +824,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
                 let model = model(from: result.toJson()?.z.jsonToDictionary() ?? [:], VRRoomEntity.self)
                 self?.roomId = room.room_id
                 self?._startCheckExpire()
-                //添加鉴黄接口
+                //Add yellow detection interface
                 NetworkManager.shared.voiceIdentify(channelName: room.channel_id ?? "", channelType: room.sound_effect == 3 ? 0 : 1, sceneType: .voice) { msg in
                     agoraPrint("\(msg == nil ? "开启鉴黄成功" : "开启鉴黄失败")")
                 }
@@ -873,11 +873,11 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
     func joinRoom(_ roomId: String, completion: @escaping (Error?, VRRoomEntity?) -> Void) {
         
         /**
-         先拿到对应的房间信息
-         1.获取用户信息
-         2.修改click_count
-         3.更新syncManager
-         4.加入语聊房，更新KV
+         Get the corresponding room information first
+         1. Obtain user information
+         2. Modify click_ Count
+         3. Update syncManager
+         4. Join the chat room and update KV
          */
         
         if let roomList = self.roomList {
@@ -949,13 +949,13 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         
     }
     
-    // todo 去掉owner
+    //Todo Remove Owner
     func leaveRoom(_ roomId: String, completion: @escaping (Error?, Bool) -> Void) {
         self.roomId = nil
         /**
-         先拿到对应的房间信息
-         1.如果是房主需要销毁房间，普通成员需要click_count - 1. 同时需要退出RTC+IM
-         2.房主需要调用destory
+         Get the corresponding room information first
+         If the homeowner needs to destroy the room, ordinary members need to click_ Count -1 Simultaneously, it is necessary to exit RTC+IM
+         2. The homeowner needs to call destory
          */
         if let roomList = self.roomList {
             for (index,room) in roomList.enumerated() {

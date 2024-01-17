@@ -2,7 +2,7 @@
 //  VRAllRoomsViewController.swift
 //  AgoraScene_iOS
 //
-//  Created by 朱继超 on 2022/9/14.
+//Created by Zhu Jichao on September 14, 2022
 //
 
 import UIKit

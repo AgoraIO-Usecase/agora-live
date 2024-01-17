@@ -6,7 +6,7 @@
 //
 
 import UIKit
-//不同场景的视图高度
+//View heights for different scenes
 public enum TV_TYPE_HEIGHT: CGFloat {
     case ANS = 920
     case AEC = 455
