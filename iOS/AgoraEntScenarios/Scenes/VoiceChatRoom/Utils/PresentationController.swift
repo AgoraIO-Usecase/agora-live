@@ -2,18 +2,18 @@
 //  VoiceRoomAlertViewController.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/8/30.
+//Created by Zhu Jichao on August 30, 2022
 //
 
 import Foundation
 
-// MARK: - UIPresentationController子类，重写present相关属性和方法
+//MARK: - UIPresentationController subclass, override presentation related properties and methods
 
 public final class PresentationController: UIPresentationController {
-    /// present配置
+    ///Presentation configuration
     private let component: PresentedViewComponent
 
-    /// 背景蒙层
+    ///Background Mask
     private lazy var backgroundView: UIView = {
         let containerbounds = containerView?.bounds ?? UIScreen.main.bounds
         let backgroundView = UIView(frame: containerbounds)
@@ -26,21 +26,21 @@ public final class PresentationController: UIPresentationController {
         return backgroundView
     }()
 
-    /// pan的起始点
+    ///The starting point of pan
     private var panStart: CGPoint = .zero
 
-    /// pan手势方向
+    ///Pan gesture direction
     private var panDirection: PanDismissDirection {
         return component.panDismissDirection ?? component.destination.panDirection
     }
 
-    /// 当前输入view
+    ///Current input view
     private var textInputView: UIView?
 
-    /// 键盘frame
+    ///Keyboard frame
     private var keyboardFrame: CGRect?
 
-    /// 键盘动画时间
+    ///Keyboard animation time
     private var keyboardAnimationDuration: TimeInterval?
 
     // MARK: -  override
@@ -71,26 +71,26 @@ public final class PresentationController: UIPresentationController {
         }
     }
 
-    /// 将要弹出时添加背景按钮
+    ///Add background button when about to pop up
     override public func presentationTransitionWillBegin() {
-        /// 注册键盘通知
+        ///Register keyboard notification
         if component.destination != .topBaseline, component.destination != .center {
             registerObservers()
         }
-        /// 背景动画
+        ///Background animation
         guard let containerView = containerView else { return }
         containerView.addSubview(backgroundView)
         guard let coordinator = presentedViewController.transitionCoordinator else {
             backgroundView.alpha = 1.0
             return
         }
-        /// 动画
+        ///Animation
         coordinator.animate(alongsideTransition: { context in
             self.backgroundView.alpha = 1.0
         }, completion: nil)
     }
 
-    /// 已经弹出视图
+    ///The view has been popped up
     override public func presentationTransitionDidEnd(_ completed: Bool) {
         if component.canPanDismiss {
             let panGuesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(gesture:)))
@@ -99,9 +99,9 @@ public final class PresentationController: UIPresentationController {
     }
 
     override public func dismissalTransitionWillBegin() {
-        /// 移除键盘通知
+        ///Remove keyboard notifications
         removeObservers()
-        /// 背景动画
+        ///Background animation
         guard let coordinator = presentedViewController.transitionCoordinator else {
             backgroundView.alpha = 0.0
             return
@@ -182,11 +182,11 @@ extension PresentationController {
 
 extension PresentationController {
     private func registerObservers() {
-        /// 注册键盘通知
+        ///Register keyboard notification
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIApplication.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame(notification:)), name: UIApplication.keyboardWillChangeFrameNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIApplication.keyboardWillHideNotification, object: nil)
-        /// 注册输入框通知
+        ///Registration Input Box Notification
         NotificationCenter.default.addObserver(self, selector: #selector(textInputViewDidBeginEditing(notification:)), name: UITextField.textDidBeginEditingNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(textInputViewDidBeginEditing(notification:)), name: UITextView.textDidBeginEditingNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(textInputViewDidEndEditing(notification:)), name: UITextField.textDidEndEditingNotification, object: nil)
@@ -194,11 +194,11 @@ extension PresentationController {
     }
 
     private func removeObservers() {
-        /// 移除键盘通知
+        ///Remove keyboard notifications
         NotificationCenter.default.removeObserver(self, name: UIApplication.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIApplication.keyboardWillChangeFrameNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIApplication.keyboardWillHideNotification, object: nil)
-        /// 移除输入框通知
+        ///Remove input box notification
         NotificationCenter.default.removeObserver(self, name: UITextField.textDidBeginEditingNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UITextView.textDidBeginEditingNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UITextField.textDidEndEditingNotification, object: nil)

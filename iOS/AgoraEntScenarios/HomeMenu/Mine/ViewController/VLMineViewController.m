@@ -117,7 +117,7 @@ typedef NS_ENUM(NSUInteger, AVAuthorizationRequestType){
         }
         textField.delegate = self;
         [textField becomeFirstResponder];
-        TF = textField; //赋值
+        TF = textField; // Assignment
     })
     .LeeAddAction(^(LEEAction *action) {
         action.type = LEEActionTypeCancel;

@@ -14,8 +14,8 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
 }
 
 @IBDesignable open class CommerceNumberButton: UIView {
-    weak var delegate: CommerceNumberButtonDelegate?  // 代理
-    var NumberResultClosure: ResultClosure?     // 闭包
+    weak var delegate: CommerceNumberButtonDelegate?  // Proxy
+    var NumberResultClosure: ResultClosure?     // Closure
     lazy var decreaseBtn: UIButton = {
         let decreaseBtn = setupButton(title: "－")
         return decreaseBtn
@@ -33,10 +33,10 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         textField.textAlignment = .center
         return textField
     }()
-    private var timer: Timer!              // 快速加减定时器
-    public var _minValue = 1                 // 最大值
-    public var _maxValue = Int.max           // 最大值
-    public var shakeAnimation: Bool = false  // 是否打开抖动动画
+    private var timer: Timer!              // Quick add/subtract timer
+    public var _minValue = 1                 // Maximum value
+    public var _maxValue = Int.max           // Maximum value
+    public var shakeAnimation: Bool = false  // Do you want to turn on the shake animation
     public var borderColor: UIColor? {
         didSet{
             layer.borderColor = borderColor?.cgColor
@@ -75,7 +75,7 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         super.init(frame: frame)
         
         setupUI()
-        //整个控件的默认尺寸(和某宝上面的按钮同样大小)
+        // The default size of the entire control (the same size as the button on a certain treasure)
         if frame.isEmpty {self.frame = CGRect(x: 0, y: 0, width: 110, height: 30)}
     }
     
@@ -88,7 +88,7 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         setupUI()
     }
     
-    //设置UI布局
+    // Set UI layout
     fileprivate func setupUI() {
         backgroundColor = .white
         layer.cornerRadius = 3.0
@@ -121,7 +121,7 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         textFieldBottomBorderView.frame = CGRect(x: height, y: height - 2, width: width - 2.0*height, height: textFieldBorderWidth)
     }
     
-    //设置加减按钮的公共方法
+    // Public method for setting addition and subtraction buttons
     fileprivate func setupButton(title: String) -> UIButton {
         let button = UIButton()
         button.setTitle(title, for: UIControl.State())
@@ -133,8 +133,8 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         return button
     }
     
-    // MARK: - 加减按钮点击响应
-    //点击按钮: 单击逐次加减,长按连续加减
+    // MARK: - Add/subtract button click response
+    // Click button: Click to add and subtract one by one, long press to continue adding and subtracting
     @objc fileprivate func touchDown(_ button: UIButton) {
         textField.endEditing(false)
         if button == decreaseBtn {
@@ -153,12 +153,12 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         timer.fire()
     }
     
-    //松开按钮:清除定时器
+    // Release button: Clear timer
     @objc fileprivate func touchUp()  {
         cleanTimer()
     }
     
-    // MARK: - 减运算
+    // MARK: - Subtraction operation
     @objc fileprivate func decrease() {
         guard let text = textField.text else { return }
         if text.count == 0 || (Int(text) ?? 0) <= _minValue {
@@ -177,7 +177,7 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         }
     }
     
-    // MARK: - 加运算
+    // MARK: - addition operation
     @objc fileprivate func increase() {
         guard let text = textField.text else { return }
         if text.count == 0 || (Int(text) ?? 0) <= _minValue {
@@ -195,7 +195,7 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         }
     }
     
-    // MARK: - 抖动动画
+    // MARK: - Jitter animation
     fileprivate func shakeAnimationFunc() {
         let animation = CAKeyframeAnimation.init(keyPath: "position.x")
         let positionX = layer.position.x
@@ -238,17 +238,17 @@ extension CommerceNumberButton: UITextFieldDelegate {
         textField.layer.borderColor = textFieldBorderColor?.cgColor
         textFieldTopBorderView.backgroundColor = .clear
         textFieldBottomBorderView.backgroundColor = .clear
-        //闭包回调
+        // Closure callback
         NumberResultClosure?("\(text)")
-        //delegate的回调
+        // Callback for delegate
         delegate?.numberButtonResult(self, number: "\(text)")
     }
 }
 
-// MARK: - 自定义UI接口
+// MARK: - Custom UI interface
 public extension CommerceNumberButton {
     /**
-     输入框中的内容
+     The content in the input box
      */
     var currentNumber: String? {
         get {
@@ -259,7 +259,7 @@ public extension CommerceNumberButton {
         }
     }
     /**
-     设置最小值
+     Set minimum value
      */
     var minValue: Int {
         get {
@@ -271,7 +271,7 @@ public extension CommerceNumberButton {
         }
     }
     /**
-     设置最大值
+     Set maximum value
      */
     var maxValue: Int {
         get {
@@ -283,21 +283,21 @@ public extension CommerceNumberButton {
     }
     
     /**
-     加减按钮的响应闭包回调
+     Response closure callback for addition and subtraction buttons
      */
     func numberResult(_ finished: @escaping ResultClosure) {
         NumberResultClosure = finished
     }
     
     /**
-     输入框中的字体属性
+     Font properties in the input box
      */
     func inputFieldFont(_ inputFieldFont: UIFont) {
         textField.font = inputFieldFont
     }
     
     /**
-     加减按钮的字体属性
+     Font properties of addition and subtraction buttons
      */
     func buttonTitleFont(_ buttonTitleFont: UIFont) {
         increaseBtn.titleLabel?.font = buttonTitleFont
@@ -305,7 +305,7 @@ public extension CommerceNumberButton {
     }
     
     /**
-     设置按钮的边框颜色
+     Set the border color of the button
      */
     func borderColor(_ borderColor: UIColor) {
         layer.borderColor = borderColor.cgColor
@@ -317,13 +317,13 @@ public extension CommerceNumberButton {
         increaseBtn.layer.borderWidth = 0.5
     }
     
-    //注意:加减号按钮的标题和背景图片只能设置其中一个,若全部设置,则以最后设置的类型为准
+    // Note: The title and background image of the plus and minus buttons can only be set to one of them. If all are set, the type set last will prevail
     
     /**
-     设置加/减按钮的标题
+     Set the title of the add/subtract button
      
-     - parameter decreaseTitle: 减按钮标题
-     - parameter increaseTitle: 加按钮标题
+     -Parameter decreaseTitle: Subtract button title
+     -Parameter incrementTitle: Add button title
      */
     func setTitle(decreaseTitle: String, increaseTitle: String) {
         decreaseBtn.setBackgroundImage(nil, for: UIControl.State())
@@ -334,10 +334,10 @@ public extension CommerceNumberButton {
     }
     
     /**
-     设置加/减按钮的背景图片
+     Set background image for add/subtract buttons
      
-     - parameter decreaseImage: 减按钮背景图片
-     - parameter increaseImage: 加按钮背景图片
+     -Parameter decreaseImage: Background image of the subtract button
+     -Parameter incrementImage: Add button background image
      */
     func setImage(decreaseImage: UIImage, increaseImage: UIImage) {
         decreaseBtn.setTitle(nil, for: UIControl.State())

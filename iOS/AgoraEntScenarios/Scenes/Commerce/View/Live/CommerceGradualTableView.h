@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// 渐进方向
+// Progressive direction
 typedef NS_OPTIONS(NSInteger, CommerceTableViewGradualDirection) {
     CommerceTableViewGradualDirectionTop                                         = 1 << 0, // top
     CommerceTableViewGradualDirectionBottom                                   = 1 <<  1,    // bottom

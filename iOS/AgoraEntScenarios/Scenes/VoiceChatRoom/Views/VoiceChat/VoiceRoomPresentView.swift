@@ -30,9 +30,9 @@ class VoiceRoomPresentView: UIView, UIGestureRecognizerDelegate {
             .first(where: \.isKeyWindow)
     }()
     
-    fileprivate var frames: [CGRect] = [] //保存所有的frame 保证你回来的各个高度都是你之前设定的
-    fileprivate var maxHeights: [CGFloat] = [] //保存每个视图的最大高度
-    fileprivate var minHeights: [CGFloat] = [] //保存每个视图的最小高度
+    fileprivate var frames: [CGRect] = [] //Save all frames to ensure that the heights you return to are the ones you previously set
+    fileprivate var maxHeights: [CGFloat] = [] //Save the maximum height for each view
+    fileprivate var minHeights: [CGFloat] = [] //Save the minimum height for each view
     fileprivate var isTableViewScrollable: Bool = false
     
     @objc func showView(with frame: CGRect, vc: UIViewController, maxHeight: CGFloat) {
@@ -109,7 +109,7 @@ class VoiceRoomPresentView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    //返回上一级
+    //Return to the previous level
     @objc func pop() {
         if frames.count < 2 {return}
         let lastFrame: CGRect = frames[frames.count - 2];

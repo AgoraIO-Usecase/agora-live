@@ -2,7 +2,7 @@
 //  VoiceRoomIMManager.swift
 //  Pods-VoiceRoomIMKit_Tests
 //
-//  Created by 朱继超 on 2022/9/1.
+//Created by Zhu Jichao on September 1, 2022
 //
 
 import AgoraChat
@@ -10,7 +10,7 @@ import Foundation
 import KakaJSON
 
 public let VoiceRoomGift = "chatroom_gift"
-public let VoiceRoomPraise = "chatroom_praise" // like 点赞
+public let VoiceRoomPraise = "chatroom_praise" //Like Like Like
 public let VoiceRoomInviteSite = "chatroom_inviteSiteNotify"
 public let VoiceRoomCancelInviteSite = "chatroom_inviteRefusedNotify"
 public let VoiceRoomApplySite = "chatroom_applySiteNotify"

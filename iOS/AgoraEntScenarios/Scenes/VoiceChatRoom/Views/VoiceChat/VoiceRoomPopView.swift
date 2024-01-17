@@ -2,7 +2,7 @@
 //  VoiceRoomPopView.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/9/8.
+//Created by Zhu Jichao on September 8, 2022
 //
 
 import UIKit

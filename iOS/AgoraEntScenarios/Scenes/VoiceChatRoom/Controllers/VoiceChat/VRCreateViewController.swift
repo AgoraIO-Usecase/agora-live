@@ -23,7 +23,7 @@ class VRCreateViewController: UIViewController, VRCreateRoomViewDelegate {
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         }
 
-        func createBtnAction(_ roomModel: VRRoomEntity) {  //房主创建
+        func createBtnAction(_ roomModel: VRRoomEntity) {  //Homeowner Creation
             if roomModel.is_private && roomModel.roomPassword.count != 4 {
                 return
             }

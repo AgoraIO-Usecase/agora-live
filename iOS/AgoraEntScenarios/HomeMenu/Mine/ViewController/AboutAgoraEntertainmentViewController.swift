@@ -2,7 +2,7 @@
 //  AboutAgoraEntertainmentViewController.swift
 //  AgoraEntScenarios
 //
-//  Created by 朱继超 on 2023/2/8.
+// Created by Zhu Jichao on February 8, 2023
 //
 
 import UIKit

@@ -8,44 +8,44 @@
 import Foundation
 
 enum VoiceChatSubscribeStatus {
-    case created     //订阅到对象创建
-    case deleted     //订阅到对象删除
-    case updated     //订阅到对象更新
+    case created     //Subscription to object creation
+    case deleted     //Subscription to object deletion
+    case updated     //Subscription to object updates
 }
 
 protocol VoiceServiceProtocol: NSObjectProtocol {
 
-    /// 获取房间列表
+    ///Get room list
     /// - Parameters:
-    ///   - page: 分页索引，从0开始(由于SyncManager无法进行分页，这个属性暂时无效)
-    ///   - completion: 完成回调   (错误信息， 房间列表)
+    ///- Page: pagination index, starting from 0 (this attribute is temporarily invalid due to SyncManager's inability to perform pagination)
+    ///- completion: Complete callback (error message, room list)
     func getRoomList(page: Int,
                      completion: @escaping (Error?, [VoiceChatRoom]?) -> Void)
     
-    /// 创建房间
+    ///Create a room
     /// - Parameters:
-    ///   - room: 房间对象信息
-    ///   - completion: 完成回调   (错误信息)
+    ///- room: Room object information
+    ///- completion: Complete callback (error message)
     func createRoom(room: VoiceChatRoom,
                     completion: @escaping (Error?) -> Void)
     
-    /// 加入房间
+    ///Join Room
     /// - Parameters:
-    ///   - roomName: 房间名
-    ///   - completion: 完成回调   (错误信息， 房间信息)
+    ///- roomName: Room name
+    ///- completion: Complete callback (error message, room information)
     func joinRoom(roomName: String,
                   completion: @escaping (Error?, VoiceChatRoom?) -> Void)
     
-    /// 离开房间
+    ///Leave the room
     func leaveRoom()
     
-    /// 监听用户变化
+    ///Monitor user changes
     /// - Parameters:
     ///   - subscribeClosure: <#subscribeClosure description#>
     func subscribeUser(subscribeClosure: @escaping (VoiceChatSubscribeStatus, VoiceChatRoom) -> Void)
     
-    /// 获取当前房间所有用户
-    /// - Parameter completion: 完成回调   (错误信息， 用户列表)
+    ///Get all users in the current room
+    ///- Parameter completion: Completed callback (error message, user list)
     func getAllUserList(completion: @escaping (Error?, [VoiceChatUsers]?) -> Void)
 
     
@@ -53,18 +53,18 @@ protocol VoiceServiceProtocol: NSObjectProtocol {
     
     
 
-    /// 设置浏览人数
+    ///Set the number of viewers
     /// - Parameters:
-    ///   - visitCount: 浏览人数
+    ///- visitCount: Number of visitors
     ///   - completion: <#completion description#>
     func setVisit(visitCount: Int,
                   completion: @escaping (Error?) -> Void)
     
-    /// 获取浏览人数
+    ///Get the number of viewers
     /// - Parameter completion: <#completion description#>
     func getVisit(completion: @escaping (Error?, Int?) -> Void)
     
-    /// 订阅浏览人数变化
+    ///Changes in the number of subscribed viewers
     /// - Parameters:
     ///   - subscribeClosure: <#subscribeClosure description#>
     func subscribeVisit(subscribeClosure: @escaping (VoiceChatSubscribeStatus, Int) -> Void)
@@ -73,14 +73,14 @@ protocol VoiceServiceProtocol: NSObjectProtocol {
     
     
     
-    /// 语聊机器人开关
+    ///Chat robot switch
     /// - Parameters:
-    ///   - enable: true: 打开语聊机器人， false: 关闭语聊机器人
+    ///- enable: true: opens chatbot, false: closes chatbot
     ///   - completion: <#completion description#>
     func toggleSmartRobot(enable: Bool,
                           completion: @escaping (Error?) -> Void)
     
-    /// 语聊机器人开关变化
+    ///Chat robot switch changes
     /// - Parameters:
     ///   - subscribeClosure: <#subscribeClosure description#>
     func subscribeSmartRobot(subscribeClosure: @escaping (Bool) -> Void)
@@ -89,92 +89,92 @@ protocol VoiceServiceProtocol: NSObjectProtocol {
     
     
     
-    /// 获取所有麦位列表
+    ///Get a list of all booths
     /// - Parameter completion: <#completion description#>
     func getAllMicSeatsList(completion: @escaping (Error?, [VoiceChatMicSeat]?) -> Void)
     
-    /// 更新麦位信息
+    ///Update microphone location information
     /// - Parameters:
     ///   - seat: <#seatInfo description#>
     ///   - completion: <#completion description#>
     func updateMicSeat(seat: VoiceChatMicSeat, completion: @escaping (Error?) -> Void)
     
-    /// 订阅麦位变化
+    ///Subscription slot changes
     /// - Parameters:
     ///   - subscribeClosure: <#subscribeClosure description#>
     func subscribeMicSeat(subscribeClosure: @escaping (VoiceChatSubscribeStatus, VoiceChatMicSeat) -> Void)
     
-    /// 观众申请上麦
+    ///Audience applies for admission to the microphone
     /// - Parameters:
-    ///   - seatIndex: 麦位索引
+    ///- seatIndex: wheat spot index
     ///   - completion: <#completion description#>
     func createMicSeatRequest(seatIndex: Int,
                               completion: @escaping (Error?) -> Void)
     
     
-    ///  观众取消上麦申请
+    ///Audience cancels the application for online streaming
     /// - Parameters:
     ///   - seatIndex: <#seatIndex description#>
     ///   - completion: <#completion description#>
     func cancelMicSeatRequest(seatIndex: Int,
                               completion: @escaping (Error?) -> Void)
     
-    /// 获取所有上麦请求
+    ///Get all requests to access the microphone
     /// - Parameter completion: <#completion description#>
     func getAllMicSeatRequests(completion: @escaping (Error?, [VoiceChatMicSeatRequest]?) -> Void)
     
-    /// 同意上麦
+    ///Agree to go online
     /// - Parameters:
-    ///   - request: 上麦请求对象
+    ///- request: Request object for uploading to the microphone
     ///   - completion: <#completion description#>
     func approveMicSeatRequest(request: VoiceChatMicSeatRequest,
                                completion: @escaping (Error?) -> Void)
         
-    ///  拒接上麦
+    ///Refuse to connect to the microphone
     /// - Parameters:
-    ///   - request: 上麦请求对象
+    ///- request: Request object for uploading to the microphone
     ///   - completion: <#completion description#>
     func rejectMicSeatRequest(request: VoiceChatMicSeatRequest,
                               completion: @escaping (Error?) -> Void)
     
-    /// 订阅上麦请求变化
+    ///Subscription to microphone request changes
     /// - Parameters:
     ///   - subscribeClosure: <#subscribeClosure description#>
     func subscribeMicSeatRequestList(subscribeClosure: @escaping (VoiceChatSubscribeStatus, VoiceChatMicSeatRequest) -> Void)
     
-    /// 主播邀请观众上麦
+    ///The anchor invites the audience to join the microphone
     /// - Parameters:
     ///   - invitation: <#invitation description#>
     ///   - completion: <#completion description#>
     func createMicSeatInvitation(invitation: VoiceChatMicSeatInvitation,
                                  completion: @escaping (Error?) -> Void)
     
-    /// 主播取消观众上麦邀请
+    ///Anchor cancels audience's invitation to join the microphone
     /// - Parameters:
     ///   - invitation: <#invitation description#>
     ///   - completion: <#completion description#>
     func cancelMicSeatInvitation(invitation: VoiceChatMicSeatInvitation,
                                  completion: @escaping (Error?) -> Void)
     
-    /// 观众同意上麦邀请
+    ///Audience agrees to the invitation for online streaming
     /// - Parameters:
     ///   - invitation: <#invitation description#>
     ///   - completion: <#completion description#>
     func approveMicSeatInvitation(invitation: VoiceChatMicSeatInvitation,
                                   completion: @escaping (Error?) -> Void)
         
-    /// 拒绝上麦邀请
+    ///Refuse the invitation to access the microphone
     /// - Parameters:
     ///   - invitation: <#invitation description#>
     ///   - completion: <#completion description#>
     func rejectMicSeatInvitation(invitation: VoiceChatMicSeatInvitation,
                                  completion: @escaping (Error?) -> Void)
     
-    /// 获取所有上麦邀请
+    ///Get all online invitations
     /// - Parameter completion: <#completion description#>
     func getAllMicSeatInvitations(completion: @escaping (Error?, [VoiceChatMicSeatInvitation]?) -> Void)
     
-    /// 订阅上麦邀请变化
+    ///Subscription to microphone invitation changes
     /// - Parameters:
     ///   - subscribeClosure: <#subscribeClosure description#>
     func subscribeMicSeatInvitation(subscribeClosure: @escaping (VoiceChatSubscribeStatus, VoiceChatMicSeatInvitation) -> Void)
@@ -183,14 +183,14 @@ protocol VoiceServiceProtocol: NSObjectProtocol {
     
     
     
-    /// 发送聊天消息
+    ///Send chat messages
     /// - Parameters:
     ///   - message: <#message description#>
     ///   - completion: <#completion description#>
     func sendChatMessage(message: VoiceChatMessage,
                          completion: ((Error) -> Void)?)
     
-    /// 订阅聊天消息变化
+    ///Subscription chat message changes
     /// - Parameters:
     ///   - subscribeClosure: <#subscribeClosure description#>
     func subscribeMicSeatInvitation(subscribeClosure: @escaping (VoiceChatSubscribeStatus, VoiceChatMessage) -> Void)
@@ -200,17 +200,17 @@ protocol VoiceServiceProtocol: NSObjectProtocol {
     
     
     
-    /// 获取收到礼物数量
+    ///Obtain the number of gifts received
     /// - Parameter completion: <#completion description#>
     func getTotalGiftCount(completion: ((Error?, Int) -> Void)?)
     
-    /// 发送礼物
+    ///Sending gifts
     /// - Parameters:
-    ///   - gift: 礼物信息
+    ///- gift: gift information
     ///   - completion: <#completion description#>
     func sendGift(gift: VoiceChatGift, completion: ((Error?) -> Void)?)
     
-    /// 订阅收到礼物数量变化
+    ///Subscription received gift quantity change
     /// - Parameters:
     ///   - subscribeClosure: <#subscribeClosure description#>
     func subscribeTotalGiftCount(subscribeClosure: @escaping (Int) -> Void)
@@ -220,20 +220,20 @@ protocol VoiceServiceProtocol: NSObjectProtocol {
     
     
     
-    /// 更新公告
+    ///Update Announcement
     /// - Parameters:
-    ///   - content: 公告信息
+    ///- Content: Announcement information
     ///   - completion: <#completion description#>
     func setRoomNotice(content: String, completion: ((Error?) -> Void)?)
     
     
-    /// 更新公告信息(目前只有变化)
+    ///Update Announcement information (currently only changes)
     /// - Parameters:
     ///   - subscribeClosure: <#subscribeClosure description#>
     func subscribeRoomNotice(subscribeClosure: @escaping (VoiceChatSubscribeStatus, String) -> Void)
     
     
 
-    /// 取消所有监听
+    ///Cancel all listening
     func unsubscribeAll()
 }

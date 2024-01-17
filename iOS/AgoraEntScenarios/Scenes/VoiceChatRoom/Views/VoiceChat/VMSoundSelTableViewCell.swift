@@ -135,13 +135,13 @@ class VMSoundSelTableViewCell: UITableViewCell {
     func setShadow(view: UIView, sColor: UIColor, offset: CGSize,
                    opacity: Float, radius: CGFloat)
     {
-        // 设置阴影颜色
+        //Set Shadow Color
         view.layer.shadowColor = sColor.cgColor
-        // 设置透明度
+        //Set Transparency
         view.layer.shadowOpacity = opacity
-        // 设置阴影半径
+        //Set shadow radius
         view.layer.shadowRadius = radius
-        // 设置阴影偏移量
+        //Set Shadow Offset
         view.layer.shadowOffset = offset
     }
 

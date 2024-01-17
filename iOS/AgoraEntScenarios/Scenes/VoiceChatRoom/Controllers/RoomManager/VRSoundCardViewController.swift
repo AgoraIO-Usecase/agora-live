@@ -9,7 +9,7 @@ import UIKit
 
 class VRSoundCardViewController: UIViewController {
     
-    //虚拟声卡的属性
+    //Properties of Virtual Sound Card
     public var soundOpen: Bool = false
     public var gainValue: String = ""
     public var typeValue: Int = 0
@@ -39,7 +39,7 @@ class VRSoundCardViewController: UIViewController {
             settingView.gainValue = 0
         }
         settingView.clicKBlock = {[weak self] index in
-            //弹出音效
+            //Pop up sound effects
             let effectVC = VRSoundEffectViewController()
             effectVC.effectType = self?.effectType ?? 0
             effectVC.clicKBlock = {[weak self] index in

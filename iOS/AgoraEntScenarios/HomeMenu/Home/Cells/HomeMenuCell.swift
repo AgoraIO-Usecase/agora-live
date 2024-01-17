@@ -2,7 +2,7 @@
 //  HomeMenuCell.swift
 //  AgoraEntScenarios
 //
-//  Created by 朱继超 on 2022/10/27.
+// Created by Zhu Jichao on October 27, 2022
 //
 
 import UIKit

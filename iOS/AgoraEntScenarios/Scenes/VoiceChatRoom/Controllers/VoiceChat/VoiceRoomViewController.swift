@@ -121,7 +121,7 @@ class VoiceRoomViewController: VRBaseViewController {
         }
     }
     
-    //虚拟声卡的属性
+    //Properties of Virtual Sound Card
     public var soundOpen: Bool = false
     public var gainValue: String = ""
     public var typeValue: Int = 0
@@ -148,11 +148,11 @@ class VoiceRoomViewController: VRBaseViewController {
         isOwner = user.uid == owner.uid
         local_index = isOwner ? 0 : nil
         vmType = getSceneType(type)
-        // 布局UI
+        //Layout UI
         layoutUI()
-        // 加载RTC+IM
+        //Load RTC+IM
         loadKit()
-        // 处理底部事件
+        //Handle bottom events
         charBarEvents()
         self.subscribeSceneRoom()
         NotificationCenter.default.addObserver(self, selector: #selector(leaveRoom), name: Notification.Name("terminate"), object: nil)
@@ -202,7 +202,7 @@ extension VoiceRoomViewController {
         actionView.show()
     }
     
-    // 加载RTC
+    //Load RTC
     func loadKit() {
         guard let channel_id = roomInfo?.room?.channel_id else { return }
         guard let roomId = roomInfo?.room?.chatroom_id else { return }
@@ -254,10 +254,10 @@ extension VoiceRoomViewController {
                 self.quitRoom()
             } else {
                 if self.isOwner == true {
-                    //房主更新环信KV
+                    //Landlord updates environmental information KV
                     self.setChatroomAttributes()
                 } else {
-                    //观众更新拉取详情后更新kv
+                    //Update kV after audience updates pull details
                     self.requestRoomDetail()
                     Throttler.throttle(queue: .main,delay: .seconds(0.5),shouldRunLatest: true) {
                         self.sendJoinedMessage()
@@ -266,7 +266,7 @@ extension VoiceRoomViewController {
                 }
             }
         }
-        // 收集APM全链路音频
+        //Collect APM full link audio
         rtckit.setAPMOn(isOn: AppContext.shared.isVRApmOn)
     }
     
@@ -310,9 +310,9 @@ extension VoiceRoomViewController {
         }
     }
 
-    // 加入房间获取房间详情
+    //Join the room to obtain room details
     func requestRoomDetail() {
-        // 如果不是房主。需要主动获取房间详情
+        //If it's not the homeowner. Need to proactively obtain room details
         ChatRoomServiceImp.getSharedInstance().fetchRoomDetail(entity: self.roomInfo?.room ?? VRRoomEntity()) { [weak self] error, room_info in
             if error == nil {
                 guard let info = room_info else { return }
@@ -462,7 +462,7 @@ extension VoiceRoomViewController {
         } else if action == .notice {
             showNoticeView(with: isOwner ? .owner : .audience)
         } else if action == .rank {
-            // 展示土豪榜
+            //Display the list of tycoons
             showUsers(position: .left)
         } else if action == .soundClick {
             showSoundView()
@@ -478,7 +478,7 @@ extension VoiceRoomViewController {
     func didRtcAction(with type: AgoraChatRoomBaseUserCellType, tag: Int) {
         let index: Int = tag - 200
         guard let mic: VRRoomMic = ChatRoomServiceImp.getSharedInstance().mics[safe:index] else { return }
-        if index == 6 { // 操作机器人
+        if index == 6 { //Operating robots
             if roomInfo?.room?.use_robot == false {
                 showActiveAlienView(true)
             } else {
@@ -563,7 +563,7 @@ extension VoiceRoomViewController {
         noticeView.resBlock = { [weak self] flag, str in
             self?.dismiss(animated: true)
             guard let str = str else { return }
-            // 修改群公告
+            //Modify group announcements
             self?.updateNotice(with: str)
         }
         let noticeStr = roomInfo?.room?.announcement ?? ""
@@ -628,7 +628,7 @@ extension VoiceRoomViewController {
     func updateNotice(with str: String) {
         ChatRoomServiceImp.getSharedInstance().updateAnnouncement(content: str) { result in
             if result {
-                // 如果返回的结果为true 表示上麦成功
+                //If the returned result is true, it indicates that the wheat was successfully loaded
                 self.view.makeToast("voice_notice_posted".voice_localized)
                 self.roomInfo?.room?.announcement = str
             } else {
@@ -641,7 +641,7 @@ extension VoiceRoomViewController {
         if isOwner == false { return }
         ChatRoomServiceImp.getSharedInstance().updateRobotVolume(value: Vol) { error in
             if error == nil {
-                // 如果返回的结果为true 表示上麦成功
+                //If the returned result is true, it indicates that the wheat was successfully loaded
                 guard let room = self.roomInfo?.room else { return }
                 let newRoom = room
                 newRoom.robot_volume = UInt(Vol)
