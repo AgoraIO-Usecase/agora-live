@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraRtcKit
 
 private let SwitchCellID = "SwitchCellID"
 private let SliderCellID = "SliderCellID"
@@ -15,13 +16,19 @@ private let Debug2TFCellID = "Debug2TFCellID"
 
 class ShowDebugSettingVC: UIViewController {
     
-    var isBroadcastor = true
+    var isBroadcastor = true // 频道外
+    var engine: AgoraRtcEngineKit! {
+        didSet{
+            ShowDebugAgoraKitManager.shared.engine = engine
+        }
+    }
     
     private let transDelegate = ShowPresentTransitioningDelegate()
     private lazy var dataArray: [Any] = {
         isBroadcastor ? createBroadcastorDataArray() : createAudienceDataArray()
     }()
     
+    // 自定义导航栏
     private let naviBar = ShowNavigationBar()
     
     private lazy var tableView: UITableView = {
@@ -54,7 +61,8 @@ class ShowDebugSettingVC: UIViewController {
     }
     
     private func configCustomNaviBar(){
-        naviBar.title = "Developer mode Settings"
+        // 标题
+        naviBar.title = "开发者模式设置"
         naviBar.backgroundColor = .white
         view.addSubview(naviBar)
         
@@ -77,15 +85,15 @@ class ShowDebugSettingVC: UIViewController {
     }
     
     private func createBroadcastorDataArray() -> [Any] {
-        let settingManager = ShowAgoraKitManager.shared
+        let settingManager = ShowDebugAgoraKitManager.shared
         return [
             settingManager.debug1TFModelForKey(.encodeFrameRate),
             settingManager.debug2TFModelForKey(.encodeVideoSize),
             settingManager.debug1TFModelForKey(.bitRate),
             ShowDebugSettingKey.debugPVC,
-            ShowDebugSettingKey.focusFace,
-            settingManager.debug2TFModelForKey(.exposureRange),
-            settingManager.debug2TFModelForKey(.colorSpace), 
+            ShowDebugSettingKey.focusFace,  // 人脸对焦
+            settingManager.debug2TFModelForKey(.exposureRange),// 曝光区域
+            settingManager.debug2TFModelForKey(.colorSpace), // 颜色空间
             ShowDebugSettingKey.encode,
             ShowDebugSettingKey.codeCType,
             ShowDebugSettingKey.mirror,
@@ -116,7 +124,7 @@ extension ShowDebugSettingVC: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: Debug1TFCellID, for: indexPath) as! ShowDebugSetting1TFCell
             cell.setTitle(tf1Model.title, value: tf1Model.tfText, unit: tf1Model.unitText) { textField in
                 tf1Model.tfText = textField.text
-                ShowAgoraKitManager.shared.updateDebugProfileFor1TFMode(tf1Model)
+                ShowDebugAgoraKitManager.shared.updateDebugProfileFor1TFMode(tf1Model)
             } beginEditing: {
                 tableView.scrollToRow(at: indexPath, at: .top, animated: true)
             }
@@ -127,10 +135,10 @@ extension ShowDebugSettingVC: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: Debug2TFCellID, for: indexPath) as! ShowDebugSetting2TFCell
             cell.setTitle(tf2Model.title, value1: tf2Model.tf1Text, value2: tf2Model.tf2Text, separator: tf2Model.separatorText) { textField in
                 tf2Model.tf1Text = textField.text
-                ShowAgoraKitManager.shared.updateDebugProfileFor2TFModel(tf2Model)
+                ShowDebugAgoraKitManager.shared.updateDebugProfileFor2TFModel(tf2Model)
             } tf2DidEndEditing: { textField in
                 tf2Model.tf2Text = textField.text
-                ShowAgoraKitManager.shared.updateDebugProfileFor2TFModel(tf2Model)
+                ShowDebugAgoraKitManager.shared.updateDebugProfileFor2TFModel(tf2Model)
             } beginEditing: {
                 tableView.scrollToRow(at: indexPath, at: .top, animated: true)
             }
@@ -159,7 +167,7 @@ extension ShowDebugSettingVC: UITableViewDelegate, UITableViewDataSource {
                 vc.dataArray = data.items
                 vc.didSelectedIndex = { index in
                     data.writeValue(index)
-                    ShowAgoraKitManager.shared.updateSettingForDebugkey(data)
+                    ShowDebugAgoraKitManager.shared.updateSettingForDebugkey(data)
                     tableView.reloadData()
                 }
                 self?.present(vc, animated: true, completion: {
@@ -180,7 +188,7 @@ extension ShowDebugSettingVC: UITableViewDelegate, UITableViewDataSource {
 extension ShowDebugSettingVC {
     func changeValue(_ value: Any, forSettingKey key: ShowDebugSettingKey) {
         key.writeValue(value)
-        ShowAgoraKitManager.shared.updateSettingForDebugkey(key)
+        ShowDebugAgoraKitManager.shared.updateSettingForDebugkey(key)
         tableView.reloadData()
     }
 }
