@@ -2,7 +2,7 @@
 //  VoiceRoomChatEntity.swift
 //  VoiceRoomBaseUIKit-VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/8/30.
+//Created by Zhu Jichao on August 30, 2022
 //
 
 import Foundation

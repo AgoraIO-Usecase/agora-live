@@ -2,7 +2,7 @@
 //  Xcode14.m
 //  AgoraEntScenarios
 //
-//  Created by 朱继超 on 2022/11/14.
+// Created by Zhu Jichao on November 14, 2022
 //
 
 #import "Xcode14.h"

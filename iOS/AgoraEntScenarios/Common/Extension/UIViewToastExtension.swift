@@ -2,7 +2,7 @@
 //  UIViewToastExtension.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/8/29.
+// Created by Zhu Jichao on August 29, 2022
 //
 
 import ObjectiveC

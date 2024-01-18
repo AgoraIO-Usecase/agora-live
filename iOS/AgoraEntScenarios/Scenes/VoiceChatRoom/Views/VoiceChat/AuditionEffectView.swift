@@ -2,7 +2,7 @@
 //  AuditionEffectView.swift
 //  AgoraEntScenarios
 //
-//  Created by 朱继超 on 2023/2/9.
+//Created by Zhu Jichao on February 9, 2023
 //
 
 import UIKit

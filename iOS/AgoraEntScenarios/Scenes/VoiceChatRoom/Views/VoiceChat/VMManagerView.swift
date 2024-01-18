@@ -42,7 +42,7 @@ class VMManagerView: UIView {
 
     public var micInfo: VRRoomMic? {
         didSet {
-            // 0:正常状态 1:闭麦 2:禁言 3:锁麦 4:锁麦和禁言 -1:空闲
+            //0: Normal state 1: Closed microphone 2: Forbidden speech 3: Locked microphone 4: Locked microphone and Forbidden speech 1: Idle
             let m_type = micInfo?.status
             var username: String = "\(micInfo?.mic_index ?? 0)"
             var iconStr: String = ""
@@ -82,13 +82,21 @@ class VMManagerView: UIView {
                 nameLabel.text = username
             } else if m_type == 0 {
                 iconView.isHidden = false
-                iconView.sd_setImage(with: URL(string: iconStr), placeholderImage: UIImage.sceneImage(name: "mine_avatar_placeHolder", bundleName: "VoiceChatRoomResource"))
+                if iconStr.hasPrefix("http") {
+                    iconView.sd_setImage(with: URL(string: iconStr), placeholderImage: UIImage.sceneImage(name: "mine_avatar_placeHolder", bundleName: "VoiceChatRoomResource"))
+                } else {
+                    iconView.image = UIImage(named: iconStr)
+                }
                 nameLabel.text = username
                 micView.isHidden = true
                 inviteBtn.setTitle("voice_kick_mic".voice_localized, for: .normal)
             } else if m_type == 2 {
                 iconView.isHidden = false
-                iconView.sd_setImage(with: URL(string: iconStr), placeholderImage: UIImage.sceneImage(name: "mine_avatar_placeHolder", bundleName: "VoiceChatRoomResource"))
+                if iconStr.hasPrefix("http") {
+                    iconView.sd_setImage(with: URL(string: iconStr), placeholderImage: UIImage.sceneImage(name: "mine_avatar_placeHolder", bundleName: "VoiceChatRoomResource"))
+                } else {
+                    iconView.image = UIImage(named: iconStr)
+                }
                 nameLabel.text = username
                 micView.isHidden = false
                 inviteBtn.setTitle(micInfo?.member != nil ? "voice_kick_mic".voice_localized : "voice_invite".voice_localized, for: .normal)
@@ -211,7 +219,7 @@ class VMManagerView: UIView {
             return
         }
 
-        // 0:正常状态 1:闭麦 2:禁言 3:锁麦 4:锁麦和禁言 -1:空闲
+        //0: Normal state 1: Closed microphone 2: Forbidden speech 3: Locked microphone 4: Locked microphone and Forbidden speech 1: Idle
         let m_type = micInfo.status
         let user: VRUser? = micInfo.member
         switch m_type {

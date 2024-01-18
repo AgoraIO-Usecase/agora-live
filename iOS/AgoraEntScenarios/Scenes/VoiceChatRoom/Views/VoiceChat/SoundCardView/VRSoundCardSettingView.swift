@@ -67,25 +67,25 @@ import Foundation
         noSoundCardView = UIView()
         self.addSubview(noSoundCardView)
         
-        // 创建图片 attachment
+        //Create image attachment
         let imageAttachment = NSTextAttachment()
         imageAttachment.image = UIImage.sceneImage(name: "candel")
 
-        // 设置图片的大小和位置
+        //Set the size and position of the image
         let imageSize = CGSize(width: 20, height: 20)
         imageAttachment.bounds = CGRect(origin: .zero, size: imageSize)
 
-        // 创建带有图片的富文本
+        //Create rich text with images
         let attributedString = NSMutableAttributedString()
         let imageAttString = NSAttributedString(attachment: imageAttachment)
         attributedString.append(imageAttString)
 
-        // 添加文字部分
+        //Add Text Section
         let text = " 当前无法使用虚拟声卡，请连接优先输入设备！"
         let textAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: 12),
             .foregroundColor: UIColor.red,
-            .baselineOffset: (imageSize.height - UIFont.systemFont(ofSize: 12).capHeight) / 2  // 调整图片位置以实现垂直居中
+            .baselineOffset: (imageSize.height - UIFont.systemFont(ofSize: 12).capHeight) / 2  //Adjust image position to achieve vertical center
         ]
         let textAttString = NSAttributedString(string: text, attributes: textAttributes)
         attributedString.append(textAttString)
@@ -210,7 +210,7 @@ extension VRSoundCardSettingView: UITableViewDataSource, UITableViewDelegate {
        if indexPath.row == 0 {
           let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "switch", for: indexPath)
             
-           // 检查是否已经存在开关控件，如果不存在则创建并添加
+           //Check if switch controls already exist, if not, create and add them
           var switchControl: UISwitch? = cell.contentView.viewWithTag(100) as? UISwitch
           if switchControl == nil {
               switchControl = UISwitch()
@@ -282,10 +282,10 @@ extension VRSoundCardSettingView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let block = clicKBlock else {return}
         if indexPath.row == 1 {
-            //弹出音效选择
+            //Pop up sound effect selection
             block(2)
         } else if indexPath.row == 3 {
-//            //弹出麦克风类型
+////Pop up microphone type
 //            block(4)
         }
     }

@@ -109,17 +109,17 @@ open class AUIUploadNetworkModel: AUINetworkModel {
     }
     
     public func multipartData() -> Data {
-        // 创建HTTP请求体
+        // Create HTTP request body
         var data = Data()
         guard let name = name, let fileName = fileName, let fileData = fileData else {
             return data
         }
-        // 添加数据
+        // Add data
         data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
         data.append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(fileName)\"\r\n".data(using: .utf8)!)
         data.append("Content-Type: \(mimeType!)\r\n\r\n".data(using: .utf8)!)
         data.append(fileData)
-        // Multipart结束标记
+        // Multipart end tag
         data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
         return data
     }

@@ -110,12 +110,12 @@ class VRSoundCardSwitchCell: UITableViewCell {
 
 extension VRSoundCardSwitchCell: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
-            // 在此处执行输入结束后的操作
+            //Perform post input operations here
             if let text = textField.text {
                 guard let num = Float(text) else {return}
                 if num > 4.0 || num < 0 {
                     textField.text = "4.0"
-                    //同时更新slider
+                    //Simultaneously updating the slider
                     slider.value = 1.0
                 } else {
                     slider.value = num / 4.0

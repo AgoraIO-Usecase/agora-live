@@ -2,16 +2,16 @@
 //  VRRoomEntity.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/8/24.
+//Created by Zhu Jichao on August 24, 2022
 //
 
 import Foundation
 import KakaJSON
 
 @objc public class VRRoomsEntity: NSObject, Convertible {
-    public var total: Int? // 总房间数量
-    public var cursor: String? // 下一次请求房间列表的cursor
-    public var rooms: [VRRoomEntity]? // 房间信息数组
+    public var total: Int? //Total number of rooms
+    public var cursor: String? //The cursor for the next room list request
+    public var rooms: [VRRoomEntity]? //Room information array
 
     override public required init() {}
 
@@ -21,21 +21,21 @@ import KakaJSON
 }
 
 @objc open class VRRoomEntity: NSObject, Convertible {
-    public var room_id: String? // 房间id
+    public var room_id: String? //Room ID
     public var channel_id: String? // agora rtc channel id
     public var chatroom_id: String? // agora chat chatroom id
-    @objc public var name: String? // 房间名称
-    public var member_count: Int? = 0 // 房间人数
-    public var gift_amount: Int? = 0 // 礼物数
+    @objc public var name: String? //Room Name
+    public var member_count: Int? = 0 //Number of people in the room
+    public var gift_amount: Int? = 0 //Number of gifts
     public var owner: VRUser?
-    @objc public var is_private: Bool = false // 是否为私密房间
-    public var type: Int? = 0 // 房间类型， 0 ：普通房间，1:3D房间
-    public var created_at: UInt? // 创建房间时间戳，单位毫秒
+    @objc public var is_private: Bool = false //Is it a private room
+    public var type: Int? = 0 //Room type, 0: Normal room, 1:3D room
+    public var created_at: UInt? //Create room timestamp in milliseconds
     @objc public var roomPassword = ""
-    public var click_count: Int? = 0 // 观看人数
+    public var click_count: Int? = 0 //Number of viewers
     public var announcement: String? // Notice
-    public var ranking_list: [VRUser]? = [VRUser]() // 土豪榜
-    public var member_list: [VRUser]? = [VRUser]() // 用户榜
+    public var ranking_list: [VRUser]? = [VRUser]() //Rich List
+    public var member_list: [VRUser]? = [VRUser]() //User List
     public var rtc_uid: Int? = 0
     public var use_robot: Bool? = false
     public var turn_AIAEC: Bool? = false
@@ -56,18 +56,18 @@ import KakaJSON
 }
 
 enum VRRoomMicStatus: Int {
-    case idle = -1              //空闲
-    case normal = 0             //正常
-    case close = 1              //闭麦
-    case forbidden = 2          //禁言
-    case lock = 3               //锁麦
-    case forbiddenAndLock = 4   //锁麦和禁言
+    case idle = -1              //Idle
+    case normal = 0             //Normal
+    case close = 1              //Closed wheat
+    case forbidden = 2          //Prohibition
+    case lock = 3               //Lock wheat
+    case forbiddenAndLock = 4   //Lock while and Prohibition
 }
 
 @objc open class VRRoomMic: NSObject, Convertible {
     var mic_index: Int = 0
 
-    var status: Int = 0 // 0:正常状态 1:闭麦 2:禁言 3:锁麦 4:锁麦和禁言 -1:空闲
+    var status: Int = 0 //0: Normal state 1: Closed microphone 2: Forbidden speech 3: Locked microphone 4: Locked microphone and Forbidden speech 1: Idle
 
     var member: VRUser?
 

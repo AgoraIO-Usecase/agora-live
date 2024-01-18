@@ -2,7 +2,7 @@
 //  VoiceRoomGifterCell.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/9/9.
+//Created by Zhu Jichao on September 9, 2022
 //
 
 import UIKit
@@ -52,6 +52,10 @@ public class VoiceRoomGifterCell: UITableViewCell {
     func refresh(item: VRUser?) {
         userName.text = item?.name ?? ""
         total.setTitle("  \(item?.amount ?? 0)", for: .normal)
-        avatar.sd_setImage(with: URL(string: item?.portrait ?? "")!, placeholderImage: UIImage(named: "mine_avatar_placeHolder"))
+        if let portrait = item?.portrait, portrait.hasPrefix("http") {
+            avatar.sd_setImage(with: URL(string: item?.portrait ?? "")!, placeholderImage: UIImage(named: "mine_avatar_placeHolder"))
+        } else {
+            avatar.image = UIImage(named: item?.portrait ?? "")
+        }
     }
 }

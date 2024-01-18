@@ -2,7 +2,7 @@
 //  VoiceRoomApplyCell.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/9/13.
+//Created by Zhu Jichao on September 13, 2022
 //
 
 import UIKit
@@ -44,8 +44,10 @@ public class VoiceRoomApplyCell: UITableViewCell {
     func refresh(item: VoiceRoomApply?) {
         user = item
         userName.text = item?.member?.name
-        if let imgUrl = URL(string: item?.member?.portrait ?? "") {
+        if let portrait = item?.member?.portrait, portrait.hasPrefix("http"), let imgUrl = URL(string: portrait) {
             avatar.sd_setImage(with: imgUrl, placeholderImage: UIImage(named: "mine_avatar_placeHolder"))
+        } else {
+            avatar.image = UIImage(named: item?.member?.portrait ?? "")
         }
         operation.setTitle(item?.member?.invited == true ? "voice_accepted".voice_localized : "voice_accept".voice_localized, for: .normal)
         operation.setBackgroundImage(UIImage.voice_image(item?.member?.invited == true ? "" : "blue_btn_bg")?.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20), resizingMode: .stretch), for: .normal)

@@ -21,10 +21,6 @@ class VMSoundSelTableViewCell: UITableViewCell {
     private var typeLabel: UILabel = .init()
     private var iconView: UIImageView = .init()
     private var detailLabel: UILabel = .init()
-    private var lineView: UIView = .init()
-    private var usageLabel: UILabel = .init()
-    private var yallaView: UIImageView = .init()
-    private var soulView: UIImageView = .init()
     private var selView: UIImageView = .init()
 
     private var typeStr: String = ""
@@ -103,14 +99,6 @@ class VMSoundSelTableViewCell: UITableViewCell {
         selView.image = UIImage.sceneImage(name: "dan-check", bundleName: "VoiceChatRoomResource")
         addSubview(selView)
 
-        usageLabel.text = "voice_current_customer_usage".voice_localized
-        usageLabel.font = UIFont.systemFont(ofSize: 11)
-        usageLabel.textColor = UIColor(hex: 0x979CBB, alpha: 1)
-        bgView.addSubview(usageLabel)
-
-        lineView.backgroundColor = UIColor(hex: 0xF6F6F6, alpha: 1)
-        bgView.addSubview(lineView)
-
         guard let iconImgs = iconImgs else {
             return
         }
@@ -142,29 +130,18 @@ class VMSoundSelTableViewCell: UITableViewCell {
         iconView.frame = CGRect(x: screenWidth - 30, y: 15, width: 20, height: 20)
         detailLabel.frame = CGRect(x: 20, y: 40, width: bounds.size.width - 80, height: cellHeight)
         selView.frame = CGRect(x: screenWidth - 10, y: bounds.size.height - 50, width: 30, height: 30)
-        usageLabel.frame = CGRect(x: 20, y: bounds.size.height - 74, width: 200, height: 12)
-        lineView.frame = CGRect(x: 20, y: bounds.size.height - 82, width: bounds.size.width - 80, height: 1)
-
-        for view in subviews {
-            if view.isKind(of: UIImageView.self) {
-                if view.tag >= 10 && view.tag <= 50 {
-                    let index = view.tag % 10
-                    view.frame = CGRect(x: 40 + 30 * CGFloat(index), y: bounds.size.height - 55, width: 20, height: 20)
-                }
-            }
-        }
     }
 
     func setShadow(view: UIView, sColor: UIColor, offset: CGSize,
                    opacity: Float, radius: CGFloat)
     {
-        // 设置阴影颜色
+        //Set Shadow Color
         view.layer.shadowColor = sColor.cgColor
-        // 设置透明度
+        //Set Transparency
         view.layer.shadowOpacity = opacity
-        // 设置阴影半径
+        //Set shadow radius
         view.layer.shadowRadius = radius
-        // 设置阴影偏移量
+        //Set Shadow Offset
         view.layer.shadowOffset = offset
     }
 

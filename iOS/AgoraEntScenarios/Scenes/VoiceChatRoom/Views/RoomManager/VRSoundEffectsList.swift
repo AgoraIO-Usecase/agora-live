@@ -2,7 +2,7 @@
 //  VRSoundEffectsList.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/8/26.
+//Created by Zhu Jichao on August 26, 2022
 //
 
 import QuartzCore
@@ -39,7 +39,7 @@ public class VRSoundEffectsList: UITableView, UITableViewDelegate, UITableViewDa
 
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let item = datas[indexPath.row]
-        return VRSoundEffectsList.heightMap[item.title]! + 20 + 102.5
+        return VRSoundEffectsList.heightMap[item.title]! + 20 + 50
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

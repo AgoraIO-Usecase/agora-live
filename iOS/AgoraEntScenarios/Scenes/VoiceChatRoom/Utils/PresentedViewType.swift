@@ -2,52 +2,52 @@
 //  VoiceRoomAlertViewController.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/8/30.
+//Created by Zhu Jichao on August 30, 2022
 //
 
 import Foundation
 
-/// presentedView的设置
+///Settings for presentedView
 public struct PresentedViewComponent {
-    /// presentedView的size
+    ///The size of presentedView
     public var contentSize: CGSize
 
-    /// presentedView最终展示位置
+    ///PresentedView final display location
     public var destination: PresentationDestination = .bottomBaseline
 
-    /// present转场动画，为nil则基于destination使用
+    ///Present transition animation, using nil based on destination
     public var presentTransitionType: TransitionType?
 
-    /// dismiss转场动画，为nil则基于destination使用
+    ///Dismiss transition animation, using nil based on destination
     public var dismissTransitionType: TransitionType?
 
-    /// 是否开启点击背景dismiss
+    ///Do you want to enable background display when clicking
     public var canTapBGDismiss: Bool = true
 
-    /// 是否开启pan手势dismiss
+    ///Do you want to enable pan gesture display
     public var canPanDismiss: Bool = true
 
-    /// pan手势方向，为nil则基于destination使用
+    ///Pan gesture direction, for nil, use based on destination
     public var panDismissDirection: PanDismissDirection?
 
-    /// 键盘出现的平移方式，默认贴近PresentedView
+    ///The translation method of the keyboard, which is close to PresentedView by default
     public var keyboardTranslationType: KeyboardTranslationType = .unabgeschirmt(compress: true)
 
-    /// 键盘间隔，默认0
+    ///Keyboard interval, default to 0
     public var keyboardPadding: CGFloat = 0
 
-    /// 初始化方法
+    ///Initialization method
     ///
     /// - Parameters:
-    ///   - contentSize: presentedView的size
-    ///   - destination: presentedView最终展示位置
-    ///   - presentTransitionType: present转场动画
-    ///   - dismissTransitionType: dismiss转场动画
-    ///   - canTapBGDismiss:  是否开启点击背景dismiss
-    ///   - canPanDismiss: 是否开启pan手势dismiss
-    ///   - panDismissDirection: pan手势方向
-    ///   - keyboardTranslationType: 键盘出现的平移方式，默认贴近PresentedView
-    ///   - keyboardPadding: 键盘间隔，默认20
+    ///- contentSize: The size of presentedView
+    ///- Destination: presentedView
+    ///- presentTransitionType: present transition animation
+    ///- dispissTransitionType: dispissTransitionType animation
+    ///- canTapBGDismiss: Is clicking background Dismiss enabled
+    ///- canPanDismiss: Is pan gesture Dismiss enabled
+    ///- panDisassisDirection: Pan gesture direction
+    ///- keyboardTranslationType: The translation method that appears on the keyboard, which is close to PresentedView by default
+    ///- keyboardPadding: keyboard spacing, default to 20
     public init(contentSize: CGSize,
                 destination: PresentationDestination = .bottomBaseline,
                 presentTransitionType: TransitionType? = nil,
@@ -70,9 +70,9 @@ public struct PresentedViewComponent {
     }
 }
 
-/// presentedView必须遵守此协议
+///PresentedView must comply with this agreement
 public protocol PresentedViewType {
-    /// presentedView的设置
+    ///Settings for presentedView
     var presentedViewComponent: PresentedViewComponent? { get set }
 }
 

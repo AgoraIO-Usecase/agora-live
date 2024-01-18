@@ -6,7 +6,7 @@
 //
 
 import UIKit
-//不同场景的视图高度
+//View heights for different scenes
 public enum TV_TYPE_HEIGHT: CGFloat {
     case ANS = 920
     case AEC = 455
@@ -232,9 +232,9 @@ extension VoiceRoomAudioSettingDetailViewController: UITableViewDelegate, UITabl
         switch settingType {
         case .effect:
             if indexPath.section == 0 {
-                return effectHeight[0] + 132
+                return effectHeight[0] + 70
             } else {
-                return effectHeight[indexPath.row + 1] + 132
+                return effectHeight[indexPath.row + 1] + 70
             }
 
         case .Noise:

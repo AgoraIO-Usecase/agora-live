@@ -54,7 +54,7 @@ class VoiceRoomAudioSettingViewController: VRBaseViewController {
     [
         [.AINS, .AIAEC, .AGC, .EarBack, .SoundCard],
         [.Robots, .RobotsVolume],
-        [.BesetSoundEffect, .BGM, .Engine]
+        [.BesetSoundEffect]
     ]
 
     private var soundTitle: [String] = []
@@ -80,7 +80,7 @@ class VoiceRoomAudioSettingViewController: VRBaseViewController {
         let actionView = ActionSheetManager()
         let isOn = (roomInfo?.room?.turn_InEar ?? false)
         inEarView.isHidden = !isOn
-        // 设置耳返音量
+        //Set ear return volume
         setInEarVolumnBlock?(roomInfo?.room?.inEar_volume ?? 100)
         var inEar_volume = Double((roomInfo?.room?.inEar_volume ?? 100)) / 100.0
         var inEarMode = roomInfo?.room?.inEarMode ?? ""
@@ -88,7 +88,7 @@ class VoiceRoomAudioSettingViewController: VRBaseViewController {
         var inEarModeIndex = earModes.firstIndex(where: { $0 == inEarMode }) ?? 0
         let hasHeadset = HeadSetUtil.hasHeadset()
         let tipsTextColor = hasHeadset ? UIColor(hex: "#979CBB") : UIColor(hex: "#FF1216")
-        // 查询自己有没有在麦上
+        //Check if you are on the microphone
         let seatUser = ChatRoomServiceImp.getSharedInstance().mics.first(where: { $0.member?.uid == VLUserCenter.user.id && $0.status != -1 })
         let tipsText = hasHeadset ? "voice_open_ear_return_adjust".voice_localized : "voice_using_ear_feedback".voice_localized
         actionView.title(title: "voice_in_ear".voice_localized)
@@ -99,7 +99,7 @@ class VoiceRoomAudioSettingViewController: VRBaseViewController {
                         value: inEar_volume,
                         isEnable: isOn,
                         accessibilityIdentifier: "voice_chat_room_audio_setting_action_slider_inEar")
-//                    .segmentCell(title: "耳返模式", items: earModes, selectedIndex: inEarModeIndex, isEnable: isOn)
+//. segmentCell (Title: "Ear Return Mode", items: earModes, selectedIndex: inEarModeIndex, isEnable: isOn)
 //                    .customCell(customView: inEarView, viewHeight: 150)
             .config()
         actionView.backButtonAccessibilityIdentifier = "voice_chat_room_audio_setting_action_back_btn"
@@ -131,10 +131,10 @@ class VoiceRoomAudioSettingViewController: VRBaseViewController {
             })
         }
         
-        // 监听耳机插入
+        //Listening earphone insertion
         HeadSetUtil.addHeadsetObserver { hasHeadset in
             let isOn = (self.roomInfo?.room?.turn_InEar ?? false)
-            // 查询自己有没有在麦上
+            //Check if you are on the microphone
             let seatUser = ChatRoomServiceImp.getSharedInstance().mics.first(where: { $0.member?.uid == VLUserCenter.user.id && $0.status != -1 })
             let switchIndexPath = IndexPath(row: 0, section: 0)
             actionView.updateSwitchStatus(indexPath: switchIndexPath, isOn: hasHeadset ? isOn : false, isEnable: hasHeadset && seatUser != nil)
@@ -175,7 +175,7 @@ class VoiceRoomAudioSettingViewController: VRBaseViewController {
     var backgroundMusicPlaying: ((VoiceMusicModel) -> Void)?
     var onClickAccompanyButtonClosure: ((Bool) -> Void)?
     
-    //虚拟声卡相关
+    //Virtual sound card related
     @objc var clicKBlock:((Int) -> Void)?
     @objc var gainBlock:((Float) -> Void)?
     @objc var typeBlock:((Int) -> Void)?
@@ -236,7 +236,6 @@ class VoiceRoomAudioSettingViewController: VRBaseViewController {
         tableView.registerCell(VMSwitchTableViewCell.self, forCellReuseIdentifier: swIdentifier)
         tableView.registerCell(VMSliderTableViewCell.self, forCellReuseIdentifier: slIdentifier)
         tableView.registerCell(VMNorSetTableViewCell.self, forCellReuseIdentifier: nIdentifier)
-        tableView.registerCell(VMAudioSetEngineSurpportCell.self, forCellReuseIdentifier: spdentifier)
         tableView.dataSource = self
         tableView.delegate = self
         view.addSubview(tableView)
@@ -451,10 +450,6 @@ extension VoiceRoomAudioSettingViewController: UITableViewDelegate, UITableViewD
             let text = musicName == nil ? "" : "\(musicName ?? "")-\(singerName ?? "")"
             cell.contentLabel.text = text
             return cell
-        } else if (type == .Engine) {
-            let cell = tableView.dequeueReusableCell(withIdentifier: spdentifier) ?? UITableViewCell()
-            cell.accessibilityIdentifier = "voice_chat_room_audio_setting_\(indexPath.section)_\(indexPath.row)"
-            return cell
         }
         return UITableViewCell()
     }
@@ -479,7 +474,7 @@ extension VoiceRoomAudioSettingViewController: UITableViewDelegate, UITableViewD
             case 3:
                 state = .InEar
                 heightType = .InEar
-                // 查询自己有没有在麦上
+                //Check if you are on the microphone
                 let seatUser = ChatRoomServiceImp.getSharedInstance().mics.first(where: { $0.member?.uid == VLUserCenter.user.id && $0.status != -1 })
                 if seatUser != nil {
                     actionView.show_voice()
@@ -493,7 +488,7 @@ extension VoiceRoomAudioSettingViewController: UITableViewDelegate, UITableViewD
         }  else if indexPath.section == 2 {
             switch indexPath.row {
             case 0:
-                //最佳音效
+                //Best Sound Effects
                 state = .effect
                 heightType = .EFFECT
                 
@@ -514,7 +509,7 @@ extension VoiceRoomAudioSettingViewController: UITableViewDelegate, UITableViewD
             return
         }
         
-        //处理虚拟声卡的业务
+        //Handling virtual sound card business
         if indexPath.section == 0 && indexPath.row == 4 {
             
             let seatUser = ChatRoomServiceImp.getSharedInstance().mics.first(where: { $0.member?.uid == VLUserCenter.user.id && $0.status != -1 })

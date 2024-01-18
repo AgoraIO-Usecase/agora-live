@@ -48,7 +48,7 @@ import UIKit
         let imgH:CGFloat = reportButton.imageView!.frame.size.height
         let lblW:CGFloat = reportButton.titleLabel!.frame.size.width
         let lblH:CGFloat = reportButton.titleLabel!.frame.size.height
-        //设置图片和文字的间距，这里可自行调整
+        // Set the spacing between images and text, which can be adjusted independently here
         let margin:CGFloat = 4
  
         reportButton.imageEdgeInsets = UIEdgeInsets(top: -lblH - margin, left: 0, bottom: 0, right: -lblW)

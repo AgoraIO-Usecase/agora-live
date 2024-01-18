@@ -2,7 +2,7 @@
 //  VoiceRoomGiftsView.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/9/8.
+//Created by Zhu Jichao on September 8, 2022
 //
 
 import UIKit
@@ -37,9 +37,9 @@ public class VoiceRoomGiftsView: UIView, UICollectionViewDelegate, UICollectionV
         pageControl.backgroundColor = UIColor.clear
         pageControl.numberOfPages = 3
         pageControl.currentPage = 0
-        // 设置pageControl未选中的点的颜色
+        //Set the color of unselected points in pageControl
         pageControl.pageIndicatorTintColor = UIColor(0xEFF4FF)
-        // 设置pageControl选中的点的颜色
+        //Set the color of the selected points in pageControl
         pageControl.currentPageIndicatorTintColor = UIColor(0x6378F4)
         return pageControl
     }()

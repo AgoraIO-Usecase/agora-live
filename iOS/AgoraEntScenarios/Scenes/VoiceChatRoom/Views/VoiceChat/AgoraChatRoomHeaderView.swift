@@ -40,16 +40,20 @@ class AgoraChatRoomHeaderView: UIView {
     private var configView: UIView = .init()
     private var soundClickBtn: UIButton = .init()
 
-    private var rankFBtn: UIButton = .init() // 榜一大哥
-    private var rankSBtn: UIButton = .init() // 榜二土豪
-    private var rankTBtn: UIButton = .init() // 榜三小弟
+    private var rankFBtn: UIButton = .init() //Rank One Big Brother
+    private var rankSBtn: UIButton = .init() //Ranked second tycoon
+    private var rankTBtn: UIButton = .init() //Ranking Three Little Brother
 
     var completeBlock: resBlock?
     
     func updateHeader(with room_entity: VRRoomEntity?) {
         guard let room = room_entity else {return}
         guard let owner = room.owner else { return }
-        self.iconImgView.sd_setImage(with: URL(string: owner.portrait ?? ""), placeholderImage:UIImage.sceneImage(name: "", bundleName: "VoiceChatRoomResource"))
+        if let portrait = owner.portrait, portrait.hasPrefix("http") {
+            self.iconImgView.sd_setImage(with: URL(string: owner.portrait ?? ""), placeholderImage:UIImage.sceneImage(name: "", bundleName: "VoiceChatRoomResource"))
+        } else {
+            iconImgView.image = UIImage(named: owner.portrait ?? "")
+        }
         self.titleLabel.text = "\((room.member_list?.count ?? 0)+(room.owner?.chat_uid ?? "" == VoiceRoomUserInfo.shared.user?.chat_uid ?? "" ? 3:4))\("voice_online".voice_localized) ｜ \(room.click_count ?? 0)\("voice_watch".voice_localized)"
         self.roomLabel.text = room.name
         let gift_count = room.gift_amount ?? 0
@@ -309,7 +313,7 @@ class AgoraChatRoomHeaderView: UIView {
     }
 
     private func updateGiftList(with room: VRRoomEntity) {
-        // 土豪榜展示逻辑
+        //Display logic of the tycoon list
         if let rankList = room.ranking_list {
             if rankList.count == 0 { return }
 
