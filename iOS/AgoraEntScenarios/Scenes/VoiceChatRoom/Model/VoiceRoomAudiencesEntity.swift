@@ -2,7 +2,7 @@
 //  VoiceRoomAudiencesEntity.swift
 //  AgoraScene_iOS
 //
-//  Created by 朱继超 on 2022/9/18.
+//Created by Zhu Jichao on September 18, 2022
 //
 
 import Foundation

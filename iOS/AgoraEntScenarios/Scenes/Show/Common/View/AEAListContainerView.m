@@ -39,7 +39,7 @@
         [self.childVCDic setObject:vc forKey:@(index)];
     }
     
-    // 如果vc是当前控制器 不做操作直接返回
+    // If VC is the current controller that does not take any action and returns directly
     if (_currentVC == vc) {
         return;
     }

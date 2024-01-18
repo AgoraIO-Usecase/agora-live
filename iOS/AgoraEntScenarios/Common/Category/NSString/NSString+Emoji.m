@@ -3,7 +3,7 @@
 //  Ulife_Service
 //
 //  Created by tcnj on 15/11/9.
-//  Copyright © 2015年 UHouse. All rights reserved.
+// Copyright ©  2015 UHouse All rights reserved
 //
 
 #import "NSString+Emoji.h"

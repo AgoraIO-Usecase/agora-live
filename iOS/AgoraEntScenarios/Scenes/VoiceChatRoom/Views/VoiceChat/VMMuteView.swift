@@ -11,9 +11,9 @@ import ZSwiftBaseLib
 import YYCategories
 
 public enum MUTE_ACTION {
-    case unmute // unmute自己
-    case mute // mute自己
-    case leave // 下麦
+    case unmute //Unmute himself
+    case mute //Mute himself
+    case leave //Xiamai
 }
 
 class VMMuteView: UIView {
@@ -36,7 +36,7 @@ class VMMuteView: UIView {
     public var isOwner: Bool = false
     public var micInfo: VRRoomMic? {
         didSet {
-            // 0:正常状态 1:闭麦 2:禁言 3:锁麦 4:锁麦和禁言 -1:空闲
+            //0: Normal state 1: Closed microphone 2: Forbidden speech 3: Locked microphone 4: Locked microphone and Forbidden speech 1: Idle
             let m_type = micInfo?.status
             let userStatus = micInfo?.member?.micStatus
             var username: String = "\(micInfo?.mic_index ?? 0)"

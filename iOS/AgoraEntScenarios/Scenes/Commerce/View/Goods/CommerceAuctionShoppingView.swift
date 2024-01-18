@@ -206,7 +206,7 @@ class CommerceAuctionShoppingView: UIView {
 //            if count <= 0 {
 //                timer.invalidate()
 //                sender.isUserInteractionEnabled = true
-//                //TODO: 待刷新
+// // TODO: To be refreshed
 //            }
 //            count -= 1
 //        }

@@ -2,7 +2,7 @@
 //  NSDictionary+dictToModel.h
 //  FT_iPhone
 //
-//  Created by 吴文海 on 2019/4/17.
+// Created by Wu Wenhai on April 17, 2019
 //  Copyright © 2019 ChangDao. All rights reserved.
 //
 

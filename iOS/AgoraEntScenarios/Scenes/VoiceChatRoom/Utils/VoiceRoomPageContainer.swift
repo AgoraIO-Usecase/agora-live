@@ -2,7 +2,7 @@
 //  VoiceRoomPageContainer.swift
 //  VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/9/9.
+//Created by Zhu Jichao on September 9, 2022
 //
 
 import UIKit
@@ -47,7 +47,7 @@ public class VoiceRoomPageContainer: UIView, UIPageViewControllerDataSource, UIP
         pageController.view.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
         pageController.view.topAnchor.constraint(equalTo: topAnchor).isActive = true
         
-        // 禁用默认的滑动手势
+        //Disable default sliding gestures
         for view in pageController.view.subviews {
             if let subView = view as? UIScrollView {
                 subView.isScrollEnabled = false
@@ -60,7 +60,7 @@ public class VoiceRoomPageContainer: UIView, UIPageViewControllerDataSource, UIP
         fatalError("init(coder:) has not been implemented")
     }
     
-    // 重写手势识别方法，返回false以禁止滑动手势
+    //Rewrite gesture recognition method and return false to prohibit sliding gestures
     public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return false
     }

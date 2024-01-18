@@ -19,19 +19,19 @@ private let roateAnimtionKey = "roateAnimtionKey"
 private let scaleAnimtionKey = "scaleAnimtionKey"
 
 class CommerceEmitterLayer: CALayer, CAAnimationDelegate {
-    // 生命周期
+    // Life cycle
     var lifeTime: TimeInterval = 2 {
         didSet {
             defaultConfig()
         }
     }
-    // 速度 px/s 影响最终消失的距离
+    // The speed px/s affects the final disappearance distance
     var velocity: Float = 60 {
         didSet {
             defaultConfig()
         }
     }
-    // 速度随机范围 必须在(0, 1]之间
+    // The speed random range must be between (0, 1]
     var velocityRange: Float = 0 {
         didSet {
             defaultConfig()
@@ -47,15 +47,15 @@ class CommerceEmitterLayer: CALayer, CAAnimationDelegate {
     }
     var fromAlpha: Float = 1.0
     var toAlpha: Float = 1.0
-    // 旋转范围
+    // Rotation range
     var roateRange: Double = 0
     var fromScale: Float = 1.0
     var toScale: Float = 1.0
-    // 偏移 影响垂直发射出的位置
+    // Deviation affects the position of vertical emission
     var skewing: CGFloat = 30
-    // 显示的视图
+    // Displayed View
     private var displayView: UIView?
-    // 最终移动的距离
+    // The final distance of movement
     private var maxLength: CGFloat = 0
         
     class func emitterLayer(size: CGSize, center: CGPoint, image: UIImage) -> CommerceEmitterLayer {

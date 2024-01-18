@@ -10,7 +10,7 @@ import UIKit
 class ShowDebugPrivateParamsVC: UIViewController {
     
     var settingManager: ShowAgoraKitManager?
-    // 自定义导航栏
+    // Customize navigation bar
     private let naviBar = ShowNavigationBar()
     
     private let textView = UITextView()
@@ -37,7 +37,7 @@ class ShowDebugPrivateParamsVC: UIViewController {
     }
     
     private func configCustomNaviBar(){
-        // 标题
+        // Title
         naviBar.title = "设置私参"
         naviBar.backgroundColor = .white
         view.addSubview(naviBar)

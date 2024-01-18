@@ -2,7 +2,7 @@
 //  VoiceRoomViewController+ChatBar.swift
 //  AgoraScene_iOS
 //
-//  Created by 朱继超 on 2022/10/11.
+//Created by Zhu Jichao on October 11, 2022
 //
 
 import Foundation
@@ -13,7 +13,7 @@ import ZSwiftBaseLib
 extension VoiceRoomViewController {
     
     func showEQView() {
-        //更新为不等高弹窗视图 全都是控制器 方便业务更新
+        //Updated to unequal height pop-up view, all controllers are convenient for business updates
         let audioSetVC: VoiceRoomAudioSettingViewController = VoiceRoomAudioSettingViewController(rtcKit: rtckit)
         audioSetVC.roomInfo = roomInfo
         audioSetVC.isAudience = !isOwner
@@ -82,8 +82,8 @@ extension VoiceRoomViewController {
         audioSetVC.effectClickBlock = { [weak self] type in
 
             /**
-             1.如果是观众，则toast 提示
-             2.如果是主播先要判断是否开启机器人
+             If it is the audience, toast prompt
+             2. If it is the anchor, first determine whether to turn on the robot
              */
             if self!.isOwner == false {
                 self?.view.makeToast("voice_host_sound".voice_localized)
@@ -95,7 +95,7 @@ extension VoiceRoomViewController {
 //            }
 
             if type == .none {
-                // 如果选择的是其他音效。弹窗确认是否需要退出
+                //If other sound effects are selected. Pop up to confirm if you need to exit
                 self?.showExitRoomView()
                 return
             }

@@ -2,7 +2,7 @@
 //  VoiceRoomChatView.swift
 //  VoiceRoomBaseUIKit-VoiceRoomBaseUIKit
 //
-//  Created by 朱继超 on 2022/8/30.
+//Created by Zhu Jichao on August 30, 2022
 //
 
 import UIKit
@@ -53,16 +53,16 @@ public class VoiceRoomChatView: UIView, UITableViewDelegate, UITableViewDataSour
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    } /// 渐变蒙层
+    } ///Gradient mask
 //    self.gradientLayer = [CAGradientLayer layer];
-//    self.gradientLayer.startPoint = CGPointMake(0, 0); //渐变色起始位置
-//    self.gradientLayer.endPoint = CGPointMake(0, 0.1); //渐变色终止位置
+//Self. radiantLayer. startPoint=CGPointMake (0,0)// Gradient start position
+//Self. radiantLayer. endPoint=CGPointMake (0, 0.1)// Gradient termination position
 //    self.gradientLayer.colors = @[(__bridge id)[UIColor.clearColor colorWithAlphaComponent:0].CGColor, (__bridge id)
 //     [UIColor.clearColor colorWithAlphaComponent:1.0].CGColor];
-//    self.gradientLayer.locations = @[@(0), @(1.0)]; // 对应colors的alpha值
+//Self. radiantLayer. locations=@ [@ (0), @ (1.0)]// Corresponding alpha value of colors
 //    self.gradientLayer.rasterizationScale = UIScreen.mainScreen.scale;
 //
-//    ///  添加蒙层效果的图层
+/////Add a layer with a masking effect
 //    self.tableViewBackgroundView = [[UIView alloc] init];
 //    self.tableViewBackgroundView.backgroundColor = UIColor.clearColor;
 //    [self addSubview:self.tableViewBackgroundView];

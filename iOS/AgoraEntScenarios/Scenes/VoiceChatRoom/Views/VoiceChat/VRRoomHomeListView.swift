@@ -36,7 +36,7 @@ class VRRoomHomeListView: UIView {
         let itemH = itemW
         flowLayout.itemSize = CGSize(width: itemW, height: itemH)
         flowLayout.minimumInteritemSpacing = middleMargin
-        flowLayout.minimumLineSpacing = middleMargin // 修改为 middleMargin，使得两个项目显示在一行中
+        flowLayout.minimumLineSpacing = middleMargin //Change to middleMargin to display two items on one line
         
         collectionView = UICollectionView(frame: CGRect(x: 0, y: 20, width: bounds.width, height: bounds.height - 20), collectionViewLayout: flowLayout)
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)

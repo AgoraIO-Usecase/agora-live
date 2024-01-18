@@ -3,7 +3,7 @@
 //  test
 //
 //  Created by LiuLogan on 15/6/17.
-//  Copyright (c) 2015年 Xidibuy. All rights reserved.
+// Copyright (c) 2015 Xidibuy All rights reserved
 //
 
 #import "CALayer+JKBorderColor.h"

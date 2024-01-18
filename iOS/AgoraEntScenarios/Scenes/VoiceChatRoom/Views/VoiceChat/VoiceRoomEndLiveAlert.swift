@@ -2,7 +2,7 @@
 //  VoiceRoomEndLiveAlert.swift
 //  AgoraScene_iOS
 //
-//  Created by 朱继超 on 2022/10/12.
+//Created by Zhu Jichao on October 12, 2022
 //
 
 import UIKit
