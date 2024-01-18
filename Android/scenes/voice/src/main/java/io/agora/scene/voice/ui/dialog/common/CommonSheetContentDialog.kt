@@ -8,9 +8,7 @@ import android.view.ViewGroup
 import io.agora.scene.voice.databinding.VoiceDialogBottomSheetContentBinding
 import io.agora.voice.common.ui.dialog.BaseSheetDialog
 
-/**
- * content dialog 类似聊天室公告
- */
+
 class CommonSheetContentDialog constructor(): BaseSheetDialog<VoiceDialogBottomSheetContentBinding>() {
 
     override fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VoiceDialogBottomSheetContentBinding {

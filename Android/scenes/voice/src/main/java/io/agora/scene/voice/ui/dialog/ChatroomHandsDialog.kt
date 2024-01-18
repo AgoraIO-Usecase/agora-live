@@ -39,7 +39,6 @@ class ChatroomHandsDialog : BaseSheetDialog<VoiceRoomHandLayoutBinding>() {
 
     private var onFragmentListener: OnFragmentListener? = null
 
-    // 房主准备邀请的麦位
     private var inviteMicIndex:Int = -1
 
     fun setInviteMicIndex(inviteMicIndex: Int){
@@ -221,7 +220,6 @@ class ChatroomHandsDialog : BaseSheetDialog<VoiceRoomHandLayoutBinding>() {
     interface OnFragmentListener {
         fun getItemCount(count: Int) {}
 
-        // 同意上麦
         fun onAcceptMicSeatApply(voiceMicInfoModel: VoiceMicInfoModel) {}
     }
 

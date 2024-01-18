@@ -43,7 +43,6 @@ class LiveGiftListFragment : BaseUiFragment<VoiceFragmentGiftListLayoutBinding>(
             rvList.setHasFixedSize(true)
             rvList.layoutManager = manager
 
-            //设置item 间距
             val itemDecoration = DividerItemDecoration(root.context, DividerItemDecoration.VERTICAL)
             val drawable = GradientDrawable()
             drawable.setSize(DeviceTools.dp2px(root.context, 3f), 0)

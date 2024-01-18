@@ -109,9 +109,7 @@ class RoomAudioSettingsSheetDialog : BaseSheetDialog<VoiceDialogAudioSettingBind
             }
         }
     }
-    /**
-     * 更新AINS
-     */
+
     fun updateAINSView() {
         binding?.apply {
             mtAINSArrow.text = view?.let {
@@ -119,9 +117,7 @@ class RoomAudioSettingsSheetDialog : BaseSheetDialog<VoiceDialogAudioSettingBind
             }
         }
     }
-    /**
-     * 更新AIAEC
-     */
+
     fun updateAIAECView() {
         binding?.apply {
             if (audioSettingsInfo.isAIAECOn) {
@@ -132,9 +128,6 @@ class RoomAudioSettingsSheetDialog : BaseSheetDialog<VoiceDialogAudioSettingBind
         }
     }
 
-    /**
-     * 更新AIAGC
-     */
     fun updateAIAGCView() {
         binding?.apply {
             if (audioSettingsInfo.isAIAGCOn) {
@@ -161,9 +154,6 @@ class RoomAudioSettingsSheetDialog : BaseSheetDialog<VoiceDialogAudioSettingBind
         }
     }
 
-    /**
-     * 更新机器人ui
-     */
     fun updateBotStateView() {
         binding?.mcbAgoraBot?.post {
             binding?.mcbAgoraBot?.isChecked = audioSettingsInfo.botOpen
@@ -187,28 +177,19 @@ class RoomAudioSettingsSheetDialog : BaseSheetDialog<VoiceDialogAudioSettingBind
     }
 
     interface OnClickAudioSettingsListener {
-        /**AI降噪*/
         fun onAINS(mode: Int, isEnable: Boolean)
 
-        /**AI回声消除*/
         fun onAIAEC(isOn: Boolean, isEnable: Boolean)
 
-        /**人声自动增益*/
         fun onAGC(isOn: Boolean, isEnable: Boolean)
 
-        /**耳返设置*/
         fun onEarBackSetting()
-        /**耳返设置*/
         fun onVirtualSoundCardSetting()
-        /** BGM 设置*/
         fun onBGMSetting()
-        /**机器人开关*/
         fun onBotCheckedChanged(buttonView: CompoundButton, isChecked: Boolean)
 
-        /**机器人音量*/
         fun onBotVolumeChange(progress: Int)
 
-        /**最佳音效*/
         fun onSoundEffect(soundSelectionType: Int, isEnable: Boolean)
     }
 }

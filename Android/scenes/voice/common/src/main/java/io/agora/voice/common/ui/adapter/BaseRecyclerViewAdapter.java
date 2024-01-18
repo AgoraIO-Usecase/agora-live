@@ -22,7 +22,7 @@ import io.agora.voice.common.ui.adapter.listener.OnItemClickListener;
 import io.agora.voice.common.utils.BaseUiTool;
 
 /**
- * 基础RecyclerView adapter
+ * Base RecyclerView adapter
  */
 public class BaseRecyclerViewAdapter<B extends ViewBinding, T, H extends BaseRecyclerViewAdapter.BaseViewHolder<B, T>> extends RecyclerView.Adapter<H> {
 

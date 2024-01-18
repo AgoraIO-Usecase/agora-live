@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp"
             android:paddingVertical="12dp"
-            android:src="@mipmap/show_live_prepare_ic_close" />
+            android:src="@drawable/show_live_prepare_ic_close" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="@string/show_live_prepare_title"
+            android:text="@string/commerce_live_prepare_title"
             android:textColor="@android:color/white"
             android:textSize="16sp" />
 
@@ -58,7 +58,7 @@
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearance="@style/show_roundStyle_12"
+            app:shapeAppearance="@style/commerce_roundStyle_12"
             tools:src="@mipmap/portrait01" />
 
         <EditText
@@ -68,7 +68,7 @@
             android:layout_marginStart="10dp"
             android:background="@null"
             android:ellipsize="end"
-            android:hint="@string/show_live_prepare_room_name_hint"
+            android:hint="@string/commerce_live_prepare_room_name_hint"
             android:imeOptions="actionDone"
             android:singleLine="true"
             android:textColor="@color/white"
@@ -87,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
-            android:src="@mipmap/show_live_prepare_ic_edit"
+            android:src="@drawable/show_live_prepare_ic_edit"
             app:layout_constraintBottom_toBottomOf="@id/etRoomName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/etRoomName"
@@ -112,7 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:src="@mipmap/show_live_prepare_ic_copy"
+            android:src="@drawable/show_live_prepare_ic_copy"
             app:layout_constraintBottom_toBottomOf="@id/tvRoomId"
             app:layout_constraintStart_toEndOf="@id/tvRoomId"
             app:layout_constraintTop_toTopOf="@id/tvRoomId" />
@@ -134,10 +134,10 @@
             android:id="@+id/tvRotate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@mipmap/show_live_prepare_ic_camera"
+            android:drawableTop="@drawable/show_live_prepare_ic_camera"
             android:drawablePadding="3dp"
             android:gravity="center"
-            android:text="@string/show_live_prepare_rotate"
+            android:text="@string/commerce_live_prepare_rotate"
             android:textColor="@color/white"
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@id/tvTip"
@@ -150,10 +150,10 @@
             android:id="@+id/tvSetting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@mipmap/show_live_prepare_ic_setting"
+            android:drawableTop="@drawable/show_live_prepare_ic_setting"
             android:drawablePadding="3dp"
             android:gravity="center"
-            android:text="@string/show_live_prepare_setting"
+            android:text="@string/commerce_live_prepare_setting"
             android:textColor="@color/white"
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@id/tvTip"
@@ -166,11 +166,11 @@
             android:id="@+id/tvTip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@mipmap/show_live_prepare_ic_tip"
+            android:drawableStart="@drawable/show_live_prepare_ic_tip"
             android:drawablePadding="6dp"
             android:paddingHorizontal="50dp"
             android:paddingVertical="25dp"
-            android:text="@string/show_live_prepare_tip"
+            android:text="@string/commerce_live_prepare_tip"
             android:textColor="@color/white_80_percent"
             android:textSize="11sp"
             app:layout_constraintBottom_toTopOf="@id/btnStartLive"
@@ -185,14 +185,10 @@
             android:layout_marginBottom="15dp"
             android:gravity="center"
             android:paddingHorizontal="50dp"
-            android:text="@string/show_live_prepare_start_live"
+            android:text="@string/commerce_live_prepare_start_live"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

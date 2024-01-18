@@ -10,9 +10,7 @@ import io.agora.scene.voice.databinding.VoiceDialogBottomSheetSingleBinding
 import io.agora.voice.common.ui.dialog.BaseSheetDialog
 import io.agora.voice.common.utils.DeviceTools.dp
 
-/**
- * 单按钮
- */
+
 class CommonSheetSingleDialog constructor(): BaseSheetDialog<VoiceDialogBottomSheetSingleBinding>() {
 
     override fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VoiceDialogBottomSheetSingleBinding {

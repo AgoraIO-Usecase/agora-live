@@ -76,9 +76,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
     private val voiceServiceProtocol = VoiceServiceProtocol.getImplInstance()
     private var isActivityStop = false
 
-    /**
-     * 代理头部view以及麦位view
-     */
+
     private lateinit var roomObservableDelegate: RoomObservableViewDelegate
 
     /** voice room info */
@@ -86,7 +84,6 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
         intent.getSerializableExtra(KEY_VOICE_ROOM_MODEL) as VoiceRoomModel
     }
 
-    /**房间基础*/
     private val roomKitBean = RoomKitBean()
     private var isRoomOwnerLeave = false
     private val dialogFragments = mutableListOf<BottomSheetDialogFragment>()
@@ -351,11 +348,8 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                     chatUid.let {
                         if (roomKitBean.isOwner) {
                             ChatroomIMManager.getInstance().removeMember(it)
-                            //当成员已申请上麦 未经过房主同意退出时 申请列表移除该成员
                             ChatroomIMManager.getInstance().removeSubmitMember(it)
-                            //刷新 owner 邀请列表
                             roomObservableDelegate.handsUpdate(1)
-                            //刷新 owner 申请列表
                             roomObservableDelegate.handsUpdate(0)
                             roomLivingViewModel.updateRoomMember()
                             roomObservableDelegate.checkUserLeaveMic(
@@ -407,13 +401,11 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                                 if (ChatroomIMManager.getInstance().checkMember(it.member?.chatUid)) {
                                     ChatroomIMManager.getInstance().removeSubmitMember(it.member?.chatUid)
                                     ThreadManager.getInstance().runOnMainThread {
-                                        //刷新 owner 申请列表
                                         roomObservableDelegate.handsUpdate(0)
                                     }
                                 }
                                 if (ChatroomIMManager.getInstance().checkInvitationMember(it.member?.chatUid)) {
                                     ThreadManager.getInstance().runOnMainThread {
-                                        //刷新 owner 邀请列表
                                         roomObservableDelegate.handsUpdate(1)
                                     }
                                 }

@@ -10,9 +10,7 @@ import io.agora.scene.voice.databinding.VoiceDialogCenterFragmentContentBinding
 import io.agora.voice.common.ui.dialog.BaseFragmentDialog
 import io.agora.voice.common.utils.DeviceTools.dp
 
-/**
- * 中间弹框，确认/取消按钮
- */
+
 class CommonFragmentContentDialog constructor() : BaseFragmentDialog<VoiceDialogCenterFragmentContentBinding>() {
 
     override fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VoiceDialogCenterFragmentContentBinding {
@@ -60,9 +58,7 @@ class CommonFragmentContentDialog constructor() : BaseFragmentDialog<VoiceDialog
     }
 
     interface OnClickBottomListener {
-        /**
-         * 点击确定按钮事件
-         */
+
         fun onConfirmClick()
     }
 }

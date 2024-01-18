@@ -62,15 +62,16 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 注册订阅
-     * @param delegate 聊天室内IM回调处理
+     * Subscribe event
+     *
+     * @param delegate
      */
     override fun subscribeEvent(delegate: VoiceRoomSubscribeDelegate) {
         roomServiceSubscribeDelegates.add(delegate)
     }
 
     /**
-     *  取消订阅
+     * Unsubscribe event
      */
     override fun unsubscribeEvent() {
         roomServiceSubscribeDelegates.clear()
@@ -88,8 +89,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 获取房间列表
-     * @param page 分页索引，从0开始(由于SyncManager无法进行分页，这个属性暂时无效)
+     * Fetch room list
+     *
+     * @param page
+     * @param completion
+     * @receiver
      */
     override fun fetchRoomList(page: Int, completion: (error: Int, result: List<VoiceRoomModel>) -> Unit) {
         initScene {
@@ -107,7 +111,7 @@ class VoiceSyncManagerServiceImp(
                         }
 
                     }
-                    //按照创建时间顺序排序
+
                     val comparator: Comparator<VoiceRoomModel> = Comparator { o1, o2 ->
                         o2.createdAt.compareTo(o1.createdAt)
                     }
@@ -135,13 +139,15 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 创建房间
-     * @param inputModel 输入的房间信息
+     * Create room
+     *
+     * @param inputModel
+     * @param completion
+     * @receiver
      */
     override fun createRoom(
         inputModel: VoiceCreateRoomModel, completion: (error: Int, result: VoiceRoomModel) -> Unit
     ) {
-        // 1、根据用户输入信息创建房间信息
         val currentMilliseconds = System.currentTimeMillis()
         val voiceRoomModel = VoiceRoomModel().apply {
             roomId = currentMilliseconds.toString()
@@ -151,8 +157,8 @@ class VoiceSyncManagerServiceImp(
             roomName = inputModel.roomName
             createdAt = currentMilliseconds
             roomPassword = inputModel.password
-            memberCount = 2 // 两个机器人
-            clickCount = 2 // 两个机器人
+            memberCount = 2
+            clickCount = 2
         }
         val owner = VoiceMemberModel().apply {
             rtcUid = VoiceBuddyFactory.get().getVoiceBuddy().rtcUid()
@@ -163,7 +169,6 @@ class VoiceSyncManagerServiceImp(
             portrait = VoiceBuddyFactory.get().getVoiceBuddy().headUrl()
         }
         voiceRoomModel.owner = owner
-        // 2、置换token,获取im 配置，创建房间需要这里的数据
         VoiceToolboxServerHttpManager.get().requestToolboxService(
             channelId = voiceRoomModel.channelId,
             chatroomId = "",
@@ -175,7 +180,6 @@ class VoiceSyncManagerServiceImp(
                     return@requestToolboxService
                 }
                 voiceRoomModel.chatroomId = chatroomId
-                // 3、创建房间
                 initScene {
                     val scene = Scene()
                     scene.id = voiceRoomModel.roomId
@@ -196,8 +200,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 加入房间
-     * @param roomId 房间id
+     * Join room
+     *
+     * @param roomId
+     * @param completion
+     * @receiver
      */
     override fun joinRoom(roomId: String, completion: (error: Int, result: VoiceRoomModel?) -> Unit) {
         initScene {
@@ -280,9 +287,14 @@ class VoiceSyncManagerServiceImp(
         val isOrigin = info.isOrigin
         AgoraRtcEngineController.get().bgmManager().remoteUpdateBGMInfo(song, singer, isOrigin)
     }
+
     /**
-     * 离开房间
-     * @param roomId 房间id
+     * Leave room
+     *
+     * @param roomId
+     * @param isRoomOwnerLeave
+     * @param completion
+     * @receiver
      */
     override fun leaveRoom(roomId: String, isRoomOwnerLeave: Boolean, completion: (error: Int, result: Boolean) -> Unit) {
         val cacheRoom = roomMap[roomId] ?: return
@@ -342,8 +354,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 获取房间详情
-     * @param voiceRoomModel 房间概要
+     * Fetch room detail
+     *
+     * @param voiceRoomModel
+     * @param completion
+     * @receiver
      */
     override fun fetchRoomDetail(
         voiceRoomModel: VoiceRoomModel,
@@ -365,7 +380,10 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 获取排行榜列表
+     * Fetch gift contribute
+     *
+     * @param completion
+     * @receiver
      */
     override fun fetchGiftContribute(completion: (error: Int, result: List<VoiceRankUserModel>?) -> Unit) {
         ChatroomIMManager.getInstance().fetchGiftContribute(object :
@@ -385,7 +403,10 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 获取邀请列表（过滤已在麦位成员）
+     * Fetch room invited members
+     *
+     * @param completion
+     * @receiver
      */
     override fun fetchRoomInvitedMembers(completion: (error: Int, result: List<VoiceMemberModel>) -> Unit) {
         val  memberList = ChatroomIMManager.getInstance().fetchRoomInviteMembers()
@@ -397,7 +418,10 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 获取房间成员列表
+     * Fetch room members
+     *
+     * @param completion
+     * @receiver
      */
     override fun fetchRoomMembers(completion: (error: Int, result: List<VoiceMemberModel>) -> Unit) {
         val  memberList = ChatroomIMManager.getInstance().fetchRoomMembers()
@@ -409,7 +433,6 @@ class VoiceSyncManagerServiceImp(
     }
 
     override fun kickMemberOutOfRoom(chatUidList: MutableList<String>, completion: (error: Int, result: Boolean) -> Unit) {
-        //房主踢用户(踢出房间)
         ChatroomIMManager.getInstance().removeMemberToRoom(chatUidList,object :
             ValueCallBack<ChatRoom>{
             override fun onSuccess(value: ChatRoom?) {
@@ -422,9 +445,6 @@ class VoiceSyncManagerServiceImp(
         })
     }
 
-    /**
-     * 更新用户列表
-     */
     override fun updateRoomMembers(completion: (error: Int, result: Boolean) -> Unit){
         ChatroomIMManager.getInstance().updateRoomMembers(object : CallBack{
             override fun onSuccess() {
@@ -438,7 +458,10 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 申请列表
+     * Fetch applicants list
+     *
+     * @param completion
+     * @receiver
      */
     override fun fetchApplicantsList(completion: (error: Int, result: List<VoiceMemberModel>) -> Unit) {
        val raisedList = ChatroomIMManager.getInstance().fetchRaisedList()
@@ -450,8 +473,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 申请上麦
-     * @param micIndex 麦位index
+     * Start mic seat apply
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     override fun startMicSeatApply(micIndex: Int?, completion: (error: Int, result: Boolean) -> Unit) {
         ChatroomIMManager.getInstance().startMicSeatApply(micIndex ?: -1, object : CallBack {
@@ -466,8 +492,12 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 同意申请
-     * @param chatUid 环信用户id
+     * Accept mic seat apply
+     *
+     * @param micIndex
+     * @param chatUid
+     * @param completion
+     * @receiver
      */
     override fun acceptMicSeatApply(micIndex: Int?, chatUid: String, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit) {
         ChatroomIMManager.getInstance().acceptMicSeatApply(micIndex ?: -1,chatUid,object :
@@ -483,8 +513,12 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 取消上麦
-     * @param chatUid im uid
+     * Cancel mic seat apply
+     *
+     * @param chatroomId
+     * @param chatUid
+     * @param completion
+     * @receiver
      */
     override fun cancelMicSeatApply(chatroomId: String, chatUid: String, completion: (error: Int, result: Boolean) -> Unit) {
         ChatroomIMManager.getInstance().cancelMicSeatApply(chatroomId, chatUid, object : CallBack{
@@ -499,8 +533,12 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 邀请用户上麦
-     * @param chatUid im uid
+     * Start mic seat invitation
+     *
+     * @param chatUid
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     override fun startMicSeatInvitation(
         chatUid: String,
@@ -519,7 +557,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 接受邀请
+     * Accept mic seat invitation
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     override fun acceptMicSeatInvitation(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit) {
         ChatroomIMManager.getInstance().acceptMicSeatInvitation(micIndex, object :
@@ -535,7 +577,10 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 拒绝邀请
+     * Refuse invite
+     *
+     * @param completion
+     * @receiver
      */
     override fun refuseInvite(completion: (error: Int, result: Boolean) -> Unit) {
         ChatroomIMManager.getInstance().refuseInvite(VoiceBuddyFactory.get().getVoiceBuddy().chatUserName(), object : CallBack {
@@ -550,8 +595,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * mute
-     * @param micIndex 麦位index
+     * Mute local
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     override fun muteLocal(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit) {
         ChatroomIMManager.getInstance().muteLocal(micIndex,object :
@@ -567,8 +615,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * unMute
-     * @param micIndex 麦位index
+     * Un mute local
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     override fun unMuteLocal(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit) {
         ChatroomIMManager.getInstance().unMuteLocal(micIndex,object :
@@ -584,8 +635,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 禁言指定麦位置
-     * @param micIndex 麦位index
+     * Forbid mic
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     override fun forbidMic(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit) {
         ChatroomIMManager.getInstance().forbidMic(micIndex,object :
@@ -601,8 +655,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 取消禁言指定麦位置
-     * @param micIndex 麦位index
+     * Un forbid mic
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     override fun unForbidMic(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit) {
         ChatroomIMManager.getInstance().unForbidMic(micIndex,object :
@@ -618,8 +675,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 锁麦
-     * @param micIndex 麦位index
+     * Lock mic
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     override fun lockMic(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit) {
         ChatroomIMManager.getInstance().lockMic(micIndex, object :ValueCallBack<VoiceMicInfoModel>{
@@ -639,8 +699,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 取消锁麦
-     * @param micIndex 麦位index
+     * Un lock mic
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     override fun unLockMic(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit) {
         ChatroomIMManager.getInstance().unLockMic(micIndex,object :
@@ -656,8 +719,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 踢用户下麦
-     * @param micIndex 麦位index
+     * Kick off
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     override fun kickOff(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit) {
         ChatroomIMManager.getInstance().kickOff(micIndex,object : ValueCallBack<VoiceMicInfoModel>{
@@ -672,8 +738,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 下麦
-     * @param micIndex 麦位index
+     * Leave mic
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     override fun leaveMic(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit) {
         ChatroomIMManager.getInstance().leaveMic(micIndex,object : ValueCallBack<VoiceMicInfoModel>{
@@ -688,9 +757,12 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 换麦
-     * @param oldIndex 老麦位index
-     * @param newIndex 新麦位index
+     * Change mic
+     *
+     * @param oldIndex
+     * @param newIndex
+     * @param completion
+     * @receiver
      */
     override fun changeMic(
         oldIndex: Int,
@@ -710,8 +782,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 更新公告
-     * @param content 公告内容
+     * Update announcement
+     *
+     * @param content
+     * @param completion
+     * @receiver
      */
     override fun updateAnnouncement(content: String, completion: (error: Int, result: Boolean) -> Unit) {
         ChatroomIMManager.getInstance().updateAnnouncement(content,object : CallBack{
@@ -755,8 +830,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 是否启用机器人
-     * @param enable true 启动机器人，false 关闭机器人
+     * Enable robot
+     *
+     * @param enable
+     * @param completion
+     * @receiver
      */
     override fun enableRobot(enable: Boolean, completion: (error: Int, result:Boolean) -> Unit) {
         ChatroomIMManager.getInstance().enableRobot(enable,object :
@@ -772,8 +850,11 @@ class VoiceSyncManagerServiceImp(
     }
 
     /**
-     * 更新机器人音量
-     * @param value 音量
+     * Update robot volume
+     *
+     * @param value
+     * @param completion
+     * @receiver
      */
     override fun updateRobotVolume(value: Int, completion: (error: Int, result: Boolean) -> Unit) {
         ChatroomIMManager.getInstance().updateRobotVolume(value,object : CallBack{

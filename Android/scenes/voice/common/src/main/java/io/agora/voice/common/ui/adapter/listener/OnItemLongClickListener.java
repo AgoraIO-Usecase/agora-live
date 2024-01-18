@@ -8,8 +8,10 @@ import android.view.View;
 public interface OnItemLongClickListener {
     /**
      * Item long click
-     * @param view
-     * @param position
+     *
+     * @param view     the view
+     * @param position the position
+     * @return the boolean
      */
     boolean onItemLongClick(View view, int position);
 }

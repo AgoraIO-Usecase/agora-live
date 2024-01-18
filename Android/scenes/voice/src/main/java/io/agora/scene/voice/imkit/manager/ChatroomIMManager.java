@@ -64,10 +64,6 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         return instance;
     }
 
-    /**
-     * 需要在详情页时候初始化，防止chatroomId为空或不正确
-     * @param chatroomId
-     */
     public void init(String chatroomId,boolean isOwner) {
         this.chatroomId = chatroomId;
         this.isOwner = isOwner;
@@ -95,9 +91,6 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         return ChatClient.getInstance().chatroomManager();
     }
 
-    /**
-     * 设置自定义消息监听
-     */
     public void setCustomMsgListener() {
         CustomMsgHelper.getInstance().init();
     }
@@ -126,18 +119,10 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         this.chatroomConnectionListener = listener;
     }
 
-    /**
-     * 移除自定义消息监听
-     */
     public void removeCustomMsgListener() {
         CustomMsgHelper.getInstance().removeListener();
     }
 
-    /**
-     * 发送文本消息
-     * @param content
-     * @param callBack
-     */
     public void sendTxtMsg(String content,String nickName, OnMsgCallBack callBack) {
         ChatMessage message = ChatMessage.createTextSendMessage(content, chatroomId);
         message.setAttribute("userName",nickName);
@@ -162,11 +147,6 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         ChatClient.getInstance().chatManager().sendMessage(message);
     }
 
-    /**
-     * 插入欢迎消息
-     * @param content
-     * @param nick
-     */
     public void saveWelcomeMsg(String content,String nick){
         ChatMessage message = ChatMessage.createSendMessage(ChatMessage.Type.TXT);
         message.setChatType(ChatMessage.ChatType.ChatRoom);
@@ -261,11 +241,6 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         return userPortrait;
     }
 
-    /**
-     * 解析Gift消息获取 giftModel
-     * @param msg
-     * @return
-     */
     public VoiceGiftModel getGiftModel(ChatMessageData msg){
         Map<String, String> giftMap = CustomMsgHelper.getInstance().getCustomMsgParams(msg);
         if (giftMap != null){
@@ -281,11 +256,6 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
        return null;
     }
 
-    /**
-     * 解析消息 获取VoiceMemberModel对象
-     * @param msg
-     * @return
-     */
     public VoiceMemberModel getVoiceMemberModel(ChatMessageData msg){
         Map<String, String> map = CustomMsgHelper.getInstance().getCustomMsgParams(msg);
         if (map.containsKey("user")){
@@ -294,11 +264,6 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         return null;
     }
 
-    /**
-     * 获取成员非主动退出房间原因
-     * @param reason
-     * @return
-     */
     public VoiceRoomServiceKickedReason getKickReason(int reason){
         switch (reason){
             case EMAChatRoomManagerListener.BE_KICKED:
@@ -496,11 +461,6 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         });
     }
 
-    /**
-     * 加入房间
-     * @param chatroomId
-     * @param callBack
-     */
     public void joinRoom(String chatroomId, ValueCallBack<ChatRoom> callBack){
         ChatClient.getInstance().chatroomManager()
                 .joinChatRoom(chatroomId, new ValueCallBack<ChatRoom>() {
@@ -526,16 +486,10 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
                 });
     }
 
-    /**
-     * 离开房间
-     */
     public void leaveChatRoom(String chatroomId){
         ChatClient.getInstance().chatroomManager().leaveChatRoom(chatroomId);
     }
 
-    /**
-     * 销毁房间
-     */
     public void asyncDestroyChatRoom(String chatroomId,CallBack callBack){
         ChatClient.getInstance().chatroomManager().asyncDestroyChatRoom(chatroomId, new CallBack() {
             @Override
@@ -560,9 +514,6 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         });
     }
 
-    /**
-     * 获取当前用户实体类
-     */
     public VoiceMemberModel getMySelfModel(){
        return delegate.getMySelfModel();
     }
@@ -571,11 +522,6 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         delegate.clearCache();
     }
 
-    /**
-     * 初始化麦位信息
-     * @param roomType
-     * @param callBack
-     */
     public void initMicInfo(int roomType,CallBack callBack){
         VoiceMemberModel voiceMemberModel = new VoiceMemberModel(
                 VoiceBuddyFactory.get().getVoiceBuddy().userId(),
@@ -588,11 +534,6 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         delegate.initMicInfo(roomType,voiceMemberModel,callBack);
     }
 
-    /**
-     * 获取详情
-     * @param voiceRoomModel
-     * @param callBack
-     */
     public void fetchRoomDetail(VoiceRoomModel voiceRoomModel, ValueCallBack<VoiceRoomInfo> callBack) {
         // 麦位信息
         VoiceMemberModel owner = voiceRoomModel.getOwner();
@@ -613,300 +554,147 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         }
     }
 
-    /**
-     * 邀请上麦
-     * @param chatUid
-     * @param callBack
-     */
     public void invitationMic(String chatUid,int micIndex,CallBack callBack){delegate.invitationMic(chatUid,micIndex,callBack);}
 
 
-    /**
-     * 禁言指定麦位置
-     * @param micIndex
-     * @param callBack
-     */
     public void forbidMic(int micIndex,ValueCallBack<VoiceMicInfoModel> callBack){
         delegate.forbidMic(micIndex,callBack);
     }
 
-    /**
-     * 取消禁言指定麦位置
-     * @param micIndex
-     * @param callBack
-     */
     public void unForbidMic(int micIndex,ValueCallBack<VoiceMicInfoModel> callBack){
         delegate.unForbidMic(micIndex,callBack);
     }
 
-    /**
-     * 锁麦
-     * @param micIndex
-     * @param callBack
-     */
     public void lockMic(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
         delegate.lockMic(micIndex,callBack);
     }
 
-    /**
-     * 取消锁麦
-     * @param micIndex
-     * @param callBack
-     */
     public void unLockMic(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
         delegate.unLockMic(micIndex, callBack);
     }
 
-    /**
-     * 踢用户下麦
-     * @param micIndex
-     * @param callBack
-     */
     public void kickOff(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
         delegate.kickOff(micIndex, callBack);
     }
 
-    /**
-     * 下麦
-     * @param micIndex
-     * @param callBack
-     */
     public void leaveMic(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
         delegate.leaveMic(micIndex,callBack);
     }
 
-    /**
-     * 关麦
-     * @param micIndex
-     * @param callBack
-     */
     public void muteLocal(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
         delegate.muteLocal(micIndex,callBack);
     }
 
-    /**
-     * 取消关麦
-     * @param micIndex
-     * @param callBack
-     */
     public void unMuteLocal(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
         delegate.unMuteLocal(micIndex,callBack);
     }
 
-    /**
-     * 换麦
-     * @param oldIndex
-     * @param newIndex
-     * @param callBack
-     */
     public void changeMic(int oldIndex,int newIndex,ValueCallBack<Map<Integer,VoiceMicInfoModel>> callBack){
         delegate.changeMic(oldIndex,newIndex,callBack);
     }
 
 
-    /**
-     * 接受邀请
-     * @param callBack
-     */
     public void acceptMicSeatInvitation(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
         delegate.acceptMicSeatInvitation(VoiceBuddyFactory.get().getVoiceBuddy().chatUserName(),micIndex,callBack);
     }
 
-    /**
-     * 拒绝邀请
-     * @param chatUid
-     * @param callBack
-     */
     public void refuseInvite(String chatUid,CallBack callBack){ delegate.refuseInviteToMic(chatUid,callBack);}
 
-    /**
-     * 申请上麦
-     * @param micIndex
-     * @param callBack
-     */
     public void startMicSeatApply(int micIndex, CallBack callBack){ delegate.startMicSeatApply(micIndex,callBack);}
 
-    /**
-     * 同意申请
-     * @param callBack
-     */
     public void acceptMicSeatApply(int micIndex, String chatUid, ValueCallBack<VoiceMicInfoModel> callBack) {
         delegate.acceptMicSeatApply(chatUid, micIndex, callBack);
     }
 
-    /**
-     * 取消上麦
-     * @param chatroomId 撤销申请的IM房间号
-     * @param chatUid
-     * @param callBack
-     */
     public void cancelMicSeatApply(String chatroomId, String chatUid,CallBack callBack){
         delegate.cancelSubmitMic(chatroomId, chatUid, callBack);
     }
 
 
-    /**
-     * 更新公告
-     * @param content
-     */
     public void updateAnnouncement(String content,CallBack callBack){
         delegate.updateAnnouncement(content, callBack);
     }
 
-    /**
-     * 举手列表
-     * @return
-     */
     public List<VoiceMemberModel> fetchRaisedList(){
         return delegate.fetchRaisedList();
     }
 
-    /**
-     * 是否启用机器人
-     * @param enable true 启动机器人，false 关闭机器人
-     * @param callBack
-     */
     public void enableRobot(Boolean enable,ValueCallBack<Boolean> callBack){
         delegate.enableRobot(enable,callBack);
     }
 
-    /**
-     * 更新机器人音量
-     * @param volume
-     * @param callBack
-     */
     public void updateRobotVolume(int volume,CallBack callBack){
         delegate.updateRobotVolume(volume,callBack);
     }
 
-    /**
-     * 获取邀请列表(过滤已在麦位的成员)
-     */
     public List<VoiceMemberModel> fetchRoomInviteMembers(){
         return delegate.fetchRoomInviteMembers();
     }
 
-    /**
-     * 获取房间内所有观众列表
-     */
     public List<VoiceMemberModel> fetchRoomMembers(){
         return delegate.fetchRoomMembers();
     }
 
-    /**
-     * 更新用户列表
-     */
     public void updateRoomMembers(CallBack callBack){
        delegate.updateRoomMember(cacheManager.getMemberList(),callBack);
     }
 
-    /**
-     * 获取排行榜列表
-     */
     public void fetchGiftContribute(ValueCallBack<List<VoiceRankUserModel>> callBack){
         delegate.fetchGiftContribute(callBack);
     }
 
-    /**
-     * 更新排行榜
-     * @param giftModel
-     * @param callBack
-     */
     public void updateRankList(String chatUid,VoiceGiftModel giftModel, CallBack callBack){
         delegate.updateRankList(chatUid,giftModel,callBack);
     }
 
-    /**
-     * 更新本地kv缓存
-     * @param kvMap
-     */
     public void updateMicInfoCache(Map<String,String> kvMap){
         delegate.updateMicInfoCache(kvMap);
     }
 
-    /**
-     * 更新礼物总数
-     */
     public void updateAmount(String chatUid,int amount,CallBack callBack){
         delegate.updateGiftAmount(chatUid,amount,callBack);
     }
 
-    ////////////////////////////本地缓存管理//////////////////////////////
-    /**
-     * 从服务端获取数据 直接赋值giftAmount
-     */
     public void setGiftAmountCache(int amount){
         cacheManager.setGiftAmountCache(amount);
     }
 
-    /**
-     * 获取房间礼物总金额
-     */
     public int getGiftAmountCache(){
         return cacheManager.getGiftAmountCache();
     }
 
-    /**
-     * 设置申请上麦列表
-     */
     public void setSubmitMicList(VoiceMemberModel voiceMemberModel){
         cacheManager.setSubmitMicList(voiceMemberModel);
     }
 
-    /**
-     * 从申请列表移除指定成员对象
-     */
     public void removeSubmitMember(String chatUid){
         cacheManager.removeSubmitMember(chatUid);
     }
 
-    /**
-     * 设置成员列表
-     */
     public void setMemberList(VoiceMemberModel voiceMemberModel){
         cacheManager.setMemberList(voiceMemberModel);
     }
 
-    /**
-     * 检查指定id是否在申请列表中
-     */
     public boolean checkMember(String chatUid){
        return cacheManager.getSubmitMic(chatUid) != null;
     }
 
-    /**
-     * 检查邀请列表成员是否已经在麦位上
-     */
     public boolean checkInvitationMember(String chatUid){
         return cacheManager.checkInvitationByChatUid(chatUid);
     }
 
-    /**
-     * 从成员列表中移除指定成员( 成员退出回调中调用 )
-     */
     public void removeMember(String chatUid){
         cacheManager.removeMember(chatUid);
     }
 
-    /**
-     * 设置榜单列表
-     */
     public void setRankList(VoiceRankUserModel voiceRankUserModel){
         cacheManager.setRankList(voiceRankUserModel);
     }
 
-    /**
-     * 获取榜单列表
-     */
     public List<VoiceRankUserModel> getRankList(){
         return cacheManager.getRankList();
     }
 
-    /**
-     * 根据chatUid获取VoiceMicInfoModel
-     * @param chatUid
-     * @return
-     */
     public int getMicIndexByChatUid(String chatUid){
         VoiceMicInfoModel bean = cacheManager.getMicInfoByChatUid(chatUid);
         if (bean != null){
@@ -916,10 +704,6 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         }
     }
 
-    /**
-     * 将成员移出房间
-     * @param userList
-     */
     public void removeMemberToRoom(List<String> userList,ValueCallBack<ChatRoom> callBack){
         getChatRoomManager().asyncRemoveChatRoomMembers(chatroomId,userList,callBack);
     }

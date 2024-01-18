@@ -99,8 +99,9 @@ public abstract class NetworkOnlyResource<ResultType> {
 
     /**
      * Process request response
-     * @param response
-     * @return
+     *
+     * @param response the response
+     * @return result type
      */
     @WorkerThread
     protected ResultType processResponse(ResultType response) {
@@ -109,7 +110,8 @@ public abstract class NetworkOnlyResource<ResultType> {
 
     /**
      * This is designed as a callback mode to facilitate asynchronous operations in this method
-     * @return
+     *
+     * @param callBack the call back
      */
     @MainThread
     protected abstract void createCall(@NonNull ResultCallBack<LiveData<ResultType>> callBack);

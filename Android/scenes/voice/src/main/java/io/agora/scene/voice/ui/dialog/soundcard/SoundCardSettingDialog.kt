@@ -103,7 +103,7 @@ class SoundCardSettingDialog: BaseSheetDialog<VoiceDialogSoundCardBinding>() {
                 }
             })
             vPramsMark.setOnClickListener {
-                // 空实现阻挡事件传递
+
             }
             tvSoundTypeSelect.setOnClickListener {
                 onClickSoundCardType?.invoke()

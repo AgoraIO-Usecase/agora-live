@@ -14,21 +14,25 @@ public abstract class OnResourceParseCallback<T> {
 
     /**
      * Whether to display error messages
-     * @param hideErrorMsg
+     *
+     * @param hideErrorMsg the hide error msg
      */
     public OnResourceParseCallback(boolean hideErrorMsg) {
         this.hideErrorMsg = hideErrorMsg;
     }
+
     /**
      * success
-     * @param data
+     *
+     * @param data the data
      */
     public abstract void onSuccess(@Nullable T data);
 
     /**
      * fail
-     * @param code
-     * @param message
+     *
+     * @param code    the code
+     * @param message the message
      */
     public void onError(int code, String message){}
 

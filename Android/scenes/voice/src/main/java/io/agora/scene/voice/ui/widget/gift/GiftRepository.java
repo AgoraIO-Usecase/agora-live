@@ -46,11 +46,6 @@ public class GiftRepository {
         return gifts;
     }
 
-    /**
-     * 获取GiftBean
-     * @param giftId
-     * @return
-     */
     public static GiftBean getGiftById(Context context,String giftId) {
         List<GiftBean> gifts = getDefaultGifts(context);
         for (GiftBean bean : gifts) {

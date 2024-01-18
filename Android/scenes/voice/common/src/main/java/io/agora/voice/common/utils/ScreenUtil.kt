@@ -8,7 +8,7 @@ import android.graphics.Point
 import android.view.WindowManager
 
 /**
- * 获取屏幕宽度
+ * Screen width
  */
 val Context.screenWidth: Int
     get() {
@@ -19,7 +19,7 @@ val Context.screenWidth: Int
     }
 
 /**
- * 获取屏幕高度
+ * Screen height
  */
 val Context.screenHeight: Int
     get() {
@@ -30,7 +30,7 @@ val Context.screenHeight: Int
     }
 
 /**
- * 判断和设置是否全屏，赋值为true设置成全屏
+ * Is full screen
  */
 var Activity.isFullScreen: Boolean
     get() {
@@ -46,14 +46,14 @@ var Activity.isFullScreen: Boolean
     }
 
 /**
- * 是否是竖屏
+ * Is portrait
  */
 val Activity.isPortrait: Boolean
     get() = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 
 
 /**
- * 是否是横屏
+ * Is landscape
  */
 val Activity.isLandscape: Boolean
     get() = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE

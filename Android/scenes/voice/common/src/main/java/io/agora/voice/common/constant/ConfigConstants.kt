@@ -5,28 +5,21 @@ package io.agora.voice.common.constant
  */
 object ConfigConstants {
 
-    // 可点击透明度
     const val ENABLE_ALPHA = 1.0f
-    // 不可点击透明度
     const val DISABLE_ALPHA = 0.2f
 
-    // 默认音量
     const val RotDefaultVolume = 50
-    //--------房间类型 start--------
     object RoomType {
         const val Common_Chatroom = 0
         const val Spatial_Chatroom = 1
     }
-    //--------房间类型 end--------
 
-    //--------音效类型 start--------
     object SoundSelection {
         const val Social_Chat = 1
         const val Karaoke = 2
         const val Gaming_Buddy = 3
         const val Professional_Broadcaster = 4
     }
-    //--------音效类型 end--------
 
     object SoundSelectionText {
         const val Social_Chat = "Social Chat"
@@ -35,26 +28,20 @@ object ConfigConstants {
         const val Professional_Broadcaster = "Professional podcaster"
     }
 
-    //--------AI 降噪模式 start--------
     object AINSMode {
         const val AINS_High = 0
         const val AINS_Medium = 1
         const val AINS_Off = 2
         const val AINS_Unknown = -1
     }
-    //--------AI 降噪模式 end--------
 
-    //--------AI 机器人播放类型 start--------
     object BotSpeaker {
         const val None = -1
-        const val BotBlue = 0 // 机器人小蓝
-        const val BotRed = 1 // 机器人小红
-        const val BotBoth = 2 // 两个机器人一起播放
+        const val BotBlue = 0
+        const val BotRed = 1
+        const val BotBoth = 2
     }
 
-    //--------AI 降噪模式 end--------
-
-    //--------音量大小 start--------
     object VolumeType {
         const val Volume_None = 0
         const val Volume_Low = 1
@@ -62,26 +49,23 @@ object ConfigConstants {
         const val Volume_High = 3
         const val Volume_Max = 4
     }
-    //--------音量大小 end--------
 
-    //--------AI 降噪-14种噪音试听 start--------
     object AINSSoundType {
-        const val AINS_TVSound = 1 // 电视噪
-        const val AINS_KitchenSound = 2 //厨房噪⾳
-        const val AINS_StreetSound = 3 //街道噪⾳
-        const val AINS_MachineSound = 4 //机器噪⾳
-        const val AINS_OfficeSound = 5 //办公室噪⾳
-        const val AINS_HomeSound = 6 //家庭噪⾳
-        const val AINS_ConstructionSound = 7 //装修噪⾳
-        const val AINS_AlertSound = 8 //提示⾳/音乐
-        const val AINS_ApplauseSound = 9 //鼓掌声
-        const val AINS_WindSound = 10 //风燥
-        const val AINS_MicPopFilterSound = 11 //喷⻨
-        const val AINS_AudioFeedback = 12 //啸叫
-        const val AINS_MicrophoneFingerRub = 13 //玩⼿机时⼿指摩擦⻨克⻛
-        const val AINS_MicrophoneScreenTap = 14 //玩⼿机时⼿指敲击屏幕
+        const val AINS_TVSound = 1
+        const val AINS_KitchenSound = 2
+        const val AINS_StreetSound = 3
+        const val AINS_MachineSound = 4
+        const val AINS_OfficeSound = 5
+        const val AINS_HomeSound = 6
+        const val AINS_ConstructionSound = 7
+        const val AINS_AlertSound = 8
+        const val AINS_ApplauseSound = 9
+        const val AINS_WindSound = 10
+        const val AINS_MicPopFilterSound = 11
+        const val AINS_AudioFeedback = 12
+        const val AINS_MicrophoneFingerRub = 13
+        const val AINS_MicrophoneScreenTap = 14
     }
-    //--------AI 降噪-14种噪音试听 end--------
 
     object MicConstant {
         const val KeyMic0 = "mic_0"

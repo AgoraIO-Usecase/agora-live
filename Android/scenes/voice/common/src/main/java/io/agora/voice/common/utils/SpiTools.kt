@@ -3,15 +3,13 @@ package io.agora.voice.common.utils
 import java.lang.RuntimeException
 import java.util.*
 
-/**
- * Spi 构造器
- */
 object SpiTools {
     /**
-     * 多个SPI实现
+     * Spi multiple load
      *
+     * @param T
      * @param clazz
-     * @return <T>
+     * @return
      */
     fun <T> spiMultipleLoad(clazz: Class<T>): List<T> {
         val list: MutableList<T> = ArrayList()
@@ -24,10 +22,11 @@ object SpiTools {
     }
 
     /**
-     * 单个SPI实现
+     * Spi single load
      *
+     * @param T
      * @param clazz
-     * @return <T>
+     * @return
      */
     fun <T> spiSingleLoad(clazz: Class<T>): T? {
         var t: T? = null

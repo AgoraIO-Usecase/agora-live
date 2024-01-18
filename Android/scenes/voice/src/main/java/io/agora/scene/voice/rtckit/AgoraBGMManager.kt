@@ -14,7 +14,6 @@ import io.agora.rtc2.RtcEngineEx
 interface AgoraBGMStateListener {
     fun onLocalMusicChanged(music: Music?) {}
     fun onLocalPlayStateChanged(isPlay: Boolean) {}
-    /** 将BGM状态同步到远端*/
     fun onUpdateBGMInfoToRemote() {}
     fun onUpdateBGMInfoVisible(content: String?, singerOn: Boolean) {}
 }

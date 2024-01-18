@@ -14,24 +14,24 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * 页面沉浸式工具，需要用到RomUtils
+ * The type Status bar compat.
  */
-
 public class StatusBarCompat {
 
     private static final int INVALID_VAL = -1;
     private static final int COLOR_DEFAULT = Color.parseColor("#20000000");
 
-    /**
-     * 设置页面是否是沉浸式，并可以修改状态栏的颜色
-     * @param activity
-     * @param fitSystemForTheme 是否设置为沉浸式 true 则页面侵入状态栏; false 保留状态栏
-     * @param color 状态栏的颜色
-     */
     public static void setFitSystemForTheme(Activity activity, boolean fitSystemForTheme, String color) {
         setFitSystemForTheme(activity, fitSystemForTheme, Color.parseColor(color));
     }
 
+    /**
+     * Sets fit system for theme.
+     *
+     * @param activity          the activity
+     * @param fitSystemForTheme the fit system for theme
+     * @param color             the color
+     */
     public static void setFitSystemForTheme(Activity activity, boolean fitSystemForTheme, int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -53,10 +53,15 @@ public class StatusBarCompat {
         compat(activity, color);
     }
 
+    /**
+     * Compat.
+     *
+     * @param activity    the activity
+     * @param statusColor the status color
+     */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void compat(Activity activity, int statusColor) {
 
-        //当前手机版本为5.0及以上
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (statusColor != INVALID_VAL) {
                 activity.getWindow().setStatusBarColor(statusColor);
@@ -64,7 +69,6 @@ public class StatusBarCompat {
             return;
         }
 
-        //当前手机版本为4.4
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             int color = COLOR_DEFAULT;
             ViewGroup contentView = (ViewGroup) activity.findViewById(android.R.id.content);
@@ -84,11 +88,22 @@ public class StatusBarCompat {
 
     }
 
+    /**
+     * Compat.
+     *
+     * @param activity the activity
+     */
     public static void compat(Activity activity) {
         compat(activity, INVALID_VAL);
     }
 
 
+    /**
+     * Gets status bar height.
+     *
+     * @param context the context
+     * @return the status bar height
+     */
     public static int getStatusBarHeight(Context context) {
         int result = 0;
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -98,8 +113,13 @@ public class StatusBarCompat {
         return result;
     }
 
+    /**
+     * Sets light status bar.
+     *
+     * @param activity the activity
+     * @param dark     the dark
+     */
     public static void setLightStatusBar(Activity activity, boolean dark) {
-        //针对4.4以上
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             switch (RomUtils.getLightStatusBarAvailableRomType()) {
                 case RomUtils.AvailableRomType.MIUI :
@@ -115,6 +135,13 @@ public class StatusBarCompat {
         }
     }
 
+    /**
+     * Sets miui set status bar light mode.
+     *
+     * @param activity the activity
+     * @param dark     the dark
+     * @return the miui set status bar light mode
+     */
     public static boolean setMIUISetStatusBarLightMode(Activity activity, boolean dark) {
         boolean result = false;
         Window window = activity.getWindow();
@@ -127,14 +154,13 @@ public class StatusBarCompat {
                 darkModeFlag = field.getInt(layoutParams);
                 Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
                 if (dark) {
-                    extraFlagField.invoke(window, darkModeFlag, darkModeFlag);//状态栏透明且黑色字体
+                    extraFlagField.invoke(window, darkModeFlag, darkModeFlag);
                 } else {
-                    extraFlagField.invoke(window, 0, darkModeFlag);//清除黑色字体
+                    extraFlagField.invoke(window, 0, darkModeFlag);
                 }
                 result = true;
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && RomUtils.isMiUIV7OrAbove()) {
-                    //开发版 7.7.13 及以后版本采用了系统API，旧方法无效但不会报错，所以两个方式都要加上
                     if (dark) {
                         activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
                     } else {

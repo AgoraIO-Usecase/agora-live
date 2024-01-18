@@ -55,7 +55,6 @@ class AgoraRtcEngineController {
 
     private var joinCallback: VRValueCallBack<Boolean>? = null
 
-    /**加入rtc频道*/
     fun joinChannel(
         context: Context, channelId: String, rtcUid: Int, soundEffect: Int, broadcaster: Boolean = false,
         joinCallback: VRValueCallBack<Boolean>
@@ -75,7 +74,6 @@ class AgoraRtcEngineController {
                 this.joinCallback = joinCallback
                 VoiceBuddyFactory.get().rtcChannelTemp.broadcaster = broadcaster
                 checkJoinChannel(channelId, rtcUid, soundEffect, broadcaster)
-                // 语音鉴定
                 AudioModeration.moderationAudio(channelId, rtcUid.toLong(),
                     AudioModeration.AgoraChannelType.broadcast, "voice", {})
             },{
@@ -110,7 +108,6 @@ class AgoraRtcEngineController {
         }
         synchronized(AgoraRtcEngineController::class.java) {
             if (rtcEngine != null) return false
-            //初始化RTC
             val config = RtcEngineConfig()
             config.mContext = context
             config.mAppId = VoiceBuddyFactory.get().getVoiceBuddy().rtcAppId()
@@ -125,7 +122,6 @@ class AgoraRtcEngineController {
                     super.onJoinChannelSuccess(channel, uid, elapsed)
                     "voice rtc onJoinChannelSuccess channel:$channel,uid:$uid".logD(TAG)
                     rtcEngine?.setEnableSpeakerphone(true)
-                    // 默认开启降噪
                     deNoise(VoiceBuddyFactory.get().rtcChannelTemp.AINSMode)
                     joinCallback?.onSuccess(true)
                 }
@@ -164,7 +160,6 @@ class AgoraRtcEngineController {
                     mEarBackManager?.updateDelay(stats?.earMonitorDelay ?: 0)
                 }
             }
-            // 加载ai 降噪so
             config.addExtension("agora_ai_noise_suppression_extension")
             config.addExtension("agora_ai_echo_cancellation_extension")
             try {
@@ -191,33 +186,31 @@ class AgoraRtcEngineController {
         rtcEngine?.apply {
             when (soundEffect) {
                 ConfigConstants.SoundSelection.Social_Chat,
-                ConfigConstants.SoundSelection.Karaoke -> { // 社交语聊，ktv
+                ConfigConstants.SoundSelection.Karaoke -> {
                     setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
                     setAudioProfile(Constants.AUDIO_PROFILE_MUSIC_HIGH_QUALITY)
                     setAudioScenario(Constants.AUDIO_SCENARIO_GAME_STREAMING)
                 }
-                ConfigConstants.SoundSelection.Gaming_Buddy -> { // 游戏陪玩
+                ConfigConstants.SoundSelection.Gaming_Buddy -> {
                     setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
                 }
-                else -> { //专业主播
+                else -> {
                     setAudioProfile(Constants.AUDIO_PROFILE_MUSIC_HIGH_QUALITY)
                     setAudioScenario(Constants.AUDIO_SCENARIO_GAME_STREAMING)
                     setParameters("{\"che.audio.custom_payload_type\":73}")
                     setParameters("{\"che.audio.custom_bitrate\":128000}")
-                    // setRecordingDeviceVolume(128) 4.0.1上才支持
+                    // setRecordingDeviceVolume(128)
                     setParameters("{\"che.audio.input_channels\":2}")
                 }
             }
         }
         if (isBroadcaster) {
-            // 音效默认50
             rtcEngine?.adjustAudioMixingVolume(ConfigConstants.RotDefaultVolume)
             rtcEngine?.setClientRole(Constants.CLIENT_ROLE_BROADCASTER)
         } else {
             rtcEngine?.setClientRole(Constants.CLIENT_ROLE_AUDIENCE)
         }
         val status = rtcEngine?.joinChannel(VoiceBuddyFactory.get().getVoiceBuddy().rtcToken(), channelId, "", rtcUid)
-        // 启用用户音量提示。
         rtcEngine?.enableAudioVolumeIndication(1000, 3, false)
         if (status != IRtcEngineEventHandler.ErrorCode.ERR_OK) {
             joinCallback?.onError(status ?: IRtcEngineEventHandler.ErrorCode.ERR_FAILED, "")
@@ -236,10 +229,7 @@ class AgoraRtcEngineController {
         return true
     }
 
-    /**
-     * 切换角色
-     * @param broadcaster
-     */
+
     fun switchRole(broadcaster: Boolean) {
         if (VoiceBuddyFactory.get().rtcChannelTemp.broadcaster == broadcaster) return
         if (broadcaster) {
@@ -250,10 +240,6 @@ class AgoraRtcEngineController {
         VoiceBuddyFactory.get().rtcChannelTemp.broadcaster = broadcaster
     }
 
-    /**
-     * Ai 降噪
-     * @param anisMode 降噪模式
-     */
     fun deNoise(anisMode: Int) {
         when (anisMode) {
             ConfigConstants.AINSMode.AINS_Off -> {
@@ -289,9 +275,6 @@ class AgoraRtcEngineController {
         }
     }
 
-    /**
-     * AI 回声消除（AIAEC）
-     */
     fun setAIAECOn(isOn: Boolean) {
         rtcEngine?.apply {
             if (isOn) {
@@ -302,9 +285,6 @@ class AgoraRtcEngineController {
         }
     }
 
-    /**
-     * AI 人声增强（AIAGC）
-     */
     fun setAIAGCOn(isOn: Boolean) {
         rtcEngine?.apply {
             if (isOn) {
@@ -317,9 +297,6 @@ class AgoraRtcEngineController {
         }
     }
 
-    /**
-     * APM全链路音频开关
-     */
     fun setApmOn(isOn: Boolean) {
         if (isOn) {
             rtcEngine?.setParameters("{\"rtc.debug.enable\": true}");
@@ -340,42 +317,26 @@ class AgoraRtcEngineController {
         return rtcEngine?.createMediaPlayer()
     }
 
-    /**
-     * 音效队列
-     */
     private val soundAudioQueue: ArrayDeque<SoundAudioBean> = ArrayDeque()
 
-    /**
-     * 播放音效列表
-     * @param soundAudioList 音效列表
-     */
     fun playMusic(soundAudioList: List<SoundAudioBean>) {
-        // 复原其他
+
         resetMediaPlayer()
-        // 加入音效队列
+
         soundAudioQueue.clear()
         soundAudioQueue.addAll(soundAudioList)
-        // 取队列第一个播放
+
         soundAudioQueue.removeFirstOrNull()?.let {
             openMediaPlayer(it.audioUrl, it.speakerType)
         }
     }
 
-    /**
-     * 播放单个音效
-     * @param soundId sound id
-     * @param audioUrl cdn url
-     * @param speakerType 模拟哪个机器人
-     */
     fun playMusic(soundId: Int, audioUrl: String, speakerType: Int) {
         "playMusic soundId:$soundId".logD(TAG)
         resetMediaPlayer()
         openMediaPlayer(audioUrl, speakerType)
     }
 
-    /**
-     * reset mpk
-     */
     fun resetMediaPlayer() {
         soundAudioQueue.clear()
         mediaPlayer?.stop()
@@ -386,9 +347,6 @@ class AgoraRtcEngineController {
         mediaPlayer?.adjustPublishSignalVolume(volume)
     }
 
-    /**
-     * 本地mute/unmute
-     */
     fun enableLocalAudio(enable: Boolean) {
         Log.d(TAG, "set local audio enable: $enable")
         rtcEngine?.enableLocalAudio(enable)
@@ -429,7 +387,6 @@ class AgoraRtcEngineController {
                     mediaPlayer?.play()
                 }
                 MediaPlayerState.PLAYER_STATE_PLAYBACK_ALL_LOOPS_COMPLETED -> {
-                    // 结束播放回调--->> 播放下一个，取队列第一个播放
                     ThreadManager.getInstance().runOnMainThread {
                         micVolumeListener?.onBotVolume(soundSpeakerType, true)
                         soundAudioQueue.removeFirstOrNull()?.let {
@@ -438,7 +395,6 @@ class AgoraRtcEngineController {
                     }
                 }
                 MediaPlayerState.PLAYER_STATE_PLAYING -> {
-                    // 开始播放回调--->>
                     ThreadManager.getInstance().runOnMainThread {
                         micVolumeListener?.onBotVolume(soundSpeakerType, false)
                     }

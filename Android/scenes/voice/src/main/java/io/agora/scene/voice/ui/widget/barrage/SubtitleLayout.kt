@@ -15,9 +15,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import io.agora.scene.voice.R
 
 class SubtitleLayout : RelativeLayout, StatusChangeListener {
-    //View宽度
+
     private var mWidth = 0
-    //View高度
+
     private var mHeight = 0
     private lateinit var mBaseLayout: ConstraintLayout
     lateinit var mContent: SubtitleView
@@ -89,14 +89,9 @@ class SubtitleLayout : RelativeLayout, StatusChangeListener {
     }
 
     interface SubtitleStatusChangeListener{
-        /**
-         * 当字幕数未超过当前行数限制时回调
-         */
+
         fun onShortSubtitleShow(textView: TextView)
 
-        /**
-         * 当字幕数较长超出行数限制并完整展示后回调
-         */
         fun onLongSubtitleRollEnd(textView: TextView)
     }
 
@@ -104,7 +99,6 @@ class SubtitleLayout : RelativeLayout, StatusChangeListener {
         this.listener = listener
     }
 
-//    // 开启任务
     private fun startTask() {
         if (!isRunning){
             handler.postDelayed(Runnable {
@@ -118,7 +112,6 @@ class SubtitleLayout : RelativeLayout, StatusChangeListener {
         }
     }
 
-    // 停止任务
     private fun stopTask() {
         hideSubtitleView()
         if (contentList.contains(content)){
@@ -130,7 +123,6 @@ class SubtitleLayout : RelativeLayout, StatusChangeListener {
                 isRunning = false
             }
         }else{
-            // 任务执行完后再次调用postDelayed开启下一次任务
             task?.let {
                 isRunning = false
                 handler.postDelayed(it, 1000)
@@ -146,7 +138,6 @@ class SubtitleLayout : RelativeLayout, StatusChangeListener {
         mBaseLayout.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
     }
 
-    //销毁语聊房页面时调用 移除 task
     fun clearTask(){
         task?.let {
             mainHandler.removeCallbacks(it)

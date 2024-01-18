@@ -3,97 +3,112 @@ package io.agora.scene.voice.service
 import io.agora.scene.voice.imkit.bean.ChatMessageData
 import io.agora.scene.voice.model.VoiceMemberModel
 
+
 /**
- * @author create by zhangwei03
+ * Voice room subscribe delegate
  *
- * im kv 回调协议
+ * @constructor Create empty Voice room subscribe delegate
  */
 interface VoiceRoomSubscribeDelegate {
     /**
-     * 收到礼物消息
-     * @param roomId 环信IMSDK聊天室id
+     * On receive gift
+     *
+     * @param roomId
      * @param message
      */
     fun onReceiveGift(roomId: String, message: ChatMessageData?){}
 
     /**
-     * 接收到普通消息
+     * On receive text msg
+     *
+     * @param roomId
      * @param message
      */
     fun onReceiveTextMsg(roomId: String,message: ChatMessageData?){}
 
     /**
-     * 收到上麦申请消息
-     * @param message 消息对象
+     * On receive seat request
+     *
+     * @param message
      */
     fun onReceiveSeatRequest( message: ChatMessageData) {}
 
     /**
-     * 收到取消上麦申请消息
-     * @param chatUid 环信IM SDK 用户id
+     * On receive seat request rejected
+     *
+     * @param chatUid
      */
     fun onReceiveSeatRequestRejected(chatUid: String) {}
 
     /**
-     * 接收邀请消息
-     * @param message IM消息对象
+     * On receive seat invitation
+     *
+     * @param message
      */
     fun onReceiveSeatInvitation(message: ChatMessageData) {}
 
     /**
-     * 接收拒绝邀请消息
-     *  @param chatUid
+     * On receive seat invitation rejected
+     *
+     * @param chatUid
+     * @param message
      */
     fun onReceiveSeatInvitationRejected(chatUid: String, message: ChatMessageData?) {}
 
-//    /**
-//     * 接收拒绝申请消息
-//     *  @param roomId 环信IM SDK聊天室id
-//     */
-//    fun onReceiveSeatRequestRejected(roomId: String, message: ChatMessageData) {}
-
     /**
-     * 聊天室公告更新
-     * @param roomId 环信IM SDK聊天室id
-     * @param content 公告变化内容
+     * On announcement changed
+     *
+     * @param roomId
+     * @param content
      */
     fun onAnnouncementChanged(roomId: String, content: String) {}
 
     /**
-     * 用户加入聊天室回调，带所有用户信息
-     *  @param roomId 环信IM SDK聊天室id
-     *  @param voiceMember 用户数据
+     * On user joined room
+     *
+     * @param roomId
+     * @param voiceMember
      */
     fun onUserJoinedRoom(roomId: String, voiceMember: VoiceMemberModel) {}
 
     /**
-     * 用户离开房间
-     * @param roomId 环信IM SDK聊天室id
-     * @param chatUid 离开的环信用户id
+     * On user left room
+     *
+     * @param roomId
+     * @param chatUid
      */
     fun onUserLeftRoom(roomId: String, chatUid: String) {}
 
     /**
-     * 聊天室成员被踢出房间
-     * @param roomId 环信IM SDK聊天室id
-     * @param reason 被踢出房间
+     * On user be kicked
+     *
+     * @param roomId
+     * @param reason
      */
     fun onUserBeKicked(roomId: String, reason: VoiceRoomServiceKickedReason) {}
 
     /**
-     * 房间销毁
+     * On room destroyed
+     *
+     * @param roomId
      */
     fun onRoomDestroyed(roomId: String){}
 
     /**
-     *  聊天室自定义麦位属性发生变化
-     * @param roomId 环信IM SDK聊天室id
-     * @param attributeMap 变换的属性kv
-     * @param fromId 谁操作发生的变化
+     * On seat updated
+     *
+     * @param roomId
+     * @param attributeMap
+     * @param fromId
      */
     fun onSeatUpdated(roomId: String, attributeMap: Map<String, String>, fromId: String) {}
 }
 
+/**
+ * Voice room service kicked reason
+ *
+ * @constructor Create empty Voice room service kicked reason
+ */
 enum class VoiceRoomServiceKickedReason{
     removed,
     destroyed,

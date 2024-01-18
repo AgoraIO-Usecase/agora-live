@@ -8,9 +8,6 @@ import io.agora.scene.voice.model.AINSSoundsBean
 
 object RoomAINSConstructor {
 
-    /**
-     * 降噪等级
-     */
     fun builderDefaultAINSList(context: Context, anisMode: Int): MutableList<AINSModeBean> {
         return mutableListOf(
             AINSModeBean(context.getString(R.string.voice_chatroom_your_ains), anisMode),
@@ -19,9 +16,6 @@ object RoomAINSConstructor {
         )
     }
 
-    /**
-     * 降噪音效
-     */
     fun builderDefaultSoundList(context: Context): MutableList<AINSSoundsBean> {
         return mutableListOf(
             AINSSoundsBean(ConfigConstants.AINSSoundType.AINS_TVSound, context.getString(R.string.voice_chatroom_sounds_tv)),

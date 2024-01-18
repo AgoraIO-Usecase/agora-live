@@ -18,6 +18,9 @@ import java.util.Map;
 import io.agora.voice.common.net.model.VRHttpResponse;
 import io.agora.voice.common.utils.LogTools;
 
+/**
+ * The type Vr http client controller.
+ */
 class VRHttpClientController {
    private static final String TAG = VRHttpClientController.class.getSimpleName();
    private final Context mContext;
@@ -29,23 +32,32 @@ class VRHttpClientController {
    private static final String TWO_HYPHENS = "--";
    private static final String LINE_END = "\r\n";
 
+   /**
+    * Instantiates a new Vr http client controller.
+    *
+    * @param mContext the m context
+    */
    public VRHttpClientController(Context mContext) {
       this.mContext = mContext;
    }
 
+
    /**
-    * 设置URL
-    * @param url
-    * @throws IOException
+    * Sets url.
+    *
+    * @param url the url
+    * @throws IOException the io exception
     */
    public void setURL(String url) throws IOException {
       setURL(url, -1);
    }
+
    /**
-    * 设置URL
-    * @param url
-    * @param port
-    * @throws IOException
+    * Sets url.
+    *
+    * @param url  the url
+    * @param port the port
+    * @throws IOException the io exception
     */
    public void setURL(String url, int port) throws IOException {
       url = VRHttpClientConfig.processUrl(url);
@@ -62,17 +74,19 @@ class VRHttpClientController {
    }
 
    /**
-    * 设置请求方法
-    * @param requestMethod
-    * @throws ProtocolException
+    * Sets request method.
+    *
+    * @param requestMethod the request method
+    * @throws ProtocolException the protocol exception
     */
    public void setRequestMethod(String requestMethod) throws ProtocolException {
       mConn.setRequestMethod(requestMethod);
    }
 
    /**
-    * 设置连接过期时间
-    * @param timeout
+    * Sets connect timeout.
+    *
+    * @param timeout the timeout
     */
    public void setConnectTimeout(int timeout) {
       if (timeout <= 0) {
@@ -81,6 +95,11 @@ class VRHttpClientController {
       mConn.setConnectTimeout(timeout);
    }
 
+   /**
+    * Sets read timeout.
+    *
+    * @param timeout the timeout
+    */
    public void setReadTimeout(int timeout) {
       if (timeout <= 0) {
          timeout = EM_DEFAULT_READ_TIMEOUT;
@@ -89,28 +108,29 @@ class VRHttpClientController {
    }
 
    /**
-    * 为请求头加上token
+    * Sets token.
     */
    public void setToken() {
       mConn.setRequestProperty("Authorization", "Bearer " );
    }
 
+
    /**
-    * 添加默认的请求头
+    * Sets default request header.
     */
    public void setDefaultProperty() {
       mConn.setRequestProperty("Connection", "Keep-Alive");
    }
 
    /**
-    * Get请求时的设置
+    * Sets get connection.
     */
    public void setGetConnection() {
       mConn.setDoInput(true);
    }
 
    /**
-    * Post等请求时的设置
+    * Sets post connection.
     */
    public void setPostConnection() {
       mConn.setDoOutput(true);
@@ -120,7 +140,7 @@ class VRHttpClientController {
 
 
    /**
-    * Delete等请求时的设置(android 4.4版本以上才支持setDoOutput方法)
+    * Sets delete connection.
     */
    public void setDeleteConnection() {
       if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
@@ -130,13 +150,19 @@ class VRHttpClientController {
       }
    }
 
+   /**
+    * Gets http url connection.
+    *
+    * @return the http url connection
+    */
    public HttpURLConnection getHttpURLConnection() {
       return mConn;
    }
 
    /**
-    * 添加请求头
-    * @param headers
+    * Add request header.
+    *
+    * @param headers the headers
     */
    public void addHeader(Map<String, String> headers) {
       if (headers != null && headers.size() > 0) {
@@ -147,10 +173,11 @@ class VRHttpClientController {
    }
 
    /**
-    * 添加参数
-    * @param params
-    * @param out
-    * @throws IOException
+    * Add params.
+    *
+    * @param params the params
+    * @param out    the out
+    * @throws IOException the io exception
     */
    public void addParams(Map<String, String> params, OutputStream out) throws IOException {
       LogTools.d(TAG, "request Map params = "+params.toString());
@@ -166,10 +193,11 @@ class VRHttpClientController {
    }
 
    /**
-    * 添加参数
-    * @param params
-    * @param out
-    * @throws IOException
+    * Add params.
+    *
+    * @param params the params
+    * @param out    the out
+    * @throws IOException the io exception
     */
    public void addParams(String params, OutputStream out) throws IOException {
       LogTools.d(TAG, "request String params = "+params);
@@ -180,10 +208,11 @@ class VRHttpClientController {
       out.flush();
    }
 
-
    /**
-    * 连接
-    * @throws IOException
+    * Connect http url connection.
+    *
+    * @return the http url connection
+    * @throws IOException the io exception
     */
    public HttpURLConnection connect() throws IOException {
       printRequestInfo(true);
@@ -191,11 +220,6 @@ class VRHttpClientController {
       return mConn;
    }
 
-   /**
-    * 打印请求信息
-    * @param showInfo
-    * @throws IllegalStateException
-    */
    private void printRequestInfo(boolean showInfo) throws IllegalStateException{
       if(showInfo && mConn != null) {
          LogTools.d(TAG, "request start =========================== ");
@@ -207,9 +231,10 @@ class VRHttpClientController {
    }
 
    /**
-    * 获取请求相应
-    * @return
-    * @throws IOException
+    * Gets http response.
+    *
+    * @return the http response
+    * @throws IOException the io exception
     */
    public VRHttpResponse getHttpResponse() throws IOException {
       VRHttpResponse response = new VRHttpResponse();
@@ -226,12 +251,6 @@ class VRHttpClientController {
       return response;
    }
 
-
-   /**
-    * 打印相应信息
-    * @param showInfo
-    * @param response
-    */
    private void printResponseInfo(boolean showInfo, VRHttpResponse response) {
       if(mConn == null || response == null) {
          return;
@@ -274,10 +293,11 @@ class VRHttpClientController {
    }
 
    /**
-    * 获取Exception response
-    * @param e
-    * @return
-    * @throws IOException
+    * Get exception response
+    *
+    * @param e the e
+    * @return exception response
+    * @throws IOException the io exception
     */
    public VRHttpResponse getExceptionResponse(Exception e) throws IOException{
       VRHttpResponse response = new VRHttpResponse();
@@ -291,11 +311,6 @@ class VRHttpClientController {
       return response;
    }
 
-   /**
-    * 解析流信息
-    * @param is
-    * @return
-    */
    private String parseStream(InputStream is) {
       String buf;
       try {
@@ -332,10 +347,21 @@ class VRHttpClientController {
       public String mUrl;
 
 
+      /**
+       * Instantiates a new Http params.
+       *
+       * @param mContext the m context
+       */
       public HttpParams(Context mContext) {
          this.mContext = mContext;
       }
 
+      /**
+       * Apply.
+       *
+       * @param controller the controller
+       * @throws IOException the io exception
+       */
       public void apply(VRHttpClientController controller) throws IOException {
          if (mPort != -1) {
             controller.setURL(mUrl, mPort);
@@ -360,10 +386,25 @@ class VRHttpClientController {
          controller.addHeader(mHeaders);
       }
 
+      /**
+       * Gets response.
+       *
+       * @param controller the controller
+       * @return the response
+       * @throws IOException the io exception
+       */
       public VRHttpResponse getResponse(VRHttpClientController controller) throws IOException {
          return controller.getHttpResponse();
       }
 
+      /**
+       * Gets exception response.
+       *
+       * @param controller the controller
+       * @param e          the e
+       * @return the exception response
+       * @throws IOException the io exception
+       */
       public VRHttpResponse getExceptionResponse(VRHttpClientController controller, IOException e) throws IOException {
          if (controller != null) {
             return controller.getExceptionResponse(e);
@@ -371,6 +412,9 @@ class VRHttpClientController {
          return null;
       }
 
+      /**
+       * Check token.
+       */
       public void checkToken() {
          if (mHeaders.keySet().contains("Authorization")) {
             if (TextUtils.isEmpty(mHeaders.get("Authorization"))) {

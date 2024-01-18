@@ -99,7 +99,6 @@ class VoiceRoomListFragment : BaseUiFragment<VoiceFragmentRoomListLayoutBinding>
             parseResource(response, object : OnResourceParseCallback<Boolean>() {
                 override fun onSuccess(value: Boolean?) {
                     curVoiceRoomModel?.let {
-                        // 房间列表进入需要置换 token 与获取 im 配置
                         gotoJoinRoom(it)
                     }
                 }
@@ -210,7 +209,6 @@ class VoiceRoomListFragment : BaseUiFragment<VoiceFragmentRoomListLayoutBinding>
         if (voiceRoomModel.isPrivate) {
             showInputDialog(voiceRoomModel)
         } else {
-            // 房间列表进入需要置换 token 与获取 im 配置
             showLoading(false)
             gotoJoinRoom(voiceRoomModel)
         }

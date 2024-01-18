@@ -8,11 +8,11 @@ public class VRHttpResponse {
     public long contentLength;
     public Exception exception;
     /**
-     * 服务器返回的code
+     * code return form server
      */
     public int code;
     /**
-     * 服务器返回的内容
+     * content return from server
      */
     public String content;
 

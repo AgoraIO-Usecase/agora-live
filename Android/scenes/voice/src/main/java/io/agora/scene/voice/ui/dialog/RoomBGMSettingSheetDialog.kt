@@ -67,7 +67,6 @@ class RoomBGMSettingSheetDialog: BaseSheetDialog<VoiceDialogChatroomBgmSettingBi
             binding?.tvMusic?.text = music.name
             binding?.tvSinger?.text = music.singer
         }
-        // 原唱伴唱
         if (bgmManager.params.isSingerOn) {
             binding?.ivSinging?.setImageResource(R.drawable.voice_icon_bgm_sing_on)
         } else {
@@ -82,7 +81,6 @@ class RoomBGMSettingSheetDialog: BaseSheetDialog<VoiceDialogChatroomBgmSettingBi
                 binding?.ivSinging?.setImageResource(R.drawable.voice_icon_bgm_sing_off)
             }
         }
-        // 播放/暂停
         if (bgmManager.params.isAutoPlay) {
             binding?.ivPlay?.setImageResource(R.drawable.voice_icon_bgm_pause)
         } else {
@@ -95,7 +93,6 @@ class RoomBGMSettingSheetDialog: BaseSheetDialog<VoiceDialogChatroomBgmSettingBi
         binding?.ivNext?.setOnClickListener {
             AgoraRtcEngineController.get().bgmManager().playNext()
         }
-        // 音量
         binding?.ivVolume?.setOnClickListener {
             val isSelected = binding?.ivVolume?.isSelected ?: true
             if (isSelected) {
@@ -172,7 +169,7 @@ class RoomBGMSettingSheetDialog: BaseSheetDialog<VoiceDialogChatroomBgmSettingBi
     }
 }
 
-private class MusicAdapter (  // 数据源
+private class MusicAdapter (
     private var context: Context?,
     private var mData: List<Music>,
     private var mSelected: Music? = null
@@ -239,7 +236,6 @@ private class MusicAdapter (  // 数据源
         return mData.size
     }
 
-    // ViewHolder类
     internal class MusicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var isLoadedGif = false

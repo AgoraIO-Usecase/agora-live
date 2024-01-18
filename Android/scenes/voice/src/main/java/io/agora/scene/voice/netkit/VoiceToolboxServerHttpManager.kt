@@ -41,14 +41,6 @@ class VoiceToolboxServerHttpManager {
         val sSingle = VoiceToolboxServerHttpManager()
     }
 
-    /**
-     * 生成RTC/RTM/Chat等Token007
-     * @param channelName 频道名
-     * @param expire 过期时间, 单位秒
-     * @param src 来源/请求方 android
-     * @param types 类型 1: RTC Token，2: RTM Token,3: Chat Token
-     * @param uid 用户ID
-     */
     fun generateToken(
         channelName: String,
         uid: String,
@@ -102,27 +94,6 @@ class VoiceToolboxServerHttpManager {
             })
     }
 
-    /**
-     * 创建环信聊天室
-     * @param chatroomName 聊天室名称，最大长度为 128 字符。
-     * @param chatroomNameDesc 聊天室描述，最大长度为 512 字符。
-     * @param chatroomOwner 聊天室的管理员。
-     * @param src 来源/请求方
-     * @param traceId 请求ID
-     * @param username 用户 ID，长度不可超过 64 个字节长度。不可设置为空。支持以下字符集：
-     *  - 26 个小写英文字母a-z；
-     *  - 26 个大写英文字母A-Z；
-     *  - 10 个数字 0-9；
-     *  - “_”, “-”,“.”。
-     * @param password 用户的登录密码，长度不可超过 64 个字符。
-     * @param nickname 推送消息时，在消息推送通知栏内显示的用户昵称，并非用户个人信息的昵称。长度不可超过 100 个字符。支持以下字符集：
-     * - 26 个小写英文字母a-z；
-     * - 26 个大写英文字母A-Z；
-     * - 10 个数字 0-9；
-     * - 中文；
-     * - 特殊字符。
-     * @param chatroomId 环信聊天室roomId
-     */
     fun createImRoom(
         roomName: String,
         roomOwner: String,
@@ -201,13 +172,6 @@ class VoiceToolboxServerHttpManager {
             })
     }
 
-    /**
-     * toolbox service api 置换token, 获取im 配置
-     * @param channelId rtc 频道号
-     * @param chatroomId im roomId
-     * @param chatroomName im 房间名
-     * @param chatOwner im 房间房主
-     */
     fun requestToolboxService(
         channelId: String,
         chatroomId: String,

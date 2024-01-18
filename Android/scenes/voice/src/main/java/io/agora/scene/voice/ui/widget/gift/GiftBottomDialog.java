@@ -25,7 +25,7 @@ import io.agora.voice.common.utils.DeviceTools;
 import io.agora.voice.common.utils.LogTools;
 
 public class GiftBottomDialog extends BaseSheetDialog<VoiceDialogGiftLayoutBinding> implements View.OnClickListener {
-    private int currentIndex = 0;//当前页面,默认首页
+    private int currentIndex = 0;
     private GiftFragmentAdapter adapter;
     private OnSendClickListener listener;
     private List<GiftBean> list;
@@ -73,9 +73,8 @@ public class GiftBottomDialog extends BaseSheetDialog<VoiceDialogGiftLayoutBindi
         binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
-                //当前页卡被选择时,position为当前页数
-                binding.pagerDots.getChildAt(position).setEnabled(false);//不可点击
-                binding.pagerDots.getChildAt(currentIndex).setEnabled(true);//恢复之前页面状态
+                binding.pagerDots.getChildAt(position).setEnabled(false);
+                binding.pagerDots.getChildAt(currentIndex).setEnabled(true);
                 currentIndex = position;
                 if (currentIndex == 0) {
                     binding.pagerDots.getChildAt(currentIndex).setEnabled(false);
@@ -134,12 +133,6 @@ public class GiftBottomDialog extends BaseSheetDialog<VoiceDialogGiftLayoutBindi
         addViewPagerDots(binding.pagerDots, Math.round((list.size() / 4) + 0.5f));
     }
 
-    /**
-     * 向一个线性布局里添加小圆点
-     *
-     * @param llGuideGroup
-     * @param count        要添加多少个小圆点
-     */
     public void addViewPagerDots(LinearLayoutCompat llGuideGroup, int count) {
         LogTools.d("addViewPagerDots", "count: " + count);
         if (llGuideGroup == null || count < 1 || getContext() == null) return;
@@ -150,10 +143,9 @@ public class GiftBottomDialog extends BaseSheetDialog<VoiceDialogGiftLayoutBindi
         for (int i = 0; i < count; i++) {
             ImageView imageView = new ImageView(llGuideGroup.getContext());
             imageView.setLayoutParams(lp);
-            imageView.setEnabled(true);//设置当前状态为允许点击（可点，灰色）
-            imageView.setOnClickListener(this);//设置点击监听
-            //额外设置一个标识符，以便点击小圆点时跳转对应页面
-            imageView.setTag(i);//标识符与圆点顺序一致
+            imageView.setEnabled(true);
+            imageView.setOnClickListener(this);
+            imageView.setTag(i);
             imageView.setBackgroundResource(R.drawable.voice_bg_gift_vp_point);
             llGuideGroup.addView(imageView);
         }
@@ -192,7 +184,6 @@ public class GiftBottomDialog extends BaseSheetDialog<VoiceDialogGiftLayoutBindi
                                 if (giftBean != null && GiftNum >= 1) {
                                     giftBean.setNum(GiftNum);
                                     getBinding().count.setText(num);
-                                    //礼物金额大于100的 数量只能选1
                                     if (Integer.parseInt(giftBean.getPrice()) >= 100) {
                                         reset();
                                     }
@@ -204,7 +195,6 @@ public class GiftBottomDialog extends BaseSheetDialog<VoiceDialogGiftLayoutBindi
                     .onDismissListener(new PopupWindow.OnDismissListener() {
                         @Override
                         public void onDismiss() {
-                            /*每次dismiss都会回调*/
                             isShowPop(false);
                         }
                     })

@@ -1,4 +1,4 @@
-package io.agora.scene.voice.ui.ainoise
+package io.agora.scene.voice.ui.adapter.viewholder
 
 import android.text.TextUtils
 import androidx.core.view.isVisible

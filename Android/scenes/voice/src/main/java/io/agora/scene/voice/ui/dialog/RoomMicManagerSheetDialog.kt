@@ -112,8 +112,7 @@ class RoomMicManagerSheetDialog constructor() : BaseSheetDialog<VoiceDialogMicMa
 
     private fun bindingMicInfo(micInfo: VoiceMicInfoModel) {
         binding?.apply {
-            // 座位状态
-            if (micInfo.member == null) { // 没人
+            if (micInfo.member == null) {
                 binding?.mtChatroomMicTag?.isVisible = false
                 ivMicInnerIcon.isVisible = true
                 mtMicUsername.text = resources.getString(R.string.voice_room_mic_number, micInfo.micIndex + 1)
@@ -135,7 +134,7 @@ class RoomMicManagerSheetDialog constructor() : BaseSheetDialog<VoiceDialogMicMa
                         ivMicInnerIcon.setImageResource(R.drawable.voice_ic_mic_empty)
                     }
                 }
-            } else { // 有人
+            } else {
                 ivMicInnerIcon.isVisible = false
                 ImageTools.loadImage(ivMicInfo, micInfo.member?.portrait)
                 mtMicUsername.text = micInfo.member?.nickName ?: ""

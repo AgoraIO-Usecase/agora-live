@@ -20,7 +20,6 @@ abstract class BaseUiFragment<B : ViewBinding> : Fragment(),
     open fun showLoading(cancelable: Boolean) {
         if (loadingDialog == null) {
             loadingDialog = AlertDialog.Builder(requireActivity()).setView(R.layout.voice_view_base_loading).create().apply {
-                // 背景修改成透明
                 window?.decorView?.setBackgroundColor(Color.TRANSPARENT)
             }
         }

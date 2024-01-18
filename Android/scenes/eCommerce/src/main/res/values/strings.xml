@@ -45,7 +45,7 @@
     <string name="commerce_music_effect_beauty_voice_sweet">Sweet</string>
     <string name="commerce_music_effect_mixing_ktv">KTV</string>
     <string name="commerce_music_effect_mixing_concert">Concert</string>
-    <string name="commerce_live_prepare_title">Live Streaming</string>
+    <string name="commerce_live_prepare_title">E-Commerce</string>
     <string name="commerce_live_prepare_rotate">Flip</string>
     <string name="commerce_live_prepare_hd">Video Quality</string>
     <string name="commerce_live_prepare_tip"> NOTE: For demo purposes only. Please limit live streams to 20 minutes or less.</string>

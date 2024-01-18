@@ -6,7 +6,7 @@ import android.view.View
 /**
  * @author create by zhangwei03
  *
- * 防玻璃点击
+ * Prevent violent clicking.
  */
 object FastClickTools {
     private var lastClickTime = -1L

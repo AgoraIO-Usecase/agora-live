@@ -19,7 +19,7 @@ import io.agora.scene.voice.databinding.VoiceDialogChatroomAinsBinding
 import io.agora.scene.voice.databinding.VoiceItemRoomAgoraAinsBinding
 import io.agora.scene.voice.databinding.VoiceItemRoomAinsAuditionBinding
 import io.agora.scene.voice.model.constructor.RoomAINSConstructor
-import io.agora.scene.voice.ui.ainoise.*
+import io.agora.scene.voice.ui.adapter.viewholder.*
 
 class RoomAINSSheetDialog constructor() : BaseFixedHeightSheetDialog<VoiceDialogChatroomAinsBinding>() {
 
@@ -189,9 +189,6 @@ class RoomAINSSheetDialog constructor() : BaseFixedHeightSheetDialog<VoiceDialog
         recyclerView.adapter = concatAdapter
     }
 
-    /**
-     * 播放时候更新ui
-     */
     fun updateAnisSoundsAdapter(position: Int, update: Boolean = true) {
         if (update) {
             anisSoundsAdapter?.notifyItemChanged(position)

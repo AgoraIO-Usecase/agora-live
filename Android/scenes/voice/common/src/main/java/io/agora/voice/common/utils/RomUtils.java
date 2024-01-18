@@ -61,7 +61,6 @@ public class RomUtils {
     }
 
     public static int getLightStatusBarAvailableRomType() {
-        //开发版 7.7.13 及以后版本采用了系统API，旧方法无效但不会报错
         if (isMiUIV7OrAbove()) {
             return AvailableRomType.ANDROID_NATIVE;
         }
@@ -81,8 +80,6 @@ public class RomUtils {
         return AvailableRomType.NA;
     }
 
-    //Flyme V4的displayId格式为 [Flyme OS 4.x.x.xA]
-    //Flyme V5的displayId格式为 [Flyme 5.x.x.x beta]
     private static boolean isFlymeV4OrAbove() {
         String displayId = Build.DISPLAY;
         if (!TextUtils.isEmpty(displayId) && displayId.contains("Flyme")) {
@@ -97,7 +94,7 @@ public class RomUtils {
         return false;
     }
 
-    //Android Api 23以上
+    //Android Api 23
     private static boolean isAndroidMOrAbove() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
@@ -250,43 +247,6 @@ public class RomUtils {
             return ROM_COOLPAD;
         }
         return ROM_UNKNOWN;
-    }
-
-    public static String getDeviceManufacture() {
-        if (isMiuiRom()) {
-            return "小米";
-        }
-        if (isHuaweiRom()) {
-            return "华为";
-        }
-        if (isVivoRom()) {
-            return ROM_VIVO;
-        }
-        if (isOppoRom()) {
-            return ROM_OPPO;
-        }
-        if (isMeizuRom()) {
-            return "魅族";
-        }
-        if (isSmartisanRom()) {
-            return "锤子";
-        }
-        if (is360Rom()) {
-            return "奇酷";
-        }
-        if (isLetvRom()) {
-            return "乐视";
-        }
-        if (isLenovoRom()) {
-            return "联想";
-        }
-        if (isZTERom()) {
-            return "中兴";
-        }
-        if (isCoolPadRom()) {
-            return "酷派";
-        }
-        return Build.MANUFACTURER;
     }
 
     public static boolean isMiuiRom() {

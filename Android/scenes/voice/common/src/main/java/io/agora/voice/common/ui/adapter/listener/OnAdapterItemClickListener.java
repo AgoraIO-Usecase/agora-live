@@ -8,8 +8,9 @@ import android.view.View;
 public interface OnAdapterItemClickListener {
     /**
      * item click
-     * @param view
-     * @param position
+     *
+     * @param view     the view
+     * @param position the position
      */
     void onItemClick(View view, int position);
 }

@@ -32,8 +32,9 @@ interface VoiceServiceProtocol {
     }
 
     /**
-     * 注册订阅
-     * @param delegate 聊天室内IM回调处理
+     * Subscribe event
+     *
+     * @param delegate
      */
     fun subscribeEvent(delegate: VoiceRoomSubscribeDelegate)
 
@@ -47,8 +48,11 @@ interface VoiceServiceProtocol {
     fun getSubscribeDelegates():MutableList<VoiceRoomSubscribeDelegate>
 
     /**
-     * 获取房间列表
-     * @param page 分页索引，从0开始(由于SyncManager无法进行分页，这个属性暂时无效)
+     * Fetch room list
+     *
+     * @param page
+     * @param completion
+     * @receiver
      */
     fun fetchRoomList(
         page: Int = 0,
@@ -56,142 +60,219 @@ interface VoiceServiceProtocol {
     )
 
     /**
-     * 创建房间
-     * @param inputModel 输入的房间信息
+     * Create room
+     *
+     * @param inputModel
+     * @param completion
+     * @receiver
      */
     fun createRoom(inputModel: VoiceCreateRoomModel, completion: (error: Int, result: VoiceRoomModel) -> Unit)
 
     /**
-     * 加入房间
-     * @param roomId 房间id
+     * Join room
+     *
+     * @param roomId
+     * @param completion
+     * @receiver
      */
     fun joinRoom(roomId: String, completion: (error: Int, result: VoiceRoomModel?) -> Unit)
 
     /**
-     * 离开房间
-     * @param roomId 房间id
+     * Leave room
+     *
+     * @param roomId
+     * @param isRoomOwnerLeave
+     * @param completion
+     * @receiver
      */
     fun leaveRoom(roomId: String, isRoomOwnerLeave: Boolean, completion: (error: Int, result: Boolean) -> Unit)
 
     /**
-     * 获取房间详情
-     * @param voiceRoomModel 房间概要
+     * Fetch room detail
+     *
+     * @param voiceRoomModel
+     * @param completion
+     * @receiver
      */
     fun fetchRoomDetail(voiceRoomModel: VoiceRoomModel, completion: (error: Int, result: VoiceRoomInfo?) -> Unit)
 
     /**
-     * 获取排行榜列表
+     * Fetch gift contribute
+     *
+     * @param completion
+     * @receiver
      */
     fun fetchGiftContribute(completion: (error: Int, result: List<VoiceRankUserModel>?) -> Unit)
 
     /**
-     * 获取邀请用户列表
+     * Fetch room invited members
+     *
+     * @param completion
+     * @receiver
      */
     fun fetchRoomInvitedMembers(completion: (error: Int, result: List<VoiceMemberModel>) -> Unit)
 
     /**
-     * 获取用户列表
+     * Fetch room members
+     *
+     * @param completion
+     * @receiver
      */
     fun fetchRoomMembers(completion: (error: Int, result: List<VoiceMemberModel>) -> Unit)
 
     fun kickMemberOutOfRoom(chatUidList: MutableList<String>,completion: (error: Int, result: Boolean) -> Unit)
 
     /**
-     * 更新用户列表
+     * Update room members
+     *
+     * @param completion
+     * @receiver
      */
     fun updateRoomMembers(completion: (error: Int, result: Boolean) -> Unit)
 
     /**
-     * 申请列表
+     * Fetch applicants list
+     *
+     * @param completion
+     * @receiver
      */
     fun fetchApplicantsList(completion: (error: Int, result: List<VoiceMemberModel>) -> Unit)
 
     /**
-     * 申请上麦
-     * @param micIndex 麦位index
+     * Start mic seat apply
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     fun startMicSeatApply(micIndex: Int? = null, completion: (error: Int, result: Boolean) -> Unit)
 
     /**
-     * 同意申请
-     * @param chatUid 环信用户id
+     * Accept mic seat apply
+     *
+     * @param micIndex
+     * @param chatUid
+     * @param completion
+     * @receiver
      */
     fun acceptMicSeatApply(micIndex: Int?, chatUid: String, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit)
 
     /**
-     * 取消上麦
-     * @param chatUid im uid
+     * Cancel mic seat apply
+     *
+     * @param chatroomId
+     * @param chatUid
+     * @param completion
+     * @receiver
      */
     fun cancelMicSeatApply(chatroomId: String, chatUid: String, completion: (error: Int, result: Boolean) -> Unit)
 
     /**
-     * 邀请用户上麦
-     * @param chatUid im uid
+     * Start mic seat invitation
+     *
+     * @param chatUid
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     fun startMicSeatInvitation(chatUid: String, micIndex: Int?, completion: (error: Int, result: Boolean) -> Unit)
 
     /**
-     * 接受邀请
+     * Accept mic seat invitation
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     fun acceptMicSeatInvitation(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit)
 
     /**
-     * 拒绝邀请
+     * Refuse invite
+     *
+     * @param completion
+     * @receiver
      */
     fun refuseInvite(completion: (error: Int, result: Boolean) -> Unit)
 
     /**
-     * mute
-     * @param micIndex 麦位index
+     * Mute local
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     fun muteLocal(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit)
 
     /**
-     * unMute
-     * @param micIndex 麦位index
+     * Un mute local
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     fun unMuteLocal(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit)
 
     /**
-     * 禁言指定麦位置
-     * @param micIndex 麦位index
+     * Forbid mic
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     fun forbidMic(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit)
 
     /**
-     * 取消禁言指定麦位置
-     * @param micIndex 麦位index
+     * Un forbid mic
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     fun unForbidMic(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit)
 
     /**
-     * 锁麦
-     * @param micIndex 麦位index
+     * Lock mic
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     fun lockMic(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit)
 
     /**
-     * 取消锁麦
-     * @param micIndex 麦位index
+     * Un lock mic
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     fun unLockMic(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit)
 
     /**
-     * 踢用户下麦
-     * @param micIndex 麦位index
+     * Kick off
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     fun kickOff(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit)
 
     /**
-     * 下麦
-     * @param micIndex 麦位index
+     * Leave mic
+     *
+     * @param micIndex
+     * @param completion
+     * @receiver
      */
     fun leaveMic(micIndex: Int, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit)
 
     /**
-     * 换麦
-     * @param oldIndex 老麦位index
-     * @param newIndex 新麦位index
+     * Change mic
+     *
+     * @param oldIndex
+     * @param newIndex
+     * @param completion
+     * @receiver
      */
     fun changeMic(
         oldIndex: Int,
@@ -200,25 +281,38 @@ interface VoiceServiceProtocol {
     )
 
     /**
-     * 更新公告
-     * @param content 公告内容
+     * Update announcement
+     *
+     * @param content
+     * @param completion
+     * @receiver
      */
     fun updateAnnouncement(content: String, completion: (error: Int, result: Boolean) -> Unit)
 
     /**
-     * 更新房间背景音乐信息
+     * Update b g m info
+     *
+     * @param info
+     * @param completion
+     * @receiver
      */
     fun updateBGMInfo(info: VoiceBgmModel, completion: (error: Int) -> Unit)
 
     /**
-     * 是否启用机器人
-     * @param enable true 启动机器人，false 关闭机器人
+     * Enable robot
+     *
+     * @param enable
+     * @param completion
+     * @receiver
      */
     fun enableRobot(enable: Boolean, completion: (error: Int, enable: Boolean) -> Unit)
 
     /**
-     * 更新机器人音量
-     * @param value 音量
+     * Update robot volume
+     *
+     * @param value
+     * @param completion
+     * @receiver
      */
     fun updateRobotVolume(value: Int, completion: (error: Int, result: Boolean) -> Unit)
 

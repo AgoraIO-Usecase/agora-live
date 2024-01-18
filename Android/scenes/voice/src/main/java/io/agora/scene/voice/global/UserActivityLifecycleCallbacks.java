@@ -14,10 +14,6 @@ import java.util.List;
 
 import io.agora.voice.common.utils.LogTools;
 
-/**
- * 专门用于维护声明周期
- */
-
 public class UserActivityLifecycleCallbacks implements Application.ActivityLifecycleCallbacks, ActivityState {
     private List<Activity> activityList=new ArrayList<>();
     private List<Activity> resumeActivity=new ArrayList<>();
@@ -86,10 +82,6 @@ public class UserActivityLifecycleCallbacks implements Application.ActivityLifec
         return resumeActivity.size() > 0;
     }
 
-    /**
-     * 跳转到目标activity
-     * @param cls
-     */
     public void skipToTarget(Class<?> cls) {
         if(activityList != null && activityList.size() > 0) {
             current().startActivity(new Intent(current(), cls));
@@ -114,23 +106,11 @@ public class UserActivityLifecycleCallbacks implements Application.ActivityLifec
         }
     }
 
-    /**
-     * 判断app是否在前台
-     * @return
-     */
     public boolean isOnForeground() {
         return resumeActivity != null && !resumeActivity.isEmpty();
     }
 
 
-    /**
-     * 此方法用于设置启动模式为singleInstance的activity调用
-     * 用于解决点击悬浮框后，然后finish当前的activity，app回到桌面的问题
-     * 需要如下两个权限：
-     *     <uses-permission android:name="android.permission.GET_TASKS" />
-     *     <uses-permission android:name="android.permission.REORDER_TASKS"/>
-     * @param activity
-     */
     public void makeMainTaskToFront(Activity activity) {
         //当前activity正在finish，且可见的activity列表中只有这个正在finish的activity,且没有销毁的activity个数大于等于2
         if(activity.isFinishing() && resumeActivity.size() == 1 && resumeActivity.get(0) == activity && activityList.size() > 1) {
@@ -139,7 +119,6 @@ public class UserActivityLifecycleCallbacks implements Application.ActivityLifec
             for(int i = 0; i < runningTasks.size(); i++) {
                 ActivityManager.RunningTaskInfo taskInfo = runningTasks.get(i);
                 ComponentName topActivity = taskInfo.topActivity;
-                //判断是否是相同的包名
                 if(topActivity != null && topActivity.getPackageName().equals(activity.getPackageName())) {
                     int taskId;
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -147,7 +126,6 @@ public class UserActivityLifecycleCallbacks implements Application.ActivityLifec
                     }else {
                         taskId = taskInfo.id;
                     }
-                    //将任务栈置于前台
                     LogTools.d("ActivityLifecycle", "执行moveTaskToFront，current activity:"+activity.getClass().getName());
                     manager.moveTaskToFront(taskId, ActivityManager.MOVE_TASK_WITH_HOME);
                 }

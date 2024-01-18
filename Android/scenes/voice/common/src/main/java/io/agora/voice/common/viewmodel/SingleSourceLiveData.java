@@ -60,7 +60,7 @@ public class SingleSourceLiveData<T> extends MutableLiveData<T> {
     /**
      * Set the data source, and unlisten the data source when it has been set
      *
-     * @param source
+     * @param source the source
      */
     public void setSource(LiveData<T> source) {
         if (lastSource == source) {

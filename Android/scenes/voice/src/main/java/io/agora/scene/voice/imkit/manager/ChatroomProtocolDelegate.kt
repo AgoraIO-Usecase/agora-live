@@ -22,6 +22,12 @@ import io.agora.voice.common.utils.LogTools.logD
 import io.agora.voice.common.utils.LogTools.logE
 import io.agora.voice.common.utils.ThreadManager
 
+/**
+ * Chatroom protocol delegate
+ *
+ * @property roomId
+ * @constructor Create empty Chatroom protocol delegate
+ */
 class ChatroomProtocolDelegate constructor(
     private val roomId: String
 ) {
@@ -35,7 +41,11 @@ class ChatroomProtocolDelegate constructor(
     /////////////////////// mic ///////////////////////////
 
     /**
-     * 初始化麦位信息
+     * Init mic info
+     *
+     * @param roomType
+     * @param ownerBean
+     * @param callBack
      */
     fun initMicInfo(roomType: Int, ownerBean: VoiceMemberModel, callBack: CallBack) {
         val attributeMap = mutableMapOf<String, String>()
@@ -71,7 +81,10 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 获取详情，kv 组装
+     * Fetch room detail
+     *
+     * @param voiceRoomModel
+     * @param callback
      */
     fun fetchRoomDetail(voiceRoomModel: VoiceRoomModel, callback: ValueCallBack<VoiceRoomInfo>){
         val keyList: MutableList<String> =
@@ -167,7 +180,9 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 从服务端获取所有麦位信息
+     * Get mic info from server
+     *
+     * @param callback
      */
     fun getMicInfoFromServer(callback: ValueCallBack<List<VoiceMicInfoModel>>) {
         val keyList: MutableList<String> = mutableListOf()
@@ -197,7 +212,9 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 从本地缓存获取所有麦位信息
+     * Get mic info from local
+     *
+     * @return
      */
     fun getMicInfo(): MutableMap<String, VoiceMicInfoModel> {
         val micInfoMap = mutableMapOf<String, VoiceMicInfoModel>()
@@ -213,14 +230,20 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 从本地获取指定麦位信息
+     * Get mic info
+     *
+     * @param micIndex
+     * @return
      */
     private fun getMicInfo(micIndex: Int): VoiceMicInfoModel? {
         return ChatroomCacheManager.cacheManager.getMicInfoByIndex(micIndex)
     }
 
     /**
-     * 从服务端获取指定麦位信息
+     * Get mic info by index from server
+     *
+     * @param micIndex
+     * @param callback
      */
     fun getMicInfoByIndexFromServer(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         val keyList: MutableList<String> = mutableListOf(getMicIndex(micIndex))
@@ -239,14 +262,21 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 下麦
+     * Leave mic
+     *
+     * @param micIndex
+     * @param callback
      */
     fun leaveMic(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         updateMicByResult(null,micIndex, MicClickAction.OffStage, true, callback)
     }
 
     /**
-     * 交换麦位
+     * Change mic
+     *
+     * @param fromMicIndex
+     * @param toMicIndex
+     * @param callback
      */
     fun changeMic(fromMicIndex: Int, toMicIndex: Int, callback: ValueCallBack<Map<Int, VoiceMicInfoModel>>) {
         val attributeMap = mutableMapOf<String, String>()
@@ -304,63 +334,89 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 关麦
+     * Mute local
+     *
+     * @param micIndex
+     * @param callback
      */
     fun muteLocal(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         updateMicByResult(null,micIndex, MicClickAction.Mute, true, callback)
     }
 
     /**
-     * 取消关麦
+     * Un mute local
+     *
+     * @param micIndex
+     * @param callback
      */
     fun unMuteLocal(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         updateMicByResult(null,micIndex, MicClickAction.UnMute, true, callback)
     }
 
     /**
-     * 禁言指定麦位
+     * Forbid mic
+     *
+     * @param micIndex
+     * @param callback
      */
     fun forbidMic(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         updateMicByResult(null,micIndex, MicClickAction.ForbidMic, true, callback)
     }
 
     /**
-     * 取消指定麦位禁言
+     * Un forbid mic
+     *
+     * @param micIndex
+     * @param callback
      */
     fun unForbidMic(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         updateMicByResult(null,micIndex, MicClickAction.UnForbidMic, true, callback)
     }
 
     /**
-     * 踢用户下麦
+     * Kick off
+     *
+     * @param micIndex
+     * @param callback
      */
     fun kickOff(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         updateMicByResult(null,micIndex, MicClickAction.KickOff, true, callback)
     }
 
     /**
-     * 锁麦
+     * Lock mic
+     *
+     * @param micIndex
+     * @param callback
      */
     fun lockMic(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         updateMicByResult(null,micIndex, MicClickAction.Lock, true, callback)
     }
 
     /**
-     * 取消锁麦
+     * Un lock mic
+     *
+     * @param micIndex
+     * @param callback
      */
     fun unLockMic(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         updateMicByResult(null,micIndex, MicClickAction.UnLock, true, callback)
     }
 
     /**
-     * 获取上麦申请列表
+     * Fetch raised list
+     *
+     * @return
      */
     fun fetchRaisedList(): MutableList<VoiceMemberModel> {
         return ChatroomCacheManager.cacheManager.getSubmitMicList()
     }
 
     /**
-     * 申请上麦
+     * Start mic seat apply
+     *
+     * @param micIndex
+     * @param callback
      */
     fun startMicSeatApply(micIndex: Int, callback: CallBack) {
         val attributeMap = mutableMapOf<String, String>()
@@ -385,14 +441,17 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 同意上麦申请
+     * Accept mic seat apply
+     *
+     * @param chatUid
+     * @param micIndex
+     * @param callback
      */
     fun acceptMicSeatApply(chatUid:String,micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         val memberBean = ChatroomCacheManager.cacheManager.getMember(chatUid)
         if (memberBean != null) {
             if (micIndex != -1) {
                 val micInfoModel = getMicInfo(micIndex)
-                // 指定的麦位没人，则在指定麦位，有人则找空闲位置
                 memberBean.micIndex = if (micInfoModel?.micStatus == MicStatus.Idle || micInfoModel?.micStatus==MicStatus.ForceMute) micIndex else getFirstFreeMic()
             } else {
                 memberBean.micIndex = getFirstFreeMic()
@@ -408,7 +467,10 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * check 用户是否在麦位上
+     * Check member is on mic
+     *
+     * @param memberModel
+     * @return
      */
     private fun checkMemberIsOnMic(memberModel: VoiceMemberModel?): Boolean {
         memberModel ?: return true
@@ -423,14 +485,19 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 拒绝上麦申请
+     * Reject submit mic
+     *
      */
     fun rejectSubmitMic() {
-        // TODO: 本期暂无 拒绝上麦申请
+
     }
 
     /**
-     * 撤销上麦申请
+     * Cancel submit mic
+     *
+     * @param chatroomId
+     * @param chatUid
+     * @param callback
      */
     fun cancelSubmitMic(chatroomId: String, chatUid: String, callback: CallBack) {
         val attributeMap = mutableMapOf<String, String>()
@@ -441,21 +508,29 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 邀请上麦列表(过滤已在麦位的成员)
+     * Fetch room invite members
+     *
+     * @return
      */
     fun fetchRoomInviteMembers():MutableList<VoiceMemberModel> {
         return ChatroomCacheManager.cacheManager.getInvitationList()
     }
 
     /**
-     * 获取观众列表
+     * Fetch room members
+     *
+     * @return
      */
     fun fetchRoomMembers():MutableList<VoiceMemberModel> {
         return ChatroomCacheManager.cacheManager.getMemberList()
     }
 
     /**
-     * 邀请上麦
+     * Invitation mic
+     *
+     * @param chatUid
+     * @param micIndex
+     * @param callback
      */
     fun invitationMic(chatUid: String, micIndex: Int, callback: CallBack) {
         val attributeMap = mutableMapOf<String, String>()
@@ -467,7 +542,10 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 用户拒绝上麦邀请
+     * Refuse invite to mic
+     *
+     * @param chatUid
+     * @param callback
      */
     fun refuseInviteToMic(chatUid: String, callback: CallBack) {
         val attributeMap = mutableMapOf<String, String>()
@@ -476,14 +554,17 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 用户同意上麦邀请
+     * Accept mic seat invitation
+     *
+     * @param chatUid
+     * @param micIndex
+     * @param callback
      */
     fun acceptMicSeatInvitation(chatUid: String,micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         val memberBean = ChatroomCacheManager.cacheManager.getMember(chatUid)
         if (memberBean != null) {
             if (micIndex != -1) {
                 val micInfoModel = getMicInfo(micIndex)
-                // 指定的麦位没人，则在指定麦位，有人则找空闲位置
                 memberBean.micIndex = if (micInfoModel?.micStatus == MicStatus.Idle || micInfoModel?.micStatus==MicStatus.ForceMute) micIndex else getFirstFreeMic()
             } else {
                 memberBean.micIndex = getFirstFreeMic()
@@ -501,7 +582,10 @@ class ChatroomProtocolDelegate constructor(
     /////////////////////////// room ///////////////////////////////
 
     /**
-     * 更新公告
+     * Update announcement
+     *
+     * @param content
+     * @param callback
      */
     fun updateAnnouncement(content: String, callback: CallBack) {
         roomManager.asyncUpdateChatRoomAnnouncement(roomId, content, object : CallBack {
@@ -516,8 +600,10 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 是否启用机器人
-     * @param enable true 启动机器人，false 关闭机器人
+     * Enable robot
+     *
+     * @param enable
+     * @param callback
      */
     fun enableRobot(enable: Boolean, callback: ValueCallBack<Boolean>) {
         val attributeMap = mutableMapOf<String, String>()
@@ -561,8 +647,10 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 更新机器人音量
-     * @param value 音量
+     * Update robot volume
+     *
+     * @param value
+     * @param callback
      */
     fun updateRobotVolume(value: Int, callback: CallBack) {
         roomManager.asyncSetChatroomAttribute(roomId, "robot_volume", value.toString(), true, object :
@@ -578,8 +666,15 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 更新指定麦位信息并返回更新成功的麦位信息
-     * 0:正常状态 1:闭麦 2:禁言 3:锁麦 4:锁麦和禁言 -1:空闲 5:机器人专属激活状态 -2:机器人专属关闭状态
+     * Update the specified microphone seat information and return the successfully updated seat information.
+     * 0:Normal state
+     * 1:Muted
+     * 2:Banned
+     * 3:Locked
+     * 4:Locked and banned
+     * -1:Idle
+     * 5:Robot-exclusive active state
+     * -2:Robot-exclusive closed state
      */
     private fun updateMicByResult(member: VoiceMemberModel? = null,
                                   micIndex: Int, @MicClickAction clickAction: Int, isForced: Boolean, callback: ValueCallBack<VoiceMicInfoModel>
@@ -624,19 +719,21 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 根据麦位原状态与action 更新麦位状态
+     * Update mic status by action
+     *
+     * @param micInfo
+     * @param action
+     * @param memberBean
      */
     private fun updateMicStatusByAction(micInfo: VoiceMicInfoModel, @MicClickAction action: Int, memberBean: VoiceMemberModel? = null) {
         when (action) {
             MicClickAction.ForbidMic -> {
-                // 禁言（房主操作）
                 if (micInfo.micStatus == MicStatus.Lock) {
                     micInfo.micStatus = MicStatus.LockForceMute
                 } else {
                     micInfo.micStatus = MicStatus.ForceMute
                 }
             }
-            // 取消禁言（房主操作）
             MicClickAction.UnForbidMic -> {
                 if (micInfo.micStatus == MicStatus.LockForceMute) {
                     micInfo.micStatus = MicStatus.Lock
@@ -648,11 +745,9 @@ class ChatroomProtocolDelegate constructor(
                     }
                 }
             }
-            // 关麦（麦位用户操作包括房主操作自己）
             MicClickAction.Mute -> {
                 micInfo.member?.micStatus = 0
             }
-            // 开麦（麦位用户操作包括房主操作自己）
             MicClickAction.UnMute -> {
                 if (micInfo.member == null) {
                     micInfo.micStatus = MicStatus.Idle
@@ -661,7 +756,6 @@ class ChatroomProtocolDelegate constructor(
                     micInfo.member?.micStatus = 1
                 }
             }
-            // 关闭座位（房主操作）
             MicClickAction.Lock -> {
                 if (micInfo.micStatus == MicStatus.ForceMute) {
                     micInfo.micStatus = MicStatus.LockForceMute
@@ -670,7 +764,6 @@ class ChatroomProtocolDelegate constructor(
                 }
                 micInfo.member = null
             }
-            // 打开座位（房主操作）
             MicClickAction.UnLock -> {
                 if (micInfo.micStatus == MicStatus.LockForceMute) {
                     micInfo.micStatus = MicStatus.ForceMute
@@ -682,7 +775,6 @@ class ChatroomProtocolDelegate constructor(
                     }
                 }
             }
-            // 强制下麦（房主操作）
             MicClickAction.KickOff -> {
                 if (micInfo.micStatus == MicStatus.ForceMute) {
                     micInfo.micStatus = MicStatus.ForceMute
@@ -691,7 +783,6 @@ class ChatroomProtocolDelegate constructor(
                 }
                 micInfo.member = null
             }
-            // 下麦（嘉宾操作）
             MicClickAction.OffStage -> {
                 if (micInfo.micStatus == MicStatus.ForceMute) {
                     micInfo.micStatus = MicStatus.ForceMute
@@ -700,7 +791,6 @@ class ChatroomProtocolDelegate constructor(
                 }
                 micInfo.member = null
             }
-            // 接受邀请/接受申请
             MicClickAction.Accept -> {
                 "MicClickAction.Accept: ${micInfo.micStatus}".logD(TAG)
                 if (micInfo.micStatus == -1){
@@ -723,14 +813,15 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 更新榜单
+     * Update rank list
+     *
+     * @param chatUid
+     * @param giftBean
+     * @param callback
      */
     fun updateRankList(chatUid:String, giftBean: VoiceGiftModel, callback: CallBack){
-        //首先拿到所有的数据
         val rankMap = ChatroomCacheManager.cacheManager.getRankMap()
-        //创建一个新列表
         val rankingList = mutableListOf<VoiceRankUserModel>()
-        //获取指定id的对象
         var voiceRankModel = rankMap[chatUid]
         if (voiceRankModel == null){
             voiceRankModel = VoiceRankUserModel()
@@ -766,7 +857,11 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 更新礼物总数
+     * Update gift amount
+     *
+     * @param chatUid
+     * @param newAmount
+     * @param callback
      */
     fun updateGiftAmount(chatUid: String,newAmount:Int,callback: CallBack){
         if (TextUtils.equals(ownerBean.chatUid,chatUid)){
@@ -789,7 +884,9 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 从服务端获取榜单
+     * Fetch gift contribute
+     *
+     * @param callback
      */
     fun fetchGiftContribute(callback: ValueCallBack<List<VoiceRankUserModel>>){
         val rankingList = ChatroomCacheManager.cacheManager.getRankList()
@@ -824,7 +921,9 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 从服务端获取成员列表
+     * Get member from server
+     *
+     * @param callback
      */
     fun getMemberFromServer(callback: ValueCallBack<List<VoiceMemberModel>>){
         ChatroomCacheManager.cacheManager.getMemberList()
@@ -844,7 +943,9 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 获取当前用户实体信息
+     * Get my self model
+     *
+     * @return
      */
      fun getMySelfModel(): VoiceMemberModel {
         var micIndex : Int = -1
@@ -863,7 +964,10 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 向成员列表中添加自己(每个新加入房间的人需要调用一次)
+     * Add member list by self
+     *
+     * @param memberList
+     * @param callback
      */
     fun addMemberListBySelf(memberList:List<VoiceMemberModel>, callback: ValueCallBack<List<VoiceMemberModel>>){
         val newMemberList = memberList.toMutableList()
@@ -884,7 +988,10 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     * 更新成员列表
+     * Update room member
+     *
+     * @param memberList
+     * @param callback
      */
     fun updateRoomMember(memberList:List<VoiceMemberModel>,callback: CallBack){
         if (TextUtils.equals(ownerBean.chatUid, VoiceBuddyFactory.get().getVoiceBuddy().chatUserName())) {
@@ -963,10 +1070,19 @@ class ChatroomProtocolDelegate constructor(
         return "mic_$index"
     }
 
+    /**
+     * Clear cache
+     *
+     */
     fun clearCache(){
         ChatroomCacheManager.cacheManager.clearAllCache()
     }
 
+    /**
+     * Update mic info cache
+     *
+     * @param kvMap
+     */
     fun updateMicInfoCache(kvMap: Map<String,String>){
         ChatroomCacheManager.cacheManager.setMicInfo(kvMap)
     }

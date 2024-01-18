@@ -18,8 +18,9 @@ private val Context.navBarResId
     )
 
 /**
- * 获取虚拟导航栏的高度，必须在布局绘制完成之后调用才能获取到正确的值（可以在onWindowFocusChanged()中调用）
- * 单位为px
+ * Get the height of the virtual navigation bar. This method must be called after the layout is drawn
+ * to get the correct value (can be called in onWindowFocusChanged()).
+ * The unit is px.
  */
 val Context.navBarHeight: Int
     get() {
@@ -30,14 +31,14 @@ val Context.navBarHeight: Int
     }
 
 /**
- * 手机是否有虚拟导航栏
+ * Does the phone have a virtual navigation bar
  */
 val Context.hasNavBar
     @JvmName("hasNavBar")
     get() = navBarResId != 0
 
 /**
- * 当前虚拟导航栏是否显示
+ * If the virtual navigation bar show
  */
 val Activity.isNavBarShowed: Boolean
     get()  {
@@ -51,7 +52,7 @@ val Activity.isNavBarShowed: Boolean
 object NavigationUtils {
 
     /**
-     * 获取虚拟导航栏(NavigationBar)的高度，可能未显示
+     * Get the height of the virtual navigation bar (NavigationBar), which may not be visible.
      */
     fun getNavigationBarHeight(context: Context): Int {
         var result = 0
@@ -62,22 +63,17 @@ object NavigationUtils {
     }
 
     /**
-     * 获取虚拟导航栏(NavigationBar)是否显示
-     * @return true 表示虚拟导航栏显示，false 表示虚拟导航栏未显示
+     * Get whether the virtual navigation bar (NavigationBar) is visible or not.
+     * @return true indicates that the virtual navigation bar is visible, false indicates that the virtual navigation bar is not visible.
      */
     fun hasNavigationBar(context: Context) = when {
         getNavigationBarHeight(context) == 0 -> false
         RomUtils.isHuaweiRom() && isHuaWeiHideNav(context) -> false
-        // 打开会导致小米机型里带底部手势栏的被判断为全屏
 //        RomUtils.isMiuiRom() && isMiuiFullScreen(context) -> false
         RomUtils.isVivoRom() && isVivoFullScreen(context) -> false
         else -> isHasNavigationBar(context)
     }
 
-    /**
-     * 华为手机是否隐藏了虚拟导航栏
-     * @return true 表示隐藏了，false 表示未隐藏
-     */
     private fun isHuaWeiHideNav(context: Context) =
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Settings.System.getInt(context.contentResolver, "navigationbar_is_min", 0)
@@ -85,24 +81,12 @@ object NavigationUtils {
             Settings.Global.getInt(context.contentResolver, "navigationbar_is_min", 0)
         } != 0
 
-    /**
-     * 小米手机是否开启手势操作
-     * @return true 表示使用的是手势，false 表示使用的是虚拟导航栏(NavigationBar)，默认是false
-     */
     private fun isMiuiFullScreen(context: Context) =
         Settings.Global.getInt(context.contentResolver, "force_fsg_nav_bar", 0) != 0
 
-    /**
-     * Vivo手机是否开启手势操作
-     * @return true 表示使用的是手势，false 表示使用的是虚拟导航栏(NavigationBar)，默认是false
-     */
     private fun isVivoFullScreen(context: Context) =
         Settings.Secure.getInt(context.contentResolver, "navigation_gesture_on", 0) != 0
 
-    /**
-     * 根据屏幕真实高度与显示高度，判断虚拟导航栏是否显示
-     * @return true 表示虚拟导航栏显示，false 表示虚拟导航栏未显示
-     */
     private fun isHasNavigationBar(context: Context): Boolean {
         val windowManager: WindowManager =
             context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
@@ -120,7 +104,6 @@ object NavigationUtils {
         val displayHeight = displayMetrics.heightPixels
         val displayWidth = displayMetrics.widthPixels
 
-        // 部分无良厂商的手势操作，显示高度 + 导航栏高度，竟然大于物理高度，对于这种情况，直接默认未启用导航栏
 //        if (displayHeight > displayWidth) {
 //            if (displayHeight + getNavigationBarHeight(context) > realHeight) return false
 //        } else {

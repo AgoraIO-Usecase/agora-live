@@ -35,9 +35,6 @@ object LogTools {
         entLogger.i(tag, message)
     }
 
-    /**
-     * 获取打印信息所在方法名，行号等信息
-     */
     private val autoJumpLogInfoArray: Array<String>
         get() {
             val infoArray = arrayOf("", "", "")

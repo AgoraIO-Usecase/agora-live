@@ -142,7 +142,6 @@
         <attr name="voice_isWaitInput" format="boolean" />
     </declare-styleable>
 
-    <!-- like自定义属性 -->
     <declare-styleable name="voice_LikeLayout">
         <attr name="voice_initX" format="dimension" />
         <attr name="voice_initY" format="dimension" />
@@ -161,7 +160,6 @@
         <item name="android:windowExitAnimation">@anim/voice_bottom_anim_exit</item>
     </style>
 
-    <!--    取消按钮-->
     <style name="voice_chatroom_cancel_button_text_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -173,7 +171,6 @@
         <item name="android:background">@drawable/voice_bg_rect_radius24_eff4ff</item>
     </style>
 
-    <!--    确认按钮-->
     <style name="voice_chatroom_confirm_button_text_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -182,8 +179,6 @@
         <item name="android:textColor">@color/voice_white</item>
         <item name="android:textSize">@dimen/voice_sp_16</item>
         <item name="android:gravity">center</item>
-        <!--        9.0 以下隐藏阴影 -->
-        <!--        <item name="android:elevation">4dp</item>-->
         <item name="android:background">@drawable/voice_bg_rect_radius24_gradient_blue</item>
     </style>
 </resources>

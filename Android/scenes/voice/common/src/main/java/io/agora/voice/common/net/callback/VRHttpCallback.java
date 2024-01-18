@@ -2,14 +2,14 @@ package io.agora.voice.common.net.callback;
 
 public interface VRHttpCallback {
  /**
-  * 成功时的回调
+  * success call back
   *
   * @param result
   */
  default void onSuccess(String result){}
 
  /**
-  * 失败时的回调
+  * failed call back
   *
   * @param code
   * @param msg

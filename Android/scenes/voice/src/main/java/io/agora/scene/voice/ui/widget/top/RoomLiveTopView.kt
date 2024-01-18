@@ -60,7 +60,6 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
             tvOnLineCount.text = resources.getString(R.string.voice_room_online_count, roomDetailInfo.memberCount)
             mtChatroomGifts.text = roomDetailInfo.giftAmount.toString()
             tvClickCount.text = resources.getString(R.string.voice_room_click_count, roomDetailInfo.clickCount)
-            // 普通房间显示 最佳音效
             if (roomDetailInfo.roomType == ConfigConstants.RoomType.Common_Chatroom) {
                 tvRoomType.isVisible = true
                 tvRoomType.text = when (roomDetailInfo.soundEffect) {
@@ -73,7 +72,6 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
                 tvRoomType.isVisible = false
             }
 
-            // 房主头像
             ImageTools.loadImage(binding.ivChatroomOwner, roomDetailInfo.owner?.portrait)
             val topGifts = roomDetailInfo.rankingList
             if (topGifts.isNullOrEmpty()) {
@@ -179,19 +177,12 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            // 返回
             binding.ivChatroomBack.id -> onLiveTopClickListener?.onClickBack(v)
-            // 公告
             binding.tvRoomNotice.id -> onLiveTopClickListener?.onClickNotice(v)
-            //音效
             binding.tvRoomType.id -> onLiveTopClickListener?.onClickSoundSocial(v)
-            // 排行榜
             binding.llChatroomMemberRank.id -> onLiveTopClickListener?.onClickRank(v, 0)
-            // 成员列表
             binding.vRoomInfo.id -> onLiveTopClickListener?.onClickRank(v, 1)
-            // 更多
             binding.ivChatroomMore.id -> onLiveTopClickListener?.onClickMore(v)
-            // bgm
             binding.tvBGM.id -> onLiveTopClickListener?.onClickBGM(v)
             binding.ivBGM.id -> onLiveTopClickListener?.onClickBGMSinger(v)
         }

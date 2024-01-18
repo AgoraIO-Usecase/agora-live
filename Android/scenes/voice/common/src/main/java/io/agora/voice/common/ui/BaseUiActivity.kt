@@ -25,7 +25,6 @@ abstract class BaseUiActivity<B : ViewBinding> : AppCompatActivity(),
     open fun showLoading(cancelable: Boolean) {
         if (loadingDialog == null) {
             loadingDialog = AlertDialog.Builder(this).setView(R.layout.voice_view_base_loading).create().apply {
-               // 背景修改成透明
                 window?.decorView?.setBackgroundColor(Color.TRANSPARENT)
             }
         }

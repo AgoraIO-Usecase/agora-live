@@ -10,25 +10,23 @@ import java.util.List;
 
 public interface ActivityState {
     /**
-     * 得到当前Activity
-     * @return
+     * get current Activity
      */
     Activity current();
 
     /**
-     * 得到Activity集合
-     * @return
+     * Gets activity list.
+     *
+     * @return the activity list
      */
     List<Activity> getActivityList();
 
     /**
-     * 任务栈中Activity的总数
-     * @return
+     * The total number of activities in the task stack.
      */
     int count();
     /**
-     * 判断应用是否处于前台，即是否可见
-     * @return
+     * Check whether the application is in the foreground, i.e. visible.
      */
     boolean isFront();
 }

@@ -3,59 +3,59 @@ package io.agora.scene.voice.imkit.custorm;
 import io.agora.scene.voice.imkit.bean.ChatMessageData;
 
 /**
- * 定义接收到的消息类型
+ * Define the received message type.
  */
 public interface OnCustomMsgReceiveListener {
     /**
-     * 接收到礼物消息
+     * Received a gift message.
      * @param message
      */
     void onReceiveGiftMsg(ChatMessageData message);
 
     /**
-     * 接收到点赞消息
+     * Received a like message.
      * @param message
      */
     void onReceivePraiseMsg(ChatMessageData message);
 
     /**
-     * 接收到普通消息
+     * Received a regular message.
      * @param message
      */
     void onReceiveNormalMsg(ChatMessageData message);
 
     /**
-     * 接收申请消息
+     * Received an application message.
      * @param message
      */
     void onReceiveApplySite(ChatMessageData message);
 
     /**
-     * 接收取消申请消息
+     * Received a cancel application message.
      * @param message
      */
     void onReceiveCancelApplySite(ChatMessageData message);
 
     /**
-     * 接收邀请消息
+     * Received an invitation message.
      * @param message
      */
     void onReceiveInviteSite(ChatMessageData message);
 
     /**
-     * 接收拒绝邀请消息
+     * Received a rejection of invitation message.
      * @param message
      */
     void onReceiveInviteRefusedSite(ChatMessageData message);
 
     /**
-     * 接收拒绝申请消息
+     * Received a rejection of application message.
      * @param message
      */
     void onReceiveDeclineApply(ChatMessageData message);
 
     /**
-     * 接收系统消息
+     * Received a system message.
      * @param message
      */
     void onReceiveSystem(ChatMessageData message);

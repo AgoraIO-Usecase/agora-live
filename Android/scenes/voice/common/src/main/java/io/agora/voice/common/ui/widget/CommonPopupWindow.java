@@ -24,10 +24,7 @@ public abstract class CommonPopupWindow<V extends View, Binding extends ViewBind
         setOutsideTouchable(builder.mOutsideTouchable);
         setBackgroundDrawable(builder.mBackground);
         setFocusable(builder.mFocusable);
-        /*
-         * 结合showAtLocation使用精准定位，需设置mClippingEnabled为false,否则当内容过多时会移位，比如设置在某
-         * 个控件底下内容过多时popupwindow会上移
-         */
+
         setClippingEnabled(builder.mClippingEnabled);
         setAnimationStyle(builder.mAnimationStyle);
         onDismissListener = builder.onDismissListener;
@@ -58,10 +55,7 @@ public abstract class CommonPopupWindow<V extends View, Binding extends ViewBind
         setOutsideTouchable(builder.mOutsideTouchable);
         setBackgroundDrawable(builder.mBackground);
         setFocusable(builder.mFocusable);
-        /*
-         * 结合showAtLocation使用精准定位，需设置mClippingEnabled为false,否则当内容过多时会移位，比如设置在某
-         * 个控件底下内容过多时popupwindow会上移
-         */
+
         setClippingEnabled(builder.mClippingEnabled);
         setAnimationStyle(builder.mAnimationStyle);
         onDismissListener = builder.onDismissListener;
@@ -135,16 +129,9 @@ public abstract class CommonPopupWindow<V extends View, Binding extends ViewBind
         private ViewEvent<Binding> mEvent;
         private Drawable mBackground;
         private boolean mFocusable;
-        /**
-         * 设置窗口弹出时背景的透明度
-         * 0f（透明）~1.0f（正常）
-         * 设置了alpha时需要在onDismiss恢复窗口的alpha至默认值即1.0f
-         */
+
         private float alpha = 1.0f;
-        /**
-         * 结合showAtLocation使用精准定位，需设置mClippingEnabled为false,否则当内容过多时会移位，比如设置在某
-         * 个控件底下内容过多时popupwindow会上移
-         */
+
         private boolean mClippingEnabled = true;
         private OnShowBefore<Binding> mOnShowBefore;
         private OnShowAfter<Binding> mOnShowAfter;
@@ -265,16 +252,9 @@ public abstract class CommonPopupWindow<V extends View, Binding extends ViewBind
         private ViewEvent<V> mEvent;
         private Drawable mBackground;
         private boolean mFocusable;
-        /**
-         * 设置窗口弹出时背景的透明度
-         * 0f（透明）~1.0f（正常）
-         * 设置了alpha时需要在onDismiss恢复窗口的alpha至默认值即1.0f
-         */
+
         private float alpha = 1.0f;
-        /**
-         * 结合showAtLocation使用精准定位，需设置mClippingEnabled为false,否则当内容过多时会移位，比如设置在某
-         * 个控件底下内容过多时popupwindow会上移
-         */
+
         private boolean mClippingEnabled = true;
         private OnShowBefore<V> mOnShowBefore;
         private OnShowAfter<V> mOnShowAfter;

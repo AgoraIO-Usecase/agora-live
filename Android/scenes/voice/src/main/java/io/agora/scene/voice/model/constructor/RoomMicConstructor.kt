@@ -51,7 +51,6 @@ internal object RoomMicConstructor {
             ConfigConstants.MicConstant.KeyIndex1 to VoiceMicInfoModel(micIndex = 1),
             ConfigConstants.MicConstant.KeyIndex2 to VoiceMicInfoModel(micIndex = 5),
             ConfigConstants.MicConstant.KeyIndex3 to VoiceMicInfoModel(micIndex = 6),
-            // mic4 中间座位
             ConfigConstants.MicConstant.KeyIndex4 to VoiceMicInfoModel(micIndex = 4),
             ConfigConstants.MicConstant.KeyIndex5 to VoiceMicInfoModel(
                 micIndex = 2,
@@ -74,14 +73,10 @@ internal object RoomMicConstructor {
         )
     }
 
-    /**
-     * 房主点击麦位管理
-     */
     fun builderOwnerMicMangerList(
         context: Context, micInfo: VoiceMicInfoModel, isMyself: Boolean
     ): MutableList<MicManagerBean> {
         return when (micInfo.micStatus) {
-            // 正常
             MicStatus.Normal -> {
                 if (isMyself) {
                     if(micInfo.member?.micStatus == 0) {
@@ -97,7 +92,6 @@ internal object RoomMicConstructor {
                     )
                 }
             }
-            // 闭麦
             MicStatus.Mute -> {
                 if (isMyself) {
                     mutableListOf(
@@ -111,7 +105,6 @@ internal object RoomMicConstructor {
                     )
                 }
             }
-            // 禁言 :有人、没人
             MicStatus.ForceMute -> {
                 if (micInfo.member == null) {
                     mutableListOf(
@@ -127,7 +120,6 @@ internal object RoomMicConstructor {
                     )
                 }
             }
-            // 锁麦
             MicStatus.Lock -> {
                 mutableListOf(
                     MicManagerBean(context.getString(R.string.voice_room_invite), false, MicClickAction.Invite),
@@ -135,7 +127,6 @@ internal object RoomMicConstructor {
                     MicManagerBean(context.getString(R.string.voice_room_unblock), true, MicClickAction.UnLock)
                 )
             }
-            // 锁麦和禁言
             MicStatus.LockForceMute -> {
                 mutableListOf(
                     MicManagerBean(context.getString(R.string.voice_room_invite), false, MicClickAction.Invite),
@@ -143,7 +134,6 @@ internal object RoomMicConstructor {
                     MicManagerBean(context.getString(R.string.voice_room_unblock), true, MicClickAction.UnLock)
                 )
             }
-            // 空闲
             MicStatus.Idle -> {
                 mutableListOf(
                     MicManagerBean(context.getString(R.string.voice_room_invite), true, MicClickAction.Invite),
@@ -155,12 +145,9 @@ internal object RoomMicConstructor {
         }
     }
 
-    /**
-     * 嘉宾点击麦位管理
-     */
+
     fun builderGuestMicMangerList(context: Context, micInfo: VoiceMicInfoModel): MutableList<MicManagerBean> {
         return when (micInfo.micStatus) {
-            // 有⼈-正常
             MicStatus.Normal -> {
                 mutableListOf(
                     if(micInfo.member?.micStatus == 0){
@@ -171,21 +158,18 @@ internal object RoomMicConstructor {
                     MicManagerBean(context.getString(R.string.voice_room_off_stage), true, MicClickAction.OffStage)
                 )
             }
-            // 有⼈-关麦
             MicStatus.Mute -> {
                 mutableListOf(
                     MicManagerBean(context.getString(R.string.voice_room_unmute), true, MicClickAction.UnMute),
                     MicManagerBean(context.getString(R.string.voice_room_off_stage), true, MicClickAction.OffStage)
                 )
             }
-            // 有⼈-禁麦（被房主强制静音）
             MicStatus.ForceMute -> {
                 mutableListOf(
                     MicManagerBean(context.getString(R.string.voice_room_unmute), false, MicClickAction.UnForbidMic),
                     MicManagerBean(context.getString(R.string.voice_room_off_stage), true, MicClickAction.OffStage)
                 )
             }
-            // 其他情况 nothing
             else -> {
                 mutableListOf()
             }

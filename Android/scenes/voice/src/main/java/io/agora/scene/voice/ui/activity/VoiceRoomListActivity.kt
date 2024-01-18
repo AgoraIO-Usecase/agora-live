@@ -37,7 +37,6 @@ class VoiceRoomListActivity : BaseUiActivity<VoiceAgoraRoomListLayoutBinding>(){
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        // library 初始化
         ResourcesTools.isZh(this)
         voiceServiceProtocol.reset()
         VoiceConfigManager.initMain()

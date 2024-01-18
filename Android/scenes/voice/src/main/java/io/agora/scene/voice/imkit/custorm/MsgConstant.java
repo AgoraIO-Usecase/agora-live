@@ -1,7 +1,6 @@
 package io.agora.scene.voice.imkit.custorm;
 
 public interface MsgConstant {
-    // 定义的消息params中的key
     String CUSTOM_GIFT_KEY_ID = "gift_id";
     String CUSTOM_GIFT_KEY_NUM = "gift_count";
     String CUSTOM_GIFT_NAME = "gift_name";

@@ -96,9 +96,7 @@ class AgoraSoundCardManager constructor(private val rtcEngineEx: RtcEngineEx) {
         }
     }
 
-    /**
-     * 开启/关闭 虚拟声卡
-     */
+
     fun enable(enable: Boolean, force: Boolean, callback: () -> Unit) {
         if (this.isEnable != enable || force) {
             this.isEnable = enable
@@ -113,7 +111,6 @@ class AgoraSoundCardManager constructor(private val rtcEngineEx: RtcEngineEx) {
         }
     }
 
-    // 设置预设音效
     fun setPresetSound(presetSound: AgoraPresetSound, callback: () -> Unit) {
         this.presetSound = presetSound
         gainValue = presetSound.gainValue
@@ -125,14 +122,12 @@ class AgoraSoundCardManager constructor(private val rtcEngineEx: RtcEngineEx) {
         Log.d(tag, "setPresetSound $presetSound")
     }
 
-    // 设置增益调节
     fun setGainValue(gainValue: Float) {
         this.gainValue = gainValue
         setSoundCardParameters()
         Log.d(tag, "setGainValue $gainValue")
     }
 
-    // 预设值，麦克风类型
     fun setPresetValue(presetValue: Int) {
         this.presetValue = presetValue
         setSoundCardParameters()

@@ -12,9 +12,7 @@ import io.agora.scene.voice.databinding.VoiceDialogCenterFragmentAlertBinding
 import io.agora.voice.common.ui.dialog.BaseFragmentDialog
 import io.agora.voice.common.utils.DeviceTools.dp
 
-/**
- * 中间弹框，确认/取消按钮
- */
+
 class CommonFragmentAlertDialog constructor() : BaseFragmentDialog<VoiceDialogCenterFragmentAlertBinding>() {
 
     override fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VoiceDialogCenterFragmentAlertBinding {
@@ -31,7 +29,7 @@ class CommonFragmentAlertDialog constructor() : BaseFragmentDialog<VoiceDialogCe
                 mtTitle.text = titleText
             } else {
                 mtTitle.isVisible = false
-                // 更改间距
+
                 val layoutParams: ConstraintLayout.LayoutParams = mbLeft.layoutParams as ConstraintLayout.LayoutParams
                 layoutParams.setMargins(layoutParams.marginStart, 34.dp.toInt(), layoutParams.marginEnd, layoutParams.bottomMargin)
                 mbLeft.layoutParams = layoutParams
@@ -89,14 +87,8 @@ class CommonFragmentAlertDialog constructor() : BaseFragmentDialog<VoiceDialogCe
     }
 
     interface OnClickBottomListener {
-        /**
-         * 点击确定按钮事件
-         */
         fun onConfirmClick()
 
-        /**
-         * 点击取消按钮事件
-         */
         fun onCancelClick() {}
     }
 }

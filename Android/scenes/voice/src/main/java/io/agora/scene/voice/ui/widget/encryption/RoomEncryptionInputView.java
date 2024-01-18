@@ -71,7 +71,7 @@ public class RoomEncryptionInputView extends AppCompatEditText {
    }
 
    private void init() {
-      setTextColor(0X00ffffff); //把用户输入的内容设置为透明
+      setTextColor(0X00ffffff);
       setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);
       sidePaint = new Paint();
       backPaint = new Paint();
@@ -94,14 +94,11 @@ public class RoomEncryptionInputView extends AppCompatEditText {
       if (mText == null) {
          return;
       }
-      //如果字数不超过用户设置的总字数，就赋值给成员变量mText；
-      // 如果字数大于用户设置的总字数，就只保留用户设置的几位数字，并把光标制动到最后，让用户可以删除；
       if (text.toString().length() <= textLength) {
          mText = text.toString();
       } else {
          setText(mText);
-         setSelection(getText().toString().length());  //光标制动到最后
-         //调用setText(mText)之后键盘会还原，再次把键盘设置为数字键盘；
+         setSelection(getText().toString().length());
          setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);
       }
       if (OnTextChangeListener != null) OnTextChangeListener.onTextChange(mText);
@@ -127,15 +124,12 @@ public class RoomEncryptionInputView extends AppCompatEditText {
    @Override
    protected void onDraw(Canvas canvas) {
       super.onDraw(canvas);
-      //边框画笔
-      sidePaint.setAntiAlias(true);//消除锯齿
-      sidePaint.setStrokeWidth(StrokeWidth);//设置画笔的宽度
-      sidePaint.setStyle(Paint.Style.STROKE);//设置绘制轮廓
+      sidePaint.setAntiAlias(true);
+      sidePaint.setStrokeWidth(StrokeWidth);
+      sidePaint.setStyle(Paint.Style.STROKE);
       sidePaint.setColor(defaultColor);
-      //背景色画笔
       backPaint.setStyle(Paint.Style.FILL);
       backPaint.setColor(backColor);
-      //文字的画笔
       textPaint.setTextSize(textSize);
       textPaint.setStyle(Paint.Style.FILL);
       textPaint.setColor(textColor);
@@ -147,22 +141,18 @@ public class RoomEncryptionInputView extends AppCompatEditText {
 //      Log.e(TAG, "Wide: "+ Wide);
       RectF rect = null;
       for (int i = 0; i < textLength; i++) {
-         //区分已输入和未输入的边框颜色
+
          if (mText.length() >= i) {
             sidePaint.setColor(checkedColor);
          } else {
             sidePaint.setColor(defaultColor);
          }
-//         Log.e(TAG, "spzceX: "+ spzceX  + " spzceY:" + spzceY);
-         //RectF的参数(left,  top,  right,  bottom); 画出每个矩形框并设置间距，间距其实是增加左边框距离，缩小上下右边框距离；
-//            rect = new RectF(i * Wide + spzceX , spzceY, i * Wide + Wide - spzceX, Wide - spzceY); //四个值，分别代表4条线，距离起点位置的线
-//         Log.e(TAG, "left: " + (i * Wide + spzceX)  + " top:" + spzceY + " right:"+ (i * Wide + Wide - spzceX) + " bottom:" + (Wide - spzceY));
-         rect = new RectF(i * Wide + spzceX , spzceY, i * Wide + Wide - spzceX , getMeasuredHeight() - spzceY); //四个值，分别代表4条线，距离起点位置的线
-         canvas.drawRoundRect(rect, Round, Round, backPaint); //绘制背景色
-         canvas.drawRoundRect(rect, Round, Round, sidePaint); //绘制边框；
+         rect = new RectF(i * Wide + spzceX , spzceY, i * Wide + Wide - spzceX , getMeasuredHeight() - spzceY);
+         canvas.drawRoundRect(rect, Round, Round, backPaint);
+         canvas.drawRoundRect(rect, Round, Round, sidePaint);
          rectFS.add(rect);
 
-         if (isWaitInput && i == mText.length()) {  //显示待输入的线
+         if (isWaitInput && i == mText.length()) {
             l = new Paint();
             l.setStrokeWidth(3);
             l.setStyle(Paint.Style.FILL);
@@ -174,7 +164,7 @@ public class RoomEncryptionInputView extends AppCompatEditText {
 //            }
          }
       }
-      //画密码圆点
+
       for (int j = 0; j < mText.length(); j++) {
          if (isPwd) {
             canvas.drawCircle(rectFS.get(j).centerX(), rectFS.get(j).centerY(), Circle, textPaint);
@@ -193,15 +183,6 @@ public class RoomEncryptionInputView extends AppCompatEditText {
    private Runnable cursorAnimation = new Runnable() {
       public void run() {
 
-//         // Switch the cursor visibility and set it
-//         Log.e("cursorAnimation","getAlpha1: " + l.getAlpha());
-//         int newAlpha = (l.getAlpha() == 0) ? 255 : 0;
-//         l.setAlpha(newAlpha);
-//         Log.e("cursorAnimation","getAlpha2: " + l.getAlpha());
-//         // Call onDraw() to draw the cursor with the new Paint
-//         invalidate();
-//         // Wait 500 milliseconds before calling self again
-//         postDelayed(cursorAnimation, 2000);
       }
    };
 
@@ -210,9 +191,6 @@ public class RoomEncryptionInputView extends AppCompatEditText {
       return (int) (dpValue * scale + 0.5f);
    }
 
-   /**
-    * 输入监听
-    */
    public interface OnTextChangeListener {
       void onTextChange(String pwd);
    }
@@ -231,79 +209,46 @@ public class RoomEncryptionInputView extends AppCompatEditText {
       setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);
    }
 
-   /**
-    * 设置密码框间距
-    */
    public void setXSpace(int space) {
       spzceX = space;
    }
 
-   /**
-    * 设置密码框间距
-    */
    public void setYSpace(int space) {
       spzceY = space;
    }
 
-   /**
-    * 设置密码框个数
-    */
    public void setTextLength(int textLength) {
       this.textLength = textLength;
    }
 
-   /**
-    * 获得密码框个数
-    */
    public int getTextLength() {
       return this.textLength;
    }
 
-   /**
-    * 设置已输入密码框颜色
-    */
    public void setcheckedColorColor(int checkedColor) {
       this.checkedColor = checkedColor;
    }
 
-   /**
-    * 设置未输入密码框颜色
-    */
    public void setdefaultColorColor(int defaultColor) {
       this.defaultColor = defaultColor;
    }
 
-   /**
-    * 设置密码框背景色
-    */
    public void setBackColor(int backColor) {
       this.backColor = backColor;
    }
 
-   /**
-    * 设置密码圆点的颜色
-    */
    public void setPwdTextColor(int textColor) {
       this.textColor = textColor;
    }
 
-   /**
-    * 设置密码框 边框的宽度
-    */
    public void setStrokeWidth(int width) {
       StrokeWidth = width;
    }
 
-   /**
-    * 密码的圆点大小
-    */
    public void setCircle(int Circle) {
       this.Circle = Circle;
    }
 
-   /**
-    * 密码边框的圆角大小
-    */
    public void setRound(int Round) {
       this.Round = Round;
    }
@@ -356,11 +301,6 @@ public class RoomEncryptionInputView extends AppCompatEditText {
       return isPwd;
    }
 
-   /**
-    * 是否密文输入
-    *
-    * @param pwd
-    */
    public void setPwd(boolean pwd) {
       isPwd = pwd;
    }
@@ -369,12 +309,6 @@ public class RoomEncryptionInputView extends AppCompatEditText {
       return waitInputColor;
    }
 
-   /**
-    * \
-    * 待输入线的颜色
-    *
-    * @param waitInputColor
-    */
    public void setWaitInputColor(int waitInputColor) {
       this.waitInputColor = waitInputColor;
    }
@@ -383,11 +317,6 @@ public class RoomEncryptionInputView extends AppCompatEditText {
       return isWaitInput;
    }
 
-   /**
-    * 是否显示待输入的线
-    *
-    * @param waitInput
-    */
    public void setWaitInput(boolean waitInput) {
       isWaitInput = waitInput;
 

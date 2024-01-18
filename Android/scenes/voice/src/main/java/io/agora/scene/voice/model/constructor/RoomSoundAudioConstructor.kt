@@ -21,20 +21,20 @@ object RoomSoundAudioConstructor {
     private const val AINSIntroduce = "/07AINSIntroduce%1\$s"
     //AI噪⾳ 08AINSTVSound/EN/High/08-01-B-CN-High.wav  1./08AINSTVSound/EN/High 2./08-01-B 3.CN 4.High.wav
     private const val AINSSound = "%1\$s%2\$s-%3\$s-%4\$s"
-    private const val AINS_TVSound = "/08AINSTVSound" // 电视噪⾳
-    private const val AINS_KitchenSound = "/09AINSKitchenSound" //厨房噪⾳
-    private const val AINS_StreetSound = "/10AINStreetSound" //街道噪⾳
-    private const val AINS_MachineSound = "/11AINSRobotSound" //机器噪⾳
-    private const val AINS_OfficeSound = "/12AINSOfficeSound" //办公室噪⾳
-    private const val AINS_HomeSound = "/13AINSHomeSound" //家庭噪⾳
-    private const val AINS_ConstructionSound = "/14AINSConstructionSound" //装修噪⾳
-    private const val AINS_AlertSound = "/15AINSAlertSound" //提示⾳/音乐
-    private const val AINS_ApplauseSound = "/16AINSApplause" //鼓掌声
-    private const val AINS_WindSound = "/17AINSWindSound" //风燥
-    private const val AINS_MicPopFilterSound = "/18AINSMicPopFilter" //喷⻨
-    private const val AINS_AudioFeedback = "/19AINSAudioFeedback" //啸叫
-    private const val AINS_MicrophoneFingerRub = "/20ANISMicrophoneFingerRubSound" //玩⼿机时⼿指摩擦⻨克⻛
-    private const val AINS_MicrophoneScreenTap = "/21ANISScreenTapSound" //玩⼿机时⼿指敲击屏幕
+    private const val AINS_TVSound = "/08AINSTVSound"
+    private const val AINS_KitchenSound = "/09AINSKitchenSound"
+    private const val AINS_StreetSound = "/10AINStreetSound"
+    private const val AINS_MachineSound = "/11AINSRobotSound"
+    private const val AINS_OfficeSound = "/12AINSOfficeSound"
+    private const val AINS_HomeSound = "/13AINSHomeSound"
+    private const val AINS_ConstructionSound = "/14AINSConstructionSound"
+    private const val AINS_AlertSound = "/15AINSAlertSound"
+    private const val AINS_ApplauseSound = "/16AINSApplause"
+    private const val AINS_WindSound = "/17AINSWindSound"
+    private const val AINS_MicPopFilterSound = "/18AINSMicPopFilter"
+    private const val AINS_AudioFeedback = "/19AINSAudioFeedback"
+    private const val AINS_MicrophoneFingerRub = "/20ANISMicrophoneFingerRubSound"
+    private const val AINS_MicrophoneScreenTap = "/21ANISScreenTapSound"
 
 
     private const val CreateCommonRoomSoundId = 100
@@ -45,9 +45,6 @@ object RoomSoundAudioConstructor {
     private const val AINSIntroduceSoundId = 700
     private const val AINSSoundId = 800
 
-    /**
-     * 新房间创建欢迎语料
-     */
     val createRoomSoundAudioMap: Map<Int, List<SoundAudioBean>> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         mutableMapOf(
             ConfigConstants.RoomType.Common_Chatroom to
@@ -96,9 +93,6 @@ object RoomSoundAudioConstructor {
         )
     }
 
-    /**
-     * 最佳音效语料
-     */
     val soundSelectionAudioMap: Map<Int, List<SoundAudioBean>> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         mutableMapOf(
             ConfigConstants.SoundSelection.Social_Chat to
@@ -231,9 +225,6 @@ object RoomSoundAudioConstructor {
         )
     }
 
-    /**
-     * AI 降噪开关讲解语料
-     */
     val anisIntroduceAudioMap: Map<Int, List<SoundAudioBean>> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         mutableMapOf(
             ConfigConstants.AINSMode.AINS_High to
@@ -351,13 +342,8 @@ object RoomSoundAudioConstructor {
                         )
                     )
         )
-
-
     }
 
-    /**
-     * AI 降噪14种语料
-     */
     val AINSSoundMap: Map<Int, SoundAudioBean> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         mutableMapOf(
             ConfigConstants.AINSSoundType.AINS_TVSound to SoundAudioBean(

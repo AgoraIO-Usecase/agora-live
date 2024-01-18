@@ -10,7 +10,6 @@ import io.agora.voice.common.utils.LogTools;
 
 /**
  * Created by Sunny on 2019/4/1.
- * 参考博文：https://blog.csdn.net/Y_sunny_U/article/details/89500464
  */
 public class HorizontalPageLayoutManager extends RecyclerView.LayoutManager implements PageDecorationLastJudge {
     @Override
@@ -81,20 +80,15 @@ public class HorizontalPageLayoutManager extends RecyclerView.LayoutManager impl
         if (state.isPreLayout()) {
             return;
         }
-        //获取每个Item的平均宽高
         itemWidth = getUsableWidth() / columns;
         itemHeight = getUsableHeight() / rows;
 
-        //计算宽高已经使用的量，主要用于后期测量
         itemWidthUsed = (columns - 1) * itemWidth;
         itemHeightUsed = (rows - 1) * itemHeight;
-
-        //计算总的页数
 
 //        pageSize = state.getItemCount() / onePageSize + (state.getItemCount() % onePageSize == 0 ? 0 : 1);
         computePageSize(state);
         LogTools.i("zzz", "itemCount=" + getItemCount() + " state itemCount=" + state.getItemCount() + " pageSize=" + pageSize);
-        //计算可以横向滚动的最大值
         totalWidth = (pageSize - 1) * getWidth();
 
         //分离view
@@ -106,7 +100,6 @@ public class HorizontalPageLayoutManager extends RecyclerView.LayoutManager impl
                 for (int c = 0; c < columns; c++) {
                     int index = p * onePageSize + r * columns + c;
                     if (index == count) {
-                        //跳出多重循环
                         c = columns;
                         r = rows;
                         p = pageSize;
@@ -115,12 +108,10 @@ public class HorizontalPageLayoutManager extends RecyclerView.LayoutManager impl
 
                     View view = recycler.getViewForPosition(index);
                     addView(view);
-                    //测量item
                     measureChildWithMargins(view, itemWidthUsed, itemHeightUsed);
 
                     int width = getDecoratedMeasuredWidth(view);
                     int height = getDecoratedMeasuredHeight(view);
-                    //记录显示范围
                     Rect rect = allItemFrames.get(index);
                     if (rect == null) {
                         rect = new Rect();
@@ -129,11 +120,8 @@ public class HorizontalPageLayoutManager extends RecyclerView.LayoutManager impl
                     int y = r * itemHeight;
                     rect.set(x, y, width + x, height + y);
                     allItemFrames.put(index, rect);
-
-
                 }
             }
-            //每一页循环以后就回收一页的View用于下一页的使用
             removeAndRecycleAllViews(recycler);
         }
 
