@@ -71,7 +71,8 @@ class PresetDialog constructor(context: Context, deviceScore: Int, rtcConnection
             // 画质设置
             val broadcastStrategySelectPosition = getGroupSelectedItem(
                 mBinding.broadcastStrategyItemSmooth,
-                mBinding.broadcastStrategyItemClear
+                mBinding.broadcastStrategyItemClear,
+                mBinding.broadcastStrategyItemPureMode
             )
             if (broadcastStrategySelectPosition < 0) {
                 ToastDialog(context).apply {
@@ -105,10 +106,12 @@ class PresetDialog constructor(context: Context, deviceScore: Int, rtcConnection
                 when (it) {
                     0 -> mBinding.networkView.isVisible = true
                     1 -> mBinding.networkView.isVisible = false
+                    2 -> mBinding.networkView.isVisible = false
                 }
             }, 0,
             mBinding.broadcastStrategyItemSmooth,
-            mBinding.broadcastStrategyItemClear
+            mBinding.broadcastStrategyItemClear,
+            mBinding.broadcastStrategyItemPureMode
         )
 
         groupItems(
@@ -182,7 +185,12 @@ class PresetDialog constructor(context: Context, deviceScore: Int, rtcConnection
             return
         }
 
-        val broadcastStrategy = if (broadcastStrategyLevel == 0) VideoSetting.BroadcastStrategy.Smooth else VideoSetting.BroadcastStrategy.Clear
+        val broadcastStrategy = when (broadcastStrategyLevel) {
+            0 -> VideoSetting.BroadcastStrategy.Smooth
+            1 -> VideoSetting.BroadcastStrategy.Clear
+            2 -> VideoSetting.BroadcastStrategy.Pure
+            else -> VideoSetting.BroadcastStrategy.Smooth
+        }
         val network = if (networkLevel == 0) VideoSetting.NetworkLevel.Good else VideoSetting.NetworkLevel.Normal
 
         device?.let {

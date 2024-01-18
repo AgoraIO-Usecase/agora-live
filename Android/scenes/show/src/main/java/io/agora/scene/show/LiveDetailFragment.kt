@@ -363,6 +363,11 @@ class LiveDetailFragment : Fragment() {
         }
 
         startTopLayoutTimer()
+        VideoSetting.isPureMode = mRoomInfo.isPureMode == 1
+        if (mRoomInfo.isPureMode == 1) {
+            VideoSetting.setCurrAudienceEnhanceSwitch(false)
+            VideoSetting.updateSRSetting(VideoSetting.SuperResolution.SR_NONE)
+        }
     }
 
     /**
@@ -813,7 +818,11 @@ class LiveDetailFragment : Fragment() {
         }
         topBinding.tvStatisticH265.isVisible = true
         if (isRoomOwner) {
-            topBinding.tvStatisticH265.text = getString(R.string.show_statistic_h265, getString(R.string.show_setting_opened))
+            if (mRoomInfo.isPureMode == 1) {
+                topBinding.tvStatisticH265.text = getString(R.string.show_statistic_h265, getString(R.string.show_setting_closed))
+            } else {
+                topBinding.tvStatisticH265.text = getString(R.string.show_statistic_h265, getString(R.string.show_setting_opened))
+            }
         } else {
             topBinding.tvStatisticH265.text = getString(R.string.show_statistic_h265, "--")
         }
@@ -840,6 +849,8 @@ class LiveDetailFragment : Fragment() {
             topBinding.tvStatisticLowStream.text =
                 getString(R.string.show_statistic_low_stream,
                     if (VideoSetting.getCurrLowStreamSetting() == null)
+                        getString(R.string.show_setting_closed)
+                    else if (mRoomInfo.isPureMode == 1)
                         getString(R.string.show_setting_closed)
                     else
                         getString(R.string.show_setting_opened)

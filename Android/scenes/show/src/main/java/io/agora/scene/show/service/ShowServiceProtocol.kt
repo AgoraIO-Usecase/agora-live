@@ -90,6 +90,7 @@ interface ShowServiceProtocol {
         roomId: String,
         roomName: String,
         thumbnailId: String,
+        isPureMode: Boolean,
         success: (ShowRoomDetailModel) -> Unit,
         error: ((Exception) -> Unit)? = null
     )
