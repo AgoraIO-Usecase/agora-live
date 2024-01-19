@@ -266,7 +266,7 @@ class VoiceRoomListFragment : BaseUiFragment<VoiceFragmentRoomListLayoutBinding>
             holder.ivBackground.setImageResource(resId)
             val list = mList ?: return
             val data: VoiceRoomModel = list[position]
-            GlideApp.with(holder.ivAvatar.context).load(data.owner?.portrait)
+            GlideApp.with(holder.ivAvatar.context).load(data.owner?.getAvatarUrl())
                 .into(holder.ivAvatar)
             holder.tvRoomName.text = data.roomName
             val peopleNum = if (data.memberCount > 0) data.memberCount else 0

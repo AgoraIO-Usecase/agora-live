@@ -72,7 +72,7 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
                 tvRoomType.isVisible = false
             }
 
-            ImageTools.loadImage(binding.ivChatroomOwner, roomDetailInfo.owner?.portrait)
+            ImageTools.loadImage(binding.ivChatroomOwner, roomDetailInfo.owner?.getAvatarUrl())
             val topGifts = roomDetailInfo.rankingList
             if (topGifts.isNullOrEmpty()) {
                 llChatroomMemberRank.isVisible = false

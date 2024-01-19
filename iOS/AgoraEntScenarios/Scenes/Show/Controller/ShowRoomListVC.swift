@@ -116,12 +116,6 @@ class ShowRoomListVC: UIViewController {
     private func joinRoom(_ room: ShowRoomListModel){
         ShowAgoraKitManager.shared.setupAudienceProfile()
         ShowAgoraKitManager.shared.updateLoadingType(roomId: room.roomId, channelId: room.roomId, playState: .joinedWithAudioVideo)
-        if (room.isPureMode) {
-            ShowAgoraKitManager.shared.setSuperResolutionOn(false)
-        } else {
-            ShowAgoraKitManager.shared.setSuperResolutionOn(true)
-        }
-
         if room.ownerId == VLUserCenter.user.id {
             ToastView.show(text: "show_join_own_room_error".show_localized)
         } else {
@@ -176,7 +170,7 @@ extension ShowRoomListVC: UICollectionViewDataSource, UICollectionViewDelegateFl
                        name: room.roomName,
                        id: room.roomId,
                        count: room.roomUserCount,
-                       pureMode: room.isPureMode)
+                       pureMode: (room.isPureMode != 0))
         cell.ag_addPreloadTap(roomInfo: room, localUid: delegateHandler.localUid) {[weak self] state in
             if AppContext.shared.rtcToken?.count ?? 0 == 0 {
                 if state == .began {

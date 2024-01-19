@@ -83,7 +83,7 @@ class Room2DMicView : ConstraintLayout, IRoomMicBinding {
                 } else {
                     vWave1.isVisible = true
                     vWave2.isVisible = true
-                    ImageTools.loadImage(ivMicInfo, micInfo.member?.portrait)
+                    ImageTools.loadImage(ivMicInfo, micInfo.member?.getAvatarUrl())
                     mtMicUsername.text = micInfo.member?.nickName ?: ""
                     if (micInfo.micIndex == 0) {
                         mtMicUsername.setCompoundDrawablesWithIntrinsicBounds(

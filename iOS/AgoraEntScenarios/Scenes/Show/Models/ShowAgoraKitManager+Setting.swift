@@ -195,12 +195,6 @@ extension ShowAgoraKitManager {
         let performance = performanceMode
         
         rtcParam.suggested = true
-        if (performance == .pure) {
-            // apply pure mode params
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0, h265On: false)
-            setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
-            return
-        }
         if (machine == .high && net == .good && performance == .smooth && showMode == .single) {
             // High-end machine, good network, clear, unicast
             _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: true)
@@ -299,6 +293,11 @@ extension ShowAgoraKitManager {
             // Low-end machine, weak net, smooth, pk
             _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
+        }
+        if (performance == .pure) {
+            // apply pure mode params
+            ShowSettingKey.H265.writeValue(false)
+            setSimulcastStream(isOn: false)
         }
     }
     

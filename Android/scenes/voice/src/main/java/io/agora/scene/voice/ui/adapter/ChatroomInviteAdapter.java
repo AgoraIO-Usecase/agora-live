@@ -37,7 +37,7 @@ public class ChatroomInviteAdapter extends RoomBaseRecyclerViewAdapter<VoiceMemb
 
         @Override
         public void setData(VoiceMemberModel item, int position) {
-            ImageTools.loadImage(avatar, item.getPortrait());
+            ImageTools.loadImage(avatar, item.getAvatarUrl());
             name.setText(item.getNickName());
             action.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -16,7 +16,7 @@ class RoomAudienceListViewHolder constructor(private val binding: VoiceItemRoomA
     override fun binding(data: VoiceMemberModel?, selectedIndex: Int) {
         data?.let { audienceInfo ->
             binding.mtAudienceUsername.text = audienceInfo.nickName
-            ImageTools.loadImage(binding.ivAudienceAvatar, audienceInfo.portrait)
+            ImageTools.loadImage(binding.ivAudienceAvatar, audienceInfo.getAvatarUrl())
             if ( ChatroomIMManager.getInstance().isOwner ){
                 binding.mtAudienceAction.apply {
                     isClickable = true

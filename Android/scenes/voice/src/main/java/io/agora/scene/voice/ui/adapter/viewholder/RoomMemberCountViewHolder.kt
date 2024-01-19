@@ -9,7 +9,7 @@ import io.agora.voice.common.utils.ImageTools.loadImage
 class RoomMemberCountViewHolder (binding: VoiceItemHandsRaisedBinding) :
     BaseRecyclerViewAdapter.BaseViewHolder<VoiceItemHandsRaisedBinding, VoiceMemberModel>(binding){
     override fun binding(data: VoiceMemberModel?, selectedIndex: Int) {
-        loadImage(mBinding.ivAudienceAvatar, data?.portrait)
+        loadImage(mBinding.ivAudienceAvatar, data?.getAvatarUrl())
         mBinding.mtAudienceUsername.text = data?.nickName
         mBinding.mtAudienceAction.text = context.resources.getString(R.string.voice_member_count_action_kick)
         mBinding.mtAudienceAction.setOnClickListener {

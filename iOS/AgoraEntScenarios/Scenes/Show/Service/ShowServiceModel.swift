@@ -86,7 +86,7 @@ class ShowRoomListModel: ShowBaseInfo, IVideoLoaderRoomInfo {
     var interactStatus: ShowInteractionStatus = .idle
     var createdAt: Int64 = 0
     var updatedAt: Int64 = 0
-    var isPureMode: Bool = false
+    var isPureMode: Int64 = 0
 }
 
 //PK Invite objects

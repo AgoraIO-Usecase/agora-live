@@ -136,7 +136,7 @@ class RoomMicManagerSheetDialog constructor() : BaseSheetDialog<VoiceDialogMicMa
                 }
             } else {
                 ivMicInnerIcon.isVisible = false
-                ImageTools.loadImage(ivMicInfo, micInfo.member?.portrait)
+                ImageTools.loadImage(ivMicInfo, micInfo.member?.getAvatarUrl())
                 mtMicUsername.text = micInfo.member?.nickName ?: ""
                 binding?.mtChatroomMicTag?.isVisible = (micInfo.micIndex == 0)
                 mtChatroomMicTag.isVisible = (micInfo.micIndex == 0)
