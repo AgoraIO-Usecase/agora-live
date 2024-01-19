@@ -193,51 +193,51 @@ extension ShowAgoraKitManager {
         let machine = deviceLevel
         let net = netCondition
         let performance = performanceMode
-        
+        let h265On = (performance != .pure)
         rtcParam.suggested = true
-        if (machine == .high && net == .good && performance == .smooth && showMode == .single) {
+        if (machine == .high && net == .good && performance != .fluent && showMode == .single) {
             // High-end machine, good network, clear, unicast
-            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: h265On)
             setSimulcastStream(isOn: false)
         } else if (machine == .high && net == .good && performance == .fluent && showMode == .single) {
             // High-end machine, good network, smooth, unicast
             _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: true)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(540, 960), fps: 15, bitrate: 1100, svc: false)
-        } else if (machine == .high && net == .bad && performance == .smooth && showMode == .single) {
+        } else if (machine == .high && net == .bad && performance != .fluent && showMode == .single) {
             // High-end machine, weak network, clear, unicast
-            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: h265On)
             setSimulcastStream(isOn: false)
         } else if (machine == .high && net == .bad && performance == .fluent && showMode == .single) {
             // High-end machine, weak network, smooth, unicast
             _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: true)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 748, svc: true)
-        } else if (machine == .medium && net == .good && performance == .smooth && showMode == .single) {
+        } else if (machine == .medium && net == .good && performance != .fluent && showMode == .single) {
             // Mid-range machine, good network, clear, unicast
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0, h265On: h265On)
             setSimulcastStream(isOn: false)
         } else if (machine == .medium && net == .good && performance == .fluent && showMode == .single) {
             // Mid-range machine, good network, smooth, unicast
             _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0, h265On: true)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
-        } else if (machine == .medium && net == .bad && performance == .smooth && showMode == .single) {
+        } else if (machine == .medium && net == .bad && performance != .fluent && showMode == .single) {
             // Mid-range machine, weak network, clear, unicast
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0, h265On: h265On)
             setSimulcastStream(isOn: false)
         } else if (machine == .medium && net == .bad && performance == .fluent && showMode == .single) {
             // Mid-range machine, weak network, smooth, unicast
             _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0, h265On: true)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 748, svc: true)
-        } else if (machine == .low && net == .good && performance == .smooth && showMode == .single) {
+        } else if (machine == .low && net == .good && performance != .fluent && showMode == .single) {
             // Low-end machine, good network, clear, unicast
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: h265On)
             setSimulcastStream(isOn: false)
         } else if (machine == .low && net == .good && performance == .fluent && showMode == .single) {
             // Low-end machine, good network, smooth, unicast
             _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
-        } else if (machine == .low && net == .bad && performance == .smooth && showMode == .single) {
+        } else if (machine == .low && net == .bad && performance != .fluent && showMode == .single) {
             // Low end machine, weak network, clear, unicast
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: h265On)
             setSimulcastStream(isOn: false)
         } else if (machine == .low && net == .bad && performance == .fluent && showMode == .single) {
             // Low end machine, weak network, smooth, unicast
@@ -245,59 +245,54 @@ extension ShowAgoraKitManager {
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 748, svc: true)
         }
         // pk
-        else if (machine == .high && net == .good && performance == .smooth && showMode == .pk) {
+        else if (machine == .high && net == .good && performance != .fluent && showMode == .pk) {
             // High-end machine, good network, clear, pk
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: h265On)
             setSimulcastStream(isOn: false)
         } else if (machine == .high && net == .good && performance == .fluent && showMode == .pk) {
             // High-end machine, good network, smooth, pk
             _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
-        } else if (machine == .high && net == .bad && performance == .smooth && showMode == .pk) {
+        } else if (machine == .high && net == .bad && performance != .fluent && showMode == .pk) {
             // High-end machine, weak net, clear, pk
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: h265On)
             setSimulcastStream(isOn: false)
         } else if (machine == .high && net == .bad && performance == .fluent && showMode == .pk) {
             // High-end machine, weak net, smooth, pk
             _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
-        } else if (machine == .medium && net == .good && performance == .smooth && showMode == .pk) {
+        } else if (machine == .medium && net == .good && performance != .fluent && showMode == .pk) {
             // Mid-end machine, good net, clear, pk
-            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: h265On)
             setSimulcastStream(isOn: false)
         } else if (machine == .medium && net == .good && performance == .fluent && showMode == .pk) {
             // Mid-end machine, good net, smooth, pk
             _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
-        } else if (machine == .medium && net == .bad && performance == .smooth && showMode == .pk) {
+        } else if (machine == .medium && net == .bad && performance != .fluent && showMode == .pk) {
             // Mid-end machine, weak net, clear, pk
-            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: h265On)
             setSimulcastStream(isOn: false)
         } else if (machine == .medium && net == .bad && performance == .fluent && showMode == .pk) {
             // Mid-end machine, weak net, smooth, pk
             _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
-        } else if (machine == .low && net == .good && performance == .smooth && showMode == .pk) {
+        } else if (machine == .low && net == .good && performance != .fluent && showMode == .pk) {
             // Low-end machine, good network, clear, pk
-            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: h265On)
             setSimulcastStream(isOn: false)
         } else if (machine == .low && net == .good && performance == .fluent && showMode == .pk) {
             // Low-end machine, good network, smooth, pk
             _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
-        } else if (machine == .low && net == .bad && performance == .smooth && showMode == .pk) {
+        } else if (machine == .low && net == .bad && performance != .fluent && showMode == .pk) {
             // Low end machine, weak net, clear, pk
-            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: h265On)
             setSimulcastStream(isOn: false)
         } else if (machine == .low && net == .bad && performance == .fluent && showMode == .pk) {
             // Low-end machine, weak net, smooth, pk
             _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
-        }
-        if (performance == .pure) {
-            // apply pure mode params
-            ShowSettingKey.H265.writeValue(false)
-            setSimulcastStream(isOn: false)
         }
     }
     
