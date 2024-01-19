@@ -299,7 +299,7 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
         binding.btnStartLive.isEnabled = false
 
         mayFetchUniversalToken {
-            mService.createRoom(mRoomId, roomName, mThumbnailId, {
+            mService.createRoom(mRoomId, roomName, mThumbnailId, VideoSetting.isPureMode, {
                 runOnUiThread {
                     isFinishToLiveDetail = true
                     LiveDetailActivity.launch(this@LivePrepareActivity, it)

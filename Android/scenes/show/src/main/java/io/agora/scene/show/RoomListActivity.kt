@@ -194,6 +194,7 @@ class RoomListActivity : AppCompatActivity() {
         binding.tvRoomName.text = roomInfo.roomName
         binding.tvRoomId.text = getString(R.string.show_room_id, roomInfo.roomId)
         binding.ivCover.setImageResource(roomInfo.getThumbnailIcon())
+        binding.tvPureMode.isVisible = roomInfo.isPureMode == 1
 
         val onTouchEventHandler = object : OnLiveRoomItemTouchEventHandler(
             mRtcEngine,
@@ -331,11 +332,11 @@ class RoomListActivity : AppCompatActivity() {
     private fun initVideoSettings() {
         val deviceScore = RtcEngineInstance.rtcEngine.queryDeviceScore()
         val deviceLevel = if (deviceScore >= 90) {
-            VideoSetting.updateAudioSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
+            VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
             VideoSetting.setCurrAudienceEnhanceSwitch(true)
             VideoSetting.DeviceLevel.High
         } else if (deviceScore >= 75) {
-            VideoSetting.updateAudioSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
+            VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
             VideoSetting.setCurrAudienceEnhanceSwitch(true)
             VideoSetting.DeviceLevel.Medium
         } else {

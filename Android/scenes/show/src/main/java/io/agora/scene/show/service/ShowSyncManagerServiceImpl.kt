@@ -289,7 +289,8 @@ class ShowSyncManagerServiceImpl constructor(
                 ShowRoomStatus.activity.value,
                 ShowInteractionStatus.idle.value,
                 TimeUtils.currentTimeMillis().toDouble(),
-                TimeUtils.currentTimeMillis().toDouble()
+                TimeUtils.currentTimeMillis().toDouble(),
+                0
             )
             roomMap[roomInfo.roomId] = roomInfo
             retRoomList.add(roomInfo)
@@ -366,6 +367,7 @@ class ShowSyncManagerServiceImpl constructor(
         roomId: String,
         roomName: String,
         thumbnailId: String,
+        isPureMode: Boolean,
         success: (ShowRoomDetailModel) -> Unit,
         error: ((Exception) -> Unit)?
     ) {
@@ -378,6 +380,7 @@ class ShowSyncManagerServiceImpl constructor(
                 UserManager.getInstance().user.id.toString(),
                 UserManager.getInstance().user.headUrl,
                 UserManager.getInstance().user.name,
+                isPureMode,
                 success,
                 error
             )
@@ -406,6 +409,7 @@ class ShowSyncManagerServiceImpl constructor(
         ownerUid: String,
         ownerAvatar: String,
         ownerName: String,
+        isPureMode: Boolean,
         success: (ShowRoomDetailModel) -> Unit,
         error: ((Exception) -> Unit)?
     ) {
@@ -420,7 +424,8 @@ class ShowSyncManagerServiceImpl constructor(
             ShowRoomStatus.activity.value,
             ShowInteractionStatus.idle.value,
             TimeUtils.currentTimeMillis().toDouble(),
-            TimeUtils.currentTimeMillis().toDouble()
+            TimeUtils.currentTimeMillis().toDouble(),
+            if (isPureMode) 1 else 0
         )
 
         val scene = Scene().apply {
@@ -507,6 +512,7 @@ class ShowSyncManagerServiceImpl constructor(
                                 roomInfo.ownerId,
                                 roomInfo.ownerAvatar,
                                 roomInfo.ownerName,
+                                isPureMode = roomInfo.isPureMode == 1,
                                 success = {
                                     runOnMainThread {
                                         roomInfoControllers.remove(roomInfoController)
@@ -1628,6 +1634,7 @@ class ShowSyncManagerServiceImpl constructor(
             interactStatus,
             roomInfo.createdAt,
             roomInfo.updatedAt,
+            roomInfo.isPureMode
         )
         sceneReference.update(nRoomInfo.toMap(), object : Sync.DataItemCallback {
             override fun onSuccess(result: IObject?) {
@@ -1673,6 +1680,7 @@ class ShowSyncManagerServiceImpl constructor(
             roomInfo.interactStatus,
             roomInfo.createdAt,
             roomInfo.updatedAt,
+            roomInfo.isPureMode
         )
         sceneReference.update(nRoomInfo.toMap(), object : Sync.DataItemCallback {
             override fun onSuccess(result: IObject?) {
