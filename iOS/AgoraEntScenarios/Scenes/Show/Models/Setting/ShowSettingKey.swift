@@ -226,6 +226,7 @@ enum ShowSettingKey: String, CaseIterable {
                     AgoraVideoFrameRate.fps10.stringValue(),
                     AgoraVideoFrameRate.fps15.stringValue(),
                     AgoraVideoFrameRate.fps24.stringValue(),
+                    AgoraVideoFrameRate.fps30.stringValue(),
             ]
         case .audioBitRate:
             return ["2","3","5"]

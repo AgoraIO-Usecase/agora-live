@@ -226,6 +226,7 @@ class ShowSyncManagerServiceImp: NSObject, ShowServiceProtocol {
         room.ownerName = VLUserCenter.user.name
         room.ownerAvatar = VLUserCenter.user.headUrl
         room.createdAt = Date().millionsecondSince1970()
+        room.isPureMode = (ShowAgoraKitManager.shared.performanceMode == .pure) ? 1 : 0
         let params = room.yy_modelToJSONObject() as? [String: Any]
         initScene { [weak self] error in
             if let error = error  {

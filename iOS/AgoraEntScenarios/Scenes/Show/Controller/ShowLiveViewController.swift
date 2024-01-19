@@ -346,6 +346,7 @@ extension ShowLiveViewController {
     }
     
     func _joinRoom(_ room: ShowRoomListModel){
+
         finishView?.removeFromSuperview()
         ShowAgoraKitManager.shared.addRtcDelegate(delegate: self, roomId: room.roomId)
         if let service = serviceImp {
@@ -1093,6 +1094,7 @@ extension ShowLiveViewController: ShowToolMenuViewControllerDelegate {
                 wSelf.navigationController?.pushViewController(vc, animated: true)
             }else {
                 let vc = ShowAdvancedSettingVC()
+                vc.isPureMode = (self?.room?.isPureMode != 0)
                 vc.mode = wSelf.interactionStatus == .pking ? .pk : .single
                 vc.isBroadcaster = wSelf.role == .broadcaster
                 vc.musicManager = wSelf.musicPresenter

@@ -338,6 +338,12 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
      * @param binding
      */
     private fun updateVideoSettingView(binding: ShowSettingAdvanceVideoBinding) {
+        setItemInvisible(ITEM_ID_SWITCH_QUALITY_ENHANCE, VideoSetting.isPureMode)
+        setItemInvisible(ITEM_ID_SWITCH_COLOR_ENHANCE, VideoSetting.isPureMode)
+        setItemInvisible(ITEM_ID_SWITCH_DARK_ENHANCE, VideoSetting.isPureMode)
+        setItemInvisible(ITEM_ID_SWITCH_VIDEO_NOISE_REDUCE, VideoSetting.isPureMode)
+        setItemInvisible(ITEM_ID_SWITCH_BITRATE_SAVE, VideoSetting.isPureMode)
+
         setupSwitchItem(
             ITEM_ID_SWITCH_QUALITY_ENHANCE,
             binding.qualityEnhance,
@@ -705,7 +711,6 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
             )
 
             ITEM_ID_SELECTOR_FRAME_RATE -> VideoSetting.updateBroadcastSetting(
-                captureResolution = VideoSetting.ResolutionList[index],
                 frameRate = VideoSetting.FrameRateList[index]
             )
         }
