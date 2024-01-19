@@ -12,7 +12,6 @@ import io.agora.scene.base.Constant
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.utils.GsonUtils
 import io.agora.scene.base.utils.SPUtil
-import io.agora.scene.show.videoSwitcherAPI.VideoSwitcher
 
 /**
  * Video setting
@@ -117,7 +116,8 @@ object VideoSetting {
         FrameRate.FPS_7,
         FrameRate.FPS_10,
         FrameRate.FPS_15,
-        FrameRate.FPS_24
+        FrameRate.FPS_24,
+        FrameRate.FPS_30
     )
 
     /**
@@ -151,7 +151,8 @@ object VideoSetting {
      */
     enum class BroadcastStrategy constructor(val value: Int) {
         Smooth(0),
-        Clear(1)
+        Clear(1),
+        Pure(2)
     }
 
     /**
@@ -739,9 +740,13 @@ object VideoSetting {
      *
      */
     fun updateAudienceSetting() {
+        if (isPureMode) return
         if (currAudienceDeviceLevel != DeviceLevel.Low) {
             setCurrAudienceEnhanceSwitch(true)
-            updateAudioSetting(SR = SuperResolution.SR_AUTO)
+            updateSRSetting(SR = SuperResolution.SR_AUTO)
+        } else {
+            setCurrAudienceEnhanceSwitch(false)
+            updateSRSetting(SR = SuperResolution.SR_NONE)
         }
     }
 
@@ -750,12 +755,21 @@ object VideoSetting {
      *
      * @param SR
      */
-    fun updateAudioSetting(SR: SuperResolution? = null) {
+    fun updateSRSetting(SR: SuperResolution? = null) {
+        if (isPureMode) {
+            setCurrAudienceSetting(
+                AudienceSetting(AudienceSetting.Video(SuperResolution.SR_NONE))
+            )
+            updateRTCAudioSetting(SuperResolution.SR_NONE)
+            return
+        }
         setCurrAudienceSetting(
             AudienceSetting(AudienceSetting.Video(SR ?: currAudienceSetting.video.SR))
         )
         updateRTCAudioSetting(SR)
     }
+
+    var isPureMode = false
 
     /**
      * Update broadcast setting
@@ -773,9 +787,10 @@ object VideoSetting {
         broadcastStrategy: BroadcastStrategy = BroadcastStrategy.Smooth,
         isJoinedRoom: Boolean = false,
         isByAudience: Boolean = false,
-        rtcConnection: RtcConnection? = null
+        rtcConnection: RtcConnection? = null,
     ) {
-        ShowLogger.d("VideoSettings", "updateBroadcastSetting, deviceLevel:$deviceLevel networkLevel:$networkLevel broadcastStrategy:$broadcastStrategy")
+        ShowLogger.d("VideoSettings", "updateBroadcastSetting, deviceLevel:$deviceLevel networkLevel:$networkLevel broadcastStrategy:$broadcastStrategy isPureMode:$isPureMode")
+        this.isPureMode = broadcastStrategy == BroadcastStrategy.Pure
         var liveMode = LiveMode.OneVOne
         if (isByAudience) {
             setCurrAudienceDeviceLevel(deviceLevel)
@@ -878,7 +893,7 @@ object VideoSetting {
 
         if (isLinkAudience && isPkMode) {
             setCurrAudienceEnhanceSwitch(false)
-            updateAudioSetting(SR = SuperResolution.SR_NONE)
+            updateSRSetting(SR = SuperResolution.SR_NONE)
         }
     }
 
@@ -1124,12 +1139,14 @@ object VideoSetting {
         ShowLogger.d("VideoSettings", "updateRTCBroadcastSetting, frameRate:$frameRate")
         val rtcEngine = RtcEngineInstance.rtcEngine
         val videoEncoderConfiguration = RtcEngineInstance.videoEncoderConfiguration
-        val videoSwitcher = VideoSwitcher.getImplInstance(rtcEngine)
         h265?.let {
-            if (!isJoinedRoom) {
+            if (isPureMode) {
+                rtcEngine.setParameters("{\"engine.video.enable_hw_encoder\":${it}}")
+                rtcEngine.setParameters("{\"che.video.videoCodecIndex\": 1}")
+            } else if (!isJoinedRoom) {
                 rtcEngine.setParameters("{\"engine.video.enable_hw_encoder\":${it}}")
                 rtcEngine.setParameters("{\"che.video.videoCodecIndex\":${if(it) 2 else 1}}")
-            }
+            } else { }
         }
         colorEnhance?.let {
             rtcEngine.setColorEnhanceOptions(it, ColorEnhanceOptions())
@@ -1145,7 +1162,9 @@ object VideoSetting {
             }
         }
         PVC?.let {
-            rtcEngine.setParameters("{\"rtc.video.enable_pvc\":${it}}")
+            if (!isPureMode) {
+                rtcEngine.setParameters("{\"rtc.video.enable_pvc\":${it}}")
+            }
         }
         if (!AgoraApplication.the().isDebugModeOpen) {
             captureResolution?.let {
@@ -1197,7 +1216,7 @@ object VideoSetting {
         }
         audioMixingVolume?.let {
             if (rtcConnection != null) {
-                videoSwitcher.adjustAudioMixingVolume(rtcConnection, it)
+                //videoSwitcher.adjustAudioMixingVolume(rtcConnection, it)
             } else {
                 rtcEngine.adjustAudioMixingVolume(it)
             }

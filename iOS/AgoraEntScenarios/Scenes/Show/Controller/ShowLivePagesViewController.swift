@@ -249,6 +249,11 @@ class ShowLivePagesSlicingDelegateHandler: AGCollectionSlicingDelegateHandler {
         super.collectionView(collectionView, willDisplay: cell, forItemAt: indexPath)
         vc.loadingType = .joinedWithVideo
         currentVC = vc
+        if (vc.room?.isPureMode != 0) {
+            ShowAgoraKitManager.shared.setSuperResolutionOn(false)
+        } else {
+            ShowAgoraKitManager.shared.setSuperResolutionOn(true)
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {

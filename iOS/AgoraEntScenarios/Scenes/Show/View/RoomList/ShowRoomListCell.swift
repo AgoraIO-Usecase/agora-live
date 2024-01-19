@@ -22,6 +22,8 @@ class ShowRoomListCell: UICollectionViewCell {
         return label
     }()
     
+    private let pureImageView = UIImageView()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         createSubviews()
@@ -31,7 +33,7 @@ class ShowRoomListCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setBgImge(_ img: String, name: String?, id: String?, count: Int) {
+    func setBgImge(_ img: String, name: String?, id: String?, count: Int, pureMode: Bool) {
         imageView.image = UIImage.show_sceneImage(name: "show_room_bg_\(img)")
         nameLabel.text = name
         idLablel.text = "ID: \(id ?? "0")"
@@ -46,6 +48,7 @@ class ShowRoomListCell: UICollectionViewCell {
         let attriTips = NSMutableAttributedString(attributedString: attriTipsImg)
         attriTips.append(NSAttributedString(string: "  \(count)"))
         numberLabel.attributedText = attriTips
+        pureImageView.isHidden = !pureMode
     }
     
     private func createSubviews(){
@@ -58,16 +61,36 @@ class ShowRoomListCell: UICollectionViewCell {
             make.edges.equalToSuperview()
         }
         
-        let indicatorImgView = UIImageView()
-        indicatorImgView.image = UIImage.show_sceneImage(name: "show_live_indictor")
-        indicatorImgView.contentMode = .scaleAspectFit
-        contentView.addSubview(indicatorImgView)
-        indicatorImgView.snp.makeConstraints { make in
+        let stateImgView = UIImageView()
+        stateImgView.image = UIImage.show_sceneImage(name: "show_live_indictor")
+        stateImgView.contentMode = .scaleAspectFit
+        contentView.addSubview(stateImgView)
+        stateImgView.snp.makeConstraints { make in
             make.top.equalTo(5)
             make.right.equalTo(-5)
         }
-        indicatorImgView.addSubview(liveStatusLabel)
+        stateImgView.addSubview(liveStatusLabel)
         liveStatusLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.trailing.equalToSuperview().offset(-10)
+            make.leading.equalToSuperview().offset(27)
+        }
+        
+        pureImageView.image = UIImage.show_sceneImage(name: "show_live_indictor")
+        pureImageView.contentMode = .scaleAspectFit
+        pureImageView.isHidden = true
+        contentView.addSubview(pureImageView)
+        pureImageView.snp.makeConstraints { make in
+            make.right.equalTo(stateImgView.snp.left)
+            make.centerY.equalTo(liveStatusLabel)
+        }
+
+        let pureModeLabel = UILabel()
+        pureModeLabel.text = "show_pure_mode".show_localized
+        pureModeLabel.font = .systemFont(ofSize: 10)
+        pureModeLabel.textColor = .white
+        pureImageView.addSubview(pureModeLabel)
+        pureModeLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().offset(-10)
             make.leading.equalToSuperview().offset(27)

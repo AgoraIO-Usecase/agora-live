@@ -19,6 +19,23 @@
         app:shapeAppearance="@style/show_roundStyle_6" />
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvPureMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/show_room_item_text_bg"
+        android:drawableStart="@mipmap/show_list_living"
+        android:drawablePadding="3dp"
+        android:gravity="center"
+        android:paddingHorizontal="5dp"
+        android:paddingVertical="3dp"
+        android:text="@string/show_pure"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toStartOf="@+id/tvLiving"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvLiving"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
