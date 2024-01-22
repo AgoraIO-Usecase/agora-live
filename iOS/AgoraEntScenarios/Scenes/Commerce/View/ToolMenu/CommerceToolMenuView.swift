@@ -41,14 +41,14 @@ enum CommerceToolMenuType: CaseIterable {
         case .mic: return "show_setting_mic_on".commerce_localized
         case .real_time_data: return "show_setting_statistic".commerce_localized
         case .setting: return "show_setting_advance_setting".commerce_localized
-        case .mute_mic: return "show_setting_mute".commerce_localized
+        case .mute_mic: return "show_setting_mic_off".commerce_localized
         }
     }
     var selectedTitle: String? {
         switch self {
         case .camera: return "show_setting_video_off".commerce_localized
         case .mic: return "show_setting_mic_off".commerce_localized
-        case .mute_mic: return "show_setting_unmute".commerce_localized
+        case .mute_mic: return "show_setting_mic_on".commerce_localized
         default: return title
         }
     }
