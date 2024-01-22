@@ -880,26 +880,26 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
         if role == .audience, info.userId != VLUserCenter.user.id {
             return
         }
-        let title = info.interactStatus == .onSeat ? "show_seat_with_audience_end_seat_title".show_localized : "show_pking_with_broadcastor_end_pk_title".show_localized
-        let alertVC = UIAlertController(title: title+"\(info.userName ?? "")", message: nil, preferredStyle: .alert)
-        let ok = UIAlertAction(title: "show_setting_end_pk".show_localized, style: .destructive) { _ in
-            self.serviceImp?.stopInteraction(interaction: info) { _ in
-            }
-        }
-        alertVC.addAction(ok)
         
-        if info.interactStatus == .onSeat {
-            let actionTitle = info.muteAudio ? "show_setting_mic_on".show_localized : "show_setting_mic_off".show_localized
-            let micAction = UIAlertAction(title: actionTitle, style: .default) { _ in
-                self.serviceImp?.muteAudio(mute: !info.muteAudio, userId: info.userId) { err in
+        let toolView = ShowToolMenuView(type: role == .broadcaster ? .joint_broadcasting : .end)
+        toolView.title = "To \(info.userName ?? "")"
+        toolView.updateStatus(type: .mic, isSelected: info.muteAudio)
+        toolView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        toolView.onTapItemClosure = { [weak self] type, _ in
+            AlertManager.hiddenView()
+            switch type {
+            case .end_pk:
+                self?.serviceImp?.stopInteraction(interaction: info) { _ in
                 }
+                
+            case .mic, .mute_mic:
+                self?.serviceImp?.muteAudio(mute: !info.muteAudio, userId: info.userId) { err in
+                }
+                
+            default: break
             }
-            alertVC.addAction(micAction)
-        } else {
-            let cancel = UIAlertAction(title: "show_alert_cancel_btn_title".show_localized, style: .cancel)
-            alertVC.addAction(cancel)
         }
-        present(alertVC, animated: true)
+        AlertManager.show(view: toolView, alertPostion: .bottom)
     }
     
     func onClickSendMsgButton(text: String) {

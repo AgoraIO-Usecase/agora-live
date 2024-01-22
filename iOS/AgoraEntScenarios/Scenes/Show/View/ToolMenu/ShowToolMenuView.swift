@@ -43,7 +43,7 @@ enum ShowToolMenuType: CaseIterable {
         case .mic: return "show_setting_mic_on".show_localized
         case .real_time_data: return "show_setting_statistic".show_localized
         case .setting: return "show_setting_advance_setting".show_localized
-        case .mute_mic: return "show_setting_mute".show_localized
+        case .mute_mic: return "show_setting_mic_off".show_localized
         case .end_pk: return "show_setting_end_mic_seat".show_localized
         }
     }
@@ -51,7 +51,7 @@ enum ShowToolMenuType: CaseIterable {
         switch self {
         case .camera: return "show_setting_video_off".show_localized
         case .mic: return "show_setting_mic_off".show_localized
-        case .mute_mic: return "show_setting_unmute".show_localized
+        case .mute_mic: return "show_setting_mic_on".show_localized
         default: return title
         }
     }
@@ -70,6 +70,8 @@ enum ShowMenuType {
     case idle_broadcaster
     case pking
     case managerMic
+    case joint_broadcasting
+    case end
 }
 
 class ShowToolMenuView: UIView {
@@ -104,7 +106,6 @@ class ShowToolMenuView: UIView {
     
     var type: ShowMenuType = .idle_audience {
         didSet {
-            
             switch type {
             case .idle_broadcaster:
                 updateToolType(type: [.switch_camera, .camera, .mic, .real_time_data, .setting])
@@ -114,6 +115,10 @@ class ShowToolMenuView: UIView {
                 updateToolType(type: [.mute_mic, .end_pk, .real_time_data])
             case .idle_audience:
                 updateToolType(type: [.real_time_data, .setting])
+            case .joint_broadcasting:
+                updateToolType(type: [.mute_mic, .end_pk])
+            case .end:
+                updateToolType(type: [.end_pk])
             }
         }
     }
