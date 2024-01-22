@@ -50,7 +50,8 @@
     <string name="show_live_prepare_rotate">Flip</string>
     <string name="show_live_prepare_beauty">Beautification</string>
     <string name="show_live_prepare_hd">Video Quality</string>
-    <string name="show_live_prepare_tip">This product is intended for functional demo only, and the duration of a single live stream should not exceed 20 minutes.</string>
+    <string name="show_live_prepare_tip"> NOTE: This version allows you to livestream for up to 20 minutes. Please
+        ensure that the content of your livestream does not violate the Terms of Service you have agreed to, or the laws and regulations of your location, otherwise your livestream will be interrupted."</string>
     <string name="show_live_prepare_start_live">Go Live</string>
     <string name="show_live_prepare_room_empty">Room name cannot be empty!</string>
     <string name="show_live_prepare_room_clipboard_copyed">Room ID has been copied to the clipboard!</string>
