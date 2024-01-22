@@ -53,6 +53,7 @@ import io.agora.scene.show.service.ShowRoomDetailModel
 import io.agora.scene.show.service.ShowRoomRequestStatus
 import io.agora.scene.show.service.ShowServiceProtocol
 import io.agora.scene.show.service.ShowUser
+import io.agora.scene.show.utils.ShowConstants
 import io.agora.scene.show.videoLoaderAPI.OnPageScrollEventHandler
 import io.agora.scene.show.videoLoaderAPI.VideoLoader
 import io.agora.scene.show.widget.AdvanceSettingAudienceDialog
@@ -71,6 +72,7 @@ import io.agora.scene.show.widget.pk.LiveRoomConfig
 import io.agora.scene.show.widget.pk.OnPKDialogActionListener
 import io.agora.scene.widget.basic.BindingSingleAdapter
 import io.agora.scene.widget.basic.BindingViewHolder
+import io.agora.scene.widget.dialog.TopFunctionDialog
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -407,6 +409,23 @@ class LiveDetailFragment : Fragment() {
         }
     }
 
+
+    private fun onClickMore() {
+        context?.let {
+            val dialog = TopFunctionDialog(it)
+            dialog.reportContentCallback = {
+                ShowConstants.reportContents[mRoomInfo.roomName] = true
+                activity?.finish()
+            }
+            dialog.reportUserCallback = {
+                ShowConstants.reportUsers[mRoomInfo.ownerId] = true
+                activity?.finish()
+            }
+            dialog.show()
+        }
+    }
+
+
     //================== UI Operation ===============
 
     /**
@@ -522,6 +541,8 @@ class LiveDetailFragment : Fragment() {
         topLayout.tvRoomId.text = getString(R.string.show_room_id, mRoomInfo.roomId)
         topLayout.tvUserCount.text = mRoomInfo.roomUserCount.toString()
         topLayout.ivClose.setOnClickListener { onBackPressed() }
+        topLayout.ivMore.setOnClickListener { onClickMore() }
+        topLayout.ivMore.isVisible = !isRoomOwner
     }
 
     /**

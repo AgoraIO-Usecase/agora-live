@@ -8,6 +8,10 @@
     <string name="dismiss_room">Disband the room</string>
     <string name="report_room">Report</string>
     <string name="report_room_success">Reported</string>
+    <string name="common_report_content">Report Content</string>
+    <string name="common_report_content_tips">You have blocked this content.</string>
+    <string name="common_report_user">Report User</string>
+    <string name="common_report_user_tips">You have blocked this user.</string>
 
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
