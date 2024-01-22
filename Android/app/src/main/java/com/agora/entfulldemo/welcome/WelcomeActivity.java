@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import com.agora.entfulldemo.R;
 import com.agora.entfulldemo.databinding.AppActivityWelcomeBinding;
 import com.agora.entfulldemo.home.MainActivity;
+import com.agora.entfulldemo.home.constructor.URLStatics;
 import com.agora.entfulldemo.webview.WebViewActivity;
 
 import io.agora.scene.base.component.BaseViewBindingActivity;
@@ -42,7 +43,7 @@ public class WelcomeActivity extends BaseViewBindingActivity<AppActivityWelcomeB
         ClickableSpan policyClickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                WebViewActivity.launch(WelcomeActivity.this, "https://www.agora.io/en/compliance/");
+                WebViewActivity.launch(WelcomeActivity.this, URLStatics.termsOfServiceURL);
             }
         };
         ss.setSpan(policyClickableSpan, split[0].length(), split[0].length() + split[1].length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

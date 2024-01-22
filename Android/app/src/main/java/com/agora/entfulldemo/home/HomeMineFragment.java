@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.agora.entfulldemo.R;
 import com.agora.entfulldemo.databinding.AppFragmentHomeMineBinding;
+import com.agora.entfulldemo.home.constructor.URLStatics;
 import com.agora.entfulldemo.home.mine.AboutUsActivity;
 import com.agora.entfulldemo.webview.WebViewActivity;
 
@@ -54,7 +55,7 @@ public class HomeMineFragment extends BaseViewBindingFragment<AppFragmentHomeMin
     @Override
     public void initListener() {
         getBinding().tvUserAgreement.setOnClickListener(view -> {
-            WebViewActivity.launch(getContext(), "https://www.agora.io/en/compliance/");
+            WebViewActivity.launch(getContext(), URLStatics.termsOfServiceURL);
         });
         getBinding().tvAbout.setOnClickListener(view -> {
             startActivity(new Intent(getActivity(), AboutUsActivity.class));

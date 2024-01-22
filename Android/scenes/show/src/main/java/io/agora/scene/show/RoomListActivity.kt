@@ -348,4 +348,9 @@ class RoomListActivity : AppCompatActivity() {
             isByAudience = true
         )
     }
+
+    override fun onRestart() {
+        super.onRestart()
+        mBinding.smartRefreshLayout.autoRefresh()
+    }
 }
