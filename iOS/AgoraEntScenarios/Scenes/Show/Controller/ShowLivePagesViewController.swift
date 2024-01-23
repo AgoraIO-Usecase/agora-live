@@ -12,11 +12,14 @@ import VideoLoaderAPI
 private let kPagesVCTag = "UI"
 class ShowLivePagesViewController: ViewController {
     var onClickDislikeClosure: (() -> Void)?
+    var onClickDisUserClosure: (() -> Void)?
     private lazy var delegateHandler = {
         let localUid = UInt(UserInfo.userId)!
         let handler = ShowLivePagesSlicingDelegateHandler(localUid: localUid)
         handler.parentVC = self
         handler.vcDelegate = self
+        handler.onClickDislikeClosure = onClickDislikeClosure
+        handler.onClickDisUserClosure = onClickDisUserClosure
         handler.onRequireRenderVideo = {[weak self] info, cell, indexPath in
             guard let vc = cell.contentView.viewWithTag(kShowLiveRoomViewTag)?.next as? ShowLiveViewController,
                   let room = vc.room,
@@ -211,6 +214,8 @@ let kShowLiveRoomViewTag = 12345
 class ShowLivePagesSlicingDelegateHandler: AGCollectionSlicingDelegateHandler {
     weak var parentVC: UIViewController?
     weak var vcDelegate: ShowLiveViewControllerDelegate?
+    var onClickDislikeClosure: (() -> Void)?
+    var onClickDisUserClosure: (() -> Void)?
     var currentVC: ShowLiveViewController?
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -235,6 +240,8 @@ class ShowLivePagesSlicingDelegateHandler: AGCollectionSlicingDelegateHandler {
         vc.view.frame = parentVC!.view.bounds
         vc.view.tag = kShowLiveRoomViewTag
         vc.loadingType = .joinedWithVideo
+        vc.onClickDislikeClosure = onClickDislikeClosure
+        vc.onClickDisUserClosure = onClickDisUserClosure
         cell.contentView.addSubview(vc.view)
         parentVC!.addChild(vc)
         return cell

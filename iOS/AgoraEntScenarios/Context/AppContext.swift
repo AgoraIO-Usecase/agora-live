@@ -16,6 +16,7 @@ import Foundation
     @objc var imageCahe = [String: AnyObject]()
     @objc var localizedCache = [String: String]()
     private var dislikeRoomCache: [String :String] = [:]
+    private var dislikeUserCache: [String :String] = [:]
     @objc var sceneConfig: VLSceneConfigsModel?
     
     @objc var isAgreeLicense: Bool = false {
@@ -68,6 +69,14 @@ import Foundation
     }
     func dislikeRooms() -> [String] {
         let value = dislikeRoomCache.filter({ $0.key.contains(sceneImageBundleName ?? "") })
+        return value.map({ $0.value })
+    }
+    func addDislikeUser(at uid: String?) {
+        guard let uid = uid else { return }
+        dislikeUserCache[(sceneImageBundleName ?? "") + uid] = uid
+    }
+    func dislikeUsers() -> [String] {
+        let value = dislikeUserCache.filter({ $0.key.contains(sceneImageBundleName ?? "") })
         return value.map({ $0.value })
     }
 }
