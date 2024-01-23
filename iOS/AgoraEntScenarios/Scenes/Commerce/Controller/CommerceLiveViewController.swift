@@ -19,6 +19,7 @@ protocol CommerceLiveViewControllerDelegate: NSObjectProtocol {
 class CommerceLiveViewController: UIViewController {
     weak var delegate: CommerceLiveViewControllerDelegate?
     var onClickDislikeClosure: (() -> Void)?
+    var onClickDisUserClosure: (() -> Void)?
     var room: CommerceRoomListModel? {
         didSet{
             if oldValue?.roomId != room?.roomId {
@@ -486,6 +487,16 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
             }
             self.updateLoadingType(playState: .idle)
             self.onClickDislikeClosure?()
+            self.dismiss(animated: true)
+        }
+        dialog.onClickDisUserClosure = { [weak self] in
+            guard let self = self else { return }
+            AppContext.shared.addDislikeUser(at: self.room?.ownerId)
+            if let room = self.room {
+                self._leavRoom(room)
+            }
+            self.updateLoadingType(playState: .idle)
+            self.onClickDisUserClosure?()
             self.dismiss(animated: true)
         }
         view.addSubview(dialog)
