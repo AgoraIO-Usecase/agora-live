@@ -265,6 +265,7 @@
 		E72F624D2A8097DF00C963D2 /* VLLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72F624C2A8097DF00C963D2 /* VLLoginViewController.swift */; };
 		E72F62562A822D3500C963D2 /* FUManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E72F62532A822D3500C963D2 /* FUManager.m */; };
 		E72F62582A823B5000C963D2 /* FUBeautyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72F62572A823B5000C963D2 /* FUBeautyManager.swift */; };
+		E7AE8DDE2B5FB82A002FB106 /* ShowLiveMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AE8DDD2B5FB82A002FB106 /* ShowLiveMoreDialog.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -649,6 +650,7 @@
 		E72F62512A822D3500C963D2 /* FUManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUManager.h; sourceTree = "<group>"; };
 		E72F62532A822D3500C963D2 /* FUManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUManager.m; sourceTree = "<group>"; };
 		E72F62572A823B5000C963D2 /* FUBeautyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FUBeautyManager.swift; sourceTree = "<group>"; };
+		E7AE8DDD2B5FB82A002FB106 /* ShowLiveMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowLiveMoreDialog.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -1004,6 +1006,7 @@
 				DD36103829B70CDC00CE7984 /* ShowCanvasView.swift */,
 				DD36103929B70CDC00CE7984 /* ShowChatInputView.swift */,
 				DD36103A29B70CDC00CE7984 /* ShowRoomChatCell.swift */,
+				E7AE8DDD2B5FB82A002FB106 /* ShowLiveMoreDialog.swift */,
 				DD36103B29B70CDC00CE7984 /* ShowRoomInfoView.swift */,
 			);
 			path = Live;
@@ -2108,6 +2111,7 @@
 				DDA199E928FFE579009D3E61 /* VLResponseDataModel.m in Sources */,
 				E3735CA72A5E8023004737EF /* VRBaseViewController.swift in Sources */,
 				DD3610BB29B70CDC00CE7984 /* ShowPresettingHeaderView.swift in Sources */,
+				E7AE8DDE2B5FB82A002FB106 /* ShowLiveMoreDialog.swift in Sources */,
 				E3735C972A5E7E75004737EF /* BEPixelBufferInfo.m in Sources */,
 				DDA199EF28FFE579009D3E61 /* VLBaseTableView.m in Sources */,
 				DD84177C29090C520026B624 /* VLHomeItemView.m in Sources */,
@@ -2546,9 +2550,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 0;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -2572,6 +2578,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

@@ -10,7 +10,8 @@ import UIKit
 
 private let kPagesVCTag = "PagesVC"
 class ShowLivePagesViewController: ViewController {
-    
+    var onClickDislikeClosure: (() -> Void)?
+    var onClickDisUserClosure: (() -> Void)?
     var roomList: [ShowRoomListModel]?
     
     var focusIndex: Int = 0
@@ -182,6 +183,8 @@ extension ShowLivePagesViewController: UICollectionViewDelegate, UICollectionVie
         vc.delegate = self
         vc.view.frame = self.view.bounds
         vc.view.tag = kShowLiveRoomViewTag
+        vc.onClickDislikeClosure = onClickDislikeClosure
+        vc.onClickDisUserClosure = onClickDisUserClosure
         cell.contentView.addSubview(vc.view)
         self.addChild(vc)
         return cell
