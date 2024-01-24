@@ -60,6 +60,10 @@ class ShowToolMenuViewController: UIViewController {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         dismiss(animated: true)
     }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        menuTitle = nil
+    }
     
     private func setUpUI(){
         menuView = ShowToolMenuView(type: type)
@@ -97,15 +101,15 @@ class ShowToolMenuViewController: UIViewController {
     }
     
     private func updateLayoutForType(_ menuType: ShowMenuType) {
-        var height = 210
+        var height: CGFloat = 210
         if type == .idle_audience {
             height = 150
         }
+        height = menuTitle == nil ? height : (height + Screen.safeAreaBottomHeight())
         menuView?.type = type
         menuView?.snp.remakeConstraints({ make in
             make.left.bottom.right.equalToSuperview()
             make.height.equalTo(height)
         })
     }
-
 }
