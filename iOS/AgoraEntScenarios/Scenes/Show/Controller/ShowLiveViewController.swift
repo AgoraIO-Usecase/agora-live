@@ -882,10 +882,10 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
             return
         }
         
-        let toolView = ShowToolMenuView(type: role == .broadcaster ? .joint_broadcasting : .end)
+        let toolView = ShowToolMenuView(type: (role == .broadcaster && info.interactStatus == .onSeat) ? .joint_broadcasting : .end)
         toolView.title = "To \(info.userName ?? "")"
         toolView.updateStatus(type: .mic, isSelected: info.muteAudio)
-        toolView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        toolView.heightAnchor.constraint(equalToConstant: 150 + Screen.safeAreaBottomHeight()).isActive = true
         toolView.onTapItemClosure = { [weak self] type, _ in
             AlertManager.hiddenView()
             switch type {
@@ -984,7 +984,6 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
         if let info = currentInteraction, info.userId == VLUserCenter.user.id {
             muteAudio = info.muteAudio
         }
-        settingMenuVC.selectedMap = [.camera: self.muteLocalVideo, .mic: muteAudio, .mute_mic: muteAudio]
         
         if interactionStatus == .idle {
             settingMenuVC.type = role == .broadcaster ? .idle_broadcaster : .idle_audience
@@ -992,6 +991,8 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
             settingMenuVC.type = role == .broadcaster ? .pking : (currentInteraction?.userId == VLUserCenter.user.id ? .pking : .idle_audience)
             settingMenuVC.menuTitle = currentInteraction?.interactStatus == .pking ? "show_setting_menu_on_pk_title".show_localized : "show_setting_menu_on_seat_title".show_localized
         }
+        settingMenuVC.selectedMap = [.camera: self.muteLocalVideo, .mic: muteAudio, .mute_mic: muteAudio]
+        
         present(settingMenuVC, animated: true)
     }
 }

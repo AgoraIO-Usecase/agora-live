@@ -277,11 +277,11 @@ class LiveToolViewCell: UICollectionViewCell {
         contentView.addSubview(titleLabel)
         
         iconButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        iconButton.bottomAnchor.constraint(equalTo: titleLabel.topAnchor, constant: -5).isActive = true
+        iconButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 2).isActive = true
         
+        titleLabel.topAnchor.constraint(equalTo: iconButton.bottomAnchor, constant: 5).isActive = true
         titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
         titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
-        titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
     }
     
     func setToolData(item: Any?) {
