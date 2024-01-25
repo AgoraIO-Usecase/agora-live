@@ -882,8 +882,8 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
             return
         }
         
-        let toolView = ShowToolMenuView(type: (role == .broadcaster && info.interactStatus == .onSeat) ? .joint_broadcasting : .end)
-        toolView.title = "To \(info.userName ?? "")"
+        let toolView = ShowToolMenuView(type: info.interactStatus == .onSeat ? .joint_broadcasting : .end)
+        toolView.title = "To audience \(info.userName ?? "")"
         toolView.updateStatus(type: .mic, isSelected: info.muteAudio)
         toolView.heightAnchor.constraint(equalToConstant: 150 + Screen.safeAreaBottomHeight()).isActive = true
         toolView.onTapItemClosure = { [weak self] type, _ in
