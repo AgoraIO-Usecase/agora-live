@@ -177,12 +177,15 @@ class VoiceRoomAudioSettingDetailViewController: UIViewController {
         lineImgView.image = UIImage.sceneImage(name: "pop_indicator", bundleName: "VoiceChatRoomResource")
         view.addSubview(lineImgView)
 
-        titleLabel.frame = CGRect(x: ScreenWidth / 2.0 - 60, y: 25, width: 120, height: 30)
         titleLabel.textAlignment = .center
         titleLabel.text = "voice_spatial_audio".voice_localized
         titleLabel.textColor = UIColor(hex: 0x040925, alpha: 1)
         titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         view.addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 25).isActive = true
+        
         
         backBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
         backBtn.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor).isActive = true
