@@ -124,7 +124,7 @@ class VoiceRoomAudioSettingDetailViewController: UIViewController {
             if tableView.tableFooterView == nil {
                 switch settingType {
                 case .AGC,.AIAEC:
-                    tableView.tableFooterView = AuditionEffectView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 162), type: self.settingType)
+                    tableView.tableFooterView = UIView()//AuditionEffectView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 162), type: self.settingType)
                 default:
                     tableView.tableFooterView = UIView()
                 }
@@ -135,7 +135,7 @@ class VoiceRoomAudioSettingDetailViewController: UIViewController {
     
     var tableViewHeight: CGFloat = 0 {
         didSet {
-            
+            print("===")
         }
     }
 
