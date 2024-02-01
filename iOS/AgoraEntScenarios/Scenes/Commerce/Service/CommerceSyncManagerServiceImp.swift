@@ -247,6 +247,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
                 self?.roomId = channelName
                 let output = CommerceRoomDetailModel.yy_model(with: params!)
                 self?._startCheckExpire()
+                self?._subscribeOnRoomDestroy(isOwner: self?.isOwner(room) ?? false)
                 self?._subscribeAll()
                 self?.isJoined = true
                 completion(nil, output)
@@ -602,6 +603,14 @@ extension CommerceSyncManagerServiceImp {
             })
 
 //        userListCountDidChanged?(UInt(count))
+    }
+    
+    private func _subscribeOnRoomDestroy(isOwner: Bool) {
+        guard isOwner == false else { return }
+        SyncUtil.scene(id: roomId ?? "")?.subscribe(key: "", onDeleted: { object in
+            let roomId = object.getId()
+            self.subscribeDelegate?.onRoomDestroy(roomId: roomId)
+        })
     }
 }
 
