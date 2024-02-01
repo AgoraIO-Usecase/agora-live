@@ -200,7 +200,6 @@ class CommerceLiveViewController: UIViewController {
         CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
         CommerceAgoraKitManager.shared.cleanCapture()
         CommerceAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
-        serviceImp?.unsubscribeEvent(delegate: self)
         
         serviceImp?.leaveRoom {_ in
         }
@@ -303,6 +302,11 @@ extension CommerceLiveViewController {
 
 //MARK: service subscribe
 extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
+    func onRoomDestroy(roomId: String) {
+        guard roomId == self.roomId else { return }
+        onRoomExpired()
+    }
+    
     private func _subscribeServiceEvent() {
         serviceImp?.subscribeEvent(delegate: self)
     }
@@ -473,6 +477,7 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
             }
         }else {
             updateLoadingType(playState: .idle)
+            leaveRoom()
             dismiss(animated: true)
         }
     }
