@@ -8,7 +8,7 @@
 import UIKit
 
 @objcMembers
-public class AUIRoomListNetworkModel: AUINetworkModel {
+public class SyncRoomListNetworkModel: SyncNetworkModel {
     public var lastCreateTime: NSNumber?
     public var pageSize: Int = 10
     public override init() {
