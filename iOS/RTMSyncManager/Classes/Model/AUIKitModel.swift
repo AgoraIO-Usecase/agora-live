@@ -12,6 +12,7 @@ import Foundation
     public var roomName: String = ""    //房间名称
     public var roomId: String = ""            //房间id
     public var owner: AUIUserThumbnailInfo?   //房主信息
+    public var customPayload: [String: Any] = [:]   //扩展信息
 }
 
 ///用户简略信息，用于各个模型传递简单数据

@@ -67,6 +67,7 @@ class CommerceRoomListVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         AppContext.shared.sceneImageBundleName = "CommerceResource"
+        RTMSyncUtil.initRTMSyncManager()
         createViews()
         createConstrains()
         CommerceAgoraKitManager.shared.prepareEngine()
