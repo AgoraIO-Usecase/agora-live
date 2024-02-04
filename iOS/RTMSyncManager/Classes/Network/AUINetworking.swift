@@ -34,14 +34,14 @@ public extension URLRequest {
     }
 }
 
-open class AUINetworking: NSObject {
-    static let shared: AUINetworking = AUINetworking()
+open class SyncNetworking: NSObject {
+    static let shared: SyncNetworking = SyncNetworking()
     
-    private var reqMap: [String: (URLSessionDataTask, AUINetworkModel)] = [:]
+    private var reqMap: [String: (URLSessionDataTask, SyncNetworkModel)] = [:]
     
     override init() {}
     
-    private func baserequest(model: AUINetworkModel, progress: ((Float) -> Void)?, completion: ((Error?, Any?) -> Void)?) {
+    private func baserequest(model: SyncNetworkModel, progress: ((Float) -> Void)?, completion: ((Error?, Any?) -> Void)?) {
         cancel(model: model)
         if model.host.count == 0 {
             completion?(AUICommonError.httpError(-1, "request host is empty").toNSError(), nil)
@@ -114,11 +114,11 @@ open class AUINetworking: NSObject {
         reqMap[model.uniqueId] = (dataTask, model)
     }
     
-    public func request(model: AUINetworkModel, completion:  ((Error?, Any?) -> Void)?) {
+    public func request(model: SyncNetworkModel, completion:  ((Error?, Any?) -> Void)?) {
         baserequest(model: model, progress: nil, completion: completion)
     }
     
-    public func cancel(model: AUINetworkModel) {
+    public func cancel(model: SyncNetworkModel) {
         guard let pair = reqMap[model.uniqueId] else {return}
         pair.0.cancel()
         reqMap[model.uniqueId] = nil

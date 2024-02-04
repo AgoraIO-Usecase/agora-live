@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class AUITokenGenerateNetworkModel: AUINetworkModel {
+public class SyncTokenGenerateNetworkModel: SyncNetworkModel {
     public override init() {
         super.init()
         interfaceName = "/v2/token/generate"

@@ -8,7 +8,7 @@
 import Foundation
 import YYModel
 
-public enum AUINetworkMethod: Int {
+public enum SyncNetworkMethod: Int {
     case get = 0
     case post
     
@@ -23,11 +23,11 @@ public enum AUINetworkMethod: Int {
 }
 
 @objcMembers
-open class AUINetworkModel: NSObject {
+open class SyncNetworkModel: NSObject {
     public var uniqueId: String = UUID().uuidString
     public var host: String = AUIRoomContext.shared.commonConfig?.host ?? ""
     public var interfaceName: String?
-    public var method: AUINetworkMethod = .post
+    public var method: SyncNetworkMethod = .post
     
     static func modelPropertyBlacklist() -> [Any] {
         return ["uniqueId", "host", "interfaceName", "method"]
@@ -43,7 +43,7 @@ open class AUINetworkModel: NSObject {
     }
     
     public func request(completion: ((Error?, Any?)->())?) {
-        AUINetworking.shared.request(model: self, completion: completion)
+        SyncNetworking.shared.request(model: self, completion: completion)
     }
     
     
@@ -73,6 +73,6 @@ open class AUINetworkModel: NSObject {
 
 
 @objcMembers
-open class AUICommonNetworkModel: AUINetworkModel {
+open class SyncCommonNetworkModel: SyncNetworkModel {
     public var userId: String?
 }

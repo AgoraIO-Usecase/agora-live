@@ -9,7 +9,7 @@ import Foundation
 import YYModel
 
 @objcMembers
-open class AUIRoomCreateNetworkModel: AUICommonNetworkModel {
+open class SyncRoomCreateNetworkModel: SyncCommonNetworkModel {
     public override init() {
         super.init()
         interfaceName = "/v2/room/create"
@@ -38,7 +38,7 @@ open class AUIRoomCreateNetworkModel: AUICommonNetworkModel {
     }
 }
 
-open class AUIRoomDestroyNetworkModel: AUICommonNetworkModel {
+open class SyncRoomDestroyNetworkModel: SyncCommonNetworkModel {
     public override init() {
         super.init()
         interfaceName = "/v2/room/destroy"

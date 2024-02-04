@@ -7,7 +7,7 @@
 
 import UIKit
 
-@objcMembers open class AUIKickUserReqModel: AUINetworkModel {
+@objcMembers open class AUIKickUserReqModel: SyncNetworkModel {
     
     public override init() {
         super.init()
@@ -33,8 +33,6 @@ import UIKit
             throw AUICommonError.networkParseFail.toNSError()
         }
         
-        
         return result
     }
-
 }

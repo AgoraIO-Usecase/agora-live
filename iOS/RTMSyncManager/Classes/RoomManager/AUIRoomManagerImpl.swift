@@ -22,7 +22,7 @@ extension AUIRoomManagerImpl {
     public func createRoom(room: AUIRoomInfo, callback: @escaping (NSError?, AUIRoomInfo?) -> ()) {
         aui_info("enterRoom: \(room.roomName) ", tag: "AUIRoomManagerImpl")
         
-        let model = AUIRoomCreateNetworkModel()
+        let model = SyncRoomCreateNetworkModel()
         model.roomInfo = room
         
         var createRoomError: NSError? = nil
@@ -36,7 +36,7 @@ extension AUIRoomManagerImpl {
     }
     
     public func destroyRoom(roomId: String, callback: @escaping (NSError?) -> ()) {
-        let model = AUIRoomDestroyNetworkModel()
+        let model = SyncRoomDestroyNetworkModel()
         model.userId = AUIRoomContext.shared.currentUserInfo.userId
         model.roomId = roomId
         model.request { error, _ in
@@ -45,7 +45,7 @@ extension AUIRoomManagerImpl {
     }
     
     public func getRoomInfoList(lastCreateTime: Int64, pageSize: Int, callback: @escaping AUIRoomListCallback) {
-        let model = AUIRoomListNetworkModel()
+        let model = SyncRoomListNetworkModel()
         model.lastCreateTime = lastCreateTime == 0 ? nil : NSNumber(value: Int(lastCreateTime))
         model.pageSize = pageSize
         model.request { error, list in

@@ -27,7 +27,7 @@ class RTMSyncUtil: NSObject {
     
     class func login(channelName: String, success: (() -> Void)?, failure: ((String?) -> Void)?) {
         guard isLogined == false else { return }
-        let model = AUITokenGenerateNetworkModel()
+        let model = SyncTokenGenerateNetworkModel()
         model.channelName = channelName
         model.userId = VLUserCenter.user.id
         model.request { err, result in
@@ -97,7 +97,7 @@ class RTMSyncUtil: NSObject {
         scene?.unbindRespDelegate(delegate: RTMSyncUtilDeleage())
         if ownerId == VLUserCenter.user.id {
             scene?.delete()
-            let model = AUIRoomDestroyNetworkModel()
+            let model = SyncRoomDestroyNetworkModel()
             model.roomId = id
             model.request { err, _ in
             }
@@ -161,7 +161,7 @@ class RTMSyncUtil: NSObject {
 class RTMSyncUtilDeleage: NSObject, AUISceneRespDelegate {
     func onSceneDestroy(roomId: String) {
         print("房间销毁 == \(roomId)")
-        let model = AUIRoomDestroyNetworkModel()
+        let model = SyncRoomDestroyNetworkModel()
         model.roomId = roomId
         model.request { err, _ in
         }
