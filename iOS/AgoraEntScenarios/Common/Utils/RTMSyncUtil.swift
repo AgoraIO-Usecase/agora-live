@@ -23,7 +23,7 @@ class RTMSyncUtil: NSObject {
         owner.userName = VLUserCenter.user.name
         owner.userAvatar = VLUserCenter.user.headUrl
         config.owner = owner
-        config.appCert = KeyCenter.IMClientSecret ?? ""
+        config.appCert = KeyCenter.Certificate ?? ""
         config.host = KeyCenter.RTMHostUrl
         syncManager = AUISyncManager(rtmClient: nil, commonConfig: config)
         isLogined = false
@@ -45,6 +45,10 @@ class RTMSyncUtil: NSObject {
         login(channelName: roomId, success: {
             self.syncManagerImpl.createRoom(room: roomInfo, callback: callback)
         }) { error in
+            if error?.code == 10002 {
+                createRoom(roomName: roomName, roomId: roomId, payload: payload, callback: callback)
+                return
+            }
             callback(error, nil)
         }
     }
@@ -56,11 +60,14 @@ class RTMSyncUtil: NSObject {
     }
     
     class func getRoomList(lastCreateTime: Int64 = 0, callback: @escaping ((NSError?, [AUIRoomInfo]?) -> Void)) {
-        syncManagerImpl.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: lastCreateTime == 0 ? 0 : 20, callback: callback)
+        syncManagerImpl.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: 20, callback: callback)
     }
     
     class func login(channelName: String, success: (() -> Void)?, failure: ((NSError?) -> Void)?) {
-        guard isLogined == false else { return }
+        if isLogined == true {
+            success?()
+            return
+        }
         let model = SyncTokenGenerateNetworkModel()
         model.channelName = channelName
         model.userId = VLUserCenter.user.id
@@ -97,6 +104,7 @@ class RTMSyncUtil: NSObject {
                          ownerId: String,
                          success: (() -> Void)?,
                          failure: ((NSError?) -> Void)?) {
+        leaveScene(id: id, ownerId: ownerId)
         let scene = scene(id: id)
         scene?.bindRespDelegate(delegate: delegate)
         login(channelName: id, success: {

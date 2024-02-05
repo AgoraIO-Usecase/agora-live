@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import RTMSyncManager
 
-private let kSceneId = "scene_ecommerce_0.2.0"
+private let kSceneId = "scene_ecommerce_0_2_0"
 
 private let SYNC_MANAGER_MESSAGE_COLLECTION = "commerce_message_collection"
 private let SYNC_MANAGER_SEAT_APPLY_COLLECTION = "commerce_seat_apply_collection"
@@ -103,7 +103,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     }
     
     fileprivate func initScene(completion: @escaping (NSError?) -> Void) {
-        RTMSyncUtil.joinScene(id: kSceneId, ownerId: room?.ownerId ?? "") {
+        RTMSyncUtil.joinScene(id: kSceneId, ownerId: room?.ownerId ?? VLUserCenter.user.id ?? "") {
             self._subscribeAll()
             completion(nil)
         } failure: { error in
@@ -160,9 +160,9 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     }
     
     @objc func createRoom(roomName: String,
-                    roomId: String,
-                    thumbnailId: String,
-                    completion: @escaping (NSError?, CommerceRoomDetailModel?) -> Void) {
+                          roomId: String,
+                          thumbnailId: String,
+                          completion: @escaping (NSError?, CommerceRoomDetailModel?) -> Void) {
         let room = CommerceRoomListModel()
         room.roomName = roomName
         room.roomId = roomId
@@ -172,24 +172,19 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         room.ownerAvatar = VLUserCenter.user.headUrl
         room.createdAt = Date().millionsecondSince1970()
         let params = (room.yy_modelToJSONObject() as? [String: Any]) ?? [:]
-        initScene { [weak self] error in
-            if let error = error  {
+        RTMSyncUtil.createRoom(roomName: roomName, roomId: room.roomId, payload: params) { error, roomInfo in
+            if error != nil {
                 completion(error, nil)
                 return
             }
-            RTMSyncUtil.createRoom(roomName: roomName, roomId: room.roomId, payload: params) { error, roomInfo in
-                if error != nil {
-                    completion(error, nil)
-                    return
-                }
-                
+            RTMSyncUtil.joinScene(id: roomId, ownerId: room.ownerId) {
                 let channelName = roomInfo?.roomId//result.getPropertyWith(key: "roomId", type: String.self) as? String
                 guard let channelName = channelName else {
                     agoraAssert("createRoom fail: channelName == nil")
                     completion(nil, nil)
                     return
                 }
-                self?.roomId = channelName
+                self.roomId = channelName
                 let roomModel = CommerceRoomDetailModel()
                 roomModel.ownerAvatar = roomInfo?.owner?.userAvatar
                 roomModel.ownerId = roomInfo?.owner?.userId ?? ""
@@ -197,10 +192,14 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
                 roomModel.roomId = channelName
                 roomModel.roomName = roomInfo?.roomName
                 roomModel.thumbnailId = thumbnailId
-                self?.roomList?.append(roomModel)
-                self?._startCheckExpire()
-                self?._subscribeAll()
+                roomModel.roomStatus = .end
+                roomModel.createdAt = Date().millionsecondSince1970()
+                self.roomList?.append(roomModel)
+                self._startCheckExpire()
+                self._subscribeAll()
                 completion(nil, roomModel)
+            } failure: { error in
+                completion(error, nil)
             }
         }
     }
@@ -208,32 +207,24 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     @objc func joinRoom(room: CommerceRoomListModel,
                         completion: @escaping (NSError?, CommerceRoomDetailModel?) -> Void) {
         isJoined = false
-        let params = room.yy_modelToJSONObject() as? [String: Any]
-        initScene { [weak self] error in
-            if let error = error  {
-                self?._joinRoomRetry(room: room, completion: completion, reachLimitTask: {
-                    completion(error, nil)
-                })
-                return
-            }
-            RTMSyncUtil.joinScene(id: room.roomId, ownerId: room.ownerId) {
-                self?.roomId = room.roomId
-                let roomModel = CommerceRoomDetailModel()
-                roomModel.ownerAvatar = room.ownerAvatar
-                roomModel.ownerId = room.ownerId
-                roomModel.ownerName = room.ownerName
-                roomModel.roomId = room.roomId
-                roomModel.roomName = room.roomName
-                roomModel.roomUserCount = room.roomUserCount
-                roomModel.thumbnailId = room.thumbnailId
-                self?._startCheckExpire()
-                self?._subscribeOnRoomDestroy(isOwner: self?.isOwner(room) ?? false)
-                self?._subscribeAll()
-                self?.isJoined = true
-                completion(nil, roomModel)
-            } failure: { error in
-                completion(error, nil)
-            }
+        self.roomId = room.roomId
+        self.roomList?.append(room)
+        RTMSyncUtil.joinScene(id: room.roomId, ownerId: room.ownerId) {
+            let roomModel = CommerceRoomDetailModel()
+            roomModel.ownerAvatar = room.ownerAvatar
+            roomModel.ownerId = room.ownerId
+            roomModel.ownerName = room.ownerName
+            roomModel.roomId = room.roomId
+            roomModel.roomName = room.roomName
+            roomModel.roomUserCount = room.roomUserCount
+            roomModel.thumbnailId = room.thumbnailId
+            self._startCheckExpire()
+            self._subscribeOnRoomDestroy(isOwner: self.isOwner(room))
+            self._subscribeAll()
+            self.isJoined = true
+            completion(nil, roomModel)
+        } failure: { error in
+            completion(error, nil)
         }
     }
     
@@ -313,29 +304,23 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
 //MARK: room operation
 extension CommerceSyncManagerServiceImp {
     @objc func _getRoomList(page: Int, completion: @escaping (NSError?, [CommerceRoomListModel]?) -> Void) {
-        initScene { error in
-            if let error = error {
+        RTMSyncUtil.getRoomList { error, roomList in
+            agoraPrint("result == \(roomList?.compactMap { $0 })")
+            if error != nil {
                 completion(error, nil)
                 return
             }
-            RTMSyncUtil.getRoomList { error, roomList in
-                agoraPrint("result == \(roomList?.compactMap { $0 })")
-                if error != nil {
-                    completion(error, nil)
-                    return
-                }
-                let dataArray = roomList?.map({ info in
-                    let roomModel = CommerceRoomDetailModel()
-                    roomModel.ownerAvatar = info.owner?.userAvatar
-                    roomModel.ownerId = info.owner?.userId ?? ""
-                    roomModel.ownerName = info.owner?.userName
-                    roomModel.roomId = info.roomId
-                    roomModel.roomName = info.roomName
-                    roomModel.thumbnailId = info.roomName // TODO: 待替换
-                    return roomModel
-                })
-                completion(nil, dataArray)
-            }
+            let dataArray = roomList?.map({ info in
+                let roomModel = CommerceRoomDetailModel()
+                roomModel.ownerAvatar = info.owner?.userAvatar
+                roomModel.ownerId = info.owner?.userId ?? ""
+                roomModel.ownerName = info.owner?.userName
+                roomModel.roomId = info.roomId
+                roomModel.roomName = info.roomName
+                roomModel.thumbnailId = info.customPayload["thumbnailId"] as? String
+                return roomModel
+            })
+            completion(nil, dataArray)
         }
     }
     
@@ -413,18 +398,18 @@ extension CommerceSyncManagerServiceImp {
         agoraPrint("imp user get...")
         RTMSyncUtil.getMetaData(id: channelName, key: SYNC_SCENE_ROOM_USER_COLLECTION) { [weak self] error, list in
             if error != nil {
-                agoraPrint("imp user get fail :\(error?.localizedDescription)...")
+                agoraPrint("imp user get fail :\(error?.localizedDescription ?? "")...")
                 finished(error, nil)
                 return
             }
             agoraPrint("imp user get success...")
-            print("list == \(list)")
+            print("list == \(list ?? [])")
 //            let users = list.compactMap({ CommerceUser.yy_model(withJSON: $0.toJson()!)! })
 //            self?.userList = users
 //            self?._updateUserCount(completion: { error in
 //
 //            })
-//            finished(nil, users)
+            finished(nil, [])
         }
     }
 
@@ -672,29 +657,23 @@ class CommerceRobotSyncManagerServiceImp: CommerceSyncManagerServiceImp {
     }
     
     @objc override func _getRoomList(page: Int, completion: @escaping (NSError?, [CommerceRoomListModel]?) -> Void) {
-        initScene { error in
-            if let error = error {
+        RTMSyncUtil.getRoomList { error, results in
+            agoraPrint("result == \(results?.compactMap { $0 })")
+            if error != nil {
                 completion(error, nil)
                 return
             }
-            RTMSyncUtil.getRoomList { error, results in
-                agoraPrint("result == \(results?.compactMap { $0 })")
-                if error != nil {
-                    completion(error, nil)
-                    return
-                }
-                let dataArray = results?.map({ info in
-                    let roomModel = CommerceRoomDetailModel()
+            let dataArray = results?.map({ info in
+                let roomModel = CommerceRoomDetailModel()
 //                    roomModel.ownerAvatar = info.owner?.userAvatar
-                    roomModel.ownerId = info.owner?.userId ?? ""
-                    roomModel.ownerName = info.owner?.userName
-                    roomModel.roomId = info.roomId
-                    roomModel.roomName = info.roomName
-                    roomModel.thumbnailId = info.roomName // TODO: 待替换
-                    return roomModel
-                })
-                completion(nil, dataArray)
-            }
+                roomModel.ownerId = info.owner?.userId ?? ""
+                roomModel.ownerName = info.owner?.userName
+                roomModel.roomId = info.roomId
+                roomModel.roomName = info.roomName
+                roomModel.thumbnailId = info.customPayload["thumbnailId"] as? String // TODO: 待替换
+                return roomModel
+            })
+            completion(nil, dataArray)
         }
     }
     
