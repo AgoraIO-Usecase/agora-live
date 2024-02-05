@@ -103,7 +103,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     }
     
     fileprivate func initScene(completion: @escaping (NSError?) -> Void) {
-        RTMSyncUtil.joinScene(id: kSceneId, ownerId: room?.ownerId ?? VLUserCenter.user.id ?? "") {
+        RTMSyncUtil.joinScene(id: kSceneId, ownerId: room?.ownerId ?? VLUserCenter.user.id ?? "", payload: nil) {
             self._subscribeAll()
             completion(nil)
         } failure: { error in
@@ -177,7 +177,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
                 completion(error, nil)
                 return
             }
-            RTMSyncUtil.joinScene(id: roomId, ownerId: room.ownerId) {
+            RTMSyncUtil.joinScene(id: roomId, ownerId: room.ownerId, payload: params) {
                 let channelName = roomInfo?.roomId//result.getPropertyWith(key: "roomId", type: String.self) as? String
                 guard let channelName = channelName else {
                     agoraAssert("createRoom fail: channelName == nil")
@@ -209,7 +209,8 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         isJoined = false
         self.roomId = room.roomId
         self.roomList?.append(room)
-        RTMSyncUtil.joinScene(id: room.roomId, ownerId: room.ownerId) {
+        let params = (room.yy_modelToJSONObject() as? [String: Any])
+        RTMSyncUtil.joinScene(id: room.roomId, ownerId: room.ownerId, payload: params) {
             let roomModel = CommerceRoomDetailModel()
             roomModel.ownerAvatar = room.ownerAvatar
             roomModel.ownerId = room.ownerId
@@ -262,7 +263,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     
     func initRoom(roomId: String?, completion: @escaping (NSError?) -> Void) {
         if isJoined {
-            _addUserIfNeed(roomId: roomId, finished: completion)
             _sendMessageWithText(roomId: roomId, text: "join_live_room".commerce_localized)
         }
     }
@@ -355,6 +355,9 @@ extension CommerceSyncManagerServiceImp {
         agoraPrint("imp all subscribe...")
         _subscribeOnlineUsersChanged()
         _subscribeMessageChanged()
+        _getUserList(roomId: room?.roomId) { _, list in
+            
+        }
     }
     
     private func _unsubscribeAll() {
@@ -373,37 +376,15 @@ extension CommerceSyncManagerServiceImp {
 
 //MARK: user operation
 extension CommerceSyncManagerServiceImp {
-    fileprivate func _addUserIfNeed(roomId: String?, finished: @escaping (NSError?) -> Void) {
-        _getUserList(roomId: roomId) {[weak self] error, userList in
-            guard let self = self, roomId == self.roomId else {
-                finished(NSError(domain: "unknown error", code: -1))
-                return
-            }
-            // current user already add
-            if self.userList.contains(where: { $0.userId == VLUserCenter.user.id }) {
-                finished(nil)
-                return
-            }
-            self._addUserInfo(roomId: roomId) {
-                finished(nil)
-            }
-        }
-    }
-
     private func _getUserList(roomId: String?, finished: @escaping (NSError?, [CommerceUser]?) -> Void) {
         guard let channelName = roomId else {
             finished(NSError(domain: "roomId is empty", code: 0), nil)
             return
         }
         agoraPrint("imp user get...")
-        RTMSyncUtil.getMetaData(id: channelName, key: SYNC_SCENE_ROOM_USER_COLLECTION) { [weak self] error, list in
-            if error != nil {
-                agoraPrint("imp user get fail :\(error?.localizedDescription ?? "")...")
-                finished(error, nil)
-                return
-            }
+        RTMSyncUtil.getUserList(id: channelName) { roomId, userList in
             agoraPrint("imp user get success...")
-            print("list == \(list ?? [])")
+            print("list == \(userList)")
 //            let users = list.compactMap({ CommerceUser.yy_model(withJSON: $0.toJson()!)! })
 //            self?.userList = users
 //            self?._updateUserCount(completion: { error in
@@ -413,60 +394,29 @@ extension CommerceSyncManagerServiceImp {
         }
     }
 
-    private func _addUserInfo(roomId: String?, finished: @escaping () -> Void) {
-        guard let channelName = roomId else {
-//            assert(false, "channelName = nil")
-            print("addUserInfo channelName = nil")
-            return
-        }
-        let model = CommerceUser()
-        model.userId = VLUserCenter.user.id
-        model.avatar = VLUserCenter.user.headUrl
-        model.userName = VLUserCenter.user.name
-
-        let params = model.yy_modelToJSONObject() as! [String: Any]
-        agoraPrint("imp user add ...\(channelName)")
-        RTMSyncUtil.addMetaData(id: channelName, key: SYNC_SCENE_ROOM_USER_COLLECTION, data: params) { error in
-            if error != nil {
-                agoraPrint("imp user get fail :\(error?.localizedDescription ?? "")...")
-                finished()
-                return
-            }
-            agoraPrint("imp user add success...\(channelName)")
-            
-            if self.userList.contains(where: { $0.userId == model.userId }) {
-                return
-            }
-            self.userList.append(model)
-            finished()
-        }
-    }
-    
-    
-    private func _updateUserInfo(user: CommerceUser, completion: @escaping (NSError?) -> Void) {
-        let channelName = getRoomId()
-        agoraPrint("imp user update...")
-
-        let params = user.yy_modelToJSONObject() as! [String: Any]
-        RTMSyncUtil.updateMetaData(id: channelName, key: SYNC_SCENE_ROOM_USER_COLLECTION, data: params) { error in
-            if error != nil {
-                agoraPrint("imp user update fail :\(error?.localizedDescription ?? "")...")
-                completion(error)
-                return
-            }
-            agoraPrint("imp user update success...")
-            completion(nil)
-        }
-    }
-
     private func _subscribeOnlineUsersChanged() {
         guard let channelName = roomId else {
             agoraPrint("channelName = nil")
             return
         }
         agoraPrint("imp user subscribe ...")
-        RTMSyncUtil.subscribeAttributesDidChanged(id: channelName, key: SYNC_SCENE_ROOM_USER_COLLECTION) { channelName, object in
-            print("channelName == \(channelName)  object == \(object)")
+        RTMSyncUtil.userUpdate(id: channelName) { roomId, userInfo in
+            print("userUpdate == \(roomId)  object == \(userInfo)")
+        }
+        RTMSyncUtil.userEnter(id: channelName) { roomId, userInfo in
+            print("userEnter == \(roomId)  object == \(userInfo)")
+        }
+        RTMSyncUtil.userLeave(id: channelName) { roomId, userInfo in
+            print("userLeave == \(roomId)  object == \(userInfo)")
+        }
+        RTMSyncUtil.userKicked(id: channelName) { roomId, userId in
+            print("userKicked == \(roomId)  userId == \(userId)")
+        }
+        RTMSyncUtil.userAudioMute(id: channelName) { userId, mute in
+            print("userAudioMute == \(userId)  userId == \(mute)")
+        }
+        RTMSyncUtil.userVideoMute(id: channelName) { userId, mute in
+            print("userVideoMute == \(userId)  userId == \(mute)")
         }
 //        SyncUtil
 //            .scene(id: channelName)?
@@ -518,15 +468,16 @@ extension CommerceSyncManagerServiceImp {
             return
         }
         agoraPrint("imp user delete... [\(objectId)]")
-        RTMSyncUtil.removeMetaData(id: channelName, key: SYNC_SCENE_ROOM_USER_COLLECTION, filter: [["objectId": objectId]]) { error in
-            if error != nil {
-                agoraPrint("imp user delete fail \(error?.localizedDescription ?? "")...")
-                completion(error)
-                return
-            }
-            agoraPrint("imp user delete success...")
-            completion(nil)
-        }
+        //TODO: 待完成
+//        RTMSyncUtil.removeMetaData(id: channelName, key: SYNC_SCENE_ROOM_USER_COLLECTION, filter: [["objectId": objectId]]) { error in
+//            if error != nil {
+//                agoraPrint("imp user delete fail \(error?.localizedDescription ?? "")...")
+//                completion(error)
+//                return
+//            }
+//            agoraPrint("imp user delete success...")
+//            completion(nil)
+//        }
     }
 
     private func _updateUserCount(completion: @escaping (NSError?) -> Void) {
