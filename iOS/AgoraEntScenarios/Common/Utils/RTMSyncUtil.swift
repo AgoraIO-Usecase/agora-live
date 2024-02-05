@@ -12,10 +12,9 @@ class RTMSyncUtil: NSObject {
     private static var syncManager: AUISyncManager?
     private static var syncManagerImpl = AUIRoomManagerImpl()
     private static var isLogined: Bool = false
-    private static var delegate = RTMSyncUtilDeleage()
+    private static let roomDelegate = RTMSyncUtilRoomDeleage()
     
     class func initRTMSyncManager() {
-        logOut()
         let config = AUICommonConfig()
         config.appId = KeyCenter.AppId
         let owner = AUIUserThumbnailInfo()
@@ -27,12 +26,14 @@ class RTMSyncUtil: NSObject {
         config.host = KeyCenter.RTMHostUrl
         syncManager = AUISyncManager(rtmClient: nil, commonConfig: config)
         isLogined = false
+        syncManager?.logout()
     }
     
     class func createRoom(roomName: String,
                           roomId: String,
                           payload: [String: Any],
                           callback: @escaping ((NSError?, AUIRoomInfo?) -> Void)) {
+        logOut()
         let roomInfo = AUIRoomInfo()
         roomInfo.roomName = roomName
         roomInfo.roomId = roomId
@@ -102,34 +103,37 @@ class RTMSyncUtil: NSObject {
     
     class func joinScene(id: String, 
                          ownerId: String,
+                         payload: [String: Any]?,
                          success: (() -> Void)?,
                          failure: ((NSError?) -> Void)?) {
         leaveScene(id: id, ownerId: ownerId)
         let scene = scene(id: id)
-        scene?.bindRespDelegate(delegate: delegate)
+        scene?.bindRespDelegate(delegate: roomDelegate)
         login(channelName: id, success: {
             if ownerId == VLUserCenter.user.id {
-                scene?.create { err in
+                scene?.create(payload: payload) { err in
                     if let err = err {
                         print("create scene fail: \(err.localizedDescription)")
                         failure?(err)
                         return
                     }
-                    scene?.enter(ownerId: ownerId, completion: { err in
+                    scene?.enter(completion: { res, error in
                         if let err = err {
                             print("enter scene fail: \(err.localizedDescription)")
                             return
                         }
+                        print("res == \(res)")
                         success?()
                     })
                 }
             } else {
-                scene?.enter(ownerId: ownerId, completion: { err in
+                scene?.enter(completion: { res, err in
                     if let err = err {
                         print("enter scene fail: \(err.localizedDescription)")
                         failure?(err)
                         return
                     }
+                    print("res == \(res)")
                     success?()
                 })
             }
@@ -138,7 +142,7 @@ class RTMSyncUtil: NSObject {
     
     class func leaveScene(id: String, ownerId: String) {
         let scene = scene(id: id)
-        scene?.unbindRespDelegate(delegate: delegate)
+        scene?.unbindRespDelegate(delegate: roomDelegate)
         if ownerId == VLUserCenter.user.id {
             scene?.delete()
             let model = SyncRoomDestroyNetworkModel()
@@ -151,7 +155,43 @@ class RTMSyncUtil: NSObject {
     }
     
     class func subscribeRoomDestroy(roomDestoryClosure: ((String) -> Void)?) {
-        delegate.roomDestoryClosure = roomDestoryClosure
+        roomDelegate.roomDestoryClosure = roomDestoryClosure
+    }
+    
+    class func getUserList(id: String, callback: @escaping (_ roomId: String, _ userList: [AUIUserInfo]) -> Void) {
+        let userDelegate = RTMSyncUtilUserDelegate()
+        userDelegate.onUserListCallback = callback
+        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
+    }
+    class func userEnter(id: String, callback: @escaping (_ roomId: String, _ userInfo: AUIUserInfo) -> Void) {
+        let userDelegate = RTMSyncUtilUserDelegate()
+        userDelegate.onUserEnterCallback = callback
+        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
+    }
+    class func userLeave(id: String, callback: @escaping (_ roomId: String, _ userInfo: AUIUserInfo) -> Void) {
+        let userDelegate = RTMSyncUtilUserDelegate()
+        userDelegate.onUserLeaveCallback = callback
+        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
+    }
+    class func userUpdate(id: String, callback: @escaping (_ roomId: String, _ userInfo: AUIUserInfo) -> Void) {
+        let userDelegate = RTMSyncUtilUserDelegate()
+        userDelegate.onUserUpdateCallback = callback
+        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
+    }
+    class func userKicked(id: String, callback: @escaping (_ roomId: String, _ userId: String) -> Void) {
+        let userDelegate = RTMSyncUtilUserDelegate()
+        userDelegate.onUserKickedCallback = callback
+        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
+    }
+    class func userAudioMute(id: String, callback: @escaping (_ userId: String, _ mute: Bool) -> Void) {
+        let userDelegate = RTMSyncUtilUserDelegate()
+        userDelegate.onUserAudioMuteCallback = callback
+        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
+    }
+    class func userVideoMute(id: String, callback: @escaping (_ userId: String, _ mute: Bool) -> Void) {
+        let userDelegate = RTMSyncUtilUserDelegate()
+        userDelegate.onUserVideoMuteCallback = callback
+        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
     }
     
     class func subscribeAttributesDidChanged(id: String,
@@ -218,7 +258,7 @@ class RTMSyncUtil: NSObject {
     }
 }
 
-class RTMSyncUtilDeleage: NSObject, AUISceneRespDelegate {
+class RTMSyncUtilRoomDeleage: NSObject, AUISceneRespDelegate {
     var roomDestoryClosure: ((String) -> Void)?
     func onSceneDestroy(roomId: String) {
         print("房间销毁 == \(roomId)")
@@ -230,3 +270,40 @@ class RTMSyncUtilDeleage: NSObject, AUISceneRespDelegate {
     }
 }
 
+class RTMSyncUtilUserDelegate: NSObject, AUIUserRespDelegate {
+    var onUserListCallback: ((_ roomId: String, _ userList: [AUIUserInfo]) -> Void)?
+    var onUserEnterCallback: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?
+    var onUserLeaveCallback: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?
+    var onUserUpdateCallback: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?
+    var onUserKickedCallback: ((_ roomId: String, _ userId: String) -> Void)?
+    var onUserAudioMuteCallback: ((_ userId: String, _ mute: Bool) -> Void)?
+    var onUserVideoMuteCallback: ((_ userId: String, _ mute: Bool) -> Void)?
+    
+    func onRoomUserSnapshot(roomId: String, userList: [RTMSyncManager.AUIUserInfo]) {
+        onUserListCallback?(roomId, userList)
+    }
+    
+    func onRoomUserEnter(roomId: String, userInfo: RTMSyncManager.AUIUserInfo) {
+        onUserEnterCallback?(roomId, userInfo)
+    }
+    
+    func onRoomUserLeave(roomId: String, userInfo: RTMSyncManager.AUIUserInfo) {
+        onUserLeaveCallback?(roomId, userInfo)
+    }
+    
+    func onRoomUserUpdate(roomId: String, userInfo: RTMSyncManager.AUIUserInfo) {
+        onUserUpdateCallback?(roomId, userInfo)
+    }
+    
+    func onUserAudioMute(userId: String, mute: Bool) {
+        onUserAudioMuteCallback?(userId, mute)
+    }
+    
+    func onUserVideoMute(userId: String, mute: Bool) {
+        onUserVideoMuteCallback?(userId, mute)
+    }
+    
+    func onUserBeKicked(roomId: String, userId: String) {
+        onUserKickedCallback?(roomId, userId)
+    }
+}

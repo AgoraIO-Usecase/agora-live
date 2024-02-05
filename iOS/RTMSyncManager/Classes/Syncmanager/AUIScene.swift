@@ -12,20 +12,23 @@ let kSceneTag = "AUIScene"
 private let kRoomInfoKey = "scene_room_info"
 private let kRoomInfoRoomId = "room_id"
 private let kRoomInfoRoomOwnerId = "room_owner_id"
+private let kRoomInfoPayloadId = "room_payload_id"
 public class AUIScene: NSObject {
     private var channelName: String
     private var ownerId: String = "" {
         didSet {
             AUIRoomContext.shared.roomOwnerMap[channelName] = ownerId
+            checkRoomValid()
         }
     }
     private var rtmManager: AUIRtmManager
     private var collectionMap: [String: IAUICollection] = [:]
-    private var userService: AUIUserServiceImpl
+    public let userService: AUIUserServiceImpl!
     private lazy var roomCollection: AUIMapCollection = getCollection(key: kRoomInfoKey)!
     
+    private var enterRoomCompletion: (([String: Any]?, NSError?)-> ())?
     private var respDelegates: NSHashTable<AUISceneRespDelegate> = NSHashTable<AUISceneRespDelegate>.weakObjects()
-    
+    private var roomPayload: [String: Any]?
     private var subscribeDate: Date?
     private var lockRetrived: Bool = false {
         didSet {
@@ -65,17 +68,20 @@ public class AUIScene: NSObject {
     }
     
     //TODO: 是否需要像UIKit一样传入一个房间信息对象，还是这个对象业务上自己创建map collection来写入
-    public func create(completion:@escaping (NSError?)->()) {
+    public func create(payload: [String: Any]?, completion:@escaping (NSError?)->()) {
         guard rtmManager.isLogin else {
             aui_error("create fail! not login", tag: kSceneTag)
             completion(NSError.auiError("create fail! not login"))
             return
         }
-        self.ownerId = AUIRoomContext.shared.currentUserInfo.userId
-        let roomInfo = [
+        let ownerId = AUIRoomContext.shared.currentUserInfo.userId
+        var roomInfo = [
             kRoomInfoRoomId: channelName,
             kRoomInfoRoomOwnerId: ownerId
         ]
+        if let payload = payload {
+            roomInfo[kRoomInfoPayloadId] = encodeToJsonStr(payload)
+        }
         
         let date = Date()
         roomCollection.initMetaData(channelName: channelName,
@@ -90,29 +96,47 @@ public class AUIScene: NSObject {
         AUIRoomContext.shared.getArbiter(channelName: channelName)?.create()
     }
     
-    public func enter(ownerId: String, completion:@escaping (NSError?)->()) {
+    public func enter(completion:@escaping ([String: Any]?, NSError?)->()) {
         guard rtmManager.isLogin else {
             aui_error("enter fail! not login", tag: kSceneTag)
-            completion(NSError.auiError("enter fail! not login"))
+            completion(nil, NSError.auiError("enter fail! not login"))
             return
         }
         
-        self.ownerId = ownerId
-        subscribeDate = Date()
         let date = Date()
+        subscribeDate = date
+        self.enterRoomCompletion = { payload, err in
+            aui_info("[Benchmark]enterRoomCompletion: \(Int64(-date.timeIntervalSinceNow * 1000)) ms", tag: kSceneTag)
+            completion(payload, nil)
+        }
+        
+        if self.ownerId.isEmpty {
+            roomCollection.getMetaData {[weak self] err, metadata in
+                guard let self = self else {return}
+                guard let map = metadata as? [String: Any],
+                      let ownerId = map[kRoomInfoRoomOwnerId] as? String else {
+                    self.ownerId = "owner unknown"
+                    aui_error("get room owner fatel!")
+                    return
+                }
+                if let payloadStr = map[kRoomInfoPayloadId] as? String {
+                    self.roomPayload = decodeToJsonObj(payloadStr) as? [String: Any]
+                }
+                self.ownerId = ownerId
+            }
+        }
         AUIRoomContext.shared.getArbiter(channelName: channelName)?.acquire()
         rtmManager.subscribeError(channelName: channelName, delegate: self)
         rtmManager.subscribeLock(channelName: channelName, lockName: kRTM_Referee_LockName, delegate: self)
         rtmManager.subscribe(channelName: channelName) {[weak self] error in
             guard let self = self else { return }
             if let error = error {
-                completion(error)
+                completion(nil, error)
                 return
             }
-            self.subscribeSuccess = true
             aui_benchmark("[Benchmark]rtm manager subscribe", cost: -(date.timeIntervalSinceNow), tag: kSceneTag)
             aui_info("enterRoom subscribe finished \(channelName) \(error?.localizedDescription ?? "")", tag: kSceneTag)
-            completion(nil)
+            self.subscribeSuccess = true
         }
     }
     
@@ -148,17 +172,11 @@ public class AUIScene: NSObject {
 extension AUIScene {
     //如果subscribe成功、锁也获取到、用户列表也获取到，可以检查是否是脏房间并且清理
     private func checkRoomValid() {
-        guard subscribeSuccess, lockRetrived else { return }
-//        if let completion = self.enterRoomCompletion {
-//            completion(roomInfo)
-//            self.enterRoomCompletion = nil
-//            for obj in self.respDelegates.allObjects {
-//                obj.onRoomInfoChange?(roomId: roomInfo.roomId, roomInfo: roomInfo)
-//            }
-//            
-//            //TODO: add more service.sereviceDidLoad
-////            chatImplement.sereviceDidLoad?()
-//        }
+        guard subscribeSuccess, lockRetrived, !ownerId.isEmpty else { return }
+        if let completion = self.enterRoomCompletion {
+            completion(roomPayload, nil)
+            self.enterRoomCompletion = nil
+        }
         
         guard let userList = userSnapshotList else { return }
         guard let _ = userList.filter({ AUIRoomContext.shared.isRoomOwner(channelName: channelName, userId: $0.userId)}).first else {
