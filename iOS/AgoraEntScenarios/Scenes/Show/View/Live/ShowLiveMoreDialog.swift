@@ -32,7 +32,7 @@ import Agora_Scene_Utils
     
     private lazy var reportButton: AGEButton = {
         let button = AGEButton()
-        button.setImage(UIImage.sceneImage(name: "report_icon"),
+        button.setImage(UIImage.sceneImage(name: "report_icon")?.withTintColor(.white, renderingMode: .alwaysOriginal),
                         for: .normal,
                         postion: .top,
                         spacing: 4)
