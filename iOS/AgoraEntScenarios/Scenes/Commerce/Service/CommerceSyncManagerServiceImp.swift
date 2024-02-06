@@ -208,7 +208,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
                         completion: @escaping (NSError?, CommerceRoomDetailModel?) -> Void) {
         isJoined = false
         self.roomId = room.roomId
-        self.roomList?.append(room)
         let params = (room.yy_modelToJSONObject() as? [String: Any])
         RTMSyncUtil.joinScene(id: room.roomId, ownerId: room.ownerId, payload: params) {
             let roomModel = CommerceRoomDetailModel()
@@ -219,8 +218,11 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
             roomModel.roomName = room.roomName
             roomModel.roomUserCount = room.roomUserCount
             roomModel.thumbnailId = room.thumbnailId
+            roomModel.roomStatus = .end
+            roomModel.createdAt = room.createdAt
+            self.roomList?.append(roomModel)
             self._startCheckExpire()
-            self._subscribeOnRoomDestroy(isOwner: self.isOwner(room))
+            self._subscribeOnRoomDestroy(isOwner: self.isOwner(roomModel))
             self._subscribeAll()
             self.isJoined = true
             completion(nil, roomModel)
@@ -305,7 +307,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
 extension CommerceSyncManagerServiceImp {
     @objc func _getRoomList(page: Int, completion: @escaping (NSError?, [CommerceRoomListModel]?) -> Void) {
         RTMSyncUtil.getRoomList { error, roomList in
-            agoraPrint("result == \(roomList?.compactMap { $0 })")
             if error != nil {
                 completion(error, nil)
                 return
@@ -318,6 +319,7 @@ extension CommerceSyncManagerServiceImp {
                 roomModel.roomId = info.roomId
                 roomModel.roomName = info.roomName
                 roomModel.thumbnailId = info.customPayload["thumbnailId"] as? String
+                roomModel.createdAt = (info.customPayload["createdAt"] as? Int64) ?? 0
                 return roomModel
             })
             completion(nil, dataArray)
@@ -365,12 +367,12 @@ extension CommerceSyncManagerServiceImp {
             return
         }
         agoraPrint("imp all unsubscribe...")
-        SyncUtil.leaveScene(id: channelName)
+        RTMSyncUtil.leaveScene(id: channelName, ownerId: room?.ownerId ?? "")
     }
     
     private func _leaveScene(roomId: String) {
         agoraPrint("imp leave scene: \(roomId)")
-        SyncUtil.leaveScene(id: roomId)
+        RTMSyncUtil.leaveScene(id: roomId, ownerId: room?.ownerId ?? "")
     }
 }
 
@@ -385,11 +387,15 @@ extension CommerceSyncManagerServiceImp {
         RTMSyncUtil.getUserList(id: channelName) { roomId, userList in
             agoraPrint("imp user get success...")
             print("list == \(userList)")
-//            let users = list.compactMap({ CommerceUser.yy_model(withJSON: $0.toJson()!)! })
-//            self?.userList = users
-//            self?._updateUserCount(completion: { error in
-//
-//            })
+            let users = userList.compactMap({ item in
+                let user = CommerceUser()
+                user.userId = item.userId
+                user.avatar = item.userAvatar
+                user.userName = item.userName
+                return user
+            })
+            self.userList = users
+            self._updateUserCount(completion: { error in })
             finished(nil, [])
         }
     }
@@ -400,23 +406,54 @@ extension CommerceSyncManagerServiceImp {
             return
         }
         agoraPrint("imp user subscribe ...")
-        RTMSyncUtil.userUpdate(id: channelName) { roomId, userInfo in
-            print("userUpdate == \(roomId)  object == \(userInfo)")
-        }
-        RTMSyncUtil.userEnter(id: channelName) { roomId, userInfo in
+        RTMSyncUtil.subscribeUserDidChange(id: channelName) { roomId, userInfo in
             print("userEnter == \(roomId)  object == \(userInfo)")
-        }
-        RTMSyncUtil.userLeave(id: channelName) { roomId, userInfo in
+            userEnter(userInfo: userInfo)
+            
+        } userLeave: { roomId, userInfo in
             print("userLeave == \(roomId)  object == \(userInfo)")
-        }
-        RTMSyncUtil.userKicked(id: channelName) { roomId, userId in
+            userLeave(userId: userInfo.userId)
+            
+        } userUpdate: { roomId, userInfo in
+            print("userUpdate == \(roomId)  object == \(userInfo)")
+            userEnter(userInfo: userInfo)
+            
+        } userKicked: { roomId, userId in
             print("userKicked == \(roomId)  userId == \(userId)")
-        }
-        RTMSyncUtil.userAudioMute(id: channelName) { userId, mute in
+            userLeave(userId: userId)
+            
+        } audioMute: { userId, mute in
             print("userAudioMute == \(userId)  userId == \(mute)")
-        }
-        RTMSyncUtil.userVideoMute(id: channelName) { userId, mute in
+        } videoMute: { userId, mute in
             print("userVideoMute == \(userId)  userId == \(mute)")
+        }
+        
+        func userEnter(userInfo: AUIUserInfo) {
+            let user = CommerceUser()
+            user.userId = userInfo.userId
+            user.avatar = userInfo.userAvatar
+            user.userName = userInfo.userName
+            if !self.userList.map({ $0.userId }).contains(userInfo.userId) {
+                self.userList.append(user)
+            }
+            defer{
+                self._updateUserCount { error in
+                }
+                self.subscribeDelegate?.onUserCountChanged(userCount: self.userList.count)
+            }
+            self.subscribeDelegate?.onUserJoinedRoom(user: user)
+            self.subscribeDelegate?.onUserCountChanged(userCount: self.userList.count)
+        }
+        
+        func userLeave(userId: String) {
+            if let index = self.userList.firstIndex(where: { $0.userId == userId }) {
+                let model = self.userList[index]
+                self.userList.remove(at: index)
+                self._updateUserCount { error in
+                }
+                self.subscribeDelegate?.onUserLeftRoom(user: model)
+                self.subscribeDelegate?.onUserCountChanged(userCount: self.userList.count)
+            }
         }
 //        SyncUtil
 //            .scene(id: channelName)?
@@ -500,15 +537,6 @@ extension CommerceSyncManagerServiceImp {
         roomInfo.updatedAt = Int64(Date().timeIntervalSince1970 * 1000)
         roomInfo.roomUserCount = roomUserCount
         roomInfo.objectId = channelName
-        let params = roomInfo.yy_modelToJSONObject() as! [String: Any]
-        agoraPrint("imp room update user count... [\(channelName)]")
-        RTMSyncUtil.updateMetaData(id: channelName, key: "", data: params) { error in
-            if error != nil {
-                agoraPrint("imp room update user count fail \(error?.localizedDescription ?? "")...")
-                return
-            }
-            agoraPrint("imp room update user count success...")
-        }
     }
     
     private func _subscribeOnRoomDestroy(isOwner: Bool) {
@@ -522,27 +550,12 @@ extension CommerceSyncManagerServiceImp {
 
 //MARK: message operation
 extension CommerceSyncManagerServiceImp {
-    private func _getMessageList(finished: @escaping (NSError?, [CommerceMessage]?) -> Void) {
-        let channelName = getRoomId()
-        agoraPrint("imp message get...")
-        RTMSyncUtil.getMetaData(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION) { error, result in
-            if error != nil {
-                agoraPrint("imp user get fail :\(error?.localizedDescription ?? "")...")
-                finished(error, nil)
-                return
-            }
-            agoraPrint("imp user get success...")
-//            let messageList = list.compactMap({ CommerceMessage.yy_model(withJSON: $0.toJson()!)! })
-////            guard !users.isEmpty else { return }
-//            self?.messageList = messageList
-//            finished(nil, messageList)
-        }
-    }
-
     private func _addMessage(roomId: String?, message: CommerceMessage, finished: ((NSError?) -> Void)?) {
         guard let channelName = roomId else { return }
         agoraPrint("imp message add ...")
-
+        if messageList.contains(where: { $0.userId == message.userId && $0.message == message.message }) {
+            return
+        }
         let params = message.yy_modelToJSONObject() as! [String: Any]
         RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION, data: params) { error in
             if error != nil {
@@ -559,30 +572,16 @@ extension CommerceSyncManagerServiceImp {
         let channelName = getRoomId()
         agoraPrint("imp message subscribe ...")
         RTMSyncUtil.subscribeAttributesDidChanged(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION) { channelName, object in
+            agoraPrint("imp message subscribe onUpdated... [\(object.getMap() ?? [:])] \(channelName)")
+            guard let map = object.getMap(),
+                  let model = CommerceMessage.yy_model(with: map) else { return }
             
+            if self.messageList.contains(where: { $0.userId == model.userId && $0.message == model.message }) {
+                return
+            }
+            self.messageList.append(model)
+            self.subscribeDelegate?.onMessageDidAdded(message: model)
         }
-//        SyncUtil
-//            .scene(id: channelName)?
-//            .subscribe(key: SYNC_MANAGER_MESSAGE_COLLECTION,
-//                       onCreated: { _ in
-//                       }, onUpdated: {[weak self] object in
-//                           agoraPrint("imp message subscribe onUpdated... [\(object.getId())] \(channelName)")
-//                           guard let self = self,
-//                                 let jsonStr = object.toJson(),
-//                                 let model = CommerceMessage.yy_model(withJSON: jsonStr)
-//                           else {
-//                               return
-//                           }
-//                           self.messageList.append(model)
-//                           self.subscribeDelegate?.onMessageDidAdded(message: model)
-//                       }, onDeleted: { object in
-//                           agoraPrint("imp message subscribe onDeleted... [\(object.getId())] \(channelName)")
-//                           agoraAssert("not implemented")
-//                       }, onSubscribed: {
-//                       }, fail: { error in
-//                           agoraPrint("imp message subscribe fail \(error.message)...")
-//                           ToastView.show(text: error.message)
-//                       })
     }
 }
 
@@ -616,12 +615,13 @@ class CommerceRobotSyncManagerServiceImp: CommerceSyncManagerServiceImp {
             }
             let dataArray = results?.map({ info in
                 let roomModel = CommerceRoomDetailModel()
-//                    roomModel.ownerAvatar = info.owner?.userAvatar
+                roomModel.ownerAvatar = info.owner?.userAvatar
                 roomModel.ownerId = info.owner?.userId ?? ""
                 roomModel.ownerName = info.owner?.userName
                 roomModel.roomId = info.roomId
                 roomModel.roomName = info.roomName
-                roomModel.thumbnailId = info.customPayload["thumbnailId"] as? String // TODO: 待替换
+                roomModel.thumbnailId = info.customPayload["thumbnailId"] as? String
+                roomModel.createdAt = (info.customPayload["createdAt"] as? Int64) ?? 0
                 return roomModel
             })
             completion(nil, dataArray)

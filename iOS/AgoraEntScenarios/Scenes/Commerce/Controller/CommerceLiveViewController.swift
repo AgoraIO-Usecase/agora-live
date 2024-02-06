@@ -321,6 +321,7 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     
     func onRoomExpired() {
         AppContext.expireCommerceImp(roomId)
+        serviceImp?.leaveRoom(completion: { _ in })
         serviceImp = nil
         finishView?.removeFromSuperview()
         finishView = CommerceReceiveFinishView()

@@ -46,8 +46,8 @@ extension AUIRoomManagerImpl {
     
     public func getRoomInfoList(lastCreateTime: Int64, pageSize: Int, callback: @escaping AUIRoomListCallback) {
         let model = SyncRoomListNetworkModel()
-        model.lastCreateTime = lastCreateTime == 0 ? nil : NSNumber(value: Int(lastCreateTime))
-        model.pageSize = pageSize
+//        model.lastCreateTime = lastCreateTime == 0 ? nil : NSNumber(value: Int(lastCreateTime))
+//        model.pageSize = pageSize
         model.request { error, list in
             callback(error as NSError?, list as? [AUIRoomInfo])
         }
