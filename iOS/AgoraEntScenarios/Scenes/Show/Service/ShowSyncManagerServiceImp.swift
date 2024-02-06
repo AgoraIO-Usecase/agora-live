@@ -881,13 +881,14 @@ extension ShowSyncManagerServiceImp {
             .collection(className: SYNC_SCENE_ROOM_USER_COLLECTION)
             .get(success: { [weak self] list in
                 agoraPrint("imp user get success...")
-                guard (list.first?.getId().count ?? 0) > 0 else { return }
                 let users = list.compactMap({ ShowUser.yy_model(withJSON: $0.toJson()!)! })
 //            guard !users.isEmpty else { return }
-                self?.userList = users
-                self?._updateUserCount(completion: { error in
+                if users.count > 0 {
+                    self?.userList = users
+                    self?._updateUserCount(completion: { error in
 
-                })
+                    })
+                }                
                 finished(nil, users)
             }, fail: { error in
                 agoraPrint("imp user get fail :\(error.message)...")
