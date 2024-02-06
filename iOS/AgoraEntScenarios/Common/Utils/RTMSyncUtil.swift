@@ -140,15 +140,17 @@ class RTMSyncUtil: NSObject {
     
     class func leaveScene(id: String, ownerId: String) {
         let scene = scene(id: id)
-        scene?.unbindRespDelegate(delegate: roomDelegate)
         if ownerId == VLUserCenter.user.id {
             scene?.delete()
             let model = SyncRoomDestroyNetworkModel()
             model.roomId = id
             model.request { err, _ in
+                print("error == \(err?.localizedDescription ?? "")")
+                scene?.unbindRespDelegate(delegate: self.roomDelegate)
             }
         } else {
             scene?.leave()
+            scene?.unbindRespDelegate(delegate: roomDelegate)
         }
     }
     
@@ -255,10 +257,6 @@ class RTMSyncUtilRoomDeleage: NSObject, AUISceneRespDelegate {
     var roomDestoryClosure: ((String) -> Void)?
     func onSceneDestroy(roomId: String) {
         print("房间销毁 == \(roomId)")
-        let model = SyncRoomDestroyNetworkModel()
-        model.roomId = roomId
-        model.request { err, _ in
-        }
         roomDestoryClosure?(roomId)
     }
 }

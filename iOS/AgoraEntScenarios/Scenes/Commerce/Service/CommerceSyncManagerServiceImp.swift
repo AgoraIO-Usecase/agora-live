@@ -103,7 +103,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     }
     
     fileprivate func initScene(completion: @escaping (NSError?) -> Void) {
-        RTMSyncUtil.joinScene(id: kSceneId, ownerId: room?.ownerId ?? VLUserCenter.user.id ?? "", payload: nil) {
+        RTMSyncUtil.joinScene(id: kSceneId, ownerId: room?.ownerId ?? VLUserCenter.user.id, payload: nil) {
             self._subscribeAll()
             completion(nil)
         } failure: { error in
