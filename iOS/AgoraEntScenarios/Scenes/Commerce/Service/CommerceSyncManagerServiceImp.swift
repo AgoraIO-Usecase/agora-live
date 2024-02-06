@@ -348,7 +348,7 @@ extension CommerceSyncManagerServiceImp {
             agoraAssert("channelName = nil")
             return
         }
-        RTMSyncUtil.destroy(roomId: channelName, callback: nil)
+        RTMSyncUtil.leaveScene(id: channelName, ownerId: room?.ownerId ?? "")
         roomId = nil
         completion(nil)
     }

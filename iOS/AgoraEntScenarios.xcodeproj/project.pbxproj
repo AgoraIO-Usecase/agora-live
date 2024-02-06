@@ -78,7 +78,6 @@
 		A84C2D462B4FB01700D6EFCF /* CommerceChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CE22B4FB01700D6EFCF /* CommerceChatInputView.swift */; };
 		A84C2D472B4FB01700D6EFCF /* CommerceEmitterLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CE32B4FB01700D6EFCF /* CommerceEmitterLayer.swift */; };
 		A84C2D482B4FB01700D6EFCF /* CommerceRoomInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CE42B4FB01700D6EFCF /* CommerceRoomInfoView.swift */; };
-		A84C2D492B4FB01700D6EFCF /* CommerceGradualTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CE52B4FB01700D6EFCF /* CommerceGradualTableView.m */; };
 		A84C2D4A2B4FB01700D6EFCF /* CommerceNumberButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CE72B4FB01700D6EFCF /* CommerceNumberButton.swift */; };
 		A84C2D4B2B4FB01700D6EFCF /* CommerceAuctionShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CE82B4FB01700D6EFCF /* CommerceAuctionShoppingView.swift */; };
 		A84C2D4C2B4FB01700D6EFCF /* CommerceGoodsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CE92B4FB01700D6EFCF /* CommerceGoodsListView.swift */; };
@@ -513,6 +512,7 @@
 		E732CD8F2B47F800004D6FB9 /* AUiAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CD8E2B47F800004D6FB9 /* AUiAlertView.swift */; };
 		E732CD912B47F82C004D6FB9 /* AUiMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CD902B47F82C004D6FB9 /* AUiMoreDialog.swift */; };
 		E73F23292B6F64850000B523 /* RTMSyncUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F23282B6F64850000B523 /* RTMSyncUtil.swift */; };
+		E73F232D2B7219F40000B523 /* GradualTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F232C2B7219F40000B523 /* GradualTableView.swift */; };
 		E76F80142AF2417800CCB9D6 /* ShowLiveMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */; };
 /* End PBXBuildFile section */
 
@@ -604,14 +604,12 @@
 		A84C2CDB2B4FB01700D6EFCF /* CommerceCanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCanvasView.swift; sourceTree = "<group>"; };
 		A84C2CDC2B4FB01700D6EFCF /* CommerceRoomChatCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomChatCell.swift; sourceTree = "<group>"; };
 		A84C2CDD2B4FB01700D6EFCF /* CommerceRoomMembersCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomMembersCountView.swift; sourceTree = "<group>"; };
-		A84C2CDE2B4FB01700D6EFCF /* CommerceGradualTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommerceGradualTableView.h; sourceTree = "<group>"; };
 		A84C2CDF2B4FB01700D6EFCF /* CommerceRoomBottomBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomBottomBar.swift; sourceTree = "<group>"; };
 		A84C2CE02B4FB01700D6EFCF /* CommerceLiveMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceLiveMoreDialog.swift; sourceTree = "<group>"; };
 		A84C2CE12B4FB01700D6EFCF /* CommerceUserJoinView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceUserJoinView.swift; sourceTree = "<group>"; };
 		A84C2CE22B4FB01700D6EFCF /* CommerceChatInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceChatInputView.swift; sourceTree = "<group>"; };
 		A84C2CE32B4FB01700D6EFCF /* CommerceEmitterLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceEmitterLayer.swift; sourceTree = "<group>"; };
 		A84C2CE42B4FB01700D6EFCF /* CommerceRoomInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomInfoView.swift; sourceTree = "<group>"; };
-		A84C2CE52B4FB01700D6EFCF /* CommerceGradualTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommerceGradualTableView.m; sourceTree = "<group>"; };
 		A84C2CE72B4FB01700D6EFCF /* CommerceNumberButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceNumberButton.swift; sourceTree = "<group>"; };
 		A84C2CE82B4FB01700D6EFCF /* CommerceAuctionShoppingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceAuctionShoppingView.swift; sourceTree = "<group>"; };
 		A84C2CE92B4FB01700D6EFCF /* CommerceGoodsListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceGoodsListView.swift; sourceTree = "<group>"; };
@@ -1151,6 +1149,7 @@
 		E732CD8E2B47F800004D6FB9 /* AUiAlertView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AUiAlertView.swift; sourceTree = "<group>"; };
 		E732CD902B47F82C004D6FB9 /* AUiMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AUiMoreDialog.swift; sourceTree = "<group>"; };
 		E73F23282B6F64850000B523 /* RTMSyncUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTMSyncUtil.swift; sourceTree = "<group>"; };
+		E73F232C2B7219F40000B523 /* GradualTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradualTableView.swift; sourceTree = "<group>"; };
 		E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowLiveMoreDialog.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -1430,16 +1429,15 @@
 			children = (
 				A84C2CDA2B4FB01700D6EFCF /* CommerceRoomLiveView.swift */,
 				A84C2CDB2B4FB01700D6EFCF /* CommerceCanvasView.swift */,
+				E73F232C2B7219F40000B523 /* GradualTableView.swift */,
 				A84C2CDC2B4FB01700D6EFCF /* CommerceRoomChatCell.swift */,
 				A84C2CDD2B4FB01700D6EFCF /* CommerceRoomMembersCountView.swift */,
-				A84C2CDE2B4FB01700D6EFCF /* CommerceGradualTableView.h */,
 				A84C2CDF2B4FB01700D6EFCF /* CommerceRoomBottomBar.swift */,
 				A84C2CE02B4FB01700D6EFCF /* CommerceLiveMoreDialog.swift */,
 				A84C2CE12B4FB01700D6EFCF /* CommerceUserJoinView.swift */,
 				A84C2CE22B4FB01700D6EFCF /* CommerceChatInputView.swift */,
 				A84C2CE32B4FB01700D6EFCF /* CommerceEmitterLayer.swift */,
 				A84C2CE42B4FB01700D6EFCF /* CommerceRoomInfoView.swift */,
-				A84C2CE52B4FB01700D6EFCF /* CommerceGradualTableView.m */,
 			);
 			path = Live;
 			sourceTree = "<group>";
@@ -3355,6 +3353,7 @@
 				E732CD7D2B47F654004D6FB9 /* AUINetworkModel.swift in Sources */,
 				E732CCE22B47EC6D004D6FB9 /* HorizontalTextCarousel.swift in Sources */,
 				A84C2D052B4FB01700D6EFCF /* UIColor+Commerce.swift in Sources */,
+				E73F232D2B7219F40000B523 /* GradualTableView.swift in Sources */,
 				DD8417CB29090C520026B624 /* TemplateServiceImp.swift in Sources */,
 				E732CD222B47EC6D004D6FB9 /* VoiceRoomSendGiftCell.swift in Sources */,
 				E732CCF32B47EC6D004D6FB9 /* String + Extension.swift in Sources */,
@@ -3365,7 +3364,6 @@
 				DD84178129090C520026B624 /* VLDiscoveryItemTCell.m in Sources */,
 				DDA199F428FFE579009D3E61 /* String+Extension.swift in Sources */,
 				A84C2D5F2B4FB01700D6EFCF /* CommerceServiceProtocol.swift in Sources */,
-				A84C2D492B4FB01700D6EFCF /* CommerceGradualTableView.m in Sources */,
 				DD3610BF29B70CDC00CE7984 /* ShowSettingActionSheetCell.swift in Sources */,
 				E732CD512B47EC6D004D6FB9 /* VoiceMusicPlayingView.swift in Sources */,
 				DDA199DE28FFE579009D3E61 /* AlertManager.swift in Sources */,

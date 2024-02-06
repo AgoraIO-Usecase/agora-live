@@ -83,10 +83,11 @@ class CommerceRoomLiveView: UIView {
         let view = CommerceRoomBottomBar(isBroadcastor: isBroadcastor)
         return view
     }()
-    private lazy var tableView: CommerceGradualTableView = {
-        let tableView = CommerceGradualTableView(frame: .zero,
-                                                 direction: [.top, .bottom],
-                                                 gradualValue: 0.3)
+    private lazy var tableView: GradualTableView = {
+        let tableView = GradualTableView(frame: .zero,
+                                         style: .plain,
+                                         direction: [.top, .bottom],
+                                         gradualValue: 0.3)
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.delegate = self
@@ -310,8 +311,9 @@ extension CommerceRoomLiveView {
             userJoinView.joinHandler(nickName: chatModel.userName)
         }
         chatArray.insert(chatModel, at: 0)
+        let indexPath = IndexPath(item: chatArray.count - 1, section: 0)
+        tableView.insertRows(at: [indexPath], with: .top)
         tableView.reloadData()
-        tableView.scrollToTop()
     }
     
     func clearChatModel(){
