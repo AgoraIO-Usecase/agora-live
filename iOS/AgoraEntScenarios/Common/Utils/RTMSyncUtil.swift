@@ -13,6 +13,7 @@ class RTMSyncUtil: NSObject {
     private static var syncManagerImpl = AUIRoomManagerImpl()
     private static var isLogined: Bool = false
     private static let roomDelegate = RTMSyncUtilRoomDeleage()
+    private static let userDelegate = RTMSyncUtilUserDelegate()
     
     class func initRTMSyncManager() {
         let config = AUICommonConfig()
@@ -106,7 +107,6 @@ class RTMSyncUtil: NSObject {
                          payload: [String: Any]?,
                          success: (() -> Void)?,
                          failure: ((NSError?) -> Void)?) {
-        leaveScene(id: id, ownerId: ownerId)
         let scene = scene(id: id)
         scene?.bindRespDelegate(delegate: roomDelegate)
         login(channelName: id, success: {
@@ -122,7 +122,6 @@ class RTMSyncUtil: NSObject {
                             print("enter scene fail: \(err.localizedDescription)")
                             return
                         }
-                        print("res == \(res)")
                         success?()
                     })
                 }
@@ -133,7 +132,6 @@ class RTMSyncUtil: NSObject {
                         failure?(err)
                         return
                     }
-                    print("res == \(res)")
                     success?()
                 })
             }
@@ -159,48 +157,43 @@ class RTMSyncUtil: NSObject {
     }
     
     class func getUserList(id: String, callback: @escaping (_ roomId: String, _ userList: [AUIUserInfo]) -> Void) {
-        let userDelegate = RTMSyncUtilUserDelegate()
         userDelegate.onUserListCallback = callback
         scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
     }
-    class func userEnter(id: String, callback: @escaping (_ roomId: String, _ userInfo: AUIUserInfo) -> Void) {
-        let userDelegate = RTMSyncUtilUserDelegate()
-        userDelegate.onUserEnterCallback = callback
+    
+    class func subscribeUserDidChange(id: String,
+                                      userEnter: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?,
+                                      userLeave: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?,
+                                      userUpdate: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?,
+                                      userKicked: ((_ roomId: String, _ userId: String) -> Void)?,
+                                      audioMute: ((_ userId: String, _ mute: Bool) -> Void)?,
+                                      videoMute: ((_ userId: String, _ mute: Bool) -> Void)?) {
+        userDelegate.onUserEnterCallback = userEnter
+        userDelegate.onUserLeaveCallback = userLeave
+        userDelegate.onUserUpdateCallback = userUpdate
+        userDelegate.onUserKickedCallback = userKicked
+        userDelegate.onUserAudioMuteCallback = audioMute
+        userDelegate.onUserVideoMuteCallback = videoMute
         scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
     }
-    class func userLeave(id: String, callback: @escaping (_ roomId: String, _ userInfo: AUIUserInfo) -> Void) {
-        let userDelegate = RTMSyncUtilUserDelegate()
-        userDelegate.onUserLeaveCallback = callback
-        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
+    
+    class func muteAudio(channelName: String, isMute: Bool, callback: ((NSError?) -> Void)?) {
+        scene(id: channelName)?.userService.muteUserAudio(isMute: isMute, callback: { error in
+            callback?(error)
+        })
     }
-    class func userUpdate(id: String, callback: @escaping (_ roomId: String, _ userInfo: AUIUserInfo) -> Void) {
-        let userDelegate = RTMSyncUtilUserDelegate()
-        userDelegate.onUserUpdateCallback = callback
-        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
-    }
-    class func userKicked(id: String, callback: @escaping (_ roomId: String, _ userId: String) -> Void) {
-        let userDelegate = RTMSyncUtilUserDelegate()
-        userDelegate.onUserKickedCallback = callback
-        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
-    }
-    class func userAudioMute(id: String, callback: @escaping (_ userId: String, _ mute: Bool) -> Void) {
-        let userDelegate = RTMSyncUtilUserDelegate()
-        userDelegate.onUserAudioMuteCallback = callback
-        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
-    }
-    class func userVideoMute(id: String, callback: @escaping (_ userId: String, _ mute: Bool) -> Void) {
-        let userDelegate = RTMSyncUtilUserDelegate()
-        userDelegate.onUserVideoMuteCallback = callback
-        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
+    
+    class func muteVideo(channelName: String, isMute: Bool, callback: ((NSError?) -> Void)?) {
+        scene(id: channelName)?.userService.muteUserVideo(isMute: isMute, callback: { error in
+            callback?(error)
+        })
     }
     
     class func subscribeAttributesDidChanged(id: String,
                                              key: String,
-                                             changeClosure: ((_ channelName: String, _ object: [String: Any]) -> Void)?) {
+                                             changeClosure: ((_ channelName: String, _ object: AUIAttributesModel) -> Void)?) {
         collection(id: id, key: key)?.subscribeAttributesDidChanged(callback: { channelName, key, object in
-            print("channelName == \(channelName)")
-            print("object == \(object)")
-            print("key == \(key)")
+            changeClosure?(channelName, object)
         })
     }
     
