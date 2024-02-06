@@ -55,12 +55,6 @@ class RTMSyncUtil: NSObject {
         }
     }
     
-    class func destroy(roomId: String, callback: ((NSError?) -> Void)?) {
-        syncManagerImpl.destroyRoom(roomId: roomId) { error in
-            callback?(error)
-        }
-    }
-    
     class func getRoomList(lastCreateTime: Int64 = 0, callback: @escaping ((NSError?, [AUIRoomInfo]?) -> Void)) {
         syncManagerImpl.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: 20, callback: callback)
     }
