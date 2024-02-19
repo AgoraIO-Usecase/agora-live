@@ -1,5 +1,6 @@
 package io.agora.scene.show
 
+import android.util.Log
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.SimulcastStreamConfig
