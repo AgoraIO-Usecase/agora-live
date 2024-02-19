@@ -11,12 +11,15 @@ import VideoLoaderAPI
 
 private let kPagesVCTag = "CommercePagesVC"
 class CommerceLivePagesViewController: ViewController {
-    
+    var onClickDislikeClosure: (() -> Void)?
+    var onClickDisUserClosure: (() -> Void)?
     private lazy var delegateHandler = {
         let localUid = UInt(UserInfo.userId)!
         let handler = CommerceLivePagesSlicingDelegateHandler(localUid: localUid)
         handler.parentVC = self
         handler.vcDelegate = self
+        handler.onClickDislikeClosure = onClickDislikeClosure
+        handler.onClickDisUserClosure = onClickDisUserClosure
         handler.onRequireRenderVideo = {[weak self] info, cell, indexPath in
             guard let vc = cell.contentView.viewWithTag(kCommerceLiveRoomViewTag)?.next as? CommerceLiveViewController,
                   let room = vc.room,
@@ -37,7 +40,6 @@ class CommerceLivePagesViewController: ViewController {
         return handler
     }()
     
-    var onClickDislikeClosure: (() -> Void)?
     var roomList: [CommerceRoomListModel]? {
         didSet {
             delegateHandler.roomList = CommerceCycleRoomArray(roomList: roomList)
@@ -218,6 +220,8 @@ class CommerceLivePagesSlicingDelegateHandler: AGCollectionSlicingDelegateHandle
     weak var parentVC: UIViewController?
     weak var vcDelegate: CommerceLiveViewControllerDelegate?
     var currentVC: CommerceLiveViewController?
+    var onClickDislikeClosure: (() -> Void)?
+    var onClickDisUserClosure: (() -> Void)?
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
@@ -241,6 +245,8 @@ class CommerceLivePagesSlicingDelegateHandler: AGCollectionSlicingDelegateHandle
         vc.view.frame = parentVC!.view.bounds
         vc.view.tag = kCommerceLiveRoomViewTag
         vc.loadingType = .joinedWithVideo
+        vc.onClickDislikeClosure = onClickDislikeClosure
+        vc.onClickDisUserClosure = onClickDisUserClosure
         cell.contentView.addSubview(vc.view)
         parentVC!.addChild(vc)
         return cell

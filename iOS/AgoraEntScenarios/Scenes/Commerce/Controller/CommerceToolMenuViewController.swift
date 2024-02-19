@@ -59,6 +59,10 @@ class CommerceToolMenuViewController: UIViewController {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         dismiss(animated: true)
     }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        menuTitle = nil
+    }
     
     private func setUpUI(){
         menuView = CommerceToolMenuView(type: type)
@@ -92,10 +96,11 @@ class CommerceToolMenuViewController: UIViewController {
     }
     
     private func updateLayoutForType(_ menuType: CommerceMenuType) {
-        var height = 210
+        var height: CGFloat = 210
         if type == .idle_audience {
             height = 150
         }
+        height = menuTitle == nil ? height : (height + Screen.safeAreaBottomHeight())
         menuView?.type = type
         menuView?.snp.remakeConstraints({ make in
             make.left.bottom.right.equalToSuperview()

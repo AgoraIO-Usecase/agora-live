@@ -10,6 +10,8 @@ import Agora_Scene_Utils
 
 @objc public class ShowLiveMoreDialog: UIView {
     var onClickDislikeClosure: (() -> Void)?
+    var onClickDisUserClosure:(() -> Void)?
+    
     private lazy var contentView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(hex: "#000000", alpha: 0.85)
@@ -98,14 +100,15 @@ import Agora_Scene_Utils
     @objc private func onAction(_ sender: UIButton) {
         hidden()
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
-            ToastView.show(text: "report_success".show_localized)
+            ToastView.show(text: "You have blocked this user.")
         }
+        onClickDisUserClosure?()
     }
     @objc
     private func onDislikeButton(sender: UIButton) {
         hidden()
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
-            ToastView.show(text: "report_success".show_localized)
+            ToastView.show(text: "You have blocked this content.")
         }
         onClickDislikeClosure?()
     }
