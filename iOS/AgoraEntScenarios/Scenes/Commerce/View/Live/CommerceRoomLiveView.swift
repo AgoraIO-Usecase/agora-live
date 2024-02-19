@@ -285,15 +285,15 @@ class CommerceRoomLiveView: UIView {
     }
 
     func showHeartAnimation(at location: CGPoint) {
-        let images = (0...5).compactMap({ UIImage.commerce_sceneImage(name: "commerce_smiley_\($0)") })
+        var images = ["finger_heart", "thunder", "thumbs_up", "No_of_the_beast", "lips", "heart"].compactMap({ UIImage.commerce_sceneImage(name: "\($0)") })
         let animationLayer = CommerceEmitterLayer.emitterLayer(size: CGSize.init(width: 32, height: 32),
                                                                center: location,
                                                                image: images.randomElement() ?? UIImage())
         animationLayer.cm_delegate = self
         animationLayer.fromAlpha = 1.0
         animationLayer.toAlpha = 0
-        animationLayer.fromScale = 0.5
-        animationLayer.toScale = 1.2
+        animationLayer.fromScale = 1.0
+        animationLayer.toScale = 1.5
         animationLayer.roateRange = Double.pi / 4
         animationLayer.startAnimation()
     }
