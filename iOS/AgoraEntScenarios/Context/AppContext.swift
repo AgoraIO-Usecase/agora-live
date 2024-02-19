@@ -15,6 +15,8 @@ import Foundation
     @objc var isDebugMode = false
     @objc var imageCahe = [String: AnyObject]()
     @objc var localizedCache = [String: String]()
+    private var dislikeRoomCache: [String :String] = [:]
+    private var dislikeUserCache: [String :String] = [:]
     
     @objc var isAgreeLicense: Bool = false {
         didSet {
@@ -58,5 +60,23 @@ import Foundation
     
     @objc func appRTMToken() -> String {
         return VLUserCenter.user.agoraRTMToken
+    }
+    
+    public func addDislikeRoom(at roomId: String?) {
+        guard let roomId = roomId else { return }
+        dislikeRoomCache[(sceneImageBundleName ?? "") + roomId] = roomId
+    }
+    public func dislikeRooms() -> [String] {
+        let value = dislikeRoomCache.filter({ $0.key.contains(sceneImageBundleName ?? "") })
+        return value.map({ $0.value })
+    }
+    
+    public func addDislikeUser(at uid: String?) {
+        guard let uid = uid else { return }
+        dislikeUserCache[(sceneImageBundleName ?? "") + uid] = uid
+    }
+    public func dislikeUsers() -> [String] {
+        let value = dislikeUserCache.filter({ $0.key.contains(sceneImageBundleName ?? "") })
+        return value.map({ $0.value })
     }
 }
