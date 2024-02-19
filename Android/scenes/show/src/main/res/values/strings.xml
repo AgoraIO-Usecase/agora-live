@@ -13,7 +13,7 @@
     <string name="show_live_yes">Yes</string>
     <string name="show_live_no">No</string>
     <string name="show_text_input_sent">Send</string>
-    <string name="show_text_input_hint">Pleae input...</string>
+    <string name="show_text_input_hint">Please input...</string>
     <string name="show_text_input_empty">Empty input</string>
     <string name="show_setting_switch_camera">Flip</string>
     <string name="show_setting_video_on">Camera On</string>

@@ -36,13 +36,6 @@
         android:layout_marginBottom="20dp"
         android:background="@drawable/commerce_auction_bg_user"
         app:layout_constraintBottom_toBottomOf="parent">
-
-        <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:name="io.agora.scene.eCommerce.shop.LiveAuctionFragment"
-            tools:layout="@layout/commerce_shop_auction_fragment"
-            />
     </FrameLayout>
 
     <include

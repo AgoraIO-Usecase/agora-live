@@ -87,6 +87,7 @@
     <string name="commerce_shop_auction_buy">Buy</string>
     <string name="commerce_shop_auction_not_start">Auction Not Started</string>
     <string name="commerce_shop_auction_leading_bidder">You are the leading bidder.</string>
+    <string name="commerce_shop_auction_you_leading">You</string>
     <string name="commerce_shop_auction_bid">Bid: $%s</string>
     <string name="commerce_shop_auction_won">Won</string>
     <string name="commerce_shop_item_qty">Qty: %s</string>

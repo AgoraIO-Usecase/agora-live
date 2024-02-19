@@ -23,10 +23,8 @@ include ':common'
 
 include ':scenes:show'
 
+include ':RTMSyncManager'
 include ':scenes:eCommerce'
 
 include ':scenes:voice'
 include ':scenes:voice:common'
-
-
-

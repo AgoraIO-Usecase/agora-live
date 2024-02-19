@@ -3,22 +3,35 @@ package io.agora.scene.eCommerce.service
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.widget.Toast
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import io.agora.auikit.service.http.CommonResp
+import io.agora.rtm.*
+import io.agora.rtmsyncmanager.ISceneResponse
+import io.agora.rtmsyncmanager.Scene
+import io.agora.rtmsyncmanager.SyncManager
+import io.agora.rtmsyncmanager.model.AUICommonConfig
+import io.agora.rtmsyncmanager.model.AUIRoomContext
+import io.agora.rtmsyncmanager.model.AUIRoomInfo
+import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
+import io.agora.rtmsyncmanager.service.collection.AUIListCollection
+import io.agora.rtmsyncmanager.service.collection.AUIMapCollection
+import io.agora.rtmsyncmanager.service.http.HttpManager
+import io.agora.rtmsyncmanager.service.http.token.TokenGenerateReq
+import io.agora.rtmsyncmanager.service.http.token.TokenGenerateResp
+import io.agora.rtmsyncmanager.service.http.token.TokenInterface
+import io.agora.rtmsyncmanager.service.room.AUIRoomManager
+import io.agora.rtmsyncmanager.utils.AUILogger
+import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.scene.base.BuildConfig
+import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
-import io.agora.scene.eCommerce.R
-import io.agora.scene.eCommerce.ShowLogger
-import io.agora.syncmanager.rtm.IObject
-import io.agora.syncmanager.rtm.RethinkConfig
-import io.agora.syncmanager.rtm.Scene
-import io.agora.syncmanager.rtm.SceneReference
-import io.agora.syncmanager.rtm.Sync
-import io.agora.syncmanager.rtm.Sync.EventListener
-import io.agora.syncmanager.rtm.Sync.JoinSceneCallback
-import io.agora.syncmanager.rtm.SyncManagerException
-import java.util.Collections
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.Executors
+import retrofit2.Response
+import java.util.*
+
 
 /**
  * Show sync manager service impl
@@ -30,7 +43,7 @@ import java.util.concurrent.Executors
 class ShowSyncManagerServiceImpl constructor(
     private val context: Context,
     private val errorHandler: (Exception) -> Unit
-) : ShowServiceProtocol {
+) : ShowServiceProtocol, ISceneResponse {
     /**
      * Tag
      */
@@ -46,25 +59,9 @@ class ShowSyncManagerServiceImpl constructor(
      */
     private val kCollectionIdUser = "userCollection"
 
-    /**
-     * K collection id message
-     */
-    private val kCollectionIdMessage = "show_message_collection"
+    private val kCollectionIdBid = "commerce_goods_bid_collection"
 
-    /**
-     * K collection id seat apply
-     */
-    private val kCollectionIdSeatApply = "show_seat_apply_collection"
-
-    /**
-     * K collection id p k invitation
-     */
-    private val kCollectionIdPKInvitation = "show_pk_invitation_collection"
-
-    /**
-     * K collection id interaction info
-     */
-    private val kCollectionIdInteractionInfo = "show_interaction_collection"
+    private val kCollectionIdBuy = "commerce_goods_buy_collection"
 
     /**
      * K robot avatars
@@ -97,86 +94,51 @@ class ShowSyncManagerServiceImpl constructor(
     private var syncInitialized = false
 
     /**
-     * Main handler
-     */
-    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
-
-    /**
-     * Worker executor
-     */
-    private val workerExecutor by lazy { Executors.newSingleThreadExecutor() }
-
-    /**
      * Cloud player service
      */
     private val cloudPlayerService by lazy { CloudPlayerService() }
 
-    /**
-     * Room map
-     */// global cache data
-    private val roomMap = mutableMapOf<String, ShowRoomDetailModel>()
+    private val rtmClient: RtmClient
 
-    /**
-     * Room info controller
-     *
-     * @property roomId
-     * @property sceneReference
-     * @property pkSceneReference
-     * @property eventListeners
-     * @property pkEventListeners
-     * @property roomChangeSubscriber
-     * @property userChangeSubscriber
-     * @property micSeatApplySubscriber
-     * @property micSeatInvitationSubscriber
-     * @property micPKInvitationSubscriber
-     * @property micInteractionInfoSubscriber
-     * @property onReconnectSubscriber
-     * @property objIdOfUserId
-     * @property userList
-     * @property micSeatApplyList
-     * @property micSeatInvitationList
-     * @property pKInvitationList
-     * @property interactionInfoList
-     * @property pKCompetitorInvitationList
-     * @property objIdOfSeatApply
-     * @property objIdOfSeatInvitation
-     * @property objIdOfPKInvitation
-     * @property objIdOfInteractionInfo
-     * @property objIdOfPKCompetitorInvitation
-     * @constructor Create empty Room info controller
-     */// current room cache data
+    private val syncManager: SyncManager
+
+    private val roomManager = AUIRoomManager()
+
+    private var roomList = emptyList<AUIRoomInfo>()
+
+    init {
+        HttpManager.setBaseURL(BuildConfig.ROOM_MANAGER_SERVER_HOST)
+        AUILogger.initLogger(AUILogger.Config(context, "eCommerce"))
+
+        val commonConfig = AUICommonConfig()
+        commonConfig.context = context
+        commonConfig.appId = BuildConfig.AGORA_APP_ID
+        val owner = AUIUserThumbnailInfo()
+        owner.userId = UserManager.getInstance().user.id.toString()
+        owner.userName = UserManager.getInstance().user.name
+        owner.userAvatar = UserManager.getInstance().user.headUrl
+        commonConfig.owner = owner
+        commonConfig.host = BuildConfig.TOOLBOX_SERVER_HOST
+        AUIRoomContext.shared().setCommonConfig(commonConfig)
+        rtmClient = createRtmClient()
+        syncManager = SyncManager(context, rtmClient, commonConfig)
+        rtmLogin { }
+    }
+
     data class RoomInfoController constructor(
         val roomId: String,
-
-        var sceneReference: SceneReference? = null,
-        var pkSceneReference: SceneReference? = null,
-
-        val eventListeners: MutableList<EventListener> = Collections.synchronizedList(mutableListOf()),
-        val pkEventListeners: MutableList<EventListener> = Collections.synchronizedList(
-            mutableListOf()
-        ),
-
-        var roomChangeSubscriber: ((ShowServiceProtocol.ShowSubscribeStatus, ShowRoomDetailModel?) -> Unit)? = null,
-        var userChangeSubscriber: ((ShowServiceProtocol.ShowSubscribeStatus, ShowUser?) -> Unit)? = null,
-        var micSeatApplySubscriber: ((ShowServiceProtocol.ShowSubscribeStatus, ShowMicSeatApply?) -> Unit)? = null,
-        var micSeatInvitationSubscriber: ((ShowServiceProtocol.ShowSubscribeStatus, ShowMicSeatInvitation?) -> Unit)? = null,
-        var micPKInvitationSubscriber: ((ShowServiceProtocol.ShowSubscribeStatus, ShowPKInvitation?) -> Unit)? = null,
-        var micInteractionInfoSubscriber: ((ShowServiceProtocol.ShowSubscribeStatus, ShowInteractionInfo?) -> Unit)? = null,
-        var onReconnectSubscriber: (() -> Unit)? = null,
-
-        val objIdOfUserId: MutableMap<String, String> = mutableMapOf(), // key: userId, value: objectId
+        val scene: Scene,
+        val roomInfo: AUIRoomInfo,
+        val rtmChannel: StreamChannel? = null,
         val userList: ArrayList<ShowUser> = ArrayList(),
-        val micSeatApplyList: ArrayList<ShowMicSeatApply> = ArrayList(),
-        val micSeatInvitationList: ArrayList<ShowUser> = ArrayList(),
-        val pKInvitationList: ArrayList<ShowPKInvitation> = ArrayList(),
-        val interactionInfoList: ArrayList<ShowInteractionInfo> = ArrayList(),
-        val pKCompetitorInvitationList: ArrayList<ShowPKInvitation> = ArrayList(),
 
-        val objIdOfSeatApply: ArrayList<String> = ArrayList(), // objectId of seat Apply
-        val objIdOfSeatInvitation: ArrayList<String> = ArrayList(), // objectId of seat Invitation
-        val objIdOfPKInvitation: ArrayList<String> = ArrayList(), // objectId of pk Invitation
-        val objIdOfInteractionInfo: ArrayList<String> = ArrayList(), // objectId of pk Invitation
-        val objIdOfPKCompetitorInvitation: ArrayList<String> = ArrayList(), // objectId of pk competitor Invitation
+        var userCollection: AUIListCollection? = null,
+        var shopCollection: AUIListCollection? = null,
+        var auctionCollection: AUIMapCollection? = null,
+
+        var userChangeSubscriber: ((List<ShowUser>) -> Unit)? = null,
+        var auctionChangeSubscriber: ((AuctionModel) -> Unit)? = null,
+        var shopChangeSubscriber: ((List<GoodsModel>) -> Unit)? = null,
     )
 
     /**
@@ -192,12 +154,9 @@ class ShowSyncManagerServiceImpl constructor(
         if (syncInitialized) {
             synchronized(roomInfoControllers){
                 roomInfoControllers.forEach {
-                    cleanRoomInfoController(it)
                 }
             }
             roomInfoControllers.clear()
-            roomMap.clear()
-            Sync.Instance().destroy()
             syncInitialized = false
             kRobotVideoRoomIds.forEach { roomId ->
                 cloudPlayerService.stopHeartBeat(roomId.toString())
@@ -205,52 +164,27 @@ class ShowSyncManagerServiceImpl constructor(
         }
     }
 
-    /**
-     * Get room list
-     *
-     * @param success
-     * @param error
-     * @receiver
-     */
-    override fun getRoomList(
-        success: (List<ShowRoomDetailModel>) -> Unit,
+    override fun getRoomInfo(roomId: String): AUIRoomInfo? {
+        return roomList.firstOrNull { it.roomId == roomId }
+    }
+
+    override fun getRoomList(): List<AUIRoomInfo> {
+        return roomList
+    }
+
+    override fun fetchRoomList(
+        success: (List<AUIRoomInfo>) -> Unit,
         error: ((Exception) -> Unit)?
     ) {
-        initSync {
-            Sync.Instance().getScenes(object : Sync.DataListCallback {
-                override fun onSuccess(result: MutableList<IObject>?) {
-                    workerExecutor.execute {
-
-                        var roomList = result!!.map {
-                            it.toObject(ShowRoomDetailModel::class.java)
-                        }
-                        roomList = removeExpiredRooms(roomList)
-
-                        roomMap.clear()
-                        roomList.forEach { roomMap[it.roomId] = it.copy() }
-
-                        roomList = appendRobotRooms(roomList)
-
-                        val sortedBy = roomList.sortedByDescending { it.createdAt }
-                        runOnMainThread { success.invoke(sortedBy) }
-                    }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    if (exception?.message?.contains("empty") == true) {
-                        workerExecutor.execute {
-                            val roomList = appendRobotRooms(emptyList())
-
-                            val sortedBy = roomList.sortedBy { it.createdAt }
-                            runOnMainThread { success.invoke(sortedBy) }
-                        }
-                    } else {
-                        runOnMainThread {
-                            error?.invoke(exception!!) ?: errorHandler.invoke(exception!!)
-                        }
-                    }
-                }
-            })
+        roomManager.getRoomInfoList(BuildConfig.AGORA_APP_ID, kSceneId, System.currentTimeMillis(), 20) { error, list ->
+            if (error != null) {
+                roomList = appendRobotRooms(emptyList())
+                runOnMainThread { success.invoke(roomList) }
+            }
+            if (list != null) {
+                roomList = appendRobotRooms(list)
+                runOnMainThread { success.invoke(roomList) }
+            }
         }
     }
 
@@ -260,10 +194,8 @@ class ShowSyncManagerServiceImpl constructor(
      * @param roomList
      * @return
      */
-    private fun appendRobotRooms(roomList: List<ShowRoomDetailModel>): List<ShowRoomDetailModel> {
-        val retRoomList = mutableListOf<ShowRoomDetailModel>()
-        retRoomList.addAll(roomList)
-
+    private fun appendRobotRooms(roomList: List<AUIRoomInfo>): List<AUIRoomInfo> {
+        val retRoomList = mutableListOf<AUIRoomInfo>()
         val robotRoomIds = ArrayList(kRobotVideoRoomIds)
         val kRobotRoomStartId = kRobotVideoRoomIds[0]
         retRoomList.forEach { roomDetail ->
@@ -273,2004 +205,344 @@ class ShowSyncManagerServiceImpl constructor(
                     robotRoomIds.remove(id)
                 }
             }
-
         }
         for (i in 0 until robotRoomIds.size) {
             val robotRoomId = robotRoomIds[i]
             val robotId = robotRoomId % 10
-            val roomInfo = ShowRoomDetailModel(
-                robotRoomId.toString(), // roomId
-                "Smooth $robotId", // roomName
-                1,
-                "1",
-                kRobotUid.toString(),
-                kRobotAvatars[(robotId - 1) % kRobotAvatars.size],
-                "Robot $robotId",
-                ShowRoomStatus.activity.value,
-                ShowInteractionStatus.idle.value,
-                TimeUtils.currentTimeMillis().toDouble(),
-                TimeUtils.currentTimeMillis().toDouble()
-            )
-            roomMap[roomInfo.roomId] = roomInfo
+            val robotOwner = AUIUserThumbnailInfo().apply {
+                userId = kRobotUid.toString()
+                userName = "Robot $robotId"
+                userAvatar = kRobotAvatars[(robotId - 1) % kRobotAvatars.size]
+            }
+            val roomInfo = AUIRoomInfo().apply {
+                roomId = robotRoomId.toString()
+                roomName = "Smooth $robotId"
+                owner = robotOwner
+                memberCount = 1
+                thumbnail = "1"
+                createTime = TimeUtils.currentTimeMillis()
+            }
             retRoomList.add(roomInfo)
         }
-        return retRoomList
-    }
-
-    /**
-     * Remove expired rooms
-     *
-     * @param roomList
-     * @return
-     */
-    private fun removeExpiredRooms(
-        roomList: List<ShowRoomDetailModel>
-    ): List<ShowRoomDetailModel> {
-        val retRoomList = mutableListOf<ShowRoomDetailModel>()
         retRoomList.addAll(roomList)
-
-        val expireRoomList = roomList.filter {
-            (TimeUtils.currentTimeMillis() - it.createdAt.toLong() > ShowServiceProtocol.ROOM_AVAILABLE_DURATION) && !it.isRobotRoom()
-        }
-        if (expireRoomList.isNotEmpty()) {
-            val expireLetchCount = CountDownLatch(expireRoomList.size)
-            runOnMainThread {
-                expireRoomList.forEach {
-
-                    Sync.Instance()
-                        .joinScene(it.roomId, object : JoinSceneCallback {
-                            override fun onSuccess(sceneReference: SceneReference?) {
-                                runOnMainThread {
-                                    sceneReference?.delete(object : Sync.Callback {
-                                        override fun onSuccess() {
-                                            retRoomList.remove(it)
-                                            expireLetchCount.countDown()
-                                        }
-
-                                        override fun onFail(exception: SyncManagerException?) {
-                                            errorHandler.invoke(exception!!)
-                                            expireLetchCount.countDown()
-                                        }
-                                    }) ?: expireLetchCount.countDown()
-                                }
-                            }
-
-                            override fun onFail(exception: SyncManagerException?) {
-                                errorHandler.invoke(exception!!)
-                                expireLetchCount.countDown()
-                            }
-                        })
-                }
-            }
-
-            try {
-                expireLetchCount.await()
-            } catch (e: Exception) {
-                ShowLogger.e(TAG, e)
-            }
-        }
         return retRoomList
     }
 
-    /**
-     * Create room
-     *
-     * @param roomId
-     * @param roomName
-     * @param thumbnailId
-     * @param success
-     * @param error
-     * @receiver
-     */
-    override fun createRoom(
-        roomId: String,
-        roomName: String,
-        thumbnailId: String,
-        success: (ShowRoomDetailModel) -> Unit,
-        error: ((Exception) -> Unit)?
-    ) {
-        initSync {
-            createRoomInner(
-                roomId,
-                roomName,
-                0,
-                thumbnailId,
-                UserManager.getInstance().user.id.toString(),
-                UserManager.getInstance().user.headUrl,
-                UserManager.getInstance().user.name,
-                success,
-                error
-            )
+    override fun createRoom(roomId: String, roomName: String, thumbnailId: String, success: (AUIRoomInfo) -> Unit, error: ((Exception) -> Unit)?) {
+        val roomInfo = AUIRoomInfo()
+        roomInfo.roomId = roomId
+        roomInfo.roomName = roomName
+        val owner = AUIUserThumbnailInfo()
+        owner.userId = UserManager.getInstance().user.id.toString()
+        owner.userName = UserManager.getInstance().user.name
+        owner.userAvatar = UserManager.getInstance().user.headUrl
+        roomInfo.owner = owner
+        roomInfo.thumbnail = thumbnailId
+        roomInfo.createTime = TimeUtils.currentTimeMillis()
+        roomManager.createRoom(BuildConfig.AGORA_APP_ID, kSceneId, roomInfo) { e, info ->
+            if (info != null) {
+                val temp = mutableListOf<AUIRoomInfo>()
+                temp.add(roomInfo)
+                temp.addAll(roomList)
+                roomList = temp
+                success.invoke(info)
+            }
+            if (e != null) {
+                error?.invoke(Exception(e.message))
+            }
         }
     }
 
-    /**
-     * Create room inner
-     *
-     * @param roomId
-     * @param roomName
-     * @param roomUserCount
-     * @param thumbnailId
-     * @param ownerUid
-     * @param ownerAvatar
-     * @param ownerName
-     * @param success
-     * @param error
-     * @receiver
-     */
-    private fun createRoomInner(
-        roomId: String,
-        roomName: String,
-        roomUserCount: Int,
-        thumbnailId: String,
-        ownerUid: String,
-        ownerAvatar: String,
-        ownerName: String,
-        success: (ShowRoomDetailModel) -> Unit,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomDetail = ShowRoomDetailModel(
-            roomId,
-            roomName,
-            roomUserCount,
-            thumbnailId,
-            ownerUid,
-            ownerAvatar,
-            ownerName,
-            ShowRoomStatus.activity.value,
-            ShowInteractionStatus.idle.value,
-            TimeUtils.currentTimeMillis().toDouble(),
-            TimeUtils.currentTimeMillis().toDouble()
-        )
-
-        val scene = Scene().apply {
-            id = roomDetail.roomId
-            userId = roomDetail.ownerId
-            property = roomDetail.toMap()
-        }
-        Sync.Instance().createScene(
-            scene,
-            object : Sync.Callback {
-                override fun onSuccess() {
-                    roomMap[roomDetail.roomId] = roomDetail.copy()
-                    success.invoke(roomDetail)
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    errorHandler.invoke(exception!!)
-                    error?.invoke(exception)
-                }
-            })
-    }
-
-    /**
-     * Join room
-     *
-     * @param roomId
-     * @param success
-     * @param error
-     * @receiver
-     */
-    override fun joinRoom(
-        roomId: String,
-        success: (ShowRoomDetailModel) -> Unit,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfo = roomMap[roomId]
-        if (roomInfo == null) {
-            error?.invoke(
-                io.agora.scene.eCommerce.service.RoomException(
-                    "The room has been destroyed!",
-                    roomId
-                )
-            )
+    override fun joinRoom(roomInfo: AUIRoomInfo, success: (AUIRoomInfo) -> Unit, error: ((Exception) -> Unit)?) {
+        val ownerId = roomInfo.owner?.userId ?: run {
+            error?.invoke(Exception("room info error"))
             return
         }
-        if (roomInfoControllers.any { it.roomId == roomId }) {
-            success.invoke(roomInfo)
-            return
-        }
-        val roomInfoController = RoomInfoController(roomId)
-        roomInfoControllers.add(roomInfoController)
-        initSync {
-            Sync.Instance().joinScene(
-                roomInfo.ownerId == UserManager.getInstance().user.id.toString() || roomInfo.isRobotRoom(),
-                true,
-                roomId, object : JoinSceneCallback {
-                    override fun onSuccess(sceneReference: SceneReference?) {
-                        roomInfoController.sceneReference = sceneReference
-
-                        innerMayAddLocalUser(roomId, {
-                            innerSubscribeUserChange(roomId)
-                            innerSubscribeSeatApplyChanged(roomId)
-                            innerSubscribeRoomChange(roomId)
-                            if (roomInfo.isRobotRoom()) {
-                                cloudPlayerService.startHeartBeat(
-                                    roomId,
-                                    UserManager.getInstance().user.id.toString()
-                                )
-                            }
-
-                            success.invoke(roomInfo)
-                        }, {
-                            roomInfoControllers.remove(roomInfoController)
-                            error?.invoke(
-                                RoomException(
-                                    it.message,
-                                    roomId
-                                )
-                            ) ?: errorHandler.invoke(it)
-                        })
+        rtmLogin { rtmLogin ->
+            if (!rtmLogin) {
+                error?.invoke(Exception("rtm login failed"))
+                return@rtmLogin
+            }
+            val scene = syncManager.getScene(roomInfo.roomId)
+            scene.bindRespDelegate(this)
+            if (ownerId == UserManager.getInstance().user.id.toString()) {
+                scene.create(null) { er ->
+                    if (er != null) {
+                        Log.d(TAG, "enter scene fail: ${er.message}")
+                        error?.invoke(Exception(er.message))
+                        return@create
                     }
-
-                    override fun onFail(exception: SyncManagerException?) {
-                        exception ?: return
-                        if (exception.code == -2000 && roomInfo.isRobotRoom()) {
-                            ShowLogger.d(TAG, "create robotRoom ${roomInfo.roomId}")
-                            createRoomInner(
-                                roomId,
-                                roomInfo.roomName,
-                                roomInfo.roomUserCount,
-                                roomInfo.thumbnailId,
-                                roomInfo.ownerId,
-                                roomInfo.ownerAvatar,
-                                roomInfo.ownerName,
-                                success = {
-                                    runOnMainThread {
-                                        roomInfoControllers.remove(roomInfoController)
-                                        joinRoom(roomId, { joinRet ->
-                                            innerAddUser(roomId, ShowUser(
-                                                roomInfo.ownerId,
-                                                roomInfo.ownerAvatar,
-                                                roomInfo.ownerName
-                                            ),
-                                                success = {
-                                                    roomInfoController.objIdOfUserId[roomInfo.ownerId] = it
-                                                    innerUpdateRoomUserCount(roomId, 2, {}, {})
-                                                },
-                                                error = {})
-                                            success.invoke(joinRet)
-                                        }, error)
-                                    }
-                                },
-                                {
-                                    roomInfoControllers.remove(roomInfoController)
-                                    error?.invoke(
-                                        io.agora.scene.eCommerce.service.RoomException(
-                                            it.message,
-                                            roomId
-                                        )
-                                    )
-                                }
-                            )
+                    scene.enter { payload, e ->
+                        if (e != null) {
+                            Log.d(TAG, "enter scene fail: ${e.message}")
+                            error?.invoke(Exception(e.message))
                         } else {
-                            roomInfoControllers.remove(roomInfoController)
-                            error?.invoke(
-                                io.agora.scene.eCommerce.service.RoomException(
-                                    exception.message,
-                                    roomId
-                                )
-                            )
-                                ?: errorHandler.invoke(exception)
+                            val controller = RoomInfoController(roomInfo.roomId, scene, roomInfo)
+                            actionSubscribe(controller)
+                            roomInfoControllers.add(controller)
+                            innerAddLocalUser(controller)
+                            addOriginalData(controller)
+                            success.invoke(roomInfo)
                         }
                     }
                 }
-            )
+            } else {
+                scene.enter { payload, e ->
+                    if (e != null) {
+                        Log.d(TAG, "enter scene fail: ${e.message}")
+                        error?.invoke(Exception(e.message))
+                    } else {
+                        val controller = RoomInfoController(roomInfo.roomId, scene, roomInfo)
+                        actionSubscribe(controller)
+                        roomInfoControllers.add(controller)
+                        innerAddLocalUser(controller)
+                        success.invoke(roomInfo)
+                    }
+                }
+            }
         }
     }
 
-    /**
-     * Leave room
-     *
-     * @param roomId
-     */
     override fun leaveRoom(roomId: String) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val roomDetail = roomMap[roomId] ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
+        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
+        val roomInfo = controller.roomInfo
+        val scene = syncManager.getScene(roomId)
+        scene.unbindRespDelegate(this)
+        if (roomInfo.owner?.userId == UserManager.getInstance().user.id.toString()) {
+            innerRemoveLocalUser(controller)
+            scene.delete()
+            roomManager.destroyRoom(BuildConfig.AGORA_APP_ID, kSceneId, roomId) { e ->
 
-        sendChatMessage(roomId, context.getString(R.string.commerce_live_chat_leaving))
-
-        val targetApply =
-            roomInfoController.micSeatApplyList.filter { it.userId == UserManager.getInstance().user.id.toString() }
-                .getOrNull(0)
-        if (targetApply != null) {
-            val indexOf = roomInfoController.micSeatApplyList.indexOf(targetApply)
-            roomInfoController.micSeatApplyList.removeAt(indexOf)
-            val removedSeatApplyObjId = roomInfoController.objIdOfSeatApply.removeAt(indexOf)
-            innerRemoveSeatApply(roomId, removedSeatApplyObjId, null, null)
-        }
-
-        roomInfoController.pKCompetitorInvitationList.forEach {
-            val index = roomInfoController.pKCompetitorInvitationList.indexOf(it)
-            innerRemovePKInvitation(
-                roomInfoController.sceneReference,
-                roomInfoController.objIdOfPKCompetitorInvitation[index],
-                null,
-                null
-            )
-        }
-        roomInfoController.pKCompetitorInvitationList.clear()
-
-        innerRemoveUser(
-            roomId,
-            UserManager.getInstance().user.id.toString(),
-            success = {},
-            error = { errorHandler.invoke(it) }
-        )
-        innerUpdateRoomUserCount(roomId, roomDetail.roomUserCount - 1, {}, {})
-
-        ShowLogger.d(
-            TAG,
-            "leaveRoom roomId=${roomId} ownerId=${roomDetail.ownerId} myId=${UserManager.getInstance().user.id}"
-        )
-        if (roomDetail.isRobotRoom()) {
-            // nothing
-        } else if (roomDetail.ownerId == UserManager.getInstance().user.id.toString()
-            || TimeUtils.currentTimeMillis() - roomDetail.createdAt.toLong() >= ShowServiceProtocol.ROOM_AVAILABLE_DURATION
-        ) {
-            ShowLogger.d(TAG, "leaveRoom delete room")
-            sceneReference.delete(object : Sync.Callback {
-                override fun onSuccess() {
-                    roomMap.remove(roomId)
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    errorHandler.invoke(exception!!)
-                }
-            })
-        }
-
-        cleanRoomInfoController(roomInfoController)
-        roomInfoControllers.remove(roomInfoController)
-    }
-
-    /**
-     * Clean room info controller
-     *
-     * @param infoController
-     */
-    private fun cleanRoomInfoController(infoController: RoomInfoController) {
-        infoController.roomChangeSubscriber = null
-        infoController.userChangeSubscriber = null
-        infoController.micSeatApplySubscriber = null
-        infoController.micSeatInvitationSubscriber = null
-        infoController.micPKInvitationSubscriber = null
-        infoController.micInteractionInfoSubscriber = null
-        infoController.onReconnectSubscriber = null
-
-        infoController.sceneReference?.let { ref ->
-            synchronized(infoController.eventListeners){
-                infoController.eventListeners.forEach {
-                    ref.unsubscribe(it)
-                }
             }
+        } else {
+            innerRemoveLocalUser(controller)
+            scene.leave()
         }
-        infoController.eventListeners.clear()
-        infoController.sceneReference = null
+        cleanRoomInfoController(controller)
+        roomInfoControllers.remove(controller)
+    }
+    override fun deleteRoom(roomId: String, complete: () -> Unit) {
+        syncManager.getScene(roomId).delete()
+        roomManager.destroyRoom(BuildConfig.AGORA_APP_ID, kSceneId, roomId) { e ->
+            complete.invoke()
+        }
+    }
+    private fun cleanRoomInfoController(controller: RoomInfoController) {
+        controller.userChangeSubscriber = null
+        controller.auctionChangeSubscriber = null
+        controller.shopChangeSubscriber = null
+    }
 
-        infoController.pkSceneReference?.let { ref ->
-            synchronized(infoController.pkEventListeners){
-                infoController.pkEventListeners.forEach {
-                    ref.unsubscribe(it)
-                }
+    private fun actionSubscribe(controller: RoomInfoController) {
+        controller.userCollection = controller.scene.getCollection(kCollectionIdUser) { a, b, c ->
+            AUIListCollection(a, b, c)
+        }
+        controller.userCollection?.subscribeAttributesDidChanged { channelName, key, model ->
+            val list = model.getList()
+            if (list == null) {
+                controller.userChangeSubscriber?.invoke(emptyList())
+                return@subscribeAttributesDidChanged
             }
+            val gson = Gson()
+            val userList: List<ShowUser> = list.map { map ->
+                gson.fromJson(gson.toJsonTree(map), ShowUser::class.java)
+            }
+            controller.userChangeSubscriber?.invoke(userList)
         }
-        infoController.pkEventListeners.clear()
-        infoController.pkSceneReference = null
+        controller.shopCollection = controller.scene.getCollection(kCollectionIdBuy) { a, b, c ->
+            AUIListCollection(a, b, c)
+        }
+        controller.shopCollection?.subscribeAttributesDidChanged { channelName, key, model ->
+            val list = model.getList()
+            if (list == null) {
+                controller.userChangeSubscriber?.invoke(emptyList())
+                return@subscribeAttributesDidChanged
+            }
+            val gson = Gson()
+            val goodsList: List<GoodsModel> = list.map { map ->
+                gson.fromJson(gson.toJsonTree(map), GoodsModel::class.java)
+            }
+            controller.shopChangeSubscriber?.invoke(goodsList)
+        }
+        controller.auctionCollection = controller.scene.getCollection(kCollectionIdBid) { a, b, c ->
+            AUIMapCollection(a, b, c)
+        }
+        controller.auctionCollection?.subscribeAttributesDidChanged { channelName, key, model ->
+            val gson = Gson()
+            val json = gson.toJson(model.getMap())
+            val auction = gson.fromJson(json, AuctionModel::class.java)
+            controller.auctionChangeSubscriber?.invoke(auction)
+        }
     }
 
-    /**
-     * Subscribe curr room event
-     *
-     * @param roomId
-     * @param onUpdate
-     * @receiver
-     */
-    override fun subscribeCurrRoomEvent(
-        roomId: String,
-        onUpdate: (status: ShowServiceProtocol.ShowSubscribeStatus, roomInfo: ShowRoomDetailModel?) -> Unit
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        roomInfoController.roomChangeSubscriber = onUpdate
+    private fun addOriginalData(controller: RoomInfoController) {
+        val gson = Gson()
+        val map1 = gson.fromJson(gson.toJson(GoodsModel(title = "1")), Map::class.java) as Map<String, Any>
+        val map2 = gson.fromJson(gson.toJson(GoodsModel(title = "2")), Map::class.java) as Map<String, Any>
+        val map3 = gson.fromJson(gson.toJson(GoodsModel(title = "3")), Map::class.java) as Map<String, Any>
+        controller.shopCollection?.addMetaData(null, map1) {}
+        controller.shopCollection?.addMetaData(null, map2) {}
+        controller.shopCollection?.addMetaData(null, map3) {}
     }
 
-    /**
-     * Get all user list
-     *
-     * @param roomId
-     * @param success
-     * @param error
-     * @receiver
-     */
-    override fun getAllUserList(
-        roomId: String,
-        success: (List<ShowUser>) -> Unit,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        innerGetUserList(
-            roomId,
-            {
-                if (roomMap[roomId]?.ownerId == UserManager.getInstance().user.id.toString()) {
-                    innerUpdateRoomUserCount(roomId, roomInfoController.userList.size, {}, {})
-                }
-                success.invoke(it)
-            },
-            {
-                error?.invoke(it) ?: errorHandler.invoke(it)
-            })
-    }
-
-    /**
-     * Subscribe user
-     *
-     * @param roomId
-     * @param onUserChange
-     * @receiver
-     */
+    /** User Actions */
     override fun subscribeUser(
         roomId: String,
-        onUserChange: (ShowServiceProtocol.ShowSubscribeStatus, ShowUser?) -> Unit
+        onChange: (List<ShowUser>) -> Unit
     ) {
         val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        roomInfoController.userChangeSubscriber = onUserChange
+        roomInfoController.userChangeSubscriber = onChange
     }
-
-    /**
-     * Send chat message
-     *
-     * @param roomId
-     * @param message
-     * @param success
-     * @param error
-     */
-    override fun sendChatMessage(
-        roomId: String,
-        message: String,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-        sceneReference.collection(kCollectionIdMessage)
-            .add(ShowMessage(
-                UserManager.getInstance().user.id.toString(),
-                UserManager.getInstance().user.name,
-                message,
-                TimeUtils.currentTimeMillis().toDouble()
-            ), object : Sync.DataItemCallback {
-                override fun onSuccess(result: IObject?) {
-                    success?.invoke()
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    error?.invoke(exception!!) ?: errorHandler.invoke(exception!!)
-                }
-            })
-    }
-
-    /**
-     * Subscribe message
-     *
-     * @param roomId
-     * @param onMessageChange
-     * @receiver
-     */
-    override fun subscribeMessage(
-        roomId: String,
-        onMessageChange: (ShowServiceProtocol.ShowSubscribeStatus, ShowMessage) -> Unit
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-        val listener = object : EventListener {
-            override fun onCreated(item: IObject?) {
-                // do nothing
-            }
-
-            override fun onUpdated(item: IObject?) {
-                item ?: return
-                onMessageChange.invoke(
-                    ShowServiceProtocol.ShowSubscribeStatus.updated,
-                    item.toObject(ShowMessage::class.java)
-                )
-            }
-
-            override fun onDeleted(item: IObject?) {
-
-            }
-
-            override fun onSubscribeError(ex: SyncManagerException?) {
-                errorHandler.invoke(ex!!)
-            }
-        }
-        roomInfoController.eventListeners.add(listener)
-        sceneReference.collection(kCollectionIdMessage)
-            .subscribe(listener)
-    }
-
-    /**
-     * Get all mic seat apply list
-     *
-     * @param roomId
-     * @param success
-     * @param error
-     * @receiver
-     */
-    override fun getAllMicSeatApplyList(
-        roomId: String,
-        success: (List<ShowMicSeatApply>) -> Unit,
-        error: ((Exception) -> Unit)?
-    ) {
-        innerGetSeatApplyList(roomId, success, error)
-    }
-
-    /**
-     * Subscribe mic seat apply
-     *
-     * @param roomId
-     * @param onMicSeatChange
-     * @receiver
-     */
-    override fun subscribeMicSeatApply(
-        roomId: String,
-        onMicSeatChange: (ShowServiceProtocol.ShowSubscribeStatus, ShowMicSeatApply?) -> Unit
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        roomInfoController.micSeatApplySubscriber = onMicSeatChange
-    }
-
-    /**
-     * Create mic seat apply
-     *
-     * @param roomId
-     * @param success
-     * @param error
-     */
-    override fun createMicSeatApply(
-        roomId: String,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val targetApply =
-            roomInfoController.micSeatApplyList.filter { it.userId == UserManager.getInstance().user.id.toString() }
-                .getOrNull(0)
-        if (targetApply != null) {
-            error?.invoke(RuntimeException("The seat apply found!"))
-            return
-        }
-        val apply = ShowMicSeatApply(
+    private fun innerAddLocalUser(controller: RoomInfoController) {
+        val user = ShowUser(
             UserManager.getInstance().user.id.toString(),
             UserManager.getInstance().user.headUrl,
-            UserManager.getInstance().user.name,
-            ShowRoomRequestStatus.waitting.value,
-            TimeUtils.currentTimeMillis().toDouble()
+            UserManager.getInstance().user.name
         )
-        innerCreateSeatApply(roomId, apply, success, error)
+        val gson = Gson()
+        val json = gson.toJson(user)
+        val map = gson.fromJson(json, Map::class.java) as Map<String, Any>
+        controller.userCollection?.addMetaData(null, map, null) { err ->
+        }
     }
 
-    /**
-     * Cancel mic seat apply
-     *
-     * @param roomId
-     * @param success
-     * @param error
-     */
-    override fun cancelMicSeatApply(
+    private fun innerRemoveLocalUser(controller: RoomInfoController) {
+        val filter = listOf(mapOf<String, Any>("userId" to UserManager.getInstance().user.id.toString()))
+        controller.userCollection?.removeMetaData(null, filter) {
+        }
+    }
+
+    /** Message Actions */
+    override fun sendChatMessage(roomId: String, message: String, success: (() -> Unit)?, error: ((Exception) -> Unit)?) {
+        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
+
+    }
+    override fun subscribeMessage(
         roomId: String,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
+        onMessageChange: (ShowMessage) -> Unit
     ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-
-        if (roomInfoController.micSeatApplyList.size <= 0) {
-            error?.invoke(RuntimeException("The seat apply list is empty!"))
-            return
-        }
-        val targetApply =
-            roomInfoController.micSeatApplyList.filter { it.userId == UserManager.getInstance().user.id.toString() }
-                .getOrNull(0)
-        if (targetApply == null) {
-            error?.invoke(RuntimeException("The seat apply not found!"))
-            return
-        }
-
-        val indexOf = roomInfoController.micSeatApplyList.indexOf(targetApply)
-        roomInfoController.micSeatApplyList.removeAt(indexOf)
-        val removedSeatApplyObjId = roomInfoController.objIdOfSeatApply.removeAt(indexOf)
-
-        innerRemoveSeatApply(roomId, removedSeatApplyObjId, success, error)
-    }
-
-    /**
-     * Accept mic seat apply
-     *
-     * @param roomId
-     * @param apply
-     * @param success
-     * @param error
-     */
-    override fun acceptMicSeatApply(
-        roomId: String,
-        apply: ShowMicSeatApply,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-
-        if (roomInfoController.micSeatApplyList.size <= 0) {
-            error?.invoke(RuntimeException("The seat apply list is empty!"))
-            return
-        }
-        val targetApply =
-            roomInfoController.micSeatApplyList.filter { it.userId == apply.userId }.getOrNull(0)
-        if (targetApply == null) {
-            error?.invoke(RuntimeException("The seat apply found!"))
-            return
-        }
-
-        val indexOf = roomInfoController.micSeatApplyList.indexOf(targetApply)
-        roomInfoController.micSeatApplyList.removeAt(indexOf)
-        val removedSeatApplyObjId = roomInfoController.objIdOfSeatApply.removeAt(indexOf)
-        innerRemoveSeatApply(roomId, removedSeatApplyObjId, success, error)
-
-        val interaction = ShowInteractionInfo(
-            apply.userId,
-            apply.userName,
-            roomId,
-            ShowInteractionStatus.onSeat.value,
-            muteAudio = false,
-            ownerMuteAudio = false,
-            createdAt = apply.createAt
-        )
-        innerCreateInteraction(roomId, interaction, null, null)
-    }
-
-    /**
-     * Reject mic seat apply
-     *
-     * @param roomId
-     * @param apply
-     * @param success
-     * @param error
-     */
-    override fun rejectMicSeatApply(
-        roomId: String,
-        apply: ShowMicSeatApply,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-
-        if (roomInfoController.micSeatApplyList.size <= 0) {
-            error?.invoke(RuntimeException("The seat apply list is empty!"))
-            return
-        }
-        val targetApply =
-            roomInfoController.micSeatApplyList.filter { it.userId == apply.userId }.getOrNull(0)
-        if (targetApply == null) {
-            error?.invoke(RuntimeException("The seat apply found!"))
-            return
-        }
-
-        val seatApply = ShowMicSeatApply(
-            targetApply.userId,
-            targetApply.avatar,
-            targetApply.userName,
-            ShowRoomRequestStatus.rejected.value,
-            targetApply.createAt
-        )
-        val indexOf = roomInfoController.micSeatApplyList.indexOf(targetApply)
-        roomInfoController.micSeatApplyList[indexOf] = seatApply
-        innerUpdateSeatApply(
-            roomId,
-            roomInfoController.objIdOfSeatApply[indexOf],
-            seatApply,
-            success,
-            error
-        )
-    }
-
-    /**
-     * Get all mic seat invitation list
-     *
-     * @param roomId
-     * @param success
-     * @param error
-     * @receiver
-     */
-    override fun getAllMicSeatInvitationList(
-        roomId: String,
-        success: (List<ShowMicSeatInvitation>) -> Unit,
-        error: ((Exception) -> Unit)?
-    ) {
-
-    }
-
-    /**
-     * Subscribe mic seat invitation
-     *
-     * @param roomId
-     * @param onMicSeatInvitationChange
-     * @receiver
-     */
-    override fun subscribeMicSeatInvitation(
-        roomId: String,
-        onMicSeatInvitationChange: (ShowServiceProtocol.ShowSubscribeStatus, ShowMicSeatInvitation?) -> Unit
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        roomInfoController.micSeatInvitationSubscriber = onMicSeatInvitationChange
-    }
-
-    /**
-     * Create mic seat invitation
-     *
-     * @param roomId
-     * @param user
-     * @param success
-     * @param error
-     */
-    override fun createMicSeatInvitation(
-        roomId: String,
-        user: ShowUser,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val userItem = ShowUser(
-            user.userId,
-            user.avatar,
-            user.userName,
-            ShowRoomRequestStatus.waitting.value,
-        )
-        innerUpdateUserRoomRequestStatus(roomId, userItem, {}, {})
-    }
-
-    /**
-     * Cancel mic seat invitation
-     *
-     * @param roomId
-     * @param userId
-     * @param success
-     * @param error
-     */
-    override fun cancelMicSeatInvitation(
-        roomId: String,
-        userId: String,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-
-    }
-
-    /**
-     * Accept mic seat invitation
-     *
-     * @param roomId
-     * @param success
-     * @param error
-     */
-    override fun acceptMicSeatInvitation(
-        roomId: String,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-
-        if (roomInfoController.userList.size <= 0) {
-            error?.invoke(RuntimeException("The seat invitation list is empty!"))
-            return
-        }
-        val user =
-            roomInfoController.userList.filter { it.userId == UserManager.getInstance().user.id.toString() }
-                .getOrNull(0)
-        if (user == null) {
-            error?.invoke(RuntimeException("The seat invitation found!"))
-            return
-        }
-        val userItem = ShowUser(
-            user.userId,
-            user.avatar,
-            user.userName,
-            ShowRoomRequestStatus.accepted.value,
-        )
-        innerUpdateUserRoomRequestStatus(roomId, userItem, {}, {})
-
-        val interaction = ShowInteractionInfo(
-            user.userId,
-            user.userName,
-            roomId,
-            ShowInteractionStatus.onSeat.value,
-            muteAudio = false,
-            ownerMuteAudio = false,
-            createdAt = TimeUtils.currentTimeMillis().toDouble() //TODO
-        )
-        innerCreateInteraction(roomId, interaction, { }, { })
-    }
-
-    /**
-     * Reject mic seat invitation
-     *
-     * @param roomId
-     * @param success
-     * @param error
-     */
-    override fun rejectMicSeatInvitation(
-        roomId: String,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-
-        if (roomInfoController.userList.size <= 0) {
-            error?.invoke(RuntimeException("The seat invitation list is empty!"))
-            return
-        }
-        val user =
-            roomInfoController.userList.filter { it.userId == UserManager.getInstance().user.id.toString() }
-                .getOrNull(0)
-        if (user == null) {
-            error?.invoke(RuntimeException("The seat invitation found!"))
-            return
-        }
-        val userItem = ShowUser(
-            user.userId,
-            user.avatar,
-            user.userName,
-            ShowRoomRequestStatus.idle.value,
-        )
-        innerUpdateUserRoomRequestStatus(roomId, userItem, {}, {})
-    }
-    /**
-     * Mute audio
-     *
-     * @param roomId
-     * @param mute
-     * @param userId
-     * @param success
-     * @param error
-     */
-    override fun muteAudio(
-        roomId: String,
-        mute: Boolean,
-        userId: String,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val oldInteraction =
-            roomInfoController.interactionInfoList.filter { it.userId == userId }.getOrNull(0)
-        if (oldInteraction != null) {
-            val indexOf = roomInfoController.interactionInfoList.indexOf(oldInteraction)
-            val objId = roomInfoController.objIdOfInteractionInfo[indexOf]
-
-            val interaction = ShowInteractionInfo(
-                oldInteraction.userId,
-                oldInteraction.userName,
-                oldInteraction.roomId,
-                oldInteraction.interactStatus,
-                mute,
-                oldInteraction.ownerMuteAudio,
-                oldInteraction.createdAt
-            )
-            innerUpdateInteraction(
-                roomInfoController.sceneReference,
-                objId,
-                interaction,
-                success = {},
-                error = {}
-            )
-        }
-
-        // pk
-        if (roomInfoController.pKCompetitorInvitationList.isEmpty()) {
-            val invitation =
-                roomInfoController.pKInvitationList.filter { it.userId == userId }.getOrNull(0)
-            if (invitation != null) {
-                val index = roomInfoController.pKInvitationList.indexOf(invitation)
-                val newInvitation = ShowPKInvitation(
-                    invitation.userId,
-                    invitation.userName,
-                    invitation.roomId,
-                    invitation.fromUserId,
-                    invitation.fromName,
-                    invitation.fromRoomId,
-                    invitation.status,
-                    mute,
-                    invitation.fromUserMuteAudio,
-                    invitation.createAt
-                )
-                val objId = roomInfoController.objIdOfPKInvitation[index]
-                innerUpdatePKInvitation(
-                    roomInfoController.sceneReference,
-                    objId,
-                    newInvitation,
-                    null,
-                    null
-                )
-            }
-        } else {
-            val invitation =
-                roomInfoController.pKCompetitorInvitationList.filter { it.fromUserId == userId }
-                    .getOrNull(0)
-            if (invitation != null) {
-                val index = roomInfoController.pKCompetitorInvitationList.indexOf(invitation)
-                val objId = roomInfoController.objIdOfPKCompetitorInvitation[index]
-                val newInvitation = ShowPKInvitation(
-                    invitation.userId,
-                    invitation.userName,
-                    invitation.roomId,
-                    invitation.fromUserId,
-                    invitation.fromName,
-                    invitation.fromRoomId,
-                    invitation.status,
-                    invitation.userMuteAudio,
-                    mute,
-                    invitation.createAt
-                )
-                innerUpdatePKInvitation(
-                    roomInfoController.pkSceneReference,
-                    objId,
-                    newInvitation,
-                    null,
-                    null
-                )
-            }
-        }
-    }
-
-    /**
-     * Subscribe re connect event
-     *
-     * @param roomId
-     * @param onReconnect
-     * @receiver
-     */
-    override fun subscribeReConnectEvent(roomId: String, onReconnect: () -> Unit) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        roomInfoController.onReconnectSubscriber = onReconnect
-    }
-
-    /**
-     * Run on main thread
-     *
-     * @param r
-     */
-    private fun runOnMainThread(r: Runnable) {
-        if (Thread.currentThread() == mainHandler.looper.thread) {
-            r.run()
-        } else {
-            mainHandler.post(r)
-        }
-    }
-
-    /**
-     * Init sync
-     *
-     * @param complete
-     * @receiver
-     */
-    private fun initSync(complete: () -> Unit) {
-        if (syncInitialized) {
-            complete.invoke()
-            return
-        }
-        syncInitialized = true
-        Sync.Instance().init(
-            RethinkConfig(BuildConfig.AGORA_APP_ID, kSceneId),
-            object : Sync.Callback {
-                override fun onSuccess() {
-                    runOnMainThread { complete.invoke() }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    syncInitialized = false
-                    errorHandler.invoke(exception!!)
-                }
-            }
-        )
-        Sync.Instance().subscribeConnectState {
-            ShowLogger.d(TAG, "subscribeConnectState state=$it")
-            if (it == Sync.ConnectionState.open) {
-                runOnMainThread {
-                    roomInfoControllers.forEach { roomInfoController ->
-                        val roomId = roomInfoController.roomId
-                        val oldRoomInfo = roomMap[roomId]
-                        if (oldRoomInfo != null) {
-                            getRoomList({
-                                val roomInfo = roomMap[roomId]
-                                if (roomInfo == null) {
-                                    runOnMainThread {
-                                        roomInfoController.roomChangeSubscriber?.invoke(
-                                            ShowServiceProtocol.ShowSubscribeStatus.deleted,
-                                            oldRoomInfo
-                                        )
-                                    }
-                                }
-                            })
-                        }
-                        roomInfoController.onReconnectSubscriber?.invoke()
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Inner update room interact status
-     *
-     * @param roomId
-     * @param interactStatus
-     * @param success
-     * @param error
-     * @receiver
-     * @receiver
-     */
-    private fun innerUpdateRoomInteractStatus(
-        roomId: String,
-        interactStatus: Int,
-        success: () -> Unit,
-        error: (Exception) -> Unit
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val roomInfo = roomMap[roomId] ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-
-        val nRoomInfo = ShowRoomDetailModel(
-            roomInfo.roomId,
-            roomInfo.roomName,
-            roomInfo.roomUserCount,
-            roomInfo.thumbnailId,
-            roomInfo.ownerId,
-            roomInfo.ownerAvatar,
-            roomInfo.ownerName,
-            roomInfo.roomStatus,
-            interactStatus,
-            roomInfo.createdAt,
-            roomInfo.updatedAt,
-        )
-        sceneReference.update(nRoomInfo.toMap(), object : Sync.DataItemCallback {
-            override fun onSuccess(result: IObject?) {
-                roomMap[roomId] = nRoomInfo
-                success.invoke()
+        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
+        rtmClient.unsubscribe(roomId, object: ResultCallback<Void> {
+            override fun onSuccess(responseInfo: Void?) {
+                TODO("Not yet implemented")
             }
 
-            override fun onFail(exception: SyncManagerException?) {
-                error.invoke(exception!!)
+            override fun onFailure(errorInfo: ErrorInfo?) {
+                TODO("Not yet implemented")
             }
         })
     }
 
-    /**
-     * Inner update room user count
-     *
-     * @param roomId
-     * @param userCount
-     * @param success
-     * @param error
-     * @receiver
-     * @receiver
-     */
-    private fun innerUpdateRoomUserCount(
-        roomId: String,
-        userCount: Int,
-        success: () -> Unit,
-        error: (Exception) -> Unit
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val roomInfo = roomMap[roomId] ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-
-        val nRoomInfo = ShowRoomDetailModel(
-            roomInfo.roomId,
-            roomInfo.roomName,
-            Math.max(1, userCount),
-            roomInfo.thumbnailId,
-            roomInfo.ownerId,
-            roomInfo.ownerAvatar,
-            roomInfo.ownerName,
-            roomInfo.roomStatus,
-            roomInfo.interactStatus,
-            roomInfo.createdAt,
-            roomInfo.updatedAt,
+    /** Auction Actions */
+    override fun subscribeAuction(roomId: String, onChange: (AuctionModel) -> Unit) {
+        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
+        controller.auctionChangeSubscriber = onChange
+    }
+    override fun startAuction(roomId: String) {
+        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
+        val auctionModel = AuctionModel().apply {
+            timestamp = TimeUtils.currentTimeMillis().toString()
+        }
+        val map = GsonTools.beanToMap(auctionModel)
+        controller.auctionCollection?.addMetaData(null, map, null) { e ->
+            Log.d(TAG, "startAuction e: $e")
+        }
+    }
+    override fun bidding(roomId: String) {
+        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
+        val mergeKey = listOf("bid")
+        controller.auctionCollection?.calculateMetaData(null, mergeKey, 1, 0, 1000, null) { err ->
+        }
+        val user = ShowUser(
+            UserManager.getInstance().user.id.toString(),
+            UserManager.getInstance().user.headUrl,
+            UserManager.getInstance().user.name
         )
-        sceneReference.update(nRoomInfo.toMap(), object : Sync.DataItemCallback {
-            override fun onSuccess(result: IObject?) {
-                roomMap[roomId] = nRoomInfo
-                success.invoke()
-            }
-
-            override fun onFail(exception: SyncManagerException?) {
-                error.invoke(exception!!)
-            }
-        })
+        val userMap = GsonTools.beanToMap(user)
+        val map = mapOf("bidUser" to userMap)
+        controller.auctionCollection?.updateMetaData(null, map) {
+        }
+    }
+    override fun finishAuction(roomId: String) {
+        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
+        val map = mapOf<String, Any>("status" to 0)
+        controller.auctionCollection?.updateMetaData(null, map) {
+        }
     }
 
-    /**
-     * Inner may add local user
-     *
-     * @param roomId
-     * @param success
-     * @param error
-     * @receiver
-     * @receiver
-     */
-    private fun innerMayAddLocalUser(
-        roomId: String,
-        success: () -> Unit,
-        error: (Exception) -> Unit
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val userId = UserManager.getInstance().user.id.toString()
-        val avatarUrl = UserManager.getInstance().user.headUrl
-        innerGetUserList(roomId, { list ->
-            if (list.none { it.userId == it.toString() }) {
-                innerAddUser(roomId,
-                    ShowUser(userId, avatarUrl, UserManager.getInstance().user.name),
-                    {
-                        roomInfoController.objIdOfUserId[userId] = it
-                        innerUpdateRoomUserCount(roomId, list.size + 1, {
-                            success.invoke()
-                        }, { ex ->
-                            error.invoke(ex)
-                        })
-                    },
-                    {
-                        error.invoke(it)
-                    })
+    /** Shop Actions */
+    override fun subscribeShop(roomId: String, onChange: (List<GoodsModel>) -> Unit) {
+        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
+        controller.shopChangeSubscriber = onChange
+    }
+    override fun buyItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit) {
+        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
+        val keys = listOf("quantity")
+        val filter = listOf(mapOf<String, Any>("title" to itemId))
+        controller.shopCollection?.calculateMetaData(null, keys, -1, 0, 1000, filter) { err ->
+            if (err != null) {
+                onComplete.invoke(err)
             } else {
-                success.invoke()
-            }
-        }, {
-            error.invoke(it)
-        })
-    }
-
-    /**
-     * Inner get user list
-     *
-     * @param roomId
-     * @param success
-     * @param error
-     * @receiver
-     * @receiver
-     */
-    private fun innerGetUserList(
-        roomId: String,
-        success: (List<ShowUser>) -> Unit,
-        error: (Exception) -> Unit
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-
-        sceneReference.collection(kCollectionIdUser)
-            .get(object : Sync.DataListCallback {
-                override fun onSuccess(result: MutableList<IObject>?) {
-                    result ?: return
-                    val map = result.map { it.toObject(ShowUser::class.java) }
-                    roomInfoController.userList.clear()
-
-                    val ret = ArrayList<ShowUser>()
-                    result.forEach {
-                        val obj = it.toObject(ShowUser::class.java)
-                        roomInfoController.objIdOfUserId[obj.userId] = it.id
-                        ret.add(obj)
-                    }
-                    roomInfoController.userList.addAll(ret)
-                    runOnMainThread {
-                        success.invoke(map)
-                    }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    runOnMainThread { error.invoke(exception!!) }
-                }
-            })
-    }
-
-    /**
-     * Inner add user
-     *
-     * @param roomId
-     * @param user
-     * @param success
-     * @param error
-     * @receiver
-     * @receiver
-     */
-    private fun innerAddUser(
-        roomId: String,
-        user: ShowUser,
-        success: (String) -> Unit,
-        error: (Exception) -> Unit
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-
-        sceneReference.collection(kCollectionIdUser)
-            .add(user, object : Sync.DataItemCallback {
-                override fun onSuccess(result: IObject?) {
-                    success.invoke(result?.id!!)
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    error.invoke(exception!!)
-                }
-            })
-    }
-
-    /**
-     * Inner remove user
-     *
-     * @param roomId
-     * @param userId
-     * @param success
-     * @param error
-     * @receiver
-     * @receiver
-     */
-    private fun innerRemoveUser(
-        roomId: String,
-        userId: String,
-        success: () -> Unit,
-        error: (Exception) -> Unit
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-        val objectId = roomInfoController.objIdOfUserId[userId] ?: return
-        sceneReference.collection(kCollectionIdUser)
-            .delete(objectId, object : Sync.Callback {
-                override fun onSuccess() {
-                    success.invoke()
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    error.invoke(exception!!)
-                }
-            })
-    }
-
-    /**
-     * Inner update user room request status
-     *
-     * @param roomId
-     * @param user
-     * @param success
-     * @param error
-     * @receiver
-     * @receiver
-     */
-    private fun innerUpdateUserRoomRequestStatus(
-        roomId: String,
-        user: ShowUser,
-        success: () -> Unit,
-        error: (Exception) -> Unit
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-        val objectId = roomInfoController.objIdOfUserId[user.userId] ?: return
-
-        sceneReference.collection(kCollectionIdUser)
-            ?.update(objectId, user, object : Sync.Callback {
-                override fun onSuccess() {
-                    runOnMainThread { success.invoke() }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    runOnMainThread { error.invoke(exception!!) }
-                }
-            })
-    }
-
-    /**
-     * Inner subscribe user change
-     *
-     * @param roomId
-     */
-    private fun innerSubscribeUserChange(roomId: String) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-        val listener = object : EventListener {
-            override fun onCreated(item: IObject?) {
-                // do nothing
-            }
-
-            override fun onUpdated(item: IObject?) {
-                val user = item?.toObject(ShowUser::class.java) ?: return
-                roomInfoController.objIdOfUserId[user.userId] = item.id
-
-
-                val list =
-                    roomInfoController.micSeatInvitationList.filter { it.userId == user.userId }
-                if (list.isEmpty()) {
-                    roomInfoController.micSeatInvitationList.add(user)
-                    roomInfoController.objIdOfSeatInvitation.add(item.id)
-                } else {
-                    val indexOf = roomInfoController.micSeatInvitationList.indexOf(list[0])
-                    roomInfoController.micSeatInvitationList[indexOf] = user
-                    roomInfoController.objIdOfSeatInvitation[indexOf] = item.id
-                }
-                runOnMainThread {
-                    roomInfoController.userChangeSubscriber?.invoke(
-                        ShowServiceProtocol.ShowSubscribeStatus.updated,
-                        user
-                    )
-                }
-
-            }
-
-            override fun onDeleted(item: IObject?) {
-                val userId =
-                    roomInfoController.objIdOfUserId.filterValues { it == item?.id }.entries.firstOrNull()?.key
-                        ?: return
-                val userInfo =
-                    roomInfoController.userList.filter { it.userId == userId }.getOrNull(0)
-                        ?: return
-                roomInfoController.userList.remove(userInfo)
-                runOnMainThread {
-                    roomInfoController.userChangeSubscriber?.invoke(
-                        ShowServiceProtocol.ShowSubscribeStatus.deleted,
-                        userInfo
-                    )
-                }
-            }
-
-            override fun onSubscribeError(ex: SyncManagerException?) {
-                errorHandler.invoke(ex!!)
+                onComplete.invoke(null)
             }
         }
-        roomInfoController.eventListeners.add(listener)
-        sceneReference.collection(kCollectionIdUser)
-            .subscribe(listener)
+    }
+    override fun updateRemain(roomId: String, itemId: String, count: UInt) {
+        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
+        val map = mapOf("quantity" to count)
+        val filter = listOf(mapOf<String, Any>("title" to itemId))
+        controller.shopCollection?.updateMetaData(null, map, filter) {
+        }
     }
 
-    /**
-     * Inner subscribe room change
-     *
-     * @param roomId
-     */
-    private fun innerSubscribeRoomChange(roomId: String) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-        val listener = object : EventListener {
-            override fun onCreated(item: IObject?) {
-                // do nothing
-            }
-
-            override fun onUpdated(item: IObject?) {
-                item ?: return
-                val roomInfo = item.toObject(ShowRoomDetailModel::class.java)
-                roomMap[item.id] = roomInfo
-                ShowLogger.d(
-                    TAG,
-                    "SubscribeRoomChange Update roomNo=${item.id}, roomInfo=${roomInfo}"
+    private var isRtmLogin = false
+    private fun rtmLogin(complete: (Boolean) -> Unit) {
+        if (isRtmLogin) {
+            complete.invoke(true)
+            return
+        }
+        HttpManager
+            .getService(TokenInterface::class.java)
+            .tokenGenerate(
+                TokenGenerateReq(
+                    appId = BuildConfig.AGORA_APP_ID,
+                    appCert = "",
+                    channelName = "111",
+                    userId = UserManager.getInstance().user.id.toString()
                 )
-                if (roomInfoController.roomId.isNotEmpty()) {
-                    runOnMainThread {
-                        roomInfoController.roomChangeSubscriber?.invoke(
-                            ShowServiceProtocol.ShowSubscribeStatus.updated,
-                            roomInfo
-                        )
-                    }
-                }
-
-            }
-
-            override fun onDeleted(item: IObject?) {
-                item ?: return
-                val roomInfo = roomMap.remove(item.id)
-                ShowLogger.d(TAG, "SubscribeRoomChange Delete roomNo=${item.id}")
-                if (roomInfoController.roomId.isNotEmpty() && roomInfoController.roomId == item.id) {
-                    runOnMainThread {
-                        roomInfoController.roomChangeSubscriber?.invoke(
-                            ShowServiceProtocol.ShowSubscribeStatus.deleted,
-                            roomInfo
-                        )
-                    }
-                }
-            }
-
-            override fun onSubscribeError(ex: SyncManagerException?) {
-                ShowLogger.e(TAG, ex)
-                errorHandler.invoke(ex!!)
-            }
-        }
-        roomInfoController.eventListeners.add(listener)
-        Sync.Instance().subscribeScene(sceneReference, listener)
-    }
-
-    /**
-     * Inner get seat apply list
-     *
-     * @param roomId
-     * @param success
-     * @param error
-     * @receiver
-     */
-    private fun innerGetSeatApplyList(
-        roomId: String,
-        success: (List<ShowMicSeatApply>) -> Unit,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-
-        sceneReference.collection(kCollectionIdSeatApply)?.get(object :
-            Sync.DataListCallback {
-            override fun onSuccess(result: MutableList<IObject>?) {
-                val ret = ArrayList<ShowMicSeatApply>()
-                val retObjId = ArrayList<String>()
-                result?.forEach {
-                    val obj = it.toObject(ShowMicSeatApply::class.java)
-                    ret.add(obj)
-                    retObjId.add(it.id)
-                }
-                roomInfoController.micSeatApplyList.clear()
-                roomInfoController.micSeatApplyList.addAll(ret)
-                roomInfoController.objIdOfSeatApply.clear()
-                roomInfoController.objIdOfSeatApply.addAll(retObjId)
-
-                //ret.sortBy { it.createdAt }
-                runOnMainThread { success.invoke(ret) }
-            }
-
-            override fun onFail(exception: SyncManagerException?) {
-                runOnMainThread { error?.invoke(exception!!) }
-            }
-        })
-    }
-
-    /**
-     * Inner create seat apply
-     *
-     * @param roomId
-     * @param seatApply
-     * @param success
-     * @param error
-     */
-    private fun innerCreateSeatApply(
-        roomId: String,
-        seatApply: ShowMicSeatApply,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-
-        sceneReference.collection(kCollectionIdSeatApply)
-            ?.add(seatApply, object : Sync.DataItemCallback {
-                override fun onSuccess(result: IObject) {
-                    //micSeatApplyList.add(seatApply)
-                    runOnMainThread { success?.invoke() }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    runOnMainThread { error?.invoke(exception!!) }
-                }
-            })
-    }
-
-    /**
-     * Inner update seat apply
-     *
-     * @param roomId
-     * @param objectId
-     * @param seatApply
-     * @param success
-     * @param error
-     */
-    private fun innerUpdateSeatApply(
-        roomId: String,
-        objectId: String,
-        seatApply: ShowMicSeatApply,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-
-        sceneReference.collection(kCollectionIdSeatApply)
-            ?.update(objectId, seatApply, object : Sync.Callback {
-                override fun onSuccess() {
-                    runOnMainThread { success?.invoke() }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    runOnMainThread { error?.invoke(exception!!) }
-                }
-            })
-    }
-
-    /**
-     * Inner remove seat apply
-     *
-     * @param roomId
-     * @param objectId
-     * @param success
-     * @param error
-     */
-    private fun innerRemoveSeatApply(
-        roomId: String,
-        objectId: String,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-
-        sceneReference.collection(kCollectionIdSeatApply)
-            ?.delete(objectId, object : Sync.Callback {
-                override fun onSuccess() {
-                    runOnMainThread { success?.invoke() }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    runOnMainThread { error?.invoke(exception!!) }
-                }
-            })
-    }
-
-    /**
-     * Inner subscribe seat apply changed
-     *
-     * @param roomId
-     */
-    private fun innerSubscribeSeatApplyChanged(roomId: String) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val sceneReference = roomInfoController.sceneReference ?: return
-
-        val listener = object : EventListener {
-            override fun onCreated(item: IObject?) {
-                // do Nothing
-            }
-
-            override fun onUpdated(item: IObject?) {
-                val info = item?.toObject(ShowMicSeatApply::class.java) ?: return
-                val list = roomInfoController.micSeatApplyList.filter { it.userId == info.userId }
-                if (list.isEmpty()) {
-                    roomInfoController.micSeatApplyList.add(info)
-                    roomInfoController.objIdOfSeatApply.add(item.id)
-                } else {
-                    val indexOf = roomInfoController.micSeatApplyList.indexOf(list[0])
-                    roomInfoController.micSeatApplyList[indexOf] = info
-                    roomInfoController.objIdOfSeatApply[indexOf] = item.id
-                }
-                runOnMainThread {
-                    roomInfoController.micSeatApplySubscriber?.invoke(
-                        ShowServiceProtocol.ShowSubscribeStatus.updated,
-                        info
-                    )
-                }
-            }
-
-            override fun onDeleted(item: IObject?) {
-                val info = item?.toObject(ShowMicSeatApply::class.java)
-                if (info != null) {
-                    val list =
-                        roomInfoController.micSeatApplyList.filter { it.userId == info.userId }
-                    if (list.isNotEmpty()) {
-                        val indexOf = roomInfoController.micSeatApplyList.indexOf(list[0])
-                        roomInfoController.micSeatApplyList.removeAt(indexOf)
-                        roomInfoController.objIdOfSeatApply.removeAt(indexOf)
-                    }
-                }
-                runOnMainThread {
-                    roomInfoController.micSeatApplySubscriber?.invoke(
-                        ShowServiceProtocol.ShowSubscribeStatus.deleted,
-                        null
-                    )
-                }
-            }
-
-            override fun onSubscribeError(ex: SyncManagerException?) {
-            }
-        }
-        roomInfoController.eventListeners.add(listener)
-        sceneReference.collection(kCollectionIdSeatApply)
-            .subscribe(listener)
-    }
-
-    /**
-     * Inner get p k invitation list
-     *
-     * @param localRoomId
-     * @param room
-     * @param success
-     * @param error
-     * @receiver
-     */
-    private fun innerGetPKInvitationList(
-        localRoomId: String,
-        room: ShowRoomDetailModel?,
-        success: (List<ShowPKInvitation>) -> Unit,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController =
-            roomInfoControllers.firstOrNull { it.roomId == localRoomId } ?: return
-        if (room != null) {
-            if (room.roomId == "") return
-            val roomId = room.roomId
-            if (roomId != localRoomId) {
-                initSync {
-                    Sync.Instance().joinScene(
-                        roomId, object : JoinSceneCallback {
-                            override fun onSuccess(sceneReference: SceneReference?) {
-                                roomInfoController.pkSceneReference = sceneReference!!
-                                roomInfoController.pkSceneReference?.collection(
-                                    kCollectionIdPKInvitation
-                                )
-                                    ?.get(object : Sync.DataListCallback {
-                                        override fun onSuccess(result: MutableList<IObject>?) {
-                                            val ret = ArrayList<ShowPKInvitation>()
-                                            val retObjId = ArrayList<String>()
-                                            result?.forEach {
-                                                val obj = it.toObject(ShowPKInvitation::class.java)
-                                                ret.add(obj)
-                                                retObjId.add(it.id)
-                                            }
-                                            innerSubscribeCompetitorPKInvitationChanged(localRoomId)
-                                            runOnMainThread { success.invoke(ret) }
-                                        }
-
-                                        override fun onFail(exception: SyncManagerException?) {
-                                            runOnMainThread { error?.invoke(exception!!) }
-                                        }
-                                    })
+            )
+            .enqueue(object : retrofit2.Callback<CommonResp<TokenGenerateResp>> {
+                override fun onResponse(
+                    call: retrofit2.Call<CommonResp<TokenGenerateResp>>,
+                    response: Response<CommonResp<TokenGenerateResp>>
+                ) {
+                    val rspObj = response.body()?.data
+                    if (rspObj != null) {
+                        rtmClient.login(rspObj.rtmToken, object : ResultCallback<Void> {
+                            override fun onSuccess(responseInfo: Void?) {
+                                isRtmLogin = true
+                                complete.invoke(true)
                             }
 
-                            override fun onFail(exception: SyncManagerException?) {
-                                error?.invoke(exception!!) ?: errorHandler.invoke(exception!!)
+                            override fun onFailure(errorInfo: ErrorInfo?) {
+                                if (errorInfo?.errorCode == RtmConstants.RtmErrorCode.LOGIN_REJECTED) {
+                                    isRtmLogin = true
+                                    complete.invoke(true)
+                                } else {
+                                    complete.invoke(false)
+                                }
                             }
-                        }
-                    )
-                }
-                return
-            }
-        }
-
-        roomInfoController.sceneReference?.collection(kCollectionIdPKInvitation)
-            ?.get(object : Sync.DataListCallback {
-                override fun onSuccess(result: MutableList<IObject>?) {
-                    val ret = ArrayList<ShowPKInvitation>()
-                    val retObjId = ArrayList<String>()
-                    result?.forEach {
-                        val obj = it.toObject(ShowPKInvitation::class.java)
-                        ret.add(obj)
-                        retObjId.add(it.id)
-                    }
-                    roomInfoController.pKInvitationList.clear()
-                    roomInfoController.pKInvitationList.addAll(ret)
-                    roomInfoController.objIdOfPKInvitation.clear()
-                    roomInfoController.objIdOfPKInvitation.addAll(retObjId)
-
-                    runOnMainThread { success.invoke(ret) }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    runOnMainThread { error?.invoke(exception!!) }
-                }
-            })
-    }
-
-    /**
-     * Inner create p k invitation
-     *
-     * @param sceneReference
-     * @param pkInvitation
-     * @param success
-     * @param error
-     */
-    private fun innerCreatePKInvitation(
-        sceneReference: SceneReference?,
-        pkInvitation: ShowPKInvitation,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        sceneReference?.collection(kCollectionIdPKInvitation)
-            ?.add(pkInvitation, object : Sync.DataItemCallback {
-                override fun onSuccess(result: IObject) {
-                    runOnMainThread { success?.invoke() }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    runOnMainThread { error?.invoke(exception!!) }
-                }
-            })
-    }
-
-    /**
-     * Inner update p k invitation
-     *
-     * @param sceneReference
-     * @param objectId
-     * @param pkInvitation
-     * @param success
-     * @param error
-     */
-    private fun innerUpdatePKInvitation(
-        sceneReference: SceneReference?,
-        objectId: String,
-        pkInvitation: ShowPKInvitation,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        sceneReference?.collection(kCollectionIdPKInvitation)
-            ?.update(objectId, pkInvitation, object : Sync.Callback {
-                override fun onSuccess() {
-                    runOnMainThread { success?.invoke() }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    runOnMainThread { error?.invoke(exception!!) }
-                }
-            })
-    }
-
-    /**
-     * Inner remove p k invitation
-     *
-     * @param sceneReference
-     * @param objectId
-     * @param success
-     * @param error
-     */
-    private fun innerRemovePKInvitation(
-        sceneReference: SceneReference?,
-        objectId: String,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        sceneReference?.collection(kCollectionIdPKInvitation)
-            ?.delete(objectId, object : Sync.Callback {
-                override fun onSuccess() {
-                    runOnMainThread { success?.invoke() }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    runOnMainThread { error?.invoke(exception!!) }
-                }
-            })
-    }
-
-    /**
-     * Is interaction created
-     */
-    private var isInteractionCreated = false // TODO workaround
-
-    /**
-     * Inner subscribe competitor p k invitation changed
-     *
-     * @param roomId
-     */
-    private fun innerSubscribeCompetitorPKInvitationChanged(roomId: String) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        val pkSceneReference = roomInfoController.pkSceneReference ?: return
-        val listener = object : EventListener {
-            override fun onCreated(item: IObject?) {
-                // do Nothing
-            }
-
-            override fun onUpdated(item: IObject?) {
-                val info = item?.toObject(ShowPKInvitation::class.java) ?: return
-
-                val acceptItem =
-                    roomInfoController.pKCompetitorInvitationList.filter { it.status == ShowRoomRequestStatus.accepted.value }
-                        .getOrNull(0)
-                if (acceptItem != null && acceptItem.userId != info.userId && info.status == ShowRoomRequestStatus.accepted.value) {
-                    innerRemovePKInvitation(roomInfoController.sceneReference, item.id, null, null)
-                    return
-                }
-
-                val list =
-                    roomInfoController.pKCompetitorInvitationList.filter { it.userId == info.userId }
-                if (list.isEmpty()) {
-                    roomInfoController.pKCompetitorInvitationList.add(info)
-                    roomInfoController.objIdOfPKCompetitorInvitation.add(item.id)
-                } else {
-                    val indexOf = roomInfoController.pKCompetitorInvitationList.indexOf(list[0])
-                    roomInfoController.pKCompetitorInvitationList[indexOf] = info
-                    roomInfoController.objIdOfPKCompetitorInvitation[indexOf] = item.id
-                }
-
-                if (roomInfoController.interactionInfoList.isEmpty() && info.status == ShowRoomRequestStatus.accepted.value && !isInteractionCreated) {
-                    isInteractionCreated = true
-                    val interaction = ShowInteractionInfo(
-                        info.userId,
-                        info.userName,
-                        info.roomId,
-                        ShowInteractionStatus.pking.value,
-                        muteAudio = false,
-                        ownerMuteAudio = false,
-                        createdAt = info.createAt
-                    )
-                    innerCreateInteraction(info.fromRoomId, interaction, null, null)
-                } else {
-                    val oldInteraction =
-                        roomInfoController.interactionInfoList.filter { it.userId == info.userId }
-                            .getOrNull(0)
-                    if (oldInteraction != null) {
-                        val indexOf = roomInfoController.interactionInfoList.indexOf(oldInteraction)
-                        val objId = roomInfoController.objIdOfInteractionInfo[indexOf]
-
-                        val interaction = ShowInteractionInfo(
-                            oldInteraction.userId,
-                            oldInteraction.userName,
-                            oldInteraction.roomId,
-                            oldInteraction.interactStatus,
-                            info.userMuteAudio,
-                            info.fromUserMuteAudio,
-                            oldInteraction.createdAt
-                        )
-                        innerUpdateInteraction(
-                            roomInfoController.sceneReference,
-                            objId,
-                            interaction,
-                            success = {},
-                            error = {}
-                        )
+                        })
+                    } else {
+                        complete.invoke(false)
                     }
                 }
-
-                runOnMainThread {
-                    roomInfoController.micPKInvitationSubscriber?.invoke(
-                        ShowServiceProtocol.ShowSubscribeStatus.updated,
-                        info
-                    )
-                }
-            }
-
-            override fun onDeleted(item: IObject?) {
-                val objId = item!!.id
-                val index = roomInfoController.objIdOfPKCompetitorInvitation.indexOf(objId)
-                val invitation = roomInfoController.pKCompetitorInvitationList[index]
-
-                val sceneReference = roomInfoController.pkSceneReference ?: return
-                synchronized(roomInfoController.pkEventListeners){
-                    roomInfoController.pkEventListeners.forEach {
-                        sceneReference.unsubscribe(it)
-                    }
-                }
-
-                roomInfoController.pkSceneReference = null
-                roomInfoController.objIdOfPKCompetitorInvitation.removeAt(index)
-                roomInfoController.pKCompetitorInvitationList.removeAt(index)
-                runOnMainThread {
-                    roomInfoController.micPKInvitationSubscriber?.invoke(
-                        ShowServiceProtocol.ShowSubscribeStatus.deleted,
-                        invitation
-                    )
-                }
-            }
-
-            override fun onSubscribeError(ex: SyncManagerException?) {
-            }
-        }
-        roomInfoController.pkEventListeners.add(listener)
-        pkSceneReference.collection(kCollectionIdPKInvitation).subscribe(listener)
-    }
-
-    /**
-     * Inner get all interaction list
-     *
-     * @param roomId
-     * @param success
-     * @param error
-     */
-    private fun innerGetAllInteractionList(
-        roomId: String,
-        success: ((List<ShowInteractionInfo>) -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        roomInfoController.sceneReference?.collection(kCollectionIdInteractionInfo)
-            ?.get(object : Sync.DataListCallback {
-                override fun onSuccess(result: MutableList<IObject>?) {
-                    val ret = ArrayList<ShowInteractionInfo>()
-                    val retObjId = ArrayList<String>()
-                    result?.forEach {
-                        val obj = it.toObject(ShowInteractionInfo::class.java)
-                        ret.add(obj)
-                        retObjId.add(it.id)
-                    }
-                    roomInfoController.interactionInfoList.clear()
-                    roomInfoController.interactionInfoList.addAll(ret)
-                    roomInfoController.objIdOfInteractionInfo.clear()
-                    roomInfoController.objIdOfInteractionInfo.addAll(retObjId)
-
-                    runOnMainThread { success?.invoke(ret) }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    runOnMainThread { error?.invoke(exception!!) }
+                override fun onFailure(call: retrofit2.Call<CommonResp<TokenGenerateResp>>, t: Throwable) {
+                    complete.invoke(false)
                 }
             })
     }
 
-    /**
-     * Inner create interaction
-     *
-     * @param roomId
-     * @param info
-     * @param success
-     * @param error
-     */
-    private fun innerCreateInteraction(
-        roomId: String,
-        info: ShowInteractionInfo,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        ShowLogger.d(TAG, "innerCreateInteraction called")
-        roomInfoController.sceneReference?.collection(kCollectionIdInteractionInfo)
-            ?.add(info, object : Sync.DataItemCallback {
-                override fun onSuccess(result: IObject) {
-                    ShowLogger.d(TAG, "innerCreateInteraction success")
-                    runOnMainThread { success?.invoke() }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    ShowLogger.d(TAG, "innerCreateInteraction failed")
-                    runOnMainThread { error?.invoke(exception!!) }
-                }
-            })
-    }
-
-    /**
-     * Inner update interaction
-     *
-     * @param sceneReference
-     * @param objectId
-     * @param info
-     * @param success
-     * @param error
-     */
-    private fun innerUpdateInteraction(
-        sceneReference: SceneReference?,
-        objectId: String,
-        info: ShowInteractionInfo,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        sceneReference?.collection(kCollectionIdInteractionInfo)
-            ?.update(objectId, info, object : Sync.Callback {
-                override fun onSuccess() {
-                    runOnMainThread { success?.invoke() }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    runOnMainThread { error?.invoke(exception!!) }
-                }
-            })
-    }
-
-    /**
-     * Inner remove interaction
-     *
-     * @param roomId
-     * @param objectId
-     * @param success
-     * @param error
-     */
-    private fun innerRemoveInteraction(
-        roomId: String,
-        objectId: String,
-        success: (() -> Unit)?,
-        error: ((Exception) -> Unit)?
-    ) {
-        val roomInfoController = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        roomInfoController.sceneReference?.collection(kCollectionIdInteractionInfo)
-            ?.delete(objectId, object : Sync.Callback {
-                override fun onSuccess() {
-                    innerUpdateRoomInteractStatus(roomId, ShowInteractionStatus.idle.value, {}, {})
-                    runOnMainThread { success?.invoke() }
-                }
-
-                override fun onFail(exception: SyncManagerException?) {
-                    runOnMainThread { error?.invoke(exception!!) }
-                }
-            })
-    }
     /**
      * Start cloud player
      *
@@ -2291,6 +563,36 @@ class ShowSyncManagerServiceImpl constructor(
                     )
                 },
                 failure = { })
+        }
+    }
+
+    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
+    private fun runOnMainThread(r: Runnable) {
+        if (Thread.currentThread() == mainHandler.looper.thread) {
+            r.run()
+        } else {
+            mainHandler.post(r)
+        }
+    }
+
+    private fun createRtmClient(): RtmClient {
+        val commonConfig = AUIRoomContext.shared().requireCommonConfig()
+        val userInfo = AUIRoomContext.shared().currentUserInfo
+        val rtmConfig = RtmConfig.Builder(commonConfig.appId, userInfo.userId).apply {
+            presenceTimeout(60)
+        }.build()
+        if (rtmConfig.appId.isEmpty()) {
+            assert(false) { "userId is empty" }
+        }
+        if (rtmConfig.userId.isEmpty()) {
+            assert(false) { "appId is empty, please check 'AUIRoomContext.shared.commonConfig.appId'" }
+        }
+        return RtmClient.create(rtmConfig)
+    }
+
+    override fun onSceneDestroy(roomId: String) {
+        leaveRoom(roomId)
+        roomManager.destroyRoom(BuildConfig.AGORA_APP_ID, kSceneId, roomId) {
         }
     }
 }
