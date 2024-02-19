@@ -138,8 +138,10 @@ class ShowDataPanelPresenter {
         let startup = audience ? "\(callTs) ms" : "--"
         let startupStr = "show_statistic_startup_time".show_localized + ": " + startup
         // h265 switch
-        let h265 = send ? onStr : "--"
+        let isH265On = localVideoStats.codecType == .H265
+        let h265 = send ? (isH265On ? onStr : offStr) : "--"
         let h265Str = "H265" + ": " + h265
+        
         // super resolution switch
         let sr = audience ? (params.sr ? onStr : offStr) : "--"
         let srStr = "show_statistic_SR_switch".show_localized + ": " + sr
