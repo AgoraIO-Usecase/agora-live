@@ -117,7 +117,7 @@ class Scene constructor(
         subscribeDate = System.currentTimeMillis()
         enterRoomCompletion = { payload, err ->
             Log.d(tag, "[Benchmark]enterRoomCompletion: ${System.currentTimeMillis() - (subscribeDate ?: 0)}ms")
-            completion(payload, null)
+            runOnUiThread { completion(payload, null) }
         }
         if (ownerId.isEmpty()) {
             roomCollection.getMetaData { err, metadata ->
