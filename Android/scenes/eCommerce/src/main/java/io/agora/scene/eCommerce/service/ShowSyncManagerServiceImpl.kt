@@ -424,11 +424,10 @@ class ShowSyncManagerServiceImpl constructor(
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         rtmClient.unsubscribe(roomId, object: ResultCallback<Void> {
             override fun onSuccess(responseInfo: Void?) {
-                TODO("Not yet implemented")
-            }
 
+            }
             override fun onFailure(errorInfo: ErrorInfo?) {
-                TODO("Not yet implemented")
+
             }
         })
     }
