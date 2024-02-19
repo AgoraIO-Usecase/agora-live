@@ -126,6 +126,8 @@ class ShowLiveViewController: UIViewController {
     
     private var finishView: ShowReceiveFinishView?
     
+    private var ownerExpiredView: ShowRoomOwnerExpiredView?
+    
     //pk user list (room list)
     private var pkUserInvitationList: [ShowPKUserInfo]? {
         didSet {
@@ -424,6 +426,32 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
         }
     }
     
+    private func _broadcasterRoomExpired(){
+        if ownerExpiredView != nil {return}
+        ownerExpiredView = ShowRoomOwnerExpiredView()
+        ownerExpiredView?.headImg = VLUserCenter.user.headUrl
+        ownerExpiredView?.clickBackButtonAction = {[weak self] in
+            self?.leaveRoom()
+            self?.dismiss(animated: true)
+        }
+        self.view.addSubview(ownerExpiredView!)
+        ownerExpiredView?.snp.makeConstraints { make in
+            make.left.right.top.bottom.equalToSuperview()
+        }
+    }
+    
+    private func _audienceRoomOwnerExpired(){
+        finishView?.removeFromSuperview()
+        finishView = ShowReceiveFinishView()
+        finishView?.headImg = room?.ownerAvatar ?? ""
+        finishView?.headName = room?.ownerName ?? ""
+        finishView?.delegate = self
+        self.view.addSubview(finishView!)
+        finishView?.snp.makeConstraints { make in
+            make.left.right.top.bottom.equalToSuperview()
+        }
+    }
+    
     //MARK: ShowSubscribeServiceProtocol
     func onConnectStateChanged(state: ShowServiceConnectState) {
         guard state == .open else {
@@ -436,14 +464,10 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
     }
     
     func onRoomExpired() {
-        finishView?.removeFromSuperview()
-        finishView = ShowReceiveFinishView()
-        finishView?.headImg = room?.ownerAvatar ?? ""
-        finishView?.headName = room?.ownerName ?? ""
-        finishView?.delegate = self
-        self.view.addSubview(finishView!)
-        finishView?.snp.makeConstraints { make in
-            make.left.right.top.bottom.equalToSuperview()
+        if role == .broadcaster {
+            _broadcasterRoomExpired()
+        }else{
+            _audienceRoomOwnerExpired()
         }
     }
     
