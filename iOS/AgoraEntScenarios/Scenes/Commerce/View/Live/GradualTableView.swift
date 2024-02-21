@@ -52,7 +52,7 @@ class GradualTableView: UITableView {
                                    topValue,
                                    NSNumber(value: 1 - bottomValue.doubleValue),
                                    NSNumber(value: 1.0)]
-            maskLayer.bounds = CGRect(x: 0, 
+            maskLayer.bounds = CGRect(x: 0,
                                       y: 0,
                                       width: frame.size.width,
                                       height: frame.size.height)

@@ -21,6 +21,7 @@ class CommerceRoomChatCell: UITableViewCell {
         let label = UILabel()
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 0
+        label.preferredMaxLayoutWidth = Screen.width - 130
         return label
     }()
     
@@ -39,18 +40,17 @@ class CommerceRoomChatCell: UITableViewCell {
         transform = CGAffineTransform(rotationAngle: Double.pi)
         contentView.addSubview(bgView)
         bgView.snp.makeConstraints { make in
-            make.top.equalTo(5)
-            make.bottom.equalTo(-5)
+            make.top.equalToSuperview().offset(5)
+            make.bottom.equalToSuperview().offset(-5)
             make.left.equalToSuperview()
-            make.right.lessThanOrEqualTo(0)
         }
         
         bgView.addSubview(msgLabel)
         msgLabel.snp.makeConstraints { make in
-            make.left.equalTo(10)
-            make.top.equalTo(8)
-            make.right.equalTo(-10)
-            make.bottom.equalTo(-10)
+            make.left.equalToSuperview().offset(10)
+            make.top.equalToSuperview().offset(8)
+            make.right.equalToSuperview().offset(-10)
+            make.bottom.equalToSuperview().offset(-10)
         }
         self.selectedBackgroundView = UIView()
     }

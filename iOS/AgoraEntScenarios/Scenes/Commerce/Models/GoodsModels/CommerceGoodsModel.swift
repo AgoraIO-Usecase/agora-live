@@ -7,10 +7,11 @@
 
 import UIKit
 
+@objc
 enum CommerceBuyStatus: Int {
     case idle = 0
-    case buy
-    case sold_out
+    case buy = 1
+    case sold_out = 2
     
     var titleColor: UIColor? {
         switch self {
@@ -26,11 +27,12 @@ enum CommerceBuyStatus: Int {
     }
 }
 
+@objc
 enum CommerceAuctionStatus: Int {
     case idle = 0
-    case started
-    case completion
-    case top_price
+    case started = 1
+    case completion = 2
+    case top_price = 3
     
     var statusTitleColor: UIColor? {
         switch self {
@@ -60,22 +62,25 @@ enum CommerceAuctionStatus: Int {
     }
 }
 
-class CommerceGoodsModel: NSObject {
+@objcMembers
+class CommerceGoodsModel: NSObject, YYModel {
     var imageName: String?
     var title: String?
     var quantity: Int = 0
     var price: Float = 0
 }
 
+@objcMembers
 class CommerceGoodsBuyModel: NSObject {
     var goods: CommerceGoodsModel?
     var status: CommerceBuyStatus = .idle
 }
 
-class CommerceGoodsAuctionModel: NSObject {
+@objcMembers
+class CommerceGoodsAuctionModel: NSObject, YYModel {
     var goods: CommerceGoodsModel?
     var status: CommerceAuctionStatus = .idle
-    var timestamp: String?
+    var timestamp: Int64 = 0
     var bidUser: VLLoginModel?
     var bid: Float = 0
 }
