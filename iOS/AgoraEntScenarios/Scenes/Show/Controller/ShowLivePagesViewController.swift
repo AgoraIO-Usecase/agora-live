@@ -123,7 +123,7 @@ extension ShowLivePagesViewController {
     }
     
     fileprivate func realCellIndex(with fakeIndex: Int) -> Int {
-        if fakeCellCount() < 3 {
+        if fakeCellCount() < (roomList?.count ?? 3) {
             return fakeIndex
         }
         
@@ -139,7 +139,7 @@ extension ShowLivePagesViewController {
     }
     
     fileprivate func fakeCellIndex(with realIndex: Int) -> Int {
-        if fakeCellCount() < 3 {
+        if fakeCellCount() < (roomList?.count ?? 3) {
             return realIndex
         }
         
@@ -154,6 +154,7 @@ extension ShowLivePagesViewController {
     }
     
     private func scroll(to index: Int) {
+        guard index < (roomList?.count ?? 3) else { return }
         collectionView.scrollToItem(at: IndexPath(row: index, section: 0), at: .centeredVertically, animated: false)
     }
 }
