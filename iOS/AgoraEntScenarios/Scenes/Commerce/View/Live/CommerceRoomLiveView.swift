@@ -95,6 +95,9 @@ class CommerceRoomLiveView: UIView {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 46
         tableView.showsVerticalScrollIndicator = false
+        tableView.registerCell(CommerceRoomChatCell.self, forCellReuseIdentifier: "CommerceRoomChatCell")
+//        tableView.contentInset = UIEdgeInsets(top: 100, left: 0, bottom: 0, right: 0)
+//        tableView.isExclusiveTouch = true
         tableView.transform = CGAffineTransform(rotationAngle: Double.pi)
         return tableView
     }()
@@ -181,9 +184,9 @@ class CommerceRoomLiveView: UIView {
         
         addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.left.equalTo(15)
-            make.bottom.equalTo(-kTableViewBottomOffset)
-            make.right.equalTo(-70)
+            make.left.equalToSuperview().offset(15)
+            make.bottom.equalToSuperview().offset(-kTableViewBottomOffset)
+            make.right.equalToSuperview().offset(-70)
             make.height.equalTo(168)
         }
         
@@ -286,7 +289,7 @@ class CommerceRoomLiveView: UIView {
     }
 
     func showHeartAnimation(at location: CGPoint) {
-        var images = ["finger_heart", "thunder", "thumbs_up", "No_of_the_beast", "lips", "heart"].compactMap({ UIImage.commerce_sceneImage(name: "\($0)") })
+        let images = ["finger_heart", "thunder", "thumbs_up", "No_of_the_beast", "lips", "heart"].compactMap({ UIImage.commerce_sceneImage(name: "\($0)") })
         let animationLayer = CommerceEmitterLayer.emitterLayer(size: CGSize.init(width: 32, height: 32),
                                                                center: location,
                                                                image: images.randomElement() ?? UIImage())
@@ -310,10 +313,10 @@ extension CommerceRoomLiveView {
         if chatModel.text == "join_live_room".commerce_localized && chatModel.userName != VLUserCenter.user.name {
             userJoinView.joinHandler(nickName: chatModel.userName)
         }
-        chatArray.insert(chatModel, at: 0)
+        chatArray.append(chatModel)
         let indexPath = IndexPath(item: chatArray.count - 1, section: 0)
         tableView.insertRows(at: [indexPath], with: .top)
-        tableView.reloadData()
+        tableView.scrollToRow(at: indexPath, at: .top, animated: false)
     }
     
     func clearChatModel(){
@@ -332,17 +335,15 @@ extension CommerceRoomLiveView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cellID = "CommerceRoomChatCell"
-        var cell = tableView.dequeueReusableCell(withIdentifier: cellID) as? CommerceRoomChatCell
-        if cell == nil {
-            cell = CommerceRoomChatCell(style: .default, reuseIdentifier: cellID)
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? CommerceRoomChatCell
+    
         let chatModel = chatArray[indexPath.row]
         cell?.setUserName(chatModel.userName, msg: chatModel.text)
         return cell!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let chatModel = chatArray[indexPath.row]
+
         let cell = tableView.cellForRow(at: indexPath) as? CommerceRoomChatCell
         
         let alertVC = UIAlertController(title: cell?.msgLabel.text, message: nil, preferredStyle: .actionSheet)

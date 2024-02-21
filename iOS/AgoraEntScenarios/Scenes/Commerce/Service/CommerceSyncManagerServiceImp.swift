@@ -16,6 +16,8 @@ private let SYNC_MANAGER_SEAT_APPLY_COLLECTION = "commerce_seat_apply_collection
 private let SYNC_MANAGER_SEAT_INVITATION_COLLECTION = "commerce_seat_invitation_collection"
 private let SYNC_MANAGER_PK_INVITATION_COLLECTION = "commerce_pk_invitation_collection"
 private let SYNC_MANAGER_INTERACTION_COLLECTION = "commerce_interaction_collection"
+private let SYNC_MANAGER_BID_GOODS_COLLECTION = "commerce_goods_bid_collection"
+private let SYNC_MANAGER_BUY_GOODS_COLLECTION = "commerce_goods_buy_collection"
 
 
 enum CommerceError: Int, Error {
@@ -122,7 +124,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         
         let currentTs = Int64(Date().timeIntervalSince1970 * 1000)
         let expiredDuration = 20 * 60 * 1000
-        agoraPrint("checkRoomExpire: \(currentTs - room.createdAt) / \(expiredDuration)")
+//        agoraPrint("checkRoomExpire: \(currentTs - room.createdAt) / \(expiredDuration)")
         guard currentTs - room.createdAt > expiredDuration else { return }
         
         subscribeDelegate?.onRoomExpired()
@@ -291,6 +293,26 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         sendChatMessage(roomId: roomId, message: showMsg) { error in }
     }
     
+    func getBidGoodsInfo(roomId: String?, completion: @escaping (NSError?, CommerceGoodsAuctionModel?) -> Void) {
+        _getBidGoodsInfo(roomId: roomId, completion: completion)
+    }
+    
+    func addBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel, completion: @escaping (NSError?) -> Void) {
+        _addBidGoodsInfo(roomId: roomId, goods: goods, completion: completion)
+    }
+    
+    func updateBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel, completion: @escaping (NSError?) -> Void) {
+        _updateBidGoodsInfo(roomId: roomId, goods: goods, completion: completion)
+    }
+    
+    func cleanBidGoodsInfo(roomId: String?, completion: @escaping (NSError?) -> Void) {
+        _cleanBidGoodsInfo(roomId: roomId, completion: completion)
+    }
+    
+    func subscribeBidGoodsInfo(roomId: String?, completion: @escaping (NSError?, CommerceGoodsAuctionModel?) -> Void) {
+        _subscribeBidGoodsInfo(roomId: roomId, completion: completion)
+    }
+    
     func unsubscribeEvent(delegate: CommerceSubscribeServiceProtocol) {
         //TODO: weak map
         self.subscribeDelegate = nil
@@ -373,6 +395,61 @@ extension CommerceSyncManagerServiceImp {
     private func _leaveScene(roomId: String) {
         agoraPrint("imp leave scene: \(roomId)")
         RTMSyncUtil.leaveScene(id: roomId, ownerId: room?.ownerId ?? "")
+    }
+}
+
+//MARK: Bid Goods operation
+extension CommerceSyncManagerServiceImp {
+    private func _getBidGoodsInfo(roomId: String?, completion: @escaping (NSError?, CommerceGoodsAuctionModel?) -> Void) {
+        guard let channelName = roomId else {
+            completion(NSError(domain: "roomId is empty", code: 0), nil)
+            return
+        }
+        RTMSyncUtil.getMetaData(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION) { error, res in
+            agoraPrint("imp bid goods get success...")
+            if error != nil {
+                completion(error, nil)
+                return
+            }
+            guard let res = res else { return }
+            let auctionModel = CommerceGoodsAuctionModel.yy_model(withJSON: res)
+            completion(nil, auctionModel)
+        }
+    }
+    
+    private func _addBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel?, completion: @escaping (NSError?) -> Void) {
+        guard let channelName = roomId,
+              let params = goods?.yy_modelToJSONObject() as? [String: Any] else {
+            completion(NSError(domain: "roomId is empty", code: 0))
+            return
+        }
+        RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION, data: params, callback: completion)
+    }
+    
+    private func _updateBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel?, completion: @escaping (NSError?) -> Void) {
+        guard let channelName = roomId,
+              let params = goods?.yy_modelToJSONObject() as? [String: Any]  else {
+            completion(NSError(domain: "roomId is empty", code: 0))
+            return
+        }
+        RTMSyncUtil.updateMetaData(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION, data: params, callback: completion)
+    }
+    
+    private func _cleanBidGoodsInfo(roomId: String?, completion: @escaping (NSError?) -> Void) {
+        guard let channelName = roomId else { return }
+        RTMSyncUtil.cleanMetaData(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION, callback: completion)
+    }
+    
+    private func _subscribeBidGoodsInfo(roomId: String?, completion: @escaping (NSError?, CommerceGoodsAuctionModel?) -> Void) {
+        guard let channelName = roomId else {
+            completion(NSError(domain: "roomId is empty", code: 0), nil)
+            return
+        }
+        RTMSyncUtil.subscribeAttributesDidChanged(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION) { channelName, object in
+            guard let res = object.getMap() else { return }
+            let auctionModel = CommerceGoodsAuctionModel.yy_model(with: res)
+            completion(nil, auctionModel)
+        }
     }
 }
 
@@ -570,6 +647,10 @@ extension CommerceSyncManagerServiceImp {
 
     private func _subscribeMessageChanged() {
         let channelName = getRoomId()
+        if channelName.isEmpty {
+            agoraPrint("channelName is empty ...")
+            return
+        }
         agoraPrint("imp message subscribe ...")
         RTMSyncUtil.subscribeAttributesDidChanged(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION) { channelName, object in
             agoraPrint("imp message subscribe onUpdated... [\(object.getMap() ?? [:])] \(channelName)")
