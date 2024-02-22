@@ -22,6 +22,37 @@ extension AUIMapCollection {
                                 valueCmd: String?,
                                 value: [String: Any],
                                 callback: ((NSError?)->())?) {
+        if let err = self.metadataWillAddClosure?(publisherId, valueCmd, value) {
+            callback?(err)
+            return
+        }
+        
+        var map = value
+        if let attr = self.attributesWillSetClosure?(channelName,
+                                                     observeKey,
+                                                     valueCmd,
+                                                     AUIAttributesModel(map: map)),
+           let attrMap = attr.getMap() {
+            map = attrMap
+        }
+        guard let value = encodeToJsonStr(map) else {
+            callback?(AUICollectionOperationError.encodeToJsonStringFail.toNSError())
+            return
+        }
+        aui_collection_log("rtmSetMetaData valueCmd: \(valueCmd ?? "") value: \(value)")
+        self.rtmManager.setBatchMetadata(channelName: channelName,
+                                         lockName: kRTM_Referee_LockName,
+                                         metadata: [observeKey: value]) { error in
+            aui_collection_log("rtmSetMetaData completion: \(error?.localizedDescription ?? "success")")
+            callback?(error)
+        }
+        currentMap = map
+    }
+    
+    private func rtmUpdateMetaData(publisherId: String,
+                                   valueCmd: String?,
+                                   value: [String: Any],
+                                   callback: ((NSError?)->())?) {
         if let err = self.metadataWillUpdateClosure?(publisherId, valueCmd, value, currentMap) {
             callback?(err)
             return
@@ -153,10 +184,10 @@ extension AUIMapCollection {
                                         callback: ((NSError?)->())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
             let currentUserId = AUIRoomContext.shared.currentUserInfo.userId
-            rtmSetMetaData(publisherId: currentUserId,
-                           valueCmd: valueCmd,
-                           value: value,
-                           callback: callback)
+            rtmUpdateMetaData(publisherId: currentUserId,
+                              valueCmd: valueCmd,
+                              value: value,
+                              callback: callback)
             return
         }
         
@@ -228,10 +259,34 @@ extension AUIMapCollection {
                                      value: [String: Any],
                                      filter: [[String: Any]]?,
                                      callback: ((NSError?)->())?) {
-        updateMetaData(valueCmd: valueCmd,
-                       value: value,
-                       filter: filter,
-                       callback: callback)
+        if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
+            let currentUserId = AUIRoomContext.shared.currentUserInfo.userId
+            rtmSetMetaData(publisherId: currentUserId,
+                           valueCmd: valueCmd,
+                           value: value,
+                           callback: callback)
+            return
+        }
+        
+        let payload = AUICollectionMessagePayload(type: .add,
+                                                  dataCmd: valueCmd,
+                                                  data: AUIAnyType(map: value))
+        let message = AUICollectionMessage(channelName: channelName,
+                                           messageType: AUIMessageType.normal,
+                                           sceneKey: observeKey,
+                                           uniqueId: UUID().uuidString,
+                                           payload: payload)
+
+        guard let jsonStr = encodeModelToJsonStr(message) else {
+            callback?(AUICollectionOperationError.encodeToJsonStringFail.toNSError())
+            return
+        }
+        let userId = AUIRoomContext.shared.getArbiter(channelName: channelName)?.lockOwnerId ?? ""
+        rtmManager.publishAndWaitReceipt(userId: userId,
+                                         channelName: channelName,
+                                         message: jsonStr,
+                                         uniqueId: message.uniqueId,
+                                         completion: callback)
     }
     
     /// 移除，map collection不支持
@@ -357,25 +412,39 @@ extension AUIMapCollection {
         
         let valueCmd = collectionMessage.payload.dataCmd
         var err: NSError? = nil
+        let value = collectionMessage.payload.data?.toJsonObject() as? [String : Any]
         switch updateType {
-        case .add, .update, .merge:
-            if let value = collectionMessage.payload.data?.toJsonObject() as? [String : Any] {
-                if updateType == .merge {
-                    rtmMergeMetaData(publisherId: publisher, 
-                                     valueCmd: valueCmd,
-                                     value: value) {[weak self] error in
-                        self?.sendReceipt(publisher: publisher, 
-                                          uniqueId: uniqueId,
-                                          error: error)
-                    }
-                } else {
-                    rtmSetMetaData(publisherId: publisher, 
+        case .add:
+            if let value = value {
+                    rtmSetMetaData(publisherId: publisher,
                                    valueCmd: valueCmd,
                                    value: value) {[weak self] error in
-                        self?.sendReceipt(publisher: publisher, 
+                        self?.sendReceipt(publisher: publisher,
                                           uniqueId: uniqueId,
                                           error: error)
                     }
+                return
+            }
+            err = AUICollectionOperationError.invalidPayloadType.toNSError()
+        case .update:
+            if let value = value {
+                rtmUpdateMetaData(publisherId: publisher,
+                                  valueCmd: valueCmd,
+                                  value: value) {[weak self] error in
+                    self?.sendReceipt(publisher: publisher,
+                                      uniqueId: uniqueId,
+                                      error: error)
+                }
+                return
+            }
+        case .merge:
+            if let value = value {
+                rtmMergeMetaData(publisherId: publisher,
+                                 valueCmd: valueCmd,
+                                 value: value) {[weak self] error in
+                    self?.sendReceipt(publisher: publisher,
+                                      uniqueId: uniqueId,
+                                      error: error)
                 }
                 return
             }
@@ -390,7 +459,7 @@ extension AUIMapCollection {
             err = AUICollectionOperationError.unsupportedAction.toNSError("map remove")
             break
         case .calculate:
-            if let value = collectionMessage.payload.data?.toJsonObject() as? [String : Any],
+            if let value = value,
                let data: AUICollectionCalcData = decodeModel(value) {
                 rtmCalculateMetaData(publisherId: publisher,
                                      valueCmd: valueCmd,

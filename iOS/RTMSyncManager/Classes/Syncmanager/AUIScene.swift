@@ -54,7 +54,6 @@ public class AUIScene: NSObject {
         self.channelName = channelName
         self.rtmManager = rtmManager
         self.userService = AUIUserServiceImpl(channelName: channelName, rtmManager: rtmManager)
-//        AUIRoomContext.shared.roomArbiterMap[channelName] = AUIArbiter(channelName: channelName, rtmManager: rtmManager, userInfo: AUIRoomContext.shared.currentUserInfo)
         super.init()
         userService.bindRespDelegate(delegate: self)
     }
@@ -93,7 +92,6 @@ public class AUIScene: NSObject {
             }
             completion(nil)
         }
-//        AUIRoomContext.shared.getArbiter(channelName: channelName)?.create()
         getArbiter().create()
     }
     
@@ -126,7 +124,7 @@ public class AUIScene: NSObject {
                 self.ownerId = ownerId
             }
         }
-//        AUIRoomContext.shared.getArbiter(channelName: channelName)?.acquire()
+//        getArbiter().create()
         getArbiter().acquire()
         rtmManager.subscribeError(channelName: channelName, delegate: self)
         rtmManager.subscribeLock(channelName: channelName, lockName: kRTM_Referee_LockName, delegate: self)
@@ -139,13 +137,11 @@ public class AUIScene: NSObject {
             aui_benchmark("[Benchmark]rtm manager subscribe", cost: -(date.timeIntervalSinceNow), tag: kSceneTag)
             aui_info("enterRoom subscribe finished \(channelName) \(error?.localizedDescription ?? "")", tag: kSceneTag)
             self.subscribeSuccess = true
-            completion(nil, error)
         }
     }
     
     /// 离开scene
     public func leave() {
-//        AUIRoomContext.shared.getArbiter(channelName: channelName)?.release()
         getArbiter().release()
         cleanSDK()
     }
@@ -183,7 +179,7 @@ extension AUIScene {
         
         return arbiter
     }
-        
+    
     //如果subscribe成功、锁也获取到、用户列表也获取到，可以检查是否是脏房间并且清理
     private func checkRoomValid() {
         guard subscribeSuccess, lockRetrived, !ownerId.isEmpty else { return }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-@objcMembers open class AUIKickUserReqModel: SyncNetworkModel {
+@objcMembers open class SyncKickUserReqModel: SyncNetworkModel {
     
     public override init() {
         super.init()

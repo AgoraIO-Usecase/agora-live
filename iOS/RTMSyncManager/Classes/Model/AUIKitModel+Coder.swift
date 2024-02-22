@@ -23,8 +23,6 @@ extension AUIRoomInfo {
         let superMap = NSMutableDictionary()
         let map = [
             "roomName": "payload.roomName",
-            "thumbnail": "payload.roomThumbnail",
-            "seatCount": "payload.roomSeatCount",
             "muteAudio": "payload.isMuteAudio",
             "muteVideo": "payload.isMuteVideo",
             "owner": "payload.roomOwner",

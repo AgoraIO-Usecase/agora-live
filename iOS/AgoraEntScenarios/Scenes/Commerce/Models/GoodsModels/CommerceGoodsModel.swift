@@ -13,6 +13,14 @@ enum CommerceBuyStatus: Int {
     case buy = 1
     case sold_out = 2
     
+    
+    var title: String? {
+        switch self {
+        case .sold_out: return "Sold Out"
+        default: return "Buy"
+        }
+    }
+    
     var titleColor: UIColor? {
         switch self {
         case .buy: return UIColor(hex: "#191919", alpha: 1.0)
@@ -68,12 +76,48 @@ class CommerceGoodsModel: NSObject, YYModel {
     var title: String?
     var quantity: Int = 0
     var price: Float = 0
+    var goodsId: String? = UUID().uuidString
 }
 
 @objcMembers
-class CommerceGoodsBuyModel: NSObject {
+class CommerceGoodsBuyModel: NSObject, YYModel {
     var goods: CommerceGoodsModel?
     var status: CommerceBuyStatus = .idle
+    
+    static func createGoodsData() -> [CommerceGoodsBuyModel] {
+        var dataArray = [CommerceGoodsBuyModel]()
+        var buyModel = CommerceGoodsBuyModel()
+        var goodsModel = CommerceGoodsModel()
+        goodsModel.imageName = "commerce_shop_goods_0"
+        goodsModel.price = 20
+        goodsModel.quantity = 6
+        goodsModel.title = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
+        buyModel.goods = goodsModel
+        buyModel.status = .idle
+        dataArray.append(buyModel)
+        
+        buyModel = CommerceGoodsBuyModel()
+        goodsModel = CommerceGoodsModel()
+        goodsModel.imageName = "commerce_shop_goods_1"
+        goodsModel.price = 5
+        goodsModel.quantity = 0
+        goodsModel.title = "Meta Quest 2 - 128GB Holiday Bundle - Advanced All-In-One Virtual Reality Headset"
+        buyModel.goods = goodsModel
+        buyModel.status = .idle
+        dataArray.append(buyModel)
+        
+        buyModel = CommerceGoodsBuyModel()
+        goodsModel = CommerceGoodsModel()
+        goodsModel.imageName = "commerce_shop_goods_2"
+        goodsModel.price = 12
+        goodsModel.quantity = 6
+        goodsModel.title = "Meta Quest 2 - 128GB Holiday Bundle - Advanced All-In-One Virtual Reality Headset"
+        buyModel.goods = goodsModel
+        buyModel.status = .idle
+        dataArray.append(buyModel)
+        
+        return dataArray
+    }
 }
 
 @objcMembers

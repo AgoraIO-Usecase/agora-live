@@ -21,10 +21,19 @@ class CommerceGoodsListView: UIView {
         return tableView
     }()
     private var isBroadcaster: Bool = false
-    init(isBroadcaster: Bool) {
+    private var serviceImp: CommerceServiceProtocol?
+    private var roomId: String?
+    private lazy var goodsList = CommerceGoodsBuyModel.createGoodsData()
+    
+    init(isBroadcaster: Bool, serviceImp: CommerceServiceProtocol?, roomId: String?) {
         super.init(frame: .zero)
         self.isBroadcaster = isBroadcaster
+        self.serviceImp = serviceImp
+        self.roomId = roomId
         setupUI()
+        addGoodsList()
+        getGoodsList()
+        subscribeEventGoodsList()
     }
 
     required init?(coder: NSCoder) {
@@ -45,20 +54,81 @@ class CommerceGoodsListView: UIView {
         tableView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
+    
+    private func addGoodsList() {
+        guard isBroadcaster else { return }
+        serviceImp?.addGoodsList(roomId: roomId, goods: goodsList.compactMap({ $0.goods }), completion: { _ in })
+    }
+    
+    private func getGoodsList() {
+        guard !isBroadcaster else { return }
+        serviceImp?.getGoodsList(roomId: roomId, completion: { [weak self] error, res in
+            if error != nil {
+                commerceLogger.error("error == \(error?.localizedDescription ?? "")")
+                return
+            }
+            guard let list = res else { return }
+            self?.goodsList = list
+            self?.tableView.reloadData()
+        })
+    }
+    
+    private func updateGoodsInfo(goods: CommerceGoodsModel?) {
+        serviceImp?.updateGoodsInfo(roomId: roomId, goods: goods, completion: { _ in })
+    }
+    
+    private func subscribeEventGoodsList() {
+        serviceImp?.subscribeGoodsInfo(roomId: roomId, completion: { [weak self] error, res in
+            if error != nil {
+                commerceLogger.error("error == \(error?.localizedDescription ?? "")")
+                return
+            }
+            guard let list = res?.compactMap({ item in
+                let buyModel = CommerceGoodsBuyModel()
+                buyModel.goods = item
+                return buyModel
+            }) else { return }
+            self?.goodsList = list
+            self?.tableView.reloadData()
+        })
+    }
 }
 
 extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+        goodsList.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shoppingCell", for: indexPath) as! CommerceGoodsListViewCell
-        
+        let model = goodsList[indexPath.row]
+        cell.setShoppingData(model: model, isBroadcaster: isBroadcaster)
+        cell.onClickStatusButtonClosure = { [weak self] in
+            guard let self = self else { return }
+            var title = "Bought!"
+            if (model.goods?.quantity ?? 0) > 0 {
+                model.goods?.quantity -= 1
+                self.updateGoodsInfo(goods: model.goods)
+            } else {
+                title = "Sold Out!"
+            }
+            let alertVC = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "OK", style: .default)
+            alertVC.addAction(okAction)
+            UIViewController.cl_topViewController()?.present(alertVC, animated: true)
+        }
+        cell.onClickNumberButtonClosure = { [weak self] number in
+            guard let self = self else { return }
+            model.goods?.quantity = number
+            self.updateGoodsInfo(goods: model.goods )
+        }
         return cell
     }
 }
 
 class CommerceGoodsListViewCell: UITableViewCell {
+    var onClickStatusButtonClosure: (() -> Void)?
+    var onClickNumberButtonClosure: ((Int) -> Void)?
+    
     private lazy var coverImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage.sceneImage(name: ""))
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -97,15 +167,17 @@ class CommerceGoodsListViewCell: UITableViewCell {
         button.cornerRadius(20)
         button.backgroundColor = UIColor(hex: "#DFE1E6", alpha: 1.0)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(onClickStatusButton), for: .touchUpInside)
         return button
     }()
     private lazy var numberButton: CommerceNumberButton = {
         let button = CommerceNumberButton(frame: .zero)
-        button.minValue = 1
-        button.maxValue = 100
+        button.minValue = 0
+        button.maxValue = 99
         button.shakeAnimation = true
-        button.numberResult { number in
-            print(number)
+        button.numberResult { [weak self] number in
+            let qty = Int(number) ?? 0
+            self?.onClickNumberButtonClosure?(qty)
         }
         button.textField.textColor = UIColor(hex: "#191919", alpha: 1.0)
         button.textField.font = .systemFont(ofSize: 15)
@@ -137,10 +209,14 @@ class CommerceGoodsListViewCell: UITableViewCell {
         titleLabel.text = model.goods?.title
         numberLabel.text = "Qty: \(model.goods?.quantity ?? 0)"
         priceLabel.text = "$\(model.goods?.price ?? 0)"
+        model.status = (model.goods?.quantity ?? 0) <= 0 ? .sold_out : .buy
+        statusButton.setTitle(model.status.title, for: .normal)
         statusButton.setTitleColor(model.status.titleColor, for: .normal)
         statusButton.setBackgroundImage(createGradientImage(colors: model.status.backgroundColor), for: .normal)
+        statusButton.isUserInteractionEnabled = model.status != .sold_out
         statusButton.isHidden = isBroadcaster
         numberButton.isHidden = !isBroadcaster
+        numberButton.textField.text = "\(model.goods?.quantity ?? 0)"
     }
     
     private func setupUI() {
@@ -178,5 +254,10 @@ class CommerceGoodsListViewCell: UITableViewCell {
         numberButton.bottomAnchor.constraint(equalTo: priceLabel.bottomAnchor).isActive = true
         numberButton.widthAnchor.constraint(equalToConstant: 120).isActive = true
         numberButton.heightAnchor.constraint(equalToConstant: 36).isActive = true
+    }
+    
+    @objc
+    private func onClickStatusButton() {
+        onClickStatusButtonClosure?()
     }
 }

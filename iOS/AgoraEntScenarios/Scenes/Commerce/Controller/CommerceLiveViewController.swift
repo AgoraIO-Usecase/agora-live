@@ -121,6 +121,9 @@ class CommerceLiveViewController: UIViewController {
         }
         return view
     }()
+    private lazy var goodsListView = CommerceGoodsListView(isBroadcaster: role == .broadcaster,
+                                                           serviceImp: serviceImp,
+                                                           roomId: roomId)
     
     private lazy var realTimeView: CommerceRealTimeDataView = {
         let realTimeView = CommerceRealTimeDataView(isLocal: role == .broadcaster)
@@ -261,9 +264,9 @@ class CommerceLiveViewController: UIViewController {
         guard role == .broadcaster else { return }
         let auctionModel = CommerceGoodsAuctionModel()
         let goodsModel = CommerceGoodsModel()
-        goodsModel.imageName = "auction_usb_icon"
+        goodsModel.imageName = "commerce_shop_goods_0"
         goodsModel.title = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
-        goodsModel.price = 1
+        goodsModel.price = 10
         goodsModel.quantity = 1
         auctionModel.goods = goodsModel
         auctionModel.status = .idle
@@ -290,7 +293,7 @@ class CommerceLiveViewController: UIViewController {
             }
             guard let model = auctionModel else { return }
             self?.auctionView.setGoodsData(model: model, isBroadcaster: self?.role == .broadcaster)
-            if model.status == .completion {
+            if model.status == .completion && model.bidUser?.id != "" {
                 let resultView = CommerceAuctionResultView()
                 resultView.setBidGoods(model: model)
                 AlertManager.show(view: resultView)
@@ -568,7 +571,6 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
     }
     
     func onClickShoppingButton() {
-        let goodsListView = CommerceGoodsListView(isBroadcaster: role == .broadcaster)
         AlertManager.show(view: goodsListView, alertPostion: .bottom)
     }
     
