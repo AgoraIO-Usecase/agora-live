@@ -63,7 +63,15 @@ class ShowRoomLiveView: UIView {
         let countView = ShowRoomMembersCountView()
         return countView
     }()
-    
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.spacing = 10
+        stackView.axis = .horizontal
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
     private lazy var moreBtn: UIButton = {
         let button = UIButton()
         button.setImage(UIImage.show_sceneImage(name: "icon_live_more"), for: .normal)
@@ -148,23 +156,17 @@ class ShowRoomLiveView: UIView {
             make.left.equalTo(15)
         }
         
-        addSubview(closeButton)
-        closeButton.snp.makeConstraints { make in
-            make.right.equalTo(-15)
+        addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.right.equalToSuperview().offset(-15)
             make.centerY.equalTo(roomInfoView)
         }
-        
-        addSubview(moreBtn)
+        stackView.addArrangedSubview(countView)
+        stackView.addArrangedSubview(moreBtn)
+        stackView.addArrangedSubview(closeButton)
+        moreBtn.isHidden = isBroadcastor
         moreBtn.snp.makeConstraints { make in
-            make.trailing.equalTo(closeButton.snp_leadingMargin).offset(-18)
-            make.centerY.equalTo(closeButton.snp.centerY)
-            make.width.equalTo(24)
-        }
-        
-        addSubview(countView)
-        countView.snp.makeConstraints { make in
-            make.centerY.equalTo(roomInfoView)
-            make.right.equalTo(moreBtn.snp.left).offset(-10)
+            make.width.equalTo(20)
         }
         
         addSubview(tableView)
