@@ -37,9 +37,7 @@ extension UIView {
             return image
         }
         UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
-        guard let context = UIGraphicsGetCurrentContext() else {
-            return nil
-        }
+        guard let context = UIGraphicsGetCurrentContext() else { return nil }
         colors.first?.setFill()
         let rectanglePath = UIBezierPath(rect: CGRect(origin: .zero, size: size))
         rectanglePath.fill()

@@ -95,6 +95,9 @@ class RTMSyncUtil: NSObject {
     class func collection(id: String, key: String) -> AUIMapCollection? {
         scene(id: id)?.getCollection(key: key)
     }
+    class func listCollection(id: String, key: String) -> AUIListCollection? {
+        scene(id: id)?.getCollection(key: key)
+    }
     
     class func joinScene(id: String, 
                          ownerId: String,
@@ -193,11 +196,38 @@ class RTMSyncUtil: NSObject {
         })
     }
     
+    class func subscribeListAttributesDidChanged(id: String,
+                                                 key: String,
+                                                 changeClosure: ((_ channelName: String, _ object: AUIAttributesModel) -> Void)?) {
+        listCollection(id: id, key: key)?.subscribeAttributesDidChanged(callback: { channelName, key, object in
+            changeClosure?(channelName, object)
+        })
+    }
+    
     class func addMetaData(id: String,
                            key: String,
                            data: [String: Any],
                            callback: ((NSError?) -> Void)?) {
         collection(id: id, key: key)?.addMetaData(valueCmd: nil, value: data, filter: nil, callback: callback)
+    }
+    
+    class func addMetaData(id: String,
+                           key: String,
+                           data: [[String: Any]]?,
+                           callback: ((NSError?) -> Void)?) {
+        let group = DispatchGroup()
+        data?.forEach({
+            group.enter()
+            listCollection(id: id, key: key)?.addMetaData(valueCmd: nil, value: $0, filter: nil, callback: { error in
+                if error != nil {
+                    print("error == \(error?.localizedDescription ?? "")")
+                }
+                group.leave()
+            })
+        })
+        group.notify(queue: .main, work: DispatchWorkItem(block: {
+            callback?(nil)
+        }))
     }
     
     class func getMetaData(id: String,
@@ -208,11 +238,40 @@ class RTMSyncUtil: NSObject {
         })
     }
     
+    class func getListMetaData(id: String,
+                               key: String,
+                               callback: ((NSError?, Any?) -> Void)?) {
+        listCollection(id: id, key: key)?.getMetaData(callback: { error, result in
+            callback?(error, result)
+        })
+    }
+    
     class func updateMetaData(id: String,
                               key: String,
                               data: [String: Any],
                               callback: ((NSError?) -> Void)?) {
         collection(id: id, key: key)?.updateMetaData(valueCmd: nil, value: data, filter: nil, callback: callback)
+    }
+    
+    class func updateListMetaData(id: String,
+                                  key: String,
+                                  data: [String: Any],
+                                  filter: [[String: Any]]? = nil,
+                                  callback: ((NSError?) -> Void)?) {
+        listCollection(id: id, key: key)?.updateMetaData(valueCmd: nil, value: data, filter: filter, callback: callback)
+//        let group = DispatchGroup()
+//        data?.forEach({
+//            group.enter()
+//            listCollection(id: id, key: key)?.updateMetaData(valueCmd: nil, value: $0, filter: nil, callback: { error in
+//                if error != nil {
+//                    print("error == \(error?.localizedDescription ?? "")")
+//                }
+//                group.leave()
+//            })
+//        })
+//        group.notify(queue: .main, work: DispatchWorkItem(block: {
+//            callback?(nil)
+//        }))
     }
     
     class func mergeMetaData(id: String,

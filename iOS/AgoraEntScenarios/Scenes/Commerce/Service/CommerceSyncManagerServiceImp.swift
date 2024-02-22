@@ -305,12 +305,24 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         _updateBidGoodsInfo(roomId: roomId, goods: goods, completion: completion)
     }
     
-    func cleanBidGoodsInfo(roomId: String?, completion: @escaping (NSError?) -> Void) {
-        _cleanBidGoodsInfo(roomId: roomId, completion: completion)
-    }
-    
     func subscribeBidGoodsInfo(roomId: String?, completion: @escaping (NSError?, CommerceGoodsAuctionModel?) -> Void) {
         _subscribeBidGoodsInfo(roomId: roomId, completion: completion)
+    }
+    
+    func addGoodsList(roomId: String?, goods: [CommerceGoodsModel]?, completion: @escaping (NSError?) -> Void) {
+        _addGoodsList(roomId: roomId, goods: goods, completion: completion)
+    }
+    
+    func getGoodsList(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsBuyModel]?) -> Void) {
+        _getGoodsList(roomId: roomId, completion: completion)
+    }
+    
+    func updateGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, completion: @escaping (NSError?) -> Void) {
+        _updateGoodsInfo(roomId: roomId, goods: goods, completion: completion)
+    }
+    
+    func subscribeGoodsInfo(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsModel]?) -> Void) {
+        _subscribeGoodsInfo(roomId: roomId, completion: completion)
     }
     
     func unsubscribeEvent(delegate: CommerceSubscribeServiceProtocol) {
@@ -435,11 +447,6 @@ extension CommerceSyncManagerServiceImp {
         RTMSyncUtil.updateMetaData(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION, data: params, callback: completion)
     }
     
-    private func _cleanBidGoodsInfo(roomId: String?, completion: @escaping (NSError?) -> Void) {
-        guard let channelName = roomId else { return }
-        RTMSyncUtil.cleanMetaData(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION, callback: completion)
-    }
-    
     private func _subscribeBidGoodsInfo(roomId: String?, completion: @escaping (NSError?, CommerceGoodsAuctionModel?) -> Void) {
         guard let channelName = roomId else {
             completion(NSError(domain: "roomId is empty", code: 0), nil)
@@ -449,6 +456,64 @@ extension CommerceSyncManagerServiceImp {
             guard let res = object.getMap() else { return }
             let auctionModel = CommerceGoodsAuctionModel.yy_model(with: res)
             completion(nil, auctionModel)
+        }
+    }
+}
+
+//MARK: Goods operation
+extension CommerceSyncManagerServiceImp {
+    private func _addGoodsList(roomId: String?, goods: [CommerceGoodsModel]?, completion: @escaping (NSError?) -> Void) {
+        guard let channelName = roomId else {
+            completion(NSError(domain: "roomId is empty", code: 0))
+            return
+        }
+        let jsonArray = goods?.compactMap({ $0.yy_modelToJSONObject() as? [String: Any] })
+        RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_BUY_GOODS_COLLECTION, data: jsonArray) { _ in }
+    }
+    
+    private func _getGoodsList(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsBuyModel]?) -> Void) {
+        guard let channelName = roomId else {
+            completion(NSError(domain: "roomId is empty", code: 0), nil)
+            return
+        }
+        RTMSyncUtil.getListMetaData(id: channelName, key: SYNC_MANAGER_BUY_GOODS_COLLECTION) { error, res in
+            if error != nil {
+                completion(error, nil)
+                return
+            }
+            agoraPrint("imp goods get success...")
+            guard let res = res as? [[String: Any]]? else { return }
+            let listModel = res?.compactMap({ item in
+                let model = CommerceGoodsBuyModel()
+                let goodsModel = CommerceGoodsModel.yy_model(withJSON: item)
+                model.goods = goodsModel
+                return model
+            })
+            completion(nil, listModel)
+        }
+    }
+    
+    private func _updateGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, completion: @escaping (NSError?) -> Void) {
+        guard let channelName = roomId, let params = goods?.yy_modelToJSONObject() as? [String: Any] else {
+            completion(NSError(domain: "roomId is empty", code: 0))
+            return
+        }
+        RTMSyncUtil.updateListMetaData(id: channelName, 
+                                       key: SYNC_MANAGER_BUY_GOODS_COLLECTION,
+                                       data: params,
+                                       filter: [["goodsId": goods?.goodsId ?? ""]],
+                                       callback: completion)
+    }
+    
+    private func _subscribeGoodsInfo(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsModel]?) -> Void) {
+        guard let channelName = roomId else {
+            completion(NSError(domain: "roomId is empty", code: 0), nil)
+            return
+        }
+        RTMSyncUtil.subscribeListAttributesDidChanged(id: channelName, key: SYNC_MANAGER_BUY_GOODS_COLLECTION) { channelName, object in
+            guard let res = object.getList() else { return }
+            let models = res.compactMap({ CommerceGoodsModel.yy_model(with: $0) })
+            completion(nil, models)
         }
     }
 }

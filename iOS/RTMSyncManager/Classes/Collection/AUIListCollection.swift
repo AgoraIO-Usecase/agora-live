@@ -23,8 +23,11 @@ extension AUIListCollection {
                                 value: [String: Any],
                                 filter: [[String: Any]]?,
                                 callback: ((NSError?)->())?) {
-        if let _ = getItemIndexes(array: currentList, filter: filter) {
-            callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmAddMetaData: '\(filter ?? [])'"))
+        //如果filter空，默认无条件写入，如果有filter，判断条件
+        if let filter = filter,
+           filter.isEmpty == false,
+           let _ = getItemIndexes(array: currentList, filter: filter) {
+            callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmAddMetaData: '\(filter)'"))
             return
         }
         if let err = self.metadataWillAddClosure?(publisherId, valueCmd, value) {
@@ -60,6 +63,7 @@ extension AUIListCollection {
                                 value: [String: Any],
                                 filter: [[String: Any]]?,
                                 callback: ((NSError?)->())?) {
+        //如果没有filter，默认每条记录都修改
         guard let itemIndexes = getItemIndexes(array: currentList, filter: filter) else {
             callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmSetMetaData: '\(filter ?? [])'"))
             return
@@ -106,6 +110,7 @@ extension AUIListCollection {
                                   value: [String: Any],
                                   filter: [[String: Any]]?,
                                   callback: ((NSError?)->())?) {
+        //如果没有filter，默认每条记录都修改
         guard let itemIndexes = getItemIndexes(array: currentList, filter: filter) else {
             callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmMergeMetaData: '\(filter ?? [])'"))
             return
@@ -149,6 +154,7 @@ extension AUIListCollection {
                                    valueCmd: String?,
                                    filter: [[String: Any]]?,
                                    callback: ((NSError?)->())?) {
+        //如果没有filter，默认删除所有
         guard let itemIndexes = getItemIndexes(array: currentList, filter: filter) else {
             callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmRemoveMetaData: '\(filter ?? [])'"))
             return
@@ -194,6 +200,7 @@ extension AUIListCollection {
                                       callback: ((NSError?)->())?) {
         //TODO: will calculate?
         
+        //如果没有filter，默认每条记录都修改
         guard let itemIndexes = getItemIndexes(array: currentList, filter: filter) else {
             callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmCalculateMetaData: '\(filter ?? [])'"))
             return

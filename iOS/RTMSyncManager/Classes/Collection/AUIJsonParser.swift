@@ -68,7 +68,7 @@ public func decodeToJsonObj(_ jsonStr: String) -> Any? {
 }
 
 public func encodeToJsonData(_ jsonObj: Any?) -> Data? {
-    guard let jsonObj = jsonObj as? [String: Any],
+    guard let jsonObj = jsonObj,
           let data = try? JSONSerialization.data(withJSONObject: jsonObj, options: .prettyPrinted) else {
         return nil
     }
