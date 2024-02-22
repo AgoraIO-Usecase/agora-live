@@ -158,7 +158,24 @@ class CommerceCreateLiveView: UIView {
             make.height.equalTo(btnHeight)
         }
         
-        layoutButtonArray()
+        let cameraButton = createButton(imgName: "show_create_camera", title: "create_button_switch".commerce_localized)
+        cameraButton.addTarget(self, action: #selector(didClickCameraButton), for: .touchUpInside)
+        
+        let settingButton = createButton(imgName: "show_setting", title: "create_button_settings".commerce_localized)
+        settingButton.addTarget(self, action: #selector(didClickSettingButton), for: .touchUpInside)
+        
+        let buttonArray = [cameraButton, settingButton]
+        
+        let stackView = UIStackView(arrangedSubviews: buttonArray)
+        stackView.spacing = 25
+        stackView.alignment = .fill
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        coverView.addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(tipsLabel.snp.top).offset(-20)
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -184,27 +201,6 @@ class CommerceCreateLiveView: UIView {
             make.top.equalTo(imageView.snp.bottom).offset(3)
         }
         return button
-    }
-    
-    private func layoutButtonArray(){
-        let cameraButton = createButton(imgName: "show_create_camera", title: "create_button_switch".commerce_localized)
-        cameraButton.addTarget(self, action: #selector(didClickCameraButton), for: .touchUpInside)
-        
-        let settingButton = createButton(imgName: "show_setting", title: "create_button_settings".commerce_localized)
-        settingButton.addTarget(self, action: #selector(didClickSettingButton), for: .touchUpInside)
-        
-        let buttonArray = [cameraButton, settingButton]
-        
-        let stackView = UIStackView(arrangedSubviews: buttonArray)
-        stackView.spacing = 25
-        stackView.alignment = .fill
-        stackView.axis = .horizontal
-        stackView.distribution = .fill
-        coverView.addSubview(stackView)
-        stackView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-174)
-        }
     }
 }
 
