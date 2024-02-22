@@ -1,17 +1,14 @@
 package io.agora.scene.eCommerce.shop
 
 import android.graphics.Color
-import android.icu.util.TimeUnit
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
-import io.agora.scene.base.GlideApp
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.eCommerce.R
@@ -19,15 +16,18 @@ import io.agora.scene.eCommerce.databinding.CommerceShopAuctionFragmentBinding
 import io.agora.scene.eCommerce.service.*
 import io.agora.scene.widget.utils.CenterCropRoundCornerTransform
 
-class LiveAuctionFragment: Fragment() {
+class LiveAuctionFragment(
+    private val roomId: String
+): Fragment() {
 
     private val tag = "LiveAuctionFragment"
 
+    private val kAuctionInterval = 1*60*1000
+
     private lateinit var binding: CommerceShopAuctionFragmentBinding
 
-    private lateinit var mRoomId: String
     private val mService by lazy { ShowServiceProtocol.getImplInstance() }
-    private lateinit var mRoomInfo: AUIRoomInfo
+
     private var isRoomOwner = false
 
     private var data: AuctionModel? = null
@@ -42,17 +42,18 @@ class LiveAuctionFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
+        setupAuction()
+    }
+
+    private fun setupAuction() {
+        val roomInfo = mService.getRoomInfo(roomId) ?: AUIRoomInfo()
+        isRoomOwner = roomInfo.ownerId == UserManager.getInstance().user.id.toInt()
         idleAuctionStatus()
     }
 
-    fun setRoomId(roomId: String) {
-        mRoomId = roomId
-        mRoomInfo = mService.getRoomInfo(roomId) ?: AUIRoomInfo()
-        isRoomOwner = mRoomInfo.ownerId == UserManager.getInstance().user.id.toInt()
-        mService.subscribeAuction(roomId) { auctionModel ->
-            data = auctionModel
-            updateAuctionStatus()
-        }
+    fun updateAuction(auctionModel: AuctionModel) {
+        data = auctionModel
+        updateAuctionStatus()
     }
 
     private fun updateAuctionStatus() {
@@ -60,14 +61,11 @@ class LiveAuctionFragment: Fragment() {
             idleAuctionStatus()
             return
         }
-        val startTS = auctionModel.timestamp?.toLongOrNull()
-        if (startTS != null) {
-            val interval = TimeUtils.currentTimeMillis() - startTS
-            if (interval < 3*60*1000) {
-                inProgressAuctionStatus(interval)
-            } else {
-                idleAuctionStatus()
-            }
+        val startTS = auctionModel.timestamp.toLong()
+        val interval = TimeUtils.currentTimeMillis() - startTS
+        if (interval < kAuctionInterval) {
+            val rest = kAuctionInterval - interval
+            inProgressAuctionStatus(rest)
         } else {
             idleAuctionStatus()
         }
@@ -75,6 +73,9 @@ class LiveAuctionFragment: Fragment() {
 
     private fun idleAuctionStatus() {
         binding.tvCountDown.visibility = View.INVISIBLE
+        binding.ivBuyerAvatar.visibility = View.INVISIBLE
+        binding.tvBuyerName.visibility = View.INVISIBLE
+        binding.tvPrice.text = getString(R.string.commerce_shop_auction_price, "1")
         if (isRoomOwner) {
             binding.btnStart.visibility = View.VISIBLE
             binding.btnBid.visibility = View.GONE
@@ -83,7 +84,7 @@ class LiveAuctionFragment: Fragment() {
             binding.tvCountDown.visibility = View.GONE
             binding.btnBid.visibility = View.VISIBLE
             binding.btnBid.isEnabled = true
-            binding.btnBid.setBackgroundResource(R.drawable.commerce_corner_radius_gray)
+            binding.btnBid.setBackgroundResource(R.drawable.commerce_corner_radius_40white)
             binding.btnBid.text = getString(R.string.commerce_shop_auction_not_start)
             binding.btnBid.setTextColor(Color.parseColor("#FFFFFF"))
         }
@@ -96,17 +97,9 @@ class LiveAuctionFragment: Fragment() {
             binding.btnStart.visibility = View.INVISIBLE
             binding.btnBid.visibility = View.GONE
         } else {
-            binding.tvBid.text = "$${auctionModel.bid}"
-            Glide.with(this)
-                .load(auctionModel.bidUser?.getAvatarFullUrl())
-                .error(R.drawable.commerce_default_avatar)
-                .into(binding.ivBuyerAvatar)
-//            .transform(CenterCropRoundCornerTransform(10))
-            binding.tvBuyerName.text = auctionModel.bidUser?.userName
             // bid button
             if (auctionModel.bidUser?.userId == UserManager.getInstance().user.id.toString()) {
                 // leading bidder
-                binding.tvBuyerName.text = getString(R.string.commerce_shop_auction_you_leading)
                 binding.btnBid.isEnabled = false
                 binding.btnBid.text = getString(R.string.commerce_shop_auction_leading_bidder)
                 binding.btnBid.setBackgroundResource(R.drawable.commerce_corner_radius_blue)
@@ -115,9 +108,38 @@ class LiveAuctionFragment: Fragment() {
                 binding.btnBid.isEnabled = true
                 binding.btnBid.visibility = View.VISIBLE
                 binding.btnBid.setBackgroundResource(R.drawable.commerce_corner_radius_gradient_orange)
-                binding.btnBid.text = getString(R.string.commerce_shop_auction_bid, "${auctionModel.bid}")
                 binding.btnBid.setTextColor(Color.parseColor("#191919"))
+                if (auctionModel.bidUser?.userId?.isNotEmpty() == true) {
+                    binding.btnBid.text = getString(R.string.commerce_shop_auction_bid, "${auctionModel.bid}")
+                } else {
+                    binding.btnBid.text = getString(R.string.commerce_shop_auction_bid, "${auctionModel.bid + 1}")
+                }
             }
+        }
+        // bid user
+        val bidUser = auctionModel.bidUser
+        if (bidUser != null && bidUser.userId.isNotEmpty()) {
+            binding.tvBidStatus.text = getString(R.string.commerce_shop_auction_current_bid)
+            binding.tvPrice.text = getString(R.string.commerce_shop_auction_price, "${auctionModel.bid}")
+            binding.ivBuyerAvatar.visibility = View.VISIBLE
+            binding.tvBuyerName.visibility = View.VISIBLE
+            Glide.with(this)
+                .load(bidUser.getAvatarFullUrl())
+                .error(R.drawable.commerce_default_avatar)
+                .transform(CenterCropRoundCornerTransform(8))
+                .into(binding.ivBuyerAvatar)
+            if (bidUser.userId == UserManager.getInstance().user.id.toString()) {
+                // leading bidder
+                binding.tvBuyerName.text = getString(R.string.commerce_shop_auction_you_leading)
+            } else {
+                val buyer = (bidUser.userName.firstOrNull() ?: "*").toString() + "**"
+                binding.tvBuyerName.text = buyer
+            }
+        } else {
+            binding.tvBidStatus.text = getString(R.string.commerce_shop_auction_start_from)
+            binding.tvPrice.text = getString(R.string.commerce_shop_auction_price, "${auctionModel.bid + 1}")
+            binding.ivBuyerAvatar.visibility = View.INVISIBLE
+            binding.tvBuyerName.visibility = View.INVISIBLE
         }
         // timer
         if (countDownTimer == null) {
@@ -128,24 +150,30 @@ class LiveAuctionFragment: Fragment() {
                 override fun onFinish() {
                     onAuctionFinish()
                 }
-            }
-            countDownTimer?.start()
+            }.start()
         }
     }
 
     private fun onAuctionFinish() {
+        mService.auctionFinish(roomId)
+        countDownTimer?.cancel()
+        countDownTimer = null
         // show dialog
-        context?.let {
-            AuctionResultDialog(it).show()
+        val bidUser = data?.bidUser
+        if (bidUser != null && bidUser.userId.isNotEmpty()) {
+            context?.let {
+                AuctionResultDialog(it, bidUser).show()
+            }
         }
     }
 
     private fun setupView() {
         binding.btnStart.setOnClickListener {
-            mService.startAuction(mRoomId)
+            mService.auctionStart(roomId)
         }
         binding.btnBid.setOnClickListener {
-            mService.bidding(mRoomId)
+            val bid = data?.bid ?: 0
+            mService.auctionBidding(roomId, (bid + 1))
         }
     }
 

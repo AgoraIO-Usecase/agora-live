@@ -127,6 +127,8 @@ class LiveDetailFragment : Fragment() {
      * M setting dialog
      */
     private val mSettingDialog by lazy { SettingDialog(requireContext()) }
+
+    private lateinit var auctionFragment: LiveAuctionFragment
     /**
      * M rtc engine
      */
@@ -487,15 +489,14 @@ class LiveDetailFragment : Fragment() {
     }
     /** 拍卖 */
     private fun initAuctionLayout() {
-        val liveAuctionFragment = LiveAuctionFragment()
+        auctionFragment = LiveAuctionFragment(mRoomId)
         val transaction = childFragmentManager.beginTransaction()
-        transaction.add(R.id.flAuction, liveAuctionFragment)
+        transaction.add(R.id.flAuction, auctionFragment)
         transaction.commit()
         val layoutParams = mBinding.flAuction.layoutParams
         if (isRoomOwner) {
             layoutParams.height = UiUtil.dp2px(88)
             mBinding.flAuction.setBackgroundResource(R.drawable.commerce_auction_bg_owner)
-            liveAuctionFragment.setRoomId(mRoomId)
         } else {
             layoutParams.height = UiUtil.dp2px(140)
             mBinding.flAuction.setBackgroundResource(R.drawable.commerce_auction_bg_user)
@@ -704,7 +705,7 @@ class LiveDetailFragment : Fragment() {
 
     private fun goodsListDialog() {
         val context = this.context ?: return
-        GoodsListDialog(context).show()
+        GoodsListDialog(context, mRoomId).show()
     }
     /**
      * Show setting dialog
@@ -830,11 +831,19 @@ class LiveDetailFragment : Fragment() {
      *
      */
     private fun initService() {
+        mService.subscribeCurrRoomEvent(mRoomId) {
+            destroy(false)
+            showLivingEndLayout()
+            ShowLogger.d("showLivingEndLayout","room delete by owner!")
+        }
         mService.subscribeMessage(mRoomInfo.roomId) { showMessage ->
             insertMessageItem(showMessage)
         }
         mService.subscribeUser(mRoomInfo.roomId) { list ->
             refreshTopUserCount(list.size)
+        }
+        mService.auctionSubscribe(mRoomId) { auctionModel ->
+            auctionFragment.updateAuction(auctionModel)
         }
     }
 

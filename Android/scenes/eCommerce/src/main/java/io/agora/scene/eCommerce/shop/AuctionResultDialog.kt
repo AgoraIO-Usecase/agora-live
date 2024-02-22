@@ -4,10 +4,16 @@ import android.app.Dialog
 import android.content.Context
 import android.os.CountDownTimer
 import android.view.LayoutInflater
+import com.bumptech.glide.Glide
 import io.agora.scene.eCommerce.R
 import io.agora.scene.eCommerce.databinding.CommerceShopAuctionResultDialogBinding
+import io.agora.scene.eCommerce.service.ShowUser
+import io.agora.scene.widget.utils.CenterCropRoundCornerTransform
 
-class AuctionResultDialog constructor(context: Context) : Dialog(context, R.style.commerce_alert_dialog) {
+class AuctionResultDialog constructor(
+    context: Context,
+    private val user: ShowUser
+) : Dialog(context, R.style.commerce_alert_dialog) {
 
     private val TAG = "AuctionResultDialog"
 
@@ -21,6 +27,12 @@ class AuctionResultDialog constructor(context: Context) : Dialog(context, R.styl
     }
 
     private fun setupView() {
+        Glide.with(context)
+            .load(user.getAvatarFullUrl())
+            .error(R.drawable.commerce_default_avatar)
+            .transform(CenterCropRoundCornerTransform(28))
+            .into(binding.ivAvatar)
+        binding.tvUserName.text = user.userName
         binding.btnClose.setOnClickListener {
             finish()
         }

@@ -81,18 +81,20 @@ interface ShowServiceProtocol {
 
     fun deleteRoom(roomId: String, complete: () -> Unit)
 
+    fun subscribeCurrRoomEvent(roomId: String, onUpdate: () -> Unit)
+
     fun subscribeUser(roomId: String, onChange: (List<ShowUser>) -> Unit)
 
     /** Bid Actions */
-    fun subscribeAuction(roomId: String, onChange: (AuctionModel) -> Unit)
-    fun startAuction(roomId: String)
-    fun bidding(roomId: String)
-    fun finishAuction(roomId: String)
+    fun auctionSubscribe(roomId: String, onChange: (AuctionModel) -> Unit)
+    fun auctionStart(roomId: String)
+    fun auctionBidding(roomId: String, value: Int)
+    fun auctionFinish(roomId: String)
 
     /** Shop Actions */
-    fun subscribeShop(roomId: String, onChange: (List<GoodsModel>) -> Unit)
-    fun buyItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit)
-    fun updateRemain(roomId: String, itemId: String, count: UInt)
+    fun shopSubscribe(roomId: String, onChange: (List<GoodsModel>) -> Unit)
+    fun shopBuyItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit)
+    fun shopUpdateItem(roomId: String, itemId: String, count: Int)
 
     /** Chat Message Actions */
     fun sendChatMessage(roomId: String, message: String, success: (() -> Unit)? = null, error: ((Exception) -> Unit)? = null)

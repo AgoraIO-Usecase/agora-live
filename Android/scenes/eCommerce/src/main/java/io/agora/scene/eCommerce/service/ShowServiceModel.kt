@@ -52,8 +52,8 @@ enum class AuctionStatus(value: Int) {
 }
 data class AuctionModel constructor(
     var bidUser: ShowUser? = null,
-    var timestamp: String? = null,
-    val bid: Int = 0,
+    var timestamp: String = "0",
+    var bid: Int = 0,
     val status: Int = 0
 )
 
