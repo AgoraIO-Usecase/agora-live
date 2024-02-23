@@ -272,8 +272,8 @@ extension ShowLivePagesViewController: UICollectionViewDelegate, UICollectionVie
         
         //refresh visibleCell canvas after scroll to prevent adjacent rooms of pk from causing no display of images
         showLogger.info("updateRemoteCavans: \(currentVC?.room?.roomId ?? "")", context: kPagesVCTag)
-        let currentVC = visibleCell?.contentView.viewWithTag(kShowLiveRoomViewTag)?.next as? ShowLiveViewController
-        currentVC?.updateRemoteCavans()
+//        let currentVC = visibleCell?.contentView.viewWithTag(kShowLiveRoomViewTag)?.next as? ShowLiveViewController
+//        currentVC?.updateRemoteCavans()
     }
 }
 
