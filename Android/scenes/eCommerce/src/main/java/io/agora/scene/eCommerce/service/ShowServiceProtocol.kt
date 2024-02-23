@@ -83,13 +83,13 @@ interface ShowServiceProtocol {
 
     fun subscribeCurrRoomEvent(roomId: String, onUpdate: () -> Unit)
 
-    fun subscribeUser(roomId: String, onChange: (List<ShowUser>) -> Unit)
+    fun subscribeUser(roomId: String, onChange: (count: Int) -> Unit)
 
     /** Bid Actions */
     fun auctionSubscribe(roomId: String, onChange: (AuctionModel) -> Unit)
     fun auctionStart(roomId: String)
     fun auctionBidding(roomId: String, value: Int)
-    fun auctionFinish(roomId: String)
+    fun auctionReset(roomId: String)
 
     /** Shop Actions */
     fun shopSubscribe(roomId: String, onChange: (List<GoodsModel>) -> Unit)

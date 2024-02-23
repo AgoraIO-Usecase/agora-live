@@ -155,7 +155,6 @@ class LiveAuctionFragment(
     }
 
     private fun onAuctionFinish() {
-        mService.auctionFinish(roomId)
         countDownTimer?.cancel()
         countDownTimer = null
         // show dialog
@@ -164,6 +163,9 @@ class LiveAuctionFragment(
             context?.let {
                 AuctionResultDialog(it, bidUser).show()
             }
+        }
+        if (isRoomOwner) {
+            mService.auctionReset(roomId)
         }
     }
 

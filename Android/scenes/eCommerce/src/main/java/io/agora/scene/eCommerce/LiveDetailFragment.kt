@@ -812,8 +812,8 @@ class LiveDetailFragment : Fragment() {
     private fun initServiceWithJoinRoom() {
         mService.joinRoom(mRoomInfo,
             success = {
-                mService.sendChatMessage(mRoomInfo.roomId, getString(R.string.commerce_live_chat_coming))
                 initService()
+                mService.sendChatMessage(mRoomInfo.roomId, getString(R.string.commerce_live_chat_coming))
             },
             error = { e ->
                 if ((e as? RoomException)?.currRoomNo == mRoomInfo.roomId) {
@@ -839,8 +839,8 @@ class LiveDetailFragment : Fragment() {
         mService.subscribeMessage(mRoomInfo.roomId) { showMessage ->
             insertMessageItem(showMessage)
         }
-        mService.subscribeUser(mRoomInfo.roomId) { list ->
-            refreshTopUserCount(list.size)
+        mService.subscribeUser(mRoomInfo.roomId) { count ->
+            refreshTopUserCount(count)
         }
         mService.auctionSubscribe(mRoomId) { auctionModel ->
             auctionFragment.updateAuction(auctionModel)

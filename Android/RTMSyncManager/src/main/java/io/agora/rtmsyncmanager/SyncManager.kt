@@ -13,7 +13,7 @@ class SyncManager constructor(
     private val rtmClient: RtmClient? = null,
     private val commonConfig: AUICommonConfig
 ) {
-    private var rtmManager: AUIRtmManager
+    var rtmManager: AUIRtmManager
     private var sceneMap = mutableMapOf<String, Scene>()
 
     init {

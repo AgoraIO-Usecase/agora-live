@@ -35,7 +35,22 @@ class Scene constructor(
     private var collectionMap = mutableMapOf<String, IAUICollection>()
 
     public val userService = AUIUserServiceImpl(channelName, rtmManager).apply {
-        registerRespObserver(userRespObserver)
+        registerRespObserver(object: IAUIUserService.AUIUserRespObserver {
+            override fun onRoomUserSnapshot(roomId: String, userList: List<AUIUserInfo?>?) {
+                userSnapshotList = userList
+            }
+            override fun onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {}
+            override fun onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
+                if (AUIRoomContext.shared().isRoomOwner(roomId, userInfo.userId)) else {
+                    cleanUserInfo(userInfo.userId)
+                    return
+                }
+                cleanScene()
+            }
+            override fun onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {}
+            override fun onUserAudioMute(userId: String, mute: Boolean) {}
+            override fun onUserVideoMute(userId: String, mute: Boolean) {}
+        })
     }
 
     private val roomCollection: AUIMapCollection by lazy {
@@ -233,28 +248,6 @@ class Scene constructor(
 
         override fun onReleaseLock(channelName: String, lockName: String, lockOwner: String) {
         }
-    }
-
-    private val userRespObserver = object: IAUIUserService.AUIUserRespObserver {
-        override fun onRoomUserSnapshot(roomId: String, userList: List<AUIUserInfo?>?) {
-            userSnapshotList = userList
-        }
-
-        override fun onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {}
-
-        override fun onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
-            if (AUIRoomContext.shared().isRoomOwner(roomId, userInfo.userId)) else {
-                cleanUserInfo(userInfo.userId)
-                return
-            }
-            cleanScene()
-        }
-
-        override fun onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {}
-
-        override fun onUserAudioMute(userId: String, mute: Boolean) {}
-
-        override fun onUserVideoMute(userId: String, mute: Boolean) {}
     }
 
     private val errorRespObserver = object: AUIRtmErrorRespObserver {
