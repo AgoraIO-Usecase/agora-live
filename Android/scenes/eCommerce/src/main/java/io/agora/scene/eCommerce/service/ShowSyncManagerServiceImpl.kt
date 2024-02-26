@@ -325,8 +325,9 @@ class ShowSyncManagerServiceImpl constructor(
         controller.userChangeSubscriber = null
         controller.auctionChangeSubscriber = null
         controller.shopChangeSubscriber = null
+        controller.roomChangeSubscriber = null
+        controller.messageChangeSubscriber = null
     }
-
     private fun actionSubscribe(controller: RoomInfoController) {
         controller.shopCollection = controller.scene.getCollection(kCollectionIdBuy) { a, b, c ->
             AUIListCollection(a, b, c)

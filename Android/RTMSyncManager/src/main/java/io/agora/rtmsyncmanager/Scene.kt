@@ -184,13 +184,13 @@ class Scene constructor(
     /// 获取一个collection，例如let collection: AUIMapCollection = scene.getCollection("musicList")
     /// - Parameter sceneKey: <#sceneKey description#>
     /// - Returns: <#description#>
-    fun <T : IAUICollection>getCollection(sceneKey: String, create: ((String, String, AUIRtmManager) -> T) ): T {
-        val collection = collectionMap[sceneKey]
+    fun <T : IAUICollection>getCollection(key: String, create: ((String, String, AUIRtmManager) -> T) ): T {
+        val collection = collectionMap[key]
         if (collection != null) {
             return collection as T
         }
-        val scene = create.invoke(channelName, sceneKey, rtmManager)
-        collectionMap[sceneKey] = scene
+        val scene = create.invoke(channelName, key, rtmManager)
+        collectionMap[key] = scene
         return scene
     }
     private fun getArbiter(): AUIArbiter {
@@ -210,7 +210,7 @@ class Scene constructor(
             enterRoomCompletion = null
         }
         val userList = userSnapshotList ?: return
-        if (userList.firstOrNull { AUIRoomContext.shared().isRoomOwner(channelName, it?.userId) } != null) {
+        if (userList.firstOrNull { AUIRoomContext.shared().isRoomOwner(channelName, it?.userId) } == null) {
             //room owner not found, clean room
             cleanScene()
             return
@@ -243,6 +243,7 @@ class Scene constructor(
 
     private val lockRespObserver = object: AUIRtmLockRespObserver {
         override fun onReceiveLock(channelName: String, lockName: String, lockOwner: String) {
+            if (lockOwner.isEmpty()) {return}
             lockRetrived = true
         }
 

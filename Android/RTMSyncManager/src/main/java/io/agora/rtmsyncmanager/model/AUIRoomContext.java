@@ -52,11 +52,9 @@ public class AUIRoomContext {
     }
 
     public boolean isRoomOwner(String channelName, String userId){
-        AUIRoomInfo roomInfo = roomInfoMap.get(channelName);
-        if(roomInfo == null || roomInfo.owner == null){
-            return false;
-        }
-        return roomInfo.owner.userId.equals(userId);
+        String roomOwnerId = roomOwnerMap.get(channelName);
+        if (roomOwnerId == null || userId == null) {return false;}
+        return roomOwnerId.equals(userId);
     }
 
     public void resetRoomMap(@Nullable List<AUIRoomInfo> roomInfoList) {
@@ -76,6 +74,7 @@ public class AUIRoomContext {
     public void cleanRoom(String channelName){
         roomInfoMap.remove(channelName);
         roomConfigMap.remove(channelName);
+        roomOwnerMap.remove(channelName);
         AUIArbiter auiArbiter = roomArbiterMap.remove(channelName);
         if(auiArbiter != null){
             auiArbiter.deInit();
