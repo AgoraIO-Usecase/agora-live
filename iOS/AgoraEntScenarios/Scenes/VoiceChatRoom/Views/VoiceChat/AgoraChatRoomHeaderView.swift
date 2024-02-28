@@ -410,13 +410,13 @@ class AgoraChatRoomHeaderView: UIView {
                     if let img: UIImage = UIImage(data: data) {
                         completion(img)
                     } else {
-                        completion(nil)
+                        completion(UIImage(named: url))
                     }
                 } else {
-                    completion(nil)
+                    completion(UIImage(named: url))
                 }
             } else {
-                completion(nil)
+                completion(UIImage(named: url))
             }
         }
     }
