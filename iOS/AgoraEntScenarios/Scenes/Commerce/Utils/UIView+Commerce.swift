@@ -21,6 +21,9 @@ extension UIView {
     }
     
     func createGradientImage(colors: [UIColor]) -> UIImage? {
+        if bounds.size == .zero {
+            layoutIfNeeded()
+        }
         if colors.count > 1 {
             let view = UIView(frame: bounds)
             let gradientLayer = CAGradientLayer()

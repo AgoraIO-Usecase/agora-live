@@ -23,7 +23,6 @@
 		A84C2D0F2B4FB01700D6EFCF /* CommerceAgoraKitManager+DebugSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2C972B4FB01700D6EFCF /* CommerceAgoraKitManager+DebugSetting.swift */; };
 		A84C2D102B4FB01700D6EFCF /* CommerceGoodsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2C992B4FB01700D6EFCF /* CommerceGoodsModel.swift */; };
 		A84C2D112B4FB01700D6EFCF /* CommerceAgoraKitManager+Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2C9A2B4FB01700D6EFCF /* CommerceAgoraKitManager+Setting.swift */; };
-		A84C2D122B4FB01700D6EFCF /* CommerceChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2C9B2B4FB01700D6EFCF /* CommerceChatModel.swift */; };
 		A84C2D132B4FB01700D6EFCF /* CommerceDebug2TFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2C9D2B4FB01700D6EFCF /* CommerceDebug2TFModel.swift */; };
 		A84C2D142B4FB01700D6EFCF /* CommerceSettingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2C9E2B4FB01700D6EFCF /* CommerceSettingKey.swift */; };
 		A84C2D152B4FB01700D6EFCF /* CommerceDebugPrivateParamsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2C9F2B4FB01700D6EFCF /* CommerceDebugPrivateParamsVC.swift */; };
@@ -553,7 +552,6 @@
 		A84C2C972B4FB01700D6EFCF /* CommerceAgoraKitManager+DebugSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommerceAgoraKitManager+DebugSetting.swift"; sourceTree = "<group>"; };
 		A84C2C992B4FB01700D6EFCF /* CommerceGoodsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceGoodsModel.swift; sourceTree = "<group>"; };
 		A84C2C9A2B4FB01700D6EFCF /* CommerceAgoraKitManager+Setting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommerceAgoraKitManager+Setting.swift"; sourceTree = "<group>"; };
-		A84C2C9B2B4FB01700D6EFCF /* CommerceChatModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceChatModel.swift; sourceTree = "<group>"; };
 		A84C2C9D2B4FB01700D6EFCF /* CommerceDebug2TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebug2TFModel.swift; sourceTree = "<group>"; };
 		A84C2C9E2B4FB01700D6EFCF /* CommerceSettingKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingKey.swift; sourceTree = "<group>"; };
 		A84C2C9F2B4FB01700D6EFCF /* CommerceDebugPrivateParamsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebugPrivateParamsVC.swift; sourceTree = "<group>"; };
@@ -1246,7 +1244,6 @@
 				A84C2C972B4FB01700D6EFCF /* CommerceAgoraKitManager+DebugSetting.swift */,
 				A84C2C982B4FB01700D6EFCF /* GoodsModels */,
 				A84C2C9A2B4FB01700D6EFCF /* CommerceAgoraKitManager+Setting.swift */,
-				A84C2C9B2B4FB01700D6EFCF /* CommerceChatModel.swift */,
 				A84C2C9C2B4FB01700D6EFCF /* Setting */,
 			);
 			path = Models;
@@ -3521,7 +3518,6 @@
 				DDA19A0028FFE579009D3E61 /* NSString+Emoji.m in Sources */,
 				E732CD412B47EC6D004D6FB9 /* VoiceRoomChatBar.swift in Sources */,
 				E732CD4C2B47EC6D004D6FB9 /* VoiceRoomPresentView.swift in Sources */,
-				A84C2D122B4FB01700D6EFCF /* CommerceChatModel.swift in Sources */,
 				E732CD332B47EC6D004D6FB9 /* VRSoundCardEffectView.swift in Sources */,
 				A84C2D272B4FB01700D6EFCF /* CommerceCunstomNaviBar.swift in Sources */,
 				DDA199EB28FFE579009D3E61 /* VLRequestRoute.m in Sources */,
@@ -3909,8 +3905,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = YS397FG5PA;
 				ENABLE_BITCODE = NO;
@@ -4092,7 +4087,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.AgoraVoice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";

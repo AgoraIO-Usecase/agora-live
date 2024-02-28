@@ -84,3 +84,54 @@ public func encodeToJsonStr(_ jsonObj: Any) -> String? {
     
     return value
 }
+
+
+public func isValuesEqual(_ value1: Any, _ value2: Any) -> Bool {
+    if let dict1 = value1 as? [String: Any], let dict2 = value2 as? [String: Any] {
+        return isDictionariesEqual(dict1, dict2)
+    }
+    
+    if let array1 = value1 as? [Any], let array2 = value2 as? [Any] {
+        return isArraysEqual(array1, array2)
+    }
+    
+    if let str1 = value1 as? String, let str2 = value2 as? String {
+        return str1 == str2
+    }
+    
+    return value1 as AnyObject === value2 as AnyObject
+}
+
+public func isDictionariesEqual(_ dict1: [String: Any], _ dict2: [String: Any]) -> Bool {
+    // Step 1
+    if dict1.keys.count != dict2.keys.count {
+        return false
+    }
+    
+    // Step 2
+    for (key, value) in dict1 {
+        if let otherValue = dict2[key] {
+            if !isValuesEqual(value, otherValue) {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
+    return true
+}
+
+public func isArraysEqual(_ array1: [Any], _ array2: [Any]) -> Bool {
+    if array1.count != array2.count {
+        return false
+    }
+    
+    for (index, value) in array1.enumerated() {
+        if !isValuesEqual(value, array2[index]) {
+            return false
+        }
+    }
+    
+    return true
+}

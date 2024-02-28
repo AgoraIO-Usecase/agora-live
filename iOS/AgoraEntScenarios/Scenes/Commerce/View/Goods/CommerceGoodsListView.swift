@@ -31,7 +31,6 @@ class CommerceGoodsListView: UIView {
         self.serviceImp = serviceImp
         self.roomId = roomId
         setupUI()
-        addGoodsList()
         getGoodsList()
         subscribeEventGoodsList()
     }
@@ -53,11 +52,6 @@ class CommerceGoodsListView: UIView {
         tableView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         tableView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-    }
-    
-    private func addGoodsList() {
-        guard isBroadcaster else { return }
-        serviceImp?.addGoodsList(roomId: roomId, goods: goodsList.compactMap({ $0.goods }), completion: { _ in })
     }
     
     private func getGoodsList() {

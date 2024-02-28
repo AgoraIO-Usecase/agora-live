@@ -75,7 +75,7 @@ class CommerceGoodsModel: NSObject, YYModel {
     var imageName: String?
     var title: String?
     var quantity: Int = 0
-    var price: Float = 0
+    var price: Int = 0
     var goodsId: String? = UUID().uuidString
 }
 
@@ -126,5 +126,5 @@ class CommerceGoodsAuctionModel: NSObject, YYModel {
     var status: CommerceAuctionStatus = .idle
     var timestamp: Int64 = 0
     var bidUser: VLLoginModel?
-    var bid: Float = 0
+    var bid: Int = 0
 }

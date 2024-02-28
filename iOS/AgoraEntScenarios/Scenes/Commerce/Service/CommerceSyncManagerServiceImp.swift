@@ -71,8 +71,14 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     fileprivate var room: CommerceRoomListModel? {
         return self.roomList?.filter({ $0.roomId == roomId}).first
     }
-    private var userList: [CommerceUser] = [CommerceUser]()
-    private var messageList: [CommerceMessage] = [CommerceMessage]()
+    private var userList: [CommerceUser]? {
+        set {
+            AppContext.shared.commerceUserList = newValue
+        }
+        get {
+            return AppContext.shared.commerceUserList
+        }
+    }
     private weak var subscribeDelegate: CommerceSubscribeServiceProtocol?
     
     private var userMuteLocalAudio: Bool = false
@@ -80,6 +86,8 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     private var isAdded = false
     
     private var isJoined = false
+    
+    private var isSendMessage = false
     
     private var joinRetry = 0
 
@@ -115,7 +123,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     
     private func cleanCache() {
         userList = [CommerceUser]()
-        messageList = [CommerceMessage]()
         userMuteLocalAudio = false
     }
     
@@ -199,6 +206,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
                 self.roomList?.append(roomModel)
                 self._startCheckExpire()
                 self._subscribeAll()
+                self.isJoined = true
                 completion(nil, roomModel)
             } failure: { error in
                 completion(error, nil)
@@ -227,6 +235,9 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
             self._subscribeOnRoomDestroy(isOwner: self.isOwner(roomModel))
             self._subscribeAll()
             self.isJoined = true
+            if self.isSendMessage {
+                self.initRoom(roomId: self.roomId) { _ in }
+            }
             completion(nil, roomModel)
         } failure: { error in
             completion(error, nil)
@@ -253,8 +264,8 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
             completion(nil)
             return
         }
-        _removeUser(roomId: roomId) { err in
-        }
+        
+        deinitRoom(roomId: roomId) { _ in }
         
         //current user is room owner, remove room
         if roomInfo.ownerId == VLUserCenter.user.id {
@@ -269,6 +280,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         if isJoined {
             _sendMessageWithText(roomId: roomId, text: "join_live_room".commerce_localized)
         }
+        isSendMessage = !isJoined
     }
     
     func deinitRoom(roomId: String?, completion: @escaping (NSError?) -> Void) {
@@ -389,8 +401,8 @@ extension CommerceSyncManagerServiceImp {
     
     fileprivate func _subscribeAll() {
         agoraPrint("imp all subscribe...")
-        _subscribeOnlineUsersChanged()
         _subscribeMessageChanged()
+        _subscribeOnlineUsersChanged()
         _getUserList(roomId: room?.roomId) { _, list in
             
         }
@@ -536,9 +548,24 @@ extension CommerceSyncManagerServiceImp {
                 user.userName = item.userName
                 return user
             })
-            self.userList = users
-            self._updateUserCount(completion: { error in })
+            if let userList = self.userList, !userList.isEmpty {
+                self.userList = combineAndDistinctObjects(userList, users)
+            } else {
+                self.userList = users
+            }
+            self._updateUserCount()
             finished(nil, [])
+        }
+        
+        func combineAndDistinctObjects(_ array1: [CommerceUser],
+                                       _ array2: [CommerceUser]) -> [CommerceUser] {
+            var result = array1
+            for object in array2 {
+                if !result.contains(where: { $0.userId == object.userId }) {
+                    result.append(object)
+                }
+            }
+            return result
         }
     }
 
@@ -575,26 +602,31 @@ extension CommerceSyncManagerServiceImp {
             user.userId = userInfo.userId
             user.avatar = userInfo.userAvatar
             user.userName = userInfo.userName
-            if !self.userList.map({ $0.userId }).contains(userInfo.userId) {
-                self.userList.append(user)
+            
+            if let userList = self.userList,
+                !userList.isEmpty,
+                !userList.map({ $0.userId }).contains(userInfo.userId) {
+                self.userList?.append(user)
+                
+            } else {
+                self.userList = [user]
             }
+            
             defer{
-                self._updateUserCount { error in
-                }
-                self.subscribeDelegate?.onUserCountChanged(userCount: self.userList.count)
+                self._updateUserCount()
+                self.subscribeDelegate?.onUserCountChanged(userCount: self.userList?.count ?? 1)
             }
             self.subscribeDelegate?.onUserJoinedRoom(user: user)
-            self.subscribeDelegate?.onUserCountChanged(userCount: self.userList.count)
+            self.subscribeDelegate?.onUserCountChanged(userCount: self.userList?.count ?? 1)
         }
         
         func userLeave(userId: String) {
-            if let index = self.userList.firstIndex(where: { $0.userId == userId }) {
-                let model = self.userList[index]
-                self.userList.remove(at: index)
-                self._updateUserCount { error in
-                }
+            if let index = self.userList?.firstIndex(where: { $0.userId == userId }) {
+                guard let model = self.userList?[index] else { return }
+                self.userList?.remove(at: index)
+                self._updateUserCount()
                 self.subscribeDelegate?.onUserLeftRoom(user: model)
-                self.subscribeDelegate?.onUserCountChanged(userCount: self.userList.count)
+                self.subscribeDelegate?.onUserCountChanged(userCount: self.userList?.count ?? 1)
             }
         }
 //        SyncUtil
@@ -642,7 +674,7 @@ extension CommerceSyncManagerServiceImp {
             return
         }
         
-        guard let objectId = userList.filter({ $0.userId == VLUserCenter.user.id }).first?.objectId else {
+        guard let objectId = userList?.filter({ $0.userId == VLUserCenter.user.id }).first?.objectId else {
             agoraPrint("_removeUser objectId = nil")
             return
         }
@@ -658,12 +690,8 @@ extension CommerceSyncManagerServiceImp {
 //            completion(nil)
 //        }
     }
-
-    private func _updateUserCount(completion: @escaping (NSError?) -> Void) {
-        _updateUserCount(with: userList.count)
-    }
-
-    private func _updateUserCount(with count: Int) {
+    
+    private func _updateUserCount() {
         guard let channelName = roomId,
               let roomInfo = roomList?.filter({ $0.roomId == self.getRoomId() }).first,
               roomInfo.ownerId == VLUserCenter.user.id
@@ -672,7 +700,7 @@ extension CommerceSyncManagerServiceImp {
 //            userListCountDidChanged?(UInt(count))
             return
         }
-        let roomUserCount = count
+        let roomUserCount = userList?.count ?? 1
         if roomUserCount == roomInfo.roomUserCount {
             return
         }
@@ -695,9 +723,6 @@ extension CommerceSyncManagerServiceImp {
     private func _addMessage(roomId: String?, message: CommerceMessage, finished: ((NSError?) -> Void)?) {
         guard let channelName = roomId else { return }
         agoraPrint("imp message add ...")
-        if messageList.contains(where: { $0.userId == message.userId && $0.message == message.message }) {
-            return
-        }
         let params = message.yy_modelToJSONObject() as! [String: Any]
         RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION, data: params) { error in
             if error != nil {
@@ -721,11 +746,6 @@ extension CommerceSyncManagerServiceImp {
             agoraPrint("imp message subscribe onUpdated... [\(object.getMap() ?? [:])] \(channelName)")
             guard let map = object.getMap(),
                   let model = CommerceMessage.yy_model(with: map) else { return }
-            
-            if self.messageList.contains(where: { $0.userId == model.userId && $0.message == model.message }) {
-                return
-            }
-            self.messageList.append(model)
             self.subscribeDelegate?.onMessageDidAdded(message: model)
         }
     }

@@ -280,6 +280,16 @@ extension AUIRtmManager {
         }
     }
     
+    public func cleanAllMedadata(channelName: String,
+                                 lockName: String,
+                                 completion: @escaping (NSError?)->()) {
+        let removeKeys = proxy.keys(channelName: channelName) ?? []
+        cleanMetadata(channelName: channelName, 
+                      removeKeys: removeKeys,
+                      lockName: lockName,
+                      completion: completion)
+    }
+    
     public func cleanMetadata(channelName: String, 
                               removeKeys: [String],
                               lockName: String,

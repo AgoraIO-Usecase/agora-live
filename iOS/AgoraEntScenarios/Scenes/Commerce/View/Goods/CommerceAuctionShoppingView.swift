@@ -245,7 +245,6 @@ class CommerceAuctionShoppingView: UIView {
         guard let model = currentAuctionModel else { return }
         model.bidUser = VLUserCenter.user
         model.bid += 1
-        model.status = model.bidUser?.id == VLUserCenter.user.id ? .top_price : .started
         bidInAuctionGoodsClosure?(model)
         bidUserView.setShoppingData(model: model)
         bidUserAnimation(uid: VLUserCenter.user.id)
@@ -287,7 +286,7 @@ class BidUserView: UIView {
     
     func setShoppingData(model: CommerceGoodsAuctionModel) {
         avatarImageView.sd_setImage(with: URL(string: model.bidUser?.headUrl ?? ""),
-                                    placeholderImage: UIImage.commerce_sceneImage(name: model.bidUser?.headUrl ?? ""))
+                                    placeholderImage: UIImage(named: model.bidUser?.headUrl ?? ""))
         let nickName = model.bidUser?.name.prefix(1) ?? ""
         nickNameLabel.text = "\(String(describing: nickName))**"
         if model.bidUser?.id == VLUserCenter.user.id {
