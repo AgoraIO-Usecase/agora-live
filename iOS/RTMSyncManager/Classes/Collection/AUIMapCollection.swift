@@ -10,7 +10,7 @@ import Foundation
 public class AUIMapCollection: AUIBaseCollection {
     private var currentMap: [String: Any] = [:] {
         didSet {
-            //TODO: if oldValue == currentMap {return}
+            if isValuesEqual(oldValue, currentMap) {return}
             self.attributesDidChangedClosure?(channelName, observeKey, AUIAttributesModel(map: currentMap))
         }
     }

@@ -117,6 +117,7 @@ class RTMSyncUtil: NSObject {
                     scene?.enter(completion: { res, error in
                         if let err = err {
                             print("enter scene fail: \(err.localizedDescription)")
+                            failure?(err)
                             return
                         }
                         success?()

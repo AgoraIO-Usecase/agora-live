@@ -80,8 +80,8 @@ class CommerceLivePagesViewController: ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.layer.contents = UIImage.commerce_sceneImage(name: "show_list_Bg")?.cgImage
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
-        self.view.addSubview(collectionView)
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        view.addSubview(collectionView)
         collectionView.isScrollEnabled = roomList?.count ?? 0 > 1 ? true : false
         let realIndex = (delegateHandler.roomList as? CommerceCycleRoomArray)?.fakeCellIndex(with: focusIndex) ?? focusIndex
         collectionView.scrollToItem(at: IndexPath(row: realIndex, section: 0), at: .centeredVertically, animated: false)

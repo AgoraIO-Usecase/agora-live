@@ -10,7 +10,7 @@ import Foundation
 public class AUIListCollection: AUIBaseCollection {
     private var currentList: [[String: Any]] = []{
         didSet {
-            //TODO: if oldValue == currentList {return}
+            if isValuesEqual(oldValue, currentList) {return}
             self.attributesDidChangedClosure?(channelName, observeKey, AUIAttributesModel(list: currentList))
         }
     }

@@ -72,6 +72,11 @@ open class AUIRtmMsgProxy: NSObject {
         attributesCacheAttr[channelName] = nil
     }
     
+    func keys(channelName: String) -> [String]? {
+        let cache = attributesCacheAttr[channelName]
+        return cache?.map { $0.key }
+    }
+    
     func subscribeAttributes(channelName: String, itemKey: String, delegate: AUIRtmAttributesProxyDelegate) {
         let key = "\(channelName)__\(itemKey)"
         if let value = attributesDelegates[key] {

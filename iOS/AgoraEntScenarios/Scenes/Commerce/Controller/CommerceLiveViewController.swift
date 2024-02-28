@@ -172,7 +172,6 @@ class CommerceLiveViewController: UIViewController {
         setupUI()
         if room.ownerId == VLUserCenter.user.id {
             joinChannel()
-            _subscribeServiceEvent()
             AgoraEntAuthorizedManager.checkMediaAuthorized(parent: self)
         }
     }
@@ -260,13 +259,20 @@ class CommerceLiveViewController: UIViewController {
         }
     }
     
+    private func addGoodsList() {
+        guard role == .broadcaster else { return }
+        serviceImp?.addGoodsList(roomId: roomId,
+                                 goods: CommerceGoodsBuyModel.createGoodsData().compactMap({ $0.goods }),
+                                 completion: { _ in })
+    }
+    
     private func addBidGoodsInfo() {
         guard role == .broadcaster else { return }
         let auctionModel = CommerceGoodsAuctionModel()
         let goodsModel = CommerceGoodsModel()
         goodsModel.imageName = "commerce_shop_goods_0"
         goodsModel.title = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
-        goodsModel.price = 10
+        goodsModel.price = 1
         goodsModel.quantity = 1
         auctionModel.goods = goodsModel
         auctionModel.status = .idle
@@ -307,7 +313,7 @@ extension CommerceLiveViewController {
     func _joinRoom(_ room: CommerceRoomListModel){
         finishView?.removeFromSuperview()
         CommerceAgoraKitManager.shared.addRtcDelegate(delegate: self, roomId: room.roomId)
-        if let service = serviceImp {
+        if let service = serviceImp, role == .audience {
             service.joinRoom(room: room) {[weak self] error, detailModel in
                 guard let self = self else {return}
                 guard self.room?.roomId == room.roomId else { return }
@@ -318,17 +324,10 @@ extension CommerceLiveViewController {
                     }
                 } else {
                     self._subscribeServiceEvent()
-                    self.subscribeBidGoodsInfo()
-                    if self.role == .broadcaster {
-                        self.addBidGoodsInfo()
-                    } else {
-                        self.getBidGoodsInfo()
-                    }
-                    self.updateLoadingType(playState: self.loadingType)
                 }
             }
         } else {
-            self.onRoomExpired()
+            _subscribeServiceEvent()
         }
     }
     
@@ -370,6 +369,13 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     
     private func _subscribeServiceEvent() {
         serviceImp?.subscribeEvent(delegate: self)
+        subscribeBidGoodsInfo()
+        if role == .broadcaster {
+            addBidGoodsInfo()
+            addGoodsList()
+        } else {
+            getBidGoodsInfo()
+        }
     }
         
     //MARK: CommerceSubscribeServiceProtocol
@@ -412,8 +418,7 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     
     func onMessageDidAdded(message: CommerceMessage) {
         if let text = message.message {
-            let model = CommerceChatModel(userName: message.userName ?? "", text: text)
-            self.liveView.addChatModel(model)
+            self.liveView.addChatModel(message)
         }
     }
 }

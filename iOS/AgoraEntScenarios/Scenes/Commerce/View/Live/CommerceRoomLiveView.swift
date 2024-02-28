@@ -45,7 +45,7 @@ class CommerceRoomLiveView: UIView {
         return view
     }()
     
-    private var chatArray = [CommerceChatModel]()
+    private var chatArray = [CommerceMessage]()
     
     private lazy var roomInfoView: CommerceRoomInfoView = {
         let roomInfoView = CommerceRoomInfoView()
@@ -55,6 +55,15 @@ class CommerceRoomLiveView: UIView {
     private lazy var countView: CommerceRoomMembersCountView = {
         let countView = CommerceRoomMembersCountView()
         return countView
+    }()
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.spacing = 10
+        stackView.axis = .horizontal
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
     }()
     
     private lazy var moreBtn: UIButton = {
@@ -163,23 +172,17 @@ class CommerceRoomLiveView: UIView {
             make.left.equalTo(15)
         }
         
-        addSubview(closeButton)
-        closeButton.snp.makeConstraints { make in
-            make.right.equalTo(-15)
+        addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.right.equalToSuperview().offset(-15)
             make.centerY.equalTo(roomInfoView)
         }
-        
-        addSubview(moreBtn)
+        stackView.addArrangedSubview(countView)
+        stackView.addArrangedSubview(moreBtn)
+        stackView.addArrangedSubview(closeButton)
+        moreBtn.isHidden = isBroadcastor
         moreBtn.snp.makeConstraints { make in
-            make.trailing.equalTo(closeButton.snp_leadingMargin).offset(-18)
-            make.centerY.equalTo(closeButton.snp.centerY)
-            make.width.equalTo(24)
-        }
-        
-        addSubview(countView)
-        countView.snp.makeConstraints { make in
-            make.centerY.equalTo(roomInfoView)
-            make.right.equalTo(moreBtn.snp.left).offset(-10)
+            make.width.equalTo(20)
         }
         
         addSubview(tableView)
@@ -309,14 +312,16 @@ extension CommerceRoomLiveView: CommerceEmitterLayerDelegate {
 }
 
 extension CommerceRoomLiveView {
-    func addChatModel(_ chatModel: CommerceChatModel) {
-        if chatModel.text == "join_live_room".commerce_localized && chatModel.userName != VLUserCenter.user.name {
-            userJoinView.joinHandler(nickName: chatModel.userName)
+    func addChatModel(_ message: CommerceMessage) {
+        if !chatArray.contains(where: { $0.createAt == message.createAt }) {
+            if message.message == "join_live_room".commerce_localized && message.userName != VLUserCenter.user.name {
+                userJoinView.joinHandler(nickName: message.userName ?? "")
+            }
+            chatArray.insert(message, at: 0)
+            let indexPath = IndexPath(item: chatArray.count - 1, section: 0)
+            tableView.insertRows(at: [indexPath], with: .bottom)
+            tableView.reloadData()
         }
-        chatArray.append(chatModel)
-        let indexPath = IndexPath(item: chatArray.count - 1, section: 0)
-        tableView.insertRows(at: [indexPath], with: .top)
-        tableView.scrollToRow(at: indexPath, at: .top, animated: false)
     }
     
     func clearChatModel(){
@@ -338,7 +343,7 @@ extension CommerceRoomLiveView: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? CommerceRoomChatCell
     
         let chatModel = chatArray[indexPath.row]
-        cell?.setUserName(chatModel.userName, msg: chatModel.text)
+        cell?.setUserName(chatModel.userName ?? "", msg: chatModel.message ?? "")
         return cell!
     }
     

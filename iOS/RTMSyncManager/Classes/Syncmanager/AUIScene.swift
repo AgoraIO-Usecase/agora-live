@@ -85,7 +85,7 @@ public class AUIScene: NSObject {
         let date = Date()
         roomCollection.initMetaData(channelName: channelName,
                                     metadata: roomInfo) { err in
-            aui_benchmark("rtm setMetaData", cost: -date.timeIntervalSince1970, tag: kSceneTag)
+            aui_benchmark("rtm setMetaData", cost: -date.timeIntervalSinceNow, tag: kSceneTag)
             if let err = err {
                 completion(err)
                 return
@@ -127,11 +127,12 @@ public class AUIScene: NSObject {
 //        getArbiter().create()
         getArbiter().acquire()
         rtmManager.subscribeError(channelName: channelName, delegate: self)
-        rtmManager.subscribeLock(channelName: channelName, lockName: kRTM_Referee_LockName, delegate: self)
+        getArbiter().subscribeEvent(delegate: self)
         rtmManager.subscribe(channelName: channelName) {[weak self] error in
             guard let self = self else { return }
-            if let error = error {
-                completion(nil, error)
+            if let error = error, error.code != AgoraRtmErrorCode.duplicateOperation.rawValue {
+                self.enterRoomCompletion?(nil, error)
+                self.enterRoomCompletion = nil
                 return
             }
             aui_benchmark("[Benchmark]rtm manager subscribe", cost: -(date.timeIntervalSinceNow), tag: kSceneTag)
@@ -205,13 +206,8 @@ extension AUIScene {
             return
         }
         
-        let removeKeys = collectionMap.map { $0.key }
-        
         //每个collection都清空，让所有人收到onMsgRecvEmpty
-        rtmManager.cleanBatchMetadata(channelName: channelName,
-                                      lockName: "",
-                                      removeKeys: removeKeys,
-                                      fetchImmediately: true) { error in
+        rtmManager.cleanAllMedadata(channelName: channelName, lockName: "") { error in
             aui_collection_log("cleanScene completion: \(error?.localizedDescription ?? "success")")
         }
         getArbiter().destroy()
@@ -220,21 +216,25 @@ extension AUIScene {
     private func cleanSDK() {
         rtmManager.unSubscribe(channelName: channelName)
         rtmManager.unsubscribeError(channelName: channelName, delegate: self)
-        rtmManager.unsubscribeLock(channelName: channelName, lockName: kRTM_Referee_LockName, delegate: self)
+        getArbiter().unSubscribeEvent(delegate: self)
         //TODO: syncmanager 需要logout
 //        rtmManager.logout()
     }
 }
 
 //MARK: AUIRtmLockProxyDelegate
-extension AUIScene: AUIRtmLockProxyDelegate {
-    public func onReceiveLockDetail(channelName: String, lockDetail: AgoraRtmLockDetail) {
-        aui_benchmark("onReceiveLockDetail", cost: -(subscribeDate?.timeIntervalSinceNow ?? 0), tag: kSceneTag)
-        if lockDetail.owner.isEmpty {return}
+extension AUIScene: AUIArbiterDelegate {
+    public func onArbiterDidChange(channelName: String, arbiterId: String) {
+        aui_benchmark("onArbiterDidChange", cost: -(subscribeDate?.timeIntervalSinceNow ?? 0), tag: kSceneTag)
+        if arbiterId.isEmpty {return}
         self.lockRetrived = true
     }
     
-    public func onReleaseLockDetail(channelName: String, lockDetail: AgoraRtmLockDetail) {
+    public func onError(channelName: String, error: NSError) {
+        //如果锁不存在，也认为是房间被销毁的一种
+        if error.code == AgoraRtmErrorCode.lockNotExist.rawValue {
+            cleanScene()
+        }
     }
 }
 
