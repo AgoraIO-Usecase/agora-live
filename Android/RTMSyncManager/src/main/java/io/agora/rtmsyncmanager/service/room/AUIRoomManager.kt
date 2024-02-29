@@ -30,15 +30,7 @@ class AUIRoomManager {
             appId,
             sceneId,
             roomId,
-            AUIRoomInfo().apply {
-                roomName = roomInfo.roomName
-                memberCount = 1
-                owner = AUIRoomContext.shared().currentUserInfo
-                thumbnail = roomInfo.thumbnail
-                micSeatCount = roomInfo.micSeatCount
-                micSeatStyle = roomInfo.micSeatStyle
-                password = roomInfo.password
-            }
+            roomInfo
         ))
             .enqueue(object : retrofit2.Callback<CommonResp<CreateRoomResp>> {
                 override fun onResponse(

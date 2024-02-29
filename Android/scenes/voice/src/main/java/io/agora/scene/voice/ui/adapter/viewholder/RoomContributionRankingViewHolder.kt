@@ -15,7 +15,7 @@ class RoomContributionRankingViewHolder(val binding: VoiceItemContributionRankin
     override fun binding(data: VoiceRankUserModel?, selectedIndex: Int) {
         data?.let {
             setRankNumber()
-            ImageTools.loadImage(binding.ivAudienceAvatar, it.portrait)
+            ImageTools.loadImage(binding.ivAudienceAvatar, it.getAvatarUrl())
             binding.mtContributionUsername.text = it.name
             binding.mtContributionValue.text = it.amount.toString()
             val mgr: AssetManager = context.assets

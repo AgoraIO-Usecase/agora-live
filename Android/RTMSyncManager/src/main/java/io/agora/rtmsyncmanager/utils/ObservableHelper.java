@@ -16,7 +16,7 @@ public class ObservableHelper<EventHandler> {
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public void subscribeEvent(@Nullable EventHandler eventHandler) {
-        if (eventHandler == null) {
+        if (eventHandler == null || eventHandlerList.contains(eventHandler)) {
             return;
         }
         eventHandlerList.add(eventHandler);

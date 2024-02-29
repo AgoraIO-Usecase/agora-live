@@ -22,7 +22,7 @@ class LiveAuctionFragment(
 
     private val tag = "LiveAuctionFragment"
 
-    private val kAuctionInterval = 1*60*1000
+    private val kAuctionInterval = 30*1000
 
     private lateinit var binding: CommerceShopAuctionFragmentBinding
 
@@ -61,13 +61,16 @@ class LiveAuctionFragment(
             idleAuctionStatus()
             return
         }
-        val startTS = auctionModel.timestamp.toLong()
-        val interval = TimeUtils.currentTimeMillis() - startTS
-        if (interval < kAuctionInterval) {
-            val rest = kAuctionInterval - interval
-            inProgressAuctionStatus(rest)
-        } else {
-            idleAuctionStatus()
+        when (AuctionStatus.fromValue(auctionModel.status)) {
+            AuctionStatus.Start -> {
+                val startTS = auctionModel.timestamp.toLong()
+                val interval = TimeUtils.currentTimeMillis() - startTS
+                val rest = kAuctionInterval - interval
+                inProgressAuctionStatus(rest)
+            }
+            else -> {
+                idleAuctionStatus()
+            }
         }
     }
 
@@ -98,7 +101,7 @@ class LiveAuctionFragment(
             binding.btnBid.visibility = View.GONE
         } else {
             // bid button
-            if (auctionModel.bidUser?.userId == UserManager.getInstance().user.id.toString()) {
+            if (auctionModel.bidUser?.id == UserManager.getInstance().user.id.toString()) {
                 // leading bidder
                 binding.btnBid.isEnabled = false
                 binding.btnBid.text = getString(R.string.commerce_shop_auction_leading_bidder)
@@ -109,7 +112,7 @@ class LiveAuctionFragment(
                 binding.btnBid.visibility = View.VISIBLE
                 binding.btnBid.setBackgroundResource(R.drawable.commerce_corner_radius_gradient_orange)
                 binding.btnBid.setTextColor(Color.parseColor("#191919"))
-                if (auctionModel.bidUser?.userId?.isNotEmpty() == true) {
+                if (auctionModel.bidUser?.id?.isNotEmpty() == true) {
                     binding.btnBid.text = getString(R.string.commerce_shop_auction_bid, "${auctionModel.bid}")
                 } else {
                     binding.btnBid.text = getString(R.string.commerce_shop_auction_bid, "${auctionModel.bid + 1}")
@@ -118,7 +121,7 @@ class LiveAuctionFragment(
         }
         // bid user
         val bidUser = auctionModel.bidUser
-        if (bidUser != null && bidUser.userId.isNotEmpty()) {
+        if (bidUser != null && bidUser.id.isNotEmpty()) {
             binding.tvBidStatus.text = getString(R.string.commerce_shop_auction_current_bid)
             binding.tvPrice.text = getString(R.string.commerce_shop_auction_price, "${auctionModel.bid}")
             binding.ivBuyerAvatar.visibility = View.VISIBLE
@@ -128,11 +131,11 @@ class LiveAuctionFragment(
                 .error(R.drawable.commerce_default_avatar)
                 .transform(CenterCropRoundCornerTransform(8))
                 .into(binding.ivBuyerAvatar)
-            if (bidUser.userId == UserManager.getInstance().user.id.toString()) {
+            if (bidUser.id == UserManager.getInstance().user.id.toString()) {
                 // leading bidder
                 binding.tvBuyerName.text = getString(R.string.commerce_shop_auction_you_leading)
             } else {
-                val buyer = (bidUser.userName.firstOrNull() ?: "*").toString() + "**"
+                val buyer = (bidUser.name.firstOrNull() ?: "*").toString() + "**"
                 binding.tvBuyerName.text = buyer
             }
         } else {
@@ -159,7 +162,7 @@ class LiveAuctionFragment(
         countDownTimer = null
         // show dialog
         val bidUser = data?.bidUser
-        if (bidUser != null && bidUser.userId.isNotEmpty()) {
+        if (bidUser != null && bidUser.id.isNotEmpty()) {
             context?.let {
                 AuctionResultDialog(it, bidUser).show()
             }

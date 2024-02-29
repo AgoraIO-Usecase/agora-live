@@ -7,16 +7,17 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.agora.rtm.RtmConstants.RtmConnectionChangeReason
 import io.agora.rtm.RtmConstants.RtmConnectionState
+import io.agora.rtm.RtmConstants.RtmErrorCode
 import io.agora.rtmsyncmanager.model.AUIRoomContext
 import io.agora.rtmsyncmanager.model.AUIUserInfo
 import io.agora.rtmsyncmanager.service.IAUIUserService
 import io.agora.rtmsyncmanager.service.arbiter.AUIArbiter
+import io.agora.rtmsyncmanager.service.arbiter.AUIArbiterCallback
 import io.agora.rtmsyncmanager.service.collection.AUIMapCollection
 import io.agora.rtmsyncmanager.service.collection.IAUICollection
 import io.agora.rtmsyncmanager.service.imp.AUIUserServiceImpl
 import io.agora.rtmsyncmanager.service.rtm.AUIRtmErrorRespObserver
 import io.agora.rtmsyncmanager.service.rtm.AUIRtmException
-import io.agora.rtmsyncmanager.service.rtm.AUIRtmLockRespObserver
 import io.agora.rtmsyncmanager.service.rtm.AUIRtmManager
 import io.agora.rtmsyncmanager.utils.ObservableHelper
 
@@ -157,10 +158,13 @@ class Scene constructor(
         }
         getArbiter().acquire()
         rtmManager.subscribeError(errorRespObserver)
-        rtmManager.subscribeLock(channelName, rtmManager.kRTM_Referee_LockName, lockRespObserver)
+        getArbiter().subscribeEvent(arbiterObserver)
         rtmManager.subscribe(channelName) { error ->
-            error?.let {
-                runOnUiThread { completion.invoke(null, error) }
+            if (error != null && error.code != RtmErrorCode.getValue(RtmErrorCode.DUPLICATE_OPERATION)) {
+                runOnUiThread {
+                    enterRoomCompletion?.invoke(null, Exception(error.message))
+                    enterRoomCompletion = null
+                }
                 return@subscribe
             }
             subscribeSuccess = true
@@ -225,9 +229,8 @@ class Scene constructor(
         if (!getArbiter().isArbiter()) {
             return
         }
-        val removeKeys = collectionMap.keys.toList()
         //每个collection都清空，让所有人收到onMsgRecvEmpty
-        rtmManager.cleanBatchMetadata(channelName = channelName, lockName = "", remoteKeys = removeKeys, fetchImmediately = true) {
+        rtmManager.cleanAllMedadata(channelName = channelName, lockName = "") {
         }
         roomCollection.cleanMetaData {  }
         getArbiter().destroy()
@@ -236,19 +239,9 @@ class Scene constructor(
     private fun cleanSDK() {
         rtmManager.unSubscribe(channelName)
         rtmManager.unSubscribeError(errorRespObserver)
-        rtmManager.unsubscribeLock(lockRespObserver)
+        getArbiter().unSubscribeEvent(arbiterObserver)
         //TODO: syncmanager 需要logout
 //        rtmManager.logout()
-    }
-
-    private val lockRespObserver = object: AUIRtmLockRespObserver {
-        override fun onReceiveLock(channelName: String, lockName: String, lockOwner: String) {
-            if (lockOwner.isEmpty()) {return}
-            lockRetrived = true
-        }
-
-        override fun onReleaseLock(channelName: String, lockName: String, lockOwner: String) {
-        }
     }
 
     private val errorRespObserver = object: AUIRtmErrorRespObserver {
@@ -275,6 +268,20 @@ class Scene constructor(
             }
             respHandlers.notifyEventHandlers { handler ->
                 handler.onSceneUserBeKicked(channelName, AUIRoomContext.shared().currentUserInfo.userId)
+            }
+        }
+    }
+
+    private val arbiterObserver = object: AUIArbiterCallback {
+        override fun onArbiterDidChange(channelName: String, arbiterId: String) {
+            if (arbiterId.isEmpty()) {return}
+            lockRetrived = true
+        }
+
+        override fun onError(channelName: String, error: AUIRtmException) {
+            //如果锁不存在，也认为是房间被销毁的一种
+            if (error.code == RtmErrorCode.getValue(RtmErrorCode.LOCK_NOT_EXIST)) {
+                cleanScene()
             }
         }
     }

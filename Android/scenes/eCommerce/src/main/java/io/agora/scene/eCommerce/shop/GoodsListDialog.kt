@@ -34,26 +34,7 @@ class GoodsListDialog constructor(
 
     private val mService by lazy { ShowServiceProtocol.getImplInstance() }
 
-    private val dataSource = arrayListOf(
-        GoodsListItem(
-            name = context.resources.getString(R.string.commerce_shop_auction_item_0),
-            price = 20f,
-            picResource = R.drawable.commerce_shop_goods_0,
-            qty = 20
-        ),
-        GoodsListItem(
-            name = context.resources.getString(R.string.commerce_shop_auction_item_1),
-            price = 5f,
-            picResource = R.drawable.commerce_shop_goods_1,
-            qty = 0
-        ),
-        GoodsListItem(
-            name = context.resources.getString(R.string.commerce_shop_auction_item_2),
-            price = 12f,
-            picResource = R.drawable.commerce_shop_goods_2,
-            qty = 1
-        )
-    )
+    private val dataSource = arrayListOf<GoodsModel>()
 
     private lateinit var mAdapter: ShopAdapter
 
@@ -70,10 +51,22 @@ class GoodsListDialog constructor(
     }
 
     private fun updateList(goodsModels: List<GoodsModel>) {
-        goodsModels.forEach { model ->
-            val index = model.title.toInt()
-            val item = dataSource[index]
-            item.qty = model.quantity
+        if (dataSource.isEmpty()) {
+            for (model in goodsModels) {
+                if (model.imageName.contains("0")) {
+                    model.picResource = R.drawable.commerce_shop_goods_0
+                } else if (model.imageName.contains("1")) {
+                    model.picResource = R.drawable.commerce_shop_goods_1
+                } else {
+                    model.picResource = R.drawable.commerce_shop_goods_2
+                }
+                dataSource.add(model)
+            }
+        } else {
+            for ((index, model) in goodsModels.withIndex()) {
+                val item = dataSource[index]
+                item.quantity = model.quantity
+            }
         }
         mAdapter.resetAll(dataSource)
     }
@@ -83,9 +76,8 @@ class GoodsListDialog constructor(
         isRoomOwner = roomInfo.ownerId == UserManager.getInstance().user.id.toInt()
         mAdapter = ShopAdapter(isRoomOwner)
         binding.recyclerView.adapter = mAdapter
-        mAdapter.resetAll(dataSource)
-        mAdapter.onClickBuy = { index ->
-            mService.shopBuyItem(roomId, index.toString()) { e ->
+        mAdapter.onClickBuy = { goodsId ->
+            mService.shopBuyItem(roomId, goodsId) { e ->
                 if (e != null) { // bought result
                     ShoppingResultDialog(context, context.getString(R.string.commerce_shop_alert_bought)).show()
                 } else {
@@ -93,37 +85,30 @@ class GoodsListDialog constructor(
                 }
             }
         }
-        mAdapter.onUserChangedQty = { index, qty ->
-            mService.shopUpdateItem(roomId, index.toString(), qty)
+        mAdapter.onUserChangedQty = { goodsId, qty ->
+            mService.shopUpdateItem(roomId, goodsId, qty)
         }
     }
 
-    private data class GoodsListItem(
-        val name: String,
-        val price: Float,
-        val picResource: Int,
-        var qty: Int
-    )
-
     private class ShopAdapter(
         private val isRoomOwner: Boolean
-    ): BindingSingleAdapter<GoodsListItem, CommerceShopGoodsItemLayoutBinding>(){
+    ): BindingSingleAdapter<GoodsModel, CommerceShopGoodsItemLayoutBinding>(){
 
-        var onClickBuy: ((Int) -> Unit)? = null
+        var onClickBuy: ((goodsId: String) -> Unit)? = null
 
-        var onUserChangedQty: ((index: Int, qty: Int) -> Unit)? = null
+        var onUserChangedQty: ((goodsId: String, qty: Int) -> Unit)? = null
 
         override fun onBindViewHolder(
             holder: BindingViewHolder<CommerceShopGoodsItemLayoutBinding>,
             position: Int
         ) {
             getItem(position)?.let { item ->
-                holder.binding.tvItemName.text = item.name
+                holder.binding.tvItemName.text = item.title
                 holder.binding.ivCommodity.setImageResource(item.picResource)
                 holder.binding.tvPrice.text = String.format("$%.0f", item.price)
                 val context = holder.itemView.context
-                holder.binding.tvQty.text = context.getString(R.string.commerce_shop_item_qty, item.qty.toString())
-                if (item.qty == 0) {
+                holder.binding.tvQty.text = context.getString(R.string.commerce_shop_item_qty, item.quantity.toString())
+                if (item.quantity == 0) {
                     holder.binding.btnBuy.setBackgroundResource(R.drawable.commerce_corner_radius_gray)
                     holder.binding.btnBuy.text = context.getString(R.string.commerce_shop_item_sold_out)
                     holder.binding.btnBuy.setTextColor(Color.parseColor("#A5ADBA"))
@@ -137,18 +122,18 @@ class GoodsListDialog constructor(
                 if (isRoomOwner) {
                     holder.binding.btnBuy.visibility = View.GONE
                     holder.binding.llStepper.visibility = View.VISIBLE
-                    holder.binding.etQty.setText(item.qty.toString())
+                    holder.binding.etQty.setText(item.quantity.toString())
                     holder.binding.btnAdd.setOnClickListener {
                         val value = (holder.binding.etQty.text ?: "0").toString().toInt()
                         val newValue = fitValue(value + 1)
                         holder.binding.etQty.setText(newValue.toString())
-                        onUserChangedQty?.invoke(holder.adapterPosition, newValue)
+                        onUserChangedQty?.invoke(item.goodsId, newValue)
                     }
                     holder.binding.btnReduce.setOnClickListener {
                         val value = (holder.binding.etQty.text ?: "0").toString().toInt()
                         val newValue = fitValue(value - 1)
                         holder.binding.etQty.setText(newValue.toString())
-                        onUserChangedQty?.invoke(holder.adapterPosition, newValue)
+                        onUserChangedQty?.invoke(item.goodsId, newValue)
                     }
                     holder.binding.etQty.setOnEditorActionListener { _, actionId, _ ->
                         if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -158,7 +143,7 @@ class GoodsListDialog constructor(
 
                             val qty = holder.binding.etQty.text.toString().toIntOrNull() ?: 0
                             val newValue = fitValue(qty)
-                            onUserChangedQty?.invoke(holder.adapterPosition, newValue)
+                            onUserChangedQty?.invoke(item.goodsId, newValue)
                             return@setOnEditorActionListener true
                         }
                         false
@@ -167,7 +152,7 @@ class GoodsListDialog constructor(
                     holder.binding.btnBuy.visibility = View.VISIBLE
                     holder.binding.llStepper.visibility = View.GONE
                     holder.binding.btnBuy.setOnClickListener {
-                        onClickBuy?.invoke(position)
+                        onClickBuy?.invoke(item.goodsId)
                     }
                 }
             }

@@ -328,8 +328,10 @@ class AUIListCollection(
         filter: List<Map<String, Any>>?,
         callback: ((error: AUICollectionException?) -> Unit)?
     ) {
-        val itemIndexes = AUICollectionUtils.getItemIndexes(currentList, filter)
-        if (itemIndexes?.isNotEmpty() == true) {
+        //如果filter空，默认无条件写入，如果有filter，判断条件
+        if (filter != null &&
+            filter.isNotEmpty() &&
+            AUICollectionUtils.getItemIndexes(currentList, filter)?.isNotEmpty() == true) {
             callback?.invoke(
                 AUICollectionException.ErrorCode.encodeToJsonStringFail.toException()
             )

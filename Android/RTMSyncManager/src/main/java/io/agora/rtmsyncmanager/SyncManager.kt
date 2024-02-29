@@ -14,6 +14,8 @@ class SyncManager constructor(
     private val commonConfig: AUICommonConfig
 ) {
     var rtmManager: AUIRtmManager
+        private set
+
     private var sceneMap = mutableMapOf<String, Scene>()
 
     init {

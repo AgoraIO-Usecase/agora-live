@@ -64,6 +64,11 @@ class AUIRtmMsgProxy : RtmEventListener {
         msgCacheAttr.remove(channelName)
     }
 
+    fun keys(channelName: String): List<String>? {
+        val cache = msgCacheAttr[channelName]
+        return cache?.map { it.key }
+    }
+
     fun unRegisterAllObservers() {
         attributeRespObservers.clear()
         userRespObservers.clear()

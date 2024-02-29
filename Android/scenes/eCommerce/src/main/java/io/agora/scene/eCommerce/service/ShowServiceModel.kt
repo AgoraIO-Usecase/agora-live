@@ -1,5 +1,7 @@
 package io.agora.scene.eCommerce.service
 
+import android.os.Parcel
+import android.os.Parcelable
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
 import io.agora.scene.base.manager.UserManager
@@ -27,41 +29,41 @@ enum class ShowRoomStatus(val value: Int) {
     end(1)
 }
 
-/**
- * Show user
- *
- * @property userId
- * @property avatar
- * @property userName
- * @constructor Create empty Show user
- */
 data class ShowUser constructor(
-    val userId: String,
-    val avatar: String,
-    val userName: String,
+    val id: String = "",
+    val name: String = "",
+    val headUrl: String = "",
 ){
     fun getAvatarFullUrl(): String {
-        return UserManager.getInstance().getUserAvatarFullUrl(avatar)
+        return UserManager.getInstance().getUserAvatarFullUrl(headUrl)
     }
 }
 
-enum class AuctionStatus(value: Int) {
+enum class AuctionStatus(val value: Int) {
     Idle(0),
     Start(1),
-    Finish(2)
+    Finish(2);
+    companion object {
+        fun fromValue(value: Int): AuctionStatus {
+            return values().first { it.value == value }
+        }
+    }
 }
 data class AuctionModel constructor(
     var bidUser: ShowUser? = null,
     var timestamp: String = "0",
+    var goods: GoodsModel? = null,
     var bid: Int = 0,
-    val status: Int = 0
+    var status: Int = 0
 )
 
 data class GoodsModel constructor(
+    val goodsId: String,
     val imageName: String = "",
-    val title: String,
-    val quantity: Int = 6,
-    val price: Float? = null
+    val title: String = "",
+    var quantity: Int = 6,
+    val price: Float? = null,
+    @Transient var picResource: Int = 0
 )
 
 /**
@@ -79,6 +81,34 @@ data class ShowMessage constructor(
     val message: String,
     val createAt: Double
 )
+
+data class RoomDetailModel constructor(
+    val roomId: String,
+    val roomName: String,
+    val roomUserCount: Int,
+    val thumbnailId: String, // 0, 1, 2, 3
+    val ownerId: String,
+    val ownerAvatar: String,// http url
+    val ownerName: String,
+    val roomStatus: Int = ShowRoomStatus.activity.value,
+    val createdAt: Double,
+    val updatedAt: Double,
+) {
+
+    fun getThumbnailIcon() = when (thumbnailId) {
+        "0" -> R.drawable.commerce_room_cover_0
+        "1" -> R.drawable.commerce_room_cover_1
+        "2" -> R.drawable.commerce_room_cover_2
+        "3" -> R.drawable.commerce_room_cover_3
+        else -> R.drawable.commerce_room_cover_0
+    }
+
+    fun getOwnerAvatarFullUrl(): String {
+        return UserManager.getInstance().getUserAvatarFullUrl(ownerAvatar)
+    }
+
+    fun isRobotRoom() = roomId.length > 6
+}
 
 fun AUIRoomInfo.isRobotRoom(): Boolean {
     return this.roomId.length > 6

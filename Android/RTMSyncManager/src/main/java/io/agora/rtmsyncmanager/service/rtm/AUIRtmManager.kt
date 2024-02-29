@@ -3,6 +3,7 @@ package io.agora.rtmsyncmanager.service.rtm
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import io.agora.rtm.ErrorInfo
 import io.agora.rtm.JoinChannelOptions
 import io.agora.rtm.MetadataItem
@@ -82,6 +83,7 @@ class AUIRtmManager constructor(
             completion.invoke(null)
             return
         }
+        Log.d("ShowSyncManagerServiceImpl111", "response success -> rtm login")
         rtmClient.login(token, object : ResultCallback<Void> {
             override fun onSuccess(responseInfo: Void?) {
                 isLogin = true
@@ -290,6 +292,16 @@ class AUIRtmManager constructor(
             proxy.processMetaData(channelName, metadata)
             completion.invoke(error)
         }
+    }
+
+    fun cleanAllMedadata(channelName: String, lockName: String, completion: (AUIRtmException?) -> Unit) {
+        val removeKeys = proxy.keys(channelName) ?: emptyList()
+        cleanMetadata(
+            channelName = channelName,
+            removeKeys = removeKeys,
+            lockName = lockName,
+            completion = completion
+        )
     }
 
     fun cleanMetadata(

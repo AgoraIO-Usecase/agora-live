@@ -32,7 +32,7 @@ class AuctionResultDialog constructor(
             .error(R.drawable.commerce_default_avatar)
             .transform(CenterCropRoundCornerTransform(28))
             .into(binding.ivAvatar)
-        binding.tvUserName.text = user.userName
+        binding.tvUserName.text = user.name
         binding.btnClose.setOnClickListener {
             finish()
         }

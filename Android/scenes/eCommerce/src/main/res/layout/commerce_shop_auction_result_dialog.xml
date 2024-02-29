@@ -22,25 +22,26 @@
         app:layout_constraintBottom_toBottomOf="parent"
         />
 
-    <View
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/vAvatarBG"
-        android:layout_width="74dp"
-        android:layout_height="74dp"
-        android:layout_marginTop="-37dp"
-        android:background="@drawable/commerce_corner_radius_gradient_orange"
+        android:layout_width="210dp"
+        android:layout_height="105dp"
+        android:layout_marginBottom="-37dp"
         app:layout_constraintStart_toStartOf="@+id/vBackground"
         app:layout_constraintEnd_toEndOf="@+id/vBackground"
-        app:layout_constraintTop_toTopOf="@+id/vBackground"
+        app:layout_constraintBottom_toTopOf="@+id/vBackground"
+        android:src="@drawable/commerce_shop_auction_result"
         />
     
-    <androidx.appcompat.widget.AppCompatImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/ivAvatar"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        app:layout_constraintStart_toStartOf="@+id/vAvatarBG"
-        app:layout_constraintEnd_toEndOf="@+id/vAvatarBG"
-        app:layout_constraintTop_toTopOf="@+id/vAvatarBG"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintStart_toStartOf="@+id/vBackground"
+        app:layout_constraintEnd_toEndOf="@+id/vBackground"
         app:layout_constraintBottom_toBottomOf="@+id/vAvatarBG"
+        app:shapeAppearanceOverlay="@style/commerce_roundStyle_50"
         />
 
     <com.google.android.material.textview.MaterialTextView

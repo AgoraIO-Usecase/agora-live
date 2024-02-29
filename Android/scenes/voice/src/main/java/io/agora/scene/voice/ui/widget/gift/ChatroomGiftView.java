@@ -28,6 +28,7 @@ import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 
+import io.agora.scene.base.manager.UserManager;
 import io.agora.scene.voice.R;
 import io.agora.scene.voice.imkit.bean.ChatMessageData;
 import io.agora.scene.voice.imkit.custorm.CustomMsgHelper;
@@ -171,17 +172,17 @@ public class ChatroomGiftView extends LinearLayout {
             int resId = 0;
             String gift_id = CustomMsgHelper.getInstance().getMsgGiftId(message);
             String userName = ChatroomIMManager.getInstance().getUserName(message);
-            String userPortrait = ChatroomIMManager.getInstance().getUserPortrait(message);
+            String portrait = ChatroomIMManager.getInstance().getUserPortrait(message);
             GiftBean giftBean = GiftRepository.getGiftById(context, gift_id);
             try {
-                resId = context.getResources().getIdentifier(userPortrait, "drawable", context.getPackageName());
+                resId = context.getResources().getIdentifier(portrait, "drawable", context.getPackageName());
             } catch (Exception ignored) {
                 LogTools.e("getResources()", ignored.getMessage());
             }
             if (resId != 0) {
                 avatar.setImageResource(resId);
             }else {
-                ImageTools.loadImage(avatar, userPortrait);
+                ImageTools.loadImage(avatar, UserManager.getInstance().getUserAvatarFullUrl(portrait));
             }
             StringBuilder builder = new StringBuilder();
             if (null != giftBean) {
