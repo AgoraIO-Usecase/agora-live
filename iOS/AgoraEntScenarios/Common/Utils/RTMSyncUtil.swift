@@ -10,7 +10,7 @@ import RTMSyncManager
 
 class RTMSyncUtil: NSObject {
     private static var syncManager: AUISyncManager?
-    private static var syncManagerImpl = AUIRoomManagerImpl()
+    private static var syncManagerImpl = AUIRoomManagerImpl(sceneId: kEcommerceSceneId)
     private static var isLogined: Bool = false
     private static let roomDelegate = RTMSyncUtilRoomDeleage()
     private static let userDelegate = RTMSyncUtilUserDelegate()
@@ -260,19 +260,6 @@ class RTMSyncUtil: NSObject {
                                   filter: [[String: Any]]? = nil,
                                   callback: ((NSError?) -> Void)?) {
         listCollection(id: id, key: key)?.updateMetaData(valueCmd: nil, value: data, filter: filter, callback: callback)
-//        let group = DispatchGroup()
-//        data?.forEach({
-//            group.enter()
-//            listCollection(id: id, key: key)?.updateMetaData(valueCmd: nil, value: $0, filter: nil, callback: { error in
-//                if error != nil {
-//                    print("error == \(error?.localizedDescription ?? "")")
-//                }
-//                group.leave()
-//            })
-//        })
-//        group.notify(queue: .main, work: DispatchWorkItem(block: {
-//            callback?(nil)
-//        }))
     }
     
     class func mergeMetaData(id: String,

@@ -14,10 +14,14 @@ open class SyncRoomCreateNetworkModel: SyncCommonNetworkModel {
         super.init()
         interfaceName = "/v2/room/create"
     }
+    public var appId: String? = AUIRoomContext.shared.commonConfig?.appId
+    public var sceneId: String?
     public var roomInfo: AUIRoomInfo?
     
     public override func getParameters() -> [String: Any]? {
-        let payloadParam = roomInfo?.yy_modelToJSONObject() as? [String: Any]
+        var payloadParam = roomInfo?.yy_modelToJSONObject() as? [String: Any] ?? [:]
+        payloadParam["appId"] = appId ?? ""
+        payloadParam["sceneId"] = sceneId ?? ""
         return payloadParam
     }
     
@@ -44,6 +48,8 @@ open class SyncRoomDestroyNetworkModel: SyncCommonNetworkModel {
         interfaceName = "/v2/room/destroy"
     }
     
+    public var appId: String? = AUIRoomContext.shared.commonConfig?.appId
+    public var sceneId: String?
     public var roomId: String?
 }
 
