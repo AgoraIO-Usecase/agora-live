@@ -236,7 +236,7 @@ extension ShowLivePagesViewController: UICollectionViewDelegate, UICollectionVie
         let toIndex = fakeCellIndex(with: realIndex)
         showLogger.info("scrollViewDidEndDecelerating: from: \(currentIndex) to: \(toIndex) real: \(realIndex)", context: kPagesVCTag)
         
-        scroll(to: toIndex)
+//        scroll(to: toIndex)
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
