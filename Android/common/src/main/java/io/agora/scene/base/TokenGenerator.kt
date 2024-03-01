@@ -165,7 +165,6 @@ object TokenGenerator {
     ) = withContext(Dispatchers.IO) {
         val postBody = JSONObject()
         postBody.put("appId", BuildConfig.AGORA_APP_ID)
-        postBody.put("appCertificate", BuildConfig.AGORA_APP_CERTIFICATE)
         postBody.put("channelName", channelName)
         postBody.put("expire", if (expireSecond > 0) expireSecond else defaultExpireSecond)
         postBody.put("src", "Android")
