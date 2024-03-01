@@ -82,15 +82,15 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
                     when (index) {
                         0 -> {
                             ivChatroomMember1.isVisible = true
-                            ImageTools.loadImage(ivChatroomMember1, audienceBean.portrait)
+                            ImageTools.loadImage(ivChatroomMember1, audienceBean.getAvatarUrl())
                         }
                         1 -> {
                             ivChatroomMember2.isVisible = true
-                            ImageTools.loadImage(ivChatroomMember2, audienceBean.portrait)
+                            ImageTools.loadImage(ivChatroomMember2, audienceBean.getAvatarUrl())
                         }
                         2 -> {
                             ivChatroomMember3.isVisible = true
-                            ImageTools.loadImage(ivChatroomMember3, audienceBean.portrait)
+                            ImageTools.loadImage(ivChatroomMember3, audienceBean.getAvatarUrl())
                         }
                         else -> {
                             return
@@ -111,15 +111,15 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
                     when (index) {
                         0 -> {
                             ivChatroomMember1.isVisible = true
-                            ImageTools.loadImage(ivChatroomMember1, audienceBean.portrait)
+                            ImageTools.loadImage(ivChatroomMember1, audienceBean.getAvatarUrl())
                         }
                         1 -> {
                             ivChatroomMember2.isVisible = true
-                            ImageTools.loadImage(ivChatroomMember2, audienceBean.portrait)
+                            ImageTools.loadImage(ivChatroomMember2, audienceBean.getAvatarUrl())
                         }
                         2 -> {
                             ivChatroomMember3.isVisible = true
-                            ImageTools.loadImage(ivChatroomMember3, audienceBean.portrait)
+                            ImageTools.loadImage(ivChatroomMember3, audienceBean.getAvatarUrl())
                         }
                         else -> {
                             return

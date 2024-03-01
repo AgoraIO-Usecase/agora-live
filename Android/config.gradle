@@ -21,6 +21,7 @@ ext {
             rxjava2           : 'io.reactivex.rxjava2:rxjava:2.2.16',
             retrofit2         : "com.squareup.retrofit2:retrofit:$retrofit2_version",
             retrofit2_adapter : "com.squareup.retrofit2:adapter-rxjava2:$retrofit2_version",
+            retrofit2_cov     : "com.squareup.retrofit2:converter-gson:$retrofit2_version",
             okhttp            : 'com.squareup.okhttp3:okhttp:3.12.0',
             okhttp_logger     : 'com.squareup.okhttp3:logging-interceptor:4.10.0',
 
@@ -40,8 +41,8 @@ ext {
             autosize          : 'com.github.JessYanCoding:AndroidAutoSize:v1.2.1',
 
             rtc               : 'io.agora.rtc:agora-special-full:4.1.1.23',
-            rtm               : 'com.github.agorabuilder:rtm-sdk:1.4.10',
-            syncManager       : 'com.github.AgoraIO-Community:SyncManager-Android:2.2.7.1',
+            rtm               : 'io.agora:agora-rtm:2.1.8',
+            syncManager       : 'com.github.AgoraIO-Community:SyncManager-Android:2.2.9.1',
             lyricsView        : 'com.github.AgoraIO-Community:LyricsView:1.1.1-beta.8',
 
             // android native libraries
@@ -50,7 +51,6 @@ ext {
             databinding_runtime: "androidx.databinding:databinding-runtime:4.2.2",
 
             // im
-            agora_im           : 'io.agora.rtm:rtm-sdk:1.5.0',
             svga_player        : 'com.github.yyued:SVGAPlayer-Android:2.6.1',
             agora_chat         : 'io.agora.rtc:chat-sdk:1.1.0',
             ok2curl            : 'com.github.mrmike:ok2curl:0.8.0',

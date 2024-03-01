@@ -54,7 +54,6 @@ class VoiceToolboxServerHttpManager {
         val requestBody = JSONObject()
 
         try {
-            requestBody.putOpt("appCertificate", BuildConfig.AGORA_APP_CERTIFICATE)
             requestBody.putOpt("appId", BuildConfig.AGORA_APP_ID)
             requestBody.putOpt("channelName", channelName)
             requestBody.putOpt("expire", expire)
@@ -126,7 +125,6 @@ class VoiceToolboxServerHttpManager {
             requestBody.putOpt("im", requestIM)
 
             requestBody.putOpt("appId", BuildConfig.AGORA_APP_ID)
-            requestBody.putOpt("appCertificate", BuildConfig.AGORA_APP_CERTIFICATE)
             requestBody.putOpt("src", "Android")
             requestBody.putOpt("traceId", UUID.randomUUID().toString())
             requestBody.putOpt("type",type)
