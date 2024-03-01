@@ -107,7 +107,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvRoomName"
-        android:layout_width="wrap_content"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         app:layout_constraintTop_toTopOf="@+id/vRoomInfo"

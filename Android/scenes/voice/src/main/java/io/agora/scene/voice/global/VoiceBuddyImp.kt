@@ -44,10 +44,6 @@ class VoiceBuddyImp : IVoiceBuddy {
         return io.agora.scene.base.BuildConfig.AGORA_APP_ID
     }
 
-    override fun rtcAppCert(): String {
-        return io.agora.scene.base.BuildConfig.AGORA_APP_CERTIFICATE
-    }
-
     override fun rtcToken(): String {
         return rtcToken
     }

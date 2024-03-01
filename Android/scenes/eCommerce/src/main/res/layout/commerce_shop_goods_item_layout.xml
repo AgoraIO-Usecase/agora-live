@@ -57,13 +57,13 @@
         android:text="$1"
         />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnBuy"
         android:layout_width="96dp"
         android:layout_height="36dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/ivCommodity"
-        android:elevation="0dp"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:background="@drawable/commerce_corner_radius_gradient_orange"
         android:text="@string/commerce_shop_auction_buy"
         android:textAllCaps="false"
@@ -98,6 +98,8 @@
             android:background="@android:color/transparent"
             app:boxBackgroundMode="none"
             app:boxStrokeColor="@android:color/transparent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText

@@ -180,7 +180,6 @@ class CloudPlayerService {
             baseUrl + "rte-cloud-player/start",
             JSONObject()
                 .put("appId", BuildConfig.AGORA_APP_ID)
-                .put("appCert", BuildConfig.AGORA_APP_CERTIFICATE)
                 .put(
                     "basicAuth",
                     Base64.encodeToString(

@@ -1,8 +1,6 @@
 package io.agora.scene.eCommerce
 
 import android.content.Context
-import android.content.DialogInterface
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.*
 import android.text.SpannableStringBuilder
@@ -19,15 +17,10 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import io.agora.mediaplayer.IMediaPlayer
-import io.agora.mediaplayer.IMediaPlayerObserver
-import io.agora.mediaplayer.data.PlayerUpdatedInfo
-import io.agora.mediaplayer.data.SrcInfo
 import io.agora.rtc2.ChannelMediaOptions
 import io.agora.rtc2.Constants
 import io.agora.rtc2.Constants.AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
@@ -35,20 +28,19 @@ import io.agora.rtc2.IRtcEngineEventHandler
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoCanvas
+import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
-import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.base.utils.UiUtil
 import io.agora.scene.eCommerce.databinding.CommerceLiveDetailFragmentBinding
 import io.agora.scene.eCommerce.databinding.CommerceLiveDetailMessageItemBinding
 import io.agora.scene.eCommerce.databinding.CommerceLivingEndDialogBinding
 import io.agora.scene.eCommerce.debugSettings.DebugAudienceSettingDialog
 import io.agora.scene.eCommerce.debugSettings.DebugSettingDialog
-import io.agora.scene.eCommerce.service.ShowMessage
-import io.agora.scene.eCommerce.service.ShowRoomDetailModel
-import io.agora.scene.eCommerce.service.ShowServiceProtocol
+import io.agora.scene.eCommerce.service.*
 import io.agora.scene.eCommerce.shop.GoodsListDialog
+import io.agora.scene.eCommerce.shop.LiveAuctionFragment
 import io.agora.scene.eCommerce.videoLoaderAPI.OnPageScrollEventHandler
 import io.agora.scene.eCommerce.videoLoaderAPI.VideoLoader
 import io.agora.scene.eCommerce.widget.AdvanceSettingAudienceDialog
@@ -58,8 +50,6 @@ import io.agora.scene.eCommerce.widget.SettingDialog
 import io.agora.scene.eCommerce.widget.TextInputDialog
 import io.agora.scene.widget.basic.BindingSingleAdapter
 import io.agora.scene.widget.basic.BindingViewHolder
-import org.json.JSONException
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -78,26 +68,25 @@ class LiveDetailFragment : Fragment() {
 
     companion object {
 
-        private const val EXTRA_ROOM_DETAIL_INFO = "roomDetailInfo"
+        private const val EXTRA_ROOM_ID = "EXTRA_ROOM_ID"
 
         /**
          * New instance
          *
-         * @param roomDetail
+         * @param roomId
          */
-        fun newInstance(roomDetail: ShowRoomDetailModel, handler: OnPageScrollEventHandler, position: Int) = LiveDetailFragment().apply {
+        fun newInstance(roomId: String, handler: OnPageScrollEventHandler, position: Int) = LiveDetailFragment().apply {
             arguments = Bundle().apply {
-                putParcelable(EXTRA_ROOM_DETAIL_INFO, roomDetail)
+                putString(EXTRA_ROOM_ID, roomId)
             }
             mHandler = handler
             mPosition = position
         }
     }
 
-    /**
-     * M room info
-     */
-    val mRoomInfo by lazy { (arguments?.getParcelable(EXTRA_ROOM_DETAIL_INFO) as? ShowRoomDetailModel)!! }
+    private val mRoomId by lazy { (arguments?.getString(EXTRA_ROOM_ID))!! }
+
+    private val mRoomInfo: AUIRoomInfo by lazy { mService.getRoomInfo(mRoomId) ?: AUIRoomInfo() }
 
     /**
      * Page scroll event handler
@@ -126,7 +115,7 @@ class LiveDetailFragment : Fragment() {
     /**
      * Is room owner
      */
-    private val isRoomOwner by lazy { mRoomInfo.ownerId == UserManager.getInstance().user.id.toString() }
+    private val isRoomOwner by lazy { mRoomInfo.ownerId == UserManager.getInstance().user.id.toInt() }
 
     /**
      * M message adapter
@@ -138,6 +127,8 @@ class LiveDetailFragment : Fragment() {
      * M setting dialog
      */
     private val mSettingDialog by lazy { SettingDialog(requireContext()) }
+
+    private lateinit var auctionFragment: LiveAuctionFragment
     /**
      * M rtc engine
      */
@@ -188,14 +179,6 @@ class LiveDetailFragment : Fragment() {
      */
     private val mMainRtcConnection by lazy { RtcConnection(mRoomInfo.roomId, UserManager.getInstance().user.id.toInt()) }
 
-    /**
-     * On create view
-     *
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -214,6 +197,7 @@ class LiveDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ShowLogger.d(TAG, "Fragment Lifecycle: onViewCreated")
+
         initView()
         activity?.onBackPressedDispatcher?.addCallback(enabled = isVisible) {
             onBackPressed()
@@ -275,11 +259,6 @@ class LiveDetailFragment : Fragment() {
 
     }
 
-    /**
-     * Start load page
-     *
-     * @param isScrolling
-     */
     private fun startLoadPage() {
         ShowLogger.d(TAG, "Fragment PageLoad start load, roomId=${mRoomInfo.roomId}")
         isPageLoaded = true
@@ -289,7 +268,7 @@ class LiveDetailFragment : Fragment() {
             initServiceWithJoinRoom()
         } else {
             val roomLeftTime =
-                ShowServiceProtocol.ROOM_AVAILABLE_DURATION - (TimeUtils.currentTimeMillis() - mRoomInfo.createdAt.toLong())
+                ShowServiceProtocol.ROOM_AVAILABLE_DURATION - (TimeUtils.currentTimeMillis() - mRoomInfo.createTime)
             if (roomLeftTime > 0) {
                 mBinding.root.postDelayed(timerRoomEndRun, ShowServiceProtocol.ROOM_AVAILABLE_DURATION)
                 initRtcEngine()
@@ -319,7 +298,7 @@ class LiveDetailFragment : Fragment() {
      */
     private fun destroy(isScrolling: Boolean): Boolean {
         mBinding.root.removeCallbacks(timerRoomEndRun)
-        destroyService()
+        mService.leaveRoom(mRoomInfo.roomId)
         return destroyRtcEngine(isScrolling)
     }
 
@@ -354,14 +333,14 @@ class LiveDetailFragment : Fragment() {
             mRtcVideoLoaderApi.renderVideo(
                 VideoLoader.AnchorInfo(
                     mRoomInfo.roomId,
-                    mRoomInfo.ownerId.toInt(),
+                    mRoomInfo.owner?.userId?.toIntOrNull() ?: 0,
                     RtcEngineInstance.generalToken()
                 ),
                 UserManager.getInstance().user.id.toInt(),
                 VideoLoader.VideoCanvasContainer(
                     viewLifecycleOwner,
                     mBinding.videoLinkingLayout.videoContainer,
-                    mRoomInfo.ownerId.toInt()
+                    mRoomInfo.owner?.userId?.toIntOrNull() ?: 0
                 )
             )
         }
@@ -399,7 +378,7 @@ class LiveDetailFragment : Fragment() {
             return VideoLoader.VideoCanvasContainer(
                 viewLifecycleOwner,
                 mBinding.videoLinkingLayout.videoContainer,
-                mRoomInfo.ownerId.toInt()
+                mRoomInfo.ownerId
             )
         }
         return null
@@ -411,10 +390,10 @@ class LiveDetailFragment : Fragment() {
      */
     private fun initLivingEndLayout() {
         val livingEndLayout = mBinding.livingEndLayout
-        livingEndLayout.root.isVisible = ShowServiceProtocol.ROOM_AVAILABLE_DURATION < (TimeUtils.currentTimeMillis() - mRoomInfo.createdAt.toLong()) && !isRoomOwner && !mRoomInfo.isRobotRoom()
-        livingEndLayout.tvUserName.text = mRoomInfo.ownerName
+        livingEndLayout.root.isVisible = ShowServiceProtocol.ROOM_AVAILABLE_DURATION < (TimeUtils.currentTimeMillis() - mRoomInfo.createTime) && !isRoomOwner && !mRoomInfo.isRobotRoom()
+        livingEndLayout.tvUserName.text = mRoomInfo.owner?.userName
         Glide.with(this@LiveDetailFragment)
-            .load(mRoomInfo.getOwnerAvatarFullUrl())
+            .load(mRoomInfo.owner?.getAvatarFullUrl())
             .error(R.drawable.commerce_default_avatar)
             .into(livingEndLayout.ivAvatar)
         livingEndLayout.ivClose.setOnClickListener {
@@ -429,12 +408,12 @@ class LiveDetailFragment : Fragment() {
     private fun initTopLayout() {
         val topLayout = mBinding.topLayout
         Glide.with(this)
-            .load(mRoomInfo.getOwnerAvatarFullUrl())
+            .load(mRoomInfo.owner?.getAvatarFullUrl())
             .error(R.drawable.commerce_default_avatar)
             .into(topLayout.ivOwnerAvatar)
         topLayout.tvRoomName.text = mRoomInfo.roomName
         topLayout.tvRoomId.text = getString(R.string.commerce_room_id, mRoomInfo.roomId)
-        topLayout.tvUserCount.text = mRoomInfo.roomUserCount.toString()
+        topLayout.tvUserCount.text = mRoomInfo.memberCount.toString()
         topLayout.ivClose.setOnClickListener { onBackPressed() }
     }
 
@@ -448,14 +427,14 @@ class LiveDetailFragment : Fragment() {
             SimpleDateFormat("HH:mm:ss").apply { timeZone = TimeZone.getTimeZone("GMT") }
         Log.d(
             TAG,
-            "TopTimer curr=${TimeUtils.currentTimeMillis()}, createAt=${mRoomInfo.createdAt.toLong()}, diff=${TimeUtils.currentTimeMillis() - mRoomInfo.createdAt.toLong()}, time=${
-                dataFormat.format(Date(TimeUtils.currentTimeMillis() - mRoomInfo.createdAt.toLong()))
+            "TopTimer curr=${TimeUtils.currentTimeMillis()}, createAt=${mRoomInfo.createTime}, diff=${TimeUtils.currentTimeMillis() - mRoomInfo.createTime}, time=${
+                dataFormat.format(Date(TimeUtils.currentTimeMillis() - mRoomInfo.createTime))
             }"
         )
         topLayout.tvTimer.post(object : Runnable {
             override fun run() {
                 topLayout.tvTimer.text =
-                    dataFormat.format(Date(TimeUtils.currentTimeMillis() - mRoomInfo.createdAt.toLong()))
+                    dataFormat.format(Date(TimeUtils.currentTimeMillis() - mRoomInfo.createTime))
                 topLayout.tvTimer.postDelayed(this, 1000)
                 topLayout.tvTimer.tag = this
             }
@@ -510,6 +489,10 @@ class LiveDetailFragment : Fragment() {
     }
     /** 拍卖 */
     private fun initAuctionLayout() {
+        auctionFragment = LiveAuctionFragment(mRoomId)
+        val transaction = childFragmentManager.beginTransaction()
+        transaction.add(R.id.flAuction, auctionFragment)
+        transaction.commit()
         val layoutParams = mBinding.flAuction.layoutParams
         if (isRoomOwner) {
             layoutParams.height = UiUtil.dp2px(88)
@@ -722,7 +705,7 @@ class LiveDetailFragment : Fragment() {
 
     private fun goodsListDialog() {
         val context = this.context ?: return
-        GoodsListDialog(context).show()
+        GoodsListDialog(context, mRoomId).show()
     }
     /**
      * Show setting dialog
@@ -811,6 +794,7 @@ class LiveDetailFragment : Fragment() {
             .setTitle(R.string.commerce_tip)
             .setMessage(R.string.commerce_live_end_room_or_not)
             .setPositiveButton(R.string.commerce_setting_advance_ok) { dialog, id ->
+                mService.leaveRoom(mRoomInfo.roomId)
                 activity?.finish()
                 dialog.dismiss()
             }
@@ -826,17 +810,17 @@ class LiveDetailFragment : Fragment() {
      *
      */
     private fun initServiceWithJoinRoom() {
-        mService.joinRoom(mRoomInfo.roomId,
+        mService.joinRoom(mRoomInfo,
             success = {
-                mService.sendChatMessage(mRoomInfo.roomId, getString(R.string.commerce_live_chat_coming))
                 initService()
+                mService.sendChatMessage(mRoomInfo.roomId, getString(R.string.commerce_live_chat_coming))
             },
-            error = {
-                if ((it as? io.agora.scene.eCommerce.service.RoomException)?.currRoomNo == mRoomInfo.roomId) {
+            error = { e ->
+                if ((e as? RoomException)?.currRoomNo == mRoomInfo.roomId) {
                     runOnUiThread {
                         destroy(false)
                         showLivingEndLayout()
-                        ShowLogger.d("showLivingEndLayout", "join room error!:${it.message}")
+                        ShowLogger.d("showLivingEndLayout", "join room error!:${e.message}")
                     }
                 }
             })
@@ -847,37 +831,20 @@ class LiveDetailFragment : Fragment() {
      *
      */
     private fun initService() {
-        reFetchUserList()
-        mService.subscribeReConnectEvent(mRoomInfo.roomId) {
-            reFetchUserList()
+        mService.subscribeCurrRoomEvent(mRoomId) {
+            destroy(false)
+            showLivingEndLayout()
+            ShowLogger.d("showLivingEndLayout","room delete by owner!")
         }
-        mService.subscribeCurrRoomEvent(mRoomInfo.roomId) { status, _ ->
-            if (status == ShowServiceProtocol.ShowSubscribeStatus.deleted) {
-                destroy(false)
-                showLivingEndLayout()
-                ShowLogger.d("showLivingEndLayout","room delete by owner!")
-            }
-        }
-        mService.subscribeMessage(mRoomInfo.roomId) { _, showMessage ->
+        mService.subscribeMessage(mRoomInfo.roomId) { showMessage ->
             insertMessageItem(showMessage)
         }
-    }
-
-    /**
-     * Re fetch user list
-     *
-     */
-    private fun reFetchUserList() {
-        mService.getAllUserList(mRoomInfo.roomId, {
-            refreshTopUserCount(it.size)
-        })
-    }
-    /**
-     * Destroy service
-     *
-     */
-    private fun destroyService() {
-        mService.leaveRoom(mRoomInfo.roomId)
+        mService.subscribeUser(mRoomInfo.roomId) { count ->
+            refreshTopUserCount(count)
+        }
+        mService.auctionSubscribe(mRoomId) { auctionModel ->
+            auctionFragment.updateAuction(auctionModel)
+        }
     }
 
     /**
@@ -890,7 +857,7 @@ class LiveDetailFragment : Fragment() {
             AlertDialog.Builder(context, R.style.commerce_alert_dialog)
                 .setView(CommerceLivingEndDialogBinding.inflate(LayoutInflater.from(requireContext())).apply {
                     Glide.with(this@LiveDetailFragment)
-                        .load(mRoomInfo.ownerAvatar)
+                        .load(mRoomInfo.owner?.getAvatarFullUrl())
                         .into(ivAvatar)
                 }.root)
                 .setCancelable(false)
@@ -909,13 +876,6 @@ class LiveDetailFragment : Fragment() {
     private var quickStartTime = 0L
     private var subscribeMediaTime = 0L
 
-    /**
-     * Init rtc engine
-     *
-     * @param isScrolling
-     * @param onJoinChannelSuccess
-     * @receiver
-     */
     private fun initRtcEngine() {
         val eventListener = object : IRtcEngineEventHandler() {
             override fun onLocalVideoStateChanged(
@@ -973,7 +933,7 @@ class LiveDetailFragment : Fragment() {
 
             override fun onRemoteVideoStats(stats: RemoteVideoStats) {
                 super.onRemoteVideoStats(stats)
-                if (stats.uid == mRoomInfo.ownerId.toInt()) {
+                if (stats.uid == mRoomInfo.ownerId) {
                     runOnUiThread {
                         refreshStatisticInfo(
                             downBitrate = stats.receivedBitrate,
