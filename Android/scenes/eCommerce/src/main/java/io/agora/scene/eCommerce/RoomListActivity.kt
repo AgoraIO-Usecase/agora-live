@@ -78,7 +78,6 @@ class RoomListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         StatusBarUtil.hideStatusBar(window, true)
         setContentView(mBinding.root)
-        mService.startCloudPlayer()
         fetchUniversalToken ({
             val roomList = arrayListOf<VideoLoader.RoomInfo>( )
             mRoomList.forEach { room ->

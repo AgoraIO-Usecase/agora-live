@@ -55,43 +55,6 @@ class ShowSyncManagerServiceImpl constructor(
     private val kCollectionIdBid = "commerce_goods_bid_collection"
     private val kCollectionIdBuy = "commerce_goods_buy_collection"
 
-    /**
-     * K robot avatars
-     */
-    private val kRobotAvatars = listOf("https://download.agora.io/demo/release/bot1.png")
-
-    /**
-     * K robot uid
-     */
-    private val kRobotUid = 2000000001
-
-    /**
-     * K robot video room ids
-     */
-    private val kRobotVideoRoomIds = arrayListOf(2024001, 2024002, 2024003)
-
-    /**
-     * K robot video stream urls
-     */
-    private val kRobotVideoStreamUrls = arrayListOf(
-        "https://download.agora.io/demo/release/agora_show_video_1.mp4",
-        "https://download.agora.io/demo/release/agora_show_video_2.mp4",
-        "https://download.agora.io/demo/release/agora_show_video_3.mp4"
-    )
-
-    /**
-     * Sync initialized
-     */
-    @Volatile
-    private var syncInitialized = false
-
-    /**
-     * Cloud player service
-     */
-    private val cloudPlayerService by lazy { CloudPlayerService() }
-
-    private val rtmClient: RtmClient
-
     private val syncManager: SyncManager
 
     private val roomManager = AUIRoomManager()
@@ -112,8 +75,7 @@ class ShowSyncManagerServiceImpl constructor(
         commonConfig.owner = owner
         commonConfig.host = BuildConfig.ROOM_MANAGER_SERVER_HOST
         AUIRoomContext.shared().setCommonConfig(commonConfig)
-        rtmClient = createRtmClient()
-        syncManager = SyncManager(context, rtmClient, commonConfig)
+        syncManager = SyncManager(context, null, commonConfig)
         rtmLogin { }
     }
 
@@ -147,17 +109,12 @@ class ShowSyncManagerServiceImpl constructor(
      *
      */
     override fun destroy() {
-        if (syncInitialized) {
-            synchronized(roomInfoControllers){
-                roomInfoControllers.forEach {
-                }
-            }
-            roomInfoControllers.clear()
-            syncInitialized = false
-            kRobotVideoRoomIds.forEach { roomId ->
-                cloudPlayerService.stopHeartBeat(roomId.toString())
+        synchronized(roomInfoControllers){
+            roomInfoControllers.forEach {
+                cleanRoomInfoController(it)
             }
         }
+        roomInfoControllers.clear()
     }
 
     override fun getRoomInfo(roomId: String): AUIRoomInfo? {
@@ -172,8 +129,8 @@ class ShowSyncManagerServiceImpl constructor(
         success: (List<AUIRoomInfo>) -> Unit,
         error: ((Exception) -> Unit)?
     ) {
-        roomManager.getRoomInfoList(BuildConfig.AGORA_APP_ID, kSceneId, System.currentTimeMillis(), 20) { error, list ->
-            if (error != null) {
+        roomManager.getRoomInfoList(BuildConfig.AGORA_APP_ID, kSceneId, System.currentTimeMillis(), 20) { e, list ->
+            if (e != null) {
 //                roomList = appendRobotRooms(emptyList())
                 roomList = emptyList()
                 runOnMainThread { success.invoke(roomList) }
@@ -184,43 +141,6 @@ class ShowSyncManagerServiceImpl constructor(
                 runOnMainThread { success.invoke(roomList) }
             }
         }
-    }
-
-    /**
-     * Append robot rooms
-     */
-    private fun appendRobotRooms(roomList: List<AUIRoomInfo>): List<AUIRoomInfo> {
-        val retRoomList = mutableListOf<AUIRoomInfo>()
-        val robotRoomIds = ArrayList(kRobotVideoRoomIds)
-        val kRobotRoomStartId = kRobotVideoRoomIds[0]
-        retRoomList.forEach { roomDetail ->
-            val differValue = roomDetail.roomId.toInt() - kRobotRoomStartId
-            if (differValue >= 0) {
-                robotRoomIds.firstOrNull { robotRoomId -> robotRoomId == roomDetail.roomId.toInt() }?.let { id ->
-                    robotRoomIds.remove(id)
-                }
-            }
-        }
-        for (i in 0 until robotRoomIds.size) {
-            val robotRoomId = robotRoomIds[i]
-            val robotId = robotRoomId % 10
-            val robotOwner = AUIUserThumbnailInfo().apply {
-                userId = kRobotUid.toString()
-                userName = "Robot $robotId"
-                userAvatar = kRobotAvatars[(robotId - 1) % kRobotAvatars.size]
-            }
-            val roomInfo = AUIRoomInfo().apply {
-                roomId = robotRoomId.toString()
-                roomName = "Smooth $robotId"
-                owner = robotOwner
-                memberCount = 1
-                thumbnail = "1"
-                createTime = TimeUtils.currentTimeMillis()
-            }
-            retRoomList.add(roomInfo)
-        }
-        retRoomList.addAll(roomList)
-        return retRoomList
     }
 
     override fun createRoom(roomId: String, roomName: String, thumbnailId: String, success: (AUIRoomInfo) -> Unit, error: ((Exception) -> Unit)?) {
@@ -284,7 +204,7 @@ class ShowSyncManagerServiceImpl constructor(
                         error?.invoke(Exception(er.message))
                         return@create
                     }
-                    scene.enter { payload, e ->
+                    scene.enter { _, e ->
                         if (e != null) {
                             Log.d(TAG, "enter scene fail: ${e.message}")
                             roomInfoControllers.remove(controller)
@@ -296,7 +216,7 @@ class ShowSyncManagerServiceImpl constructor(
                     }
                 }
             } else {
-                scene.enter { payload, e ->
+                scene.enter { _, e ->
                     if (e != null) {
                         Log.d(TAG, "enter scene fail: ${e.message}")
                         roomInfoControllers.remove(controller)
@@ -346,7 +266,7 @@ class ShowSyncManagerServiceImpl constructor(
         controller.shopCollection = controller.scene.getCollection(kCollectionIdBuy) { a, b, c ->
             AUIListCollection(a, b, c)
         }
-        controller.shopCollection?.subscribeAttributesDidChanged { channelName, key, model ->
+        controller.shopCollection?.subscribeAttributesDidChanged { _, _, model ->
             val list = model.getList()
             if (list == null) {
                 controller.shopChangeSubscriber?.invoke(emptyList())
@@ -362,7 +282,7 @@ class ShowSyncManagerServiceImpl constructor(
         controller.auctionCollection = controller.scene.getCollection(kCollectionIdBid) { a, b, c ->
             AUIMapCollection(a, b, c)
         }
-        controller.auctionCollection?.subscribeAttributesDidChanged { channelName, key, model ->
+        controller.auctionCollection?.subscribeAttributesDidChanged { _, _, model ->
             val gson = Gson()
             val json = gson.toJson(model.getMap())
             val auction = gson.fromJson(json, AuctionModel::class.java)
@@ -372,7 +292,7 @@ class ShowSyncManagerServiceImpl constructor(
         controller.messageCollection = controller.scene.getCollection(kCollectionIdMessage) { a, b, c ->
             AUIMapCollection(a, b, c)
         }
-        controller.messageCollection?.subscribeAttributesDidChanged { channelName, key, model ->
+        controller.messageCollection?.subscribeAttributesDidChanged { _, _, model ->
             val gson = Gson()
             val json = gson.toJson(model.getMap())
             val message = gson.fromJson(json, ShowMessage::class.java)
@@ -600,22 +520,14 @@ class ShowSyncManagerServiceImpl constructor(
                 ) {
                     val rspObj = response.body()?.data
                     if (rspObj != null) {
-                        Log.d("ShowSyncManagerServiceImpl", "2.response success -> rtm login")
-                        rtmClient.login(rspObj.rtmToken, object : ResultCallback<Void> {
-                            override fun onSuccess(responseInfo: Void?) {
+                        syncManager.login(rspObj.rtmToken) { error ->
+                            if (error == null) {
                                 isRtmLogin = true
                                 complete.invoke(true)
+                            } else {
+                                complete.invoke(false)
                             }
-
-                            override fun onFailure(errorInfo: ErrorInfo?) {
-                                if (errorInfo?.errorCode == RtmConstants.RtmErrorCode.LOGIN_REJECTED) {
-                                    isRtmLogin = true
-                                    complete.invoke(true)
-                                } else {
-                                    complete.invoke(false)
-                                }
-                            }
-                        })
+                        }
                     } else {
                         complete.invoke(false)
                     }
@@ -632,29 +544,6 @@ class ShowSyncManagerServiceImpl constructor(
         leaveRoom(roomId)
     }
 
-    /**
-     * Start cloud player
-     *
-     */
-    override fun startCloudPlayer() {
-        for (i in 0 until kRobotVideoRoomIds.size) {
-            val roomId = kRobotVideoRoomIds[i]
-            cloudPlayerService.startCloudPlayer(
-                roomId.toString(),
-                UserManager.getInstance().user.id.toString(),
-                kRobotUid,
-                kRobotVideoStreamUrls[i],
-                "cn",
-                success = {
-                    cloudPlayerService.startHeartBeat(
-                        roomId.toString(),
-                        UserManager.getInstance().user.id.toString()
-                    )
-                },
-                failure = { })
-        }
-    }
-
     private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
     private fun runOnMainThread(r: Runnable) {
         if (Thread.currentThread() == mainHandler.looper.thread) {
@@ -662,21 +551,6 @@ class ShowSyncManagerServiceImpl constructor(
         } else {
             mainHandler.post(r)
         }
-    }
-
-    private fun createRtmClient(): RtmClient {
-        val commonConfig = AUIRoomContext.shared().requireCommonConfig()
-        val userInfo = AUIRoomContext.shared().currentUserInfo
-        val rtmConfig = RtmConfig.Builder(commonConfig.appId, userInfo.userId).apply {
-            presenceTimeout(60)
-        }.build()
-        if (rtmConfig.appId.isEmpty()) {
-            assert(false) { "userId is empty" }
-        }
-        if (rtmConfig.userId.isEmpty()) {
-            assert(false) { "appId is empty, please check 'AUIRoomContext.shared.commonConfig.appId'" }
-        }
-        return RtmClient.create(rtmConfig)
     }
 
     private fun isJsonString(str: String): Boolean {

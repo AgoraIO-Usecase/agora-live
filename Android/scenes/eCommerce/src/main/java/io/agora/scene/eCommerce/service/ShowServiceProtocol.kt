@@ -100,10 +100,4 @@ interface ShowServiceProtocol {
     fun sendChatMessage(roomId: String, message: String, success: (() -> Unit)? = null, error: ((Exception) -> Unit)? = null)
     fun subscribeMessage(roomId: String, onMessageChange: (ShowMessage) -> Unit)
 
-    /**
-     * Start cloud player
-     *
-     */
-    fun startCloudPlayer()
-
 }
