@@ -128,6 +128,14 @@ class CommerceRoomListVC: UIViewController {
                     self.fetchRoomList()
                 }))
             }
+            vc.onClickDisUserClosure = { [weak self] in
+                guard let self = self else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15, execute: DispatchWorkItem(block: {
+                    self.refreshControl.beginRefreshing()
+                    self.collectionView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.size.height), animated: true)
+                    self.fetchRoomList()
+                }))
+            }
             present(nc, animated: true)
         }
     }
@@ -141,8 +149,9 @@ class CommerceRoomListVC: UIViewController {
             }
             let list = roomList ?? []
             let dislikeRooms = AppContext.shared.dislikeRooms()
-            
+            let dislikeUsers = AppContext.shared.dislikeUsers()
             self.roomList = list.filter({ !dislikeRooms.contains($0.roomId) })
+            self.roomList = self.roomList.filter { !dislikeUsers.contains($0.ownerId) }
         }
     }
 

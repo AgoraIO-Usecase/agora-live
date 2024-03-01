@@ -366,10 +366,34 @@ class LiveDetailFragment : Fragment() {
 
         startTopLayoutTimer()
         VideoSetting.isPureMode = mRoomInfo.isPureMode == 1
-        if (mRoomInfo.isPureMode == 1) {
-            VideoSetting.setCurrAudienceEnhanceSwitch(false)
-            VideoSetting.updateSRSetting(VideoSetting.SuperResolution.SR_NONE)
+
+        if (!isRoomOwner) {
+            if (mRoomInfo.isPureMode == 1) {
+                Log.d("happy", "updateSRSetting: 111")
+                VideoSetting.setCurrAudienceEnhanceSwitch(false)
+                VideoSetting.updateSRSetting(VideoSetting.SuperResolution.SR_NONE)
+            } else {
+                Log.d("happy", "updateSRSetting:333")
+                val deviceScore = RtcEngineInstance.rtcEngine.queryDeviceScore()
+                val deviceLevel = if (deviceScore >= 90) {
+                    VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
+                    VideoSetting.setCurrAudienceEnhanceSwitch(true)
+                    VideoSetting.DeviceLevel.High
+                } else if (deviceScore >= 75) {
+                    VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
+                    VideoSetting.setCurrAudienceEnhanceSwitch(true)
+                    VideoSetting.DeviceLevel.Medium
+                } else {
+                    VideoSetting.setCurrAudienceEnhanceSwitch(false)
+                    VideoSetting.DeviceLevel.Low
+                }
+                VideoSetting.updateBroadcastSetting(
+                    deviceLevel = deviceLevel,
+                    isByAudience = true
+                )
+            }
         }
+        refreshStatisticInfo()
     }
 
     /**

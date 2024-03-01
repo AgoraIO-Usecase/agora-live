@@ -20,6 +20,7 @@ protocol ShowLiveViewControllerDelegate: NSObjectProtocol {
 class ShowLiveViewController: UIViewController {
     weak var delegate: ShowLiveViewControllerDelegate?
     var onClickDislikeClosure: (() -> Void)?
+    var onClickDisUserClosure: (() -> Void)?
     var room: ShowRoomListModel? {
         didSet{
             if oldValue?.roomId != room?.roomId {
@@ -125,6 +126,8 @@ class ShowLiveViewController: UIViewController {
     private lazy var panelPresenter = ShowDataPanelPresenter()
     
     private var finishView: ShowReceiveFinishView?
+    
+    private var ownerExpiredView: ShowRoomOwnerExpiredView?
     
     //pk user list (room list)
     private var pkUserInvitationList: [ShowPKUserInfo]? {
@@ -424,6 +427,32 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
         }
     }
     
+    private func _broadcasterRoomExpired(){
+        if ownerExpiredView != nil {return}
+        ownerExpiredView = ShowRoomOwnerExpiredView()
+        ownerExpiredView?.headImg = VLUserCenter.user.headUrl
+        ownerExpiredView?.clickBackButtonAction = {[weak self] in
+            self?.leaveRoom()
+            self?.dismiss(animated: true)
+        }
+        self.view.addSubview(ownerExpiredView!)
+        ownerExpiredView?.snp.makeConstraints { make in
+            make.left.right.top.bottom.equalToSuperview()
+        }
+    }
+    
+    private func _audienceRoomOwnerExpired(){
+        finishView?.removeFromSuperview()
+        finishView = ShowReceiveFinishView()
+        finishView?.headImg = room?.ownerAvatar ?? ""
+        finishView?.headName = room?.ownerName ?? ""
+        finishView?.delegate = self
+        self.view.addSubview(finishView!)
+        finishView?.snp.makeConstraints { make in
+            make.left.right.top.bottom.equalToSuperview()
+        }
+    }
+    
     //MARK: ShowSubscribeServiceProtocol
     func onConnectStateChanged(state: ShowServiceConnectState) {
         guard state == .open else {
@@ -436,14 +465,10 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
     }
     
     func onRoomExpired() {
-        finishView?.removeFromSuperview()
-        finishView = ShowReceiveFinishView()
-        finishView?.headImg = room?.ownerAvatar ?? ""
-        finishView?.headName = room?.ownerName ?? ""
-        finishView?.delegate = self
-        self.view.addSubview(finishView!)
-        finishView?.snp.makeConstraints { make in
-            make.left.right.top.bottom.equalToSuperview()
+        if role == .broadcaster {
+            _broadcasterRoomExpired()
+        }else{
+            _audienceRoomOwnerExpired()
         }
     }
     
@@ -880,26 +905,26 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
         if role == .audience, info.userId != VLUserCenter.user.id {
             return
         }
-        let title = info.interactStatus == .onSeat ? "show_seat_with_audience_end_seat_title".show_localized : "show_pking_with_broadcastor_end_pk_title".show_localized
-        let alertVC = UIAlertController(title: title+"\(info.userName ?? "")", message: nil, preferredStyle: .alert)
-        let ok = UIAlertAction(title: "show_setting_end_pk".show_localized, style: .destructive) { _ in
-            self.serviceImp?.stopInteraction(interaction: info) { _ in
-            }
-        }
-        alertVC.addAction(ok)
         
-        if info.interactStatus == .onSeat {
-            let actionTitle = info.muteAudio ? "show_setting_mic_on".show_localized : "show_setting_mic_off".show_localized
-            let micAction = UIAlertAction(title: actionTitle, style: .default) { _ in
-                self.serviceImp?.muteAudio(mute: !info.muteAudio, userId: info.userId) { err in
+        let toolView = ShowToolMenuView(type: info.interactStatus == .onSeat ? .joint_broadcasting : .end)
+        toolView.title = "To audience \(info.userName ?? "")"
+        toolView.updateStatus(type: .mic, isSelected: info.muteAudio)
+        toolView.heightAnchor.constraint(equalToConstant: 150 + Screen.safeAreaBottomHeight()).isActive = true
+        toolView.onTapItemClosure = { [weak self] type, _ in
+            AlertManager.hiddenView()
+            switch type {
+            case .end_pk:
+                self?.serviceImp?.stopInteraction(interaction: info) { _ in
                 }
+                
+            case .mic, .mute_mic:
+                self?.serviceImp?.muteAudio(mute: !info.muteAudio, userId: info.userId) { err in
+                }
+                
+            default: break
             }
-            alertVC.addAction(micAction)
-        } else {
-            let cancel = UIAlertAction(title: "show_alert_cancel_btn_title".show_localized, style: .cancel)
-            alertVC.addAction(cancel)
         }
-        present(alertVC, animated: true)
+        AlertManager.show(view: toolView, alertPostion: .bottom)
     }
     
     func onClickSendMsgButton(text: String) {
@@ -928,6 +953,16 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
             }
             self.updateLoadingType(playState: .idle)
             self.onClickDislikeClosure?()
+            self.dismiss(animated: true)
+        }
+        dialog.onClickDisUserClosure = { [weak self] in
+            guard let self = self else { return }
+            AppContext.shared.addDislikeUser(at: self.room?.ownerId)
+            if let room = self.room {
+                self._leavRoom(room)
+            }
+            self.updateLoadingType(playState: .idle)
+            self.onClickDisUserClosure?()
             self.dismiss(animated: true)
         }
         view.addSubview(dialog)
@@ -973,7 +1008,6 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
         if let info = currentInteraction, info.userId == VLUserCenter.user.id {
             muteAudio = info.muteAudio
         }
-        settingMenuVC.selectedMap = [.camera: self.muteLocalVideo, .mic: muteAudio, .mute_mic: muteAudio]
         
         if interactionStatus == .idle {
             settingMenuVC.type = role == .broadcaster ? .idle_broadcaster : .idle_audience
@@ -981,6 +1015,8 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
             settingMenuVC.type = role == .broadcaster ? .pking : (currentInteraction?.userId == VLUserCenter.user.id ? .pking : .idle_audience)
             settingMenuVC.menuTitle = currentInteraction?.interactStatus == .pking ? "show_setting_menu_on_pk_title".show_localized : "show_setting_menu_on_seat_title".show_localized
         }
+        settingMenuVC.selectedMap = [.camera: self.muteLocalVideo, .mic: muteAudio, .mute_mic: muteAudio]
+        
         present(settingMenuVC, animated: true)
     }
 }
