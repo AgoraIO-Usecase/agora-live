@@ -47,7 +47,7 @@ class VLLoginViewController: VRBaseViewController {
     }()
     private lazy var policyButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Privacy Policy", for: .normal)
+        button.setTitle("Terms of Service", for: .normal)
         button.setTitleColor(UIColor(hex: "#32AEFF"), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 13)
         button.translatesAutoresizingMaskIntoConstraints = false

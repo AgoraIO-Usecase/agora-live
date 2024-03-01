@@ -12,7 +12,12 @@ private let kPagesVCTag = "PagesVC"
 class ShowLivePagesViewController: ViewController {
     var onClickDislikeClosure: (() -> Void)?
     var onClickDisUserClosure: (() -> Void)?
-    var roomList: [ShowRoomListModel]?
+    var roomList: [ShowRoomListModel]? {
+        didSet {
+            guard let count = roomList?.count else { return }
+            kPageCacheHalfCount = (9999999 / count) * count
+        }
+    }
     
     var focusIndex: Int = 0
     
@@ -49,7 +54,7 @@ class ShowLivePagesViewController: ViewController {
         self.navigationController?.setNavigationBarHidden(true, animated: true)
         self.view.addSubview(collectionView)
         collectionView.isScrollEnabled = roomList?.count ?? 0 > 1 ? true : false
-        scroll(to: fakeCellIndex(with: focusIndex))
+        scroll(to: focusIndex)
         preloadEnterRoom()
     }
     
@@ -98,7 +103,7 @@ class ShowLivePagesViewController: ViewController {
 }
 
 
-private let kPageCacheHalfCount = 999999
+private var kPageCacheHalfCount = 9999999
 //MARK: private
 extension ShowLivePagesViewController {
     fileprivate func preloadEnterRoom() {
@@ -170,7 +175,7 @@ extension ShowLivePagesViewController: UICollectionViewDelegate, UICollectionVie
             showLogger.info("collectionView cellForItemAt: \(idx)/\(indexPath.row)  cache vc count: \(self.children.count)", context: kPagesVCTag)
         }
         
-        guard let room = self.roomList?[idx]  else {
+        guard let room = self.roomList?[idx] else {
             return cell
         }
         
@@ -267,8 +272,8 @@ extension ShowLivePagesViewController: UICollectionViewDelegate, UICollectionVie
         
         //refresh visibleCell canvas after scroll to prevent adjacent rooms of pk from causing no display of images
         showLogger.info("updateRemoteCavans: \(currentVC?.room?.roomId ?? "")", context: kPagesVCTag)
-        let currentVC = visibleCell?.contentView.viewWithTag(kShowLiveRoomViewTag)?.next as? ShowLiveViewController
-        currentVC?.updateRemoteCavans()
+//        let currentVC = visibleCell?.contentView.viewWithTag(kShowLiveRoomViewTag)?.next as? ShowLiveViewController
+//        currentVC?.updateRemoteCavans()
     }
 }
 
