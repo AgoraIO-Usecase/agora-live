@@ -30,9 +30,6 @@ interface IVoiceBuddy {
     /** rtc app id*/
     fun rtcAppId(): String
 
-    /** rtc app certificate*/
-    fun rtcAppCert(): String
-
     /** rtc channel token */
     fun rtcToken(): String
 

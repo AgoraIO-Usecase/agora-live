@@ -38,7 +38,7 @@
         />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvBid"
+        android:id="@+id/tvBidStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@+id/tvItemName"
@@ -46,6 +46,7 @@
         android:lines="1"
         android:textColor="@color/white"
         android:textSize="15sp"
+        android:textStyle="normal"
         android:text="@string/commerce_shop_auction_start_from"
         />
 
@@ -59,7 +60,7 @@
         android:textStyle="bold"
         android:textColor="@color/white"
         android:textSize="18sp"
-        android:text="$1"
+        tools:text="$1"
         />
     
     <com.google.android.material.imageview.ShapeableImageView
@@ -82,10 +83,10 @@
         app:layout_constraintTop_toTopOf="@+id/tvPrice"
         app:layout_constraintBottom_toBottomOf="@+id/tvPrice"
         android:lines="1"
-        android:textStyle="bold"
         android:textColor="#BBBEBF"
+        android:textStyle="normal"
         android:textSize="15sp"
-        android:text="a**"
+        tools:text="a**"
         />
     
     <Button
@@ -94,6 +95,7 @@
         android:layout_height="36dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/ivCommodity"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:background="@drawable/commerce_corner_radius_gradient_orange"
         android:text="@string/commerce_shop_auction_start"
         android:textAllCaps="false"
@@ -123,6 +125,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivCommodity"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:background="@drawable/commerce_corner_radius_gradient_orange"
         android:text="@string/commerce_shop_auction_start"
         android:textAllCaps="false"

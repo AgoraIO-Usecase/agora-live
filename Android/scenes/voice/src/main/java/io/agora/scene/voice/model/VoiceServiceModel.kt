@@ -45,7 +45,11 @@ data class VoiceRankUserModel constructor(
     var name: String? = null,
     var portrait: String? = "",
     var amount: Int = 0
-) : BaseRoomBean
+) : BaseRoomBean {
+    fun getAvatarUrl(): String {
+        return UserManager.getInstance().getUserAvatarFullUrl(portrait)
+    }
+}
 
 /**
  * 房间数据
