@@ -139,7 +139,7 @@ import Foundation
     override func layoutSubviews() {
         super.layoutSubviews()
         headIconView.frame = CGRect(x: (self.bounds.width - 38)/2.0, y: 8, width: 38, height: 4)
-        headTitleLabel.frame = CGRect(x: (self.bounds.width - 80)/2.0, y: 30, width: 80, height: 22)
+        headTitleLabel.frame = CGRect(x: (self.bounds.width - 200)/2.0, y: 30, width: 200, height: 22)
         tableView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10, width: self.bounds.width, height: self.bounds.height - headTitleLabel.frame.maxY - 10)
         
         coverView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10 + 104, width: self.bounds.width, height: 156)

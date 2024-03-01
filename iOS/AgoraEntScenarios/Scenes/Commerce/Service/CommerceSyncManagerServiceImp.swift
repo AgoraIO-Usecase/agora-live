@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import RTMSyncManager
 
-private let kSceneId = "scene_ecommerce_0_2_0"
+let kEcommerceSceneId = "scene_ecommerce_0_2_0"
 
 private let SYNC_MANAGER_MESSAGE_COLLECTION = "commerce_message_collection"
 private let SYNC_MANAGER_SEAT_APPLY_COLLECTION = "commerce_seat_apply_collection"
@@ -113,7 +113,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     }
     
     fileprivate func initScene(completion: @escaping (NSError?) -> Void) {
-        RTMSyncUtil.joinScene(id: kSceneId, ownerId: room?.ownerId ?? VLUserCenter.user.id, payload: nil) {
+        RTMSyncUtil.joinScene(id: kEcommerceSceneId, ownerId: room?.ownerId ?? VLUserCenter.user.id, payload: nil) {
             self._subscribeAll()
             completion(nil)
         } failure: { error in
