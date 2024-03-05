@@ -142,6 +142,7 @@ class RTMSyncUtil: NSObject {
             scene?.delete()
             let model = SyncRoomDestroyNetworkModel()
             model.roomId = id
+            model.sceneId = kEcommerceSceneId
             model.request { err, _ in
                 print("error == \(err?.localizedDescription ?? "")")
                 scene?.unbindRespDelegate(delegate: self.roomDelegate)
