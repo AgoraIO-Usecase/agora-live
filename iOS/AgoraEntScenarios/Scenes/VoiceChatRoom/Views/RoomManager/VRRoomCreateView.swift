@@ -11,7 +11,7 @@ import ZSwiftBaseLib
 public class VRRoomCreateView: UIImageView {
     var action: (() -> Void)?
 
-    lazy var createRoom: UIButton = .init(type: .custom).frame(CGRect(x: ScreenWidth / 2.0 - 74, y: 10, width: 148, height: 56)).addTargetFor(self, action: #selector(createAction), for: .touchUpInside).font(.systemFont(ofSize: 16, weight: .semibold))
+    lazy var createRoom: UIButton = .init(type: .custom).frame(.zero).addTargetFor(self, action: #selector(createAction), for: .touchUpInside).font(.systemFont(ofSize: 16, weight: .semibold))
 
     lazy var createContainer: UIView = .init(frame: CGRect(x: ScreenWidth / 2.0 - 74, y: 10, width: 148, height: 56))
 
@@ -26,8 +26,14 @@ public class VRRoomCreateView: UIImageView {
 //        createContainer.layer.shadowOpacity = 1
         isUserInteractionEnabled = true
         createRoom.imageView?.contentMode = .scaleAspectFit
-        createRoom.setBackgroundImage(UIImage.sceneImage(name: "create_room", bundleName: "VoiceChatRoomResource"), for: .normal)
+        createRoom.setBackgroundImage(UIImage.voice_image("create_room"), for: .normal)
+        createRoom.setImage(UIImage.voice_image("create_room_add"), for: .normal)
+        createRoom.setTitle("voice_create_room".voice_localized, for: .normal)
+        createRoom.spacingBetweenImageAndTitle = 7
         createRoom.accessibilityIdentifier = "voice_chat_create_room_button_title"
+        createRoom.translatesAutoresizingMaskIntoConstraints = false
+        createRoom.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        createRoom.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
     }
 
     @available(*, unavailable)

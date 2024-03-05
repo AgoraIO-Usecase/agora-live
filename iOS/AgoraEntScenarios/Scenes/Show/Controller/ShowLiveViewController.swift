@@ -292,8 +292,6 @@ class ShowLiveViewController: UIViewController {
         ShowAgoraKitManager.shared.cleanCapture()
         ShowBeautyFaceVC.resetData()
         ShowAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
-
-        serviceImp?.unsubscribeEvent(delegate: self)
         
         serviceImp?.leaveRoom {_ in
         }
@@ -393,6 +391,11 @@ extension ShowLiveViewController {
 
 //MARK: service subscribe
 extension ShowLiveViewController: ShowSubscribeServiceProtocol {
+    func onRoomDestroy(roomId: String) {
+        guard roomId == self.roomId else { return }
+        onRoomExpired()
+    }
+    
     private func _subscribeServiceEvent() {
         serviceImp?.subscribeEvent(delegate: self)
         //TODO: migration
@@ -939,6 +942,7 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
             }
         }else {
             updateLoadingType(playState: .idle)
+            leaveRoom()
             dismiss(animated: true)
         }
     }

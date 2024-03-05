@@ -73,11 +73,15 @@ class VoiceCreateRoomView: UIView {
         contentLabel.attributedText = attributedText
         self.warningView.addSubview(contentLabel)
         
-        let roomTitleLabel = UILabel(frame: CGRect(x: 20, y: self.warningView.bottom + 20, width: 70, height: 20))
+        let roomTitleLabel = UILabel()
         roomTitleLabel.font = UIFont.systemFont(ofSize: 14)
         roomTitleLabel.textColor = UIColor(hexString: "#000000")
         roomTitleLabel.text = "voice_room_name".voice_localized
         self.addSubview(roomTitleLabel)
+        roomTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        roomTitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20).isActive = true
+        roomTitleLabel.topAnchor.constraint(equalTo: warningView.bottomAnchor, constant: 20).isActive = true
+        layoutIfNeeded()
         
         let randomBtn = UIButton(type: .custom)
         randomBtn.setTitle("voice_random".voice_localized, for: .normal)
@@ -141,9 +145,11 @@ class VoiceCreateRoomView: UIView {
         self.screatView.addSubview(pwdView)
         
         let createBtn = UIButton()
-        createBtn.setBackgroundImage(UIImage.sceneImage(name: "createRoomBtn", bundleName: "VoiceChatRoomResource"), for: .normal)
+        createBtn.backgroundColor = UIColor(hexString: "#2E6CF6")
+        createBtn.setTitle("voice_create_room".voice_localized, for: .normal)
         createBtn.accessibilityIdentifier = "voice_chat_create_room_next_btn"
         createBtn.adjustsImageWhenHighlighted = false
+        createBtn.cornerRadius(10)
         createBtn.contentMode = .scaleAspectFit
         createBtn.addTarget(self, action: #selector(createBtnClickEvent), for: .touchUpInside)
         self.addSubview(createBtn)

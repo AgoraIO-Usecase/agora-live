@@ -103,40 +103,61 @@ class VMANISSUPTableViewCell: UITableViewCell {
     }
 
     private func layoutUI() {
-        titleLabel.frame = CGRect(x: 20, y: 10, width: 200, height: 20)
+//        titleLabel.frame = CGRect(x: 20, y: 10, width: 200, height: 20)
         titleLabel.text = "TV Sound"
         titleLabel.font = UIFont.systemFont(ofSize: 13)
         titleLabel.textColor = UIColor(hex: 0x3C4267, alpha: 1)
         contentView.addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
 
-        detailLabel.frame = CGRect(x: 20, y: 30, width: 150, height: 30)
+//        detailLabel.frame = CGRect(x: 20, y: 30, width: 150, height: 30)
         detailLabel.text = "Ex bird, car,subway sounds"
         detailLabel.font = UIFont.systemFont(ofSize: 11)
         detailLabel.numberOfLines = 0
         detailLabel.lineBreakMode = .byCharWrapping
         detailLabel.textColor = UIColor(red: 151 / 255.0, green: 156 / 255.0, blue: 187 / 255.0, alpha: 1)
         contentView.addSubview(detailLabel)
+        detailLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        detailLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         detailLabel.isHidden = true
+        detailLabel.translatesAutoresizingMaskIntoConstraints = false
+        detailLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20).isActive = true
+        detailLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
 
-        noneBtn.frame = CGRect(x: screenWidth - 70, y: 12, width: 50, height: 30)
-        noneBtn.backgroundColor = UIColor(red: 236 / 255.0, green: 236 / 255.0, blue: 236 / 255.0, alpha: 1)
-        noneBtn.setTitle("voice_without_AINS".voice_localized, for: .normal)
-        noneBtn.setTitleColor(UIColor(red: 151 / 255.0, green: 156 / 255.0, blue: 187 / 255.0, alpha: 1), for: .normal)
-        noneBtn.font(UIFont.systemFont(ofSize: 11))
-        noneBtn.layer.cornerRadius = 3
-        noneBtn.layer.masksToBounds = true
-        noneBtn.addTargetFor(self, action: #selector(click), for: .touchUpInside)
-        addSubview(noneBtn)
-
-        anisBtn.frame = CGRect(x: screenWidth - 130, y: 12, width: 50, height: 30)
+//        anisBtn.frame = CGRect(x: screenWidth - 130, y: 12, width: 50, height: 30)
         anisBtn.backgroundColor = UIColor(red: 236 / 255.0, green: 236 / 255.0, blue: 236 / 255.0, alpha: 1)
         anisBtn.setTitle("voice_with_AINS".voice_localized, for: .normal)
         anisBtn.setTitleColor(UIColor(red: 151 / 255.0, green: 156 / 255.0, blue: 187 / 255.0, alpha: 1), for: .normal)
         anisBtn.font(UIFont.systemFont(ofSize: 11))
         anisBtn.layer.cornerRadius = 3
         anisBtn.layer.masksToBounds = true
+        anisBtn.contentEdgeInsets(UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5))
         anisBtn.addTargetFor(self, action: #selector(click), for: .touchUpInside)
         addSubview(anisBtn)
+        anisBtn.translatesAutoresizingMaskIntoConstraints = false
+        anisBtn.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -15).isActive = true
+        anisBtn.topAnchor.constraint(equalTo: topAnchor, constant: 12).isActive = true
+        anisBtn.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
+//        noneBtn.frame = CGRect(x: screenWidth - 70, y: 12, width: 50, height: 30)
+        noneBtn.backgroundColor = UIColor(red: 236 / 255.0, green: 236 / 255.0, blue: 236 / 255.0, alpha: 1)
+        noneBtn.setTitle("voice_without_AINS".voice_localized, for: .normal)
+        noneBtn.setTitleColor(UIColor(red: 151 / 255.0, green: 156 / 255.0, blue: 187 / 255.0, alpha: 1), for: .normal)
+        noneBtn.font(UIFont.systemFont(ofSize: 11))
+        noneBtn.layer.cornerRadius = 3
+        noneBtn.layer.masksToBounds = true
+        noneBtn.contentEdgeInsets(UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5))
+        noneBtn.addTargetFor(self, action: #selector(click), for: .touchUpInside)
+        addSubview(noneBtn)
+        noneBtn.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        noneBtn.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        noneBtn.translatesAutoresizingMaskIntoConstraints = false
+        noneBtn.topAnchor.constraint(equalTo: topAnchor, constant: 12).isActive = true
+        noneBtn.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        noneBtn.trailingAnchor.constraint(equalTo: anisBtn.leadingAnchor, constant: -8).isActive = true
+        noneBtn.leadingAnchor.constraint(equalTo: detailLabel.trailingAnchor, constant: 10).isActive = true
     }
 
     @objc private func click(sender: UIButton) {

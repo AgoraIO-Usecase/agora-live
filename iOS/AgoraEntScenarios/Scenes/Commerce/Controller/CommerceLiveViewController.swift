@@ -106,10 +106,24 @@ class CommerceLiveViewController: UIViewController {
     }()
     private lazy var auctionView: CommerceAuctionShoppingView = {
         let view = CommerceAuctionShoppingView(isBroadcastor: role == .broadcaster)
-        view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.startBidGoodsClosure = { [weak self] model in
+            guard let self = self, let model = model else { return }
+            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
+        }
+        view.endBidGoodsClosure = { [weak self] model in
+            guard let self = self, let model = model else { return }
+            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
+        }
+        view.bidInAuctionGoodsClosure = { [weak self] model in
+            guard let self = self, let model = model else { return }
+            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
+        }
         return view
     }()
+    private lazy var goodsListView = CommerceGoodsListView(isBroadcaster: role == .broadcaster,
+                                                           serviceImp: serviceImp,
+                                                           roomId: roomId)
     
     private lazy var realTimeView: CommerceRealTimeDataView = {
         let realTimeView = CommerceRealTimeDataView(isLocal: role == .broadcaster)
@@ -120,7 +134,6 @@ class CommerceLiveViewController: UIViewController {
         }
         return realTimeView
     }()
-    private var liveViewBottomCons: NSLayoutConstraint?
     
     private lazy var panelPresenter = CommerceDataPanelPresenter()
     
@@ -159,7 +172,6 @@ class CommerceLiveViewController: UIViewController {
         setupUI()
         if room.ownerId == VLUserCenter.user.id {
             joinChannel()
-            _subscribeServiceEvent()
             AgoraEntAuthorizedManager.checkMediaAuthorized(parent: self)
         }
     }
@@ -183,24 +195,25 @@ class CommerceLiveViewController: UIViewController {
         view.layer.contents = UIImage.commerce_sceneImage(name: "show_live_room_bg")?.cgImage
         navigationController?.isNavigationBarHidden = true
         liveView.room = room
+    
         view.addSubview(liveView)
+        view.addSubview(auctionView)
+        auctionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        auctionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(Screen.safeAreaBottomHeight() + 6)).isActive = true
+        auctionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        view.layoutIfNeeded()
+        
         liveView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         liveView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         liveView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        liveViewBottomCons = liveView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        liveViewBottomCons?.isActive = true
-        
-        view.addSubview(auctionView)
-        auctionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        auctionView.topAnchor.constraint(equalTo: liveView.bottomAnchor).isActive = true
-        auctionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        liveView.bottomAnchor.constraint(equalTo: auctionView.topAnchor,
+                                         constant: -6).isActive = true
     }
     
     func leaveRoom(){
         CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
         CommerceAgoraKitManager.shared.cleanCapture()
         CommerceAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
-        serviceImp?.unsubscribeEvent(delegate: self)
         
         serviceImp?.leaveRoom {_ in
         }
@@ -245,6 +258,54 @@ class CommerceLiveViewController: UIViewController {
         serviceImp?.sendChatMessage(roomId: roomId, message: showMsg) { error in
         }
     }
+    
+    private func addGoodsList() {
+        guard role == .broadcaster else { return }
+        serviceImp?.addGoodsList(roomId: roomId,
+                                 goods: CommerceGoodsBuyModel.createGoodsData().compactMap({ $0.goods }),
+                                 completion: { _ in })
+    }
+    
+    private func addBidGoodsInfo() {
+        guard role == .broadcaster else { return }
+        let auctionModel = CommerceGoodsAuctionModel()
+        let goodsModel = CommerceGoodsModel()
+        goodsModel.imageName = "commerce_shop_goods_0"
+        goodsModel.title = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
+        goodsModel.price = 1
+        goodsModel.quantity = 1
+        auctionModel.goods = goodsModel
+        auctionModel.status = .idle
+        auctionModel.timestamp = Date().millionsecondSince1970()
+        auctionModel.bidUser = nil
+        auctionModel.bid = 1
+        serviceImp?.addBidGoodsInfo(roomId: roomId, goods: auctionModel, completion: { error in
+            commerceLogger.info("error: \(error?.localizedDescription ?? "")")
+        })
+    }
+    
+    private func getBidGoodsInfo() {
+        serviceImp?.getBidGoodsInfo(roomId: roomId, completion: { [weak self] error, auctionModel in
+            guard let model = auctionModel else { return }
+            self?.auctionView.setGoodsData(model: model, isBroadcaster: self?.role == .broadcaster)
+        })
+    }
+    
+    private func subscribeBidGoodsInfo() {
+        serviceImp?.subscribeBidGoodsInfo(roomId: roomId, completion: { [weak self] error, auctionModel in
+            if error != nil {
+                commerceLogger.info("error: \(error?.localizedDescription ?? "")")
+                return
+            }
+            guard let model = auctionModel else { return }
+            self?.auctionView.setGoodsData(model: model, isBroadcaster: self?.role == .broadcaster)
+            if model.status == .completion && model.bidUser?.id != "" {
+                let resultView = CommerceAuctionResultView()
+                resultView.setBidGoods(model: model)
+                AlertManager.show(view: resultView)
+            }
+        })
+    }
 }
 
 //MARK: private
@@ -252,7 +313,7 @@ extension CommerceLiveViewController {
     func _joinRoom(_ room: CommerceRoomListModel){
         finishView?.removeFromSuperview()
         CommerceAgoraKitManager.shared.addRtcDelegate(delegate: self, roomId: room.roomId)
-        if let service = serviceImp {
+        if let service = serviceImp, role == .audience {
             service.joinRoom(room: room) {[weak self] error, detailModel in
                 guard let self = self else {return}
                 guard self.room?.roomId == room.roomId else { return }
@@ -263,12 +324,10 @@ extension CommerceLiveViewController {
                     }
                 } else {
                     self._subscribeServiceEvent()
-
-                    self.updateLoadingType(playState: self.loadingType)
                 }
             }
         } else {
-            self.onRoomExpired()
+            _subscribeServiceEvent()
         }
     }
     
@@ -303,8 +362,20 @@ extension CommerceLiveViewController {
 
 //MARK: service subscribe
 extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
+    func onRoomDestroy(roomId: String) {
+        guard roomId == self.roomId else { return }
+        onRoomExpired()
+    }
+    
     private func _subscribeServiceEvent() {
         serviceImp?.subscribeEvent(delegate: self)
+        subscribeBidGoodsInfo()
+        if role == .broadcaster {
+            addBidGoodsInfo()
+            addGoodsList()
+        } else {
+            getBidGoodsInfo()
+        }
     }
         
     //MARK: CommerceSubscribeServiceProtocol
@@ -317,6 +388,7 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     
     func onRoomExpired() {
         AppContext.expireCommerceImp(roomId)
+        serviceImp?.leaveRoom(completion: { _ in })
         serviceImp = nil
         finishView?.removeFromSuperview()
         finishView = CommerceReceiveFinishView()
@@ -346,8 +418,7 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     
     func onMessageDidAdded(message: CommerceMessage) {
         if let text = message.message {
-            let model = CommerceChatModel(userName: message.userName ?? "", text: text)
-            self.liveView.addChatModel(model)
+            self.liveView.addChatModel(message)
         }
     }
 }
@@ -473,6 +544,7 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
             }
         }else {
             updateLoadingType(playState: .idle)
+            leaveRoom()
             dismiss(animated: true)
         }
     }
@@ -504,14 +576,7 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
     }
     
     func onClickShoppingButton() {
-//        let shoppingListView = CommerceShoppingListView(isBroadcaster: role == .broadcaster)
-//        AlertManager.show(view: shoppingListView, alertPostion: .bottom)
-        liveViewBottomCons?.constant = -(auctionView.height + Screen.safeAreaBottomHeight() + 6)
-        liveViewBottomCons?.isActive = true
-        auctionView.isHidden = false
-        UIView.animate(withDuration: 0.25) {
-            self.view.layoutIfNeeded()
-        }
+        AlertManager.show(view: goodsListView, alertPostion: .bottom)
     }
     
     func onClickSettingButton() {
