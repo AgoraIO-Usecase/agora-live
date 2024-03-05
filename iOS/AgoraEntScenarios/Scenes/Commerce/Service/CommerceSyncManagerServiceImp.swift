@@ -608,7 +608,7 @@ extension CommerceSyncManagerServiceImp {
                 !userList.map({ $0.userId }).contains(userInfo.userId) {
                 self.userList?.append(user)
                 
-            } else {
+            } else if (self.userList ?? []).isEmpty {
                 self.userList = [user]
             }
             

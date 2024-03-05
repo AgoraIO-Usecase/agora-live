@@ -16,11 +16,11 @@ func aui_info(_ message: String, tag: String = logTag) {
 }
 
 func aui_warn(_ message: String, tag: String = logTag) {
-    aui_info("[Warning]message", tag: tag)
+    aui_info("[Warning]\(message)", tag: tag)
 }
 
 func aui_error(_ message: String, tag: String = logTag) {
-    aui_info("[Error]message", tag: tag)
+    aui_info("[Error]\(message)", tag: tag)
 }
 
 func aui_benchmark(_ text: String, cost: Double, tag: String = logTag) {
