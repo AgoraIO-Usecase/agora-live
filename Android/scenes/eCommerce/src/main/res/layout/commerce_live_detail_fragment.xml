@@ -45,6 +45,15 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/flAuction" />
 
+    <io.agora.scene.eCommerce.widget.like.LikeLayout
+        android:id="@+id/vLike"
+        android:visibility="gone"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomLayout"
+        />
+
     <include
         android:id="@+id/livingEndLayout"
         layout="@layout/commerce_live_detail_living_end"

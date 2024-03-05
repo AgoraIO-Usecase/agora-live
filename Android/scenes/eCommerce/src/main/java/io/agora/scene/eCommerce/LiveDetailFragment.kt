@@ -327,6 +327,12 @@ class LiveDetailFragment : Fragment() {
         initBottomLayout()
         initMessageLayout()
         initAuctionLayout()
+        if (!isRoomOwner) {
+            mBinding.vLike.visibility = View.VISIBLE
+            mBinding.vLike.likeView.setOnClickListener { mBinding.vLike.addFavor() }
+        } else {
+            mBinding.vLike.visibility = View.GONE
+        }
 
         // Render host video
         if (needRender) {
