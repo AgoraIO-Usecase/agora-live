@@ -83,7 +83,7 @@ class VRSoundCardEffectView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         headIconView.frame = CGRect(x: (self.bounds.width - 38)/2.0, y: 8, width: 38, height: 4)
-        headTitleLabel.frame = CGRect(x: (self.bounds.width - 80)/2.0, y: 30, width: 80, height: 22)
+        headTitleLabel.frame = CGRect(x: (self.bounds.width - 200)/2.0, y: 30, width: 200, height: 22)
         tableView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10, width: self.bounds.width, height: 350)
        // sepView.frame = CGRect(x: 0, y: self.bounds.height - 70, width: self.bounds.width, height: 10)
        // cancleView.frame = CGRect(x: 10, y: 26, width: 50, height: 30)
@@ -97,11 +97,11 @@ class VRSoundCardEffectView: UIView {
 
 extension VRSoundCardEffectView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        voiceArray.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+        70
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

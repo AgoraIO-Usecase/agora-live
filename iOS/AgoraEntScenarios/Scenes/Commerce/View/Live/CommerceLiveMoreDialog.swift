@@ -11,6 +11,7 @@ import Agora_Scene_Utils
 @objc public class CommerceLiveMoreDialog: UIView {
     var onClickDislikeClosure: (() -> Void)?
     var onClickDisUserClosure:(() -> Void)?
+    
     private lazy var contentView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(hex: "#000000", alpha: 0.85)
@@ -31,27 +32,27 @@ import Agora_Scene_Utils
     
     private lazy var reportButton: AGEButton = {
         let button = AGEButton()
-        button.setImage(UIImage.sceneImage(name: "report_icon"),
-                        for: .normal,
-                        postion: .top,
-                        spacing: 4)
-        button.setTitle("show_report".commerce_localized, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-        button.setTitleColor(.gray, for: .normal)
-        button.addTargetFor(self, action: #selector(onAction(_:)), for: .touchUpInside)
-        return button
-    }()
-    private lazy var dislikeButton: AGEButton = {
-        let button = AGEButton()
         button.setImage(UIImage.sceneImage(name: "report_content_icon")?.withTintColor(.white, renderingMode: .alwaysOriginal),
                         for: .normal,
                         postion: .top,
                         spacing: 4)
-        button.setTitle("report_content".commerce_localized, for: .normal)
+        button.setTitle("report_content".show_localized, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        button.setTitleColor(.gray, for: .normal)
+        button.addTargetFor(self, action: #selector(onClickReportContentButton(_:)), for: .touchUpInside)
+        return button
+    }()
+    private lazy var dislikeButton: AGEButton = {
+        let button = AGEButton()
+        button.setImage(UIImage.sceneImage(name: "report_user_icon")?.withTintColor(.white, renderingMode: .alwaysOriginal),
+                        for: .normal,
+                        postion: .top,
+                        spacing: 4)
+        button.setTitle("report_user".show_localized, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         button.setTitleColor(.gray, for: .normal)
         
-        button.addTargetFor(self, action: #selector(onDislikeButton(sender:)), for: .touchUpInside)
+        button.addTargetFor(self, action: #selector(onClickReportUserButton(sender:)), for: .touchUpInside)
         return button
     }()
     
@@ -96,19 +97,20 @@ import Agora_Scene_Utils
         }
     }
     
-    @objc private func onAction(_ sender: UIButton) {
-        hidden()
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
-            ToastView.show(text: "You have blocked this user.")
-        }
-        onClickDisUserClosure?()
-    }
-    @objc
-    private func onDislikeButton(sender: UIButton) {
+    @objc private func onClickReportContentButton(_ sender: UIButton) {
         hidden()
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
             ToastView.show(text: "You have blocked this content.")
         }
         onClickDislikeClosure?()
+    }
+    
+    @objc
+    private func onClickReportUserButton(sender: UIButton) {
+        hidden()
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
+            ToastView.show(text: "You have blocked this user.".show_localized)
+        }
+        onClickDisUserClosure?()
     }
 }

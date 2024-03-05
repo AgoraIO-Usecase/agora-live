@@ -21,21 +21,35 @@ extension UIView {
     }
     
     func createGradientImage(colors: [UIColor]) -> UIImage? {
-        let view = UIView(frame: bounds)
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = view.bounds
-        gradientLayer.colors = colors.map({ $0.cgColor })
-
-        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
-        view.layer.addSublayer(gradientLayer)
-
-        let renderer = UIGraphicsImageRenderer(size: view.bounds.size)
-        let image = renderer.image { (context) in
-            view.layer.render(in: context.cgContext)
+        if bounds.size == .zero {
+            layoutIfNeeded()
         }
+        if colors.count > 1 {
+            let view = UIView(frame: bounds)
+            let gradientLayer = CAGradientLayer()
+            gradientLayer.frame = view.bounds
+            gradientLayer.colors = colors.map({ $0.cgColor })
+            gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
+            gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
+            view.layer.addSublayer(gradientLayer)
+
+            let renderer = UIGraphicsImageRenderer(size: view.bounds.size)
+            let image = renderer.image { (context) in
+                view.layer.render(in: context.cgContext)
+            }
+            return image
+        }
+        UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
+        guard let context = UIGraphicsGetCurrentContext() else { return nil }
+        colors.first?.setFill()
+        let rectanglePath = UIBezierPath(rect: CGRect(origin: .zero, size: size))
+        rectanglePath.fill()
+
+        guard let image = UIGraphicsGetImageFromCurrentImageContext() else {
+            fatalError("Unable to get the image from the current context.")
+        }
+        UIGraphicsEndImageContext()
         return image
     }
 }
-
 

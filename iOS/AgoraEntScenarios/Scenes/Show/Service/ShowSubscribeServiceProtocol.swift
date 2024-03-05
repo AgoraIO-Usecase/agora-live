@@ -20,6 +20,9 @@ protocol ShowSubscribeServiceProtocol: NSObject {
     /// Room expired
     func onRoomExpired()
     
+    /// Live broadcast has ended
+    func onRoomDestroy(roomId: String)
+    
     /// Network state change
     /// - Parameter state: <#state description#>
     func onConnectStateChanged(state: ShowServiceConnectState)

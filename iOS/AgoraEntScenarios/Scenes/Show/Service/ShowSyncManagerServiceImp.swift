@@ -283,6 +283,7 @@ class ShowSyncManagerServiceImp: NSObject, ShowServiceProtocol {
                 self?.roomId = channelName
                 let output = ShowRoomDetailModel.yy_model(with: params!)
                 self?._startCheckExpire()
+                self?._subscribeOnRoomDestroy(isOwner: self?.isOwner(room) ?? false)
                 self?._subscribeAll()
                 self?._getAllPKInvitationList(room: nil) { error, list in
                 }
@@ -880,13 +881,14 @@ extension ShowSyncManagerServiceImp {
             .collection(className: SYNC_SCENE_ROOM_USER_COLLECTION)
             .get(success: { [weak self] list in
                 agoraPrint("imp user get success...")
-                guard (list.first?.getId().count ?? 0) > 0 else { return }
                 let users = list.compactMap({ ShowUser.yy_model(withJSON: $0.toJson()!)! })
 //            guard !users.isEmpty else { return }
-                self?.userList = users
-                self?._updateUserCount(completion: { error in
+                if users.count > 0 {
+                    self?.userList = users
+                    self?._updateUserCount(completion: { error in
 
-                })
+                    })
+                }                
                 finished(nil, users)
             }, fail: { error in
                 agoraPrint("imp user get fail :\(error.message)...")
@@ -950,6 +952,14 @@ extension ShowSyncManagerServiceImp {
             })
     }
 
+    private func _subscribeOnRoomDestroy(isOwner: Bool) {
+        guard isOwner == false else { return }
+        SyncUtil.scene(id: roomId ?? "")?.subscribe(key: "", onDeleted: { object in
+            let roomId = object.getId()
+            self.subscribeDelegate?.onRoomDestroy(roomId: roomId)
+        })
+    }
+    
     private func _subscribeOnlineUsersChanged() {
         guard let channelName = roomId else {
             agoraPrint("channelName = nil")
