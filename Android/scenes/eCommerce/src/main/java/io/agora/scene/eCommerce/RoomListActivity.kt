@@ -168,6 +168,11 @@ class RoomListActivity : AppCompatActivity() {
         mBinding.btnCreateRoom2.setOnClickListener { goLivePrepareActivity() }
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        mBinding.smartRefreshLayout.autoRefresh()
+    }
+
     /**
      * Update list
      *
