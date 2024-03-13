@@ -18,6 +18,7 @@ private let SYNC_MANAGER_PK_INVITATION_COLLECTION = "commerce_pk_invitation_coll
 private let SYNC_MANAGER_INTERACTION_COLLECTION = "commerce_interaction_collection"
 private let SYNC_MANAGER_BID_GOODS_COLLECTION = "commerce_goods_bid_collection"
 private let SYNC_MANAGER_BUY_GOODS_COLLECTION = "commerce_goods_buy_collection"
+private let SYNC_MANAGER_UPVOTE_COLLECTION = "commerce_upvote_collection"
 
 
 enum CommerceError: Int, Error {
@@ -337,6 +338,10 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         _subscribeGoodsInfo(roomId: roomId, completion: completion)
     }
     
+    func getGoodsInfo(roomId: String?, goodsId: String?, completion: @escaping (NSError?, CommerceGoodsBuyModel?) -> Void) {
+        _getGoodsInfo(roomId: roomId, goodsId: goodsId, completion: completion)
+    }
+    
     func unsubscribeEvent(delegate: CommerceSubscribeServiceProtocol) {
         //TODO: weak map
         self.subscribeDelegate = nil
@@ -528,6 +533,37 @@ extension CommerceSyncManagerServiceImp {
             completion(nil, models)
         }
     }
+    
+    private func _getGoodsInfo(roomId: String?, goodsId: String?, completion: @escaping (NSError?, CommerceGoodsBuyModel?) -> Void) {
+        _getGoodsList(roomId: roomId) { error, list in
+            let goods = list?.filter({ $0.goods?.goodsId == goodsId }).first
+            completion(error, goods)
+        }
+    }
+}
+
+extension CommerceSyncManagerServiceImp {
+    func upvote(roomId: String?, count: Int, completion: ((NSError?) -> Void)?) {
+        guard let channelName = roomId else {
+            completion?(NSError(domain: "roomId is empty", code: 0))
+            return
+        }
+        RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION,
+                                data: ["userId": VLUserCenter.user.id, "count":  count, "createAt": Date().millionsecondSince1970()],
+                                callback: completion)
+    }
+    
+    func subscribeUpvoteEvent(roomId: String?, completion: ((String?, Int) -> Void)?) {
+        guard let channelName = roomId else {
+            completion?(nil, 0)
+            return
+        }
+        RTMSyncUtil.subscribeAttributesDidChanged(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION) { channelName, object in
+            let userId = object.getMap()?["userId"] as? String
+            let count = object.getMap()?["count"] as? Int
+            completion?(userId, count ?? 1)
+        }
+    }
 }
 
 //MARK: user operation
@@ -629,43 +665,6 @@ extension CommerceSyncManagerServiceImp {
                 self.subscribeDelegate?.onUserCountChanged(userCount: self.userList?.count ?? 1)
             }
         }
-//        SyncUtil
-//            .scene(id: channelName)?
-//            .subscribe(key: SYNC_SCENE_ROOM_USER_COLLECTION,
-//                       onCreated: { _ in
-//                       }, onUpdated: { [weak self] object in
-//                           agoraPrint("imp user subscribe onUpdated...")
-//                           guard let self = self,
-//                                 let jsonStr = object.toJson(),
-//                                 let model = CommerceUser.yy_model(withJSON: jsonStr) else { return }
-//                           defer{
-//                               self._updateUserCount { error in
-//                               }
-//                               self.subscribeDelegate?.onUserCountChanged(userCount: self.userList.count)
-//                           }
-//                           self.userList.append(model)
-//                           self.subscribeDelegate?.onUserJoinedRoom(user: model)
-//                           self.subscribeDelegate?.onUserCountChanged(userCount: self.userList.count)
-//                           
-//                       }, onDeleted: { [weak self] object in
-//                           agoraPrint("imp user subscribe onDeleted... [\(object.getId())]")
-//                           guard let self = self else { return }
-//                           var model: CommerceUser? = nil
-//                           if let index = self.userList.firstIndex(where: { object.getId() == $0.objectId }) {
-//                               model = self.userList[index]
-//                               self.userList.remove(at: index)
-//                               self._updateUserCount { error in
-//                               }
-//                           }
-//                           guard let model = model else { return }
-//                           self.subscribeDelegate?.onUserLeftRoom(user: model)
-//                           self.subscribeDelegate?.onUserCountChanged(userCount: self.userList.count)
-//                       }, onSubscribed: {
-////                LogUtils.log(message: "subscribe message", level: .info)
-//                       }, fail: { error in
-//                           agoraPrint("imp user subscribe fail \(error.message)...")
-//                           ToastView.show(text: error.message)
-//                       })
     }
 
     private func _removeUser(roomId: String?, completion: @escaping (NSError?) -> Void) {
@@ -707,6 +706,17 @@ extension CommerceSyncManagerServiceImp {
         roomInfo.updatedAt = Int64(Date().timeIntervalSince1970 * 1000)
         roomInfo.roomUserCount = roomUserCount
         roomInfo.objectId = channelName
+        
+        let params = (roomInfo.yy_modelToJSONObject() as? [String: Any]) ?? [:]
+        
+        let ownerInfo = AUIUserThumbnailInfo()
+        ownerInfo.userId = roomInfo.ownerId
+        ownerInfo.userAvatar = roomInfo.ownerAvatar ?? ""
+        ownerInfo.userName = roomInfo.ownerName ?? ""
+        RTMSyncUtil.updateRoomInfo(roomName: roomInfo.roomName ?? "",
+                                   roomId: roomInfo.roomId,
+                                   payload: params,
+                                   ownerInfo: ownerInfo)
     }
     
     private func _subscribeOnRoomDestroy(isOwner: Bool) {
@@ -788,6 +798,7 @@ class CommerceRobotSyncManagerServiceImp: CommerceSyncManagerServiceImp {
                 roomModel.roomName = info.roomName
                 roomModel.thumbnailId = info.customPayload["thumbnailId"] as? String
                 roomModel.createdAt = (info.customPayload["createdAt"] as? Int64) ?? 0
+                roomModel.roomUserCount = (info.customPayload["roomUserCount"] as? Int) ?? 1
                 return roomModel
             })
             completion(nil, dataArray)
