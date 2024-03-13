@@ -126,11 +126,12 @@ class CommerceAuctionShoppingView: UIView {
                                    placeholderImage: UIImage.commerce_sceneImage(name: model.goods?.imageName ?? ""))
         titleLabel.text = model.goods?.title
         descLabel.text = (model.bidUser == nil || model.bidUser?.id == "") ? "Start from" : "Current Bid:"
-        priceLabel.text = "$\(model.goods?.price ?? 0)"
+        let bidPrint = model.status == .completion ? (model.goods?.price ?? 1) : model.bid
+        priceLabel.text = "$\(bidPrint)"
         bidContainerView.isHidden = isBroadcaster
         shoppingContainerView.layer.maskedCorners = isBroadcaster ? [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner] : [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        bidUserView.isHidden = model.bidUser == nil || model.bidUser?.id == ""
+        bidUserView.isHidden = model.status == .completion || model.bidUser == nil || model.bidUser?.id == ""
         model.status = (model.bidUser?.id == VLUserCenter.user.id && model.status == .started) ? .top_price : model.status
         bidUserView.setShoppingData(model: model)
         bidUserAnimation(uid: model.bidUser?.id ?? "")

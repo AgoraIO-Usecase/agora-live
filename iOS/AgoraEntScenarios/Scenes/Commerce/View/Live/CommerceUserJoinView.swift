@@ -53,8 +53,8 @@ class CommerceUserJoinView: UIView {
         })
         UIView.animate(withDuration: 0.25, delay: 2.0, options: [.curveEaseOut], animations: {
             self.frame.origin.x = -(self.frame.width + 16)
-        }, completion: { _ in
-            self.semaphore.signal()
+        }, completion: { [weak self] _ in
+            self?.semaphore.signal()
         })
     }
     

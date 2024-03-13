@@ -22,14 +22,17 @@ public class AUISyncManager: NSObject {
     }
     
     public func login(with token: String, completion: @escaping (NSError?) -> ()) {
+        aui_info("login")
         rtmManager.login(token: token, completion: completion)
     }
     
     public func logout() {
+        aui_info("logout")
         rtmManager.logout()
     }
     
     public func getScene(channelName: String) -> AUIScene {
+        aui_info("getScene: \(channelName)")
         if let scene = sceneMap[channelName] {
             return scene
         }
