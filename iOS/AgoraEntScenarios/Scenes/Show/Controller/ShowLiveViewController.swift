@@ -155,6 +155,7 @@ class ShowLiveViewController: UIViewController {
     
     private var currentInteraction: ShowInteractionInfo? {
         didSet {
+            showLogger.info("currentInteraction[\(roomId)] \(currentInteraction?.interactStatus.rawValue ?? -1)/\(currentInteraction?.roomId ?? "")")
             //update audio status
             if let interaction = currentInteraction {
                 liveView.canvasView.setLocalUserInfo(name: room?.ownerName ?? "")
@@ -335,10 +336,14 @@ extension ShowLiveViewController {
     func _joinRoom(_ room: ShowRoomListModel){
         finishView?.removeFromSuperview()
         ShowAgoraKitManager.shared.addRtcDelegate(delegate: self, roomId: room.roomId)
+        self.currentInteraction = nil
         if let service = serviceImp {
+            let date = Date()
+            showLogger.info("joinRoom[\(room.roomId)] start")
             service.joinRoom(room: room) {[weak self] error, detailModel in
                 guard let self = self else {return}
                 guard self.room?.roomId == room.roomId else { return }
+                showLogger.info("joinRoom[\(room.roomId)] end cost: \(-Int64(date.timeIntervalSinceNow * 1000))ms, error code: \(error?.code ?? 0)")
                 if let err = error {
                     showLogger.info("joinRoom[\(room.roomId)] error: \(error?.code ?? 0)")
                     if err.code == -1 {
