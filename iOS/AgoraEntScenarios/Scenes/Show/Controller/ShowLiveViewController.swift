@@ -346,7 +346,7 @@ extension ShowLiveViewController {
                     }
                 } else {
                     self._subscribeServiceEvent()
-                    self.updateLoadingType(playState: .joined, roomId: room.roomId)
+                    self.updateLoadingType(playState: self.loadingType, roomId: room.roomId)
                 }
             }
         } else {
