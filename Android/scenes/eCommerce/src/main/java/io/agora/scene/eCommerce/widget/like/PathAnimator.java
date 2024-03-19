@@ -80,6 +80,7 @@ public class PathAnimator extends AbstractPathAnimator {
             mDistance = mPm.getLength();
             mView = child;
             mRotation = rotation;
+            mView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             parent.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
 

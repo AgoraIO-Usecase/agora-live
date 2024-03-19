@@ -199,8 +199,8 @@
     <string name="voice_chatroom_medium">Medium</string>
     <string name="voice_chatroom_off">Off</string>
     <string name="voice_chatroom_on">On</string>
-    <string name="voice_chatroom_ains">With Noise Suppression</string>
-    <string name="voice_chatroom_none">Without Noise Suppression</string>
+    <string name="voice_chatroom_ains">AINS</string>
+    <string name="voice_chatroom_none">OFF</string>
     <string name="voice_chatroom_agora_ains">Learn about AI Noise Suppression</string>
     <string name="voice_chatroom_ains_introduce">AINS: AI Noise Suppression</string>
     <string name="voice_chatroom_agora_ains_supports_sounds">Supported noise types by Agora AI Noise Suppression. Click to listen the samples:</string>

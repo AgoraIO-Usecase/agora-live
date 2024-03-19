@@ -5,16 +5,14 @@ import android.content.ClipboardManager
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.LayoutInflater
-import android.view.TextureView
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.CameraCapturerConfiguration
@@ -213,10 +211,11 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
         val view = TextureView(this)
         binding.flVideoContainer.addView(view)
         val canvas = VideoCanvas(view, 0, 0)
-        canvas.mirrorMode = Constants.VIDEO_MIRROR_MODE_DISABLED
+        canvas.mirrorMode = Constants.VIDEO_MIRROR_MODE_ENABLED
         mRtcEngine.setupLocalVideo(canvas)
         mRtcEngine.startPreview()
     }
+
     /**
      * Copy2clipboard
      *

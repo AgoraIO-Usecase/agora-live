@@ -15,7 +15,7 @@ interface ShowServiceProtocol {
         /**
          * Room Available Duration
          */
-        var ROOM_AVAILABLE_DURATION: Long = 1200 * 1000
+        var ROOM_AVAILABLE_DURATION: Long = 20 * 60 * 1000
 
         private val instance by lazy {
             ShowSyncManagerServiceImpl(AgoraApplication.the()){
@@ -39,12 +39,12 @@ interface ShowServiceProtocol {
      */
     fun destroy()
 
-    fun getRoomInfo(roomId: String): AUIRoomInfo?
+    fun getRoomInfo(roomId: String): RoomDetailModel?
 
-    fun getRoomList(): List<AUIRoomInfo>
+    fun getRoomList(): List<RoomDetailModel>
 
     fun fetchRoomList(
-        success: (List<AUIRoomInfo>) -> Unit,
+        success: (List<RoomDetailModel>) -> Unit,
         error: ((Exception) -> Unit)? = null
     )
 
@@ -62,13 +62,13 @@ interface ShowServiceProtocol {
         roomId: String,
         roomName: String,
         thumbnailId: String,
-        success: (AUIRoomInfo) -> Unit,
+        success: (RoomDetailModel) -> Unit,
         error: ((Exception) -> Unit)? = null
     )
 
     fun joinRoom(
-        roomInfo: AUIRoomInfo,
-        success: (AUIRoomInfo) -> Unit,
+        roomInfo: RoomDetailModel,
+        success: (RoomDetailModel) -> Unit,
         error: ((Exception) -> Unit)? = null
     )
 
@@ -99,5 +99,7 @@ interface ShowServiceProtocol {
     /** Chat Message Actions */
     fun sendChatMessage(roomId: String, message: String, success: (() -> Unit)? = null, error: ((Exception) -> Unit)? = null)
     fun subscribeMessage(roomId: String, onMessageChange: (ShowMessage) -> Unit)
-
+    /** Like Actions */
+    fun likeSend(roomId: String, success: (() -> Unit)?, error: ((Exception) -> Unit)?)
+    fun likeSubscribe(roomId: String, onMessageChange: (ShowMessage) -> Unit)
 }

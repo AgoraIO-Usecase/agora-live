@@ -84,7 +84,7 @@ public abstract class AbstractPathAnimator {
             config.heartWidth = heartWidth;
             config.heartHeight = heartHeight;
             config.animDuration = typedArray.getInteger(R.styleable.commerce_LikeLayout_commerce_anim_duration,
-                    3000);
+                    2000);
             return config;
         }
     }

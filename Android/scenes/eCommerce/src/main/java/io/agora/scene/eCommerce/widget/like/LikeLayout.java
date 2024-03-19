@@ -24,12 +24,15 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import java.lang.ref.WeakReference;
 import java.util.Random;
 
+import io.agora.rtmsyncmanager.service.http.Utils;
+import io.agora.scene.base.utils.UiUtil;
 import io.agora.scene.eCommerce.R;
 
 public class LikeLayout extends RelativeLayout implements View.OnClickListener {
@@ -76,8 +79,8 @@ public class LikeLayout extends RelativeLayout implements View.OnClickListener {
         imageView = view.findViewById(R.id.img);
         imageView.setOnClickListener(this);
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.commerce_icon_like);
-        dHeight = bitmap.getWidth();
-        dWidth = bitmap.getHeight();
+        dHeight = UiUtil.dp2px(28);
+        dWidth = UiUtil.dp2px(28);
         textHight = sp2px(getContext(), 20) + dHeight / 2;
 
         pointx = dWidth;

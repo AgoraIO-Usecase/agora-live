@@ -1,30 +1,26 @@
 package io.agora.scene.eCommerce.shop
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.agora.rtc2.internal.CommonUtility.getSystemService
-import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.eCommerce.R
 import io.agora.scene.eCommerce.databinding.CommerceShopGoodsItemLayoutBinding
 import io.agora.scene.eCommerce.databinding.CommerceShopGoodsListDialogBinding
 import io.agora.scene.eCommerce.service.GoodsModel
 import io.agora.scene.eCommerce.service.ShowServiceProtocol
-import io.agora.scene.eCommerce.service.ownerId
 import io.agora.scene.widget.basic.BindingSingleAdapter
 import io.agora.scene.widget.basic.BindingViewHolder
 
 class GoodsListDialog constructor(
     context: Context,
     private val roomId: String
-) : BottomSheetDialog(context, R.style.commerce_alert_dialog) {
+) : Dialog(context, R.style.commerce_full_screen_dialog) {
 
     private val tag = "GoodsListDialog"
 
@@ -72,22 +68,38 @@ class GoodsListDialog constructor(
     }
 
     private fun setupView() {
-        val roomInfo = mService.getRoomInfo(roomId) ?: AUIRoomInfo()
-        isRoomOwner = roomInfo.ownerId == UserManager.getInstance().user.id.toInt()
+        val roomInfo = mService.getRoomInfo(roomId) ?: run {
+            return
+        }
+        isRoomOwner = roomInfo.ownerId.toLong() == UserManager.getInstance().user.id
         mAdapter = ShopAdapter(isRoomOwner)
         binding.recyclerView.adapter = mAdapter
         mAdapter.onClickBuy = { goodsId ->
             mService.shopBuyItem(roomId, goodsId) { e ->
                 if (e != null) { // bought result
-                    ShoppingResultDialog(context, context.getString(R.string.commerce_shop_alert_bought)).show()
+                    showOperationInfo(context.getString(R.string.commerce_shop_alert_sold_out))
                 } else {
-                    ShoppingResultDialog(context, context.getString(R.string.commerce_shop_alert_sold_out)).show()
+                    showOperationInfo(context.getString(R.string.commerce_shop_alert_bought))
                 }
             }
         }
         mAdapter.onUserChangedQty = { goodsId, qty ->
             mService.shopUpdateItem(roomId, goodsId, qty)
         }
+        binding.root.setOnClickListener {
+            dismiss()
+        }
+        binding.clAlert.setOnClickListener {
+            binding.clAlert.visibility = View.INVISIBLE
+        }
+        binding.tvAlertSubmit.setOnClickListener {
+            binding.clAlert.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun showOperationInfo(text: String) {
+        binding.tvAlertInfo.text = text
+        binding.clAlert.visibility = View.VISIBLE
     }
 
     private class ShopAdapter(
