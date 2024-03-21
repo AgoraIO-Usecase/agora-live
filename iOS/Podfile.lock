@@ -27,7 +27,7 @@ PODS:
   - KakaJSON (1.1.2)
   - LEEAlert (1.6.4)
   - Masonry (1.1.0)
-  - MJRefresh (3.7.7)
+  - MJRefresh (3.7.8)
   - Protobuf (3.22.1)
   - SDWebImage (4.4.8):
     - SDWebImage/Core (= 4.4.8)
@@ -127,7 +127,7 @@ SPEC CHECKSUMS:
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
   LEEAlert: a604ad481e3e9b021421a271f78594926dd034bb
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
-  MJRefresh: d1bdca269d250edd1a3bafb4f003a7bd957f2a0f
+  MJRefresh: 4e6e7ba77a6d5fab012426777e32b0a77127c50a
   Protobuf: d7f7c8329edf5eb8af65547a8ba3e9c1cee927d5
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   SDWebImageAPNGCoder: 3e4c684c8223eef2f45a50bdd0beaab345e4eb24

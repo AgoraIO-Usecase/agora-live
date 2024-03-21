@@ -157,7 +157,7 @@ class ShowLiveViewController: UIViewController {
     private var currentInteraction: ShowInteractionInfo? {
         didSet {
             showLogger.info("currentInteraction[\(roomId)] 'interactStatus: \(currentInteraction?.interactStatus.rawValue ?? -1)', interaction roomId'\(currentInteraction?.roomId ?? "")'")
-            if let ll = currentInteraction?.roomId, serviceImp is ShowRobotSyncManagerServiceImp {
+            if let _ = currentInteraction?.roomId, serviceImp is ShowRobotSyncManagerServiceImp {
 //                assert(false)
                 showLogger.info("currentInteraction fail!")
             }
