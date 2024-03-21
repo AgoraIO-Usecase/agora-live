@@ -23,6 +23,7 @@ class ShowLiveViewController: UIViewController {
         didSet{
             if oldValue?.roomId != room?.roomId {
                 liveView.room = room
+                serviceImp?.unsubscribeEvent(delegate: self)
                 if let oldRoom = oldValue {
                     _leavRoom(oldRoom)
                 }
@@ -155,7 +156,11 @@ class ShowLiveViewController: UIViewController {
     
     private var currentInteraction: ShowInteractionInfo? {
         didSet {
-            showLogger.info("currentInteraction[\(roomId)] \(currentInteraction?.interactStatus.rawValue ?? -1)/\(currentInteraction?.roomId ?? "")")
+            showLogger.info("currentInteraction[\(roomId)] 'interactStatus: \(currentInteraction?.interactStatus.rawValue ?? -1)', interaction roomId'\(currentInteraction?.roomId ?? "")'")
+            if let _ = currentInteraction?.roomId, serviceImp is ShowRobotSyncManagerServiceImp {
+//                assert(false)
+                showLogger.info("currentInteraction fail!")
+            }
             //update audio status
             if let interaction = currentInteraction {
                 liveView.canvasView.setLocalUserInfo(name: room?.ownerName ?? "")
@@ -269,8 +274,6 @@ class ShowLiveViewController: UIViewController {
         ShowAgoraKitManager.shared.cleanCapture()
         ShowBeautyFaceVC.resetData()
         ShowAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
-        serviceImp?.unsubscribeEvent(delegate: self)
-        
         serviceImp?.leaveRoom {_ in
         }
         serviceImp?.unsubscribeEvent(delegate: self)
@@ -417,8 +420,13 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
     }
     
     private func _refreshInteractionList() {
+        let rId = roomId
         serviceImp?.getAllInterationList { [weak self] (error, interactionList) in
             guard let self = self, error == nil else { return }
+            if rId != self.roomId {
+                showLogger.warning("missmatch roomId! \(rId)/\(self.roomId)")
+                return
+            }
             if self.interactionList == nil, let interaction = interactionList?.first {
                 // first load
                 if self.role == .broadcaster {
