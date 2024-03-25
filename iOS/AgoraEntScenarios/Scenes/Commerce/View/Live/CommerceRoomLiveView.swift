@@ -108,7 +108,7 @@ class CommerceRoomLiveView: UIView {
         tableView.registerCell(CommerceRoomChatCell.self, forCellReuseIdentifier: "CommerceRoomChatCell")
 //        tableView.contentInset = UIEdgeInsets(top: 100, left: 0, bottom: 0, right: 0)
 //        tableView.isExclusiveTouch = true
-        tableView.transform = CGAffineTransform(rotationAngle: Double.pi)
+//        tableView.transform = CGAffineTransform(rotationAngle: Double.pi)
         return tableView
     }()
     
@@ -194,6 +194,7 @@ class CommerceRoomLiveView: UIView {
             make.right.equalToSuperview().offset(-70)
             make.height.equalTo(168)
         }
+        tableView.contentInset = UIEdgeInsets(top: 100, left: 0, bottom: 0, right: 0)
         
         addSubview(chatButton)
         chatButton.snp.makeConstraints { make in
@@ -337,10 +338,10 @@ extension CommerceRoomLiveView {
             if message.message == "join_live_room".commerce_localized && message.userName != VLUserCenter.user.name {
                 userJoinView.joinHandler(nickName: message.userName ?? "")
             }
-            chatArray.insert(message, at: 0)
+            chatArray.append(message)
             let indexPath = IndexPath(item: chatArray.count - 1, section: 0)
             tableView.insertRows(at: [indexPath], with: .bottom)
-            tableView.reloadData()
+            tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
         }
     }
     

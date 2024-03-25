@@ -451,6 +451,7 @@ class ShowAgoraKitManager: NSObject {
         let container = VideoCanvasContainer()
         container.uid = uid
         container.container = canvasView
+        container.mirrorMode = .enabled
         VideoLoaderApiImpl.shared.renderVideo(anchorInfo: anchorInfo, container: container)
     }
     

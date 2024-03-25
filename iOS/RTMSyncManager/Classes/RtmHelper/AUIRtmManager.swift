@@ -74,8 +74,13 @@ open class AUIRtmManager: NSObject {
         }
         self.rtmClient.login(token) {[weak self] resp, error in
             aui_info("login: \(error?.errorCode.rawValue ?? 0)", tag: "AUIRtmManager")
-            self?.isLogin = error == nil ? true : false
-            completion(error?.toNSError())
+            if let error = error, error.errorCode != .ok, error.errorCode != .duplicateOperation {
+                self?.isLogin = false
+                completion(error.toNSError())
+                return
+            }
+            self?.isLogin = true
+            completion(nil)
         }
         aui_info("login ", tag: "AUIRtmManager")
     }
