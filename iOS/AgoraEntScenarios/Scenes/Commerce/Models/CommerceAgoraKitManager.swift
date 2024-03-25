@@ -423,7 +423,7 @@ class CommerceAgoraKitManager: NSObject {
         let canvas = AgoraRtcVideoCanvas()
         canvas.view = canvasView
         canvas.uid = uid
-        canvas.mirrorMode = .disabled
+//        canvas.mirrorMode = .disabled
         engine.setupLocalVideo(canvas)
         engine.startPreview()
         engine.setDefaultAudioRouteToSpeakerphone(true)
@@ -447,6 +447,7 @@ class CommerceAgoraKitManager: NSObject {
         let container = VideoCanvasContainer()
         container.uid = uid
         container.container = canvasView
+        container.mirrorMode = .enabled
         VideoLoaderApiImpl.shared.renderVideo(anchorInfo: anchorInfo, container: container)
     }
     

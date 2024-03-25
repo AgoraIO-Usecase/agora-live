@@ -159,6 +159,7 @@ class VoiceMusicListView: UIView {
                 self.currentIndex = 0
             }
             self.tableView.reloadData()
+            guard self.currentIndex >= 0 else { return }
             self.tableView.scrollToRow(at: IndexPath(row: self.currentIndex,
                                                      section: 0), at: .middle,
                                        animated: true)

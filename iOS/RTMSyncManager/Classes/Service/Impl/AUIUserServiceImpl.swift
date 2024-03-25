@@ -32,6 +32,7 @@ import YYModel
 extension AUIUserServiceImpl: AUIRtmUserProxyDelegate {
     public func onCurrentUserJoined(channelName: String) {
         guard channelName == self.channelName else {return}
+        aui_info("onCurrentUserJoined", tag: "AUIUserServiceImpl")
         _setupUserAttr(roomId: channelName) { error in
             //TODO: retry if fail
         }
@@ -126,14 +127,17 @@ extension AUIUserServiceImpl: AUIUserServiceDelegate {
     }
     
     public func bindRespDelegate(delegate: AUIUserRespDelegate) {
+        aui_info("bindRespDelegate \(delegate)", tag: "AUIUserServiceImpl")
         respDelegates.add(delegate)
     }
     
     public func unbindRespDelegate(delegate: AUIUserRespDelegate) {
+        aui_info("unbindRespDelegate \(delegate)", tag: "AUIUserServiceImpl")
         respDelegates.remove(delegate)
     }
     
     public func getUserInfoList(roomId: String, userIdList: [String], callback:@escaping AUIUserListCallback) {
+        aui_info("getUserInfoList", tag: "AUIUserServiceImpl")
         self.rtmManager.whoNow(channelName: roomId) { error, userList in
             if let error = error {
                 callback(error as NSError, nil)

@@ -31,8 +31,8 @@ class CommerceGoodsListView: UIView {
         self.serviceImp = serviceImp
         self.roomId = roomId
         setupUI()
-        getGoodsList()
         subscribeEventGoodsList()
+        getGoodsList()
     }
 
     required init?(coder: NSCoder) {
@@ -55,7 +55,6 @@ class CommerceGoodsListView: UIView {
     }
     
     private func getGoodsList() {
-        guard !isBroadcaster else { return }
         serviceImp?.getGoodsList(roomId: roomId, completion: { [weak self] error, res in
             if error != nil {
                 commerceLogger.error("error == \(error?.localizedDescription ?? "")")
@@ -68,7 +67,9 @@ class CommerceGoodsListView: UIView {
     }
     
     private func updateGoodsInfo(goods: CommerceGoodsModel?) {
-        serviceImp?.updateGoodsInfo(roomId: roomId, goods: goods, completion: { _ in })
+        serviceImp?.updateGoodsInfo(roomId: roomId, goods: goods, completion: { error in
+            commerceLogger.error("error == \(error?.localizedDescription ?? "")")
+        })
     }
     
     private func subscribeEventGoodsList() {
@@ -84,6 +85,11 @@ class CommerceGoodsListView: UIView {
             }) else { return }
             self?.goodsList = list
             self?.tableView.reloadData()
+        })
+    }
+    private func getGoodsInfo(goodsId: String?, callback: @escaping (Int) -> Void) {
+        serviceImp?.getGoodsInfo(roomId: roomId, goodsId: goodsId, completion: { _, model in
+            callback(model?.goods?.quantity ?? 0)
         })
     }
 }
@@ -113,7 +119,7 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
         cell.onClickNumberButtonClosure = { [weak self] number in
             guard let self = self else { return }
             model.goods?.quantity = number
-            self.updateGoodsInfo(goods: model.goods )
+            self.updateGoodsInfo(goods: model.goods)
         }
         return cell
     }
@@ -252,6 +258,10 @@ class CommerceGoodsListViewCell: UITableViewCell {
     
     @objc
     private func onClickStatusButton() {
-        onClickStatusButtonClosure?()
+        ToastView.showWait(text: "Loading...")
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double.random(in: 0.5...1.5), execute: {
+            ToastView.hidden()
+            self.onClickStatusButtonClosure?()
+        })
     }
 }

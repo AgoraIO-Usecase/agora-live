@@ -67,6 +67,10 @@ protocol CommerceServiceProtocol: NSObjectProtocol {
                          message: CommerceMessage,
                          completion: ((NSError?) -> Void)?)
     
+    func upvote(roomId: String?, count: Int, completion: ((NSError?) -> Void)?)
+    
+    func subscribeUpvoteEvent(roomId: String?, completion: ((String?, Int) -> Void)?)
+    
     func unsubscribeEvent(delegate: CommerceSubscribeServiceProtocol)
     
     func subscribeEvent(delegate: CommerceSubscribeServiceProtocol)
@@ -86,4 +90,6 @@ protocol CommerceServiceProtocol: NSObjectProtocol {
     func updateGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, completion: @escaping (NSError?) -> Void)
     
     func subscribeGoodsInfo(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsModel]?) -> Void)
+    
+    func getGoodsInfo(roomId: String?, goodsId: String?, completion: @escaping (NSError?, CommerceGoodsBuyModel?) -> Void)
 }

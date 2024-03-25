@@ -95,8 +95,8 @@
 "voice_AINS_settings" = "AI Noise Suppression Settings";
 "voice_AINS_definition" = "Learn about AI Noise Suppression";
 "voice_AINS_sup" = "Supported noise types by Agora AI Noise Suppression. Click to listen the samples:";
-"voice_with_AINS" = "With AINS";
-"voice_without_AINS" = "Without AINS";
+"voice_with_AINS" = "AINS";
+"voice_without_AINS" = "Off";
 "voice_your_AINS" = "Yourself";
 "voice_TV_sound" = "TV Noise";
 "voice_kitchen_sound" = "Kitchen Noise";

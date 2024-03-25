@@ -32,6 +32,7 @@ import AgoraRtcKit
     public var container: UIView?                          //需要渲染到的view
     public var uid: UInt = 0                               //需要渲染的用户uid
     public var setupMode: AgoraVideoViewSetupMode = .add   //画布模式
+    public var mirrorMode: AgoraVideoMirrorMode = .auto
 //    public var viewIndex: Int = 0
 //    public var renderMode: Int = Constants.RENDER_MODE_HIDDEN
 }

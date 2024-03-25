@@ -174,6 +174,7 @@ extension AGCollectionSlicingDelegateHandler {
             let container = VideoCanvasContainer()
             container.uid = anchorInfo.uid
             container.container = renderView
+            container.mirrorMode = .disabled
             if state == .idle {
                 container.setupMode = .remove
             }

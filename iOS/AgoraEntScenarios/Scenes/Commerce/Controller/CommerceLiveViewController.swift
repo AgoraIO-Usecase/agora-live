@@ -127,11 +127,11 @@ class CommerceLiveViewController: UIViewController {
     
     private lazy var realTimeView: CommerceRealTimeDataView = {
         let realTimeView = CommerceRealTimeDataView(isLocal: role == .broadcaster)
-        view.addSubview(realTimeView)
-        realTimeView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(Screen.safeAreaTopHeight() + 50)
-        }
+//        view.addSubview(realTimeView)
+//        realTimeView.snp.makeConstraints { make in
+//            make.centerX.equalToSuperview()
+//            make.top.equalTo(Screen.safeAreaTopHeight() + 50)
+//        }
         return realTimeView
     }()
     
@@ -370,6 +370,10 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     private func _subscribeServiceEvent() {
         serviceImp?.subscribeEvent(delegate: self)
         subscribeBidGoodsInfo()
+        serviceImp?.subscribeUpvoteEvent(roomId: roomId, completion: { [weak self] userId, count in
+            guard userId != VLUserCenter.user.id else { return }
+            self?.liveView.showHeartAnimation()
+        })
         if role == .broadcaster {
             addBidGoodsInfo()
             addGoodsList()
@@ -586,6 +590,9 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
         present(settingMenuVC, animated: true)
     }
     
+    func onClickUpvoteButton(count: Int) {
+        serviceImp?.upvote(roomId: roomId, count: count, completion: nil)
+    }
 }
 
 extension CommerceLiveViewController {

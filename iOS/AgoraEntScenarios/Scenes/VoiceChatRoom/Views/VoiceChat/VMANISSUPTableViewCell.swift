@@ -36,7 +36,7 @@ class VMANISSUPTableViewCell: UITableViewCell {
             print("\(titleLabel.text ?? "") 无降噪: \(noneBtn.accessibilityIdentifier ?? "") 有降噪: \(anisBtn.accessibilityIdentifier ?? "")")
         }
     }
-
+    
     public var cellType: SUP_CELL_TYPE = .normal {
         didSet {
             if cellType == .normal {
@@ -48,7 +48,7 @@ class VMANISSUPTableViewCell: UITableViewCell {
             }
         }
     }
-
+    
     public var btn_state: CELL_BTN_TYPE = .none {
         didSet {
             if btn_state == .off {
@@ -56,31 +56,31 @@ class VMANISSUPTableViewCell: UITableViewCell {
                 noneBtn.layer.borderColor = UIColor(hex: 0x0A7AFF, alpha: 1).cgColor
                 noneBtn.setTitleColor(UIColor(hex: 0x0A7AFF, alpha: 1), for: .normal)
                 noneBtn.layer.borderWidth = 1
-
+                
                 anisBtn.backgroundColor = UIColor(red: 236 / 255.0, green: 236 / 255.0, blue: 236 / 255.0, alpha: 1)
                 anisBtn.setTitleColor(UIColor(red: 151 / 255.0, green: 156 / 255.0, blue: 187 / 255.0, alpha: 1), for: .normal)
                 anisBtn.layer.borderColor = UIColor.clear.cgColor
                 anisBtn.layer.borderWidth = 0
-
+                
                 selBtn = noneBtn
             } else if btn_state == .middle {
                 anisBtn.backgroundColor = .white
                 anisBtn.layer.borderColor = UIColor(hex: 0x0A7AFF, alpha: 1).cgColor
                 anisBtn.setTitleColor(UIColor(hex: 0x0A7AFF, alpha: 1), for: .normal)
                 anisBtn.layer.borderWidth = 1
-
+                
                 noneBtn.backgroundColor = UIColor(red: 236 / 255.0, green: 236 / 255.0, blue: 236 / 255.0, alpha: 1)
                 noneBtn.setTitleColor(UIColor(red: 151 / 255.0, green: 156 / 255.0, blue: 187 / 255.0, alpha: 1), for: .normal)
                 noneBtn.layer.borderColor = UIColor.clear.cgColor
                 noneBtn.layer.borderWidth = 0
-
+                
                 selBtn = anisBtn
             } else if btn_state == .none {
                 anisBtn.backgroundColor = UIColor(red: 236 / 255.0, green: 236 / 255.0, blue: 236 / 255.0, alpha: 1)
                 anisBtn.setTitleColor(UIColor(red: 151 / 255.0, green: 156 / 255.0, blue: 187 / 255.0, alpha: 1), for: .normal)
                 anisBtn.layer.borderColor = UIColor.clear.cgColor
                 anisBtn.layer.borderWidth = 0
-
+                
                 noneBtn.backgroundColor = UIColor(red: 236 / 255.0, green: 236 / 255.0, blue: 236 / 255.0, alpha: 1)
                 noneBtn.setTitleColor(UIColor(red: 151 / 255.0, green: 156 / 255.0, blue: 187 / 255.0, alpha: 1), for: .normal)
                 noneBtn.layer.borderColor = UIColor.clear.cgColor
@@ -89,21 +89,21 @@ class VMANISSUPTableViewCell: UITableViewCell {
             }
         }
     }
-
+    
     public var resBlock: ((Int) -> Void)?
-
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         layoutUI()
     }
-
+    
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     private func layoutUI() {
-//        titleLabel.frame = CGRect(x: 20, y: 10, width: 200, height: 20)
+        //        titleLabel.frame = CGRect(x: 20, y: 10, width: 200, height: 20)
         titleLabel.text = "TV Sound"
         titleLabel.font = UIFont.systemFont(ofSize: 13)
         titleLabel.textColor = UIColor(hex: 0x3C4267, alpha: 1)
@@ -111,8 +111,8 @@ class VMANISSUPTableViewCell: UITableViewCell {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20).isActive = true
         titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
-
-//        detailLabel.frame = CGRect(x: 20, y: 30, width: 150, height: 30)
+        
+        //        detailLabel.frame = CGRect(x: 20, y: 30, width: 150, height: 30)
         detailLabel.text = "Ex bird, car,subway sounds"
         detailLabel.font = UIFont.systemFont(ofSize: 11)
         detailLabel.numberOfLines = 0
@@ -125,8 +125,23 @@ class VMANISSUPTableViewCell: UITableViewCell {
         detailLabel.translatesAutoresizingMaskIntoConstraints = false
         detailLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20).isActive = true
         detailLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
-
-//        anisBtn.frame = CGRect(x: screenWidth - 130, y: 12, width: 50, height: 30)
+        
+        //        noneBtn.frame = CGRect(x: screenWidth - 70, y: 12, width: 50, height: 30)
+        noneBtn.backgroundColor = UIColor(red: 236 / 255.0, green: 236 / 255.0, blue: 236 / 255.0, alpha: 1)
+        noneBtn.setTitle("voice_without_AINS".voice_localized, for: .normal)
+        noneBtn.setTitleColor(UIColor(red: 151 / 255.0, green: 156 / 255.0, blue: 187 / 255.0, alpha: 1), for: .normal)
+        noneBtn.font(UIFont.systemFont(ofSize: 11))
+        noneBtn.layer.cornerRadius = 3
+        noneBtn.layer.masksToBounds = true
+        noneBtn.contentEdgeInsets(UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10))
+        noneBtn.addTargetFor(self, action: #selector(click), for: .touchUpInside)
+        addSubview(noneBtn)
+        noneBtn.translatesAutoresizingMaskIntoConstraints = false
+        noneBtn.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -15).isActive = true
+        noneBtn.topAnchor.constraint(equalTo: topAnchor, constant: 12).isActive = true
+        noneBtn.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
+        //        anisBtn.frame = CGRect(x: screenWidth - 130, y: 12, width: 50, height: 30)
         anisBtn.backgroundColor = UIColor(red: 236 / 255.0, green: 236 / 255.0, blue: 236 / 255.0, alpha: 1)
         anisBtn.setTitle("voice_with_AINS".voice_localized, for: .normal)
         anisBtn.setTitleColor(UIColor(red: 151 / 255.0, green: 156 / 255.0, blue: 187 / 255.0, alpha: 1), for: .normal)
@@ -136,38 +151,23 @@ class VMANISSUPTableViewCell: UITableViewCell {
         anisBtn.contentEdgeInsets(UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5))
         anisBtn.addTargetFor(self, action: #selector(click), for: .touchUpInside)
         addSubview(anisBtn)
+        anisBtn.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        anisBtn.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         anisBtn.translatesAutoresizingMaskIntoConstraints = false
-        anisBtn.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -15).isActive = true
         anisBtn.topAnchor.constraint(equalTo: topAnchor, constant: 12).isActive = true
         anisBtn.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
-//        noneBtn.frame = CGRect(x: screenWidth - 70, y: 12, width: 50, height: 30)
-        noneBtn.backgroundColor = UIColor(red: 236 / 255.0, green: 236 / 255.0, blue: 236 / 255.0, alpha: 1)
-        noneBtn.setTitle("voice_without_AINS".voice_localized, for: .normal)
-        noneBtn.setTitleColor(UIColor(red: 151 / 255.0, green: 156 / 255.0, blue: 187 / 255.0, alpha: 1), for: .normal)
-        noneBtn.font(UIFont.systemFont(ofSize: 11))
-        noneBtn.layer.cornerRadius = 3
-        noneBtn.layer.masksToBounds = true
-        noneBtn.contentEdgeInsets(UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5))
-        noneBtn.addTargetFor(self, action: #selector(click), for: .touchUpInside)
-        addSubview(noneBtn)
-        noneBtn.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        noneBtn.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        noneBtn.translatesAutoresizingMaskIntoConstraints = false
-        noneBtn.topAnchor.constraint(equalTo: topAnchor, constant: 12).isActive = true
-        noneBtn.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        noneBtn.trailingAnchor.constraint(equalTo: anisBtn.leadingAnchor, constant: -8).isActive = true
-        noneBtn.leadingAnchor.constraint(equalTo: detailLabel.trailingAnchor, constant: 10).isActive = true
+        anisBtn.trailingAnchor.constraint(equalTo: noneBtn.leadingAnchor, constant: -8).isActive = true
+        anisBtn.leadingAnchor.constraint(equalTo: detailLabel.trailingAnchor, constant: 10).isActive = true
     }
-
+    
     @objc private func click(sender: UIButton) {
         if sender == selBtn { return }
-
+        
         guard let resBlock = resBlock else { return }
         resBlock(sender.tag)
-
+        
         if !isTouchAble || isAudience { return }
-
+        
         sender.backgroundColor = .white
         sender.layer.borderColor = UIColor(hex: 0x0A7AFF, alpha: 1).cgColor
         sender.setTitleColor(UIColor(hex: 0x0A7AFF, alpha: 1), for: .normal)

@@ -59,6 +59,15 @@ class RTMSyncUtil: NSObject {
         syncManagerImpl.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: 20, callback: callback)
     }
     
+    class func updateRoomInfo(roomName: String, roomId: String, payload: [String: Any], ownerInfo: AUIUserThumbnailInfo) {
+        let roomInfo = AUIRoomInfo()
+        roomInfo.roomName = roomName
+        roomInfo.roomId = roomId
+        roomInfo.customPayload = payload
+        roomInfo.owner = ownerInfo
+        syncManagerImpl.updateRoom(room: roomInfo) { _, _ in }
+    }
+    
     class func login(channelName: String, success: (() -> Void)?, failure: ((NSError?) -> Void)?) {
         if isLogined == true {
             success?()
@@ -106,6 +115,7 @@ class RTMSyncUtil: NSObject {
                          failure: ((NSError?) -> Void)?) {
         let scene = scene(id: id)
         scene?.bindRespDelegate(delegate: roomDelegate)
+        scene?.userService.bindRespDelegate(delegate: userDelegate)
         login(channelName: id, success: {
             if ownerId == VLUserCenter.user.id {
                 scene?.create(payload: payload) { err in
@@ -159,7 +169,9 @@ class RTMSyncUtil: NSObject {
     
     class func getUserList(id: String, callback: @escaping (_ roomId: String, _ userList: [AUIUserInfo]) -> Void) {
         userDelegate.onUserListCallback = callback
-        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
+        scene(id: id)?.userService.getUserInfoList(roomId: id, userIdList: [], callback: { _, userList in
+            callback(id, userList ?? [])
+        })
     }
     
     class func subscribeUserDidChange(id: String,
@@ -175,7 +187,6 @@ class RTMSyncUtil: NSObject {
         userDelegate.onUserKickedCallback = userKicked
         userDelegate.onUserAudioMuteCallback = audioMute
         userDelegate.onUserVideoMuteCallback = videoMute
-        scene(id: id)?.userService.bindRespDelegate(delegate: userDelegate)
     }
     
     class func muteAudio(channelName: String, isMute: Bool, callback: ((NSError?) -> Void)?) {
@@ -300,6 +311,7 @@ class RTMSyncUtilRoomDeleage: NSObject, AUISceneRespDelegate {
     func onSceneDestroy(roomId: String) {
         print("房间销毁 == \(roomId)")
         roomDestoryClosure?(roomId)
+        RTMSyncUtil.leaveScene(id: roomId, ownerId: VLUserCenter.user.id)
     }
 }
 
