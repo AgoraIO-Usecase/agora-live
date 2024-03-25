@@ -18,7 +18,7 @@ private let SYNC_MANAGER_PK_INVITATION_COLLECTION = "commerce_pk_invitation_coll
 private let SYNC_MANAGER_INTERACTION_COLLECTION = "commerce_interaction_collection"
 private let SYNC_MANAGER_BID_GOODS_COLLECTION = "commerce_goods_bid_collection"
 private let SYNC_MANAGER_BUY_GOODS_COLLECTION = "commerce_goods_buy_collection"
-private let SYNC_MANAGER_UPVOTE_COLLECTION = "commerce_upvote_collection"
+private let SYNC_MANAGER_UPVOTE_COLLECTION = "commerce_like_collection"
 
 
 enum CommerceError: Int, Error {
