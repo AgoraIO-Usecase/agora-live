@@ -10,7 +10,7 @@ import AgoraRtmKit
 
 public class AUISyncManager: NSObject {
     public var sceneMap: [String: AUIScene] = [:]
-    private var rtmManager: AUIRtmManager
+    public private(set) var rtmManager: AUIRtmManager
     
     public required init(rtmClient: AgoraRtmClientKit?, commonConfig: AUICommonConfig) {
         AUIRoomContext.shared.commonConfig = commonConfig
