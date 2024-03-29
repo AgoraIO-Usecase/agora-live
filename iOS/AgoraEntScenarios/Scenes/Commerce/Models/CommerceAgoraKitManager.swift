@@ -26,6 +26,7 @@ class CommerceAgoraKitManager: NSObject {
     public var performanceMode: PerformanceMode = .smooth
     
     private var broadcasterConnection: AgoraRtcConnection?
+    var remoteMirrorModel: AgoraVideoMirrorMode = .enabled
     
     var exposureRangeX: Int?
     var exposureRangeY: Int?
@@ -255,45 +256,6 @@ class CommerceAgoraKitManager: NSObject {
         engine?.switchCamera()
     }
     
-    func enableVirtualBackground(isOn: Bool, greenCapacity: Float = 0) {
-        guard let engine = engine else {
-            assert(true, "rtc engine not initlized")
-            return
-        }
-        let source = AgoraVirtualBackgroundSource()
-        source.backgroundSourceType = .blur
-        source.blurDegree = .high
-        var seg: AgoraSegmentationProperty?
-        if CommerceAgoraKitManager.isOpenGreen {
-            seg = AgoraSegmentationProperty()
-            seg?.modelType = .agoraGreen
-            seg?.greenCapacity = greenCapacity
-        }
-        let ret = engine.enableVirtualBackground(isOn, backData: source, segData: seg)
-        commerceLogger.info("isOn = \(isOn), enableVirtualBackground ret = \(ret)")
-    }
-    
-    func seVirtualtBackgoundImage(imagePath: String?, isOn: Bool, greenCapacity: Float = 0) {
-        guard let bundlePath = Bundle.main.path(forResource: "CommerceResource", ofType: "bundle"),
-              let bundle = Bundle(path: bundlePath) else { return }
-        let imgPath = bundle.path(forResource: imagePath, ofType: "jpg")
-        let source = AgoraVirtualBackgroundSource()
-        source.backgroundSourceType = .img
-        source.source = imgPath
-        var seg: AgoraSegmentationProperty?
-        if CommerceAgoraKitManager.isOpenGreen {
-            seg = AgoraSegmentationProperty()
-            seg?.modelType = .agoraGreen
-            seg?.greenCapacity = greenCapacity
-        }
-        guard let engine = engine else {
-            assert(true, "rtc engine not initlized")
-            return
-        }
-        engine.enableVirtualBackground(isOn, backData: source, segData: seg)
-    }
-    
-    
     func updateChannelEx(channelId: String, options: AgoraRtcChannelMediaOptions) {
         guard let engine = engine,
               let connection = (broadcasterConnection?.channelId == channelId ? broadcasterConnection : nil) ?? VideoLoaderApiImpl.shared.getConnectionMap()[channelId] else {
@@ -447,7 +409,7 @@ class CommerceAgoraKitManager: NSObject {
         let container = VideoCanvasContainer()
         container.uid = uid
         container.container = canvasView
-        container.mirrorMode = .enabled
+        container.mirrorMode = remoteMirrorModel
         VideoLoaderApiImpl.shared.renderVideo(anchorInfo: anchorInfo, container: container)
     }
     
