@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.agora.rtc2.internal.CommonUtility.getSystemService
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.eCommerce.R
@@ -47,7 +46,8 @@ class GoodsListDialog constructor(
     }
 
     private fun updateList(goodsModels: List<GoodsModel>) {
-        if (dataSource.isEmpty()) {
+        if (dataSource.count() != goodsModels.count()) {
+            dataSource.clear()
             for (model in goodsModels) {
                 if (model.imageName.contains("0")) {
                     model.picResource = R.drawable.commerce_shop_goods_0

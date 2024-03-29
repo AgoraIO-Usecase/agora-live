@@ -1,6 +1,5 @@
 package io.agora.scene.eCommerce.service
 
-import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.utils.ToastUtils
 
@@ -89,7 +88,7 @@ interface ShowServiceProtocol {
     fun auctionSubscribe(roomId: String, onChange: (AuctionModel) -> Unit)
     fun auctionStart(roomId: String)
     fun auctionBidding(roomId: String, value: Int)
-    fun auctionReset(roomId: String)
+    fun auctionComplete(roomId: String)
 
     /** Shop Actions */
     fun shopSubscribe(roomId: String, onChange: (List<GoodsModel>) -> Unit)

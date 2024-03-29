@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.eCommerce.R
@@ -179,7 +178,7 @@ class LiveAuctionFragment: Fragment() {
             }
         }
         if (isRoomOwner) {
-            mService.auctionReset(mRoomId)
+            mService.auctionComplete(mRoomId)
         }
     }
 

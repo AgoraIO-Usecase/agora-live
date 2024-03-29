@@ -212,6 +212,7 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
         binding.flVideoContainer.addView(view)
         val canvas = VideoCanvas(view, 0, 0)
         canvas.mirrorMode = Constants.VIDEO_MIRROR_MODE_ENABLED
+        canvas.renderMode = Constants.RENDER_MODE_HIDDEN
         mRtcEngine.setupLocalVideo(canvas)
         mRtcEngine.startPreview()
     }

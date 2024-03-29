@@ -341,13 +341,13 @@ class ShowSyncManagerServiceImpl constructor(
                 price = 12f,
             )
         )
-        controller.shopCollection?.addMetaData(null, map1, listOf(mapOf<String, Any>("goodsId" to "0"))) {}
+        controller.shopCollection?.addMetaData(null, map1, null) {}
         mainHandler.postDelayed({
-            controller.shopCollection?.addMetaData(null, map2, listOf(mapOf<String, Any>("goodsId" to "1"))) {}
-        }, 200)
+            controller.shopCollection?.addMetaData(null, map2, null) {}
+        }, 500)
         mainHandler.postDelayed({
-            controller.shopCollection?.addMetaData(null, map3, listOf(mapOf<String, Any>("goodsId" to "2"))) {}
-        }, 400)
+            controller.shopCollection?.addMetaData(null, map3, null) {}
+        }, 1000)
         val auctionModel = AuctionModel().apply {
             goods = GoodsModel(
                 goodsId = "",
@@ -441,6 +441,7 @@ class ShowSyncManagerServiceImpl constructor(
     override fun auctionStart(roomId: String) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val auctionModel = AuctionModel().apply {
+            bidUser = ShowUser("", "", "")
             timestamp = TimeUtils.currentTimeMillis().toString()
             bid = 1
             status = 1
@@ -465,7 +466,7 @@ class ShowSyncManagerServiceImpl constructor(
         controller.auctionCollection?.updateMetaData(null, map) {
         }
     }
-    override fun auctionReset(roomId: String) {
+    override fun auctionComplete(roomId: String) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val map = mapOf(
             "timestamp" to "0",
