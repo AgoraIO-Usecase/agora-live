@@ -59,7 +59,6 @@ class CommerceAgoraKitManager: NSObject {
     func prepareEngine() {
         let engine = AgoraRtcEngineKit.sharedEngine(with: engineConfig(), delegate: nil)
         self.engine = engine
-        
         let loader = VideoLoaderApiImpl.shared
         loader.addListener(listener: self)
         let config = VideoLoaderConfig()
@@ -247,13 +246,18 @@ class CommerceAgoraKitManager: NSObject {
         canvas.view = canvasView
         canvas.uid = 0
         canvas.renderMode = .hidden
+        canvas.mirrorMode = .enabled
         engine.setupLocalVideo(canvas)
         engine.enableVideo()
         engine.startPreview()
+        engine.setVideoFrameDelegate(self)
     }
     
+    private var isFrontCamera: Bool = true
     func switchCamera(_ channelId: String? = nil) {
+        isFrontCamera = !isFrontCamera
         engine?.switchCamera()
+        engine?.setLocalRenderMode(.hidden, mirror: .enabled)
     }
     
     func updateChannelEx(channelId: String, options: AgoraRtcChannelMediaOptions) {
@@ -325,6 +329,7 @@ class CommerceAgoraKitManager: NSObject {
             return
         }
 //        setupContentInspectConfig(false)
+        isFrontCamera = true
         engine.stopPreview()
     }
     
@@ -385,7 +390,7 @@ class CommerceAgoraKitManager: NSObject {
         let canvas = AgoraRtcVideoCanvas()
         canvas.view = canvasView
         canvas.uid = uid
-//        canvas.mirrorMode = .disabled
+        canvas.mirrorMode = .enabled
         engine.setupLocalVideo(canvas)
         engine.startPreview()
         engine.setDefaultAudioRouteToSpeakerphone(true)
@@ -517,5 +522,17 @@ extension CommerceAgoraKitManager: AgoraRtcMediaPlayerDelegate {
         if state == .openCompleted {
             playerKit.play()
         }
+    }
+}
+
+extension CommerceAgoraKitManager: AgoraVideoFrameDelegate {
+    func getVideoFrameProcessMode() -> AgoraVideoFrameProcessMode {
+        .readWrite
+    }
+    func getMirrorApplied() -> Bool {
+        !isFrontCamera
+    }
+    func getObservedFramePosition() -> AgoraVideoFramePosition {
+        .postCapture
     }
 }
