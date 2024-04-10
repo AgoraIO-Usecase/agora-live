@@ -37,7 +37,7 @@ class CommerceRoomChatCell: UITableViewCell {
     private func createSubviews(){
         contentView.backgroundColor = .clear
         backgroundColor = .clear
-        transform = CGAffineTransform(rotationAngle: Double.pi)
+//        transform = CGAffineTransform(rotationAngle: Double.pi)
         contentView.addSubview(bgView)
         bgView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(5)

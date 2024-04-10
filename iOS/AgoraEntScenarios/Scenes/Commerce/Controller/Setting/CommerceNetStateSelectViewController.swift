@@ -18,7 +18,7 @@ class CommerceNetStateSelectViewController: UIViewController {
     }
     
     public static func showInViewController(_ viewController: UIViewController) {
-        let vc = ShowNetStateSelectViewController()
+        let vc = CommerceNetStateSelectViewController()
         vc.modalPresentationStyle = .fullScreen
         viewController.present(vc, animated: true)
     }
