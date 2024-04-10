@@ -39,26 +39,27 @@ extension AUIRoomManagerImpl {
         }
     }
     
-//    public func updateRoom(room: AUIRoomInfo,
-//                           callback: @escaping (NSError?, AUIRoomInfo?) -> ()) {
-//        aui_info("updateRoom: \(room.roomName) ", tag: "AUIRoomManagerImpl")
-//        
-//        let model = SyncRoomDestroyNetworkModel()
-//        model.sceneId = sceneId
-//        model.roomInfo = room
-//        
-//        var createRoomError: NSError? = nil
-//        var roomInfo: AUIRoomInfo? = nil
-//        //update a room from the server
-//        model.request { error, resp in
-//            createRoomError = error as? NSError
-//            roomInfo = resp as? AUIRoomInfo
-//            callback(createRoomError, roomInfo)
-//        }
-//    }
+    public func updateRoom(room: AUIRoomInfo,
+                           callback: @escaping (NSError?, AUIRoomInfo?) -> ()) {
+        aui_info("updateRoom: \(room.roomName) ", tag: "AUIRoomManagerImpl")
+        
+        let model = SyncRoomUpdateNetworkModel()
+        model.sceneId = sceneId
+        model.roomInfo = room
+        
+        var createRoomError: NSError? = nil
+        var roomInfo: AUIRoomInfo? = nil
+        //update a room from the server
+        model.request { error, resp in
+            createRoomError = error as? NSError
+            roomInfo = resp as? AUIRoomInfo
+            callback(createRoomError, roomInfo)
+        }
+    }
     
     public func destroyRoom(roomId: String,
                             callback: @escaping (NSError?) -> ()) {
+        aui_info("destroyRoom: \(roomId) ", tag: "AUIRoomManagerImpl")
         let model = SyncRoomDestroyNetworkModel()
         model.sceneId = sceneId
         model.userId = AUIRoomContext.shared.currentUserInfo.userId
@@ -71,6 +72,7 @@ extension AUIRoomManagerImpl {
     public func getRoomInfoList(lastCreateTime: Int64,
                                 pageSize: Int,
                                 callback: @escaping AUIRoomListCallback) {
+        aui_info("getRoomInfoList", tag: "AUIRoomManagerImpl")
         let model = SyncRoomListNetworkModel()
         model.sceneId = sceneId
         model.lastCreateTime = lastCreateTime == 0 ? nil : NSNumber(value: Int(lastCreateTime))

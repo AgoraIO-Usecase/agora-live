@@ -300,6 +300,7 @@ extension VideoLoaderApiImpl: IVideoLoaderApi {
         videoCanvas.uid = container.uid
         videoCanvas.view = container.container
         videoCanvas.renderMode = .hidden
+        videoCanvas.mirrorMode = container.mirrorMode
         videoCanvas.setupMode = container.setupMode
         let ret = engine.setupRemoteVideoEx(videoCanvas, connection: connection)
         debugLoaderPrint("renderVideo[\(connection.channelId)] ret = \(ret), uid:\(anchorInfo.uid)")
