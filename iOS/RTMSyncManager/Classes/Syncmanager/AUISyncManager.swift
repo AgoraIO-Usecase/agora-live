@@ -11,8 +11,12 @@ import AgoraRtmKit
 public class AUISyncManager: NSObject {
     public var sceneMap: [String: AUIScene] = [:]
     public private(set) var rtmManager: AUIRtmManager
+    deinit {
+        aui_info("deinit AUISyncManager")
+    }
     
     public required init(rtmClient: AgoraRtmClientKit?, commonConfig: AUICommonConfig) {
+        aui_info("init AUISyncManager")
         AUIRoomContext.shared.commonConfig = commonConfig
         let _rtmClient = rtmClient ?? AUISyncManager.createRtmClient()
         self.rtmManager = AUIRtmManager(rtmClient: _rtmClient,
@@ -22,13 +26,15 @@ public class AUISyncManager: NSObject {
     }
     
     public func login(with token: String, completion: @escaping (NSError?) -> ()) {
-        aui_info("login")
         rtmManager.login(token: token, completion: completion)
     }
     
     public func logout() {
-        aui_info("logout")
         rtmManager.logout()
+    }
+    
+    public func renew(token: String) {
+        rtmManager.renew(token: token)
     }
     
     public func getScene(channelName: String) -> AUIScene {
