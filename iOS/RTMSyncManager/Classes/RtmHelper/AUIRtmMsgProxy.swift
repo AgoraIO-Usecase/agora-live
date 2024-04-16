@@ -218,8 +218,8 @@ extension AUIRtmMsgProxy: AgoraRtmClientDelegate {
                        channel channelName: String,
                        connectionChangedToState state: AgoraRtmClientConnectionState,
                        reason: AgoraRtmClientConnectionChangeReason) {
-        aui_info("connectionStateChanged state: \(state.rawValue) reason: \(reason.rawValue)", tag: "AUIRtmMsgProxy")
-        if errorDelegates.count <= 0 { return }
+        aui_info("connectionStateChanged[\(channelName)] state: \(state.rawValue) reason: \(reason.rawValue) delegate count: \(errorDelegates.allObjects.count)", tag: "AUIRtmMsgProxy")
+
         for element in errorDelegates.allObjects {
             element.onConnectionStateChanged?(channelName: channelName,
                                               connectionStateChanged: state,

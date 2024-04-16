@@ -72,7 +72,7 @@ public class AUIScene: NSObject {
     
     //TODO: 是否需要像UIKit一样传入一个房间信息对象，还是这个对象业务上自己创建map collection来写入
     public func create(payload: [String: Any]?, completion:@escaping (NSError?)->()) {
-        aui_error("create with channelName: \(channelName), with payload \(payload ?? [:])", tag: kSceneTag)
+        aui_info("create with channelName: \(channelName), with payload \(payload ?? [:])", tag: kSceneTag)
         
         guard rtmManager.isLogin else {
             aui_error("create fail! not login", tag: kSceneTag)
@@ -102,7 +102,7 @@ public class AUIScene: NSObject {
     }
     
     public func enter(completion:@escaping ([String: Any]?, NSError?)->()) {
-        aui_error("enter with channelName: \(channelName)", tag: kSceneTag)
+        aui_info("enter with channelName: \(channelName)", tag: kSceneTag)
         guard rtmManager.isLogin else {
             aui_error("enter fail! not login", tag: kSceneTag)
             completion(nil, NSError.auiError("enter fail! not login"))
@@ -112,13 +112,21 @@ public class AUIScene: NSObject {
         let date = Date()
         subscribeDate = date
         self.enterRoomCompletion = { payload, err in
-            aui_info("[Benchmark]enterRoomCompletion: \(Int64(-date.timeIntervalSinceNow * 1000)) ms", tag: kSceneTag)
+            if let err = err {
+                aui_error("enterRoomCompletion fail: \(err.localizedDescription)", tag: kSceneTag)
+            } else {
+                aui_info("[Benchmark]enterRoomCompletion: \(Int64(-date.timeIntervalSinceNow * 1000)) ms", tag: kSceneTag)
+            }
             completion(payload, err)
         }
         
         if self.ownerId.isEmpty {
             roomCollection.getMetaData {[weak self] err, metadata in
                 guard let self = self else {return}
+                if let err = err {
+                    self._notifyError(error: err)
+                    return
+                }
                 guard let map = metadata as? [String: Any],
                       let ownerId = map[kRoomInfoRoomOwnerId] as? String else {
 //                    self.ownerId = "owner unknown"
@@ -159,6 +167,7 @@ public class AUIScene: NSObject {
         aui_info("leave", tag: kSceneTag)
         getArbiter().release()
         cleanSDK()
+        AUIRoomContext.shared.clean(channelName: channelName)
     }
     
     /// 销毁scene，清理所有缓存（包括rtm的所有metadata）
@@ -166,8 +175,8 @@ public class AUIScene: NSObject {
         aui_info("delete", tag: kSceneTag)
         cleanScene()
         getArbiter().destroy()
-        AUIRoomContext.shared.clean(channelName: channelName)
         cleanSDK()
+        AUIRoomContext.shared.clean(channelName: channelName)
     }
     
     /// 获取一个collection，例如let collection: AUIMapCollection = scene.getCollection("musicList")
@@ -268,9 +277,9 @@ extension AUIScene: AUIArbiterDelegate {
         //如果锁不存在，也认为是房间被销毁的一种
         if error.code == AgoraRtmErrorCode.lockNotExist.rawValue {
             _cleanScene()
-            _notifyError(error: error)
 //            self.onMsgRecvEmpty(channelName: channelName)
         }
+        _notifyError(error: error)
     }
 }
 

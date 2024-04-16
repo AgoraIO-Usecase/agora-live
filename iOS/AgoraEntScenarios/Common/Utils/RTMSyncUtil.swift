@@ -28,6 +28,10 @@ class RTMSyncUtil: NSObject {
         syncManager = AUISyncManager(rtmClient: nil, commonConfig: config)
         isLogined = false
         syncManager?.logout()
+        
+        AUIRoomContext.shared.displayLogClosure = { msg in
+            commerceLogger.info(msg)
+        }
     }
     
     class func createRoom(roomName: String,
