@@ -1,11 +1,8 @@
 /*
-  Localizable.strings
-  AgoraScene_iOS
-
-  Created by 朱继超 on 2022/9/19.
-  
+  Agora Live v1.2 - Audio Chat Room
+  Modified on 2024/04/09
 */
-//
+
 "voice_agora_name"="Agora";
 "voice_app_name"="Agora Voice Chat";
 "voice_app_all"="All";
@@ -13,7 +10,7 @@
 "voice_spatial_audio_mode_room"="Spatial Audio Room";
 "voice_private"="Private";
 "voice_enter"="Enter";
-"voice_create_room"="Create Room";
+"voice_create_room"="CREATE ROOM";
 "voice_karaoke"="Karaoke";
 "voice_no_chat_room_yet"="No Rooms Yet";
 "voice_room_name"="Room Name";
@@ -28,7 +25,7 @@
 "voice_cancel"="Cancel";
 "voice_submit" = "Submit";
 "voice_sure" = "Sure";
-"voice_notice"="Notice";
+"voice_notice"="Announcement";
 "voice_let's_chat!"="Let's Chat!";
 "voice_post"="Publish";
 "voice_edit"="Edit";
@@ -56,7 +53,7 @@
 "voice_contribution_total"="Total Contribution";
 "voice_contribution_list" = "Contribution List";
 "voice_send"="Send";
-"voice_joined"="Joined";
+"voice_joined"="joined";
 "voice_agora_blue"="Agora Blue";
 "voice_agora_red"="Agora Red";
 "voice_sweet_heart"="Sweetheart";
@@ -95,8 +92,8 @@
 "voice_AINS_settings" = "AI Noise Suppression Settings";
 "voice_AINS_definition" = "Learn about AI Noise Suppression";
 "voice_AINS_sup" = "Supported noise types by Agora AI Noise Suppression. Click to listen the samples:";
-"voice_with_AINS" = "AINS";
-"voice_without_AINS" = "OFF";
+"voice_with_AINS" = "With AINS";
+"voice_without_AINS" = "Without AINS";
 "voice_your_AINS" = "Yourself";
 "voice_TV_sound" = "TV Noise";
 "voice_kitchen_sound" = "Kitchen Noise";
@@ -105,7 +102,7 @@
 "voice_office_sound" = "Office Noise";
 "voice_home_sound" = "Home Noise";
 "voice_construction_sound" = "Construction Noise";
-"voice_alert_sound/Music" = "Alert Sound/Music";
+"voice_alert_sound/Music" = "Alert Sounds/Music";
 "voice_applause" = "Applause";
 "voice_wind_sound" = "Wind Noise";
 "voice_mic_pop_filter" = "Pop Filter";
@@ -127,14 +124,14 @@
 "voice_other_sound" = "Other Optimal Profiles";
 "voice_otherSound" = "Switching to another optimal profile requires exiting the current room.";
 "voice_prompt" = "Prompt";
-"voice_mic_num" = "Mic Number";
-"voice_add_bot" = "Add Bots for Optimal Profile experience?";
+"voice_mic_num" = "seat";
+"voice_add_bot" = "Add bots for the optimal profile?";
 "voice_exit_room" = "Leave and Create a New Voice Chat Room?";
 "voice_AINS_AI_noise_suppression" = "AINS: AI Noise Suppression";
 "voice_chatroom_social_chat_introduce"="It optimizes noise cancellation and echo suppression settings to solve the problem of voice communication in social chat scenarios, providing ultra-low latency and clear human voice.";
 "voice_chatroom_karaoke_introduce"="It focuses on solving various problems in solo or group singing scenarios, including the balance treatment of accompaniment and human voices, voice timbre and vocal line beautification, and real-time synchronization of group singing. It provides a more realistic singing scene and makes the singer's voice more pleasant.";
 "voice_chatroom_gaming_buddy_introduce"="It focuses on solving various problems in the gaming companion host scenario, including the reverb treatment of human voices and game sounds, voice timbre and vocal line beautification, etc. It enhances the attractiveness of the gaming companion host's voice while ensuring the sense of the game sound.";
-"voice_professional_podcaster"="Professional Audio Podcaster";
+"voice_professional_podcaster"="Professional Podcast";
 "voice_chatroom_professional_broadcaster_introduce"="It focuses on solving problems such as poor sound quality of mono broadcasters and compatibility with mainstream external sound cards. By utilizing stereo sound capture and high-quality technology, it significantly improves the sound quality of hosts using sound cards, enhancing the attractiveness of the live room. It is now compatible with mainstream sound cards on the market.";
 "voice_co_Watch_team_chat_gaming_buddy_chat" = "Watch Together / Premades / Gaming Companion";
 "voice_multi_audio_chat_scenario_where_anyone_can_unmute_their_mic_and_speak"="A multi-person audio interactive scenario where audience members can freely join the conversation.";
@@ -145,16 +142,16 @@
 "voice_please_set_a_name" = "Please Set a Room Name";
 "voice_visit_more" = "For more optimal profiles, please visit";
 "voice_no_room_name"="Room Name Cannot Be Empty";
-"voice_apply_success" = "Application Succeeded!";
+"voice_apply_success" = "Application Requested!";
 "voice_apply_failed" = "Application Failed!";
-"voice_cancel_apply_success" = "Application Withdrawn Successfully!";
+"voice_cancel_apply_success" = "Application Withdrawn!";
 "voice_cancel_apply_failed" = "Withdrawal Failed!";
 "voice_join_IM_failed" = "Failed to Join Chat Room";
 "voice_room_welcome" = "Welcome to Agora Voice Chat Room! Pornography, gambling, or violence is strictly prohibited in the room.";
-"voice_room_nobody" = "Welcome to Agora Voice Chat Room!\nFeaturing Agora's optimal sound practices and the latest audio technology for a more immersive, easier to use, and more fun voice chat experience.";
+"voice_room_nobody" = "Welcome to Agora Voice Chat Room!";
 "voice_create_tips" = "This version allows you to broadcast for up to 20 minutes. Please ensure that the content of your broadcast does not violate the Terms of Service you have agreed to, or the laws and regulations of your location, otherwise your broadcast will be interrupted.";
-"voice_agree_success" = "Agreeing to Co-host Successful!";
-"voice_agree_failed" = "Agreeing to Co-host Failed!";
+"voice_agree_success" = "Co-host application approved!";
+"voice_agree_failed" = "Failed to approve co-host application!";
 "voice_invitation_sent" = "Invitation Sent!";
 "voice_invited_failed" = "Invitation Failed!";
 "voice_loading" = "Loading...";
@@ -172,7 +169,7 @@
 "voice_AGC" = "Automatic Gain Control for Voice";
 "voice_SoundCard" = "Virtual Sound Card";
 "voice_agora_blue_and_red_bot" = "Agora Blue & Agora Red";
-"voice_room_audio_settings" = "Room Audio Settings";
+"voice_room_audio_settings" = "Room Settings";
 "voice_turn_on_AIAEC" = "Enable AI Echo Cancellation";
 "voice_turn_on_AGC" = "Enable Automatic Gain Control";
 "voice_AIAEC_desc" = "When you turn on accompaniment to sing, AI Echo Cancellation can greatly enhance your singing effect. It is strongly recommended to enable it when singing.";
@@ -189,7 +186,7 @@
 "voice_time_limit_desc" = "Room Dissolved Due To Time Limitation";
 "voice_close_bot" = "Turn Off Bot";
 "voice_other_settings" = "Other Settings";
-"voice_welcome" = "Welcome";
+"voice_welcome" = "Welcome to Agora Voice Chat Room! Pornography, gambling, or violence is strictly prohibited in the room.";
 "voice_you_were_kicked_off_from_the_room" = "You Were Kicked Out of the Room";
 "voice_this_room_has_been_dissolved_by_the_host" = "The Room Has Been Dissolved";
 "voice_you_were_offline" = "You Were Offline";
@@ -203,7 +200,7 @@
 "voice_force_oboe" = "Force Oboe";
 "voice_open_ear_return_adjust" = "Enable IER to Hear Your Own Voice in Real-Time, Advisable for Singing";
 "voice_using_ear_feedback" = "IER Requires Headphones, No Headphones Detected";
-"voice_in_ear" = "IER";
+"voice_in_ear" = "IER (In-Ear Return)";
 "voice_open_ear_return" = "Enable IER";
 "voice_ear_setting" = "IER Settings";
 "voice_ear_volume" = "IER Volume";
@@ -216,11 +213,11 @@
 "voice_microphone_type"="Microphone Type";
 "voice_select_preset_parameters_micrphone"="Select Preset Parameters for Microphone";
 "voice_gain_control"="Gain Control";
-"voice_gain_multiple_sound_signal"="Adjust the Gain Multiple of Sound Signal";
+"voice_gain_multiple_sound_signal"="Adjust the gain multiplier of sound signal";
 "voice_sexy_oba"="Sexy Oppa";
 "voice_pleasing_magnetism"="Pleasing | Magnetic";
-"voice_start_virtual_sound_card"="Start Virtual Sound Card";
-"voice_preset_sound"="Preset Sound";
+"voice_start_virtual_sound_card"="Enable Virtual Sound Card";
+"voice_preset_sound"="Preset Effect";
 "voice_background_music" = "Background Music";
 "In-Ear Monitor" = "In-Ear Monitor";
 "Background Music" = "Background Music";
@@ -228,13 +225,13 @@
 "voice_kick" = "Kick Out";
 "voice_network_disconnected" = "Network Disconnected";
 "voice_activate_robot_failed" = "Activate Bot Failed";
-"voice_aure_tertius"="Young Boy Voice";
-"voice_low_royal_note"="Young Girl Voice";
-"voice_adolescent_voice"="Adolescent Voice";
-"voice_radish_note"="Cute Voice";
-"voice_uncle_sound"="Uncle Voice";
-"voice_moma"="Mom Voice";
-"voice_royal_mother_tone"="Elegant Mom Voice";
+"voice_aure_tertius"="Mature Youthful Male";
+"voice_low_royal_note"="Mature Youthful Female";
+"voice_adolescent_voice"="Adolescent Boy";
+"voice_radish_note"="Cute Gril";
+"voice_uncle_sound"="Mature Male";
+"voice_moma"="Mature Female";
+"voice_royal_mother_tone"="Elegant Mature Female";
 "voice_musical_magnetic"="Musical, Magnetic";
 "voice_soft_magnetic"="Soft, Magnetic";
 "voice_liud_full"="Loud, Full";
@@ -245,19 +242,19 @@
 "voice_mellow_full"="Mellow | Full";
 "voice_dump_data_type"="Dump Data Type";
 "voice_apm_full_link_audio"="APM Full-Link Audio";
-"voice_people"="People";
+"voice_people"="";
 "voice_following_devices_supported"="Currently supported devices:";
 "voice_wired_headphones_microphone"="1. Wired Headphones\n2. Wired Microphone";
 "voice_agora_sonnet_fengming_support"="Supported by Agora AI Engine";
-"voice_online"="Online";
-"voice_watch"="Watch";
-"voice_qing_shuyin" = "Young Boy Voice(Musical，Magnetic)";
-"voice_shaoyuyin" = "Young Girl Voice(Soft，Magnetic)";
-"voice_youth_voice" = "Adolescent Voice(Loud，Full)";
-"voice_shaoluoyin" = "Cute Voice(Pinched, Loli)";
-"voice_uncle_yin" = "Uncle Voice(High Reverb | KTV)";
-"voice_ma_yin" = "Mom Voice(High Reverb | KTV)";
-"voice_qing_shuyin(Bright | Magnetic)" = "Young Boy Voice(Bright | Magnetic)";
-"voice_Yuma_Yin(bright | magnetic)" = "Elegant Mom Voice(Bright | Magnetic)";
-"voice_Youth voice (deep | warm)" = "Adolescent Voice(Low | Warm)";
-"voice_Shao Yu Yin (mellow | full)" = "Young Girl Voice(Mellow | Full)";
+"voice_online"=" Online";
+"voice_watch"=" Watch";
+"voice_qing_shuyin" = "Mature Youthful Male(Musical，Magnetic)";
+"voice_shaoyuyin" = "Mature Youthful Female(Soft，Magnetic)";
+"voice_youth_voice" = "Adolescent Boy(Loud，Full)";
+"voice_shaoluoyin" = "Cute Gril(Pinched, Loli)";
+"voice_uncle_yin" = "Mature Male(High Reverb | KTV)";
+"voice_ma_yin" = "Mature Female(High Reverb | KTV)";
+"voice_qing_shuyin(Bright | Magnetic)" = "Mature Youthful Male(Bright | Magnetic)";
+"voice_Yuma_Yin(bright | magnetic)" = "Elegant Mature Female(Bright | Magnetic)";
+"voice_Youth voice (deep | warm)" = "Adolescent Boy(Low | Warm)";
+"voice_Shao Yu Yin (mellow | full)" = "Mature Youthful Female(Mellow | Full)";
