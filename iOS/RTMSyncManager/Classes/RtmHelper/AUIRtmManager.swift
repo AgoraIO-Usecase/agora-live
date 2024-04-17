@@ -11,6 +11,8 @@ import AgoraRtmKit
 
 private let kReceiptTimeout: TimeInterval = 10.0
 
+private let unSubscribeInterval: Int64 = 2500
+
 /// 对RTM相关操作的封装类
 open class AUIRtmManager: NSObject {
     private var rtmChannelType: AgoraRtmChannelType!
@@ -23,6 +25,25 @@ open class AUIRtmManager: NSObject {
     private var isExternalLogin: Bool!
     private var throttlerUpdateModel = AUIThrottlerUpdateMetaDataModel()
     private var throttlerRemoveModel = AUIThrottlerRemoveMetaDataModel()
+    
+    //to fix the 'AgoraRtmErrorChannelSubscribeTooFrequency'(-11020) error in RTM
+    private var unsubscribeDateMap: [String: Date] = [:] {
+        didSet {
+            if unsubscribeDateMap.isEmpty {
+                autoCleanUnSubscribeChannelTimer?.invalidate()
+                autoCleanUnSubscribeChannelTimer = nil
+            } else {
+                if autoCleanUnSubscribeChannelTimer == nil {
+                    autoCleanUnSubscribeChannelTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] _ in
+                        self?.autoCleanUnSubscribe()
+                    })
+                    autoCleanUnSubscribeChannelTimer?.fire()
+                }
+            }
+        }
+    }
+    private var channelsToSubscribe: Set<String> = []
+    private var autoCleanUnSubscribeChannelTimer: Timer?
     
     private var receiptTimer: Timer?
     private(set) var receiptCallbackMap: [String: AUIReceipt] = [:] {
@@ -240,20 +261,55 @@ extension AUIRtmManager {
     }
     
     public func subscribe(channelName: String, completion:@escaping (NSError?)->()) {
+        unsubscribeDateMap.removeValue(forKey: channelName)
+        if channelsToSubscribe.contains(channelName) {
+            aui_info("subscribe '\(channelName)' already", tag: "AUIRtmManager")
+            completion(nil)
+            return
+        }
+        
+        aui_info("subscribe '\(channelName)'", tag: "AUIRtmManager")
         let options = AgoraRtmSubscribeOptions()
         options.features = [.metadata, .presence, .lock, .message]
         let date1 = Date()
-        rtmClient.subscribe(channelName: channelName, option: options) { resp, error in
+        rtmClient.subscribe(channelName: channelName, option: options) {[weak self] resp, error in
             aui_benchmark("rtm subscribe with message type", cost: -date1.timeIntervalSinceNow)
             aui_info("subscribe '\(channelName)' finished: \(error?.errorCode.rawValue ?? 0)", tag: "AUIRtmManager")
+            if error == nil {
+                self?.channelsToSubscribe.insert(channelName)
+            }
             completion(error?.toNSError())
         }
-        aui_info("subscribe '\(channelName)'", tag: "AUIRtmManager")
     }
     
     public func unSubscribe(channelName: String) {
+        if let date = unsubscribeDateMap[channelName] {
+            if Int64(-date.timeIntervalSinceNow * 1000) < unSubscribeInterval {
+                aui_info("unSubscribe '\(channelName)' dalay", tag: "AUIRtmManager")
+                return
+            }
+        } else {
+            aui_info("unSubscribe '\(channelName)' dalay", tag: "AUIRtmManager")
+            unsubscribeDateMap[channelName] = Date()
+            return
+        }
+        
+        aui_info("unSubscribe '\(channelName)'", tag: "AUIRtmManager")
         proxy.cleanCache(channelName: channelName)
         rtmClient.unsubscribe(channelName)
+        
+        unsubscribeDateMap.removeValue(forKey: channelName)
+        channelsToSubscribe.remove(channelName)
+    }
+}
+
+extension AUIRtmManager {
+    private func autoCleanUnSubscribe() {
+        unsubscribeDateMap.forEach { channelName, date in
+            if Int64(-date.timeIntervalSinceNow * 1000) >= unSubscribeInterval {
+                self.unSubscribe(channelName: channelName)
+            }
+        }
     }
 }
 
