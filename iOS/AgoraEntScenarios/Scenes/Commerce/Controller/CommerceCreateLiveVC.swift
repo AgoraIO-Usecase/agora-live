@@ -106,10 +106,12 @@ extension CommerceCreateLiveVC: CommerceCreateLiveViewDelegate {
         
         let roomId = createView.roomNo
         SVProgressHUD.show()
+        self.view.isUserInteractionEnabled = false
         AppContext.commerceServiceImp(createView.roomNo)?.createRoom(roomName: roomName,
                                                                 roomId: roomId,
                                                                 thumbnailId: createView.roomBg) { [weak self] err, detailModel in
             SVProgressHUD.dismiss()
+            self?.view.isUserInteractionEnabled = true
             if err != nil {
                 ToastView.show(text: err!.localizedDescription)
             }

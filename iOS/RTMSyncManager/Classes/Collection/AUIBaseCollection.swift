@@ -7,12 +7,13 @@
 
 import Foundation
 
+private let kCollectionTag = "AUICollection"
 func aui_collection_log(_ text: String) {
-    aui_info(text, tag: "aui_collection")
+    aui_info(text, tag: kCollectionTag)
 }
 
 func aui_collection_warn(_ text: String) {
-    aui_warn(text, tag: "aui_collection")
+    aui_warn(text, tag: kCollectionTag)
 }
 
 public class AUIBaseCollection: NSObject {
