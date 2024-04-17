@@ -22,6 +22,7 @@ public class AUIScene: NSObject {
             checkRoomValid()
         }
     }
+    private var removeClosure: ()->()
     private var rtmManager: AUIRtmManager
     private var collectionMap: [String: IAUICollection] = [:]
     public let userService: AUIUserServiceImpl!
@@ -51,12 +52,15 @@ public class AUIScene: NSObject {
     }
     
     deinit {
+        aui_info("deinit AUIScene[\(channelName)]")
         userService.unbindRespDelegate(delegate: self)
     }
     
-    public required init(channelName: String, rtmManager: AUIRtmManager) {
+    public required init(channelName: String, rtmManager: AUIRtmManager, removeClosure:@escaping ()->()) {
+        aui_info("init AUIScene[\(channelName)]")
         self.channelName = channelName
         self.rtmManager = rtmManager
+        self.removeClosure = removeClosure
         self.userService = AUIUserServiceImpl(channelName: channelName, rtmManager: rtmManager)
         super.init()
         userService.bindRespDelegate(delegate: self)
@@ -168,6 +172,7 @@ public class AUIScene: NSObject {
         getArbiter().release()
         cleanSDK()
         AUIRoomContext.shared.clean(channelName: channelName)
+        removeClosure()
     }
     
     /// 销毁scene，清理所有缓存（包括rtm的所有metadata）
@@ -177,6 +182,7 @@ public class AUIScene: NSObject {
         getArbiter().destroy()
         cleanSDK()
         AUIRoomContext.shared.clean(channelName: channelName)
+        removeClosure()
     }
     
     /// 获取一个collection，例如let collection: AUIMapCollection = scene.getCollection("musicList")

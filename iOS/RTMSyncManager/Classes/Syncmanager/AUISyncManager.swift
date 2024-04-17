@@ -43,7 +43,9 @@ public class AUISyncManager: NSObject {
             return scene
         }
         
-        let scene = AUIScene(channelName: channelName, rtmManager: rtmManager)
+        let scene = AUIScene(channelName: channelName, rtmManager: rtmManager) { [weak self] in
+            self?.sceneMap.removeValue(forKey: channelName)
+        }
         sceneMap[channelName] = scene
         return scene
     }
