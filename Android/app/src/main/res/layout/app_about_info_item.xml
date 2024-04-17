@@ -10,7 +10,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginTop="42dp"
-        android:src="@mipmap/app_ic_launcher_round"
+        android:src="@mipmap/ic_launcher_round"
         android:padding="2dp"
         android:background="@drawable/app_ic_bg"
         app:layout_constraintEnd_toEndOf="parent"
