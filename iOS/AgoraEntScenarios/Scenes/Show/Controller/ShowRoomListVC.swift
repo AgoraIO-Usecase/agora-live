@@ -124,20 +124,39 @@ class ShowRoomListVC: UIViewController {
             nc.modalPresentationStyle = .fullScreen
             vc.roomList = roomList.filter({ $0.ownerId != VLUserCenter.user.id })
             vc.focusIndex = vc.roomList?.firstIndex(where: { $0.roomId == room.roomId }) ?? 0
+            vc.onClickDislikeClosure = { [weak self] in
+                guard let self = self else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15, execute: DispatchWorkItem(block: {
+                    self.refreshControl.beginRefreshing()
+                    self.collectionView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.size.height), animated: true)
+                    self.fetchRoomList()
+                }))
+            }
+            vc.onClickDisUserClosure = { [weak self] in
+                guard let self = self else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15, execute: DispatchWorkItem(block: {
+                    self.refreshControl.beginRefreshing()
+                    self.collectionView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.size.height), animated: true)
+                    self.fetchRoomList()
+                }))
+            }
             self.present(nc, animated: true)
         }
     }
     
     private func fetchRoomList() {
         AppContext.showServiceImp("")?.getRoomList(page: 1) { [weak self] error, roomList in
+            self?.refreshControl.endRefreshing()
             guard let self = self else {return}
-            self.refreshControl.endRefreshing()
             if let error = error {
                 LogUtil.log(error.localizedDescription)
                 return
             }
             let list = roomList ?? []
-            self.roomList = list
+            let dislikeRooms = AppContext.shared.dislikeRooms()
+            let dislikeUsers = AppContext.shared.dislikeUsers()
+            self.roomList = list.filter({ !dislikeRooms.contains($0.roomId) })
+            self.roomList = self.roomList.filter { !dislikeUsers.contains($0.ownerId) }
             self.preLoadVisibleItems()
         }
     }

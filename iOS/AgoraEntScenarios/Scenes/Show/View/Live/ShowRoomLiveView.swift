@@ -14,6 +14,7 @@ private let kChatInputViewHeight: CGFloat = 56
 protocol ShowRoomLiveViewDelegate: ShowRoomBottomBarDelegate, ShowCanvasViewDelegate {
     func onClickSendMsgButton(text: String)
     func onClickCloseButton()
+    func onClickMoreButton()
 }
 
 class ShowRoomLiveView: UIView {
@@ -56,6 +57,22 @@ class ShowRoomLiveView: UIView {
     private lazy var countView: ShowRoomMembersCountView = {
         let countView = ShowRoomMembersCountView()
         return countView
+    }()
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.spacing = 10
+        stackView.axis = .horizontal
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    private lazy var moreBtn: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage.show_sceneImage(name: "icon_live_more"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.addTarget(self, action: #selector(clickMore), for: .touchUpInside)
+        return button
     }()
     
     private lazy var closeButton: UIButton = {
@@ -134,16 +151,17 @@ class ShowRoomLiveView: UIView {
             make.left.equalTo(15)
         }
         
-        addSubview(closeButton)
-        closeButton.snp.makeConstraints { make in
-            make.right.equalTo(-15)
+        addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.right.equalToSuperview().offset(-15)
             make.centerY.equalTo(roomInfoView)
         }
-        
-        addSubview(countView)
-        countView.snp.makeConstraints { make in
-            make.centerY.equalTo(roomInfoView)
-            make.right.equalTo(closeButton.snp.left).offset(-10)
+        stackView.addArrangedSubview(countView)
+        stackView.addArrangedSubview(moreBtn)
+        stackView.addArrangedSubview(closeButton)
+        moreBtn.isHidden = isBroadcastor
+        moreBtn.snp.makeConstraints { make in
+            make.width.equalTo(20)
         }
         
         addSubview(tableView)
@@ -225,6 +243,11 @@ class ShowRoomLiveView: UIView {
     
     @objc private func didClickCloseButton() {
         delegate?.onClickCloseButton()
+    }
+    
+    @objc
+    private func clickMore() {
+        delegate?.onClickMoreButton()
     }
     
     private func sendMessage(){

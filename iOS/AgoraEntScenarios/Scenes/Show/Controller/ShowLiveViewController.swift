@@ -17,10 +17,13 @@ protocol ShowLiveViewControllerDelegate: NSObjectProtocol {
 
 class ShowLiveViewController: UIViewController {
     weak var delegate: ShowLiveViewControllerDelegate?
+    var onClickDislikeClosure: (() -> Void)?
+    var onClickDisUserClosure: (() -> Void)?
     var room: ShowRoomListModel? {
         didSet{
             if oldValue?.roomId != room?.roomId {
                 liveView.room = room
+                serviceImp?.unsubscribeEvent(delegate: self)
                 if let oldRoom = oldValue {
                     _leavRoom(oldRoom)
                 }
@@ -153,6 +156,11 @@ class ShowLiveViewController: UIViewController {
     
     private var currentInteraction: ShowInteractionInfo? {
         didSet {
+            showLogger.info("currentInteraction[\(roomId)] 'interactStatus: \(currentInteraction?.interactStatus.rawValue ?? -1)', interaction roomId'\(currentInteraction?.roomId ?? "")'")
+            if let _ = currentInteraction?.roomId, serviceImp is ShowRobotSyncManagerServiceImp {
+//                assert(false)
+                showLogger.info("currentInteraction fail!")
+            }
             //update audio status
             if let interaction = currentInteraction {
                 liveView.canvasView.setLocalUserInfo(name: room?.ownerName ?? "")
@@ -266,8 +274,6 @@ class ShowLiveViewController: UIViewController {
         ShowAgoraKitManager.shared.cleanCapture()
         ShowBeautyFaceVC.resetData()
         ShowAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
-        serviceImp?.unsubscribeEvent(delegate: self)
-        
         serviceImp?.leaveRoom {_ in
         }
         serviceImp?.unsubscribeEvent(delegate: self)
@@ -333,10 +339,14 @@ extension ShowLiveViewController {
     func _joinRoom(_ room: ShowRoomListModel){
         finishView?.removeFromSuperview()
         ShowAgoraKitManager.shared.addRtcDelegate(delegate: self, roomId: room.roomId)
+        self.currentInteraction = nil
         if let service = serviceImp {
+            let date = Date()
+            showLogger.info("joinRoom[\(room.roomId)] start")
             service.joinRoom(room: room) {[weak self] error, detailModel in
                 guard let self = self else {return}
                 guard self.room?.roomId == room.roomId else { return }
+                showLogger.info("joinRoom[\(room.roomId)] end cost: \(-Int64(date.timeIntervalSinceNow * 1000))ms, error code: \(error?.code ?? 0)")
                 if let err = error {
                     showLogger.info("joinRoom[\(room.roomId)] error: \(error?.code ?? 0)")
                     if err.code == -1 {
@@ -344,7 +354,7 @@ extension ShowLiveViewController {
                     }
                 } else {
                     self._subscribeServiceEvent()
-                    self.updateLoadingType(playState: .joined, roomId: room.roomId)
+                    self.updateLoadingType(playState: self.loadingType, roomId: room.roomId)
                 }
             }
         } else {
@@ -410,8 +420,13 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
     }
     
     private func _refreshInteractionList() {
+        let rId = roomId
         serviceImp?.getAllInterationList { [weak self] (error, interactionList) in
             guard let self = self, error == nil else { return }
+            if rId != self.roomId {
+                showLogger.warning("missmatch roomId! \(rId)/\(self.roomId)")
+                return
+            }
             if self.interactionList == nil, let interaction = interactionList?.first {
                 // first load
                 if self.role == .broadcaster {
@@ -972,7 +987,33 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
         }
         present(settingMenuVC, animated: true)
     }
-    
+    func onClickMoreButton() {
+        let dialog = ShowLiveMoreDialog(frame: view.bounds)
+        dialog.onClickDislikeClosure = { [weak self] in
+            guard let self = self else { return }
+            AppContext.shared.addDislikeRoom(at: self.room?.roomId)
+            if let room = self.room {
+                self._leavRoom(room)
+            }
+            self.updateLoadingType(playState: .idle, roomId: self.roomId)
+            self.onClickDislikeClosure?()
+            self.dismiss(animated: true)
+        }
+        
+        dialog.onClickDisUserClosure = { [weak self] in
+            guard let self = self else { return }
+            AppContext.shared.addDislikeUser(at: self.room?.ownerId)
+            if let room = self.room {
+                self._leavRoom(room)
+            }
+            self.updateLoadingType(playState: .idle, roomId: self.roomId)
+            self.onClickDisUserClosure?()
+            self.dismiss(animated: true)
+        }
+        
+        view.addSubview(dialog)
+        dialog.show()
+    }
 }
 
 extension ShowLiveViewController {

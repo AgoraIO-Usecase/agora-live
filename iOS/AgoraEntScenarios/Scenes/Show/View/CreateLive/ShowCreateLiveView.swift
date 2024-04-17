@@ -159,7 +159,27 @@ class ShowCreateLiveView: UIView {
             make.height.equalTo(btnHeight)
         }
         
-        layoutButtonArray()
+        let cameraButton = createButton(imgName: "show_create_camera", title: "create_button_switch".show_localized)
+        cameraButton.addTarget(self, action: #selector(didClickCameraButton), for: .touchUpInside)
+        
+        let beautyButton = createButton(imgName: "show_create_beauty", title: "create_button_beauty".show_localized)
+        beautyButton.addTarget(self, action: #selector(didClickBeautyButton), for: .touchUpInside)
+        
+        let settingButton = createButton(imgName: "show_setting", title: "create_button_settings".show_localized)
+        settingButton.addTarget(self, action: #selector(didClickSettingButton), for: .touchUpInside)
+        
+        let buttonArray = [cameraButton, beautyButton, settingButton]
+        
+        let stackView = UIStackView(arrangedSubviews: buttonArray)
+        stackView.spacing = 25
+        stackView.alignment = .fill
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        coverView.addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(tipsLabel.snp.top).offset(-20)
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -185,30 +205,6 @@ class ShowCreateLiveView: UIView {
             make.top.equalTo(imageView.snp.bottom).offset(3)
         }
         return button
-    }
-    
-    private func layoutButtonArray(){
-        let cameraButton = createButton(imgName: "show_create_camera", title: "create_button_switch".show_localized)
-        cameraButton.addTarget(self, action: #selector(didClickCameraButton), for: .touchUpInside)
-        
-        let beautyButton = createButton(imgName: "show_create_beauty", title: "create_button_beauty".show_localized)
-        beautyButton.addTarget(self, action: #selector(didClickBeautyButton), for: .touchUpInside)
-        
-        let settingButton = createButton(imgName: "show_setting", title: "create_button_settings".show_localized)
-        settingButton.addTarget(self, action: #selector(didClickSettingButton), for: .touchUpInside)
-        
-        let buttonArray = [cameraButton, beautyButton, settingButton]
-        
-        let stackView = UIStackView(arrangedSubviews: buttonArray)
-        stackView.spacing = 25
-        stackView.alignment = .fill
-        stackView.axis = .horizontal
-        stackView.distribution = .fill
-        coverView.addSubview(stackView)
-        stackView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-174)
-        }
     }
 }
 
