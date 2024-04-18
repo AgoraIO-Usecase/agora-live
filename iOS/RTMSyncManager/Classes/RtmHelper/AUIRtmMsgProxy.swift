@@ -294,7 +294,7 @@ extension AUIRtmMsgProxy: AgoraRtmClientDelegate {
     }
     
     public func rtmKit(_ rtmKit: AgoraRtmClientKit, didReceiveMessageEvent event: AgoraRtmMessageEvent) {
-        aui_info("[\(event.channelName)] didReceiveMessageEvent  =======", tag: kAUIRtmMsgProxyKey)
+        aui_info("[\(event.channelName)]didReceiveMessageEvent  =======", tag: kAUIRtmMsgProxyKey)
         
         if let message = event.message.stringData {
             for element in messageDelegates.allObjects {
