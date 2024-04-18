@@ -31,9 +31,9 @@ public class AUIBaseCollection: NSObject {
     private(set) var attributesDidChangedClosure: AUICollectionAttributesDidChangedClosure?
     
     deinit {
+        aui_collection_log("[\(channelName)][\(observeKey)]deinit AUICollection \(self)")
         rtmManager.unsubscribeAttributes(channelName: channelName, itemKey: observeKey, delegate: self)
         rtmManager.unsubscribeMessage(channelName: channelName, delegate: self)
-        aui_collection_log("[\(observeKey)]deinit AUICollection")
     }
     
     public required init(channelName: String, observeKey: String, rtmManager: AUIRtmManager) {
@@ -41,9 +41,9 @@ public class AUIBaseCollection: NSObject {
         self.observeKey = observeKey
         self.channelName = channelName
         super.init()
+        aui_collection_log("[\(channelName)][\(observeKey)]init AUICollection \(self)")
         rtmManager.subscribeAttributes(channelName: channelName, itemKey: observeKey, delegate: self)
         rtmManager.subscribeMessage(channelName: channelName, delegate: self)
-        aui_collection_log("[\(observeKey)]init AUICollection")
     }
 }
 
