@@ -117,6 +117,8 @@ class RTMSyncUtil: NSObject {
                          payload: [String: Any]?,
                          success: (() -> Void)?,
                          failure: ((NSError?) -> Void)?) {
+        commercePrintLog("joinScene[\(id)]", tag: "RTMSyncUtil")
+        _ = syncManager?.createScene(channelName: id)
         let scene = scene(id: id)
         scene?.bindRespDelegate(delegate: roomDelegate)
         scene?.userService.bindRespDelegate(delegate: userDelegate)
@@ -151,6 +153,7 @@ class RTMSyncUtil: NSObject {
     }
     
     class func leaveScene(id: String, ownerId: String) {
+        commercePrintLog("leaveScene[\(id)]", tag: "RTMSyncUtil")
         let scene = scene(id: id)
         if ownerId == VLUserCenter.user.id {
             scene?.delete()

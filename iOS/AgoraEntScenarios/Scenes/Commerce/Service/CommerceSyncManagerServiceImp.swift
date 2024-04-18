@@ -55,6 +55,10 @@ private func agoraAssert(_ condition: Bool, _ message: String) {
     commerceLogger.error(message, context: "Service")
 }
 
+func commercePrintLog(_ message: String, tag: String? = nil) {
+    commerceLogger.info(message, context: tag)
+}
+
 private func agoraPrint(_ message: String) {
     commerceLogger.info(message, context: "Service")
 }
@@ -87,8 +91,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     private var isAdded = false
     
     private var isJoined = false
-    
-    private var isSendMessage = false
     
     private var joinRetry = 0
 
@@ -236,9 +238,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
             self._subscribeOnRoomDestroy(isOwner: self.isOwner(roomModel))
             self._subscribeAll()
             self.isJoined = true
-            if self.isSendMessage {
-                self.initRoom(roomId: self.roomId) { _ in }
-            }
+            self.initRoom(roomId: self.roomId) { _ in }
             completion(nil, roomModel)
         } failure: { error in
             completion(error, nil)
@@ -277,14 +277,13 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         _leaveRoom(completion: completion)
     }
     
-    func initRoom(roomId: String?, completion: @escaping (NSError?) -> Void) {
+    private func initRoom(roomId: String?, completion: @escaping (NSError?) -> Void) {
         if isJoined {
             _sendMessageWithText(roomId: roomId, text: "join_live_room".commerce_localized)
         }
-        isSendMessage = !isJoined
     }
     
-    func deinitRoom(roomId: String?, completion: @escaping (NSError?) -> Void) {
+    private func deinitRoom(roomId: String?, completion: @escaping (NSError?) -> Void) {
         _removeUser(roomId: roomId, completion: completion)
         _sendMessageWithText(roomId: roomId, text: "leave_live_room".commerce_localized)
     }

@@ -37,9 +37,9 @@ public class AUISyncManager: NSObject {
         rtmManager.renew(token: token)
     }
     
-    public func getScene(channelName: String) -> AUIScene {
-        aui_info("getScene: \(channelName)")
-        if let scene = sceneMap[channelName] {
+    public func createScene(channelName: String) -> AUIScene {
+        aui_info("createScene: \(channelName)")
+        if let scene = getScene(channelName: channelName) {
             return scene
         }
         
@@ -49,6 +49,15 @@ public class AUISyncManager: NSObject {
         sceneMap[channelName] = scene
         return scene
     }
+    
+    public func getScene(channelName: String) -> AUIScene? {
+        aui_info("getScene: \(channelName)")
+        if let scene = sceneMap[channelName] {
+            return scene
+        }
+        
+        return nil
+    }
 }
 
 extension AUISyncManager {
@@ -56,7 +65,7 @@ extension AUISyncManager {
         let commonConfig = AUIRoomContext.shared.commonConfig!
         let userInfo = AUIRoomContext.shared.currentUserInfo
         let rtmConfig = AgoraRtmClientConfig(appId: commonConfig.appId, userId: userInfo.userId)
-        rtmConfig.presenceTimeout = 60
+        rtmConfig.presenceTimeout = 30
         if rtmConfig.userId.count == 0 {
             aui_error("userId is empty")
             assert(false, "userId is empty")

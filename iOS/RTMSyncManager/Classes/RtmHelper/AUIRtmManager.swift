@@ -112,6 +112,8 @@ open class AUIRtmManager: NSObject {
         if isExternalLogin {return}
         rtmClient.logout()
         isLogin = false
+        unsubscribeDateMap.removeAll()
+        channelsToSubscribe.removeAll()
     }
     
     public func renew(token: String) {

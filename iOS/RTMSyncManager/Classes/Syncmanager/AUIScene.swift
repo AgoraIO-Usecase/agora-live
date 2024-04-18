@@ -52,17 +52,17 @@ public class AUIScene: NSObject {
     }
     
     deinit {
-        aui_info("deinit AUIScene[\(channelName)]")
+        aui_info("deinit AUIScene[\(channelName)] \(self)")
         userService.unbindRespDelegate(delegate: self)
     }
     
     public required init(channelName: String, rtmManager: AUIRtmManager, removeClosure:@escaping ()->()) {
-        aui_info("init AUIScene[\(channelName)]")
         self.channelName = channelName
         self.rtmManager = rtmManager
         self.removeClosure = removeClosure
         self.userService = AUIUserServiceImpl(channelName: channelName, rtmManager: rtmManager)
         super.init()
+        aui_info("init AUIScene[\(channelName)] \(self)")
         userService.bindRespDelegate(delegate: self)
     }
     
