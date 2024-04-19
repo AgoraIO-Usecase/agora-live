@@ -113,7 +113,6 @@ enum class ShowInteractionStatus(val value: Int) {
  * @property interactStatus
  * @property createdAt
  * @property updatedAt
- * @property isPureMode
  * @constructor Create empty Show room detail model
  */
 data class ShowRoomDetailModel constructor(
@@ -127,8 +126,7 @@ data class ShowRoomDetailModel constructor(
     val roomStatus: Int = ShowRoomStatus.activity.value,
     val interactStatus: Int = ShowInteractionStatus.idle.value,
     val createdAt: Double,
-    val updatedAt: Double,
-    val isPureMode: Int
+    val updatedAt: Double
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -142,8 +140,7 @@ data class ShowRoomDetailModel constructor(
         parcel.readInt(),
         parcel.readInt(),
         parcel.readDouble(),
-        parcel.readDouble(),
-        parcel.readInt()
+        parcel.readDouble()
     )
 
     /**
@@ -164,7 +161,6 @@ data class ShowRoomDetailModel constructor(
             Pair("interactStatus", interactStatus),
             Pair("createdAt", createdAt),
             Pair("updatedAt", updatedAt),
-            Pair("isPureMode", isPureMode)
         )
     }
 
@@ -214,7 +210,6 @@ data class ShowRoomDetailModel constructor(
         parcel.writeInt(interactStatus)
         parcel.writeDouble(createdAt)
         parcel.writeDouble(updatedAt)
-        parcel.writeInt(isPureMode)
     }
 
     /**

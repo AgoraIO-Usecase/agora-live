@@ -34,7 +34,7 @@ import io.agora.rtc2.RtcEngine
 /**
  * Version
  */
-const val VERSION = "1.0.5"
+const val VERSION = "1.0.3"
 
 /**
  * Capture mode
@@ -325,13 +325,6 @@ interface FaceUnityBeautyAPI {
      * @param value
      */
     fun setParameters(key: String, value: String)
-
-    /**
-     * Run on main process
-     *
-     * @param run
-     */
-    fun runOnProcessThread(run: ()->Unit)
 
     /**
      * Release

@@ -177,9 +177,10 @@ class CloudPlayerService {
         traceId: String
     ) {
         post(
-            baseUrl + "rte-cloud-player/start",
+            baseUrl + "cloud-player/start",
             JSONObject()
                 .put("appId", BuildConfig.AGORA_APP_ID)
+                .put("appCert", BuildConfig.AGORA_APP_CERTIFICATE)
                 .put(
                     "basicAuth",
                     Base64.encodeToString(

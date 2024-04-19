@@ -123,9 +123,11 @@ public class WebViewActivity extends BaseViewBindingActivity<AppActivityWebviewB
                 runOnUiThread(() -> {
                     User user = UserManager.getInstance().getUser();
                     UserModel userModel = new UserModel(user.headUrl, user.name, user.mobile);
+                    String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
                     String type = "model:" + Build.MODEL + "\n"
                             + "manufacturer：" + Build.MANUFACTURER + "\n"
                             + "os_version：" + Build.VERSION.RELEASE + "\n"
+                            + "android_id：" + androidId + "\n"
                             + "imsi：" + "";
                     DeviceInfo deviceInfo = new DeviceInfo(type, "content", 111);
                     WebUsageModel webUsageModel = new WebUsageModel(userModel, deviceInfo);

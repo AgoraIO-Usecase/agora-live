@@ -9,11 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="def_text_color_white">#EFF4FF</color>
     <color name="def_text_color_040">#040925</color>
-    <color name="def_text_grey_303">#303553</color>
     <color name="def_text_color_3c4">#3C4267</color>
     <color name="def_text_grey_979">#979CBB</color>
     <color name="def_text_grey_6c7">#6C7192</color>
-    <color name="def_text_grey_6F7">#6F738B</color>
     <color name="black_57">#575757</color>
     <color name="black_08">#080F38</color>
     <color name="black_3d">#3d3f46</color>

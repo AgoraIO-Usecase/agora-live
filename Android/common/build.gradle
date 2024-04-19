@@ -20,9 +20,10 @@ android {
         buildConfigField "String", "APP_VERSION_CODE", "\"${APP_VERSION_CODE}\""
 
         buildConfigField "String", "TOOLBOX_SERVER_HOST", "\"${TOOLBOX_SERVER_HOST}\""
-        buildConfigField "String", "ROOM_MANAGER_SERVER_HOST", "\"${ROOM_MANAGER_SERVER_HOST}\""
 
         buildConfigField "String", "AGORA_APP_ID", "\"${AGORA_APP_ID}\""
+        buildConfigField "String", "AGORA_APP_CERTIFICATE", "\"${AGORA_APP_CERTIFICATE}\""
+
     }
 
     buildTypes {

@@ -11,7 +11,7 @@ import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.show.beauty.BeautyProcessorImpl
 import io.agora.scene.show.beauty.IBeautyProcessor
 import io.agora.scene.show.debugSettings.DebugSettingModel
-import io.agora.scene.show.videoLoaderAPI.VideoLoader
+import io.agora.scene.show.videoSwitcherAPI.VideoSwitcher
 import java.util.concurrent.Executors
 
 /**
@@ -123,7 +123,7 @@ object RtcEngineInstance {
      *
      */
     fun cleanCache() {
-        VideoLoader.getImplInstance(rtcEngine).cleanCache()
+        VideoSwitcher.getImplInstance(rtcEngine).unloadConnections()
     }
 
 
@@ -132,7 +132,6 @@ object RtcEngineInstance {
      *
      */
     fun destroy() {
-        VideoLoader.release()
         innerRtcEngine?.let {
             workingExecutor.execute { RtcEngineEx.destroy() }
             innerRtcEngine = null

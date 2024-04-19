@@ -3,7 +3,6 @@
     <string name="show_create_room">Create</string>
     <string name="show_create_tips1">Welcome to Live Streaming!</string>
     <string name="show_living">LIVE</string>
-    <string name="show_pure">PURE</string>
     <string name="show_room_id">ID: %s</string>
     <string name="show_user_count">%d</string>
     <string name="show_app_name">Live Streaming</string>
@@ -13,14 +12,14 @@
     <string name="show_live_yes">Yes</string>
     <string name="show_live_no">No</string>
     <string name="show_text_input_sent">Send</string>
-    <string name="show_text_input_hint">Please input...</string>
+    <string name="show_text_input_hint">Pleae input...</string>
     <string name="show_text_input_empty">Empty input</string>
     <string name="show_setting_switch_camera">Flip</string>
     <string name="show_setting_video_on">Camera On</string>
     <string name="show_setting_video_off">Camera Off</string>
     <string name="show_setting_mic_on">Mic On</string>
     <string name="show_setting_mic_off">Mic Off</string>
-    <string name="show_setting_statistic">Stats for nerds</string>
+    <string name="show_setting_statistic">Stats</string>
     <string name="show_setting_quality">Video Quality</string>
     <string name="show_setting_advance_setting">Advanced Settings</string>
     <string name="show_setting_quality_enhance_tip">Due to your device being a low-end model, the super-resolution feature has been disabled to ensure smooth device performance.</string>
@@ -57,10 +56,10 @@
     <string name="show_live_prepare_room_clipboard_copyed">Room ID has been copied to the clipboard!</string>
     <string name="show_live_prepare_room_name_hint">Please enter the room name</string>
     <string name="show_beauty_item_beauty_whiten">Skin Tone</string>
-    <string name="show_beauty_item_beauty_overall">Cheek Thin</string>
+    <string name="show_beauty_item_beauty_overall">Thin Cheek</string>
     <string name="show_beauty_item_beauty_vshape">V Shape</string>
-    <string name="show_beauty_item_beauty_upper_width">Cheek Narrow</string>
-    <string name="show_beauty_item_beauty_short_width">Cheek Small</string>
+    <string name="show_beauty_item_beauty_upper_width">Narrow Cheek</string>
+    <string name="show_beauty_item_beauty_short_width">Small Cheek</string>
     <string name="show_beauty_item_beauty_cheekbone">Cheek</string>
     <string name="show_beauty_item_beauty_eye">Enlarge</string>
     <string name="show_beauty_item_beauty_nose">Nose Size</string>
@@ -161,10 +160,9 @@
     <string name="show_online_boardcaster">Online Host</string>
     <string name="show_pking">In PK</string>
     <string name="show_stop_pking">End</string>
-    <string name="show_empty_online_boardcaster">No online host</string>
-    <string name="show_empty_online_audience">No online audience</string>
+    <string name="show_empty_online_boardcaster">No hosts online</string>
+    <string name="show_empty_online_audience">No audience online</string>
     <string name="show_pk">Co-host</string>
-    <string name="show_pk_dialog_header">To %s</string>
     <string name="show_can_pk">Available for PK</string>
 
     <string name="show_cannot_accept">You are currently engaged in an interaction. Please finish the interaction before accepting any request for co-host.</string>
@@ -273,7 +271,6 @@
     <string name="show_video_quailty">Video Quality</string>
     <string name="show_video_quailty_smooth">Smooth First</string>
     <string name="show_video_quailty_clear">Clarity First</string>
-    <string name="show_video_pure_mode">Pure Mode</string>
     <string name="show_video_quailty_tips">Adaptive video quality strategies for different audience</string>
     <string name="show_video_device_result">Device Level: %s (%d)</string>
     <string name="show_video_device_high">High-end Device</string>

@@ -67,11 +67,6 @@ class LiveRoomConfig constructor(room: ShowRoomDetailModel, waitingForPK: Boolea
     private val updatedAt: Double
 
     /**
-     * Is Pure Mode
-     */
-    private val isPureMode: Int
-
-    /**
      * Waiting for p k
      */
     private val waitingForPK: Boolean
@@ -90,7 +85,6 @@ class LiveRoomConfig constructor(room: ShowRoomDetailModel, waitingForPK: Boolea
         interactStatus = room.interactStatus
         createdAt = room.createdAt
         updatedAt = room.updatedAt
-        isPureMode = room.isPureMode
         this.waitingForPK = waitingForPK
     }
 
@@ -111,8 +105,7 @@ class LiveRoomConfig constructor(room: ShowRoomDetailModel, waitingForPK: Boolea
             roomStatus,
             interactStatus,
             createdAt,
-            updatedAt,
-            isPureMode
+            updatedAt
         )
     }
 
@@ -157,8 +150,4 @@ class LiveRoomConfig constructor(room: ShowRoomDetailModel, waitingForPK: Boolea
      *
      */
     fun isRobotRoom() = roomId.length > robotMaxCount
-
-    fun isPureMode() : Boolean {
-        return isPureMode == 1
-    }
 }

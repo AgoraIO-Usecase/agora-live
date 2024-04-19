@@ -88,7 +88,6 @@ class AdvanceSettingAudienceDialog constructor(context: Context) : BottomFullDia
             defaultItemValues[itemId] = if (isChecked) 1 else 0
             onSwitchChanged(itemId, isChecked)
         }
-        binding.switchCompat.isEnabled = !VideoSetting.isPureMode
     }
 
 
@@ -102,7 +101,7 @@ class AdvanceSettingAudienceDialog constructor(context: Context) : BottomFullDia
         when (itemId) {
             ITEM_ID_SWITCH_QUALITY_ENHANCE -> {
                 VideoSetting.setCurrAudienceEnhanceSwitch(isChecked)
-                VideoSetting.updateSRSetting(SR = VideoSetting.getCurrAudienceSetting().video.SR)
+                VideoSetting.updateAudioSetting(SR = VideoSetting.getCurrAudienceSetting().video.SR)
             }
         }
     }
