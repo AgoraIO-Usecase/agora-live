@@ -17,6 +17,7 @@ PODS:
   - Agora-Scene-Utils (1.1.0)
   - Agora_Chat_iOS (1.0.8)
   - AgoraRtcEngine_Special_iOS (4.1.1.23)
+  - AgoraRtm (2.2.0)
   - AgoraSyncManager-overseas (3.0.8):
     - SocketRocket
   - fuLib (1.0):
@@ -27,14 +28,17 @@ PODS:
   - KakaJSON (1.1.2)
   - LEEAlert (1.6.4)
   - Masonry (1.1.0)
-  - MJRefresh (3.7.6)
+  - MJRefresh (3.7.9)
   - Protobuf (3.22.1)
+  - RTMSyncManager (0.1.0):
+    - AgoraRtm (~> 2.2.0)
+    - YYModel
   - SDWebImage (4.4.8):
     - SDWebImage/Core (= 4.4.8)
   - SDWebImage/Core (4.4.8)
   - SDWebImageAPNGCoder (0.1.1):
     - SDWebImage/Core (~> 4.2)
-  - SnapKit (5.6.0)
+  - SnapKit (5.7.1)
   - SocketRocket (0.7.0)
   - SSZipArchive (2.4.3)
   - SVGAPlayer (2.5.7):
@@ -69,6 +73,7 @@ DEPENDENCIES:
   - Masonry (= 1.1.0)
   - MJRefresh
   - Protobuf (= 3.22.1)
+  - RTMSyncManager (from `RTMSyncManager.podspec`)
   - SDWebImage (= 4.4.8)
   - SDWebImageAPNGCoder
   - SnapKit
@@ -87,6 +92,7 @@ SPEC REPOS:
     - Agora-Scene-Utils
     - Agora_Chat_iOS
     - AgoraRtcEngine_Special_iOS
+    - AgoraRtm
     - AgoraSyncManager-overseas
     - FURenderKit
     - HWWeakTimer
@@ -111,6 +117,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   fuLib:
     :path: fu.podspec
+  RTMSyncManager:
+    :path: RTMSyncManager.podspec
   VideoLoaderAPI:
     :path: AgoraEntScenarios/Common/API/VideoLoaderAPI
 
@@ -119,6 +127,7 @@ SPEC CHECKSUMS:
   Agora-Scene-Utils: 3f9b1c422cfdda4a7051cf4cffdd0cfef80c9c89
   Agora_Chat_iOS: fcd8afa4f1cff55da59535a6ed573594ace3c169
   AgoraRtcEngine_Special_iOS: 6a3f7814058f819b374cec3037cbbf7c4de519a5
+  AgoraRtm: 4813aab832ca612facb29c831339546c71e0b764
   AgoraSyncManager-overseas: 4dddc7d8cd336e257adaac5e278e6cbcfaf1e954
   fuLib: a59e706f8b8a3826dcbe93d427fba2bcafc643aa
   FURenderKit: bcff9889dbbafcd12839d57ee85d03b466e1a6fb
@@ -127,11 +136,12 @@ SPEC CHECKSUMS:
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
   LEEAlert: a604ad481e3e9b021421a271f78594926dd034bb
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
-  MJRefresh: 2fe7fb43a5167ceda20bb7e63f130c04fd1814a5
+  MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
   Protobuf: d7f7c8329edf5eb8af65547a8ba3e9c1cee927d5
+  RTMSyncManager: 110b208a8bf57881decaef0e76891bdf5345ba21
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   SDWebImageAPNGCoder: 3e4c684c8223eef2f45a50bdd0beaab345e4eb24
-  SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
+  SnapKit: d612e99e678a2d3b95bf60b0705ed0a35c03484a
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   SVGAPlayer: 318b85a78b61292d6ae9dfcd651f3f0d1cdadd86
@@ -142,6 +152,6 @@ SPEC CHECKSUMS:
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: 2477a5003c91216ab3d85f62519ee7b4ec70f7c2
+PODFILE CHECKSUM: a5711d0c288723651691595ce5e91c0a102e151f
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.12.1
