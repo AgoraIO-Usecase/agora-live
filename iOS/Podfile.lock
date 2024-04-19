@@ -17,7 +17,7 @@ PODS:
   - Agora-Scene-Utils (1.1.0)
   - Agora_Chat_iOS (1.0.8)
   - AgoraRtcEngine_Special_iOS (4.1.1.23)
-  - AgoraRtm_iOS (2.1.10)
+  - AgoraRtm (2.2.0)
   - AgoraSyncManager-overseas (3.0.8):
     - SocketRocket
   - fuLib (1.0):
@@ -31,7 +31,7 @@ PODS:
   - MJRefresh (3.7.9)
   - Protobuf (3.22.1)
   - RTMSyncManager (0.1.0):
-    - AgoraRtm_iOS (= 2.1.10)
+    - AgoraRtm (~> 2.2.0)
     - YYModel
   - SDWebImage (4.4.8):
     - SDWebImage/Core (= 4.4.8)
@@ -92,7 +92,7 @@ SPEC REPOS:
     - Agora-Scene-Utils
     - Agora_Chat_iOS
     - AgoraRtcEngine_Special_iOS
-    - AgoraRtm_iOS
+    - AgoraRtm
     - AgoraSyncManager-overseas
     - FURenderKit
     - HWWeakTimer
@@ -127,7 +127,7 @@ SPEC CHECKSUMS:
   Agora-Scene-Utils: 3f9b1c422cfdda4a7051cf4cffdd0cfef80c9c89
   Agora_Chat_iOS: fcd8afa4f1cff55da59535a6ed573594ace3c169
   AgoraRtcEngine_Special_iOS: 6a3f7814058f819b374cec3037cbbf7c4de519a5
-  AgoraRtm_iOS: b53a57502a35349aceea890df4416b483ea4153c
+  AgoraRtm: 4813aab832ca612facb29c831339546c71e0b764
   AgoraSyncManager-overseas: 4dddc7d8cd336e257adaac5e278e6cbcfaf1e954
   fuLib: a59e706f8b8a3826dcbe93d427fba2bcafc643aa
   FURenderKit: bcff9889dbbafcd12839d57ee85d03b466e1a6fb
@@ -138,7 +138,7 @@ SPEC CHECKSUMS:
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
   Protobuf: d7f7c8329edf5eb8af65547a8ba3e9c1cee927d5
-  RTMSyncManager: fe07cc1e66a8820f4badb7af67a0eca02a990066
+  RTMSyncManager: 110b208a8bf57881decaef0e76891bdf5345ba21
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   SDWebImageAPNGCoder: 3e4c684c8223eef2f45a50bdd0beaab345e4eb24
   SnapKit: d612e99e678a2d3b95bf60b0705ed0a35c03484a
