@@ -115,6 +115,8 @@ class CommerceRoomListVC: UIViewController {
         
         if room.ownerId == VLUserCenter.user.id {
             ToastView.show(text: "show_join_own_room_error".commerce_localized)
+            RTMSyncUtil.leaveScene(id: room.roomId, ownerId: room.ownerId)
+            fetchRoomList()
         } else {
             let vc = CommerceLivePagesViewController()
             let nc = UINavigationController(rootViewController: vc)
