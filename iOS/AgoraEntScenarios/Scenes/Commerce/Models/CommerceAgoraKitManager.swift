@@ -26,6 +26,7 @@ class CommerceAgoraKitManager: NSObject {
     public var performanceMode: PerformanceMode = .smooth
     
     private var broadcasterConnection: AgoraRtcConnection?
+    var remoteMirrorModel: AgoraVideoMirrorMode = .enabled
     
     var exposureRangeX: Int?
     var exposureRangeY: Int?
@@ -58,7 +59,6 @@ class CommerceAgoraKitManager: NSObject {
     func prepareEngine() {
         let engine = AgoraRtcEngineKit.sharedEngine(with: engineConfig(), delegate: nil)
         self.engine = engine
-        
         let loader = VideoLoaderApiImpl.shared
         loader.addListener(listener: self)
         let config = VideoLoaderConfig()
@@ -246,53 +246,19 @@ class CommerceAgoraKitManager: NSObject {
         canvas.view = canvasView
         canvas.uid = 0
         canvas.renderMode = .hidden
+        canvas.mirrorMode = .enabled
         engine.setupLocalVideo(canvas)
         engine.enableVideo()
         engine.startPreview()
+        engine.setVideoFrameDelegate(self)
     }
     
+    private var isFrontCamera: Bool = true
     func switchCamera(_ channelId: String? = nil) {
+        isFrontCamera = !isFrontCamera
         engine?.switchCamera()
+        engine?.setLocalRenderMode(.hidden, mirror: .enabled)
     }
-    
-    func enableVirtualBackground(isOn: Bool, greenCapacity: Float = 0) {
-        guard let engine = engine else {
-            assert(true, "rtc engine not initlized")
-            return
-        }
-        let source = AgoraVirtualBackgroundSource()
-        source.backgroundSourceType = .blur
-        source.blurDegree = .high
-        var seg: AgoraSegmentationProperty?
-        if CommerceAgoraKitManager.isOpenGreen {
-            seg = AgoraSegmentationProperty()
-            seg?.modelType = .agoraGreen
-            seg?.greenCapacity = greenCapacity
-        }
-        let ret = engine.enableVirtualBackground(isOn, backData: source, segData: seg)
-        commerceLogger.info("isOn = \(isOn), enableVirtualBackground ret = \(ret)")
-    }
-    
-    func seVirtualtBackgoundImage(imagePath: String?, isOn: Bool, greenCapacity: Float = 0) {
-        guard let bundlePath = Bundle.main.path(forResource: "CommerceResource", ofType: "bundle"),
-              let bundle = Bundle(path: bundlePath) else { return }
-        let imgPath = bundle.path(forResource: imagePath, ofType: "jpg")
-        let source = AgoraVirtualBackgroundSource()
-        source.backgroundSourceType = .img
-        source.source = imgPath
-        var seg: AgoraSegmentationProperty?
-        if CommerceAgoraKitManager.isOpenGreen {
-            seg = AgoraSegmentationProperty()
-            seg?.modelType = .agoraGreen
-            seg?.greenCapacity = greenCapacity
-        }
-        guard let engine = engine else {
-            assert(true, "rtc engine not initlized")
-            return
-        }
-        engine.enableVirtualBackground(isOn, backData: source, segData: seg)
-    }
-    
     
     func updateChannelEx(channelId: String, options: AgoraRtcChannelMediaOptions) {
         guard let engine = engine,
@@ -363,6 +329,7 @@ class CommerceAgoraKitManager: NSObject {
             return
         }
 //        setupContentInspectConfig(false)
+        isFrontCamera = true
         engine.stopPreview()
     }
     
@@ -423,7 +390,7 @@ class CommerceAgoraKitManager: NSObject {
         let canvas = AgoraRtcVideoCanvas()
         canvas.view = canvasView
         canvas.uid = uid
-//        canvas.mirrorMode = .disabled
+        canvas.mirrorMode = .enabled
         engine.setupLocalVideo(canvas)
         engine.startPreview()
         engine.setDefaultAudioRouteToSpeakerphone(true)
@@ -447,7 +414,7 @@ class CommerceAgoraKitManager: NSObject {
         let container = VideoCanvasContainer()
         container.uid = uid
         container.container = canvasView
-        container.mirrorMode = .enabled
+        container.mirrorMode = remoteMirrorModel
         VideoLoaderApiImpl.shared.renderVideo(anchorInfo: anchorInfo, container: container)
     }
     
@@ -555,5 +522,17 @@ extension CommerceAgoraKitManager: AgoraRtcMediaPlayerDelegate {
         if state == .openCompleted {
             playerKit.play()
         }
+    }
+}
+
+extension CommerceAgoraKitManager: AgoraVideoFrameDelegate {
+    func getVideoFrameProcessMode() -> AgoraVideoFrameProcessMode {
+        .readWrite
+    }
+    func getMirrorApplied() -> Bool {
+        !isFrontCamera
+    }
+    func getObservedFramePosition() -> AgoraVideoFramePosition {
+        .postCapture
     }
 }

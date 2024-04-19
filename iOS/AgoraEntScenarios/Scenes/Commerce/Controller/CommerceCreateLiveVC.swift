@@ -24,7 +24,6 @@ class CommerceCreateLiveVC: UIViewController {
         configNaviBar()
         
         CommerceAgoraKitManager.shared.startPreview(canvasView: self.localView)
-        CommerceNetStateSelectViewController.showInViewController(self)
     }
     
     func configNaviBar() {
