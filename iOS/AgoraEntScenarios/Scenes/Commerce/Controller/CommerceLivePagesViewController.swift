@@ -20,7 +20,8 @@ class CommerceLivePagesViewController: ViewController {
         handler.vcDelegate = self
         handler.onClickDislikeClosure = onClickDislikeClosure
         handler.onClickDisUserClosure = onClickDisUserClosure
-        handler.onRequireRenderVideo = {[weak self] info, cell, indexPath in
+        handler.onRequireRenderVideo = {[weak self] info, canvas, cell, indexPath in
+            canvas.mirrorMode = CommerceAgoraKitManager.shared.remoteMirrorModel
             guard let vc = cell.contentView.viewWithTag(kCommerceLiveRoomViewTag)?.next as? CommerceLiveViewController,
                   let room = vc.room,
                   localUid != info.uid else {

@@ -7,6 +7,7 @@
 
 import Foundation
 import RTMSyncManager
+import AgoraRtmKit
 
 class RTMSyncUtil: NSObject {
     private static var syncManager: AUISyncManager?
@@ -14,6 +15,8 @@ class RTMSyncUtil: NSObject {
     private static var isLogined: Bool = false
     private static let roomDelegate = RTMSyncUtilRoomDeleage()
     private static let userDelegate = RTMSyncUtilUserDelegate()
+    private static var rtm: AgoraRtmClientKit?
+    private static let rtmDeleagete = RTMDelegate()
     
     class func initRTMSyncManager() {
         let config = AUICommonConfig()
@@ -28,6 +31,10 @@ class RTMSyncUtil: NSObject {
         syncManager = AUISyncManager(rtmClient: nil, commonConfig: config)
         isLogined = false
         syncManager?.logout()
+        
+        let rtmConfig = AgoraRtmClientConfig(appId: KeyCenter.AppId, userId: VLUserCenter.user.id)
+        rtm = try? AgoraRtmClientKit(rtmConfig, delegate: rtmDeleagete)
+        rtm?.addDelegate(rtmDeleagete)
     }
     
     class func createRoom(roomName: String,
@@ -303,6 +310,29 @@ class RTMSyncUtil: NSObject {
     
     class func cleanMetaData(id: String, key: String, callback: ((NSError?) -> Void)?) {
         collection(id: id, key: key)?.cleanMetaData(callback: callback)
+    }
+    
+    class func sendMessage(channelName: String, data: [String: Any]) {
+        if let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []) {
+            let options = AgoraRtmPublishOptions()
+            options.channelType = .message
+            rtm?.publish(channelName: channelName, data: jsonData, option: options)
+        }
+    }
+    
+    class func subscribeMessageDidReceive(id: String,
+                                          key: String,
+                                          changeClosure: ((String) -> Void)?) {
+        rtmDeleagete.onReceiveMessageClosure = changeClosure
+    }
+}
+
+class RTMDelegate: NSObject, AgoraRtmClientDelegate {
+    var onReceiveMessageClosure: ((String) -> Void)?
+    func rtmKit(_ rtmKit: AgoraRtmClientKit, didReceiveMessageEvent event: AgoraRtmMessageEvent) {
+        if let message = String(data: event.message.rawData ?? Data(), encoding: .utf8) {
+            onReceiveMessageClosure?(message)
+        }
     }
 }
 

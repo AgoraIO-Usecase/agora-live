@@ -20,7 +20,7 @@ class ShowLivePagesViewController: ViewController {
         handler.vcDelegate = self
         handler.onClickDislikeClosure = onClickDislikeClosure
         handler.onClickDisUserClosure = onClickDisUserClosure
-        handler.onRequireRenderVideo = {[weak self] info, cell, indexPath in
+        handler.onRequireRenderVideo = {[weak self] info, canvas, cell, indexPath in
             guard let vc = cell.contentView.viewWithTag(kShowLiveRoomViewTag)?.next as? ShowLiveViewController,
                   let room = vc.room,
                   localUid != info.uid else {

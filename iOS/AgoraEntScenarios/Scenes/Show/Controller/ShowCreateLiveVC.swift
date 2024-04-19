@@ -29,7 +29,6 @@ class ShowCreateLiveVC: UIViewController {
             BeautyManager.shareManager.configBeautyAPIWithRtcEngine(engine: e)
         }
         ShowAgoraKitManager.shared.startPreview(canvasView: self.localView)
-        ShowNetStateSelectViewController.showInViewController(self)
     }
     
     func configNaviBar() {

@@ -734,15 +734,18 @@ extension CommerceSyncManagerServiceImp {
         guard let channelName = roomId else { return }
         agoraPrint("imp message add ...")
         let params = message.yy_modelToJSONObject() as! [String: Any]
-        RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION, data: params) { error in
-            if error != nil {
-                agoraPrint("imp message add fail :\(error?.localizedDescription ?? "")...\(channelName)")
-                finished?(error)
-                return
-            }
-            agoraPrint("imp message add success...\(channelName) params = \(params)")
-            finished?(nil)
-        }
+        RTMSyncUtil.sendMessage(channelName: channelName, data: params)
+        subscribeDelegate?.onMessageDidAdded(message: message)
+        finished?(nil)
+//        RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION, data: params) { error in
+//            if error != nil {
+//                agoraPrint("imp message add fail :\(error?.localizedDescription ?? "")...\(channelName)")
+//                finished?(error)
+//                return
+//            }
+//            agoraPrint("imp message add success...\(channelName) params = \(params)")
+//            finished?(nil)
+//        }
     }
 
     private func _subscribeMessageChanged() {
@@ -752,12 +755,18 @@ extension CommerceSyncManagerServiceImp {
             return
         }
         agoraPrint("imp message subscribe ...")
-        RTMSyncUtil.subscribeAttributesDidChanged(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION) { channelName, object in
-            agoraPrint("imp message subscribe onUpdated... [\(object.getMap() ?? [:])] \(channelName)")
-            guard let map = object.getMap(),
-                  let model = CommerceMessage.yy_model(with: map) else { return }
+        RTMSyncUtil.subscribeMessageDidReceive(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION) { message in
+            agoraPrint("imp message subscribe onUpdated... [\(message)] \(channelName)")
+            guard let model = CommerceMessage.yy_model(withJSON: message) else { return }
             self.subscribeDelegate?.onMessageDidAdded(message: model)
+
         }
+//        RTMSyncUtil.subscribeAttributesDidChanged(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION) { channelName, object in
+//            agoraPrint("imp message subscribe onUpdated... [\(object.getMap() ?? [:])] \(channelName)")
+//            guard let map = object.getMap(),
+//                  let model = CommerceMessage.yy_model(with: map) else { return }
+//            self.subscribeDelegate?.onMessageDidAdded(message: model)
+//        }
     }
 }
 
