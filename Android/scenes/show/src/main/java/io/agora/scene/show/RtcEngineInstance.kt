@@ -113,7 +113,7 @@ object RtcEngineInstance {
                 innerRtcEngine = (RtcEngine.create(config) as RtcEngineEx).apply {
                     enableVideo()
                 }
-                beautyProcessor.initialize(innerRtcEngine!!)
+                //beautyProcessor.initialize(innerRtcEngine!!)
             }
             return innerRtcEngine!!
         }
@@ -124,6 +124,13 @@ object RtcEngineInstance {
      */
     fun cleanCache() {
         VideoLoader.getImplInstance(rtcEngine).cleanCache()
+    }
+
+    fun releaseBeautyProcessor() {
+        innerBeautyProcessor?.let { processor ->
+            processor.release()
+            innerBeautyProcessor = null
+        }
     }
 
 

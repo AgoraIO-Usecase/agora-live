@@ -191,8 +191,8 @@ abstract class OnPageScrollEventHandler constructor(
                 hideChannel(roomList[currLoadPosition] ?: return)
                 onPageLeft(currLoadPosition)
 
-                joinChannel(position, roomList[position] ?: return, localUid, false)
-                onPageStartLoading(position)
+//                joinChannel(position, roomList[position] ?: return, localUid, false)
+//                onPageStartLoading(position)
             }
         }
         currLoadPosition = position

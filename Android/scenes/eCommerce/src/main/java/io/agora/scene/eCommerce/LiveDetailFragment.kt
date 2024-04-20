@@ -28,6 +28,7 @@ import io.agora.rtc2.IRtcEngineEventHandler
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoCanvas
+import io.agora.rtc2.video.VideoEncoderConfiguration
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
@@ -150,8 +151,9 @@ class LiveDetailFragment : Fragment() {
      */
     private var isAudioOnlyMode = false
 
-    private var isViewCreated = false
     private var isLoadSafely = false
+
+    private var isLoaded = false
 
     /**
      * Local video canvas
@@ -196,9 +198,6 @@ class LiveDetailFragment : Fragment() {
             onBackPressed()
         }
         changeStatisticVisible(false)
-        isViewCreated = true
-        isLoadSafely = true
-        tryLoadPage()
     }
 
     /**
@@ -210,7 +209,9 @@ class LiveDetailFragment : Fragment() {
         super.onAttach(context)
         activity ?: return
         Log.d(TAG, "[commerce]$this $mRoomId onAttach")
-        tryLoadPage()
+        if (isLoadSafely) {
+            startLoadPage()
+        }
     }
 
     /**
@@ -240,32 +241,21 @@ class LiveDetailFragment : Fragment() {
      * Start load page safely
      *
      */
-    fun startLoadPageSafely(){
+    fun startLoadPageSafely() {
         Log.d(TAG, "[commerce]${this.hashCode()} $mRoomId startLoadPageSafely1")
-        activity ?: return
         isLoadSafely = true
+        activity ?: return
         Log.d(TAG, "[commerce]$this $mRoomId startLoadPageSafely2")
-        tryLoadPage()
+        startLoadPage()
     }
+
     fun onPageLoaded() {
 
     }
 
-    private val tryLoadHandler = Handler(Looper.getMainLooper())
-    private var tryLoadRunnable: Runnable? = null
-    private fun tryLoadPage() {
-        Log.d(TAG, "[commerce]$this $mRoomId created $isViewCreated safely $isLoadSafely")
-        if (!isViewCreated || !isLoadSafely) {
-            return
-        }
-        tryLoadRunnable?.let { tryLoadHandler.removeCallbacks(it) }
-        tryLoadRunnable = Runnable {
-            startLoadPage()
-        }
-        tryLoadRunnable?.let { tryLoadHandler.postDelayed(it, 50) }
-    }
-
     private fun startLoadPage() {
+        if (isLoaded) return
+        isLoaded = true
         subscribeMediaTime = SystemClock.elapsedRealtime()
         if (mRoomInfo.isRobotRoom()) {
             initRtcEngine()
@@ -289,6 +279,8 @@ class LiveDetailFragment : Fragment() {
      */
     fun stopLoadPage(isScrolling: Boolean){
         Log.d(TAG, "[commerce]$this $mRoomId stopLoadPage")
+        isLoaded = false
+        isLoadSafely = false
         destroy(isScrolling)
     }
 
@@ -538,7 +530,15 @@ class LiveDetailFragment : Fragment() {
                     }
             }
             .setOnSentClickListener { dialog, msg ->
-                mService.sendChatMessage(mRoomInfo.roomId, msg)
+                mService.sendChatMessage(mRoomInfo.roomId, msg, {
+                    insertMessageItem(
+                        ShowMessage(
+                            UserManager.getInstance().user.id.toString(),
+                            UserManager.getInstance().user.name,
+                            msg,
+                            System.currentTimeMillis().toDouble()
+                    ))
+                })
                 dialog.dismiss()
             }
             .show()
@@ -698,6 +698,7 @@ class LiveDetailFragment : Fragment() {
         } else {
             topBinding.tvStatisticSVC.text = getString(R.string.commerce_statistic_svc, "--")
         }
+        topBinding.tvLocalUid.text = getString(R.string.commerce_local_uid, UserManager.getInstance().user.id.toString())
     }
 
     /**
@@ -725,7 +726,13 @@ class LiveDetailFragment : Fragment() {
             setHostView(isRoomOwner)
             setOnItemActivateChangedListener { _, itemId, activated ->
                 when (itemId) {
-                    SettingDialog.ITEM_ID_CAMERA -> mRtcEngine.switchCamera()
+                    SettingDialog.ITEM_ID_CAMERA -> {
+                        mRtcEngine.switchCamera()
+//                        RtcEngineInstance.isFrontCamera = !RtcEngineInstance.isFrontCamera
+//                        mRtcEngine.setVideoEncoderConfigurationEx(RtcEngineInstance.videoEncoderConfiguration.apply {
+//                            mirrorMode = if (RtcEngineInstance.isFrontCamera) VideoEncoderConfiguration.MIRROR_MODE_TYPE.MIRROR_MODE_ENABLED else VideoEncoderConfiguration.MIRROR_MODE_TYPE.MIRROR_MODE_DISABLED
+//                        }, RtcConnection(mRoomId, UserManager.getInstance().user.id.toInt()))
+                    }
                     SettingDialog.ITEM_ID_QUALITY -> showPictureQualityDialog(this)
                     SettingDialog.ITEM_ID_VIDEO -> {
                         if (activity is LiveDetailActivity){
@@ -816,20 +823,32 @@ class LiveDetailFragment : Fragment() {
 
     private fun initServiceWithJoinRoom() {
         Log.d(TAG, "[commerce]$this $mRoomId initServiceWithJoinRoom")
-        mService.joinRoom(mRoomInfo,
-            success = {
-                initService()
-                mService.sendChatMessage(mRoomInfo.roomId, getString(R.string.commerce_live_chat_coming))
-            },
-            error = { e ->
-                if ((e as? RoomException)?.currRoomNo == mRoomInfo.roomId) {
-                    runOnUiThread {
-                        destroy(false)
-                        showLivingEndLayout()
-                        Log.d(TAG, "join room error!:${e.message}")
+        mBinding.root.post {
+            mService.joinRoom(mRoomInfo,
+                success = {
+                    initService()
+                    Log.d("hugo", "[commerce]$this $mRoomId initServiceWithJoinRoom mRoomInfo.roomId:${mRoomInfo.roomId}")
+                    mService.sendChatMessage(mRoomInfo.roomId, getString(R.string.commerce_live_chat_coming), {
+                        insertMessageItem(
+                            ShowMessage(
+                                UserManager.getInstance().user.id.toString(),
+                                UserManager.getInstance().user.name,
+                                getString(R.string.commerce_live_chat_coming),
+                                System.currentTimeMillis().toDouble()
+                            )
+                        )
+                    })
+                },
+                error = { e ->
+                    if ((e as? RoomException)?.currRoomNo == mRoomInfo.roomId) {
+                        runOnUiThread {
+                            destroy(false)
+                            showLivingEndLayout()
+                            Log.d(TAG, "join room error!:${e.message}")
+                        }
                     }
-                }
-            })
+                })
+        }
     }
 
     /**
@@ -1098,7 +1117,7 @@ class LiveDetailFragment : Fragment() {
             container.lifecycleOwner,
             videoView, container.renderMode, container.uid
         )
-        local.mirrorMode = Constants.VIDEO_MIRROR_MODE_ENABLED
+        local.mirrorMode = Constants.VIDEO_MIRROR_MODE_DISABLED
         mRtcEngine.setupLocalVideo(local)
     }
 

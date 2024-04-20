@@ -26,7 +26,7 @@ class AUIListCollection(
                     callback?.invoke(AUICollectionException.ErrorCode.unknown.toException("rtm getMetadata error: $error"), null)
                     return@getMetadata
                 }
-                val data = metaData?.metadataItems?.find { it.key == observeKey }
+                val data = metaData?.items?.find { it.key == observeKey }
                 if (data == null) {
                     callback?.invoke(null, null)
                     return@getMetadata

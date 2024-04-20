@@ -914,6 +914,7 @@ class LiveDetailFragment : Fragment() {
         } else {
             topBinding.tvStatisticSVC.text = getString(R.string.show_statistic_svc, "--")
         }
+        topBinding.tvLocalUid.text = getString(R.string.show_local_uid, UserManager.getInstance().user.id.toString())
     }
 
     /**
@@ -1638,7 +1639,7 @@ class LiveDetailFragment : Fragment() {
         mService.getAllPKInvitationList(mRoomInfo.roomId,false, { list ->
             list.forEach {
                 if (it.userId == UserManager.getInstance().user.id.toString()
-                    && it.status == ShowRoomRequestStatus.waitting.value
+                    && it.status == ShowRoomRequestStatus.waitting.value && interactionInfo == null
                 ) {
                     preparePKingMode(it.fromRoomId)
                     showPKInvitationDialog(it.fromName)
@@ -1866,6 +1867,7 @@ class LiveDetailFragment : Fragment() {
             }
             mRtcEngine.setVoiceConversionPreset(Constants.VOICE_CONVERSION_OFF)
             mRtcEngine.setAudioEffectPreset(Constants.AUDIO_EFFECT_OFF)
+            RtcEngineInstance.releaseBeautyProcessor()
         }
         return true
     }

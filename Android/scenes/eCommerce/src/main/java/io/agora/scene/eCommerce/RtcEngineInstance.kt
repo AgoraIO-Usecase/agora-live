@@ -17,7 +17,7 @@ import java.util.concurrent.Executors
  * @constructor Create empty Rtc engine instance
  */
 object RtcEngineInstance {
-
+    var isFrontCamera = true
     /**
      * Video encoder configuration
      */

@@ -97,6 +97,7 @@
     <string name="commerce_shop_alert_bought">Bought!</string>
     <string name="commerce_shop_alert_sold_out">Sold Out!</string>
     <string name="commerce_shop_alert_submit">OK</string>
+    <string name="commerce_local_uid">Local UID：%s</string>
 
     <!-- co-host  -->
     <string name="commerce_linking_request_message">Application</string>
