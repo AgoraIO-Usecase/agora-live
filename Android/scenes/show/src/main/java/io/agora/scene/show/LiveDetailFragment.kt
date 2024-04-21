@@ -244,9 +244,9 @@ class LiveDetailFragment : Fragment() {
      * Timer room end run
      */
     private val timerRoomEndRun = Runnable {
+        ShowLogger.d("showLivingEndLayout","timer end!")
         destroy(false)
         showLivingEndLayout()
-        ShowLogger.d("showLivingEndLayout","timer end!")
     }
 
     /**
@@ -1572,6 +1572,7 @@ class LiveDetailFragment : Fragment() {
         }
 
         mService.subscribePKInvitationChanged(mRoomInfo.roomId) { status, info ->
+            ShowLogger.d("pk","pk invitation changed: $status, info:$info")
             mService.getAllPKUserList({ roomList ->
                 mService.getAllPKInvitationList(mRoomInfo.roomId, true, { invitationList ->
                     mPKDialog.setOnlineBroadcasterList(interactionInfo, roomList, invitationList)
@@ -1599,6 +1600,7 @@ class LiveDetailFragment : Fragment() {
         }
 
         mService.getAllInterationList(mRoomInfo.roomId, {
+            ShowLogger.d(TAG,"getAllInterationList: ${mRoomInfo.roomId}, list:$it")
             val interactionInfo = it.getOrNull(0)
             this.interactionInfo = interactionInfo
             if (interactionInfo != null && isRoomOwner) {
@@ -1636,6 +1638,7 @@ class LiveDetailFragment : Fragment() {
      */
     private fun reFetchPKInvitationList() {
         mService.getAllPKInvitationList(mRoomInfo.roomId,false, { list ->
+            ShowLogger.d(TAG,"reFetchPKInvitationList: ${mRoomInfo.roomId}, list:$list")
             list.forEach {
                 if (it.userId == UserManager.getInstance().user.id.toString()
                     && it.status == ShowRoomRequestStatus.waitting.value && interactionInfo == null
