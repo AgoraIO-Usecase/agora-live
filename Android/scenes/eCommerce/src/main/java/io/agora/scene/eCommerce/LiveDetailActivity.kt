@@ -318,7 +318,7 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
             }
         }
         binding.viewPager2.adapter = fragmentAdapter
-        binding.viewPager2.isUserInputEnabled = mScrollable
+        binding.viewPager2.isUserInputEnabled = mScrollable && mRoomInfoList.size != 1 // 只有一个房间时不允许滑动
         if (mScrollable) {
             binding.viewPager2.registerOnPageChangeCallback(onPageScrollEventHandler as OnPageChangeCallback)
             binding.viewPager2.setCurrentItem(

@@ -19,6 +19,7 @@ import io.agora.rtmsyncmanager.service.http.token.TokenGenerateReq
 import io.agora.rtmsyncmanager.service.http.token.TokenGenerateResp
 import io.agora.rtmsyncmanager.service.http.token.TokenInterface
 import io.agora.rtmsyncmanager.service.room.AUIRoomManager
+import io.agora.rtmsyncmanager.service.rtm.AUIRtmMessageRespObserver
 import io.agora.rtmsyncmanager.utils.AUILogger
 import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.scene.base.BuildConfig
@@ -49,7 +50,7 @@ class ShowSyncManagerServiceImpl constructor(
     /**
      * K scene id
      */
-    private val kSceneId = "scene_ecommerce_0_2_0"
+    private val kSceneId = "scene_ecommerce_1_2_0"
     private val kCollectionIdLike = "commerce_like_collection"
     private val kCollectionIdMessage = "commerce_message_collection"
     private val kCollectionIdBid = "commerce_goods_bid_collection"
@@ -193,7 +194,7 @@ class ShowSyncManagerServiceImpl constructor(
 
             val controller = RoomInfoController(roomInfo.roomId, scene, roomInfo)
             roomInfoControllers.add(controller)
-            Log.d(TAG, "[commerce] add controller ${roomInfo.roomId}")
+            Log.d(TAG, "[commerce] add controller ${roomInfo.roomId}， roomInfoControllers：${roomInfoControllers}")
             actionSubscribe(controller)
             scene.bindRespDelegate(this)
             if (roomInfo.ownerId.toLong() == UserManager.getInstance().user.id) {
@@ -245,6 +246,7 @@ class ShowSyncManagerServiceImpl constructor(
                 cleanRoomInfoController(c)
             }
         }
+        syncManager.removeScene(roomId)
         roomInfoControllers.removeAll { it.roomId == roomId }
         Log.d(TAG, "[commerce] leaveRoom $roomId")
     }
@@ -260,6 +262,10 @@ class ShowSyncManagerServiceImpl constructor(
         controller.roomChangeSubscriber = onUpdate
     }
     private fun cleanRoomInfoController(controller: RoomInfoController) {
+        controller.shopCollection?.release()
+        controller.auctionCollection?.release()
+        controller.messageCollection?.release()
+        controller.likeCollection?.release()
         controller.userChangeSubscriber = null
         controller.auctionChangeSubscriber = null
         controller.shopChangeSubscriber = null
@@ -270,7 +276,8 @@ class ShowSyncManagerServiceImpl constructor(
         controller.shopCollection = controller.scene.getCollection(kCollectionIdBuy) { a, b, c ->
             AUIListCollection(a, b, c)
         }
-        controller.shopCollection?.subscribeAttributesDidChanged { _, _, model ->
+        controller.shopCollection?.subscribeAttributesDidChanged { channelName, key, model ->
+            Log.d("pigpig", "1111111")
             val list = model.getList()
             if (list == null) {
                 controller.shopChangeSubscriber?.invoke(emptyList())
@@ -296,6 +303,23 @@ class ShowSyncManagerServiceImpl constructor(
         controller.messageCollection = controller.scene.getCollection(kCollectionIdMessage) { a, b, c ->
             AUIMapCollection(a, b, c)
         }
+        syncManager.rtmManager.subscribeMessage(object : AUIRtmMessageRespObserver {
+            override fun onMessageReceive(
+                channelName: String,
+                publisherId: String,
+                message: String
+            ) {
+                try {
+                    Log.d(TAG, message)
+                    val gson = Gson()
+                    val model = gson.fromJson(message, ShowMessage::class.java)
+                    if (model.message == null && model.userId == null) return
+                    runOnMainThread { controller.messageChangeSubscriber?.invoke(model) }
+                } catch (e: Exception) {
+                    Log.d(TAG, "recv message error: ${e.message}")
+                }
+            }
+        })
         controller.messageCollection?.subscribeAttributesDidChanged { _, _, model ->
             val gson = Gson()
             val json = gson.toJson(model.getMap())
@@ -402,7 +426,7 @@ class ShowSyncManagerServiceImpl constructor(
 
     /** Message Actions */
     override fun sendChatMessage(roomId: String, message: String, success: (() -> Unit)?, error: ((Exception) -> Unit)?) {
-        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
+//        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val messageModel = ShowMessage(
             UserManager.getInstance().user.id.toString(),
             UserManager.getInstance().user.name,
@@ -410,8 +434,11 @@ class ShowSyncManagerServiceImpl constructor(
             System.currentTimeMillis().toDouble()
         )
         val messageMap = GsonTools.beanToMap(messageModel)
-        controller.messageCollection?.addMetaData(null, messageMap) {}
+//        controller.messageCollection?.addMetaData(null, messageMap) {}
+
+        syncManager.rtmManager.sendMessage(roomId, messageMap.toString(), success, error)
     }
+
     override fun subscribeMessage(roomId: String, onMessageChange: (ShowMessage) -> Unit) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         controller.messageChangeSubscriber = onMessageChange

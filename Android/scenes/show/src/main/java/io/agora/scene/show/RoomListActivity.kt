@@ -24,6 +24,10 @@ import io.agora.scene.show.widget.PresetAudienceDialog
 import io.agora.scene.widget.basic.BindingSingleAdapter
 import io.agora.scene.widget.basic.BindingViewHolder
 import io.agora.scene.widget.utils.StatusBarUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Room list activity
@@ -96,7 +100,13 @@ class RoomListActivity : AppCompatActivity() {
             onRoomListScrollEventHandler?.updateRoomList(roomList)
         })
         initView()
-        initVideoSettings()
+        CoroutineScope(Dispatchers.Main).launch {
+            val rtcEngine = withContext(Dispatchers.IO) {
+                RtcEngineInstance.rtcEngine
+            }
+
+            initVideoSettings()
+        }
 
         SceneAliveTime.fetchShowAliveTime ({ show, pk ->
             ShowLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")

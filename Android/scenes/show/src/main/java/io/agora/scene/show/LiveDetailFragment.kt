@@ -914,6 +914,7 @@ class LiveDetailFragment : Fragment() {
         } else {
             topBinding.tvStatisticSVC.text = getString(R.string.show_statistic_svc, "--")
         }
+        topBinding.tvLocalUid.text = getString(R.string.show_local_uid, UserManager.getInstance().user.id.toString())
     }
 
     /**
@@ -922,6 +923,7 @@ class LiveDetailFragment : Fragment() {
      * @param status
      */
     private fun refreshViewDetailLayout(status: Int) {
+        ShowLogger.d("interaction","refreshViewDetailLayout: $status")
         when (status) {
             ShowInteractionStatus.idle.value -> {
                 if (interactionInfo?.interactStatus == ShowInteractionStatus.onSeat.value) {
@@ -1522,7 +1524,9 @@ class LiveDetailFragment : Fragment() {
             insertMessageItem(showMessage)
         }
         mService.subscribeMicSeatApply(mRoomInfo.roomId) { _, _ ->
+            ShowLogger.d("Link","mic seat apply changed")
             mService.getAllMicSeatApplyList(mRoomInfo.roomId, { list ->
+                ShowLogger.d("Link","mic seat apply list: $list")
                 if (isRoomOwner) {
                     mBinding.bottomLayout.vLinkingDot.isVisible =
                         list.any { it.status == ShowRoomRequestStatus.waitting.value }
@@ -1531,15 +1535,10 @@ class LiveDetailFragment : Fragment() {
             })
         }
         mService.subscribeInteractionChanged(mRoomInfo.roomId) { status, info ->
+            ShowLogger.d("interaction","interaction changed")
             if (status == ShowServiceProtocol.ShowSubscribeStatus.updated && info != null) {
+                ShowLogger.d("interaction","old interaction: $interactionInfo, new interaction: $info")
                 if (interactionInfo == null) {
-//                    if (deletedPKInvitation != null) {
-//                        mService.stopInteraction(mRoomInfo.roomId, info, {
-//                            // success
-//                        })
-//                        deletedPKInvitation = null
-//                        return@subscribeInteractionChanged
-//                    }
                     interactionInfo = info
                     // UI
                     updateVideoSetting(true)
@@ -1557,6 +1556,7 @@ class LiveDetailFragment : Fragment() {
                     refreshMicMuteStatus()
                 }
             } else {
+                ShowLogger.d("interaction","old interaction: $interactionInfo, new interaction: $info")
                 // UI
                 refreshViewDetailLayout(ShowInteractionStatus.idle.value)
                 mLinkDialog.setOnSeatStatus("", null)
@@ -1638,7 +1638,7 @@ class LiveDetailFragment : Fragment() {
         mService.getAllPKInvitationList(mRoomInfo.roomId,false, { list ->
             list.forEach {
                 if (it.userId == UserManager.getInstance().user.id.toString()
-                    && it.status == ShowRoomRequestStatus.waitting.value
+                    && it.status == ShowRoomRequestStatus.waitting.value && interactionInfo == null
                 ) {
                     preparePKingMode(it.fromRoomId)
                     showPKInvitationDialog(it.fromName)
@@ -1866,6 +1866,7 @@ class LiveDetailFragment : Fragment() {
             }
             mRtcEngine.setVoiceConversionPreset(Constants.VOICE_CONVERSION_OFF)
             mRtcEngine.setAudioEffectPreset(Constants.AUDIO_EFFECT_OFF)
+            RtcEngineInstance.releaseBeautyProcessor()
         }
         return true
     }
@@ -1974,6 +1975,7 @@ class LiveDetailFragment : Fragment() {
      * @param isPkMode
      */
     private fun updateVideoSetting(isPkMode:Boolean) {
+        ShowLogger.d("interaction","updateVideoSetting: $isPkMode")
         VideoSetting.setIsPkMode(isPkMode)
         if (isRoomOwner || isMeLinking()) {
             VideoSetting.updateBroadcastSetting(
@@ -1994,14 +1996,16 @@ class LiveDetailFragment : Fragment() {
      *
      */
     private fun updateAudioMuteStatus() {
-        if (interactionInfo == null) return
-        if (interactionInfo!!.interactStatus == ShowInteractionStatus.onSeat.value) {
-            if (interactionInfo!!.userId == UserManager.getInstance().user.id.toString()) {
-                enableLocalAudio(!interactionInfo!!.muteAudio)
-            }
-        } else if (interactionInfo!!.interactStatus == ShowInteractionStatus.pking.value) {
-            if (isRoomOwner) {
-                enableLocalAudio(!interactionInfo!!.ownerMuteAudio)
+        ShowLogger.d("interaction","updateAudioMuteStatus")
+        interactionInfo?.let {
+            if (it.interactStatus == ShowInteractionStatus.onSeat.value) {
+                if (it.userId == UserManager.getInstance().user.id.toString()) {
+                    enableLocalAudio(!it.muteAudio)
+                }
+            } else if (it.interactStatus == ShowInteractionStatus.pking.value) {
+                if (isRoomOwner) {
+                    enableLocalAudio(!it.ownerMuteAudio)
+                }
             }
         }
     }
@@ -2011,7 +2015,7 @@ class LiveDetailFragment : Fragment() {
      *
      */
     private fun updateIdleMode() {
-        ShowLogger.d(TAG, "Interaction >> updateIdleMode")
+        ShowLogger.d(TAG, "Interaction >> updateIdleMode, old interaction:$interactionInfo")
         if (interactionInfo?.interactStatus == ShowInteractionStatus.pking.value) {
             if (isRoomOwner) {
                 mRtcEngine.leaveChannelEx(RtcConnection(interactionInfo!!.roomId, UserManager.getInstance().user.id.toInt()))
@@ -2093,7 +2097,7 @@ class LiveDetailFragment : Fragment() {
         if (interactionInfo == null) return
         if (interactionInfo?.interactStatus != ShowInteractionStatus.onSeat.value) return
         val rtcConnection = mMainRtcConnection
-        ShowLogger.d(TAG, "Interaction >> updateLinkingMode")
+        ShowLogger.d("interaction", "Interaction >> updateLinkingMode")
 
         mBinding.videoLinkingAudienceLayout.userName.text = interactionInfo!!.userName
         mBinding.videoLinkingAudienceLayout.userName.bringToFront()
@@ -2264,7 +2268,7 @@ class LiveDetailFragment : Fragment() {
     private fun updatePKingMode() {
         if (interactionInfo == null) return
         if (interactionInfo?.interactStatus != ShowInteractionStatus.pking.value) return
-        ShowLogger.d(TAG, "Interaction >> updatePKingMode pkRoomId=${interactionInfo!!.roomId}")
+        ShowLogger.d("interaction", "Interaction >> updatePKingMode pkRoomId=${interactionInfo!!.roomId}")
         val eventListener = object: IRtcEngineEventHandler() {
             override fun onRemoteVideoStats(stats: RemoteVideoStats) {
                 super.onRemoteVideoStats(stats)

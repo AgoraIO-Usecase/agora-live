@@ -62,6 +62,7 @@ class AUIRtmMsgProxy : RtmEventListener {
 
     fun cleanCache(channelName: String) {
         msgCacheAttr.remove(channelName)
+        Log.d("pigpig", "cleanCache channelName$channelName, msgCacheAttr=$msgCacheAttr")
     }
 
     fun keys(channelName: String): List<String>? {
@@ -86,6 +87,14 @@ class AUIRtmMsgProxy : RtmEventListener {
         val observers = attributeRespObservers[key] ?: ArrayList()
         observers.add(observer)
         attributeRespObservers[key] = observers
+
+        Thread {
+            Log.d("pigpig", "$key")
+            val cache = msgCacheAttr[channelName] ?: mutableMapOf()
+            val item = cache[itemKey] ?: return@Thread
+            Log.d("pigpig", "$item")
+            observer.onAttributeChanged(channelName, itemKey, item)
+        } .start()
     }
 
     fun unRegisterAttributeRespObserver(
@@ -159,8 +168,8 @@ class AUIRtmMsgProxy : RtmEventListener {
 
     fun processMetaData(channelName: String, metadata: Metadata?) {
         metadata ?: return
-        val items = metadata.metadataItems
-        if (metadata.metadataItems.isEmpty()) {
+        val items = metadata.items
+        if (metadata.items.isEmpty()) {
             if (isMetaEmpty) {
                 return
             }
@@ -173,7 +182,7 @@ class AUIRtmMsgProxy : RtmEventListener {
         isMetaEmpty = false
 
         val cache = msgCacheAttr[channelName] ?: mutableMapOf()
-        metadata.metadataItems.forEach { item ->
+        metadata.items.forEach { item ->
             if (cache[item.key] == item.value) {
                 return@forEach
             }

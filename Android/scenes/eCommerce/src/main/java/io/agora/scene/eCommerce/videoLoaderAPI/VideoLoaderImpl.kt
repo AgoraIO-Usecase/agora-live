@@ -291,7 +291,7 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
 
         init {
             setupMode = VIEW_SETUP_MODE_ADD
-            mirrorMode = Constants.VIDEO_MIRROR_MODE_ENABLED
+            mirrorMode = Constants.VIDEO_MIRROR_MODE_AUTO
             lifecycleOwner.lifecycle.addObserver(this)
             remoteVideoCanvasList.add(this)
         }
