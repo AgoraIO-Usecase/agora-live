@@ -161,12 +161,64 @@ class AUIRtmManager constructor(
         proxy.unRegisterUserRespObserver(delegate)
     }
 
+    val subscribechannelMap = ConcurrentHashMap<String, Long>()
+
+    private val unSubscribeInterval: Int = 2500
+
+    private var unsubscribeDateMap: MutableMap<String, Date> = mutableMapOf()
+        set(value) {
+            field = value
+            if (value.isEmpty()) {
+                autoCleanUnSubscribeChannelTimer?.cancel()
+                autoCleanUnSubscribeChannelTimer = null
+            } else {
+                if (autoCleanUnSubscribeChannelTimer == null) {
+                    autoCleanUnSubscribeChannelTimer = Timer()
+                    autoCleanUnSubscribeChannelTimer?.scheduleAtFixedRate(0, 500) {
+                        autoCleanUnSubscribe()
+                    }
+                }
+            }
+        }
+
+    private var channelsToSubscribe: MutableSet<String> = mutableSetOf()
+    private var autoCleanUnSubscribeChannelTimer: Timer? = null
+
+    private fun autoCleanUnSubscribe() {
+        unsubscribeDateMap.forEach { (channelName, date) ->
+            val elapsedTimeMillis = -date.time + Date().time
+            if (elapsedTimeMillis >= unSubscribeInterval) {
+                unSubscribe(channelName)
+            }
+        }
+    }
+
     fun subscribe(
         channelName: String,
         channelType: RtmChannelType = RtmChannelType.MESSAGE,
         token: String? = null,
         completion: (AUIRtmException?) -> Unit
     ) {
+//        val nowTime = System.currentTimeMillis()
+//
+//        subscribechannelMap.forEach {
+//            if (it.key != channelName && nowTime - it.value > 5000) {
+//                innerUnSubscribe(it.key)
+//            }
+//        }
+//        if (subscribechannelMap.containsKey(channelName)) {
+//            logger.d("MessageChannel", "$channelName has already subscribed")
+//            completion.invoke(null)
+//            return
+//        }
+//        unsubscribeDateMap.remove(channelName)
+//        if (channelsToSubscribe.contains(channelName)) {
+//            logger.d("MessageChannel", "$channelName has already subscribed")
+//            completion.invoke(null)
+//            return
+//        }
+
+
         when (channelType) {
             RtmChannelType.MESSAGE -> {
                 val option = SubscribeOptions()
@@ -179,6 +231,8 @@ class AUIRtmManager constructor(
                 rtmClient.subscribe(channelName, option, object : ResultCallback<Void> {
                     override fun onSuccess(responseInfo: Void?) {
                         logger.d("MessageChannel", "subscribe RtmChannelType.MESSAGE  onSuccess")
+                        //subscribechannelMap[channelName] = System.currentTimeMillis()
+                        //channelsToSubscribe.add(channelName)
                         completion.invoke(null)
                     }
 
@@ -188,6 +242,7 @@ class AUIRtmManager constructor(
                                 "MessageChannel",
                                 "subscribe RtmChannelType.MESSAGE onFailure $errorInfo"
                             )
+                            //subscribechannelMap.remove(channelName)
                             completion.invoke(
                                 AUIRtmException(
                                     RtmErrorCode.getValue(errorInfo.errorCode),
@@ -303,7 +358,11 @@ class AUIRtmManager constructor(
 
             else -> {}
         }
+//
+//        unsubscribeDateMap.remove(channelName)
+//        channelsToSubscribe.remove(channelName)
     }
+
 
     fun fetchMetaDataSnapshot(channelName: String, completion: (AUIRtmException?) -> Unit){
         getMetadata(channelName){ error, metadata ->
