@@ -210,7 +210,12 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
                 self._startCheckExpire()
                 self._subscribeAll()
                 self.isJoined = true
-                completion(nil, roomModel)
+                
+                RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION,
+                                        data: ["userId": VLUserCenter.user.id, "count":  0, "createAt": Date().millionsecondSince1970()]) { err in
+                    completion(err, roomModel)
+                }
+                
             } failure: { error in
                 completion(error, nil)
             }
@@ -524,7 +529,7 @@ extension CommerceSyncManagerServiceImp {
                                      key: ["quantity"],
                                      value: increase ? 1 : -1,
                                      min: 0,
-                                     max: 99,
+                                     max: Int.max,
                                      filter: [["goodsId": goods?.goodsId ?? ""]],
                                      callback: completion)
     }
@@ -555,9 +560,18 @@ extension CommerceSyncManagerServiceImp {
             completion?(NSError(domain: "roomId is empty", code: 0))
             return
         }
-        RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION,
-                                data: ["userId": VLUserCenter.user.id, "count":  count, "createAt": Date().millionsecondSince1970()],
-                                callback: completion)
+//        RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION,
+//                                data: ["userId": VLUserCenter.user.id, "count":  count, "createAt": Date().millionsecondSince1970()],
+//                                callback: completion)
+        
+        let collecton = RTMSyncUtil.collection(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION)
+        collecton?.calculateMetaData(valueCmd: nil,
+                                     key: ["count"],
+                                     value: 1,
+                                     min: 0,
+                                     max: Int.max,
+                                     filter: nil,
+                                     callback: completion)
     }
     
     func subscribeUpvoteEvent(roomId: String?, completion: ((String?, Int) -> Void)?) {
