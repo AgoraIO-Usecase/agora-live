@@ -242,7 +242,7 @@ extension AUIListCollection {
             callback?(AUICollectionOperationError.encodeToJsonStringFail.toNSError())
             return
         }
-        aui_collection_log("rtmCalculateMetaData valueCmd: \(valueCmd ?? "") key: \(key), value: \(value)")
+        aui_collection_log("rtmCalculateMetaData valueCmd: \(valueCmd ?? "") key: \(key), value: \(value) filter: \(filter)")
         self.rtmManager.setBatchMetadata(channelName: channelName,
                                          lockName: kRTM_Referee_LockName,
                                          metadata: [observeKey: value]) { error in

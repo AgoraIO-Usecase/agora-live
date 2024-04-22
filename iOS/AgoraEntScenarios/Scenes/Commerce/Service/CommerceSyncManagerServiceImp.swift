@@ -524,6 +524,7 @@ extension CommerceSyncManagerServiceImp {
 //                                       data: params,
 //                                       filter: [["goodsId": goods?.goodsId ?? ""]],
 //                                       callback: completion)
+        agoraPrint("_updateGoodsInfo[\(roomId ?? "")] \(goods?.title ?? "")")
         let collecton = RTMSyncUtil.listCollection(id: channelName, key: SYNC_MANAGER_BUY_GOODS_COLLECTION)
         collecton?.calculateMetaData(valueCmd: nil,
                                      key: ["quantity"],
