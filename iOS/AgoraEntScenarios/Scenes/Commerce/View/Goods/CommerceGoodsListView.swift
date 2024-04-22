@@ -116,10 +116,17 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
             alertVC.addAction(okAction)
             UIViewController.cl_topViewController()?.present(alertVC, animated: true)
         }
+        var lastClickWorkItem: DispatchWorkItem?
         cell.onClickNumberButtonClosure = { [weak self] number, isIncrease in
             guard let self = self else { return }
             model.goods?.quantity = number
-            self.updateGoodsInfo(goods: model.goods, increase: isIncrease)
+            lastClickWorkItem?.cancel()
+            let workItem = DispatchWorkItem { [weak self] in
+                guard let self = self else { return }
+                self.updateGoodsInfo(goods: model.goods, increase: isIncrease)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
+            lastClickWorkItem = workItem
         }
         return cell
     }
