@@ -18,6 +18,11 @@ public class AUIMapCollection: AUIBaseCollection {
 
 //MARK: private set meta data
 extension AUIMapCollection {
+    private func updateCurrentMapAndNotify(_ map: [String: Any], _ needNotify: Bool) {
+        if isValuesEqual(map, currentMap) || needNotify == false {return}
+        currentMap = map
+        self.attributesDidChangedClosure?(channelName, observeKey, AUIAttributesModel(map: currentMap))
+    }
     private func rtmSetMetaData(publisherId: String,
                                 valueCmd: String?,
                                 value: [String: Any],
@@ -46,7 +51,8 @@ extension AUIMapCollection {
             aui_collection_log("rtmSetMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
-        currentMap = map
+        
+        updateCurrentMapAndNotify(map, true)
     }
     
     private func rtmUpdateMetaData(publisherId: String,
@@ -80,7 +86,8 @@ extension AUIMapCollection {
             aui_collection_log("rtmSetMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
-        currentMap = map
+        
+        updateCurrentMapAndNotify(map, true)
     }
     
     private func rtmMergeMetaData(publisherId: String,
@@ -111,7 +118,8 @@ extension AUIMapCollection {
             aui_collection_log("rtmMergeMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
-        currentMap = map
+        
+        updateCurrentMapAndNotify(map, true)
     }
     
     private func rtmCalculateMetaData(publisherId: String,
@@ -155,7 +163,8 @@ extension AUIMapCollection {
             aui_collection_log("rtmCalculateMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
-        currentMap = map
+        
+        updateCurrentMapAndNotify(map, true)
     }
     
     private func rtmCleanMetaData(callback: ((NSError?)->())?) {
@@ -375,7 +384,9 @@ extension AUIMapCollection {
     public override func onAttributesDidChanged(channelName: String, key: String, value: Any) {
         guard channelName == self.channelName, key == self.observeKey else {return}
         guard let map = value as? [String: Any] else {return}
-        self.currentMap = map
+        //如果是仲裁者，不更新，因为本地已经修改了，否则这里收到的消息可能是老的数据，例如update1->update2->resp1->resp2，那么resp1的数据比update2要老，会造成ui上短暂的回滚
+        let needNotify = AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false == true ? false : true
+        updateCurrentMapAndNotify(map, needNotify)
     }
 }
 

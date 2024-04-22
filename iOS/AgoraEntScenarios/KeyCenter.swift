@@ -68,5 +68,5 @@ class KeyCenter: NSObject {
     static var HostUrl: String = "https://gateway-fulldemo.agoralab.co"
     static var baseServerUrl: String? = "https://service.agora.io/toolbox-overseas/v1/"
     static var onlineBaseServerUrl: String? = baseServerUrl
-    static var RTMHostUrl: String = "https://service-staging.agora.io/room-manager-overseas"
+    static var RTMHostUrl: String = "https://service.agora.io/room-manager-overseas"
 }
