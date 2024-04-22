@@ -657,7 +657,7 @@ extension AUIRtmManager {
                          channelType: rtmChannelType,
                          lockName: lockName,
                          completion: { resp, errorInfo in
-            aui_info("releaseLock[\(channelName)][\(lockName)]: \(errorInfo?.reason ?? "")")
+            aui_info("releaseLock[\(channelName)][\(lockName)]: \(errorInfo?.errorCode.rawValue ?? 0)")
             completion(errorInfo?.toNSError())
         })
     }
