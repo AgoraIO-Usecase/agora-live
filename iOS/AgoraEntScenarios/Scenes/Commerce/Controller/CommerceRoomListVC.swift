@@ -202,7 +202,6 @@ extension CommerceRoomListVC: UICollectionViewDataSource, UICollectionViewDelega
             
             return true
         } onRequireRenderVideo: { info, canvas in
-            canvas.mirrorMode = CommerceAgoraKitManager.shared.remoteMirrorModel
             return nil
         } completion: { [weak self] in
             self?.joinRoom(room)
