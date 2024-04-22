@@ -293,6 +293,7 @@ class AUIMapCollection(
                 callback?.invoke(null)
             }
         }
+        currentMap = map
     }
 
     private fun rtmMergeMetaData(
@@ -335,6 +336,7 @@ class AUIMapCollection(
                 callback?.invoke(null)
             }
         }
+        currentMap = map
     }
 
     private fun rtmCalculateMetaData(
@@ -392,6 +394,7 @@ class AUIMapCollection(
                 callback?.invoke(null)
             }
         }
+        currentMap = map
     }
 
     private fun rtmCleanMetaData(callback: ((error: AUICollectionException?) -> Unit)?) {

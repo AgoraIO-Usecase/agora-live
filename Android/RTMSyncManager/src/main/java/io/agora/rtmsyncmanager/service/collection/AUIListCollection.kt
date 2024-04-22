@@ -1,5 +1,6 @@
 package io.agora.rtmsyncmanager.service.collection
 
+import android.util.Log
 import com.google.gson.reflect.TypeToken
 import io.agora.rtmsyncmanager.service.rtm.AUIRtmException
 import io.agora.rtmsyncmanager.service.rtm.AUIRtmManager
@@ -14,6 +15,7 @@ class AUIListCollection(
 
     private var currentList = listOf<Map<String, Any>>()
         set(value) {
+            Log.d("hiut", "currentList set value:$value")
             field = value
             attributesDidChangedClosure?.invoke(channelName, observeKey, AUIAttributesModel(value))
         }
@@ -373,6 +375,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
+        currentList = list
     }
 
     private fun rtmUpdateMetaData(
@@ -431,6 +434,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
+        currentList = list
     }
 
     private fun rtmMergeMetaData(
@@ -485,6 +489,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
+        currentList = list
     }
 
     private fun rtmRemoveMetaData(
@@ -539,6 +544,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
+        currentList = list
     }
 
     private fun rtmCalculateMetaData(
@@ -567,7 +573,6 @@ class AUIListCollection(
                 callback?.invoke(error)
                 return
             }
-
             val calcItem = AUICollectionUtils.calculateMap(
                 item,
                 key,
@@ -575,6 +580,7 @@ class AUIListCollection(
                 value.min,
                 value.max
             )
+            Log.d("hiut", "AUICollectionUtils.calculateMap calcItem:$calcItem")
             if (calcItem == null) {
                 callback?.invoke(
                     AUICollectionException.ErrorCode.calculateMapFail.toException()
@@ -608,6 +614,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
+        currentList = list
     }
 
     private fun rtmCleanMetaData(callback: ((error: AUICollectionException?) -> Unit)?) {
@@ -645,6 +652,7 @@ class AUIListCollection(
         }
 
         if (messageModel.messageType == AUICollectionMessageTypeReceipt) {
+            Log.d("huit", "message:$message")
             // receipt message from arbiter
             val collectionError = GsonTools.toBean(
                 GsonTools.beanToString(messageModel.payload?.data),

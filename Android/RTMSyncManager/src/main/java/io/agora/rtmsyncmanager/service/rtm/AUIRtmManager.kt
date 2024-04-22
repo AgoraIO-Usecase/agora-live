@@ -392,7 +392,7 @@ class AUIRtmManager constructor(
         val data = io.agora.rtm.Metadata()
         val item = kotlin.collections.ArrayList<MetadataItem>()
         removeKeys.forEach { it ->
-            item.add(MetadataItem(it, null))
+            item.add(MetadataItem(it, null, -1))
         }
         data.items = item
 
@@ -429,7 +429,7 @@ class AUIRtmManager constructor(
         val data = io.agora.rtm.Metadata()
         val item = kotlin.collections.ArrayList<MetadataItem>()
         metadata.forEach { entry ->
-            item.add(MetadataItem(entry.key, entry.value))
+            item.add(MetadataItem(entry.key, entry.value, -1))
         }
         data.items = item
 
@@ -469,7 +469,7 @@ class AUIRtmManager constructor(
         val data = io.agora.rtm.Metadata()
         val item = kotlin.collections.ArrayList<MetadataItem>()
         metadata.forEach { entry ->
-            item.add(MetadataItem(entry.key, entry.value))
+            item.add(MetadataItem(entry.key, entry.value, -1))
         }
         data.items = item
         val options = MetadataOptions()
@@ -821,7 +821,7 @@ class AUIRtmManager constructor(
         userId: String,
         message: String,
         uniqueId: String,
-        timeout: Long = 1000,
+        timeout: Long = 10000,
         completion: (AUIRtmException?) -> Unit
     ) {
         publish(channelName, userId, message) { error ->

@@ -48,7 +48,7 @@ interface AUIRtmLockRespObserver {
 }
 
 class AUIRtmMsgProxy : RtmEventListener {
-
+    private val tag = "AUIRtmMsgProxy"
     var originEventListeners: RtmEventListener? = null
     private val attributeRespObservers: MutableMap<String, ArrayList<AUIRtmAttributeRespObserver>> =
         mutableMapOf()
@@ -62,7 +62,7 @@ class AUIRtmMsgProxy : RtmEventListener {
 
     fun cleanCache(channelName: String) {
         msgCacheAttr.remove(channelName)
-        Log.d("pigpig", "cleanCache channelName$channelName, msgCacheAttr=$msgCacheAttr")
+        Log.d(tag, "cleanCache channelName$channelName, msgCacheAttr=$msgCacheAttr")
     }
 
     fun keys(channelName: String): List<String>? {
@@ -84,17 +84,10 @@ class AUIRtmMsgProxy : RtmEventListener {
         observer: AUIRtmAttributeRespObserver
     ) {
         val key = "${channelName}__${itemKey}"
+        Log.d(tag, "registerAttributeRespObserver: $key")
         val observers = attributeRespObservers[key] ?: ArrayList()
         observers.add(observer)
         attributeRespObservers[key] = observers
-
-        Thread {
-            Log.d("pigpig", "$key")
-            val cache = msgCacheAttr[channelName] ?: mutableMapOf()
-            val item = cache[itemKey] ?: return@Thread
-            Log.d("pigpig", "$item")
-            observer.onAttributeChanged(channelName, itemKey, item)
-        } .start()
     }
 
     fun unRegisterAttributeRespObserver(
@@ -103,6 +96,7 @@ class AUIRtmMsgProxy : RtmEventListener {
         observer: AUIRtmAttributeRespObserver
     ) {
         val key = "${channelName}__${itemKey}"
+        Log.d(tag, "unRegisterAttributeRespObserver: $key")
         val observers = attributeRespObservers[key] ?: return
         observers.remove(observer)
     }
