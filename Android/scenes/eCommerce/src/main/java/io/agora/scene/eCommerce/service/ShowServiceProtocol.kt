@@ -92,8 +92,9 @@ interface ShowServiceProtocol {
 
     /** Shop Actions */
     fun shopSubscribe(roomId: String, onChange: (List<GoodsModel>) -> Unit)
-    fun shopBuyItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit)
-    fun shopUpdateItem(roomId: String, itemId: String, count: Int)
+    fun shopBuyOrMinusItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit)
+    fun shopAddItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit)
+    fun shopUpdateItem(roomId: String, itemId: String, count: Long)
 
     /** Chat Message Actions */
     fun sendChatMessage(roomId: String, message: String, success: (() -> Unit)? = null, error: ((Exception) -> Unit)? = null)

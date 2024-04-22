@@ -104,7 +104,8 @@ object AUICollectionUtils {
             return retMap
         }
         val curKey = key.firstOrNull() ?: return null
-        val subValue = retMap[curKey] as? Long ?: return null
+        Log.d("hiut", "subValue: ${retMap[curKey]}")
+        val subValue = retMap[curKey] as Long
         val curValue = subValue + value
         if(curValue < min || curValue > max){
             return null

@@ -61,7 +61,7 @@ data class GoodsModel constructor(
     val goodsId: String,
     val imageName: String = "",
     val title: String = "",
-    var quantity: Int = 6,
+    var quantity: Long = 6,
     val price: Float? = null,
     @Transient var picResource: Int = 0
 )

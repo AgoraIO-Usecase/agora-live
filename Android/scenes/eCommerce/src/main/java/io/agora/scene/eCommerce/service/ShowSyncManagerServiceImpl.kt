@@ -24,7 +24,6 @@ import io.agora.rtmsyncmanager.utils.AUILogger
 import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.manager.UserManager
-import io.agora.scene.base.utils.GsonUtils
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.eCommerce.ShowLogger
 import org.json.JSONException
@@ -384,7 +383,7 @@ class ShowSyncManagerServiceImpl constructor(
         val auctionMap = GsonTools.beanToMap(auctionModel)
         controller.auctionCollection?.addMetaData(null, auctionMap, null) {}
 
-        val keys = mapOf<String, Any>("count" to 0)
+        val keys = mapOf<String, Any>("count" to 0L)
         controller.likeCollection?.addMetaData(null, keys, null) {}
     }
 
@@ -483,9 +482,9 @@ class ShowSyncManagerServiceImpl constructor(
         controller.likeCollection?.calculateMetaData(null, keys, 1, 0, Int.MAX_VALUE, null) {
         }
     }
-    override fun likeSubscribe(roomId: String, onLikeCountChange: () -> Unit) {
+    override fun likeSubscribe(roomId: String, onMessageChange: () -> Unit) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        controller.likeChangeSubscriber = onLikeCountChange
+        controller.likeChangeSubscriber = onMessageChange
     }
 
     /** Auction Actions */
@@ -545,11 +544,11 @@ class ShowSyncManagerServiceImpl constructor(
         }
         controller.shopChangeSubscriber = onChange
     }
-    override fun shopBuyItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit) {
+    override fun shopBuyOrMinusItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val keys = listOf("quantity")
         val filter = listOf(mapOf<String, Any>("goodsId" to itemId))
-        controller.shopCollection?.calculateMetaData(null, keys, -1, 0, 200, filter) { err ->
+        controller.shopCollection?.calculateMetaData(null, keys, -1, 0, Int.MAX_VALUE, filter) { err ->
             if (err != null) {
                 runOnMainThread { onComplete.invoke(err) }
             } else {
@@ -557,7 +556,20 @@ class ShowSyncManagerServiceImpl constructor(
             }
         }
     }
-    override fun shopUpdateItem(roomId: String, itemId: String, count: Int) {
+
+    override fun shopAddItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit) {
+        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
+        val keys = listOf("quantity")
+        val filter = listOf(mapOf<String, Any>("goodsId" to itemId))
+        controller.shopCollection?.calculateMetaData(null, keys, 1, 0, Int.MAX_VALUE, filter) { err ->
+            if (err != null) {
+                runOnMainThread { onComplete.invoke(err) }
+            } else {
+                runOnMainThread { onComplete.invoke(null) }
+            }
+        }
+    }
+    override fun shopUpdateItem(roomId: String, itemId: String, count: Long) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val map = mapOf("quantity" to count)
         val filter = listOf(mapOf<String, Any>("goodsId" to itemId))

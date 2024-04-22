@@ -14,11 +14,12 @@ class AUIListCollection(
 ) : AUIBaseCollection(channelName, observeKey, rtmManager) {
 
     private var currentList = listOf<Map<String, Any>>()
-        set(value) {
-            Log.d("hiut", "currentList set value:$value")
-            field = value
-            attributesDidChangedClosure?.invoke(channelName, observeKey, AUIAttributesModel(value))
-        }
+
+    private fun updateCurrentListAndNotify(list: List<Map<String, Any>>, needNotify: Boolean) {
+        if (!needNotify) return
+        currentList = list
+        attributesDidChangedClosure?.invoke(channelName, observeKey, AUIAttributesModel(list))
+    }
 
     override fun getMetaData(callback: ((error: AUICollectionException?, value: Any?) -> Unit)?) {
         rtmManager.getMetadata(
@@ -375,7 +376,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
-        currentList = list
+        updateCurrentListAndNotify(list, true)
     }
 
     private fun rtmUpdateMetaData(
@@ -434,7 +435,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
-        currentList = list
+        updateCurrentListAndNotify(list, true)
     }
 
     private fun rtmMergeMetaData(
@@ -489,7 +490,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
-        currentList = list
+        updateCurrentListAndNotify(list, true)
     }
 
     private fun rtmRemoveMetaData(
@@ -544,7 +545,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
-        currentList = list
+        updateCurrentListAndNotify(list, true)
     }
 
     private fun rtmCalculateMetaData(
@@ -614,7 +615,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
-        currentList = list
+        updateCurrentListAndNotify(list, true)
     }
 
     private fun rtmCleanMetaData(callback: ((error: AUICollectionException?) -> Unit)?) {
@@ -637,7 +638,8 @@ class AUIListCollection(
             strValue,
             object : TypeToken<List<Map<String, Any>>>() {}.type
         ) ?: return
-        currentList = list
+        //如果是仲裁者，不更新，因为本地已经修改了，否则这里收到的消息可能是老的数据，例如update1->update2->resp1->resp2，那么resp1的数据比update2要老，会造成ui上短暂的回滚
+        updateCurrentListAndNotify(list, !isArbiter())
     }
 
     override fun onMessageReceive(publisherId: String, message: String) {

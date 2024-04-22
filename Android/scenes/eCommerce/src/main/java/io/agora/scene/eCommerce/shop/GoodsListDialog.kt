@@ -75,7 +75,7 @@ class GoodsListDialog constructor(
         mAdapter = ShopAdapter(isRoomOwner)
         binding.recyclerView.adapter = mAdapter
         mAdapter.onClickBuy = { goodsId ->
-            mService.shopBuyItem(roomId, goodsId) { e ->
+            mService.shopBuyOrMinusItem(roomId, goodsId) { e ->
                 if (e != null) { // bought result
                     showOperationInfo(context.getString(R.string.commerce_shop_alert_sold_out))
                 } else {
@@ -85,6 +85,12 @@ class GoodsListDialog constructor(
         }
         mAdapter.onUserChangedQty = { goodsId, qty ->
             mService.shopUpdateItem(roomId, goodsId, qty)
+        }
+        mAdapter.onClickAdd = { goodsId ->
+            mService.shopAddItem(roomId, goodsId) {}
+        }
+        mAdapter.onClickMinus = { goodsId ->
+            mService.shopBuyOrMinusItem(roomId, goodsId) {}
         }
         binding.root.setOnClickListener {
             dismiss()
@@ -108,7 +114,11 @@ class GoodsListDialog constructor(
 
         var onClickBuy: ((goodsId: String) -> Unit)? = null
 
-        var onUserChangedQty: ((goodsId: String, qty: Int) -> Unit)? = null
+        var onClickAdd: ((goodsId: String) -> Unit)? = null
+
+        var onClickMinus: ((goodsId: String) -> Unit)? = null
+
+        var onUserChangedQty: ((goodsId: String, qty: Long) -> Unit)? = null
 
         override fun onBindViewHolder(
             holder: BindingViewHolder<CommerceShopGoodsItemLayoutBinding>,
@@ -120,7 +130,7 @@ class GoodsListDialog constructor(
                 holder.binding.tvPrice.text = String.format("$%.0f", item.price)
                 val context = holder.itemView.context
                 holder.binding.tvQty.text = context.getString(R.string.commerce_shop_item_qty, item.quantity.toString())
-                if (item.quantity == 0) {
+                if (item.quantity == 0L) {
                     holder.binding.btnBuy.setBackgroundResource(R.drawable.commerce_corner_radius_gray)
                     holder.binding.btnBuy.text = context.getString(R.string.commerce_shop_item_sold_out)
                     holder.binding.btnBuy.setTextColor(Color.parseColor("#A5ADBA"))
@@ -139,13 +149,13 @@ class GoodsListDialog constructor(
                         val value = (holder.binding.etQty.text ?: "0").toString().toInt()
                         val newValue = fitValue(value + 1)
                         holder.binding.etQty.setText(newValue.toString())
-                        onUserChangedQty?.invoke(item.goodsId, newValue)
+                        onClickAdd?.invoke(item.goodsId)
                     }
                     holder.binding.btnReduce.setOnClickListener {
                         val value = (holder.binding.etQty.text ?: "0").toString().toInt()
                         val newValue = fitValue(value - 1)
                         holder.binding.etQty.setText(newValue.toString())
-                        onUserChangedQty?.invoke(item.goodsId, newValue)
+                        onClickMinus?.invoke(item.goodsId)
                     }
                     holder.binding.etQty.setOnEditorActionListener { _, actionId, _ ->
                         if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -155,7 +165,7 @@ class GoodsListDialog constructor(
 
                             val qty = holder.binding.etQty.text.toString().toIntOrNull() ?: 0
                             val newValue = fitValue(qty)
-                            onUserChangedQty?.invoke(item.goodsId, newValue)
+                            onUserChangedQty?.invoke(item.goodsId, newValue.toLong())
                             return@setOnEditorActionListener true
                         }
                         false
