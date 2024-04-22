@@ -15,7 +15,6 @@ class RTMSyncUtil: NSObject {
     private static var isLogined: Bool = false
     private static let roomDelegate = RTMSyncUtilRoomDeleage()
     private static let userDelegate = RTMSyncUtilUserDelegate()
-    private static var rtm: AgoraRtmClientKit?
     private static let rtmDeleagete = RTMDelegate()
     
     class func initRTMSyncManager() {
@@ -35,9 +34,6 @@ class RTMSyncUtil: NSObject {
         AUIRoomContext.shared.displayLogClosure = { msg in
             commerceLogger.info(msg)
         }
-        let rtmConfig = AgoraRtmClientConfig(appId: KeyCenter.AppId, userId: VLUserCenter.user.id)
-        rtm = try? AgoraRtmClientKit(rtmConfig, delegate: rtmDeleagete)
-        rtm?.addDelegate(rtmDeleagete)
     }
     
     class func createRoom(roomName: String,
@@ -128,6 +124,7 @@ class RTMSyncUtil: NSObject {
         let scene = scene(id: id)
         scene?.bindRespDelegate(delegate: roomDelegate)
         scene?.userService.bindRespDelegate(delegate: userDelegate)
+        syncManager?.rtmManager.subscribeMessage(channelName: "", delegate: rtmDeleagete)
         login(channelName: id, success: {
             if ownerId == VLUserCenter.user.id {
                 scene?.create(payload: payload) { err in
@@ -174,6 +171,7 @@ class RTMSyncUtil: NSObject {
             scene?.leave()
             scene?.unbindRespDelegate(delegate: roomDelegate)
         }
+        syncManager?.rtmManager.unsubscribeMessage(channelName: "", delegate: rtmDeleagete)
     }
     
     class func subscribeRoomDestroy(roomDestoryClosure: ((String) -> Void)?) {
@@ -319,26 +317,24 @@ class RTMSyncUtil: NSObject {
     }
     
     class func sendMessage(channelName: String, data: [String: Any]) {
-        if let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []) {
-            let options = AgoraRtmPublishOptions()
-            options.channelType = .message
-            rtm?.publish(channelName: channelName, data: jsonData, option: options)
+        if let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []),
+           let message = String(data: jsonData, encoding: .utf8) {
+            syncManager?.rtmManager.publish(channelName: channelName, message: message, completion: { _ in
+            })
         }
     }
     
     class func subscribeMessageDidReceive(id: String,
                                           key: String,
-                                          changeClosure: ((String) -> Void)?) {
+                                          changeClosure: ((String, String) -> Void)?) {
         rtmDeleagete.onReceiveMessageClosure = changeClosure
     }
 }
 
-class RTMDelegate: NSObject, AgoraRtmClientDelegate {
-    var onReceiveMessageClosure: ((String) -> Void)?
-    func rtmKit(_ rtmKit: AgoraRtmClientKit, didReceiveMessageEvent event: AgoraRtmMessageEvent) {
-        if let message = String(data: event.message.rawData ?? Data(), encoding: .utf8) {
-            onReceiveMessageClosure?(message)
-        }
+class RTMDelegate: NSObject, AUIRtmMessageProxyDelegate {
+    var onReceiveMessageClosure: ((String, String) -> Void)?
+    func onMessageReceive(publisher: String, channelName: String, message: String) {
+        onReceiveMessageClosure?(message, channelName)
     }
 }
 
