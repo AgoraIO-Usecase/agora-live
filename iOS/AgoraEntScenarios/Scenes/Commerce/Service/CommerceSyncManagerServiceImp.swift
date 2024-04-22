@@ -762,9 +762,9 @@ extension CommerceSyncManagerServiceImp {
             return
         }
         agoraPrint("imp message subscribe ...")
-        RTMSyncUtil.subscribeMessageDidReceive(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION) { message in
+        RTMSyncUtil.subscribeMessageDidReceive(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION) { message, roomId in
             agoraPrint("imp message subscribe onUpdated... [\(message)] \(channelName)")
-            guard let model = CommerceMessage.yy_model(withJSON: message) else { return }
+            guard let model = CommerceMessage.yy_model(withJSON: message), channelName == roomId else { return }
             self.subscribeDelegate?.onMessageDidAdded(message: model)
 
         }
