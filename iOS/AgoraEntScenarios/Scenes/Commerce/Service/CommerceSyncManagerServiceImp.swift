@@ -514,19 +514,19 @@ extension CommerceSyncManagerServiceImp {
             completion(NSError(domain: "roomId is empty", code: 0))
             return
         }
-//        RTMSyncUtil.updateListMetaData(id: channelName, 
-//                                       key: SYNC_MANAGER_BUY_GOODS_COLLECTION,
-//                                       data: params,
-//                                       filter: [["goodsId": goods?.goodsId ?? ""]],
-//                                       callback: completion)
-        let collecton = RTMSyncUtil.listCollection(id: channelName, key: SYNC_MANAGER_BUY_GOODS_COLLECTION)
-        collecton?.calculateMetaData(valueCmd: nil,
-                                     key: ["quantity"],
-                                     value: increase ? 1 : -1,
-                                     min: 0,
-                                     max: 99,
-                                     filter: [["goodsId": goods?.goodsId ?? ""]],
-                                     callback: completion)
+        RTMSyncUtil.updateListMetaData(id: channelName, 
+                                       key: SYNC_MANAGER_BUY_GOODS_COLLECTION,
+                                       data: params,
+                                       filter: [["goodsId": goods?.goodsId ?? ""]],
+                                       callback: completion)
+//        let collecton = RTMSyncUtil.listCollection(id: channelName, key: SYNC_MANAGER_BUY_GOODS_COLLECTION)
+//        collecton?.calculateMetaData(valueCmd: nil,
+//                                     key: ["quantity"],
+//                                     value: increase ? 1 : -1,
+//                                     min: 0,
+//                                     max: 99,
+//                                     filter: [["goodsId": goods?.goodsId ?? ""]],
+//                                     callback: completion)
     }
     
     private func _subscribeGoodsInfo(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsModel]?) -> Void) {
