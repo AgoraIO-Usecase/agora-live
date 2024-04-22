@@ -177,7 +177,7 @@ class ShowSyncManagerServiceImp: NSObject, ShowServiceProtocol {
         
         let currentTs = Int64(Date().timeIntervalSince1970 * 1000)
         let expiredDuration = 20 * 60 * 1000
-        agoraPrint("checkRoomExpire: \(currentTs - room.createdAt) / \(expiredDuration)")
+//        agoraPrint("checkRoomExpire: \(currentTs - room.createdAt) / \(expiredDuration)")
         guard currentTs - room.createdAt > expiredDuration else { return }
         
         self.subscribeDelegate?.onRoomExpired()
@@ -1169,30 +1169,30 @@ extension ShowSyncManagerServiceImp {
 extension ShowSyncManagerServiceImp {
     private func _getAllMicSeatApplyList(completion: @escaping (NSError?, [ShowMicSeatApply]?) -> Void) {
         let channelName = getRoomId()
-        agoraPrint("imp seat apply get...")
+        agoraPrint("imp[\(channelName)] seat apply get...")
         SyncUtil
             .scene(id: channelName)?
             .collection(className: SYNC_MANAGER_SEAT_APPLY_COLLECTION)
             .get(success: { [weak self] list in
-                agoraPrint("imp seat apply get success... \(list.count)")
+                agoraPrint("imp[\(channelName)] seat apply get success... \(list.count)")
                 let seatApplyList = list.compactMap({ ShowMicSeatApply.yy_model(withJSON: $0.toJson()!)! })
                 self?.seatApplyList = seatApplyList
                 completion(nil, seatApplyList)
             }, fail: { error in
-                agoraPrint("imp seat apply get fail :\(error.message)...")
+                agoraPrint("imp[\(channelName)] seat apply get fail :\(error.message)...")
                 completion(error.toNSError(), nil)
             })
     }
     
     private func _subscribeMicSeatApplyChanged() {
         let channelName = getRoomId()
-        agoraPrint("imp seat apply subscribe ...")
+        agoraPrint("imp[\(channelName)] seat apply subscribe ...")
         SyncUtil
             .scene(id: channelName)?
             .subscribe(key: SYNC_MANAGER_SEAT_APPLY_COLLECTION,
                        onCreated: { _ in
                        }, onUpdated: {[weak self] object in
-                           agoraPrint("imp seat apply subscribe onUpdated...")
+                           agoraPrint("imp[\(channelName)] seat apply subscribe onUpdated...")
                            guard let self = self,
                                  let jsonStr = object.toJson(),
                                  let model = ShowMicSeatApply.yy_model(withJSON: jsonStr) else { return }
@@ -1202,7 +1202,7 @@ extension ShowSyncManagerServiceImp {
                            if self.seatApplyList.contains(where: { $0.userId == model.userId }) { return }
                            self.seatApplyList.append(model)
                        }, onDeleted: {[weak self] object in
-                           agoraPrint("imp seat apply subscribe onDeleted...")
+                           agoraPrint("imp[\(channelName)] seat apply subscribe onDeleted...")
                            guard let self = self else {return}
                            var model: ShowMicSeatApply? = nil
                            if let index = self.seatApplyList.firstIndex(where: { object.getId() == $0.objectId }) {
@@ -1213,48 +1213,48 @@ extension ShowSyncManagerServiceImp {
                            self.subscribeDelegate?.onMicSeatApplyDeleted(apply: model)
                        }, onSubscribed: {
                        }, fail: { error in
-                           agoraPrint("imp seat apply subscribe fail \(error.message)...")
+                           agoraPrint("imp[\(channelName)] seat apply subscribe fail \(error.message)...")
                            ToastView.show(text: error.message)
                        })
     }
     
     private func _addMicSeatApply(apply: ShowMicSeatApply, completion: @escaping (NSError?) -> Void) {
         let channelName = getRoomId()
-        agoraPrint("imp seat apply add ...")
+        agoraPrint("imp[\(channelName)] seat apply add ...")
 
         let params = apply.yy_modelToJSONObject() as! [String: Any]
         SyncUtil
             .scene(id: channelName)?
             .collection(className: SYNC_MANAGER_SEAT_APPLY_COLLECTION)
             .add(data: params, success: { object in
-                agoraPrint("imp seat apply add success...")
+                agoraPrint("imp[\(channelName)] seat apply add success...")
                 completion(nil)
             }, fail: { error in
-                agoraPrint("imp seat apply add fail :\(error.message)...")
+                agoraPrint("imp[\(channelName)] seat apply add fail :\(error.message)...")
                 completion(error.toNSError())
             })
     }
     
     private func _removeMicSeatApply(apply: ShowMicSeatApply, completion: @escaping (NSError?) -> Void) {
         let channelName = getRoomId()
-        agoraPrint("imp seat apply remove...")
+        agoraPrint("imp[\(channelName)] seat apply remove...")
 
         SyncUtil
             .scene(id: channelName)?
             .collection(className: SYNC_MANAGER_SEAT_APPLY_COLLECTION)
             .delete(id: apply.objectId!,
                     success: { _ in
-                agoraPrint("imp seat apply remove success...")
+                agoraPrint("imp[\(channelName)] seat apply remove success...")
                 completion(nil)
             }, fail: { error in
-                agoraPrint("imp seat apply remove fail :\(error.message)...")
+                agoraPrint("imp[\(channelName)] seat apply remove fail :\(error.message)...")
                 completion(error.toNSError())
             })
     }
     
     private func _updateMicSeatApply(apply: ShowMicSeatApply, completion: @escaping (NSError?) -> Void) {
         let channelName = getRoomId()
-        agoraPrint("imp seat apply update...")
+        agoraPrint("imp[\(channelName)] seat apply update...")
 
         let params = apply.yy_modelToJSONObject() as! [String: Any]
         SyncUtil
@@ -1263,10 +1263,10 @@ extension ShowSyncManagerServiceImp {
             .update(id: apply.objectId!,
                     data:params,
                     success: {
-                agoraPrint("imp seat apply update success...")
+                agoraPrint("imp[\(channelName)] seat apply update success...")
                 completion(nil)
             }, fail: { error in
-                agoraPrint("imp seat apply update fail :\(error.message)...")
+                agoraPrint("imp[\(channelName)] seat apply update fail :\(error.message)...")
                 completion(error.toNSError())
             })
     }
@@ -1289,7 +1289,7 @@ extension ShowSyncManagerServiceImp {
                 return
             }
             
-            agoraPrint("imp pk invitation get2... \(channelName)")
+            agoraPrint("imp[\(channelName)] pk invitation get2... \(channelName)")
             SyncUtilsWrapper.joinSceneByQueue(id: channelName,
                                               userId: ownerId,
                                               isOwner: true,
@@ -1298,11 +1298,11 @@ extension ShowSyncManagerServiceImp {
                     .scene(id: channelName)?
                     .collection(className: SYNC_MANAGER_PK_INVITATION_COLLECTION)
                     .get(success: {  list in
-                        agoraPrint("imp pk invitation get2 success...  \(channelName)")
+                        agoraPrint("imp[\(channelName)] pk invitation get2 success...  \(channelName)")
                         let pkInvitationList = list.compactMap({ ShowPKInvitation.yy_model(withJSON: $0.toJson()!)! })
                         completion(nil, pkInvitationList)
                     }, fail: { error in
-                        agoraPrint("imp pk invitation get2 fail :\(error.message)... \(channelName)")
+                        agoraPrint("imp[\(channelName)] pk invitation get2 fail :\(error.message)... \(channelName)")
                         completion(error.toNSError(), nil)
                     })
             } fail: { error in
@@ -1311,17 +1311,17 @@ extension ShowSyncManagerServiceImp {
             return
         }
         
-        agoraPrint("imp pk invitation get... \(channelName)")
+        agoraPrint("imp[\(channelName)] pk invitation get... \(channelName)")
         SyncUtil
             .scene(id: channelName)?
             .collection(className: SYNC_MANAGER_PK_INVITATION_COLLECTION)
             .get(success: { [weak self] list in
-                agoraPrint("imp pk invitation get success...")
+                agoraPrint("imp[\(channelName)] pk invitation get success...")
                 let pkInvitationList = list.compactMap({ ShowPKInvitation.yy_model(withJSON: $0.toJson()!)! })
                 self?.pkInvitationList = pkInvitationList
                 completion(nil, pkInvitationList)
             }, fail: { error in
-                agoraPrint("imp pk invitation get fail :\(error.message)...")
+                agoraPrint("imp[\(channelName)] pk invitation get fail :\(error.message)...")
                 completion(error.toNSError(), nil)
             })
         
@@ -1332,7 +1332,7 @@ extension ShowSyncManagerServiceImp {
             agoraAssert("channelName = nil")
             return
         }
-        agoraPrint("imp pk invitation unsubscribe ...")
+        agoraPrint("imp[\(channelName)] pk invitation unsubscribe ...")
         SyncUtil
             .scene(id: channelName)?
             .unsubscribe(key: SYNC_MANAGER_PK_INVITATION_COLLECTION)
@@ -1343,7 +1343,7 @@ extension ShowSyncManagerServiceImp {
             agoraAssert("channelName = nil")
             return
         }
-        agoraPrint("imp pk invitation subscribe ...")
+        agoraPrint("imp[\(channelName)] pk invitation subscribe ...")
         _subscribePKInvitationChanged(channelName: channelName) { [weak self] (status, invitation) in
             guard let self = self else { return }
             switch status {
@@ -1354,6 +1354,7 @@ extension ShowSyncManagerServiceImp {
                     self.pkInvitationList.remove(at: index)
                 }
                 let _invitation = model ?? invitation
+                agoraPrint("imp[\(channelName)] pk invitation subscribe delete, userId: \(_invitation.userId), userName: \(_invitation.userName ?? "")")
                 
                 self.subscribeDelegate?.onPKInvitationRejected(invitation: _invitation)
                 self._removeInteraction(invitation: _invitation) { error in
@@ -1369,6 +1370,7 @@ extension ShowSyncManagerServiceImp {
                     }
                     return
                 }
+                agoraPrint("imp[\(channelName)] pk invitation subscribe updated, userId: \(invitation.userId), userName: \(invitation.userName ?? "")")
                 
                 //update invitation (mute audio)
                 if let pkInvitation = pkInvitation {
@@ -1402,26 +1404,26 @@ extension ShowSyncManagerServiceImp {
     
     private func _subscribePKInvitationChanged(channelName:String,
                                                subscribeClosure: @escaping (ShowSubscribeStatus, ShowPKInvitation) -> Void) {
-        agoraPrint("imp pk invitation subscribe ... \(channelName)")
+        agoraPrint("imp[\(channelName)] pk invitation subscribe ... \(channelName)")
         SyncUtil
             .scene(id: channelName)?
             .subscribe(key: SYNC_MANAGER_PK_INVITATION_COLLECTION,
                        onCreated: { object in
-                agoraPrint("imp pk invitation subscribe onCreated... \(channelName)")
+                agoraPrint("imp[\(channelName)] pk invitation subscribe onCreated... \(channelName)")
                 guard let jsonStr = object.toJson(),
                       let model = ShowPKInvitation.yy_model(withJSON: jsonStr) else {
                     return
                 }
                 subscribeClosure(.created, model)
             }, onUpdated: { object in
-                agoraPrint("imp pk invitation subscribe onUpdated... \(channelName)")
+                agoraPrint("imp[\(channelName)] pk invitation subscribe onUpdated... \(channelName)")
                 guard let jsonStr = object.toJson(),
                       let model = ShowPKInvitation.yy_model(withJSON: jsonStr) else {
                     return
                 }
                 subscribeClosure(.updated, model)
             }, onDeleted: {[weak self] object in
-                agoraPrint("imp pk invitation subscribe onDeleted... \(channelName)")
+                agoraPrint("imp[\(channelName)] pk invitation subscribe onDeleted... \(channelName)")
                 guard let self = self else {return}
                 guard channelName == self.roomId else {
                     if let model = ShowPKInvitation.yy_model(withJSON: object.toJson() ?? "") {
@@ -1435,7 +1437,7 @@ extension ShowSyncManagerServiceImp {
                 subscribeClosure(.deleted, model)
             }, onSubscribed: {
             }, fail: { error in
-                agoraPrint("imp pk invitation subscribe fail \(error.message)...")
+                agoraPrint("imp[\(channelName)] pk invitation subscribe fail \(error.message)...")
                 ToastView.show(text: error.message)
             })
     }
@@ -1443,17 +1445,17 @@ extension ShowSyncManagerServiceImp {
     private func _addPKInvitation(invitation: ShowPKInvitation, completion: @escaping (NSError?) -> Void) {
         let channelName = invitation.roomId
         if channelName.isEmpty {return}
-        agoraPrint("imp pk invitation add... \(channelName)")
+        agoraPrint("imp[\(channelName)] pk invitation add... \(channelName)")
 
         let params = invitation.yy_modelToJSONObject() as! [String: Any]
         SyncUtil
             .scene(id: channelName)?
             .collection(className: SYNC_MANAGER_PK_INVITATION_COLLECTION)
             .add(data: params, success: { object in
-                agoraPrint("imp pk invitation add success... \(channelName)")
+                agoraPrint("imp[\(channelName)] pk invitation add success... \(channelName)")
                 completion(nil)
             }, fail: { error in
-                agoraPrint("imp pk invitation add fail :\(error.message)... \(channelName)")
+                agoraPrint("imp[\(channelName)] pk invitation add fail :\(error.message)... \(channelName)")
                 completion(error.toNSError())
             })
     }
@@ -1461,17 +1463,17 @@ extension ShowSyncManagerServiceImp {
     private func _removePKInvitation(invitation: ShowPKInvitation, completion: @escaping (NSError?) -> Void) {
         let channelName = invitation.roomId
         if channelName.isEmpty {return}
-        agoraPrint("imp pk invitation remove... \(channelName)")
+        agoraPrint("imp[\(channelName)] pk invitation remove... \(channelName)")
 
         SyncUtil
             .scene(id: channelName)?
             .collection(className: SYNC_MANAGER_PK_INVITATION_COLLECTION)
             .delete(id: invitation.objectId!,
                     success: { _ in
-                agoraPrint("imp pk invitation remove success... \(channelName)")
+                agoraPrint("imp[\(channelName)] pk invitation remove success... \(channelName)")
                 completion(nil)
             }, fail: { error in
-                agoraPrint("imp pk invitation remove fail :\(error.message)... \(channelName)")
+                agoraPrint("imp[\(channelName)] pk invitation remove fail :\(error.message)... \(channelName)")
                 completion(error.toNSError())
             })
     }
@@ -1479,7 +1481,7 @@ extension ShowSyncManagerServiceImp {
     private func _updatePKInvitation(invitation: ShowPKInvitation, completion: @escaping (NSError?) -> Void) {
         let channelName = invitation.roomId
         if channelName.isEmpty {return}
-        agoraPrint("imp pk invitation update... \(channelName)")
+        agoraPrint("imp[\(channelName)] pk invitation update... \(channelName)")
 
         let params = invitation.yy_modelToJSONObject() as! [String: Any]
         SyncUtil
@@ -1488,10 +1490,10 @@ extension ShowSyncManagerServiceImp {
             .update(id: invitation.objectId!,
                     data:params,
                     success: {
-                agoraPrint("imp pk invitation update success... \(channelName)")
+                agoraPrint("imp[\(channelName)] pk invitation update success... \(channelName)")
                 completion(nil)
             }, fail: { error in
-                agoraPrint("imp pk invitation update fail :\(error.message)... \(channelName)")
+                agoraPrint("imp[\(channelName)] pk invitation update fail :\(error.message)... \(channelName)")
                 completion(error.toNSError())
             })
     }
@@ -1721,7 +1723,7 @@ extension ShowSyncManagerServiceImp {
         let params = interaction.yy_modelToJSONObject() as! [String: Any]
         //add interation immediately to prevent received multi pk invitations at the same time
         interactionList.append(interaction)
-        interactionPaddingIdsSet.insert(interaction.userId ?? "")
+        interactionPaddingIdsSet.insert(interaction.userId)
         SyncUtil
             .scene(id: channelName)?
             .collection(className: SYNC_MANAGER_INTERACTION_COLLECTION)
