@@ -66,9 +66,17 @@ class CommerceGoodsListView: UIView {
         })
     }
     
-    private func updateGoodsInfo(goods: CommerceGoodsModel?, increase: Bool) {
-        serviceImp?.updateGoodsInfo(roomId: roomId, goods: goods, increase: increase, completion: { error in
+    private func updateGoodsInfo(goods: CommerceGoodsModel?, completion: @escaping (Error?)-> ()) {
+        serviceImp?.updateGoodsInfo(roomId: roomId, goods: goods, completion: { error in
             commerceLogger.error("error == \(error?.localizedDescription ?? "")")
+            completion(error)
+        })
+    }
+    
+    private func calcGoodsInfo(goods: CommerceGoodsModel?, increase: Bool, completion: @escaping (Error?)-> ()) {
+        serviceImp?.calcGoodsInfo(roomId: roomId, goods: goods, increase: increase, completion: { error in
+            commerceLogger.error("error == \(error?.localizedDescription ?? "")")
+            completion(error)
         })
     }
     
@@ -107,7 +115,10 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
             var title = "Bought!"
             if (model.goods?.quantity ?? 0) > 0 {
                 model.goods?.quantity -= 1
-                self.updateGoodsInfo(goods: model.goods, increase: false)
+                self.calcGoodsInfo(goods: model.goods, increase: false) { err in
+                    guard let err = err else { return }
+                    //error msg
+                }
             } else {
                 title = "Sold Out!"
             }
@@ -116,10 +127,21 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
             alertVC.addAction(okAction)
             UIViewController.cl_topViewController()?.present(alertVC, animated: true)
         }
+
         cell.onClickNumberButtonClosure = { [weak self] number, isIncrease in
             guard let self = self else { return }
-            model.goods?.quantity = number
-            self.updateGoodsInfo(goods: model.goods, increase: isIncrease)
+            if let isIncrease = isIncrease {
+                self.calcGoodsInfo(goods: model.goods, increase: isIncrease) { err in
+                    guard let err = err else { return }
+                    //error msg
+                }
+            } else {
+                model.goods?.quantity = number
+                self.updateGoodsInfo(goods: model.goods) { err in
+                    guard let err = err else { return }
+                    //error msg
+                }
+            }
         }
         return cell
     }
@@ -127,7 +149,7 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
 
 class CommerceGoodsListViewCell: UITableViewCell {
     var onClickStatusButtonClosure: (() -> Void)?
-    var onClickNumberButtonClosure: ((Int, Bool) -> Void)?
+    var onClickNumberButtonClosure: ((Int, Bool?) -> Void)?
     
     private lazy var coverImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage.sceneImage(name: ""))
@@ -258,10 +280,6 @@ class CommerceGoodsListViewCell: UITableViewCell {
     
     @objc
     private func onClickStatusButton() {
-        ToastView.showWait(text: "Loading...")
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double.random(in: 0.5...1.5), execute: {
-            ToastView.hidden()
-            self.onClickStatusButtonClosure?()
-        })
+        self.onClickStatusButtonClosure?()
     }
 }

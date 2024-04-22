@@ -7,7 +7,7 @@
 
 import UIKit
 
-public typealias ResultClosure = (_ number: String, _ isIncrease: Bool)->()
+public typealias ResultClosure = (_ number: String, _ isIncrease: Bool?)->()
 
 public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
     func numberButtonResult(_ numberButton: CommerceNumberButton, number: String, isIncrease: Bool)
@@ -33,7 +33,7 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         textField.textAlignment = .center
         return textField
     }()
-    private var timer: Timer!              // Quick add/subtract timer
+    
     public var _minValue = 1                 // Maximum value
     public var _maxValue = Int.max           // Maximum value
     public var shakeAnimation: Bool = false  // Do you want to turn on the shake animation
@@ -127,10 +127,7 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         let button = UIButton()
         button.setTitle(title, for: UIControl.State())
         button.setTitleColor(UIColor.gray, for: UIControl.State())
-        button.addTarget(self, action:#selector(self.touchDown(_:)), for: .touchDown)
-        button.addTarget(self, action:#selector(self.touchUp), for: .touchUpOutside)
-        button.addTarget(self, action:#selector(self.touchUp), for: .touchUpInside)
-        button.addTarget(self, action:#selector(self.touchUp), for: .touchCancel)
+        button.addTarget(self, action:#selector(self.touchDown(_:)), for: .touchUpInside)
         return button
     }
     
@@ -139,24 +136,11 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
     @objc fileprivate func touchDown(_ button: UIButton) {
         textField.endEditing(false)
         if button == decreaseBtn {
-            timer = Timer.scheduledTimer(timeInterval: 0.15, 
-                                         target: self,
-                                         selector: #selector(self.decrease),
-                                         userInfo: nil,
-                                         repeats: true)
+            decrease()
+            
         } else {
-            timer = Timer.scheduledTimer(timeInterval: 0.15, 
-                                         target: self,
-                                         selector: #selector(self.increase),
-                                         userInfo: nil,
-                                         repeats: true)
+            increase()
         }
-        timer.fire()
-    }
-    
-    // Release button: Clear timer
-    @objc fileprivate func touchUp()  {
-        cleanTimer()
     }
     
     // MARK: - Subtraction operation
@@ -208,19 +192,6 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         animation.autoreverses = true
         layer.add(animation, forKey: nil)
     }
-    
-    fileprivate func cleanTimer() {
-        if timer?.isValid != nil {
-            timer.invalidate()
-            timer = nil
-        }
-    }
-    
-    deinit {
-        cleanTimer()
-    }
-    
-    
 }
 
 extension CommerceNumberButton: UITextFieldDelegate {
@@ -243,7 +214,7 @@ extension CommerceNumberButton: UITextFieldDelegate {
         textFieldBottomBorderView.backgroundColor = .clear
         // Closure callback
         let isIncrease = currentValue >= (Int(text) ?? 0) ? true : false
-        NumberResultClosure?("\(text)", isIncrease)
+        NumberResultClosure?("\(text)", nil)
         // Callback for delegate
         delegate?.numberButtonResult(self, number: "\(text)", isIncrease: isIncrease)
     }
