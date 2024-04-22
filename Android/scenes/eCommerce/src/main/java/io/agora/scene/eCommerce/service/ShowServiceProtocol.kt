@@ -100,5 +100,5 @@ interface ShowServiceProtocol {
     fun subscribeMessage(roomId: String, onMessageChange: (ShowMessage) -> Unit)
     /** Like Actions */
     fun likeSend(roomId: String, success: (() -> Unit)?, error: ((Exception) -> Unit)?)
-    fun likeSubscribe(roomId: String, onMessageChange: (ShowMessage) -> Unit)
+    fun likeSubscribe(roomId: String, onMessageChange: () -> Unit)
 }

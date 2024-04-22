@@ -25,6 +25,7 @@ import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
+import io.agora.scene.eCommerce.ShowLogger
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response
@@ -45,12 +46,12 @@ class ShowSyncManagerServiceImpl constructor(
     /**
      * Tag
      */
-    private val TAG = "ShowSyncManagerServiceImpl"
+    private val TAG = "Service"
 
     /**
      * K scene id
      */
-    private val kSceneId = "scene_ecommerce_1_2_0"
+    private val kSceneId = "scene_ecommerce_0_2_0"
     private val kCollectionIdLike = "commerce_like_collection"
     private val kCollectionIdMessage = "commerce_message_collection"
     private val kCollectionIdBid = "commerce_goods_bid_collection"
@@ -99,7 +100,7 @@ class ShowSyncManagerServiceImpl constructor(
         var shopChangeSubscriber: ((List<GoodsModel>) -> Unit)? = null,
         var roomChangeSubscriber: (() -> Unit)? = null,
         var messageChangeSubscriber: ((ShowMessage) -> Unit)? = null,
-        var likeChangeSubscriber: ((ShowMessage) -> Unit)? = null,
+        var likeChangeSubscriber: (() -> Unit)? = null,
     )
 
     /**
@@ -112,6 +113,7 @@ class ShowSyncManagerServiceImpl constructor(
      *
      */
     override fun destroy() {
+        ShowLogger.d(TAG, "destroy")
         synchronized(roomInfoControllers){
             roomInfoControllers.forEach {
                 cleanRoomInfoController(it)
@@ -194,7 +196,7 @@ class ShowSyncManagerServiceImpl constructor(
 
             val controller = RoomInfoController(roomInfo.roomId, scene, roomInfo)
             roomInfoControllers.add(controller)
-            Log.d(TAG, "[commerce] add controller ${roomInfo.roomId}， roomInfoControllers：${roomInfoControllers}")
+            ShowLogger.d(TAG, "[commerce] add controller ${roomInfo.roomId}， roomInfoControllers：${roomInfoControllers}")
             actionSubscribe(controller)
             scene.bindRespDelegate(this)
             if (roomInfo.ownerId.toLong() == UserManager.getInstance().user.id) {
@@ -230,6 +232,7 @@ class ShowSyncManagerServiceImpl constructor(
     }
 
     override fun leaveRoom(roomId: String) {
+        ShowLogger.d(TAG, "leaveRoom: $roomId")
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val roomInfo = controller.roomInfo
         val scene = syncManager.getScene(roomId)
@@ -242,15 +245,16 @@ class ShowSyncManagerServiceImpl constructor(
             scene.leave()
         }
         roomInfoControllers.forEach { c ->
-            if (controller.roomId == roomId) {
+            if (c.roomId == roomId) {
                 cleanRoomInfoController(c)
             }
         }
         syncManager.removeScene(roomId)
         roomInfoControllers.removeAll { it.roomId == roomId }
-        Log.d(TAG, "[commerce] leaveRoom $roomId")
     }
+
     override fun deleteRoom(roomId: String, complete: () -> Unit) {
+        ShowLogger.d(TAG, "deleteRoom: $roomId")
         syncManager.getScene(roomId).delete()
         roomManager.destroyRoom(BuildConfig.AGORA_APP_ID, kSceneId, roomId) { e ->
             complete.invoke()
@@ -262,6 +266,7 @@ class ShowSyncManagerServiceImpl constructor(
         controller.roomChangeSubscriber = onUpdate
     }
     private fun cleanRoomInfoController(controller: RoomInfoController) {
+        ShowLogger.d(TAG, "cleanRoomInfoController: ${controller.roomId}")
         controller.shopCollection?.release()
         controller.auctionCollection?.release()
         controller.messageCollection?.release()
@@ -277,7 +282,7 @@ class ShowSyncManagerServiceImpl constructor(
             AUIListCollection(a, b, c)
         }
         controller.shopCollection?.subscribeAttributesDidChanged { channelName, key, model ->
-            Log.d("pigpig", "1111111")
+            ShowLogger.d(TAG, "shopCollection subscribeAttributesDidChanged, channelName:$channelName key:$key model:$model")
             val list = model.getList()
             if (list == null) {
                 controller.shopChangeSubscriber?.invoke(emptyList())
@@ -293,7 +298,8 @@ class ShowSyncManagerServiceImpl constructor(
         controller.auctionCollection = controller.scene.getCollection(kCollectionIdBid) { a, b, c ->
             AUIMapCollection(a, b, c)
         }
-        controller.auctionCollection?.subscribeAttributesDidChanged { _, _, model ->
+        controller.auctionCollection?.subscribeAttributesDidChanged { channelName, key, model ->
+            ShowLogger.d(TAG, "auctionCollection subscribeAttributesDidChanged, channelName:$channelName key:$key model:$model")
             val gson = Gson()
             val json = gson.toJson(model.getMap())
             val auction = gson.fromJson(json, AuctionModel::class.java)
@@ -316,7 +322,7 @@ class ShowSyncManagerServiceImpl constructor(
                     if (model.message == null && model.userId == null) return
                     runOnMainThread { controller.messageChangeSubscriber?.invoke(model) }
                 } catch (e: Exception) {
-                    Log.d(TAG, "recv message error: ${e.message}")
+                    ShowLogger.d(TAG, "recv message error: ${e.message}")
                 }
             }
         })
@@ -330,10 +336,7 @@ class ShowSyncManagerServiceImpl constructor(
             AUIMapCollection(a, b, c)
         }
         controller.likeCollection?.subscribeAttributesDidChanged { _, _, model ->
-            val gson = Gson()
-            val json = gson.toJson(model.getMap())
-            val message = gson.fromJson(json, ShowMessage::class.java)
-            runOnMainThread { controller.likeChangeSubscriber?.invoke(message) }
+            runOnMainThread { controller.likeChangeSubscriber?.invoke() }
         }
     }
 
@@ -366,12 +369,8 @@ class ShowSyncManagerServiceImpl constructor(
             )
         )
         controller.shopCollection?.addMetaData(null, map1, null) {}
-        mainHandler.postDelayed({
-            controller.shopCollection?.addMetaData(null, map2, null) {}
-        }, 500)
-        mainHandler.postDelayed({
-            controller.shopCollection?.addMetaData(null, map3, null) {}
-        }, 1000)
+        controller.shopCollection?.addMetaData(null, map2, null) {}
+        controller.shopCollection?.addMetaData(null, map3, null) {}
         val auctionModel = AuctionModel().apply {
             goods = GoodsModel(
                 goodsId = "",
@@ -383,6 +382,9 @@ class ShowSyncManagerServiceImpl constructor(
         }
         val auctionMap = GsonTools.beanToMap(auctionModel)
         controller.auctionCollection?.addMetaData(null, auctionMap, null) {}
+
+        val keys = mapOf<String, Any>("count" to 0)
+        controller.likeCollection?.addMetaData(null, keys, null) {}
     }
 
     /** User Actions */
@@ -400,19 +402,19 @@ class ShowSyncManagerServiceImpl constructor(
                 controller.userList.clear()
                 controller.userList.addAll(list)
             }
-            runOnMainThread { controller.userChangeSubscriber?.invoke(controller.userList.size) }
+            renewRoomInfo(controller, controller.userList.size)
         }
         override fun onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
             val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
             if (controller.userList.firstOrNull { it.userId == userInfo.userId } == null) {
                 controller.userList.add(userInfo)
-                runOnMainThread { controller.userChangeSubscriber?.invoke(controller.userList.size) }
+                renewRoomInfo(controller, controller.userList.size)
             }
         }
         override fun onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
             val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
             controller.userList.removeAll { it.userId == userInfo.userId }
-            runOnMainThread { controller.userChangeSubscriber?.invoke(controller.userList.size) }
+            renewRoomInfo(controller, controller.userList.size)
         }
         override fun onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {
             val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
@@ -424,9 +426,42 @@ class ShowSyncManagerServiceImpl constructor(
         }
     }
 
+    private fun renewRoomInfo(controller: RoomInfoController, count: Int) {
+        if (controller.roomInfo.ownerId == UserManager.getInstance().user.id.toString()) {
+            val roomInfo = AUIRoomInfo()
+            roomInfo.roomId = controller.roomId
+            roomInfo.roomName = controller.roomInfo.roomName
+            val owner = AUIUserThumbnailInfo()
+            owner.userId = controller.roomInfo.ownerId
+            owner.userName = controller.roomInfo.ownerName
+            owner.userAvatar = controller.roomInfo.getOwnerAvatarFullUrl()
+            roomInfo.owner = owner
+            roomInfo.thumbnail = controller.roomInfo.thumbnailId
+            roomInfo.createTime = controller.roomInfo.createdAt
+            val roomDetailModel = RoomDetailModel(
+                controller.roomInfo.roomId,
+                controller.roomInfo.roomName,
+                count,
+                controller.roomInfo.thumbnailId,
+                controller.roomInfo.ownerId,
+                controller.roomInfo.ownerAvatar,
+                controller.roomInfo.ownerName,
+                controller.roomInfo.roomStatus,
+                controller.roomInfo.createdAt,
+                controller.roomInfo.updatedAt
+            )
+            roomInfo.customPayload = GsonTools.beanToMap(roomDetailModel)
+            roomManager.updateRoomInfo(
+                BuildConfig.AGORA_APP_ID, kSceneId, roomInfo
+            ) { e, _ ->
+                Log.d("hugo", "updateRoomInfo")
+            }
+            runOnMainThread { controller.userChangeSubscriber?.invoke(controller.userList.size) }
+        }
+    }
+
     /** Message Actions */
     override fun sendChatMessage(roomId: String, message: String, success: (() -> Unit)?, error: ((Exception) -> Unit)?) {
-//        val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val messageModel = ShowMessage(
             UserManager.getInstance().user.id.toString(),
             UserManager.getInstance().user.name,
@@ -434,8 +469,6 @@ class ShowSyncManagerServiceImpl constructor(
             System.currentTimeMillis().toDouble()
         )
         val messageMap = GsonTools.beanToMap(messageModel)
-//        controller.messageCollection?.addMetaData(null, messageMap) {}
-
         syncManager.rtmManager.sendMessage(roomId, messageMap.toString(), success, error)
     }
 
@@ -451,7 +484,7 @@ class ShowSyncManagerServiceImpl constructor(
         controller.likeCollection?.calculateMetaData(null, keys, 1, 0, Int.MAX_VALUE, null) {
         }
     }
-    override fun likeSubscribe(roomId: String, onLikeCountChange: (ShowMessage) -> Unit) {
+    override fun likeSubscribe(roomId: String, onLikeCountChange: () -> Unit) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         controller.likeChangeSubscriber = onLikeCountChange
     }
@@ -517,7 +550,7 @@ class ShowSyncManagerServiceImpl constructor(
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val keys = listOf("quantity")
         val filter = listOf(mapOf<String, Any>("goodsId" to itemId))
-        controller.shopCollection?.calculateMetaData(null, keys, -1, 0, 1000, filter) { err ->
+        controller.shopCollection?.calculateMetaData(null, keys, -1, 0, 200, filter) { err ->
             if (err != null) {
                 runOnMainThread { onComplete.invoke(err) }
             } else {
