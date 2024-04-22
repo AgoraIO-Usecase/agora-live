@@ -66,8 +66,8 @@ class CommerceGoodsListView: UIView {
         })
     }
     
-    private func updateGoodsInfo(goods: CommerceGoodsModel?) {
-        serviceImp?.updateGoodsInfo(roomId: roomId, goods: goods, completion: { error in
+    private func updateGoodsInfo(goods: CommerceGoodsModel?, increase: Bool) {
+        serviceImp?.updateGoodsInfo(roomId: roomId, goods: goods, increase: increase, completion: { error in
             commerceLogger.error("error == \(error?.localizedDescription ?? "")")
         })
     }
@@ -107,7 +107,7 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
             var title = "Bought!"
             if (model.goods?.quantity ?? 0) > 0 {
                 model.goods?.quantity -= 1
-                self.updateGoodsInfo(goods: model.goods)
+                self.updateGoodsInfo(goods: model.goods, increase: false)
             } else {
                 title = "Sold Out!"
             }
@@ -116,10 +116,10 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
             alertVC.addAction(okAction)
             UIViewController.cl_topViewController()?.present(alertVC, animated: true)
         }
-        cell.onClickNumberButtonClosure = { [weak self] number in
+        cell.onClickNumberButtonClosure = { [weak self] number, isIncrease in
             guard let self = self else { return }
             model.goods?.quantity = number
-            self.updateGoodsInfo(goods: model.goods)
+            self.updateGoodsInfo(goods: model.goods, increase: isIncrease)
         }
         return cell
     }
@@ -127,7 +127,7 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
 
 class CommerceGoodsListViewCell: UITableViewCell {
     var onClickStatusButtonClosure: (() -> Void)?
-    var onClickNumberButtonClosure: ((Int) -> Void)?
+    var onClickNumberButtonClosure: ((Int, Bool) -> Void)?
     
     private lazy var coverImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage.sceneImage(name: ""))
@@ -175,9 +175,9 @@ class CommerceGoodsListViewCell: UITableViewCell {
         button.minValue = 0
         button.maxValue = 99
         button.shakeAnimation = true
-        button.numberResult { [weak self] number in
+        button.numberResult { [weak self] number, isIncrease in
             let qty = Int(number) ?? 0
-            self?.onClickNumberButtonClosure?(qty)
+            self?.onClickNumberButtonClosure?(qty, isIncrease)
         }
         button.textField.textColor = UIColor(hex: "#191919", alpha: 1.0)
         button.textField.font = .systemFont(ofSize: 15)
