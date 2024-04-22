@@ -24,6 +24,7 @@ import io.agora.rtmsyncmanager.utils.AUILogger
 import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.manager.UserManager
+import io.agora.scene.base.utils.GsonUtils
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.eCommerce.ShowLogger
 import org.json.JSONException
@@ -462,14 +463,12 @@ class ShowSyncManagerServiceImpl constructor(
 
     /** Message Actions */
     override fun sendChatMessage(roomId: String, message: String, success: (() -> Unit)?, error: ((Exception) -> Unit)?) {
-        val messageModel = ShowMessage(
-            UserManager.getInstance().user.id.toString(),
-            UserManager.getInstance().user.name,
-            message,
-            System.currentTimeMillis().toDouble()
-        )
-        val messageMap = GsonTools.beanToMap(messageModel)
-        syncManager.rtmManager.sendMessage(roomId, messageMap.toString(), success, error)
+        val jsonObject = JSONObject()
+        jsonObject.put("userId", UserManager.getInstance().user.id.toString())
+        jsonObject.put("userName", UserManager.getInstance().user.name)
+        jsonObject.put("message", message)
+        jsonObject.put("createAt", System.currentTimeMillis().toDouble())
+        syncManager.rtmManager.sendMessage(roomId, jsonObject.toString(), success, error)
     }
 
     override fun subscribeMessage(roomId: String, onMessageChange: (ShowMessage) -> Unit) {
