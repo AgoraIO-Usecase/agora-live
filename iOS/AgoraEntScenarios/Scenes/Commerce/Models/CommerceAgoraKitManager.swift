@@ -26,7 +26,6 @@ class CommerceAgoraKitManager: NSObject {
     public var performanceMode: PerformanceMode = .smooth
     
     private var broadcasterConnection: AgoraRtcConnection?
-    var remoteMirrorModel: AgoraVideoMirrorMode = .enabled
     
     var exposureRangeX: Int?
     var exposureRangeY: Int?
@@ -239,6 +238,7 @@ class CommerceAgoraKitManager: NSObject {
             assert(true, "rtc engine not initlized")
             return
         }
+        isFrontCamera = true
         engine.setClientRole(.broadcaster)
         engine.setVideoEncoderConfiguration(encoderConfig)
         engine.setCameraCapturerConfiguration(captureConfig)
@@ -246,18 +246,18 @@ class CommerceAgoraKitManager: NSObject {
         canvas.view = canvasView
         canvas.uid = 0
         canvas.renderMode = .hidden
-        canvas.mirrorMode = .enabled
+        canvas.mirrorMode = .disabled
         engine.setupLocalVideo(canvas)
         engine.enableVideo()
         engine.startPreview()
-        engine.setVideoFrameDelegate(self)
+        setMirrorMode(mode: .enabled)
     }
     
     private var isFrontCamera: Bool = true
     func switchCamera(_ channelId: String? = nil) {
         isFrontCamera = !isFrontCamera
         engine?.switchCamera()
-        engine?.setLocalRenderMode(.hidden, mirror: .enabled)
+        setMirrorMode(mode: isFrontCamera ? .enabled : .disabled)
     }
     
     func updateChannelEx(channelId: String, options: AgoraRtcChannelMediaOptions) {
@@ -329,7 +329,6 @@ class CommerceAgoraKitManager: NSObject {
             return
         }
 //        setupContentInspectConfig(false)
-        isFrontCamera = true
         engine.stopPreview()
     }
     
@@ -390,12 +389,13 @@ class CommerceAgoraKitManager: NSObject {
         let canvas = AgoraRtcVideoCanvas()
         canvas.view = canvasView
         canvas.uid = uid
-        canvas.mirrorMode = .enabled
+        canvas.mirrorMode = .disabled
         engine.setupLocalVideo(canvas)
         engine.startPreview()
         engine.setDefaultAudioRouteToSpeakerphone(true)
         engine.enableLocalAudio(true)
         engine.enableLocalVideo(true)
+        setMirrorMode(mode: isFrontCamera ? .enabled : .disabled)
         commerceLogger.info("setupLocalVideo target uid:\(uid), user uid\(UserInfo.userId)", context: kCommerceLogBaseContext)
     }
     
@@ -414,8 +414,11 @@ class CommerceAgoraKitManager: NSObject {
         let container = VideoCanvasContainer()
         container.uid = uid
         container.container = canvasView
-        container.mirrorMode = remoteMirrorModel
         VideoLoaderApiImpl.shared.renderVideo(anchorInfo: anchorInfo, container: container)
+    }
+    
+    func setMirrorMode(mode: AgoraVideoMirrorMode) {
+        engine?.setParameters("{\"rtc.camera_capture_mirror_mode\":\(mode.rawValue)}")
     }
     
     func updateLoadingType(roomId: String, channelId: String, playState: AnchorState) {
@@ -522,17 +525,5 @@ extension CommerceAgoraKitManager: AgoraRtcMediaPlayerDelegate {
         if state == .openCompleted {
             playerKit.play()
         }
-    }
-}
-
-extension CommerceAgoraKitManager: AgoraVideoFrameDelegate {
-    func getVideoFrameProcessMode() -> AgoraVideoFrameProcessMode {
-        .readWrite
-    }
-    func getMirrorApplied() -> Bool {
-        !isFrontCamera
-    }
-    func getObservedFramePosition() -> AgoraVideoFramePosition {
-        .postCapture
     }
 }
