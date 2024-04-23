@@ -210,7 +210,12 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
                 self._startCheckExpire()
                 self._subscribeAll()
                 self.isJoined = true
-                completion(nil, roomModel)
+                
+                RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION,
+                                        data: ["userId": VLUserCenter.user.id, "count":  0, "createAt": Date().millionsecondSince1970()]) { err in
+                    completion(err, roomModel)
+                }
+                
             } failure: { error in
                 completion(error, nil)
             }
@@ -329,8 +334,12 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         _getGoodsList(roomId: roomId, completion: completion)
     }
     
-    func updateGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, increase: Bool, completion: @escaping (NSError?) -> Void) {
-        _updateGoodsInfo(roomId: roomId, goods: goods, increase: increase, completion: completion)
+    func updateGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, completion: @escaping (NSError?) -> Void) {
+        _updateGoodsInfo(roomId: roomId, goods: goods, completion: completion)
+    }
+    
+    func calcGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, increase: Bool, completion: @escaping (NSError?) -> Void) {
+        _calcGoodsInfo(roomId: roomId, goods: goods, increase: increase, completion: completion)
     }
     
     func subscribeGoodsInfo(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsModel]?) -> Void) {
@@ -509,24 +518,33 @@ extension CommerceSyncManagerServiceImp {
         }
     }
     
-    private func _updateGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, increase: Bool, completion: @escaping (NSError?) -> Void) {
+    private func _updateGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, completion: @escaping (NSError?) -> Void) {
         guard let channelName = roomId, let params = goods?.yy_modelToJSONObject() as? [String: Any] else {
             completion(NSError(domain: "roomId is empty", code: 0))
             return
         }
-        RTMSyncUtil.updateListMetaData(id: channelName, 
+        agoraPrint("_updateGoodsInfo[\(roomId ?? "")] \(goods?.title ?? "")")
+        RTMSyncUtil.updateListMetaData(id: channelName,
                                        key: SYNC_MANAGER_BUY_GOODS_COLLECTION,
                                        data: params,
                                        filter: [["goodsId": goods?.goodsId ?? ""]],
                                        callback: completion)
-//        let collecton = RTMSyncUtil.listCollection(id: channelName, key: SYNC_MANAGER_BUY_GOODS_COLLECTION)
-//        collecton?.calculateMetaData(valueCmd: nil,
-//                                     key: ["quantity"],
-//                                     value: increase ? 1 : -1,
-//                                     min: 0,
-//                                     max: 99,
-//                                     filter: [["goodsId": goods?.goodsId ?? ""]],
-//                                     callback: completion)
+    }
+    
+    private func _calcGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, increase: Bool, completion: @escaping (NSError?) -> Void) {
+        guard let channelName = roomId else {
+            completion(NSError(domain: "roomId is empty", code: 0))
+            return
+        }
+        agoraPrint("_calcGoodsInfo[\(roomId ?? "")] \(goods?.title ?? "")")
+        let collecton = RTMSyncUtil.listCollection(id: channelName, key: SYNC_MANAGER_BUY_GOODS_COLLECTION)
+        collecton?.calculateMetaData(valueCmd: nil,
+                                     key: ["quantity"],
+                                     value: increase ? 1 : -1,
+                                     min: 0,
+                                     max: Int.max,
+                                     filter: [["goodsId": goods?.goodsId ?? ""]],
+                                     callback: completion)
     }
     
     private func _subscribeGoodsInfo(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsModel]?) -> Void) {
@@ -555,9 +573,18 @@ extension CommerceSyncManagerServiceImp {
             completion?(NSError(domain: "roomId is empty", code: 0))
             return
         }
-        RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION,
-                                data: ["userId": VLUserCenter.user.id, "count":  count, "createAt": Date().millionsecondSince1970()],
-                                callback: completion)
+//        RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION,
+//                                data: ["userId": VLUserCenter.user.id, "count":  count, "createAt": Date().millionsecondSince1970()],
+//                                callback: completion)
+        
+        let collecton = RTMSyncUtil.collection(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION)
+        collecton?.calculateMetaData(valueCmd: nil,
+                                     key: ["count"],
+                                     value: 1,
+                                     min: 0,
+                                     max: Int.max,
+                                     filter: nil,
+                                     callback: completion)
     }
     
     func subscribeUpvoteEvent(roomId: String?, completion: ((String?, Int) -> Void)?) {
