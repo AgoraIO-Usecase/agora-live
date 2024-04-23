@@ -66,6 +66,7 @@ extension AUIUserServiceImpl: AUIRtmUserProxyDelegate {
             self.userList.append(user)
         }
         self.respDelegates.allObjects.forEach { obj in
+            print("resp counts:\(self.respDelegates.count)")
             guard let obj = obj as? AUIUserRespDelegate else {return}
             obj.onRoomUserUpdate(roomId: channelName, userInfo: user)
         }
