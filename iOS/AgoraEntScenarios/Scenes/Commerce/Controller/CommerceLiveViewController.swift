@@ -527,7 +527,11 @@ extension CommerceLiveViewController: AgoraRtcEngineDelegate {
         commerceLogger.warning("tokenPrivilegeWillExpire: \(roomId)",
                            context: kCommerceLogBaseContext)
         if let channelId = currentChannelId {
-            CommerceAgoraKitManager.shared.renewToken(channelId: channelId)
+            CommerceAgoraKitManager.shared.preGenerateToken {
+                guard let rtmToken = AppContext.shared.commerceRtmToken, let rtcToken = AppContext.shared.commerceRtcToken else {return}
+                CommerceAgoraKitManager.shared.renewToken(channelId: channelId, rtcToken: rtcToken)
+                RTMSyncUtil.renew(rtmToken: rtmToken)
+            }
         }
     }
 }

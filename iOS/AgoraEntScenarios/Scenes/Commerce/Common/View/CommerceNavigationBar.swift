@@ -80,6 +80,7 @@ extension CommerceNavigationBar {
     
     @objc private func didClickLeftButtonAction(){
         RTMSyncUtil.logOut()
+        RTMSyncUtil.destroy()
         currentNavigationController()?.popViewController(animated: true)
     }
     

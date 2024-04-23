@@ -184,41 +184,60 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         room.ownerAvatar = VLUserCenter.user.headUrl
         room.createdAt = Date().millionsecondSince1970()
         let params = (room.yy_modelToJSONObject() as? [String: Any]) ?? [:]
+        
+        let group = DispatchGroup()
+        
+        group.enter()
+        var roomManagerError: NSError? = nil
+        let date = Date()
         RTMSyncUtil.createRoom(roomName: roomName, roomId: room.roomId, payload: params) { error, roomInfo in
-            if error != nil {
-                completion(error, nil)
+            commercePrintLog("[Timing][\(roomId)] restful createRoom cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+            
+            roomManagerError = error
+            group.leave()
+        }
+        
+        group.enter()
+        var rtmError: NSError? = nil
+        let roomModel = CommerceRoomDetailModel()
+        RTMSyncUtil.joinScene(id: roomId, ownerId: room.ownerId, payload: params) { [weak self] in
+            guard let self = self else {return}
+            let channelName = roomId
+            self.roomId = channelName
+            roomModel.ownerAvatar = room.ownerAvatar
+            roomModel.ownerId = room.ownerId
+            roomModel.ownerName = room.ownerName
+            roomModel.roomId = channelName
+            roomModel.roomName = room.roomName
+            roomModel.thumbnailId = thumbnailId
+            roomModel.roomStatus = .end
+            roomModel.createdAt = Date().millionsecondSince1970()
+            self.roomList?.append(roomModel)
+            self._startCheckExpire()
+            self._subscribeAll()
+            self.isJoined = true
+            
+            let date = Date()
+            RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION,
+                                    data: ["userId": VLUserCenter.user.id, "count":  0, "createAt": Date().millionsecondSince1970()]) { err in
+                commercePrintLog("[Timing][\(channelName)] rtm addMetaData cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+                rtmError = err
+                group.leave()
+            }
+            
+        } failure: { error in
+            rtmError = error
+            group.leave()
+        }
+        
+        group.notify(queue: .main) {
+            if roomManagerError == nil, rtmError == nil {
+                completion(nil, roomModel)
                 return
             }
-            RTMSyncUtil.joinScene(id: roomId, ownerId: room.ownerId, payload: params) {
-                let channelName = roomInfo?.roomId//result.getPropertyWith(key: "roomId", type: String.self) as? String
-                guard let channelName = channelName else {
-                    agoraAssert("createRoom fail: channelName == nil")
-                    completion(nil, nil)
-                    return
-                }
-                self.roomId = channelName
-                let roomModel = CommerceRoomDetailModel()
-                roomModel.ownerAvatar = roomInfo?.owner?.userAvatar
-                roomModel.ownerId = roomInfo?.owner?.userId ?? ""
-                roomModel.ownerName = roomInfo?.owner?.userName
-                roomModel.roomId = channelName
-                roomModel.roomName = roomInfo?.roomName
-                roomModel.thumbnailId = thumbnailId
-                roomModel.roomStatus = .end
-                roomModel.createdAt = Date().millionsecondSince1970()
-                self.roomList?.append(roomModel)
-                self._startCheckExpire()
-                self._subscribeAll()
-                self.isJoined = true
-                
-                RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION,
-                                        data: ["userId": VLUserCenter.user.id, "count":  0, "createAt": Date().millionsecondSince1970()]) { err in
-                    completion(err, roomModel)
-                }
-                
-            } failure: { error in
-                completion(error, nil)
-            }
+            
+            RTMSyncUtil.leaveScene(id: roomId, ownerId: VLUserCenter.user.id)
+            completion(roomManagerError ?? rtmError, nil)
         }
     }
     
@@ -227,7 +246,8 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         isJoined = false
         self.roomId = room.roomId
         let params = (room.yy_modelToJSONObject() as? [String: Any])
-        RTMSyncUtil.joinScene(id: room.roomId, ownerId: room.ownerId, payload: params) {
+        RTMSyncUtil.joinScene(id: room.roomId, ownerId: room.ownerId, payload: params) { [weak self] in
+            guard let self = self else {return}
             let roomModel = CommerceRoomDetailModel()
             roomModel.ownerAvatar = room.ownerAvatar
             roomModel.ownerId = room.ownerId
@@ -414,11 +434,11 @@ extension CommerceSyncManagerServiceImp {
     
     fileprivate func _subscribeAll() {
         agoraPrint("imp all subscribe...")
-        _subscribeMessageChanged()
         _subscribeOnlineUsersChanged()
         _getUserList(roomId: room?.roomId) { _, list in
             
         }
+        RTMSyncUtil.subscribeMessage(channelName: "", delegate: self)
     }
     
     private func _unsubscribeAll() {
@@ -426,6 +446,7 @@ extension CommerceSyncManagerServiceImp {
             return
         }
         agoraPrint("imp all unsubscribe...")
+        RTMSyncUtil.unsubscribeMessage(channelName: "", delegate: self)
         RTMSyncUtil.leaveScene(id: channelName, ownerId: room?.ownerId ?? "")
     }
     
@@ -715,7 +736,7 @@ extension CommerceSyncManagerServiceImp {
     }
 
     private func _removeUser(roomId: String?, completion: @escaping (NSError?) -> Void) {
-        guard let channelName = roomId else {
+        guard let _ = roomId else {
             agoraAssert("channelName = nil")
             return
         }
@@ -794,27 +815,6 @@ extension CommerceSyncManagerServiceImp {
 //            finished?(nil)
 //        }
     }
-
-    private func _subscribeMessageChanged() {
-        let channelName = getRoomId()
-        if channelName.isEmpty {
-            agoraPrint("channelName is empty ...")
-            return
-        }
-        agoraPrint("imp message subscribe ...")
-        RTMSyncUtil.subscribeMessageDidReceive(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION) { message, roomId in
-            agoraPrint("imp message subscribe onUpdated... [\(message)] \(channelName)")
-            guard let model = CommerceMessage.yy_model(withJSON: message), channelName == roomId else { return }
-            self.subscribeDelegate?.onMessageDidAdded(message: model)
-
-        }
-//        RTMSyncUtil.subscribeAttributesDidChanged(id: channelName, key: SYNC_MANAGER_MESSAGE_COLLECTION) { channelName, object in
-//            agoraPrint("imp message subscribe onUpdated... [\(object.getMap() ?? [:])] \(channelName)")
-//            guard let map = object.getMap(),
-//                  let model = CommerceMessage.yy_model(with: map) else { return }
-//            self.subscribeDelegate?.onMessageDidAdded(message: model)
-//        }
-    }
 }
 
 class CommerceRobotSyncManagerServiceImp: CommerceSyncManagerServiceImp {
@@ -840,7 +840,7 @@ class CommerceRobotSyncManagerServiceImp: CommerceSyncManagerServiceImp {
     
     @objc override func _getRoomList(page: Int, completion: @escaping (NSError?, [CommerceRoomListModel]?) -> Void) {
         RTMSyncUtil.getRoomList { error, results in
-            agoraPrint("result == \(results?.compactMap { $0 })")
+            agoraPrint("result == \(results?.compactMap { $0 } ?? [])")
             if error != nil {
                 completion(error, nil)
                 return
@@ -871,5 +871,13 @@ class CommerceRobotSyncManagerServiceImp: CommerceSyncManagerServiceImp {
     @objc override func joinRoom(room: CommerceRoomListModel,
                         completion: @escaping (NSError?, CommerceRoomDetailModel?) -> Void) {
         super.joinRoom(room: room, completion: completion)
+    }
+}
+
+extension CommerceSyncManagerServiceImp: AUIRtmMessageProxyDelegate {
+    func onMessageReceive(publisher: String, channelName: String, message: String) {
+        guard channelName == roomId, let model = CommerceMessage.yy_model(withJSON: message) else { return }
+        agoraPrint("imp onMessageReceive... [\(message)] \(channelName)")
+        self.subscribeDelegate?.onMessageDidAdded(message: model)
     }
 }

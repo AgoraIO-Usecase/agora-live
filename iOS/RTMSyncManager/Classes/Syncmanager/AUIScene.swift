@@ -95,7 +95,7 @@ public class AUIScene: NSObject {
         let date = Date()
         roomCollection.initMetaData(channelName: channelName,
                                     metadata: roomInfo) { err in
-            aui_benchmark("rtm setMetaData", cost: -date.timeIntervalSinceNow, tag: kSceneTag)
+            aui_benchmark("rtm initMetaData", cost: -date.timeIntervalSinceNow, tag: kSceneTag)
             if let err = err {
                 completion(err)
                 return
