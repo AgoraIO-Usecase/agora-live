@@ -223,11 +223,18 @@ extension AUIListCollection {
                 return
             }
             
-            guard let tempItem = calculateMap(origMap: item,
-                                              key: key,
-                                              value: value.value,
-                                              min: value.min,
-                                              max: value.max) else {
+            var tempItem: [String: Any]?
+            do {
+                tempItem = try calculateMap(origMap: item,
+                                            key: key,
+                                            value: value.value,
+                                            min: value.min,
+                                            max: value.max)
+            } catch {
+                callback?(error as NSError)
+                return
+            }
+            guard let tempItem = tempItem else {
                 callback?(AUICollectionOperationError.calculateMapFail.toNSError())
                 return
             }
@@ -513,7 +520,13 @@ extension AUIListCollection {
                 let error: AUICollectionError? = decodeModel(data)
                 let code = error?.code ?? 0
                 let reason = error?.reason ?? "success"
-                callback(code == 0 ? nil : AUICollectionOperationError.recvErrorReceipt.toNSError("code: \(code), reason: \(reason)"))
+                if code == 0 {
+                    callback(nil)
+                } else if let err = AUICollectionOperationError(rawValue: code) {
+                    callback(err.toNSError(reason))
+                } else {
+                    callback(AUICollectionOperationError.recvErrorReceipt.toNSError("code: \(code), reason: \(reason)"))
+                }
             }
             return
         }

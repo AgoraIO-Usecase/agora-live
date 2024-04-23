@@ -544,7 +544,20 @@ extension CommerceSyncManagerServiceImp {
                                      min: 0,
                                      max: Int.max,
                                      filter: [["goodsId": goods?.goodsId ?? ""]],
-                                     callback: completion)
+                                     callback: { err in
+            guard let err = err else {
+                completion(nil)
+                return
+            }
+            var title = err.localizedDescription
+            if err.code == AUICollectionOperationError.calculateMapOutOfRange.rawValue {
+                title = "Sold Out!"
+            }
+            let error = NSError(domain: "Service Error",
+                                code: err.code,
+                                userInfo: [ NSLocalizedDescriptionKey : title])
+            completion(error)
+        })
     }
     
     private func _subscribeGoodsInfo(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsModel]?) -> Void) {
