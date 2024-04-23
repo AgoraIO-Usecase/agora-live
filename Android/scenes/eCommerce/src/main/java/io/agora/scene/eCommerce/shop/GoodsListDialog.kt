@@ -1,30 +1,25 @@
 package io.agora.scene.eCommerce.shop
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.agora.rtc2.internal.CommonUtility.getSystemService
-import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.eCommerce.R
 import io.agora.scene.eCommerce.databinding.CommerceShopGoodsItemLayoutBinding
 import io.agora.scene.eCommerce.databinding.CommerceShopGoodsListDialogBinding
 import io.agora.scene.eCommerce.service.GoodsModel
 import io.agora.scene.eCommerce.service.ShowServiceProtocol
-import io.agora.scene.eCommerce.service.ownerId
 import io.agora.scene.widget.basic.BindingSingleAdapter
 import io.agora.scene.widget.basic.BindingViewHolder
 
 class GoodsListDialog constructor(
     context: Context,
     private val roomId: String
-) : BottomSheetDialog(context, R.style.commerce_alert_dialog) {
+) : Dialog(context, R.style.commerce_full_screen_dialog) {
 
     private val tag = "GoodsListDialog"
 
@@ -51,7 +46,8 @@ class GoodsListDialog constructor(
     }
 
     private fun updateList(goodsModels: List<GoodsModel>) {
-        if (dataSource.isEmpty()) {
+        if (dataSource.count() != goodsModels.count()) {
+            dataSource.clear()
             for (model in goodsModels) {
                 if (model.imageName.contains("0")) {
                     model.picResource = R.drawable.commerce_shop_goods_0
@@ -72,22 +68,44 @@ class GoodsListDialog constructor(
     }
 
     private fun setupView() {
-        val roomInfo = mService.getRoomInfo(roomId) ?: AUIRoomInfo()
-        isRoomOwner = roomInfo.ownerId == UserManager.getInstance().user.id.toInt()
+        val roomInfo = mService.getRoomInfo(roomId) ?: run {
+            return
+        }
+        isRoomOwner = roomInfo.ownerId.toLong() == UserManager.getInstance().user.id
         mAdapter = ShopAdapter(isRoomOwner)
         binding.recyclerView.adapter = mAdapter
         mAdapter.onClickBuy = { goodsId ->
-            mService.shopBuyItem(roomId, goodsId) { e ->
+            mService.shopBuyOrMinusItem(roomId, goodsId) { e ->
                 if (e != null) { // bought result
-                    ShoppingResultDialog(context, context.getString(R.string.commerce_shop_alert_bought)).show()
+                    showOperationInfo(context.getString(R.string.commerce_shop_alert_sold_out))
                 } else {
-                    ShoppingResultDialog(context, context.getString(R.string.commerce_shop_alert_sold_out)).show()
+                    showOperationInfo(context.getString(R.string.commerce_shop_alert_bought))
                 }
             }
         }
         mAdapter.onUserChangedQty = { goodsId, qty ->
             mService.shopUpdateItem(roomId, goodsId, qty)
         }
+        mAdapter.onClickAdd = { goodsId ->
+            mService.shopAddItem(roomId, goodsId) {}
+        }
+        mAdapter.onClickMinus = { goodsId ->
+            mService.shopBuyOrMinusItem(roomId, goodsId) {}
+        }
+        binding.root.setOnClickListener {
+            dismiss()
+        }
+        binding.clAlert.setOnClickListener {
+            binding.clAlert.visibility = View.INVISIBLE
+        }
+        binding.tvAlertSubmit.setOnClickListener {
+            binding.clAlert.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun showOperationInfo(text: String) {
+        binding.tvAlertInfo.text = text
+        binding.clAlert.visibility = View.VISIBLE
     }
 
     private class ShopAdapter(
@@ -96,7 +114,11 @@ class GoodsListDialog constructor(
 
         var onClickBuy: ((goodsId: String) -> Unit)? = null
 
-        var onUserChangedQty: ((goodsId: String, qty: Int) -> Unit)? = null
+        var onClickAdd: ((goodsId: String) -> Unit)? = null
+
+        var onClickMinus: ((goodsId: String) -> Unit)? = null
+
+        var onUserChangedQty: ((goodsId: String, qty: Long) -> Unit)? = null
 
         override fun onBindViewHolder(
             holder: BindingViewHolder<CommerceShopGoodsItemLayoutBinding>,
@@ -108,7 +130,7 @@ class GoodsListDialog constructor(
                 holder.binding.tvPrice.text = String.format("$%.0f", item.price)
                 val context = holder.itemView.context
                 holder.binding.tvQty.text = context.getString(R.string.commerce_shop_item_qty, item.quantity.toString())
-                if (item.quantity == 0) {
+                if (item.quantity == 0L) {
                     holder.binding.btnBuy.setBackgroundResource(R.drawable.commerce_corner_radius_gray)
                     holder.binding.btnBuy.text = context.getString(R.string.commerce_shop_item_sold_out)
                     holder.binding.btnBuy.setTextColor(Color.parseColor("#A5ADBA"))
@@ -127,13 +149,13 @@ class GoodsListDialog constructor(
                         val value = (holder.binding.etQty.text ?: "0").toString().toInt()
                         val newValue = fitValue(value + 1)
                         holder.binding.etQty.setText(newValue.toString())
-                        onUserChangedQty?.invoke(item.goodsId, newValue)
+                        onClickAdd?.invoke(item.goodsId)
                     }
                     holder.binding.btnReduce.setOnClickListener {
                         val value = (holder.binding.etQty.text ?: "0").toString().toInt()
                         val newValue = fitValue(value - 1)
                         holder.binding.etQty.setText(newValue.toString())
-                        onUserChangedQty?.invoke(item.goodsId, newValue)
+                        onClickMinus?.invoke(item.goodsId)
                     }
                     holder.binding.etQty.setOnEditorActionListener { _, actionId, _ ->
                         if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -143,7 +165,7 @@ class GoodsListDialog constructor(
 
                             val qty = holder.binding.etQty.text.toString().toIntOrNull() ?: 0
                             val newValue = fitValue(qty)
-                            onUserChangedQty?.invoke(item.goodsId, newValue)
+                            onUserChangedQty?.invoke(item.goodsId, newValue.toLong())
                             return@setOnEditorActionListener true
                         }
                         false
