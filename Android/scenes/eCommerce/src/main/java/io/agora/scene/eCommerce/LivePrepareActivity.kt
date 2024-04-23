@@ -5,16 +5,14 @@ import android.content.ClipboardManager
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.LayoutInflater
-import android.view.TextureView
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.CameraCapturerConfiguration
@@ -61,6 +59,7 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      * M room id
      */
     private val mRoomId by lazy { getRandomRoomId() }
+
     /**
      * M rtc engine
      */
@@ -79,6 +78,10 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      */
     override fun getViewBinding(inflater: LayoutInflater): CommerceLivePrepareActivityBinding {
         return CommerceLivePrepareActivityBinding.inflate(inflater)
+    }
+
+    override fun onBackPressed() {
+
     }
 
     /**
@@ -119,6 +122,7 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
         }
         binding.tvRotate.setOnClickListener {
             mRtcEngine.switchCamera()
+//            RtcEngineInstance.isFrontCamera = !RtcEngineInstance.isFrontCamera
         }
         binding.tvSetting.setOnClickListener {
             if (AgoraApplication.the().isDebugModeOpen) {
@@ -129,9 +133,8 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
         }
 
         toggleVideoRun = Runnable {
+            onPresetNetworkModeSelected()
             initRtcEngine()
-            //getDeviceScoreAndUpdateVideoProfile()
-            showPresetDialog()
         }
         requestCameraPermission(true)
     }
@@ -181,6 +184,7 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      */
     override fun onResume() {
         super.onResume()
+        mRtcEngine.setParameters("{\"rtc.camera_capture_mirror_mode\":0}")
         mRtcEngine.startPreview()
     }
 
@@ -200,23 +204,15 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      *
      */
     private fun initRtcEngine() {
-        val cacheQualityResolution = PictureQualityDialog.getCacheQualityResolution()
-        mRtcEngine.setCameraCapturerConfiguration(
-            CameraCapturerConfiguration(
-                CameraCapturerConfiguration.CaptureFormat(
-                    cacheQualityResolution.width,
-                    cacheQualityResolution.height,
-                    15
-                )
-            )
-        )
         val view = TextureView(this)
         binding.flVideoContainer.addView(view)
         val canvas = VideoCanvas(view, 0, 0)
         canvas.mirrorMode = Constants.VIDEO_MIRROR_MODE_DISABLED
+        canvas.renderMode = Constants.RENDER_MODE_HIDDEN
         mRtcEngine.setupLocalVideo(canvas)
         mRtcEngine.startPreview()
     }
+
     /**
      * Copy2clipboard
      *
@@ -316,4 +312,18 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
         else -> R.drawable.commerce_room_cover_0
     }
 
+    private fun onPresetNetworkModeSelected() {
+        val broadcastStrategy = VideoSetting.BroadcastStrategy.Smooth
+        val network = VideoSetting.NetworkLevel.Good
+
+        val deviceLevel = if (mRtcEngine.queryDeviceScore() >= 90) {
+            VideoSetting.DeviceLevel.High
+        } else if (mRtcEngine.queryDeviceScore() >= 75) {
+            VideoSetting.DeviceLevel.Medium
+        } else {
+            VideoSetting.DeviceLevel.Low
+        }
+
+        VideoSetting.updateBroadcastSetting(deviceLevel, network, broadcastStrategy, isJoinedRoom = false, isByAudience = false, RtcConnection(mRoomId, UserManager.getInstance().user.id.toInt()))
+    }
 }

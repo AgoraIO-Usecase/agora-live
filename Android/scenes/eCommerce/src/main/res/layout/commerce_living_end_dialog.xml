@@ -15,7 +15,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/show_living_end_title"
+        android:text="@string/commerce_living_end_title"
         android:textColor="#040A25"
         android:textSize="18sp" />
 
@@ -24,7 +24,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginTop="20dp"
-        android:src="@mipmap/show_default_avatar"
-        app:shapeAppearance="@style/show_roundStyle_50" />
+        android:src="@drawable/commerce_default_avatar"
+        app:shapeAppearance="@style/commerce_roundStyle_50" />
 
 </LinearLayout>

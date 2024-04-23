@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:text="@string/show_live_detail_living_end"
+        android:text="@string/commerce_live_detail_living_end"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,13 +29,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:textColor="#C6C4DD"
         android:textSize="13sp"
-        android:text="@string/show_live_detail_try_to_move"/>
+        android:text="@string/commerce_live_detail_try_to_move"/>
 
     <ImageView
         android:id="@+id/ivClose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/show_live_top_close"
+        android:src="@drawable/commerce_live_top_close"
         android:padding="8dp"
         app:layout_constraintTop_toTopOf="@id/tvLivingEnd"
         app:layout_constraintBottom_toBottomOf="@id/tvLivingEnd"
@@ -47,12 +47,12 @@
         android:id="@+id/ivAvatar"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@mipmap/show_default_avatar"
+        android:src="@drawable/commerce_default_avatar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearance="@style/show_roundStyle_50" />
+        app:shapeAppearance="@style/commerce_roundStyle_50" />
 
     <TextView
         android:id="@+id/tvUserName"

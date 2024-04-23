@@ -1,6 +1,7 @@
 package io.agora.scene.show.widget.pk
 
 import android.view.View
+import androidx.core.view.isVisible
 import io.agora.scene.base.GlideApp
 import io.agora.scene.show.R
 import io.agora.scene.show.databinding.ShowLivePkRequestMessageBinding
@@ -27,12 +28,12 @@ class LivePKViewAdapter: BindingSingleAdapter<LiveRoomConfig, ShowLivePkRequestM
     ) {
         val roomItem = getItem(position)!!
         val binding = holder.binding
-        binding.titleItemBoardcasterStatus.text = roomItem.getOwnerName()
+        binding.titleItemBoardcasterStatus.text = roomItem.getOwnerName() + " (ID:${roomItem.getRoomId()})"
         binding.coverBoardcasterIcon.visibility = View.VISIBLE
-        GlideApp.with(binding.coverBoardcasterIcon).load(roomItem.getOwnerAvatar())
+        GlideApp.with(binding.coverBoardcasterIcon).load(getFullHeadUrl(roomItem.getOwnerAvatar()))
             .fallback(R.mipmap.show_default_icon)
             .error(R.mipmap.show_default_icon)
-            .transform(CenterCropRoundCornerTransform(10))
+            .transform(CenterCropRoundCornerTransform(999))
             .into(binding.coverBoardcasterIcon)
         when (roomItem.getInteractStatus()) {
             ShowInteractionStatus.idle.value -> {
@@ -88,5 +89,16 @@ class LivePKViewAdapter: BindingSingleAdapter<LiveRoomConfig, ShowLivePkRequestM
      */
     fun setClickListener(listener : OnClickListener) {
         onClickListener = listener
+    }
+
+    /**
+     * Get full head url string.
+     *
+     * @return the string
+     */
+    private fun getFullHeadUrl(headUrl: String): String {
+        return if (headUrl.startsWith("http")) {
+            headUrl
+        } else "file:///android_asset/$headUrl.png"
     }
 }

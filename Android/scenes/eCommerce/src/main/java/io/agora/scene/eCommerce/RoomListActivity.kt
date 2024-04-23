@@ -9,16 +9,14 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.SceneAliveTime
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.eCommerce.databinding.CommerceRoomItemBinding
 import io.agora.scene.eCommerce.databinding.CommerceRoomListActivityBinding
+import io.agora.scene.eCommerce.service.RoomDetailModel
 import io.agora.scene.eCommerce.service.ShowServiceProtocol
-import io.agora.scene.eCommerce.service.getThumbnailIcon
-import io.agora.scene.eCommerce.service.ownerId
 import io.agora.scene.eCommerce.videoLoaderAPI.OnLiveRoomItemTouchEventHandler
 import io.agora.scene.eCommerce.videoLoaderAPI.OnRoomListScrollEventHandler
 import io.agora.scene.eCommerce.videoLoaderAPI.VideoLoader
@@ -42,7 +40,7 @@ class RoomListActivity : AppCompatActivity() {
     /**
      * M room adapter
      */
-    private lateinit var mRoomAdapter: BindingSingleAdapter<AUIRoomInfo, CommerceRoomItemBinding>
+    private lateinit var mRoomAdapter: BindingSingleAdapter<RoomDetailModel, CommerceRoomItemBinding>
 
     /**
      * M service
@@ -57,7 +55,7 @@ class RoomListActivity : AppCompatActivity() {
     /**
      * Room detail model list
      */
-    private val mRoomList = mutableListOf<AUIRoomInfo>()
+    private val mRoomList = mutableListOf<RoomDetailModel>()
 
     /**
      * Is first load
@@ -87,7 +85,7 @@ class RoomListActivity : AppCompatActivity() {
                         arrayListOf(
                             VideoLoader.AnchorInfo(
                                 room.roomId,
-                                room.owner?.userId?.toInt() ?: 0,
+                                room.ownerId.toInt(),
                                 RtcEngineInstance.generalToken()
                             )
                         )
@@ -119,7 +117,7 @@ class RoomListActivity : AppCompatActivity() {
         mBinding.titleView.setRightIconClick {
             showAudienceSetting()
         }
-        mRoomAdapter = object : BindingSingleAdapter<AUIRoomInfo, CommerceRoomItemBinding>() {
+        mRoomAdapter = object : BindingSingleAdapter<RoomDetailModel, CommerceRoomItemBinding>() {
             override fun onBindViewHolder(
                 holder: BindingViewHolder<CommerceRoomItemBinding>,
                 position: Int
@@ -146,7 +144,7 @@ class RoomListActivity : AppCompatActivity() {
                                     arrayListOf(
                                         VideoLoader.AnchorInfo(
                                             room.roomId,
-                                            room.ownerId,
+                                            room.ownerId.toInt(),
                                             RtcEngineInstance.generalToken()
                                         )
                                     )
@@ -168,12 +166,17 @@ class RoomListActivity : AppCompatActivity() {
         mBinding.btnCreateRoom2.setOnClickListener { goLivePrepareActivity() }
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        mBinding.smartRefreshLayout.autoRefresh()
+    }
+
     /**
      * Update list
      *
      * @param data
      */
-    private fun updateList(data: List<AUIRoomInfo>) {
+    private fun updateList(data: List<RoomDetailModel>) {
         mBinding.tvTips1.isVisible = data.isEmpty()
         mBinding.ivBgMobile.isVisible = data.isEmpty()
         mBinding.btnCreateRoom2.isVisible = data.isEmpty()
@@ -186,14 +189,14 @@ class RoomListActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun updateRoomItem(
-        list: List<AUIRoomInfo>,
+        list: List<RoomDetailModel>,
         position: Int,
         binding: CommerceRoomItemBinding,
-        roomInfo: AUIRoomInfo
+        roomInfo: RoomDetailModel
     ) {
         binding.tvRoomName.text = roomInfo.roomName
         binding.tvRoomId.text = getString(R.string.commerce_room_id, roomInfo.roomId)
-        binding.tvUserCount.text = getString(R.string.commerce_user_count, roomInfo.memberCount)
+        binding.tvUserCount.text = getString(R.string.commerce_user_count, roomInfo.roomUserCount)
         binding.ivCover.setImageResource(roomInfo.getThumbnailIcon())
 
         val onTouchEventHandler = object : OnLiveRoomItemTouchEventHandler(
@@ -203,14 +206,14 @@ class RoomListActivity : AppCompatActivity() {
                 arrayListOf(
                     VideoLoader.AnchorInfo(
                         roomInfo.roomId,
-                        roomInfo.ownerId,
+                        roomInfo.ownerId.toInt(),
                         RtcEngineInstance.generalToken()
                     )
                 )
             ),
             UserManager.getInstance().user.id.toInt()) {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                val isRoomOwner = roomInfo.owner?.userId == UserManager.getInstance().user.id.toString()
+                val isRoomOwner = roomInfo.ownerId.toLong() == UserManager.getInstance().user.id
                 if (isRoomOwner) {
                     if (event!!.action == MotionEvent.ACTION_UP) {
                         mService.deleteRoom(roomInfo.roomId) {
@@ -273,12 +276,12 @@ class RoomListActivity : AppCompatActivity() {
      * @param position
      * @param roomInfo
      */
-    private fun goLiveDetailActivity(list: List<AUIRoomInfo>, position: Int, roomInfo: AUIRoomInfo) {
+    private fun goLiveDetailActivity(list: List<RoomDetailModel>, position: Int, roomInfo: RoomDetailModel) {
         LiveDetailActivity.launch(
             this,
             ArrayList(list),
             position,
-            roomInfo.ownerId != UserManager.getInstance().user.id.toInt()
+            roomInfo.ownerId.toLong() != UserManager.getInstance().user.id
         )
     }
 

@@ -144,4 +144,38 @@ class AUIRoomManager {
                 }
             })
     }
+
+    fun updateRoomInfo(
+        appId: String,
+        sceneId: String,
+        roomInfo: AUIRoomInfo,
+        callback: AUIRoomCallback?
+    ) {
+        val roomId = roomInfo.roomId
+        roomInterface.updateRoomInfo(UpdateRoomReq(
+            appId,
+            sceneId,
+            roomId,
+            roomInfo
+        ))
+            .enqueue(object : retrofit2.Callback<CommonResp<String>> {
+                override fun onResponse(
+                    call: Call<CommonResp<String>>,
+                    response: Response<CommonResp<String>>
+                ) {
+                    val rsp = response.body()?.data
+                    if (response.body()?.code == 0 && rsp != null) {
+                        AUIRoomContext.shared().insertRoomInfo(roomInfo)
+                        // success
+                        callback?.onResult(null, roomInfo)
+                    } else {
+                        callback?.onResult(Utils.errorFromResponse(response), null)
+                    }
+                }
+
+                override fun onFailure(call: Call<CommonResp<String>>, t: Throwable) {
+                    callback?.onResult(AUIException(-1, t.message), null)
+                }
+            })
+    }
 }

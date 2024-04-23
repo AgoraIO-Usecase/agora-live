@@ -1,6 +1,5 @@
 package io.agora.scene.eCommerce.service
 
-import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.utils.ToastUtils
 
@@ -15,7 +14,7 @@ interface ShowServiceProtocol {
         /**
          * Room Available Duration
          */
-        var ROOM_AVAILABLE_DURATION: Long = 1200 * 1000
+        var ROOM_AVAILABLE_DURATION: Long = 20 * 60 * 1000
 
         private val instance by lazy {
             ShowSyncManagerServiceImpl(AgoraApplication.the()){
@@ -39,12 +38,12 @@ interface ShowServiceProtocol {
      */
     fun destroy()
 
-    fun getRoomInfo(roomId: String): AUIRoomInfo?
+    fun getRoomInfo(roomId: String): RoomDetailModel?
 
-    fun getRoomList(): List<AUIRoomInfo>
+    fun getRoomList(): List<RoomDetailModel>
 
     fun fetchRoomList(
-        success: (List<AUIRoomInfo>) -> Unit,
+        success: (List<RoomDetailModel>) -> Unit,
         error: ((Exception) -> Unit)? = null
     )
 
@@ -62,13 +61,13 @@ interface ShowServiceProtocol {
         roomId: String,
         roomName: String,
         thumbnailId: String,
-        success: (AUIRoomInfo) -> Unit,
+        success: (RoomDetailModel) -> Unit,
         error: ((Exception) -> Unit)? = null
     )
 
     fun joinRoom(
-        roomInfo: AUIRoomInfo,
-        success: (AUIRoomInfo) -> Unit,
+        roomInfo: RoomDetailModel,
+        success: (RoomDetailModel) -> Unit,
         error: ((Exception) -> Unit)? = null
     )
 
@@ -89,15 +88,18 @@ interface ShowServiceProtocol {
     fun auctionSubscribe(roomId: String, onChange: (AuctionModel) -> Unit)
     fun auctionStart(roomId: String)
     fun auctionBidding(roomId: String, value: Int)
-    fun auctionReset(roomId: String)
+    fun auctionComplete(roomId: String)
 
     /** Shop Actions */
     fun shopSubscribe(roomId: String, onChange: (List<GoodsModel>) -> Unit)
-    fun shopBuyItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit)
-    fun shopUpdateItem(roomId: String, itemId: String, count: Int)
+    fun shopBuyOrMinusItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit)
+    fun shopAddItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit)
+    fun shopUpdateItem(roomId: String, itemId: String, count: Long)
 
     /** Chat Message Actions */
     fun sendChatMessage(roomId: String, message: String, success: (() -> Unit)? = null, error: ((Exception) -> Unit)? = null)
     fun subscribeMessage(roomId: String, onMessageChange: (ShowMessage) -> Unit)
-
+    /** Like Actions */
+    fun likeSend(roomId: String, success: (() -> Unit)?, error: ((Exception) -> Unit)?)
+    fun likeSubscribe(roomId: String, onMessageChange: () -> Unit)
 }
