@@ -139,7 +139,7 @@ import Foundation
     override func layoutSubviews() {
         super.layoutSubviews()
         headIconView.frame = CGRect(x: (self.bounds.width - 38)/2.0, y: 8, width: 38, height: 4)
-        headTitleLabel.frame = CGRect(x: (self.bounds.width - 80)/2.0, y: 30, width: 80, height: 22)
+        headTitleLabel.frame = CGRect(x: (self.bounds.width - 200)/2.0, y: 30, width: 200, height: 22)
         tableView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10, width: self.bounds.width, height: self.bounds.height - headTitleLabel.frame.maxY - 10)
         
         coverView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10 + 104, width: self.bounds.width, height: 156)
@@ -156,25 +156,25 @@ import Foundation
     private func getEffectDesc(with type: Int) -> String {
         switch type {
             case 0:
-                return "青叔音(悦耳，磁性)"
+                return "voice_qing_shuyin".voice_localized
             case 1:
-                return "少御音(柔美，磁性)"
+                return "voice_shaoyuyin".voice_localized
             case 2:
-                return "青年音(洪亮，饱满)"
+                return "voice_youth_voice".voice_localized
             case 3:
-                return "少萝音(夹子音，萝莉)"
+                return "voice_shaoluoyin".voice_localized
             case 4:
-                return "大叔音(高混响 | KTV)"
+                return "voice_uncle_yin".voice_localized
             case 5:
-                return "妈音(高混响 | KTV)"
+                return "voice_ma_yin".voice_localized
             case 6:
-                return "青叔音(明亮 | 磁性)"
+                return "voice_qing_shuyin(Bright | Magnetic)".voice_localized
             case 7:
-                return "御妈音(明亮 |磁性)"
+                return "voice_Yuma_Yin(bright | magnetic)".voice_localized
             case 8:
-                return "青年音(低沉 | 温暖)"
+                return "voice_Youth voice (deep | warm)".voice_localized
             case 9:
-                return "少御音(醇厚 | 饱满)"
+                return "voice_Shao Yu Yin (mellow | full)".voice_localized
             default:
                 break
         }

@@ -46,12 +46,12 @@ protocol CommerceServiceProtocol: NSObjectProtocol {
     
     /// Initializes the room information
     /// - Parameter completion: <#completion description#>
-    func initRoom(roomId: String?, completion: @escaping (NSError?) -> Void)
+//    func initRoom(roomId: String?, completion: @escaping (NSError?) -> Void)
     
     
     /// Release the initialization room information
     /// - Parameter completion: <#completion description#>
-    func deinitRoom(roomId: String?, completion: @escaping (NSError?) -> Void)
+//    func deinitRoom(roomId: String?, completion: @escaping (NSError?) -> Void)
     
     
     /// Gets all users in the current room
@@ -67,7 +67,29 @@ protocol CommerceServiceProtocol: NSObjectProtocol {
                          message: CommerceMessage,
                          completion: ((NSError?) -> Void)?)
     
+    func upvote(roomId: String?, count: Int, completion: ((NSError?) -> Void)?)
+    
+    func subscribeUpvoteEvent(roomId: String?, completion: ((String?, Int) -> Void)?)
+    
     func unsubscribeEvent(delegate: CommerceSubscribeServiceProtocol)
     
     func subscribeEvent(delegate: CommerceSubscribeServiceProtocol)
+    
+    func getBidGoodsInfo(roomId: String?, completion: @escaping (NSError?, CommerceGoodsAuctionModel?) -> Void)
+    
+    func addBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel, completion: @escaping (NSError?) -> Void)
+    
+    func updateBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel, completion: @escaping (NSError?) -> Void)
+        
+    func subscribeBidGoodsInfo(roomId: String?, completion: @escaping (NSError?, CommerceGoodsAuctionModel?) -> Void)
+    
+    func addGoodsList(roomId: String?, goods: [CommerceGoodsModel]?, completion: @escaping (NSError?) -> Void)
+    
+    func getGoodsList(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsBuyModel]?) -> Void)
+    
+    func updateGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, increase: Bool, completion: @escaping (NSError?) -> Void)
+    
+    func subscribeGoodsInfo(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsModel]?) -> Void)
+    
+    func getGoodsInfo(roomId: String?, goodsId: String?, completion: @escaping (NSError?, CommerceGoodsBuyModel?) -> Void)
 }

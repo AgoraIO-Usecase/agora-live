@@ -14,6 +14,7 @@ protocol CommerceRoomLiveViewDelegate: CommerceRoomBottomBarDelegate {
     func onClickSendMsgButton(text: String)
     func onClickCloseButton()
     func onClickMoreButton()
+    func onClickUpvoteButton(count: Int)
 }
 
 class CommerceRoomLiveView: UIView {
@@ -45,7 +46,7 @@ class CommerceRoomLiveView: UIView {
         return view
     }()
     
-    private var chatArray = [CommerceChatModel]()
+    private var chatArray = [CommerceMessage]()
     
     private lazy var roomInfoView: CommerceRoomInfoView = {
         let roomInfoView = CommerceRoomInfoView()
@@ -55,6 +56,15 @@ class CommerceRoomLiveView: UIView {
     private lazy var countView: CommerceRoomMembersCountView = {
         let countView = CommerceRoomMembersCountView()
         return countView
+    }()
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.spacing = 10
+        stackView.axis = .horizontal
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
     }()
     
     private lazy var moreBtn: UIButton = {
@@ -83,10 +93,11 @@ class CommerceRoomLiveView: UIView {
         let view = CommerceRoomBottomBar(isBroadcastor: isBroadcastor)
         return view
     }()
-    private lazy var tableView: CommerceGradualTableView = {
-        let tableView = CommerceGradualTableView(frame: .zero,
-                                                 direction: [.top, .bottom],
-                                                 gradualValue: 0.3)
+    private lazy var tableView: GradualTableView = {
+        let tableView = GradualTableView(frame: .zero,
+                                         style: .plain,
+                                         direction: [.top, .bottom],
+                                         gradualValue: 0.3)
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.delegate = self
@@ -94,7 +105,10 @@ class CommerceRoomLiveView: UIView {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 46
         tableView.showsVerticalScrollIndicator = false
-        tableView.transform = CGAffineTransform(rotationAngle: Double.pi)
+        tableView.registerCell(CommerceRoomChatCell.self, forCellReuseIdentifier: "CommerceRoomChatCell")
+//        tableView.contentInset = UIEdgeInsets(top: 100, left: 0, bottom: 0, right: 0)
+//        tableView.isExclusiveTouch = true
+//        tableView.transform = CGAffineTransform(rotationAngle: Double.pi)
         return tableView
     }()
     
@@ -133,6 +147,7 @@ class CommerceRoomLiveView: UIView {
     }()
     
     private var isBroadcastor = false
+    private var cacheUpvotes: [Int64] = []
     
     init(isBroadcastor: Bool = false) {
         super.init(frame: .zero)
@@ -159,32 +174,27 @@ class CommerceRoomLiveView: UIView {
             make.left.equalTo(15)
         }
         
-        addSubview(closeButton)
-        closeButton.snp.makeConstraints { make in
-            make.right.equalTo(-15)
+        addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.right.equalToSuperview().offset(-15)
             make.centerY.equalTo(roomInfoView)
         }
-        
-        addSubview(moreBtn)
+        stackView.addArrangedSubview(countView)
+        stackView.addArrangedSubview(moreBtn)
+        stackView.addArrangedSubview(closeButton)
+        moreBtn.isHidden = isBroadcastor
         moreBtn.snp.makeConstraints { make in
-            make.trailing.equalTo(closeButton.snp_leadingMargin).offset(-18)
-            make.centerY.equalTo(closeButton.snp.centerY)
-            make.width.equalTo(24)
-        }
-        
-        addSubview(countView)
-        countView.snp.makeConstraints { make in
-            make.centerY.equalTo(roomInfoView)
-            make.right.equalTo(moreBtn.snp.left).offset(-10)
+            make.width.equalTo(20)
         }
         
         addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.left.equalTo(15)
-            make.bottom.equalTo(-kTableViewBottomOffset)
-            make.right.equalTo(-70)
+            make.left.equalToSuperview().offset(15)
+            make.bottom.equalToSuperview().offset(-kTableViewBottomOffset)
+            make.right.equalToSuperview().offset(-70)
             make.height.equalTo(168)
         }
+        tableView.contentInset = UIEdgeInsets(top: 100, left: 0, bottom: 0, right: 0)
         
         addSubview(chatButton)
         chatButton.snp.makeConstraints { make in
@@ -281,13 +291,31 @@ class CommerceRoomLiveView: UIView {
     
     @objc
     private func onClickUpvoteButton(sender: UIButton) {
-        showHeartAnimation(at: CGPoint(x: sender.centerX, y: sender.origin.y))
+        showHeartAnimation()
+        let time = Date().millionsecondSince1970()
+        let first = cacheUpvotes.first ?? 0
+        if cacheUpvotes.isEmpty {
+            cacheUpvotes.append(time)
+            delegate?.onClickUpvoteButton(count: cacheUpvotes.count)
+            
+        } else if first - time <= 10  {
+            cacheUpvotes.append(time)
+            upvoteCountHandler()
+        }
+    }
+    
+    private func upvoteCountHandler() {
+        guard cacheUpvotes.count == 2 else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.delegate?.onClickUpvoteButton(count: self.cacheUpvotes.count)
+            self.cacheUpvotes.removeAll()
+        }
     }
 
-    func showHeartAnimation(at location: CGPoint) {
-        var images = ["finger_heart", "thunder", "thumbs_up", "No_of_the_beast", "lips", "heart"].compactMap({ UIImage.commerce_sceneImage(name: "\($0)") })
+    func showHeartAnimation() {
+        let images = ["finger_heart", "thunder", "thumbs_up", "No_of_the_beast", "lips", "heart"].compactMap({ UIImage.commerce_sceneImage(name: "\($0)") })
         let animationLayer = CommerceEmitterLayer.emitterLayer(size: CGSize.init(width: 32, height: 32),
-                                                               center: location,
+                                                               center: CGPointMake(upvoteButton.centerX, upvoteButton.origin.y),
                                                                image: images.randomElement() ?? UIImage())
         animationLayer.cm_delegate = self
         animationLayer.fromAlpha = 1.0
@@ -305,13 +333,16 @@ extension CommerceRoomLiveView: CommerceEmitterLayerDelegate {
 }
 
 extension CommerceRoomLiveView {
-    func addChatModel(_ chatModel: CommerceChatModel) {
-        if chatModel.text == "join_live_room".commerce_localized && chatModel.userName != VLUserCenter.user.name {
-            userJoinView.joinHandler(nickName: chatModel.userName)
+    func addChatModel(_ message: CommerceMessage) {
+        if !chatArray.contains(where: { $0.createAt == message.createAt }) {
+            if message.message == "join_live_room".commerce_localized && message.userName != VLUserCenter.user.name {
+                userJoinView.joinHandler(nickName: message.userName ?? "")
+            }
+            chatArray.append(message)
+            let indexPath = IndexPath(item: chatArray.count - 1, section: 0)
+            tableView.insertRows(at: [indexPath], with: .bottom)
+            tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
         }
-        chatArray.insert(chatModel, at: 0)
-        tableView.reloadData()
-        tableView.scrollToTop()
     }
     
     func clearChatModel(){
@@ -330,17 +361,15 @@ extension CommerceRoomLiveView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cellID = "CommerceRoomChatCell"
-        var cell = tableView.dequeueReusableCell(withIdentifier: cellID) as? CommerceRoomChatCell
-        if cell == nil {
-            cell = CommerceRoomChatCell(style: .default, reuseIdentifier: cellID)
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? CommerceRoomChatCell
+    
         let chatModel = chatArray[indexPath.row]
-        cell?.setUserName(chatModel.userName, msg: chatModel.text)
+        cell?.setUserName(chatModel.userName ?? "", msg: chatModel.message ?? "")
         return cell!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let chatModel = chatArray[indexPath.row]
+
         let cell = tableView.cellForRow(at: indexPath) as? CommerceRoomChatCell
         
         let alertVC = UIAlertController(title: cell?.msgLabel.text, message: nil, preferredStyle: .actionSheet)

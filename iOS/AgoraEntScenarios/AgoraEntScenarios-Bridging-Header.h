@@ -23,4 +23,3 @@
 #import "VLCommonWebViewController.h"
 #import "VLURLPathConfig.h"
 #import "VLLoginModel.h"
-#import "CommerceGradualTableView.h"

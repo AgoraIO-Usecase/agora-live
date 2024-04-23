@@ -8,6 +8,10 @@
 import UIKit
 
 class CommerceAuctionShoppingView: UIView {
+    var startBidGoodsClosure: ((CommerceGoodsAuctionModel?) -> Void)?
+    var endBidGoodsClosure: ((CommerceGoodsAuctionModel?) -> Void)?
+    var bidInAuctionGoodsClosure: ((CommerceGoodsAuctionModel?) -> Void)?
+    
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.spacing = 0
@@ -98,9 +102,13 @@ class CommerceAuctionShoppingView: UIView {
         button.cornerRadius(20)
         button.backgroundColor = UIColor(hex: "#FFFFFF", alpha: 0.25)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(onClickBidInAuctionButton(sender:)), for: .touchUpInside)
         return button
     }()
     private var isBroadcastor: Bool = false
+    private var currentAuctionModel: CommerceGoodsAuctionModel?
+    private var timer: Timer?
+    private var lastUid: String?
     
     init(isBroadcastor: Bool = false) {
         super.init(frame: .zero)
@@ -112,38 +120,66 @@ class CommerceAuctionShoppingView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setShoppingData(model: CommerceGoodsAuctionModel, isBroadcaster: Bool) {
+    func setGoodsData(model: CommerceGoodsAuctionModel, isBroadcaster: Bool) {
+        currentAuctionModel = model
         coverImageView.sd_setImage(with: URL(string: model.goods?.imageName ?? ""),
                                    placeholderImage: UIImage.commerce_sceneImage(name: model.goods?.imageName ?? ""))
         titleLabel.text = model.goods?.title
-        descLabel.text = model.bidUser == nil ? "Start from" : "Current Bid:"
-        priceLabel.text = "$\(model.goods?.price ?? 0)"
-        statusButton.isHidden = !isBroadcaster
-        statusButton.isUserInteractionEnabled = model.status == .idle
+        descLabel.text = (model.bidUser == nil || model.bidUser?.id == "") ? "Start from" : "Current Bid:"
+        let bidPrint = model.status == .completion ? (model.goods?.price ?? 1) : model.bid
+        priceLabel.text = "$\(bidPrint)"
         bidContainerView.isHidden = isBroadcaster
         shoppingContainerView.layer.maskedCorners = isBroadcaster ? [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner] : [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        bidUserView.isHidden = model.bidUser == nil
+        bidUserView.isHidden = model.status == .completion || model.bidUser == nil || model.bidUser?.id == ""
+        model.status = (model.bidUser?.id == VLUserCenter.user.id && model.status == .started) ? .top_price : model.status
         bidUserView.setShoppingData(model: model)
+        bidUserAnimation(uid: model.bidUser?.id ?? "")
+        statusButton.isHidden = isBroadcaster ? false : (model.status == .idle || model.status == .completion)
         statusButton.setTitleColor(model.status.statusTitleColor, for: .normal)
         statusButton.setBackgroundImage(createGradientImage(colors: model.status.statusBackgroundColor), for: .normal)
         bidButton.setTitleColor(model.status.bidTitleColor, for: .normal)
         bidButton.setBackgroundImage(createGradientImage(colors: model.status.bidBackgroundColor), for: .normal)
+        bidButton.isUserInteractionEnabled = model.status == .started
         switch model.status {
         case .idle, .completion:
             bidButton.setTitle("Auction Not Started", for: .normal)
+            statusButton.setTitle("Start", for: .normal)
             
         case .started:
             bidButton.setTitle("Bid: $\(model.bid)", for: .normal)
+            setupTimer()
             
         case .top_price:
             bidButton.setTitle("You are the leading bidder.", for: .normal)
+            setupTimer()
         }
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        statusButton.setBackgroundImage(createGradientImage(colors: [UIColor(hex: "#FFEF4F", alpha: 1.0), UIColor(hex: "#FF416F", alpha: 1.0)]), for: .normal)
+    private func setupTimer() {
+        guard timer == nil else { return }
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { [weak self] t in
+            guard let self = self else { return }
+            let time = 30 - (Date().millionsecondSince1970() / 1000 - (self.currentAuctionModel?.timestamp ?? 0) / 1000)
+            self.statusButton.setTitle(self.convertToTimeFormat(seconds: Int(time)), for: .normal)
+            if time <= 0 {
+                t.invalidate()
+                self.timer = nil
+                guard self.isBroadcastor else { return }
+                self.currentAuctionModel?.status = .completion
+                self.endBidGoodsClosure?(self.currentAuctionModel)
+            }
+        })
+        timer?.fire()
+        if let t = timer {
+            RunLoop.current.add(t, forMode: .common)
+        }
+    }
+    
+    private func convertToTimeFormat(seconds: Int) -> String {
+        let minutes = (seconds % 3600) / 60
+        let seconds = (seconds % 3600) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
     }
     
     private func setupUI() {
@@ -197,19 +233,28 @@ class CommerceAuctionShoppingView: UIView {
     
     @objc
     private func onClickStartAuctionButton(sender: UIButton) {
+        guard let model = currentAuctionModel, isBroadcastor, model.status != .started else { return }
+        model.status = .started
+        model.timestamp = Date().millionsecondSince1970()
+        model.bidUser = VLLoginModel()
+        model.bid = 1
+        startBidGoodsClosure?(model)
+    }
+    
+    @objc
+    private func onClickBidInAuctionButton(sender: UIButton) {
+        guard let model = currentAuctionModel else { return }
+        model.bidUser = VLUserCenter.user
+        model.bid += 1
+        bidInAuctionGoodsClosure?(model)
+        bidUserView.setShoppingData(model: model)
+        bidUserAnimation(uid: VLUserCenter.user.id)
+    }
+    
+    private func bidUserAnimation(uid: String) {
+        guard lastUid != uid else { return }
         bidUserView.layer.add(bidUserTransition, forKey: nil)
-        
-//        sender.isUserInteractionEnabled = false
-//        var count: Int = 30
-//        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-//            sender.setTitle(String(format: "00:%02d", count), for: .normal)
-//            if count <= 0 {
-//                timer.invalidate()
-//                sender.isUserInteractionEnabled = true
-// // TODO: To be refreshed
-//            }
-//            count -= 1
-//        }
+        lastUid = uid
     }
 }
 
@@ -223,7 +268,7 @@ class BidUserView: UIView {
     }()
     private lazy var nickNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "a**"
+        label.text = ""
         label.textColor = UIColor(hex: "#BBBEBF", alpha: 1.0)
         label.font = .systemFont(ofSize: 15)
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
@@ -242,7 +287,7 @@ class BidUserView: UIView {
     
     func setShoppingData(model: CommerceGoodsAuctionModel) {
         avatarImageView.sd_setImage(with: URL(string: model.bidUser?.headUrl ?? ""),
-                                    placeholderImage: UIImage.commerce_sceneImage(name: model.bidUser?.headUrl ?? ""))
+                                    placeholderImage: UIImage(named: model.bidUser?.headUrl ?? ""))
         let nickName = model.bidUser?.name.prefix(1) ?? ""
         nickNameLabel.text = "\(String(describing: nickName))**"
         if model.bidUser?.id == VLUserCenter.user.id {

@@ -67,6 +67,7 @@ class CommerceRoomListVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         AppContext.shared.sceneImageBundleName = "CommerceResource"
+        RTMSyncUtil.initRTMSyncManager()
         createViews()
         createConstrains()
         CommerceAgoraKitManager.shared.prepareEngine()
@@ -114,12 +115,12 @@ class CommerceRoomListVC: UIViewController {
         
         if room.ownerId == VLUserCenter.user.id {
             ToastView.show(text: "show_join_own_room_error".commerce_localized)
+            RTMSyncUtil.leaveScene(id: room.roomId, ownerId: room.ownerId)
+            fetchRoomList()
         } else {
             let vc = CommerceLivePagesViewController()
             let nc = UINavigationController(rootViewController: vc)
             nc.modalPresentationStyle = .fullScreen
-            vc.roomList = roomList.filter({ $0.ownerId != VLUserCenter.user.id })
-            vc.focusIndex = vc.roomList?.firstIndex(where: { $0.roomId == room.roomId }) ?? 0
             vc.onClickDislikeClosure = { [weak self] in
                 guard let self = self else { return }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.15, execute: DispatchWorkItem(block: {
@@ -136,6 +137,8 @@ class CommerceRoomListVC: UIViewController {
                     self.fetchRoomList()
                 }))
             }
+            vc.roomList = roomList.filter({ $0.ownerId != VLUserCenter.user.id })
+            vc.focusIndex = vc.roomList?.firstIndex(where: { $0.roomId == room.roomId }) ?? 0
             present(nc, animated: true)
         }
     }
@@ -198,6 +201,8 @@ extension CommerceRoomListVC: UICollectionViewDataSource, UICollectionViewDelega
             }
             
             return true
+        } onRequireRenderVideo: { info, canvas in
+            return nil
         } completion: { [weak self] in
             self?.joinRoom(room)
         }

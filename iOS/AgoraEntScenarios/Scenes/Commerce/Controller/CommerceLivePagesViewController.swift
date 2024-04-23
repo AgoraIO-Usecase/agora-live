@@ -20,7 +20,7 @@ class CommerceLivePagesViewController: ViewController {
         handler.vcDelegate = self
         handler.onClickDislikeClosure = onClickDislikeClosure
         handler.onClickDisUserClosure = onClickDisUserClosure
-        handler.onRequireRenderVideo = {[weak self] info, cell, indexPath in
+        handler.onRequireRenderVideo = {[weak self] info, canvas, cell, indexPath in
             guard let vc = cell.contentView.viewWithTag(kCommerceLiveRoomViewTag)?.next as? CommerceLiveViewController,
                   let room = vc.room,
                   localUid != info.uid else {
@@ -80,8 +80,8 @@ class CommerceLivePagesViewController: ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.layer.contents = UIImage.commerce_sceneImage(name: "show_list_Bg")?.cgImage
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
-        self.view.addSubview(collectionView)
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        view.addSubview(collectionView)
         collectionView.isScrollEnabled = roomList?.count ?? 0 > 1 ? true : false
         let realIndex = (delegateHandler.roomList as? CommerceCycleRoomArray)?.fakeCellIndex(with: focusIndex) ?? focusIndex
         collectionView.scrollToItem(at: IndexPath(row: realIndex, section: 0), at: .centeredVertically, animated: false)
@@ -254,9 +254,11 @@ class CommerceLivePagesSlicingDelegateHandler: AGCollectionSlicingDelegateHandle
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let vc = cell.contentView.viewWithTag(kCommerceLiveRoomViewTag)?.next as? CommerceLiveViewController,
-              vc.room?.ownerId != UserInfo.userId else {
+              let room = roomList?[indexPath.row] as? CommerceRoomListModel,
+              room.ownerId != UserInfo.userId  else {
             return
         }
+        vc.room = room
 
         super.collectionView(collectionView, willDisplay: cell, forItemAt: indexPath)
         vc.loadingType = .joinedWithVideo

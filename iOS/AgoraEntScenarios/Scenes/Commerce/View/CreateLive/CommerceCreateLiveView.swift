@@ -158,41 +158,14 @@ class CommerceCreateLiveView: UIView {
             make.height.equalTo(btnHeight)
         }
         
-        layoutButtonArray()
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        nameTextField.resignFirstResponder()
-    }
-    
-    private func createButton(imgName: String, title: String) ->UIButton {
-        let button = UIButton(type: .custom)
-        let imageView = UIImageView(image: UIImage.commerce_sceneImage(name: imgName))
-        imageView.contentMode = .center
-        button.addSubview(imageView)
-        imageView.snp.makeConstraints { make in
-            make.left.top.right.equalToSuperview()
-        }
-        let label = UILabel()
-        label.font = .commerce_M_12
-        label.textColor = .commerce_main_text
-        label.text = title
-        label.textAlignment = .center
-        button.addSubview(label)
-        label.snp.makeConstraints { make in
-            make.left.bottom.right.equalToSuperview()
-            make.top.equalTo(imageView.snp.bottom).offset(3)
-        }
-        return button
-    }
-    
-    private func layoutButtonArray(){
-        let cameraButton = createButton(imgName: "show_create_camera", title: "create_button_switch".commerce_localized)
-        cameraButton.addTarget(self, action: #selector(didClickCameraButton), for: .touchUpInside)
+        let cameraButton = createButton(imgName: "show_create_camera",
+                                        title: "create_button_switch".commerce_localized,
+                                        sel: #selector(didClickCameraButton))
+        cameraButton.widthAnchor.constraint(equalToConstant: 45).isActive = true
         
-        let settingButton = createButton(imgName: "show_setting", title: "create_button_settings".commerce_localized)
-        settingButton.addTarget(self, action: #selector(didClickSettingButton), for: .touchUpInside)
-        
+        let settingButton = createButton(imgName: "show_setting", 
+                                         title: "create_button_settings".commerce_localized,
+                                         sel: #selector(didClickSettingButton))
         let buttonArray = [cameraButton, settingButton]
         
         let stackView = UIStackView(arrangedSubviews: buttonArray)
@@ -203,8 +176,40 @@ class CommerceCreateLiveView: UIView {
         coverView.addSubview(stackView)
         stackView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-174)
+            make.bottom.equalTo(tipsLabel.snp.top).offset(-20)
         }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        nameTextField.resignFirstResponder()
+    }
+    
+    private func createButton(imgName: String, title: String, sel: Selector) ->UIView {
+        let view = UIView()
+        let imageView = UIImageView(image: UIImage.commerce_sceneImage(name: imgName))
+        imageView.contentMode = .center
+        imageView.isUserInteractionEnabled = true
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.left.top.right.equalToSuperview()
+        }
+        let label = UILabel()
+        label.font = .commerce_M_12
+        label.textColor = .commerce_main_text
+        label.text = title
+        label.textAlignment = .center
+        view.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.left.bottom.right.equalToSuperview()
+            make.top.equalTo(imageView.snp.bottom).offset(3)
+        }
+        let button = UIButton(type: .custom)
+        button.addTargetFor(self, action: sel, for: .touchUpInside)
+        view.addSubview(button)
+        button.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        return view
     }
 }
 

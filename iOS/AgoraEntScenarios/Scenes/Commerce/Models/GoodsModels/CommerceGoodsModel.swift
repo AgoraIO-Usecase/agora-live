@@ -7,10 +7,19 @@
 
 import UIKit
 
+@objc
 enum CommerceBuyStatus: Int {
     case idle = 0
-    case buy
-    case sold_out
+    case buy = 1
+    case sold_out = 2
+    
+    
+    var title: String? {
+        switch self {
+        case .sold_out: return "Sold Out"
+        default: return "Buy"
+        }
+    }
     
     var titleColor: UIColor? {
         switch self {
@@ -26,11 +35,12 @@ enum CommerceBuyStatus: Int {
     }
 }
 
+@objc
 enum CommerceAuctionStatus: Int {
     case idle = 0
-    case started
-    case completion
-    case top_price
+    case started = 1
+    case completion = 2
+    case top_price = 3
     
     var statusTitleColor: UIColor? {
         switch self {
@@ -60,22 +70,61 @@ enum CommerceAuctionStatus: Int {
     }
 }
 
-class CommerceGoodsModel: NSObject {
+@objcMembers
+class CommerceGoodsModel: NSObject, YYModel {
     var imageName: String?
     var title: String?
     var quantity: Int = 0
-    var price: Float = 0
+    var price: Int = 0
+    var goodsId: String? = UUID().uuidString
 }
 
-class CommerceGoodsBuyModel: NSObject {
+@objcMembers
+class CommerceGoodsBuyModel: NSObject, YYModel {
     var goods: CommerceGoodsModel?
     var status: CommerceBuyStatus = .idle
+    
+    static func createGoodsData() -> [CommerceGoodsBuyModel] {
+        var dataArray = [CommerceGoodsBuyModel]()
+        var buyModel = CommerceGoodsBuyModel()
+        var goodsModel = CommerceGoodsModel()
+        goodsModel.imageName = "commerce_shop_goods_0"
+        goodsModel.price = 20
+        goodsModel.quantity = 6
+        goodsModel.title = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
+        buyModel.goods = goodsModel
+        buyModel.status = .idle
+        dataArray.append(buyModel)
+        
+        buyModel = CommerceGoodsBuyModel()
+        goodsModel = CommerceGoodsModel()
+        goodsModel.imageName = "commerce_shop_goods_1"
+        goodsModel.price = 5
+        goodsModel.quantity = 0
+        goodsModel.title = "Meta Quest 2 - 128GB Holiday Bundle - Advanced All-In-One Virtual Reality Headset"
+        buyModel.goods = goodsModel
+        buyModel.status = .idle
+        dataArray.append(buyModel)
+        
+        buyModel = CommerceGoodsBuyModel()
+        goodsModel = CommerceGoodsModel()
+        goodsModel.imageName = "commerce_shop_goods_2"
+        goodsModel.price = 12
+        goodsModel.quantity = 6
+        goodsModel.title = "Meta Quest 2 - 128GB Holiday Bundle - Advanced All-In-One Virtual Reality Headset"
+        buyModel.goods = goodsModel
+        buyModel.status = .idle
+        dataArray.append(buyModel)
+        
+        return dataArray
+    }
 }
 
-class CommerceGoodsAuctionModel: NSObject {
+@objcMembers
+class CommerceGoodsAuctionModel: NSObject, YYModel {
     var goods: CommerceGoodsModel?
     var status: CommerceAuctionStatus = .idle
-    var timestamp: String?
+    var timestamp: Int64 = 0
     var bidUser: VLLoginModel?
-    var bid: Float = 0
+    var bid: Int = 0
 }

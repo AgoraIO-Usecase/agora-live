@@ -122,8 +122,6 @@ class ShowRoomListVC: UIViewController {
             let vc = ShowLivePagesViewController()
             let nc = UINavigationController(rootViewController: vc)
             nc.modalPresentationStyle = .fullScreen
-            vc.roomList = roomList.filter({ $0.ownerId != VLUserCenter.user.id })
-            vc.focusIndex = vc.roomList?.firstIndex(where: { $0.roomId == room.roomId }) ?? 0
             vc.onClickDislikeClosure = { [weak self] in
                 guard let self = self else { return }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.15, execute: DispatchWorkItem(block: {
@@ -140,6 +138,8 @@ class ShowRoomListVC: UIViewController {
                     self.fetchRoomList()
                 }))
             }
+            vc.roomList = roomList.filter({ $0.ownerId != VLUserCenter.user.id })
+            vc.focusIndex = vc.roomList?.firstIndex(where: { $0.roomId == room.roomId }) ?? 0
             self.present(nc, animated: true)
         }
     }
@@ -202,6 +202,9 @@ extension ShowRoomListVC: UICollectionViewDataSource, UICollectionViewDelegateFl
             }
             
             return true
+        } onRequireRenderVideo: { info, canvas  in
+            canvas.mirrorMode = .disabled
+            return nil
         } completion: { [weak self] in
             self?.joinRoom(room)
         }

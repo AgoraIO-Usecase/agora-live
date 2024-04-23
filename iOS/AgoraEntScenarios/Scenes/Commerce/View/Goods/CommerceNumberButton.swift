@@ -7,10 +7,10 @@
 
 import UIKit
 
-public typealias ResultClosure = (_ number: String)->()
+public typealias ResultClosure = (_ number: String, _ isIncrease: Bool)->()
 
 public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
-    func numberButtonResult(_ numberButton: CommerceNumberButton, number: String)
+    func numberButtonResult(_ numberButton: CommerceNumberButton, number: String, isIncrease: Bool)
 }
 
 @IBDesignable open class CommerceNumberButton: UIView {
@@ -33,7 +33,7 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         textField.textAlignment = .center
         return textField
     }()
-    private var timer: Timer!              // Quick add/subtract timer
+    
     public var _minValue = 1                 // Maximum value
     public var _maxValue = Int.max           // Maximum value
     public var shakeAnimation: Bool = false  // Do you want to turn on the shake animation
@@ -70,6 +70,7 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
     }()
     private var topCons: NSLayoutConstraint?
     private var bottomCons: NSLayoutConstraint?
+    private var currentValue: Int = 0
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -126,10 +127,7 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         let button = UIButton()
         button.setTitle(title, for: UIControl.State())
         button.setTitleColor(UIColor.gray, for: UIControl.State())
-        button.addTarget(self, action:#selector(self.touchDown(_:)), for: .touchDown)
-        button.addTarget(self, action:#selector(self.touchUp), for: .touchUpOutside)
-        button.addTarget(self, action:#selector(self.touchUp), for: .touchUpInside)
-        button.addTarget(self, action:#selector(self.touchUp), for: .touchCancel)
+        button.addTarget(self, action:#selector(self.touchDown(_:)), for: .touchUpInside)
         return button
     }
     
@@ -138,24 +136,11 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
     @objc fileprivate func touchDown(_ button: UIButton) {
         textField.endEditing(false)
         if button == decreaseBtn {
-            timer = Timer.scheduledTimer(timeInterval: 0.15, 
-                                         target: self,
-                                         selector: #selector(self.decrease),
-                                         userInfo: nil,
-                                         repeats: true)
+            decrease()
+            
         } else {
-            timer = Timer.scheduledTimer(timeInterval: 0.15, 
-                                         target: self,
-                                         selector: #selector(self.increase),
-                                         userInfo: nil,
-                                         repeats: true)
+            increase()
         }
-        timer.fire()
-    }
-    
-    // Release button: Clear timer
-    @objc fileprivate func touchUp()  {
-        cleanTimer()
     }
     
     // MARK: - Subtraction operation
@@ -168,13 +153,14 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         let number = (Int(text) ?? 0) - 1;
         if number >= _minValue {
             textField.text = "\(number)";
-            NumberResultClosure?("\(number)")
-            delegate?.numberButtonResult(self, number: "\(number)")
+            NumberResultClosure?("\(number)", false)
+            delegate?.numberButtonResult(self, number: "\(number)", isIncrease: false)
             
         } else {
             if shakeAnimation {shakeAnimationFunc()}
             print("数量不能小于\(_minValue)");
         }
+        currentValue = number
     }
     
     // MARK: - addition operation
@@ -186,13 +172,14 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         let number = (Int(text) ?? 0) + 1;
         if number <= _maxValue {
             textField.text = "\(number)";
-            NumberResultClosure?("\(number)")
-            delegate?.numberButtonResult(self, number: "\(number)")
+            NumberResultClosure?("\(number)", true)
+            delegate?.numberButtonResult(self, number: "\(number)", isIncrease: true)
             
         } else {
             if shakeAnimation {shakeAnimationFunc()}
             print("已超过最大数量\(_maxValue)");
         }
+        currentValue = number
     }
     
     // MARK: - Jitter animation
@@ -205,19 +192,6 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
         animation.autoreverses = true
         layer.add(animation, forKey: nil)
     }
-    
-    fileprivate func cleanTimer() {
-        if timer?.isValid != nil {
-            timer.invalidate()
-            timer = nil
-        }
-    }
-    
-    deinit {
-        cleanTimer()
-    }
-    
-    
 }
 
 extension CommerceNumberButton: UITextFieldDelegate {
@@ -239,9 +213,10 @@ extension CommerceNumberButton: UITextFieldDelegate {
         textFieldTopBorderView.backgroundColor = .clear
         textFieldBottomBorderView.backgroundColor = .clear
         // Closure callback
-        NumberResultClosure?("\(text)")
+        let isIncrease = currentValue >= (Int(text) ?? 0) ? true : false
+        NumberResultClosure?("\(text)", isIncrease)
         // Callback for delegate
-        delegate?.numberButtonResult(self, number: "\(text)")
+        delegate?.numberButtonResult(self, number: "\(text)", isIncrease: isIncrease)
     }
 }
 
@@ -256,6 +231,7 @@ public extension CommerceNumberButton {
         }
         set {
             textField.text = newValue
+            currentValue = Int(newValue ?? "0") ?? 0
         }
     }
     /**

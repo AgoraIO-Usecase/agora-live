@@ -177,11 +177,9 @@ class ShowInteractionInfo: ShowBaseInfo {
     var ownerMuteAudio: Bool = false
     var createdAt: Int64 = 0                            
     
-    #if DEBUG
     override var description: String {
-        return "userId: \(userId) roomId: \(roomId) status: \(interactStatus) objectId: \(objectId ?? "")"
+        return "userId: \(userId) userName: \(userName ?? "") roomId: \(roomId) status: \(interactStatus.rawValue) objectId: \(objectId ?? "")"
     }
-    #endif
     
     override func isEqual(_ object: Any?) -> Bool {
         guard let info = object as? ShowInteractionInfo,

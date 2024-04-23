@@ -56,10 +56,9 @@ class CommerceChatInputView: UIView {
         
         addSubview(textField)
         textField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12).isActive = true
-        textField.topAnchor.constraint(equalTo: topAnchor).isActive = true
         textField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12).isActive = true
         textField.heightAnchor.constraint(equalToConstant: 38).isActive = true
-        textField.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
+        textField.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
     
     @objc private func didClickEmojiButton(){

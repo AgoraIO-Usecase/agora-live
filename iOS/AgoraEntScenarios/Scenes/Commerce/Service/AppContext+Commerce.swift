@@ -11,6 +11,7 @@ let kCommerceLogBaseContext = "AgoraKit"
 let commerceLogger = AgoraEntLog.createLog(config: AgoraEntLogConfig(sceneName: "Commerce"))
 
 private let kCommerceRoomListKey = "kCommerceRoomListKey"
+private let kCommerceUserListKey = "kCommerceUserListKey"
 private let kRtcTokenMapKey = "kRtcTokenMapKey"
 private let kRtcToken = "kRtcToken"
 private let kDebugModeKey = "kDebugModeKey"
@@ -55,6 +56,15 @@ extension AppContext {
         }
         get {
             return self.extDic[kCommerceRoomListKey] as? [CommerceRoomListModel]
+        }
+    }
+    
+    public var commerceUserList: [CommerceUser]? {
+        set {
+            extDic[kCommerceUserListKey] = newValue
+        }
+        get {
+            return extDic[kCommerceUserListKey] as? [CommerceUser]
         }
     }
     

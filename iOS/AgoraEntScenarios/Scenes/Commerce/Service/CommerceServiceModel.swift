@@ -16,7 +16,7 @@ import VideoLoaderAPI
 
 @objcMembers
 class CommerceBaseInfo: NSObject {
-    var objectId: String?
+    var objectId: String? = UUID().uuidString
 }
 
 /// Room list information

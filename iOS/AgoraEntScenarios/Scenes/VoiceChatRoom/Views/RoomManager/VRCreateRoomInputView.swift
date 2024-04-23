@@ -29,7 +29,7 @@ public class VRCreateRoomInputView: UIView, UITextFieldDelegate {
 
     var oldCenter: CGPoint = .zero
 
-    lazy var roomName: UILabel = .init(frame: CGRect(x: 40, y: 0, width: 80, height: 20)).font(.systemFont(ofSize: 14, weight: .regular)).text("voice_room_name".voice_localized).textColor(.darkText).backgroundColor(.clear)
+    lazy var roomName: UILabel = .init(frame: .zero).font(.systemFont(ofSize: 14, weight: .regular)).text("voice_room_name".voice_localized).textColor(.darkText).backgroundColor(.clear)
 
     lazy var randomName: UIButton = .init(type: .custom).frame(CGRect(x: ScreenWidth - 120, y: 0, width: 80, height: 20)).backgroundColor(.clear).font(.systemFont(ofSize: 14, weight: .regular)).textColor(UIColor(0x3C4267), .normal)
 
@@ -72,6 +72,9 @@ public class VRCreateRoomInputView: UIView, UITextFieldDelegate {
         encryptBtn.setBackgroundImage(UIImage.sceneImage(name: "open", bundleName: "VoiceChatRoomResource"), for: .selected)
         roomNameField.accessibilityIdentifier = "voice_chat_create_room_name_tf"
         addSubViews([roomName, randomName, roomBackground, roomNameField, roomEncryption, encryptBtn, pinCode, warnMessage])
+        roomName.translatesAutoresizingMaskIntoConstraints = false
+        roomName.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40).isActive = true
+        roomName.topAnchor.constraint(equalTo: topAnchor).isActive = true
         timeLimit.titleLabel?.numberOfLines = 0
 
         setupAttributes()

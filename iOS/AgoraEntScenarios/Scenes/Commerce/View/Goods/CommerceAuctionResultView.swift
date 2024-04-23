@@ -87,6 +87,13 @@ class CommerceAuctionResultView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func setBidGoods(model: CommerceGoodsAuctionModel) {
+        avatarImageView.sd_setImage(with: URL(string: model.bidUser?.headUrl ?? ""),
+                                    placeholderImage: UIImage.commerce_sceneImage(name: model.goods?.imageName ?? ""))
+        titleLabel.text = model.bidUser?.name
+        shoppingNameLabel.text = model.goods?.title
+    }
+    
     private func setupUI() {
         widthAnchor.constraint(equalToConstant: Screen.width).isActive = true
         
