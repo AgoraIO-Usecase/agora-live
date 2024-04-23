@@ -30,7 +30,7 @@ def all_pods
 #  # Sense
 #  pod 'SenseLib', :path => 'sense.podspec'
   # FU
-  pod 'fuLib', :path => 'fu.podspec'
+#  pod 'fuLib', :path => 'fu.podspec'
   
   pod 'AgoraSyncManager-overseas', '~> 3.0.8'
   pod 'RTMSyncManager', :path => 'RTMSyncManager.podspec'
@@ -38,6 +38,12 @@ def all_pods
 #  pod 'sdk', :path => 'sdk.podspec'
 #  pod 'AgoraRtcEngine_iOS', '~> 4.2.2'
   pod 'AgoraRtcEngine_Special_iOS', '4.1.1.23'
+  
+  #歌词组件
+  pod "ScoreEffectUI", '1.0.2'
+  pod 'AgoraLyricsScore', '1.1.6'
+  
+  pod 'LSTPopView', '0.3.10'
 
   pod 'VideoLoaderAPI', :path => 'AgoraEntScenarios/Common/API/VideoLoaderAPI'
 
@@ -54,7 +60,7 @@ def all_pods
 #  pod 'AgoraRtm_iOS', '1.5.1'
 #  pod 'Zip'
   pod 'MJRefresh'
-  
+  pod 'SDWebImage', '4.4.8'
   
   # Swift Code Formatter
 #  pod 'SwiftFormat/CLI'
@@ -68,6 +74,7 @@ def all_pods
   pod 'Agora_Chat_iOS', '1.0.8'
   pod 'SwiftyBeaver', '1.9.5'
   pod 'Protobuf', '3.22.1'
+  pod 'SwiftProtobuf'
  #  pod 'LookinServer', :subspecs => ['Swift'], :configurations => ['Debug']
 
   #need to remove
