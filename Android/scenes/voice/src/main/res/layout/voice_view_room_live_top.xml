@@ -193,9 +193,13 @@
         android:layout_marginEnd="12dp"
         android:drawableStart="@drawable/voice_ic_room_descr"
         android:text="@string/voice_chatroom_social_chat"
+        android:lines="1"
+        android:ellipsize="end"
         app:layout_constraintBottom_toBottomOf="@+id/mtChatroomGifts"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/mtChatroomGifts" />
+        app:layout_constraintTop_toTopOf="@+id/mtChatroomGifts"
+        app:layout_constraintWidth_max="150dp"
+        />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivBGM"

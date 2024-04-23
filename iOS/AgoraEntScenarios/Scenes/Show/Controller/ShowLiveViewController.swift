@@ -163,6 +163,7 @@ class ShowLiveViewController: UIViewController {
     
     private var currentInteraction: ShowInteractionInfo? {
         didSet {
+            showLogger.info("currentInteraction = \(currentInteraction?.description ?? "none")")
             if self.room?.userId() == self.currentUserId {
                 self.liveView.showThumnbnailCanvasView = false
             }
@@ -699,6 +700,7 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
     }
     
     private func _onStartInteraction(interaction: ShowInteractionInfo) {
+        showLogger.info("_onStartInteraction: \(interaction.description)")
         switch interaction.interactStatus {
         case .pking:
             view.layer.contents = UIImage.show_sceneImage(name: "show_live_pk_bg")?.cgImage
@@ -748,6 +750,7 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
     }
     
     private func _onStopInteraction(interaction: ShowInteractionInfo) {
+        showLogger.info("_onStopInteraction: \(interaction.description)")
         switch interaction.interactStatus {
         case .pking:
             view.layer.contents = UIImage.show_sceneImage(name: "show_live_room_bg")?.cgImage
@@ -805,7 +808,7 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
-        showLogger.info("rtcEngine didOfflineOfUid === \(uid)")
+        showLogger.info("rtcEngine didOfflineOfUid === \(uid) reason: \(reason.rawValue)")
         if let interaction = self.currentInteraction {
             let isRoomOwner: Bool = role == .broadcaster
             let isInteractionLeave: Bool = interaction.userId == "\(uid)"

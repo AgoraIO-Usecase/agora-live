@@ -15,14 +15,12 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.eCommerce.databinding.CommerceLiveDetailActivityBinding
+import io.agora.scene.eCommerce.service.RoomDetailModel
 import io.agora.scene.eCommerce.service.ShowServiceProtocol
-import io.agora.scene.eCommerce.service.ShowSyncManagerServiceImpl
-import io.agora.scene.eCommerce.service.ownerId
 import io.agora.scene.eCommerce.utils.RunnableWithDenied
 import io.agora.scene.eCommerce.videoLoaderAPI.AGSlicingType
 import io.agora.scene.eCommerce.videoLoaderAPI.OnPageScrollEventHandler
@@ -55,7 +53,7 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
          * @param context
          * @param roomDetail
          */
-        fun launch(context: Context, roomDetail: AUIRoomInfo) {
+        fun launch(context: Context, roomDetail: RoomDetailModel) {
             launch(context, arrayListOf(roomDetail), 0, false)
         }
 
@@ -69,7 +67,7 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
          */
         fun launch(
             context: Context,
-            roomDetail: ArrayList<AUIRoomInfo>,
+            roomDetail: ArrayList<RoomDetailModel>,
             selectedIndex: Int,
             scrollable: Boolean
         ) {
@@ -84,7 +82,7 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
     /**
      * M room info list
      */
-    private val mRoomInfoList: List<AUIRoomInfo> by lazy {
+    private val mRoomInfoList: List<RoomDetailModel> by lazy {
         ShowServiceProtocol.getImplInstance().getRoomList()
     }
 
@@ -272,7 +270,7 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
             val anchorList = arrayListOf(
                 VideoLoader.AnchorInfo(
                     it.roomId,
-                    it.ownerId,
+                    it.ownerId.toInt(),
                     RtcEngineInstance.generalToken()
                 )
             )
@@ -299,11 +297,11 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
                 ).apply {
                     Log.d(tag, "position：$position, room:${roomInfo.roomId}")
                     vpFragments.put(position, this)
-                    if (roomInfo.ownerId != UserManager.getInstance().user.id.toInt()) {
+                    if (roomInfo.ownerId.toLong() != UserManager.getInstance().user.id) {
                         val anchorList = arrayListOf(
                             VideoLoader.AnchorInfo(
                                 roomInfo.roomId,
-                                roomInfo.ownerId,
+                                roomInfo.ownerId.toInt(),
                                 RtcEngineInstance.generalToken()
                             )
                         )
@@ -320,7 +318,7 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
             }
         }
         binding.viewPager2.adapter = fragmentAdapter
-        binding.viewPager2.isUserInputEnabled = mScrollable
+        binding.viewPager2.isUserInputEnabled = mScrollable && mRoomInfoList.size != 1 // 只有一个房间时不允许滑动
         if (mScrollable) {
             binding.viewPager2.registerOnPageChangeCallback(onPageScrollEventHandler as OnPageChangeCallback)
             binding.viewPager2.setCurrentItem(

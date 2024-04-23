@@ -161,4 +161,6 @@ class LiveRoomConfig constructor(room: ShowRoomDetailModel, waitingForPK: Boolea
     fun isPureMode() : Boolean {
         return isPureMode == 1
     }
+
+    fun getRoomId() = roomId
 }

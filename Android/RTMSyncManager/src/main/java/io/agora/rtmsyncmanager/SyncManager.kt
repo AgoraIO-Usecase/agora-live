@@ -42,6 +42,10 @@ class SyncManager constructor(
         return newScene
     }
 
+    fun removeScene(channelName: String) {
+        sceneMap.remove(channelName)
+    }
+
     private fun createRtmClient(): RtmClient {
         val commonConfig = AUIRoomContext.shared().requireCommonConfig()
         val userInfo = AUIRoomContext.shared().currentUserInfo

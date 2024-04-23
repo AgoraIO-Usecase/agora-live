@@ -31,7 +31,7 @@ class CommerceLiveViewController: UIViewController {
                 }
                 if let room = room {
                     serviceImp = AppContext.commerceServiceImp(room.roomId)
-                    _joinRoom(room)
+//                    _joinRoom(room)
                 }
                 loadingType = .prejoined
             }
@@ -121,9 +121,6 @@ class CommerceLiveViewController: UIViewController {
         }
         return view
     }()
-    private lazy var goodsListView = CommerceGoodsListView(isBroadcaster: role == .broadcaster,
-                                                           serviceImp: serviceImp,
-                                                           roomId: roomId)
     
     private lazy var realTimeView: CommerceRealTimeDataView = {
         let realTimeView = CommerceRealTimeDataView(isLocal: role == .broadcaster)
@@ -333,8 +330,8 @@ extension CommerceLiveViewController {
     
     func _leavRoom(_ room: CommerceRoomListModel){
         CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: room.roomId)
-        AppContext.commerceServiceImp(room.roomId)?.unsubscribeEvent(delegate: self)
-        AppContext.commerceServiceImp(room.roomId)?.leaveRoom { error in
+        serviceImp?.unsubscribeEvent(delegate: self)
+        serviceImp?.leaveRoom { error in
         }
         AppContext.unloadCommerceServiceImp(room.roomId)
     }
@@ -342,10 +339,12 @@ extension CommerceLiveViewController {
     
     func updateLoadingType(playState: AnchorState) {
         if playState == .joinedWithVideo {
-            serviceImp?.initRoom(roomId: roomId, completion: { error in
-            })
+//            serviceImp?.initRoom(roomId: roomId, completion: { error in
+//            })
+            _joinRoom(room!)
         } else if playState == .prejoined {
-            serviceImp?.deinitRoom(roomId: roomId) { error in }
+//            serviceImp?.deinitRoom(roomId: roomId) { error in }
+            _leavRoom(room!)
         } else {
         }
         updateRemoteCavans()
@@ -393,7 +392,6 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     func onRoomExpired() {
         AppContext.expireCommerceImp(roomId)
         serviceImp?.leaveRoom(completion: { _ in })
-        serviceImp = nil
         finishView?.removeFromSuperview()
         finishView = CommerceReceiveFinishView()
         finishView?.headImg = room?.ownerAvatar ?? ""
@@ -580,6 +578,9 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
     }
     
     func onClickShoppingButton() {
+        let goodsListView = CommerceGoodsListView(isBroadcaster: role == .broadcaster,
+                                                  serviceImp: serviceImp,
+                                                  roomId: roomId)
         AlertManager.show(view: goodsListView, alertPostion: .bottom)
     }
     

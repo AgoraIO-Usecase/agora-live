@@ -152,6 +152,7 @@
     <string name="show_to_the_audience">To audience %s</string>
     <string name="show_link_to">Co-hosting with %s</string>
     <string name="show_get_in_line">Queue</string>
+    <string name="show_local_uid">Local UID：%s</string>
 
 
 
