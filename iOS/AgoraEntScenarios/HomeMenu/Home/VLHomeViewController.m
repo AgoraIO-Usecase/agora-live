@@ -9,6 +9,7 @@
 #import "MenuUtils.h"
 #import "AESMacro.h"
 #import "VLToast.h"
+#import "VLOnLineListVC.h"
 #import "AgoraEntScenarios-Swift.h"
 
 @interface VLHomeViewController ()<VLHomeViewDelegate>
@@ -58,10 +59,11 @@
 
 
 - (void)itemClickAction:(int)tagValue {
-    NSArray* sceneNames = @[@"LiveShow", @"E-Commerce", @"VoiceChat"];
+    NSArray* sceneNames = @[@"LiveShow", @"E-Commerce", @"VoiceChat", @"KTV"];
     [[NetworkManager shared] reportSceneClickWithSceneName:sceneNames[tagValue]];
     [[NetworkManager shared] reportDeviceInfoWithSceneName:sceneNames[tagValue]];
     [[NetworkManager shared] reportUserBehaviorWithSceneName:sceneNames[tagValue]];
+
     switch (tagValue) {
         case 0: {
             ShowRoomListVC *vc = [ShowRoomListVC new];
@@ -75,6 +77,11 @@
         }
         case 2: {
             VRRoomsViewController *vc = [[VRRoomsViewController alloc] initWithUser:VLUserCenter.user];
+            [self.navigationController pushViewController:vc animated:YES];
+            break;
+        }
+        case 3: {
+            VLOnLineListVC *vc = [[VLOnLineListVC alloc] init];
             [self.navigationController pushViewController:vc animated:YES];
             break;
         }

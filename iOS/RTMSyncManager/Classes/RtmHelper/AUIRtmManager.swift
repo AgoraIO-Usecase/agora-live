@@ -92,9 +92,11 @@ open class AUIRtmManager: NSObject {
         isLogin = false
     }
     
-    public func renew(token: String) {
+    public func renew(token: String, completion:(@escaping (AgoraRtmErrorInfo?)->Void)) {
         aui_info("renew: \(token)", tag: "AUIRtmManager")
-        rtmClient.renewToken(token)
+        rtmClient.renewToken(token) { resp, err in
+            completion(err)
+        }
     }
 }
 
