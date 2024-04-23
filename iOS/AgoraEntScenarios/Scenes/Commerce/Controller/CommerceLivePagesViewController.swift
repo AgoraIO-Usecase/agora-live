@@ -20,7 +20,7 @@ class CommerceLivePagesViewController: ViewController {
         handler.vcDelegate = self
         handler.onClickDislikeClosure = onClickDislikeClosure
         handler.onClickDisUserClosure = onClickDisUserClosure
-        handler.onRequireRenderVideo = {[weak self] info, cell, indexPath in
+        handler.onRequireRenderVideo = {[weak self] info, canvas, cell, indexPath in
             guard let vc = cell.contentView.viewWithTag(kCommerceLiveRoomViewTag)?.next as? CommerceLiveViewController,
                   let room = vc.room,
                   localUid != info.uid else {
@@ -254,9 +254,11 @@ class CommerceLivePagesSlicingDelegateHandler: AGCollectionSlicingDelegateHandle
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let vc = cell.contentView.viewWithTag(kCommerceLiveRoomViewTag)?.next as? CommerceLiveViewController,
-              vc.room?.ownerId != UserInfo.userId else {
+              let room = roomList?[indexPath.row] as? CommerceRoomListModel,
+              room.ownerId != UserInfo.userId  else {
             return
         }
+        vc.room = room
 
         super.collectionView(collectionView, willDisplay: cell, forItemAt: indexPath)
         vc.loadingType = .joinedWithVideo

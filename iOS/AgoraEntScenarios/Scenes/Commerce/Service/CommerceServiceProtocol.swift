@@ -46,12 +46,12 @@ protocol CommerceServiceProtocol: NSObjectProtocol {
     
     /// Initializes the room information
     /// - Parameter completion: <#completion description#>
-    func initRoom(roomId: String?, completion: @escaping (NSError?) -> Void)
+//    func initRoom(roomId: String?, completion: @escaping (NSError?) -> Void)
     
     
     /// Release the initialization room information
     /// - Parameter completion: <#completion description#>
-    func deinitRoom(roomId: String?, completion: @escaping (NSError?) -> Void)
+//    func deinitRoom(roomId: String?, completion: @escaping (NSError?) -> Void)
     
     
     /// Gets all users in the current room
@@ -88,6 +88,8 @@ protocol CommerceServiceProtocol: NSObjectProtocol {
     func getGoodsList(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsBuyModel]?) -> Void)
     
     func updateGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, completion: @escaping (NSError?) -> Void)
+    
+    func calcGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, increase: Bool, completion: @escaping (NSError?) -> Void)
     
     func subscribeGoodsInfo(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsModel]?) -> Void)
     

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="commerce_LikeLayout">
+        <attr name="commerce_initX" format="dimension" />
+        <attr name="commerce_initY" format="dimension" />
+        <attr name="commerce_xRand" format="dimension" />
+        <attr name="commerce_animLengthRand" format="dimension" />
+        <attr name="commerce_xPointFactor" format="dimension" />
+        <attr name="commerce_animLength" format="dimension" />
+        <attr name="commerce_heart_width" format="dimension" />
+        <attr name="commerce_heart_height" format="dimension" />
+        <attr name="commerce_bezierFactor" format="integer" />
+        <attr name="commerce_anim_duration" format="integer" />
+    </declare-styleable>
+
+</resources>

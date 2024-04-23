@@ -202,6 +202,9 @@ extension ShowRoomListVC: UICollectionViewDataSource, UICollectionViewDelegateFl
             }
             
             return true
+        } onRequireRenderVideo: { info, canvas  in
+            canvas.mirrorMode = .disabled
+            return nil
         } completion: { [weak self] in
             self?.joinRoom(room)
         }

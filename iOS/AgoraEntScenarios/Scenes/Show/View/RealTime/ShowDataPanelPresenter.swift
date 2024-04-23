@@ -160,8 +160,9 @@ class ShowDataPanelPresenter {
         //svc switch
         let svc = send ? (params.svc ? onStr : offStr) : "--"
         let svcStr = "show_statistic_svc_switch".show_localized + ": " + svc
+        let localUid = "Local UID: \(VLUserCenter.user.id)"
         let left = [title, startupStr, h265Str, srStr,  microStreamStr].joined(separator: "\n") + "\n"
-        let right = ["  ", levelStr,  pvcStr, svcStr].joined(separator: "\n") + "\n"
+        let right = ["  ", levelStr,  pvcStr, svcStr, localUid].joined(separator: "\n") + "\n"
         return ShowPanelData(left: left, right: right)
     }
 }

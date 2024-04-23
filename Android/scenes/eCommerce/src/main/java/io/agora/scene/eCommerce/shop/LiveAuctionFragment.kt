@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.eCommerce.R
@@ -16,9 +15,19 @@ import io.agora.scene.eCommerce.databinding.CommerceShopAuctionFragmentBinding
 import io.agora.scene.eCommerce.service.*
 import io.agora.scene.widget.utils.CenterCropRoundCornerTransform
 
-class LiveAuctionFragment(
-    private val roomId: String
-): Fragment() {
+class LiveAuctionFragment: Fragment() {
+
+    companion object {
+
+        private const val EXTRA_ROOM_ID = "EXTRA_ROOM_ID"
+        fun newInstance(roomId: String) = LiveAuctionFragment().apply {
+            arguments = Bundle().apply {
+                putString(EXTRA_ROOM_ID, roomId)
+            }
+        }
+    }
+
+    private val mRoomId by lazy { (arguments?.getString(EXTRA_ROOM_ID))!! }
 
     private val tag = "LiveAuctionFragment"
 
@@ -46,9 +55,10 @@ class LiveAuctionFragment(
     }
 
     private fun setupAuction() {
-        val roomInfo = mService.getRoomInfo(roomId) ?: AUIRoomInfo()
-        isRoomOwner = roomInfo.ownerId == UserManager.getInstance().user.id.toInt()
-        idleAuctionStatus()
+        mService.getRoomInfo(mRoomId)?.let { roomInfo ->
+            isRoomOwner = roomInfo.ownerId.toLong() == UserManager.getInstance().user.id
+            idleAuctionStatus()
+        }
     }
 
     fun updateAuction(auctionModel: AuctionModel) {
@@ -115,7 +125,7 @@ class LiveAuctionFragment(
                 if (auctionModel.bidUser?.id?.isNotEmpty() == true) {
                     binding.btnBid.text = getString(R.string.commerce_shop_auction_bid, "${auctionModel.bid}")
                 } else {
-                    binding.btnBid.text = getString(R.string.commerce_shop_auction_bid, "${auctionModel.bid + 1}")
+                    binding.btnBid.text = getString(R.string.commerce_shop_auction_bid, "${auctionModel.bid}")
                 }
             }
         }
@@ -140,7 +150,7 @@ class LiveAuctionFragment(
             }
         } else {
             binding.tvBidStatus.text = getString(R.string.commerce_shop_auction_start_from)
-            binding.tvPrice.text = getString(R.string.commerce_shop_auction_price, "${auctionModel.bid + 1}")
+            binding.tvPrice.text = getString(R.string.commerce_shop_auction_price, "${auctionModel.bid}")
             binding.ivBuyerAvatar.visibility = View.INVISIBLE
             binding.tvBuyerName.visibility = View.INVISIBLE
         }
@@ -168,17 +178,17 @@ class LiveAuctionFragment(
             }
         }
         if (isRoomOwner) {
-            mService.auctionReset(roomId)
+            mService.auctionComplete(mRoomId)
         }
     }
 
     private fun setupView() {
         binding.btnStart.setOnClickListener {
-            mService.auctionStart(roomId)
+            mService.auctionStart(mRoomId)
         }
         binding.btnBid.setOnClickListener {
             val bid = data?.bid ?: 0
-            mService.auctionBidding(roomId, (bid + 1))
+            mService.auctionBidding(mRoomId, (bid + 1))
         }
     }
 

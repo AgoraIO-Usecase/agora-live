@@ -7,6 +7,7 @@
 
 import Foundation
 import RTMSyncManager
+import AgoraRtmKit
 
 class RTMSyncUtil: NSObject {
     private static var syncManager: AUISyncManager?
@@ -14,6 +15,7 @@ class RTMSyncUtil: NSObject {
     private static var isLogined: Bool = false
     private static let roomDelegate = RTMSyncUtilRoomDeleage()
     private static let userDelegate = RTMSyncUtilUserDelegate()
+    private static let rtmDeleagete = RTMDelegate()
     
     class func initRTMSyncManager() {
         let config = AUICommonConfig()
@@ -28,6 +30,10 @@ class RTMSyncUtil: NSObject {
         syncManager = AUISyncManager(rtmClient: nil, commonConfig: config)
         isLogined = false
         syncManager?.logout()
+        
+        AUIRoomContext.shared.displayLogClosure = { msg in
+            commerceLogger.info(msg)
+        }
     }
     
     class func createRoom(roomName: String,
@@ -113,9 +119,12 @@ class RTMSyncUtil: NSObject {
                          payload: [String: Any]?,
                          success: (() -> Void)?,
                          failure: ((NSError?) -> Void)?) {
+        commercePrintLog("joinScene[\(id)]", tag: "RTMSyncUtil")
+        _ = syncManager?.createScene(channelName: id)
         let scene = scene(id: id)
         scene?.bindRespDelegate(delegate: roomDelegate)
         scene?.userService.bindRespDelegate(delegate: userDelegate)
+        syncManager?.rtmManager.subscribeMessage(channelName: "", delegate: rtmDeleagete)
         login(channelName: id, success: {
             if ownerId == VLUserCenter.user.id {
                 scene?.create(payload: payload) { err in
@@ -147,6 +156,7 @@ class RTMSyncUtil: NSObject {
     }
     
     class func leaveScene(id: String, ownerId: String) {
+        commercePrintLog("leaveScene[\(id)]", tag: "RTMSyncUtil")
         let scene = scene(id: id)
         if ownerId == VLUserCenter.user.id {
             scene?.delete()
@@ -161,6 +171,7 @@ class RTMSyncUtil: NSObject {
             scene?.leave()
             scene?.unbindRespDelegate(delegate: roomDelegate)
         }
+        syncManager?.rtmManager.unsubscribeMessage(channelName: "", delegate: rtmDeleagete)
     }
     
     class func subscribeRoomDestroy(roomDestoryClosure: ((String) -> Void)?) {
@@ -303,6 +314,27 @@ class RTMSyncUtil: NSObject {
     
     class func cleanMetaData(id: String, key: String, callback: ((NSError?) -> Void)?) {
         collection(id: id, key: key)?.cleanMetaData(callback: callback)
+    }
+    
+    class func sendMessage(channelName: String, data: [String: Any]) {
+        if let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []),
+           let message = String(data: jsonData, encoding: .utf8) {
+            syncManager?.rtmManager.publish(channelName: channelName, message: message, completion: { _ in
+            })
+        }
+    }
+    
+    class func subscribeMessageDidReceive(id: String,
+                                          key: String,
+                                          changeClosure: ((String, String) -> Void)?) {
+        rtmDeleagete.onReceiveMessageClosure = changeClosure
+    }
+}
+
+class RTMDelegate: NSObject, AUIRtmMessageProxyDelegate {
+    var onReceiveMessageClosure: ((String, String) -> Void)?
+    func onMessageReceive(publisher: String, channelName: String, message: String) {
+        onReceiveMessageClosure?(message, channelName)
     }
 }
 
