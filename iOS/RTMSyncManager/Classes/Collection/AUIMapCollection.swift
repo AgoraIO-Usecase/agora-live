@@ -139,13 +139,20 @@ extension AUIMapCollection {
             return
         }
         
-        var map = calculateMap(origMap: currentMap,
-                               key: key,
-                               value: value.value,
-                               min: value.min,
-                               max: value.max)
+        var map: [String: Any]?
+        do {
+            map = try calculateMap(origMap: currentMap,
+                                   key: key,
+                                   value: value.value,
+                                   min: value.min,
+                                   max: value.max)
+        } catch {
+            callback?(error as NSError)
+            return
+        }
+        
         if let tmpMap = map,
-           let attr = self.attributesWillSetClosure?(channelName,
+            let attr = self.attributesWillSetClosure?(channelName,
                                                      observeKey,
                                                      valueCmd, 
                                                      AUIAttributesModel(map: tmpMap)),
@@ -409,7 +416,13 @@ extension AUIMapCollection {
                 let error: AUICollectionError? = decodeModel(data)
                 let code = error?.code ?? 0
                 let reason = error?.reason ?? "success"
-                callback(code == 0 ? nil : AUICollectionOperationError.recvErrorReceipt.toNSError("code: \(code), reason: \(reason)"))
+                if code == 0 {
+                    callback(nil)
+                } else if let err = AUICollectionOperationError(rawValue: code) {
+                    callback(err.toNSError(reason))
+                } else {
+                    callback(AUICollectionOperationError.recvErrorReceipt.toNSError("code: \(code), reason: \(reason)"))
+                }
             }
             return
         }

@@ -112,20 +112,20 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
         cell.setShoppingData(model: model, isBroadcaster: isBroadcaster)
         cell.onClickStatusButtonClosure = { [weak self] in
             guard let self = self else { return }
-            var title = "Bought!"
-            if (model.goods?.quantity ?? 0) > 0 {
-                model.goods?.quantity -= 1
-                self.calcGoodsInfo(goods: model.goods, increase: false) { err in
-                    guard let err = err else { return }
-                    //error msg
+            self.calcGoodsInfo(goods: model.goods, increase: false) { err in
+                var title = "Bought"
+                defer {
+                    let alertVC = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default)
+                    alertVC.addAction(okAction)
+                    UIViewController.cl_topViewController()?.present(alertVC, animated: true)
                 }
-            } else {
-                title = "Sold Out!"
+                guard let err = err as? NSError else {
+                    return
+                }
+                //error msg
+                title = err.localizedDescription
             }
-            let alertVC = UIAlertController(title: title, message: nil, preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "OK", style: .default)
-            alertVC.addAction(okAction)
-            UIViewController.cl_topViewController()?.present(alertVC, animated: true)
         }
 
         cell.onClickNumberButtonClosure = { [weak self] number, isIncrease in
