@@ -97,6 +97,7 @@
     <string name="commerce_shop_alert_bought">Bought!</string>
     <string name="commerce_shop_alert_sold_out">Sold Out!</string>
     <string name="commerce_shop_alert_submit">OK</string>
+    <string name="commerce_local_uid">Local UID：%s</string>
 
     <!-- co-host  -->
     <string name="commerce_linking_request_message">Application</string>
@@ -161,6 +162,7 @@
     <string name="commerce_tip">Tips</string>
     <string name="commerce_setting_advance_preset_mode">The current preset mode is \"Live Streaming\" with optimal settings. Modifying the parameters will change the video experience.</string>
     <string name="commerce_setting_cancel">Cancel</string>
+    <string name="commerce_setting_report">Report</string>
     <string name="commerce_setting_preset_done">The settings have been updated to the \"Live Streaming\" optimal configuration.</string>
     <string name="commerce_setting_audience">Audience Settings</string>
     <string name="commerce_living_end_title">Live Ended</string>

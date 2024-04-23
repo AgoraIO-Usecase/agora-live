@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp"
             android:paddingVertical="12dp"
-            android:src="@drawable/show_live_prepare_ic_close" />
+            android:src="@drawable/commerce_live_prepare_ic_close" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -87,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
-            android:src="@drawable/show_live_prepare_ic_edit"
+            android:src="@drawable/commerce_live_prepare_ic_edit"
             app:layout_constraintBottom_toBottomOf="@id/etRoomName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/etRoomName"
@@ -112,7 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:src="@drawable/show_live_prepare_ic_copy"
+            android:src="@drawable/commerce_live_prepare_ic_copy"
             app:layout_constraintBottom_toBottomOf="@id/tvRoomId"
             app:layout_constraintStart_toEndOf="@id/tvRoomId"
             app:layout_constraintTop_toTopOf="@id/tvRoomId" />
@@ -134,7 +134,7 @@
             android:id="@+id/tvRotate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/show_live_prepare_ic_camera"
+            android:drawableTop="@drawable/commerce_live_prepare_ic_camera"
             android:drawablePadding="3dp"
             android:gravity="center"
             android:text="@string/commerce_live_prepare_rotate"
@@ -150,7 +150,7 @@
             android:id="@+id/tvSetting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/show_live_prepare_ic_setting"
+            android:drawableTop="@drawable/commerce_live_prepare_ic_setting"
             android:drawablePadding="3dp"
             android:gravity="center"
             android:text="@string/commerce_live_prepare_setting"
@@ -166,7 +166,7 @@
             android:id="@+id/tvTip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/show_live_prepare_ic_tip"
+            android:drawableStart="@drawable/commerce_live_prepare_ic_tip"
             android:drawablePadding="6dp"
             android:paddingHorizontal="50dp"
             android:paddingVertical="25dp"
