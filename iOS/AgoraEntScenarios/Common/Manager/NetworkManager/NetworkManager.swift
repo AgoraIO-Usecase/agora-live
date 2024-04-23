@@ -161,6 +161,43 @@ class NetworkManager:NSObject {
         })
     }
     
+    @objc
+    func generateToken(appId: String,
+                       appCertificate: String,
+                       channelName: String,
+                       uid: String,
+                       tokenType: TokenGeneratorType,
+                       type: AgoraTokenType,
+                       success: @escaping (String?) -> Void)
+    {
+        let params = ["appCertificate": appCertificate,
+                      "appId": appId,
+                      "channelName": channelName,
+                      "expire": 1500,
+                      "src": "iOS",
+                      "ts": 0,
+                      "type": type.rawValue,
+                      "uid": uid] as [String: Any]
+        //        ToastView.showWait(text: "loading...", view: nil)
+        let serverUrl = baseServerUrl.replacingOccurrences(of: "v1", with: "v2")
+        let url = tokenType == .token006 ?
+        "\(serverUrl)token006/generate"
+        : "\(serverUrl)token/generate"
+        NetworkManager.shared.postRequest(urlString: url,
+                                          params: params,
+                                          success: { response in
+            let data = response["data"] as? [String: String]
+            let token = data?["token"]
+            print(response)
+            success(token)
+            //            ToastView.hidden()
+        }, failure: { error in
+            print(error)
+            success(nil)
+            //            ToastView.hidden()
+        })
+    }
+    
     /// generator easemob im token & uid
     /// - Parameters:
     ///   - channelName: <#channelName description#>
