@@ -53,7 +53,7 @@ data class AuctionModel constructor(
     var bidUser: ShowUser? = null,
     var timestamp: String = "0",
     var goods: GoodsModel? = null,
-    var bid: Int = 0,
+    var bid: Int = 1,
     var status: Int = 0
 )
 
@@ -61,7 +61,7 @@ data class GoodsModel constructor(
     val goodsId: String,
     val imageName: String = "",
     val title: String = "",
-    var quantity: Int = 6,
+    var quantity: Long = 6,
     val price: Float? = null,
     @Transient var picResource: Int = 0
 )
@@ -85,15 +85,28 @@ data class ShowMessage constructor(
 data class RoomDetailModel constructor(
     val roomId: String,
     val roomName: String,
-    val roomUserCount: Int,
+    val roomUserCount: Int = 0,
     val thumbnailId: String, // 0, 1, 2, 3
     val ownerId: String,
     val ownerAvatar: String,// http url
     val ownerName: String,
     val roomStatus: Int = ShowRoomStatus.activity.value,
-    val createdAt: Double,
-    val updatedAt: Double,
-) {
+    val createdAt: Long,
+    val updatedAt: Long,
+): Parcelable {
+
+    constructor(parcel: Parcel) : this(
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readInt(),
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readInt(),
+        parcel.readLong(),
+        parcel.readLong()
+    ) {}
 
     fun getThumbnailIcon() = when (thumbnailId) {
         "0" -> R.drawable.commerce_room_cover_0
@@ -108,28 +121,31 @@ data class RoomDetailModel constructor(
     }
 
     fun isRobotRoom() = roomId.length > 6
-}
-
-fun AUIRoomInfo.isRobotRoom(): Boolean {
-    return this.roomId.length > 6
-}
-
-val AUIRoomInfo.ownerId: Int
-    get() {
-        return this.owner?.userId?.toIntOrNull() ?: 0
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(roomId)
+        parcel.writeString(roomName)
+        parcel.writeInt(roomUserCount)
+        parcel.writeString(thumbnailId)
+        parcel.writeString(ownerId)
+        parcel.writeString(ownerAvatar)
+        parcel.writeString(ownerName)
+        parcel.writeInt(roomStatus)
+        parcel.writeLong(createdAt)
+        parcel.writeLong(updatedAt)
     }
 
-fun AUIRoomInfo.getThumbnailIcon(): Int {
-    return when (this.thumbnail) {
-        "0" -> R.drawable.commerce_room_cover_0
-        "1" -> R.drawable.commerce_room_cover_1
-        "2" -> R.drawable.commerce_room_cover_2
-        "3" -> R.drawable.commerce_room_cover_3
-        else -> R.drawable.commerce_room_cover_0
+    override fun describeContents(): Int {
+        return 0
     }
-}
 
-fun AUIUserThumbnailInfo.getAvatarFullUrl(): String {
-    return UserManager.getInstance().getUserAvatarFullUrl(userAvatar)
+    companion object CREATOR : Parcelable.Creator<RoomDetailModel> {
+        override fun createFromParcel(parcel: Parcel): RoomDetailModel {
+            return RoomDetailModel(parcel)
+        }
+
+        override fun newArray(size: Int): Array<RoomDetailModel?> {
+            return arrayOfNulls(size)
+        }
+    }
 }
 
