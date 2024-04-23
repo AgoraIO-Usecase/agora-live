@@ -85,6 +85,9 @@ class CommerceRoomListVC: UIViewController {
     }
     
     @objc private func didClickCreateButton(){
+        if AppContext.shared.commerceRtcToken == nil {
+            preGenerateToken()
+        }
         let preVC = CommerceCreateLiveVC()
         let preNC = UINavigationController(rootViewController: preVC)
         preNC.navigationBar.setBackgroundImage(UIImage(), for: .default)
@@ -159,18 +162,10 @@ class CommerceRoomListVC: UIViewController {
     }
 
     private func preGenerateToken() {
-        AppContext.shared.rtcToken = nil
-        NetworkManager.shared.generateToken(
-            channelName: "",
-            uid: "\(UserInfo.userId)",
-            tokenType: .token007,
-            type: .rtc,
-            expire: 24 * 60 * 60
-        ) {[weak self] token in
-            guard let self = self, let rtcToken = token, rtcToken.count > 0 else {
-                return
-            }
-            AppContext.shared.rtcToken = rtcToken
+        CommerceAgoraKitManager.shared.preGenerateToken { [weak self] in
+            guard let self = self,
+                  let _ = AppContext.shared.commerceRtcToken,
+                  let _ = AppContext.shared.commerceRtmToken else { return }
             self.delegateHandler.preLoadVisibleItems(scrollView: self.collectionView)
         }
     }
@@ -191,7 +186,7 @@ extension CommerceRoomListVC: UICollectionViewDataSource, UICollectionViewDelega
                        id: room.roomId,
                        count: room.roomUserCount)
         cell.ag_addPreloadTap(roomInfo: room, localUid: delegateHandler.localUid) {[weak self] state in
-            if AppContext.shared.rtcToken?.count ?? 0 == 0 {
+            if AppContext.shared.commerceRtcToken?.count ?? 0 == 0 {
                 if state == .began {
                     self?.preGenerateToken()
                 } else if state == .ended {

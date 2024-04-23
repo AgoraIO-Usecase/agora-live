@@ -15,7 +15,6 @@ class RTMSyncUtil: NSObject {
     private static var isLogined: Bool = false
     private static let roomDelegate = RTMSyncUtilRoomDeleage()
     private static let userDelegate = RTMSyncUtilUserDelegate()
-    private static let rtmDeleagete = RTMDelegate()
     
     class func initRTMSyncManager() {
         let config = AUICommonConfig()
@@ -29,7 +28,6 @@ class RTMSyncUtil: NSObject {
         config.host = KeyCenter.RTMHostUrl
         syncManager = AUISyncManager(rtmClient: nil, commonConfig: config)
         isLogined = false
-        syncManager?.logout()
         
         AUIRoomContext.shared.displayLogClosure = { msg in
             commerceLogger.info(msg)
@@ -40,7 +38,6 @@ class RTMSyncUtil: NSObject {
                           roomId: String,
                           payload: [String: Any],
                           callback: @escaping ((NSError?, AUIRoomInfo?) -> Void)) {
-        logOut()
         let roomInfo = AUIRoomInfo()
         roomInfo.roomName = roomName
         roomInfo.roomId = roomId
@@ -50,15 +47,7 @@ class RTMSyncUtil: NSObject {
         userInfo.userAvatar = VLUserCenter.user.headUrl
         userInfo.userName = VLUserCenter.user.name
         roomInfo.owner = userInfo
-        login(channelName: roomId, success: {
-            self.syncManagerImpl.createRoom(room: roomInfo, callback: callback)
-        }) { error in
-            if error?.code == 10002 {
-                createRoom(roomName: roomName, roomId: roomId, payload: payload, callback: callback)
-                return
-            }
-            callback(error, nil)
-        }
+        syncManagerImpl.createRoom(room: roomInfo, callback: callback)
     }
     
     class func getRoomList(lastCreateTime: Int64 = 0, callback: @escaping ((NSError?, [AUIRoomInfo]?) -> Void)) {
@@ -74,26 +63,36 @@ class RTMSyncUtil: NSObject {
         syncManagerImpl.updateRoom(room: roomInfo) { _, _ in }
     }
     
+    class func renew(rtmToken: String) {
+        syncManager?.renew(token: rtmToken)
+    }
+    
     class func login(channelName: String, success: (() -> Void)?, failure: ((NSError?) -> Void)?) {
         if isLogined == true {
             success?()
             return
         }
-        let model = SyncTokenGenerateNetworkModel()
-        model.channelName = channelName
-        model.userId = VLUserCenter.user.id
-        model.request { err, result in
-            let result = result as? [String: String]
-            let rtmToken = (result?["rtmToken"]) ?? ""
-            self.syncManager?.login(with: rtmToken) { err in
-                if let err = err {
-                    print("login fail: \(err.localizedDescription)")
-                    failure?(err)
-                    return
-                }
-                self.isLogined = true
-                success?()
+        
+        guard let rtmToken = AppContext.shared.commerceRtmToken else {
+            let date = Date()
+            //TODO: may cause infinite recursion
+            CommerceAgoraKitManager.shared.preGenerateToken {
+                commercePrintLog("[Timing][\(channelName)] token generate cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+                self.login(channelName: channelName, success: success, failure: failure)
             }
+            return
+        }
+        
+        let date = Date()
+        self.syncManager?.login(with: rtmToken) { err in
+            if let err = err {
+                print("login fail: \(err.localizedDescription)")
+                failure?(err)
+                return
+            }
+            commercePrintLog("[Timing][\(channelName)] login cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+            self.isLogined = true
+            success?()
         }
     }
     
@@ -101,6 +100,10 @@ class RTMSyncUtil: NSObject {
         guard isLogined else { return }
         syncManager?.logout()
         isLogined = false
+    }
+    
+    class func destroy() {
+        syncManager?.destroy()
     }
     
     class func scene(id: String) -> AUIScene? {
@@ -124,16 +127,19 @@ class RTMSyncUtil: NSObject {
         let scene = scene(id: id)
         scene?.bindRespDelegate(delegate: roomDelegate)
         scene?.userService.bindRespDelegate(delegate: userDelegate)
-        syncManager?.rtmManager.subscribeMessage(channelName: "", delegate: rtmDeleagete)
         login(channelName: id, success: {
             if ownerId == VLUserCenter.user.id {
+                let date = Date()
                 scene?.create(payload: payload) { err in
+                    commercePrintLog("[Timing][\(id)] rtm create scene cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
                     if let err = err {
                         print("create scene fail: \(err.localizedDescription)")
                         failure?(err)
                         return
                     }
+                    let date = Date()
                     scene?.enter(completion: { res, error in
+                        commercePrintLog("[Timing][\(id)] rtm enter scene cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
                         if let err = err {
                             print("enter scene fail: \(err.localizedDescription)")
                             failure?(err)
@@ -171,7 +177,6 @@ class RTMSyncUtil: NSObject {
             scene?.leave()
             scene?.unbindRespDelegate(delegate: roomDelegate)
         }
-        syncManager?.rtmManager.unsubscribeMessage(channelName: "", delegate: rtmDeleagete)
     }
     
     class func subscribeRoomDestroy(roomDestoryClosure: ((String) -> Void)?) {
@@ -226,6 +231,14 @@ class RTMSyncUtil: NSObject {
         listCollection(id: id, key: key)?.subscribeAttributesDidChanged(callback: { channelName, key, object in
             changeClosure?(channelName, object)
         })
+    }
+    
+    class func subscribeMessage(channelName: String, delegate: AUIRtmMessageProxyDelegate) {
+        syncManager?.rtmManager.subscribeMessage(channelName: channelName, delegate: delegate)
+    }
+    
+    class func unsubscribeMessage(channelName: String, delegate: AUIRtmMessageProxyDelegate) {
+        syncManager?.rtmManager.unsubscribeMessage(channelName: channelName, delegate: delegate)
     }
     
     class func addMetaData(id: String,
@@ -322,19 +335,6 @@ class RTMSyncUtil: NSObject {
             syncManager?.rtmManager.publish(channelName: channelName, message: message, completion: { _ in
             })
         }
-    }
-    
-    class func subscribeMessageDidReceive(id: String,
-                                          key: String,
-                                          changeClosure: ((String, String) -> Void)?) {
-        rtmDeleagete.onReceiveMessageClosure = changeClosure
-    }
-}
-
-class RTMDelegate: NSObject, AUIRtmMessageProxyDelegate {
-    var onReceiveMessageClosure: ((String, String) -> Void)?
-    func onMessageReceive(publisher: String, channelName: String, message: String) {
-        onReceiveMessageClosure?(message, channelName)
     }
 }
 

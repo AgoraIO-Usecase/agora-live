@@ -14,6 +14,7 @@ private let kCommerceRoomListKey = "kCommerceRoomListKey"
 private let kCommerceUserListKey = "kCommerceUserListKey"
 private let kRtcTokenMapKey = "kRtcTokenMapKey"
 private let kRtcToken = "kRtcToken"
+private let kRtmToken = "kRtmToken"
 private let kDebugModeKey = "kDebugModeKey"
 
 extension AppContext {
@@ -74,6 +75,15 @@ extension AppContext {
         }
         get {
             return self.extDic[kRtcToken] as? String
+        }
+    }
+    
+    public var commerceRtmToken: String? {
+        set {
+            self.extDic[kRtmToken] = newValue
+        }
+        get {
+            return self.extDic[kRtmToken] as? String
         }
     }
 }

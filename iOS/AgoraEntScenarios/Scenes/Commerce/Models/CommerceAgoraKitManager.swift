@@ -195,22 +195,12 @@ class CommerceAgoraKitManager: NSObject {
         VideoLoaderApiImpl.shared.removeRTCListener(anchorId: roomId, listener: delegate)
     }
     
-    func renewToken(channelId: String) {
+    func renewToken(channelId: String, rtcToken: String) {
         commerceLogger.info("renewToken with channelId: \(channelId)",
                         context: kCommerceLogBaseContext)
-        NetworkManager.shared.generateToken(channelName: channelId,
-                                            uid: UserInfo.userId,
-                                            tokenType: .token007,
-                                            type: .rtc) {[weak self] token in
-            guard let token = token else {
-                commerceLogger.error("renewToken fail: token is empty")
-                return
-            }
-            let option = AgoraRtcChannelMediaOptions()
-            option.token = token
-            AppContext.shared.rtcToken = token
-            self?.updateChannelEx(channelId: channelId, options: option)
-        }
+        let option = AgoraRtcChannelMediaOptions()
+        option.token = rtcToken
+        updateChannelEx(channelId: channelId, options: option)
     }
     
     private var callTimeStampsSaved: Date?
@@ -359,19 +349,16 @@ class CommerceAgoraKitManager: NSObject {
             return
         }
         
-        NetworkManager.shared.generateToken(channelName: targetChannelId,
-                                            uid: VLUserCenter.user.id,
-                                            tokenType: .token007,
-                                            type: .rtc) {[weak self] token in
+        preGenerateToken { [weak self] in
             defer {
                 completion?()
             }
             
-            guard let token = token else {
+            guard let token = AppContext.shared.commerceRtcToken else {
                 commerceLogger.error("joinChannelEx fail: token is empty")
                 return
             }
-            AppContext.shared.rtcToken = token
+            
             self?._joinChannelEx(currentChannelId: currentChannelId,
                                  targetChannelId: targetChannelId,
                                  ownerId: ownerId,
@@ -481,7 +468,7 @@ extension CommerceAgoraKitManager {
         let anchorInfo = AnchorInfo()
         anchorInfo.channelName = channelId
         anchorInfo.uid = uid ?? (UInt(VLUserCenter.user.id) ?? 0)
-        anchorInfo.token = AppContext.shared.rtcToken ?? ""
+        anchorInfo.token = AppContext.shared.commerceRtcToken ?? ""
         
         return anchorInfo
     }
@@ -524,6 +511,31 @@ extension CommerceAgoraKitManager: AgoraRtcMediaPlayerDelegate {
     func AgoraRtcMediaPlayer(_ playerKit: AgoraRtcMediaPlayerProtocol, didChangedTo state: AgoraMediaPlayerState, error: AgoraMediaPlayerError) {
         if state == .openCompleted {
             playerKit.play()
+        }
+    }
+}
+
+// MARK: token handler
+extension CommerceAgoraKitManager {
+    func preGenerateToken(completion: ()->()) {
+        AppContext.shared.commerceRtcToken = nil
+        AppContext.shared.commerceRtmToken = nil
+        NetworkManager.shared.generateTokens(channelName: "",
+                                             uid: "\(UserInfo.userId)",
+                                             tokenGeneratorType: .token007,
+                                             tokenTypes: [.rtc, .rtm],
+                                             expire: 24 * 60 * 60) { [weak self] tokenMap in
+            guard let self = self,
+                  let rtcToken = tokenMap[NetworkManager.AgoraTokenType.rtc.rawValue],
+                  rtcToken.count > 0,
+                  let rtmToken = tokenMap[NetworkManager.AgoraTokenType.rtm.rawValue],
+                  rtmToken.count > 0 else {
+                commerceLogger.error("preGenerateToken fail: \(tokenMap)")
+                return
+            }
+            
+            AppContext.shared.commerceRtcToken = rtcToken
+            AppContext.shared.commerceRtmToken = rtmToken
         }
     }
 }
