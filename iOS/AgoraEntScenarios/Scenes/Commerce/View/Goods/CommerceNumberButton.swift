@@ -7,7 +7,7 @@
 
 import UIKit
 
-public typealias ResultClosure = (_ number: String, _ isIncrease: Bool)->()
+public typealias ResultClosure = (_ number: String, _ isIncrease: Bool?)->()
 
 public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
     func numberButtonResult(_ numberButton: CommerceNumberButton, number: String, isIncrease: Bool)
@@ -214,7 +214,7 @@ extension CommerceNumberButton: UITextFieldDelegate {
         textFieldBottomBorderView.backgroundColor = .clear
         // Closure callback
         let isIncrease = currentValue >= (Int(text) ?? 0) ? true : false
-        NumberResultClosure?("\(text)", isIncrease)
+        NumberResultClosure?("\(text)", nil)
         // Callback for delegate
         delegate?.numberButtonResult(self, number: "\(text)", isIncrease: isIncrease)
     }
