@@ -263,8 +263,8 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
             self._subscribeOnRoomDestroy(isOwner: self.isOwner(roomModel))
             self._subscribeAll()
             self.isJoined = true
-            self.initRoom(roomId: self.roomId) { _ in }
             completion(nil, roomModel)
+            self.initRoom(roomId: self.roomId) { _ in }
         } failure: { error in
             completion(error, nil)
         }
@@ -433,7 +433,7 @@ extension CommerceSyncManagerServiceImp {
     }
     
     fileprivate func _subscribeAll() {
-        agoraPrint("imp all subscribe...")
+        agoraPrint("imp[\(roomId ?? "")] all subscribe...")
         _subscribeOnlineUsersChanged()
         _getUserList(roomId: room?.roomId) { _, list in
             
@@ -445,7 +445,7 @@ extension CommerceSyncManagerServiceImp {
         guard let channelName = roomId else {
             return
         }
-        agoraPrint("imp all unsubscribe...")
+        agoraPrint("imp[\(roomId ?? "")] all unsubscribe...")
         RTMSyncUtil.unsubscribeMessage(channelName: "", delegate: self)
         RTMSyncUtil.leaveScene(id: channelName, ownerId: room?.ownerId ?? "")
     }
