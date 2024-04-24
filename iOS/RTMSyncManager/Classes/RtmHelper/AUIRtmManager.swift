@@ -241,9 +241,9 @@ extension AUIRtmManager {
         aui_info("subscribe '\(channelName)'", tag: "AUIRtmManager")
         let options = AgoraRtmSubscribeOptions()
         options.features = [.metadata, .presence, .lock, .message]
-        let date1 = Date()
+        let date = Date()
         rtmClient.subscribe(channelName: channelName, option: options) {[weak self] resp, error in
-            aui_benchmark("rtm subscribe with message type", cost: -date1.timeIntervalSinceNow)
+            aui_benchmark("rtm subscribe '\(channelName)' with message type", cost: -date.timeIntervalSinceNow)
             aui_info("subscribe '\(channelName)' finished: \(error?.errorCode.rawValue ?? 0)", tag: "AUIRtmManager")
             completion(error?.toNSError())
         }
@@ -657,7 +657,7 @@ extension AUIRtmManager {
                          channelType: rtmChannelType,
                          lockName: lockName,
                          completion: { resp, errorInfo in
-            aui_info("releaseLock[\(channelName)][\(lockName)]: \(errorInfo?.errorCode.rawValue ?? 0)")
+            aui_info("releaseLock[\(channelName)][\(lockName)]: \(errorInfo?.reason ?? "")")
             completion(errorInfo?.toNSError())
         })
     }
