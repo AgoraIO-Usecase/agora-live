@@ -49,6 +49,7 @@ class CommerceLiveViewController: UIViewController {
         }
     }
     private var currentChannelId: String?
+    private var currentLikeCount: Int?
     
     private var roomId: String {
         get {
@@ -375,8 +376,16 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
         serviceImp?.subscribeEvent(delegate: self)
         subscribeBidGoodsInfo()
         serviceImp?.subscribeUpvoteEvent(roomId: roomId, completion: { [weak self] userId, count in
-            guard userId != VLUserCenter.user.id else { return }
-//            self?.liveView.showHeartAnimation()
+            guard let self = self else {return}
+            defer {
+                self.currentLikeCount = count
+            }
+            guard userId != VLUserCenter.user.id,
+                  let currentLikeCount = self.currentLikeCount,
+                  currentLikeCount != count else {
+                return
+            }
+            self.liveView.showHeartAnimation()
         })
         if role == .broadcaster {
             addBidGoodsInfo()
@@ -602,7 +611,6 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
     
     func onClickUpvoteButton(count: Int) {
         serviceImp?.upvote(roomId: roomId, count: count, completion: nil)
-        liveView.showHeartAnimation()
     }
 }
 
