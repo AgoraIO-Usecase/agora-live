@@ -11,7 +11,7 @@ import AgoraRtmKit
 
 class RTMSyncUtil: NSObject {
     private static var syncManager: AUISyncManager?
-    private static var syncManagerImpl = AUIRoomManagerImpl(sceneId: kEcommerceSceneId)
+    private static var roomManager = AUIRoomManagerImpl(sceneId: kEcommerceSceneId)
     private static var isLogined: Bool = false
     private static let roomDelegate = RTMSyncUtilRoomDeleage()
     private static let userDelegate = RTMSyncUtilUserDelegate()
@@ -47,11 +47,11 @@ class RTMSyncUtil: NSObject {
         userInfo.userAvatar = VLUserCenter.user.headUrl
         userInfo.userName = VLUserCenter.user.name
         roomInfo.owner = userInfo
-        syncManagerImpl.createRoom(room: roomInfo, callback: callback)
+        roomManager.createRoom(room: roomInfo, callback: callback)
     }
     
     class func getRoomList(lastCreateTime: Int64 = 0, callback: @escaping ((NSError?, [AUIRoomInfo]?) -> Void)) {
-        syncManagerImpl.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: 20, callback: callback)
+        roomManager.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: 20, callback: callback)
     }
     
     class func updateRoomInfo(roomName: String, roomId: String, payload: [String: Any], ownerInfo: AUIUserThumbnailInfo) {
@@ -60,7 +60,7 @@ class RTMSyncUtil: NSObject {
         roomInfo.roomId = roomId
         roomInfo.customPayload = payload
         roomInfo.owner = ownerInfo
-        syncManagerImpl.updateRoom(room: roomInfo) { _, _ in }
+        roomManager.updateRoom(room: roomInfo) { _, _ in }
     }
     
     class func renew(rtmToken: String) {
@@ -166,17 +166,12 @@ class RTMSyncUtil: NSObject {
         let scene = scene(id: id)
         if ownerId == VLUserCenter.user.id {
             scene?.delete()
-            let model = SyncRoomDestroyNetworkModel()
-            model.roomId = id
-            model.sceneId = kEcommerceSceneId
-            model.request { err, _ in
-                print("error == \(err?.localizedDescription ?? "")")
-                scene?.unbindRespDelegate(delegate: self.roomDelegate)
+            roomManager.destroyRoom(roomId: id) { err in
             }
         } else {
             scene?.leave()
-            scene?.unbindRespDelegate(delegate: roomDelegate)
         }
+        scene?.unbindRespDelegate(delegate: roomDelegate)
     }
     
     class func subscribeRoomDestroy(roomDestoryClosure: ((String) -> Void)?) {
