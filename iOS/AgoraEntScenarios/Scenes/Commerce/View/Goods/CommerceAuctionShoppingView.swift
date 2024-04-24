@@ -120,6 +120,10 @@ class CommerceAuctionShoppingView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func currentGoodStatus() -> CommerceAuctionStatus? {
+        return currentAuctionModel?.status
+    }
+    
     func setGoodsData(model: CommerceGoodsAuctionModel, isBroadcaster: Bool) {
         currentAuctionModel = model
         coverImageView.sd_setImage(with: URL(string: model.goods?.imageName ?? ""),

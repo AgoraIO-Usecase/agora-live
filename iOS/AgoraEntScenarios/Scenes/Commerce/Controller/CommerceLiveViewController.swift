@@ -290,13 +290,18 @@ class CommerceLiveViewController: UIViewController {
     
     private func subscribeBidGoodsInfo() {
         serviceImp?.subscribeBidGoodsInfo(roomId: roomId, completion: { [weak self] error, auctionModel in
+            guard let self = self else {return}
             if error != nil {
                 commerceLogger.info("error: \(error?.localizedDescription ?? "")")
                 return
             }
             guard let model = auctionModel else { return }
-            self?.auctionView.setGoodsData(model: model, isBroadcaster: self?.role == .broadcaster)
-            if model.status == .completion && model.bidUser?.id != "" {
+            let origGoodStatus = self.auctionView.currentGoodStatus()
+            self.auctionView.setGoodsData(model: model, isBroadcaster: self.role == .broadcaster)
+            //之前是start、现在是completion，才会显示完成弹窗
+            if model.status == .completion,
+               origGoodStatus == .top_price,
+               model.bidUser?.id != "" {
                 let resultView = CommerceAuctionResultView()
                 resultView.setBidGoods(model: model)
                 AlertManager.show(view: resultView)
@@ -371,7 +376,7 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
         subscribeBidGoodsInfo()
         serviceImp?.subscribeUpvoteEvent(roomId: roomId, completion: { [weak self] userId, count in
             guard userId != VLUserCenter.user.id else { return }
-            self?.liveView.showHeartAnimation()
+//            self?.liveView.showHeartAnimation()
         })
         if role == .broadcaster {
             addBidGoodsInfo()
@@ -597,6 +602,7 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
     
     func onClickUpvoteButton(count: Int) {
         serviceImp?.upvote(roomId: roomId, count: count, completion: nil)
+        liveView.showHeartAnimation()
     }
 }
 
