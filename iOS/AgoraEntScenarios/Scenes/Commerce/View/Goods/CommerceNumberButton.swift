@@ -218,6 +218,18 @@ extension CommerceNumberButton: UITextFieldDelegate {
         // Callback for delegate
         delegate?.numberButtonResult(self, number: "\(text)", isIncrease: isIncrease)
     }
+    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        
+        if let intValue = Int(updatedText), intValue >= minValue, intValue <= maxValue {
+            return true
+        } else {
+            return updatedText.isEmpty ? true : false
+        }
+    }
 }
 
 // MARK: - Custom UI interface
