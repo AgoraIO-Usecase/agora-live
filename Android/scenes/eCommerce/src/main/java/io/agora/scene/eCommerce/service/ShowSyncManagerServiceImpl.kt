@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import io.agora.auikit.service.http.CommonResp
 import io.agora.rtm.*
 import io.agora.rtmsyncmanager.ISceneResponse
@@ -94,6 +95,7 @@ class ShowSyncManagerServiceImpl constructor(
         var auctionCollection: AUIMapCollection? = null,
         var messageCollection: AUIMapCollection? = null,
         var likeCollection: AUIMapCollection? = null,
+        var likeCount: Long? = null,
 
         var userChangeSubscriber: ((Int) -> Unit)? = null,
         var auctionChangeSubscriber: ((AuctionModel) -> Unit)? = null,
@@ -336,7 +338,19 @@ class ShowSyncManagerServiceImpl constructor(
             AUIMapCollection(a, b, c)
         }
         controller.likeCollection?.subscribeAttributesDidChanged { _, _, model ->
-            runOnMainThread { controller.likeChangeSubscriber?.invoke() }
+            try {
+                val gson = Gson()
+                val json = gson.toJson(model.getMap())
+                val message = gson.fromJson(json, LikeModel::class.java)
+                if (message.count > 0 && controller.likeCount != null) {
+                    runOnMainThread { controller.likeChangeSubscriber?.invoke() }
+                }
+                if (message.count > 0) {
+                    controller.likeCount = message.count.toLong()
+                }
+            } catch (e: Exception) {
+                Log.e("service", "subscribeAttributesDidChanged: ${e.message}")
+            }
         }
     }
 
@@ -456,8 +470,8 @@ class ShowSyncManagerServiceImpl constructor(
             ) { e, _ ->
                 Log.d("hugo", "updateRoomInfo")
             }
-            runOnMainThread { controller.userChangeSubscriber?.invoke(controller.userList.size) }
         }
+        runOnMainThread { controller.userChangeSubscriber?.invoke(controller.userList.size) }
     }
 
     /** Message Actions */

@@ -65,7 +65,13 @@ class Scene constructor(
     private var roomPayload: Map<String, Any>? = null
 
     private var subscribeDate: Long? = null
-    private var lockRetrived = false
+    private var lockOwnerRetrived = false
+        set(value) {
+            field = value
+            checkRoomValid()
+        }
+
+    private var lockOwnerAcquireSuccess = false
         set(value) {
             field = value
             checkRoomValid()
@@ -156,7 +162,12 @@ class Scene constructor(
                 this.ownerId = ownerId
             }
         }
-        getArbiter().acquire()
+        getArbiter().acquire {
+            if (it == null) {
+                //fail 走onError(channelName: String, error: NSError)，这里不处理
+                lockOwnerAcquireSuccess = true
+            }
+        }
         rtmManager.subscribeError(errorRespObserver)
         getArbiter().subscribeEvent(arbiterObserver)
         rtmManager.subscribe(channelName) { error ->
@@ -206,9 +217,11 @@ class Scene constructor(
         AUIRoomContext.shared().roomArbiterMap[channelName] = arbiter
         return arbiter
     }
-    //如果subscribe成功、锁也获取到、用户列表也获取到，可以检查是否是脏房间并且清理
+    // 如果subscribe成功、锁也获取到，并且锁主获取到锁成功(acquire的callback成功收到)、用户列表也获取到，可以检查是否是脏房间并且清理
     private fun checkRoomValid() {
-        if (subscribeSuccess && lockRetrived && ownerId.isNotEmpty()) else { return }
+        if (subscribeSuccess && lockOwnerRetrived && ownerId.isNotEmpty()) else { return }
+        //如果是锁主，需要判断有没有acquire成功回调，回调后有本地对比，没有成功回调前setmetadata会失败-12008
+        if (getArbiter().isArbiter() && !lockOwnerAcquireSuccess) return
         if (enterRoomCompletion != null) {
             enterRoomCompletion?.invoke(roomPayload, null)
             enterRoomCompletion = null
@@ -275,7 +288,7 @@ class Scene constructor(
     private val arbiterObserver = object: AUIArbiterCallback {
         override fun onArbiterDidChange(channelName: String, arbiterId: String) {
             if (arbiterId.isEmpty()) {return}
-            lockRetrived = true
+            lockOwnerRetrived = true
         }
 
         override fun onError(channelName: String, error: AUIRtmException) {
