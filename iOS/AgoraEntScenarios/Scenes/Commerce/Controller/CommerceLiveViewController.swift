@@ -27,8 +27,9 @@ class CommerceLiveViewController: UIViewController {
                 liveView.room = room
                 liveView.canvasView.canvasType = .none
                 if let oldRoom = oldValue {
-                    _leavRoom(oldRoom)
+                    _leaveRoom(oldRoom)
                 }
+                
                 if let room = room {
                     serviceImp = AppContext.commerceServiceImp(room.roomId)
 //                    _joinRoom(room)
@@ -209,13 +210,16 @@ class CommerceLiveViewController: UIViewController {
     }
     
     func leaveRoom(){
-        CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
-        CommerceAgoraKitManager.shared.cleanCapture()
-        CommerceAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
+        guard let room = room else { return }
+        _leaveRoom(room)
         
-        serviceImp?.leaveRoom {_ in
-        }
-        serviceImp?.unsubscribeEvent(delegate: self)
+//        CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
+//        CommerceAgoraKitManager.shared.cleanCapture()
+//        CommerceAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
+//        
+//        serviceImp?.leaveRoom {_ in
+//        }
+//        serviceImp?.unsubscribeEvent(delegate: self)
     }
     
     private func joinChannel(needUpdateCavans: Bool = true) {
@@ -334,12 +338,16 @@ extension CommerceLiveViewController {
         }
     }
     
-    func _leavRoom(_ room: CommerceRoomListModel){
+    func _leaveRoom(_ room: CommerceRoomListModel){
         CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: room.roomId)
+        CommerceAgoraKitManager.shared.cleanCapture()
         serviceImp?.unsubscribeEvent(delegate: self)
         serviceImp?.leaveRoom { error in
         }
         AppContext.unloadCommerceServiceImp(room.roomId)
+        
+        self.liveView.clearChatModel()
+        self.currentLikeCount = nil
     }
     
     
@@ -350,7 +358,7 @@ extension CommerceLiveViewController {
             _joinRoom(room!)
         } else if playState == .prejoined {
 //            serviceImp?.deinitRoom(roomId: roomId) { error in }
-            _leavRoom(room!)
+            _leaveRoom(room!)
         } else {
         }
         updateRemoteCavans()
@@ -433,7 +441,7 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     }
     
     func onMessageDidAdded(message: CommerceMessage) {
-        if let text = message.message {
+        if let _ = message.message {
             self.liveView.addChatModel(message)
         }
     }
@@ -575,7 +583,7 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
             guard let self = self else { return }
             AppContext.shared.addDislikeRoom(at: self.room?.roomId)
             if let room = self.room {
-                self._leavRoom(room)
+                self._leaveRoom(room)
             }
             self.updateLoadingType(playState: .idle)
             self.onClickDislikeClosure?()
@@ -585,7 +593,7 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
             guard let self = self else { return }
             AppContext.shared.addDislikeUser(at: self.room?.ownerId)
             if let room = self.room {
-                self._leavRoom(room)
+                self._leaveRoom(room)
             }
             self.updateLoadingType(playState: .idle)
             self.onClickDisUserClosure?()
