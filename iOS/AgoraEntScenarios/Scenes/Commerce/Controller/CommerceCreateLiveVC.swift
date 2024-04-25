@@ -104,6 +104,14 @@ extension CommerceCreateLiveVC: CommerceCreateLiveViewDelegate {
             return
         }
         
+        if AppContext.shared.commerceRtcToken == nil {
+            CommerceAgoraKitManager.shared.preGenerateToken {
+            }
+            
+            ToastView.show(text: "show_token_is_empty".commerce_localized)
+            return
+        }
+        
         let roomId = createView.roomNo
         SVProgressHUD.show()
         self.view.isUserInteractionEnabled = false

@@ -223,7 +223,8 @@ class CommerceLiveViewController: UIViewController {
     }
     
     private func joinChannel(needUpdateCavans: Bool = true) {
-        guard let channelId = room?.roomId, let ownerId = room?.ownerId,  let uid: UInt = UInt(ownerId) else {
+        guard let channelId = room?.roomId, let ownerId = room?.ownerId, let uid: UInt = UInt(ownerId) else {
+            commerceLogger.warning("joinChannel[\(room?.roomId ?? "")] break ownerId: \(room?.ownerId ?? "")")
             return
         }
         currentChannelId = channelId
@@ -237,11 +238,12 @@ class CommerceLiveViewController: UIViewController {
                 CommerceAgoraKitManager.shared.setupLocalVideo(uid: uid, canvasView: self.liveView.canvasView.localView)
             }
         }
+        commerceLogger.info("joinChannelEx[\(channelId)] ownerId: \(ownerId) role: \(role.rawValue)")
         CommerceAgoraKitManager.shared.joinChannelEx(currentChannelId: channelId,
-                                                 targetChannelId: channelId,
-                                                 ownerId: uid,
-                                                 options: self.channelOptions,
-                                                 role: role) {
+                                                     targetChannelId: channelId,
+                                                     ownerId: uid,
+                                                     options: self.channelOptions,
+                                                     role: role) {
         }
         
         liveView.canvasView.setLocalUserInfo(name: room?.ownerName ?? "", img: room?.ownerAvatar ?? "")
