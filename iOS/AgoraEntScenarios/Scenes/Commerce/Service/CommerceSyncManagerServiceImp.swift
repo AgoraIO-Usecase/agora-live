@@ -616,7 +616,7 @@ extension CommerceSyncManagerServiceImp {
                                      key: ["count"],
                                      value: 1,
                                      min: 0,
-                                     max: Int.max,
+                                     max: Int(Int32.max),
                                      filter: nil,
                                      callback: completion)
     }

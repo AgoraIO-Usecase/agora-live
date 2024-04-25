@@ -343,6 +343,7 @@ extension CommerceLiveViewController {
     func _leaveRoom(_ room: CommerceRoomListModel){
         CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: room.roomId)
         CommerceAgoraKitManager.shared.cleanCapture()
+        CommerceAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
         serviceImp?.unsubscribeEvent(delegate: self)
         serviceImp?.leaveRoom { error in
         }
