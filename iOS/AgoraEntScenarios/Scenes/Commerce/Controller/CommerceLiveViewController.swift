@@ -390,8 +390,7 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
             defer {
                 self.currentLikeCount = count
             }
-            guard userId != VLUserCenter.user.id,
-                  let currentLikeCount = self.currentLikeCount,
+            guard let currentLikeCount = self.currentLikeCount,
                   currentLikeCount != count else {
                 return
             }
