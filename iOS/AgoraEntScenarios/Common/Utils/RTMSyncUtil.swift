@@ -30,7 +30,7 @@ class RTMSyncUtil: NSObject {
         isLogined = false
         
         AUIRoomContext.shared.displayLogClosure = { msg in
-            commerceLogger.info(msg)
+            commercePrintLog(msg)
         }
     }
     

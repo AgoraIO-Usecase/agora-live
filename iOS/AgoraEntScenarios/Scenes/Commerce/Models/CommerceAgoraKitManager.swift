@@ -64,12 +64,12 @@ class CommerceAgoraKitManager: NSObject {
         config.rtcEngine = engine
         loader.setup(config: config)
         
-        commerceLogger.info("load AgoraRtcEngineKit, sdk version: \(AgoraRtcEngineKit.getSdkVersion())", context: kCommerceLogBaseContext)
+        commercePrintLog("load AgoraRtcEngineKit, sdk version: \(AgoraRtcEngineKit.getSdkVersion())", tag: kCommerceLogBaseContext)
     }
     
     func destoryEngine() {
         AgoraRtcEngineKit.destroy()
-        commerceLogger.info("deinit-- CommerceAgoraKitManager")
+        commercePrintLog("deinit-- CommerceAgoraKitManager", tag: kCommerceLogBaseContext)
     }
 
     func leaveAllRoom() {
@@ -253,7 +253,7 @@ class CommerceAgoraKitManager: NSObject {
     func updateChannelEx(channelId: String, options: AgoraRtcChannelMediaOptions) {
         guard let engine = engine,
               let connection = (broadcasterConnection?.channelId == channelId ? broadcasterConnection : nil) ?? VideoLoaderApiImpl.shared.getConnectionMap()[channelId] else {
-            commerceLogger.error("updateChannelEx fail: connection is empty")
+            commerceLogger.error("updateChannelEx[\(channelId)] fail: connection is empty")
             return
         }
         commerceLogger.info("updateChannelEx[\(channelId)]: \(options.publishMicrophoneTrack) \(options.publishCameraTrack)")
@@ -518,15 +518,16 @@ extension CommerceAgoraKitManager: AgoraRtcMediaPlayerDelegate {
 // MARK: token handler
 extension CommerceAgoraKitManager {
     func preGenerateToken(completion: ()->()) {
+        commerceLogger.error("preGenerateToken start")
         AppContext.shared.commerceRtcToken = nil
         AppContext.shared.commerceRtmToken = nil
+        let date = Date()
         NetworkManager.shared.generateTokens(channelName: "",
                                              uid: "\(UserInfo.userId)",
                                              tokenGeneratorType: .token007,
                                              tokenTypes: [.rtc, .rtm],
-                                             expire: 24 * 60 * 60) { [weak self] tokenMap in
-            guard let self = self,
-                  let rtcToken = tokenMap[NetworkManager.AgoraTokenType.rtc.rawValue],
+                                             expire: 24 * 60 * 60) {  tokenMap in
+            guard let rtcToken = tokenMap[NetworkManager.AgoraTokenType.rtc.rawValue],
                   rtcToken.count > 0,
                   let rtmToken = tokenMap[NetworkManager.AgoraTokenType.rtm.rawValue],
                   rtmToken.count > 0 else {
@@ -534,6 +535,7 @@ extension CommerceAgoraKitManager {
                 return
             }
             
+            commerceLogger.info("[Timing]preGenerateToken cost: \(Int64(-date.timeIntervalSinceNow * 1000)) ms")
             AppContext.shared.commerceRtcToken = rtcToken
             AppContext.shared.commerceRtmToken = rtmToken
         }

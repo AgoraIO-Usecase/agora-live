@@ -51,13 +51,13 @@ class CommerceRoomListVC: UIViewController {
     deinit {
         AppContext.unloadCommerceServiceImp()
         CommerceAgoraKitManager.shared.destoryEngine()
-        commerceLogger.info("deinit-- CommerceRoomListVC")
+        commercePrintLog("deinit-- CommerceRoomListVC")
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         hidesBottomBarWhenPushed = true
-        commerceLogger.info("init-- CommerceRoomListVC")
+        commercePrintLog("init-- CommerceRoomListVC")
     }
     
     required init?(coder: NSCoder) {
@@ -190,7 +190,7 @@ extension CommerceRoomListVC: UICollectionViewDataSource, UICollectionViewDelega
                 if state == .began {
                     self?.preGenerateToken()
                 } else if state == .ended {
-                    ToastView.show(text: "Token is not exit, try again!")
+                    ToastView.show(text: "show_token_is_empty".commerce_localized)
                 }
                 return false
             }

@@ -23,7 +23,7 @@ import Foundation
 extension AUIRoomManagerImpl {
     public func createRoom(room: AUIRoomInfo,
                            callback: @escaping (NSError?, AUIRoomInfo?) -> ()) {
-        aui_info("enterRoom: \(room.roomName) ", tag: "AUIRoomManagerImpl")
+        aui_info("createRoom: \(room.roomName) ", tag: "AUIRoomManagerImpl")
         
         let model = SyncRoomCreateNetworkModel()
         model.sceneId = sceneId
