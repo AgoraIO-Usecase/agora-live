@@ -641,10 +641,10 @@ extension CommerceSyncManagerServiceImp {
             finished(NSError(domain: "roomId is empty", code: 0), nil)
             return
         }
-        agoraPrint("imp user get...")
+        agoraPrint("_getUserList...")
         RTMSyncUtil.getUserList(id: channelName) { roomId, userList in
             agoraPrint("imp user get success...")
-            print("list == \(userList)")
+            agoraPrint("_getUserList count: \(userList.count)")
             let users = userList.compactMap({ item in
                 let user = CommerceUser()
                 user.userId = item.userId
@@ -718,7 +718,6 @@ extension CommerceSyncManagerServiceImp {
             
             defer{
                 self._updateUserCount()
-                self.subscribeDelegate?.onUserCountChanged(userCount: self.userList?.count ?? 1)
             }
             self.subscribeDelegate?.onUserJoinedRoom(user: user)
             self.subscribeDelegate?.onUserCountChanged(userCount: self.userList?.count ?? 1)
@@ -759,6 +758,7 @@ extension CommerceSyncManagerServiceImp {
     }
     
     private func _updateUserCount() {
+        self.subscribeDelegate?.onUserCountChanged(userCount: self.userList?.count ?? 1)
         guard let channelName = roomId,
               let roomInfo = roomList?.filter({ $0.roomId == self.getRoomId() }).first,
               roomInfo.ownerId == VLUserCenter.user.id

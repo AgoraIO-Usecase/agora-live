@@ -310,7 +310,7 @@ extension AUIScene: AUIUserRespDelegate {
         self.userSnapshotList = userList
         
         guard let user = userList.filter({$0.userId == AUIRoomContext.shared.currentUserInfo.userId }).first else {return}
-        aui_info("onRoomUserSnapshot[\(roomId)]", tag: kSceneTag)
+        aui_info("onRoomUserSnapshot[\(roomId)] count: \(userList.count)", tag: kSceneTag)
         onUserAudioMute(userId: user.userId, mute: user.muteAudio)
         onUserVideoMute(userId: user.userId, mute: user.muteVideo)
     }
