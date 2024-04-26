@@ -119,7 +119,10 @@ class CommerceLiveViewController: UIViewController {
         }
         view.bidInAuctionGoodsClosure = { [weak self] model in
             guard let self = self, let model = model else { return }
-            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
+            self.auctionView.isUserInteractionEnabled = false
+            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: {[weak self] err in
+                self?.auctionView.isUserInteractionEnabled = true
+            })
         }
         return view
     }()
