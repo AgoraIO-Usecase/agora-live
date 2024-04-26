@@ -136,7 +136,6 @@ class CommerceAuctionShoppingView: UIView {
         shoppingContainerView.layer.maskedCorners = isBroadcaster ? [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner] : [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
         bidUserView.isHidden = model.status == .completion || model.bidUser == nil || model.bidUser?.id == ""
-        model.status = (model.bidUser?.id == VLUserCenter.user.id && model.status == .started) ? .top_price : model.status
         bidUserView.setShoppingData(model: model)
         bidUserAnimation(uid: model.bidUser?.id ?? "")
         statusButton.isHidden = isBroadcaster ? false : (model.status == .idle || model.status == .completion)
@@ -151,11 +150,7 @@ class CommerceAuctionShoppingView: UIView {
             statusButton.setTitle("Start", for: .normal)
             
         case .started:
-            bidButton.setTitle("Bid: $\(model.bid)", for: .normal)
-            setupTimer()
-            
-        case .top_price:
-            bidButton.setTitle("You are the leading bidder.", for: .normal)
+            bidButton.setTitle(model.isTopPrice() ? "You are the leading bidder." : "Bid: $\(model.bid)", for: .normal)
             setupTimer()
         }
     }
@@ -247,7 +242,7 @@ class CommerceAuctionShoppingView: UIView {
     
     @objc
     private func onClickBidInAuctionButton(sender: UIButton) {
-        guard let model = currentAuctionModel else { return }
+        guard let model = currentAuctionModel, model.isTopPrice() == false else { return }
         model.bidUser = VLUserCenter.user
         model.bid += 1
         bidInAuctionGoodsClosure?(model)

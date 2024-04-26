@@ -40,7 +40,6 @@ enum CommerceAuctionStatus: Int {
     case idle = 0
     case started = 1
     case completion = 2
-    case top_price = 3
     
     var statusTitleColor: UIColor? {
         switch self {
@@ -127,4 +126,8 @@ class CommerceGoodsAuctionModel: NSObject, YYModel {
     var timestamp: Int64 = 0
     var bidUser: VLLoginModel?
     var bid: Int = 0
+    
+    func isTopPrice() -> Bool {
+        return bidUser?.id == VLUserCenter.user.id && status == .started
+    }
 }

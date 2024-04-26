@@ -30,10 +30,12 @@ public class AUISyncManager: NSObject {
     }
     
     public func login(with token: String, completion: @escaping (NSError?) -> ()) {
+        aui_info("AUISyncManager login")
         rtmManager.login(token: token, completion: completion)
     }
     
     public func logout() {
+        aui_info("AUISyncManager logout")
         rtmManager.logout()
         if let rtmClient = _rtmClientByInternal {
             rtmClient.logout()
@@ -41,6 +43,7 @@ public class AUISyncManager: NSObject {
     }
     
     public func destroy() {
+        aui_info("AUISyncManager destroy")
         if let rtmClient = _rtmClientByInternal {
             rtmClient.destroy()
         }
