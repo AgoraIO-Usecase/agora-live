@@ -305,9 +305,8 @@ class CommerceLiveViewController: UIViewController {
             guard let model = auctionModel else { return }
             let origGoodStatus = self.auctionView.currentGoodStatus()
             self.auctionView.setGoodsData(model: model, isBroadcaster: self.role == .broadcaster)
-            //之前是start、现在是completion，才会显示完成弹窗
+            //是completion，才会显示完成弹窗
             if model.status == .completion,
-               origGoodStatus == .top_price,
                model.bidUser?.id != "" {
                 let resultView = CommerceAuctionResultView()
                 resultView.setBidGoods(model: model)
