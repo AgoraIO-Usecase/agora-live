@@ -563,7 +563,7 @@ extension CommerceSyncManagerServiceImp {
                                      key: ["quantity"],
                                      value: increase ? 1 : -1,
                                      min: 0,
-                                     max: Int.max,
+                                     max: Int(Int32.max),
                                      filter: [["goodsId": goods?.goodsId ?? ""]],
                                      callback: { err in
             guard let err = err else {
