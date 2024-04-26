@@ -304,9 +304,19 @@ class CommerceLiveViewController: UIViewController {
             }
             guard let model = auctionModel else { return }
             let origGoodStatus = self.auctionView.currentGoodStatus()
-            self.auctionView.setGoodsData(model: model, isBroadcaster: self.role == .broadcaster)
-            //是completion，才会显示完成弹窗
+            let isBroadcaster = self.role == .broadcaster
+            self.auctionView.setGoodsData(model: model, isBroadcaster: isBroadcaster)
+            var origGoodStatusValid = false
+            if isBroadcaster {
+                //主播completion无条件显示
+                origGoodStatusValid = true
+            } else if origGoodStatus != nil, origGoodStatus != .completion {
+                //防止重新进入时再弹出(第一次为nil，第二次为completion)
+                origGoodStatusValid = true
+            }
+            //之前是start、现在是completion，才会显示完成弹窗
             if model.status == .completion,
+               origGoodStatusValid,
                model.bidUser?.id != "" {
                 let resultView = CommerceAuctionResultView()
                 resultView.setBidGoods(model: model)
