@@ -221,6 +221,9 @@
     <string name="commerce_video_device_low">Low-end Device</string>
     <string name="commerce_broadcaster_bad_exit">Detected an abnormal exit from the last live broadcast, please create a new live room to start broadcasting again.</string>
 
+    <string name="commerce_setting_preset_show_title">Live Streaming Mode</string>
+    <string name="commerce_setting_preset_show_description">Typically, hosts adopt a seated position from the upper body to engage in chat-based live streaming. The focus of the frame is primarily on the host\'s makeup, upper clothing, and low-frequency movements.</string>
+
     <string-array name="commerce_encoder">
         <item>Hardware Encoder</item>
         <item>Software Encoder</item>
