@@ -273,12 +273,12 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
             TokenGenerator.TokenGeneratorType.Token007,
             TokenGenerator.AgoraTokenType.Rtc,
             success = {
-                ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
+                //ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
                 RtcEngineInstance.setupGeneralToken(it)
                 complete.invoke()
             },
             failure = {
-                ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
+                //ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
                 ToastUtils.showToast(it?.message ?: "generate token failure")
             })
     }

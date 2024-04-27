@@ -228,7 +228,7 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
             RtcEngineInstance.rtcEngine,
             UserManager.getInstance().user.id.toInt(),
             true,
-            AGSlicingType.VISIABLE
+            AGSlicingType.VISIBLE
         ) {
             override fun onPageScrollStateChanged(state: Int) {
                 when (state) {

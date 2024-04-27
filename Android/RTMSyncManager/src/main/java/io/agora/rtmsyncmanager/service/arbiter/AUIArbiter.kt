@@ -13,6 +13,8 @@ class AUIArbiter(
     private val currentUserId: String
 ) {
 
+    private val tag = "AUIArbiter"
+
     private var lockOwnerId = ""
         set(value) {
             field = value

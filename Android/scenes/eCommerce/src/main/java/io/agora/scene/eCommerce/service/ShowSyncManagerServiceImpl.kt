@@ -5,8 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.google.gson.Gson
-import com.google.gson.JsonObject
-import io.agora.auikit.service.http.CommonResp
 import io.agora.rtm.*
 import io.agora.rtmsyncmanager.ISceneResponse
 import io.agora.rtmsyncmanager.Scene
@@ -15,6 +13,7 @@ import io.agora.rtmsyncmanager.model.*
 import io.agora.rtmsyncmanager.service.IAUIUserService
 import io.agora.rtmsyncmanager.service.collection.AUIListCollection
 import io.agora.rtmsyncmanager.service.collection.AUIMapCollection
+import io.agora.rtmsyncmanager.service.http.CommonResp
 import io.agora.rtmsyncmanager.service.http.HttpManager
 import io.agora.rtmsyncmanager.service.http.token.TokenGenerateReq
 import io.agora.rtmsyncmanager.service.http.token.TokenGenerateResp
@@ -66,7 +65,23 @@ class ShowSyncManagerServiceImpl constructor(
 
     init {
         HttpManager.setBaseURL(BuildConfig.ROOM_MANAGER_SERVER_HOST)
-        AUILogger.initLogger(AUILogger.Config(context, "eCommerce"))
+        AUILogger.initLogger(AUILogger.Config(context, "eCommerce", logCallback = object: AUILogger.AUILogCallback {
+            override fun onLogDebug(tag: String, message: String) {
+                //ShowLogger.d(tag, message)
+            }
+
+            override fun onLogInfo(tag: String, message: String) {
+                //ShowLogger.d(tag, message)
+            }
+
+            override fun onLogWarning(tag: String, message: String) {
+                //ShowLogger.d(tag, message)
+            }
+
+            override fun onLogError(tag: String, message: String) {
+                //ShowLogger.e(tag, null, message)
+            }
+        }))
 
         val commonConfig = AUICommonConfig()
         commonConfig.context = context
@@ -204,13 +219,13 @@ class ShowSyncManagerServiceImpl constructor(
             if (roomInfo.ownerId.toLong() == UserManager.getInstance().user.id) {
                 scene.create(null) { er ->
                     if (er != null) {
-                        Log.d(TAG, "enter scene fail: ${er.message}")
+                        ShowLogger.d(TAG, "enter scene fail: ${er.message}")
                         error?.invoke(Exception(er.message))
                         return@create
                     }
                     scene.enter { _, e ->
                         if (e != null) {
-                            Log.d(TAG, "enter scene fail: ${e.message}")
+                            ShowLogger.d(TAG, "enter scene fail: ${e.message}")
                             roomInfoControllers.remove(controller)
                             error?.invoke(Exception(e.message))
                         } else {
@@ -222,7 +237,7 @@ class ShowSyncManagerServiceImpl constructor(
             } else {
                 scene.enter { _, e ->
                     if (e != null) {
-                        Log.d(TAG, "enter scene fail: ${e.message}")
+                        ShowLogger.d(TAG, "enter scene fail: ${e.message}")
                         roomInfoControllers.remove(controller)
                         error?.invoke(Exception(e.message))
                     } else {
@@ -318,7 +333,7 @@ class ShowSyncManagerServiceImpl constructor(
                 message: String
             ) {
                 try {
-                    Log.d(TAG, message)
+                    ShowLogger.d(TAG, message)
                     val gson = Gson()
                     val model = gson.fromJson(message, ShowMessage::class.java)
                     if (model.message == null && model.userId == null) return
@@ -345,11 +360,11 @@ class ShowSyncManagerServiceImpl constructor(
                 if (message.count > 0 && controller.likeCount != null) {
                     runOnMainThread { controller.likeChangeSubscriber?.invoke() }
                 }
-                if (message.count > 0) {
+                if (message.count >= 0) {
                     controller.likeCount = message.count.toLong()
                 }
             } catch (e: Exception) {
-                Log.e("service", "subscribeAttributesDidChanged: ${e.message}")
+                ShowLogger.e(TAG, e, "subscribeAttributesDidChanged: ${e.message}")
             }
         }
     }
@@ -388,7 +403,7 @@ class ShowSyncManagerServiceImpl constructor(
         val auctionModel = AuctionModel().apply {
             goods = GoodsModel(
                 goodsId = "",
-                title = context.getString(io.agora.scene.eCommerce.R.string.commerce_shop_auction_item_1),
+                title = context.getString(io.agora.scene.eCommerce.R.string.commerce_shop_auction_item_0),
                 quantity = 1,
                 price = 1f
             )
@@ -448,7 +463,7 @@ class ShowSyncManagerServiceImpl constructor(
             val owner = AUIUserThumbnailInfo()
             owner.userId = controller.roomInfo.ownerId
             owner.userName = controller.roomInfo.ownerName
-            owner.userAvatar = controller.roomInfo.getOwnerAvatarFullUrl()
+            owner.userAvatar = controller.roomInfo.ownerAvatar
             roomInfo.owner = owner
             roomInfo.thumbnail = controller.roomInfo.thumbnailId
             roomInfo.createTime = controller.roomInfo.createdAt
@@ -468,7 +483,7 @@ class ShowSyncManagerServiceImpl constructor(
             roomManager.updateRoomInfo(
                 BuildConfig.AGORA_APP_ID, kSceneId, roomInfo
             ) { e, _ ->
-                Log.d("hugo", "updateRoomInfo")
+                ShowLogger.d(TAG, "updateRoomInfo")
             }
         }
         runOnMainThread { controller.userChangeSubscriber?.invoke(controller.userList.size) }
@@ -520,7 +535,7 @@ class ShowSyncManagerServiceImpl constructor(
         }
         val map = GsonTools.beanToMap(auctionModel)
         controller.auctionCollection?.updateMetaData(null, map, null) { e ->
-            Log.d(TAG, "startAuction e: $e")
+            ShowLogger.d(TAG, "startAuction e: $e")
         }
     }
     override fun auctionBidding(roomId: String, value: Int) {
@@ -597,7 +612,7 @@ class ShowSyncManagerServiceImpl constructor(
             complete.invoke(true)
             return
         }
-        Log.d("ShowSyncManagerServiceImpl", "1.rtmLogin request start -> rtm login")
+        ShowLogger.d("ShowSyncManagerServiceImpl", "1.rtmLogin request start -> rtm login")
         HttpManager
             .getService(TokenInterface::class.java)
             .tokenGenerate(

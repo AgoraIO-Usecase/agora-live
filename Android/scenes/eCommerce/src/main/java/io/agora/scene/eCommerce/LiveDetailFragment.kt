@@ -166,7 +166,7 @@ class LiveDetailFragment : Fragment() {
     private val timerRoomEndRun = Runnable {
         destroy(false)
         showLivingEndLayout()
-        Log.d(TAG,"timer end!")
+        ShowLogger.d(TAG,"timer end!")
     }
 
     /**
@@ -179,7 +179,7 @@ class LiveDetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d(TAG, "[commerce]$this $mRoomId onCreateView")
+        ShowLogger.d(TAG, "[commerce]$this $mRoomId onCreateView")
         return mBinding.root
     }
 
@@ -191,7 +191,7 @@ class LiveDetailFragment : Fragment() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "[commerce]$this $mRoomId onViewCreated")
+        ShowLogger.d(TAG, "[commerce]$this $mRoomId onViewCreated")
 
         initView()
         activity?.onBackPressedDispatcher?.addCallback(enabled = isVisible) {
@@ -208,7 +208,7 @@ class LiveDetailFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         activity ?: return
-        Log.d(TAG, "[commerce]$this $mRoomId onAttach")
+        ShowLogger.d(TAG, "[commerce]$this $mRoomId onAttach")
         if (isLoadSafely) {
             startLoadPage()
         }
@@ -220,7 +220,7 @@ class LiveDetailFragment : Fragment() {
      */
     override fun onDetach() {
         super.onDetach()
-        Log.d(TAG, "[commerce]$this $mRoomId onDetach")
+        ShowLogger.d(TAG, "[commerce]$this $mRoomId onDetach")
     }
 
     /**
@@ -242,10 +242,10 @@ class LiveDetailFragment : Fragment() {
      *
      */
     fun startLoadPageSafely() {
-        Log.d(TAG, "[commerce]${this.hashCode()} $mRoomId startLoadPageSafely1")
+        ShowLogger.d(TAG, "[commerce]${this.hashCode()} $mRoomId startLoadPageSafely1")
         isLoadSafely = true
         activity ?: return
-        Log.d(TAG, "[commerce]$this $mRoomId startLoadPageSafely2")
+        ShowLogger.d(TAG, "[commerce]$this $mRoomId startLoadPageSafely2")
         startLoadPage()
     }
 
@@ -278,9 +278,12 @@ class LiveDetailFragment : Fragment() {
      * @param isScrolling
      */
     fun stopLoadPage(isScrolling: Boolean){
-        Log.d(TAG, "[commerce]$this $mRoomId stopLoadPage")
+        ShowLogger.d(TAG, "[commerce]$this $mRoomId stopLoadPage")
         isLoaded = false
         isLoadSafely = false
+        mService.sendChatMessage(mRoomInfo.roomId, getString(R.string.commerce_live_chat_leaving), {
+
+        })
         destroy(isScrolling)
     }
 
@@ -293,7 +296,7 @@ class LiveDetailFragment : Fragment() {
     private fun destroy(isScrolling: Boolean): Boolean {
         mBinding.root.removeCallbacks(timerRoomEndRun)
         mService.leaveRoom(mRoomInfo.roomId)
-        Log.d(TAG, "[commerce]$this $mRoomId destroy")
+        ShowLogger.d(TAG, "[commerce]$this $mRoomId destroy")
         return destroyRtcEngine(isScrolling)
     }
 
@@ -428,7 +431,7 @@ class LiveDetailFragment : Fragment() {
         val topLayout = mBinding.topLayout
         val dataFormat =
             SimpleDateFormat("HH:mm:ss").apply { timeZone = TimeZone.getTimeZone("GMT") }
-        Log.d(
+        ShowLogger.d(
             TAG,
             "TopTimer curr=${TimeUtils.currentTimeMillis()}, createAt=${mRoomInfo.createdAt}, diff=${TimeUtils.currentTimeMillis() - mRoomInfo.createdAt}, time=${
                 dataFormat.format(Date(TimeUtils.currentTimeMillis() - mRoomInfo.createdAt))
@@ -827,12 +830,12 @@ class LiveDetailFragment : Fragment() {
     //================== Service Operation ===============
 
     private fun initServiceWithJoinRoom() {
-        Log.d(TAG, "[commerce]$this $mRoomId initServiceWithJoinRoom")
+        ShowLogger.d(TAG, "[commerce]$this $mRoomId initServiceWithJoinRoom")
         mBinding.root.post {
             mService.joinRoom(mRoomInfo,
                 success = {
                     initService()
-                    Log.d("hugo", "[commerce]$this $mRoomId initServiceWithJoinRoom mRoomInfo.roomId:${mRoomInfo.roomId}")
+                    ShowLogger.d("hugo", "[commerce]$this $mRoomId initServiceWithJoinRoom mRoomInfo.roomId:${mRoomInfo.roomId}")
                     mService.sendChatMessage(mRoomInfo.roomId, getString(R.string.commerce_live_chat_coming), {
                         insertMessageItem(
                             ShowMessage(
@@ -849,7 +852,7 @@ class LiveDetailFragment : Fragment() {
                         runOnUiThread {
                             destroy(false)
                             showLivingEndLayout()
-                            Log.d(TAG, "join room error!:${e.message}")
+                            ShowLogger.d(TAG, "join room error!:${e.message}")
                         }
                     }
                 })
@@ -861,11 +864,11 @@ class LiveDetailFragment : Fragment() {
      *
      */
     private fun initService() {
-        Log.d(TAG, "[commerce]$this $mRoomId initService")
+        ShowLogger.d(TAG, "[commerce]$this $mRoomId initService")
         mService.subscribeCurrRoomEvent(mRoomId) {
             destroy(false)
             showLivingEndLayout()
-            Log.d("showLivingEndLayout","room delete by owner!")
+            ShowLogger.d("showLivingEndLayout","room delete by owner!")
         }
         mService.subscribeMessage(mRoomId) { showMessage ->
             insertMessageItem(showMessage)
@@ -874,7 +877,7 @@ class LiveDetailFragment : Fragment() {
             refreshTopUserCount(count)
         }
         mService.auctionSubscribe(mRoomId) { auctionModel ->
-            Log.d(TAG, "[commerce]$this $mRoomId auctionSubscribe call back")
+            ShowLogger.d(TAG, "[commerce]$this $mRoomId auctionSubscribe call back")
             auctionFragment.updateAuction(auctionModel)
         }
         mService.likeSubscribe(mRoomId) {

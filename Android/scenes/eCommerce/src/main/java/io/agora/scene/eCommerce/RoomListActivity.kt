@@ -98,7 +98,7 @@ class RoomListActivity : AppCompatActivity() {
         initVideoSettings()
 
         SceneAliveTime.fetchShowAliveTime ({ show, pk ->
-            ShowLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
+            //ShowLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
             ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
         })
     }
@@ -320,12 +320,12 @@ class RoomListActivity : AppCompatActivity() {
             TokenGenerator.TokenGeneratorType.Token007,
             TokenGenerator.AgoraTokenType.Rtc,
             success = {
-                ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
+                //ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
                 RtcEngineInstance.setupGeneralToken(it)
                 success.invoke()
             },
             failure = {
-                ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
+                //ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
                 ToastUtils.showToast(it?.message ?: "generate token failure")
                 error?.invoke(it)
             })
