@@ -7,7 +7,7 @@ import io.agora.scene.base.EntLogger
  *
  * @constructor Create empty Show logger
  */
-object ShowLogger {
+object CommerceLogger {
 
     private val entLogger = EntLogger(EntLogger.Config("eCommerce"))
 

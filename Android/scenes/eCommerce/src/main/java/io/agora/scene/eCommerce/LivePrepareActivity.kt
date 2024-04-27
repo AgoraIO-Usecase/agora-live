@@ -24,9 +24,7 @@ import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.eCommerce.databinding.CommerceLivePrepareActivityBinding
-import io.agora.scene.eCommerce.debugSettings.DebugSettingDialog
 import io.agora.scene.eCommerce.service.ShowServiceProtocol
-import io.agora.scene.eCommerce.widget.PictureQualityDialog
 import io.agora.scene.eCommerce.widget.PresetDialog
 import io.agora.scene.widget.dialog.PermissionLeakDialog
 import io.agora.scene.widget.utils.StatusBarUtil
@@ -125,11 +123,7 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
 //            RtcEngineInstance.isFrontCamera = !RtcEngineInstance.isFrontCamera
         }
         binding.tvSetting.setOnClickListener {
-            if (AgoraApplication.the().isDebugModeOpen) {
-                showDebugModeDialog()
-            } else {
-                showPresetDialog()
-            }
+            showPresetDialog()
         }
 
         toggleVideoRun = Runnable {
@@ -171,12 +165,6 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      *
      */
     private fun showPresetDialog() = PresetDialog(this, mRtcEngine.queryDeviceScore(), RtcConnection(mRoomId, UserManager.getInstance().user.id.toInt())).show()
-
-    /**
-     * Show debug mode dialog
-     *
-     */
-    private fun showDebugModeDialog() = DebugSettingDialog(this).show()
 
     /**
      * On resume

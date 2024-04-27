@@ -20,7 +20,6 @@ import io.agora.scene.eCommerce.service.ShowServiceProtocol
 import io.agora.scene.eCommerce.videoLoaderAPI.OnLiveRoomItemTouchEventHandler
 import io.agora.scene.eCommerce.videoLoaderAPI.OnRoomListScrollEventHandler
 import io.agora.scene.eCommerce.videoLoaderAPI.VideoLoader
-import io.agora.scene.eCommerce.widget.PresetAudienceDialog
 import io.agora.scene.widget.basic.BindingSingleAdapter
 import io.agora.scene.widget.basic.BindingViewHolder
 import io.agora.scene.widget.utils.StatusBarUtil
@@ -113,9 +112,6 @@ class RoomListActivity : AppCompatActivity() {
             RtcEngineInstance.destroy()
             RtcEngineInstance.setupGeneralToken("")
             finish()
-        }
-        mBinding.titleView.setRightIconClick {
-            showAudienceSetting()
         }
         mRoomAdapter = object : BindingSingleAdapter<RoomDetailModel, CommerceRoomItemBinding>() {
             override fun onBindViewHolder(
@@ -283,14 +279,6 @@ class RoomListActivity : AppCompatActivity() {
             position,
             roomInfo.ownerId.toLong() != UserManager.getInstance().user.id
         )
-    }
-
-    /**
-     * Show audience setting
-     *
-     */
-    private fun showAudienceSetting() {
-        PresetAudienceDialog(this).show()
     }
 
     /**

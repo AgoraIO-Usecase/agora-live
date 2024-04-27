@@ -3,7 +3,6 @@ package io.agora.scene.eCommerce.service
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import com.google.gson.Gson
 import io.agora.rtm.*
 import io.agora.rtmsyncmanager.ISceneResponse
@@ -25,7 +24,7 @@ import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
-import io.agora.scene.eCommerce.ShowLogger
+import io.agora.scene.eCommerce.CommerceLogger
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response
@@ -67,19 +66,19 @@ class ShowSyncManagerServiceImpl constructor(
         HttpManager.setBaseURL(BuildConfig.ROOM_MANAGER_SERVER_HOST)
         AUILogger.initLogger(AUILogger.Config(context, "eCommerce", logCallback = object: AUILogger.AUILogCallback {
             override fun onLogDebug(tag: String, message: String) {
-                //ShowLogger.d(tag, message)
+                CommerceLogger.d(tag, message)
             }
 
             override fun onLogInfo(tag: String, message: String) {
-                //ShowLogger.d(tag, message)
+                CommerceLogger.d(tag, message)
             }
 
             override fun onLogWarning(tag: String, message: String) {
-                //ShowLogger.d(tag, message)
+                CommerceLogger.d(tag, message)
             }
 
             override fun onLogError(tag: String, message: String) {
-                //ShowLogger.e(tag, null, message)
+                CommerceLogger.e(tag, null, message)
             }
         }))
 
@@ -130,7 +129,7 @@ class ShowSyncManagerServiceImpl constructor(
      *
      */
     override fun destroy() {
-        ShowLogger.d(TAG, "destroy")
+        CommerceLogger.d(TAG, "destroy")
         synchronized(roomInfoControllers){
             roomInfoControllers.forEach {
                 cleanRoomInfoController(it)
@@ -213,19 +212,19 @@ class ShowSyncManagerServiceImpl constructor(
 
             val controller = RoomInfoController(roomInfo.roomId, scene, roomInfo)
             roomInfoControllers.add(controller)
-            ShowLogger.d(TAG, "[commerce] add controller ${roomInfo.roomId}， roomInfoControllers：${roomInfoControllers}")
+            CommerceLogger.d(TAG, "[commerce] add controller ${roomInfo.roomId}， roomInfoControllers：${roomInfoControllers}")
             actionSubscribe(controller)
             scene.bindRespDelegate(this)
             if (roomInfo.ownerId.toLong() == UserManager.getInstance().user.id) {
                 scene.create(null) { er ->
                     if (er != null) {
-                        ShowLogger.d(TAG, "enter scene fail: ${er.message}")
+                        CommerceLogger.d(TAG, "enter scene fail: ${er.message}")
                         error?.invoke(Exception(er.message))
                         return@create
                     }
                     scene.enter { _, e ->
                         if (e != null) {
-                            ShowLogger.d(TAG, "enter scene fail: ${e.message}")
+                            CommerceLogger.d(TAG, "enter scene fail: ${e.message}")
                             roomInfoControllers.remove(controller)
                             error?.invoke(Exception(e.message))
                         } else {
@@ -237,7 +236,7 @@ class ShowSyncManagerServiceImpl constructor(
             } else {
                 scene.enter { _, e ->
                     if (e != null) {
-                        ShowLogger.d(TAG, "enter scene fail: ${e.message}")
+                        CommerceLogger.d(TAG, "enter scene fail: ${e.message}")
                         roomInfoControllers.remove(controller)
                         error?.invoke(Exception(e.message))
                     } else {
@@ -249,7 +248,7 @@ class ShowSyncManagerServiceImpl constructor(
     }
 
     override fun leaveRoom(roomId: String) {
-        ShowLogger.d(TAG, "leaveRoom: $roomId")
+        CommerceLogger.d(TAG, "leaveRoom: $roomId")
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val roomInfo = controller.roomInfo
         val scene = syncManager.getScene(roomId)
@@ -271,7 +270,7 @@ class ShowSyncManagerServiceImpl constructor(
     }
 
     override fun deleteRoom(roomId: String, complete: () -> Unit) {
-        ShowLogger.d(TAG, "deleteRoom: $roomId")
+        CommerceLogger.d(TAG, "deleteRoom: $roomId")
         syncManager.getScene(roomId).delete()
         roomManager.destroyRoom(BuildConfig.AGORA_APP_ID, kSceneId, roomId) { e ->
             complete.invoke()
@@ -283,7 +282,7 @@ class ShowSyncManagerServiceImpl constructor(
         controller.roomChangeSubscriber = onUpdate
     }
     private fun cleanRoomInfoController(controller: RoomInfoController) {
-        ShowLogger.d(TAG, "cleanRoomInfoController: ${controller.roomId}")
+        CommerceLogger.d(TAG, "cleanRoomInfoController: ${controller.roomId}")
         controller.shopCollection?.release()
         controller.auctionCollection?.release()
         controller.messageCollection?.release()
@@ -299,7 +298,7 @@ class ShowSyncManagerServiceImpl constructor(
             AUIListCollection(a, b, c)
         }
         controller.shopCollection?.subscribeAttributesDidChanged { channelName, key, model ->
-            ShowLogger.d(TAG, "shopCollection subscribeAttributesDidChanged, channelName:$channelName key:$key model:$model")
+            CommerceLogger.d(TAG, "shopCollection subscribeAttributesDidChanged, channelName:$channelName key:$key model:$model")
             val list = model.getList()
             if (list == null) {
                 controller.shopChangeSubscriber?.invoke(emptyList())
@@ -316,7 +315,7 @@ class ShowSyncManagerServiceImpl constructor(
             AUIMapCollection(a, b, c)
         }
         controller.auctionCollection?.subscribeAttributesDidChanged { channelName, key, model ->
-            ShowLogger.d(TAG, "auctionCollection subscribeAttributesDidChanged, channelName:$channelName key:$key model:$model")
+            CommerceLogger.d(TAG, "auctionCollection subscribeAttributesDidChanged, channelName:$channelName key:$key model:$model")
             val gson = Gson()
             val json = gson.toJson(model.getMap())
             val auction = gson.fromJson(json, AuctionModel::class.java)
@@ -333,13 +332,13 @@ class ShowSyncManagerServiceImpl constructor(
                 message: String
             ) {
                 try {
-                    ShowLogger.d(TAG, message)
+                    CommerceLogger.d(TAG, message)
                     val gson = Gson()
                     val model = gson.fromJson(message, ShowMessage::class.java)
                     if (model.message == null && model.userId == null) return
                     runOnMainThread { controller.messageChangeSubscriber?.invoke(model) }
                 } catch (e: Exception) {
-                    ShowLogger.d(TAG, "recv message error: ${e.message}")
+                    CommerceLogger.d(TAG, "recv message error: ${e.message}")
                 }
             }
         })
@@ -364,7 +363,7 @@ class ShowSyncManagerServiceImpl constructor(
                     controller.likeCount = message.count.toLong()
                 }
             } catch (e: Exception) {
-                ShowLogger.e(TAG, e, "subscribeAttributesDidChanged: ${e.message}")
+                CommerceLogger.e(TAG, e, "subscribeAttributesDidChanged: ${e.message}")
             }
         }
     }
@@ -483,7 +482,7 @@ class ShowSyncManagerServiceImpl constructor(
             roomManager.updateRoomInfo(
                 BuildConfig.AGORA_APP_ID, kSceneId, roomInfo
             ) { e, _ ->
-                ShowLogger.d(TAG, "updateRoomInfo")
+                CommerceLogger.d(TAG, "updateRoomInfo")
             }
         }
         runOnMainThread { controller.userChangeSubscriber?.invoke(controller.userList.size) }
@@ -535,7 +534,7 @@ class ShowSyncManagerServiceImpl constructor(
         }
         val map = GsonTools.beanToMap(auctionModel)
         controller.auctionCollection?.updateMetaData(null, map, null) { e ->
-            ShowLogger.d(TAG, "startAuction e: $e")
+            CommerceLogger.d(TAG, "startAuction e: $e")
         }
     }
     override fun auctionBidding(roomId: String, value: Int) {
@@ -612,7 +611,7 @@ class ShowSyncManagerServiceImpl constructor(
             complete.invoke(true)
             return
         }
-        ShowLogger.d("ShowSyncManagerServiceImpl", "1.rtmLogin request start -> rtm login")
+        CommerceLogger.d("ShowSyncManagerServiceImpl", "1.rtmLogin request start -> rtm login")
         HttpManager
             .getService(TokenInterface::class.java)
             .tokenGenerate(
