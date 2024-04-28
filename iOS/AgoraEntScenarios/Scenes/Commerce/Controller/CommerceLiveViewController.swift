@@ -351,6 +351,11 @@ extension CommerceLiveViewController {
                     commerceLogger.info("joinRoom[\(room.roomId)] error: \(error?.code ?? 0)")
                     if err.code == -1 {
                         self.onRoomExpired()
+                    } else {
+                        ToastView.show(text: err.localizedDescription)
+                        //TODO: leave?
+//                        self.leaveRoom()
+//                        self.dismiss(animated: true)
                     }
                 }
             }

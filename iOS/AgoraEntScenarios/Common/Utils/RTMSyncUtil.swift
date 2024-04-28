@@ -13,7 +13,6 @@ class RTMSyncUtil: NSObject {
     private static var syncManager: AUISyncManager?
     private static var roomManager = AUIRoomManagerImpl(sceneId: kEcommerceSceneId)
     private static var isLogined: Bool = false
-    private static let userDelegate = RTMSyncUtilUserDelegate()
     
     class func initRTMSyncManager() {
         destroy()
@@ -127,7 +126,6 @@ class RTMSyncUtil: NSObject {
         commercePrintLog("joinScene[\(id)]", tag: "RTMSyncUtil")
         _ = syncManager?.createScene(channelName: id)
         let scene = scene(id: id)
-        scene?.userService.bindRespDelegate(delegate: userDelegate)
         login(channelName: id, success: {
             if ownerId == VLUserCenter.user.id {
                 let date = Date()
@@ -175,25 +173,9 @@ class RTMSyncUtil: NSObject {
     }
     
     class func getUserList(id: String, callback: @escaping (_ roomId: String, _ userList: [AUIUserInfo]) -> Void) {
-        userDelegate.onUserListCallback = callback
         scene(id: id)?.userService.getUserInfoList(roomId: id, userIdList: [], callback: { _, userList in
             callback(id, userList ?? [])
         })
-    }
-    
-    class func subscribeUserDidChange(id: String,
-                                      userEnter: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?,
-                                      userLeave: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?,
-                                      userUpdate: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?,
-                                      userKicked: ((_ roomId: String, _ userId: String) -> Void)?,
-                                      audioMute: ((_ userId: String, _ mute: Bool) -> Void)?,
-                                      videoMute: ((_ userId: String, _ mute: Bool) -> Void)?) {
-        userDelegate.onUserEnterCallback = userEnter
-        userDelegate.onUserLeaveCallback = userLeave
-        userDelegate.onUserUpdateCallback = userUpdate
-        userDelegate.onUserKickedCallback = userKicked
-        userDelegate.onUserAudioMuteCallback = audioMute
-        userDelegate.onUserVideoMuteCallback = videoMute
     }
     
     class func muteAudio(channelName: String, isMute: Bool, callback: ((NSError?) -> Void)?) {
@@ -327,43 +309,5 @@ class RTMSyncUtil: NSObject {
             syncManager?.rtmManager.publish(channelName: channelName, message: message, completion: { _ in
             })
         }
-    }
-}
-
-class RTMSyncUtilUserDelegate: NSObject, AUIUserRespDelegate {
-    var onUserListCallback: ((_ roomId: String, _ userList: [AUIUserInfo]) -> Void)?
-    var onUserEnterCallback: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?
-    var onUserLeaveCallback: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?
-    var onUserUpdateCallback: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?
-    var onUserKickedCallback: ((_ roomId: String, _ userId: String) -> Void)?
-    var onUserAudioMuteCallback: ((_ userId: String, _ mute: Bool) -> Void)?
-    var onUserVideoMuteCallback: ((_ userId: String, _ mute: Bool) -> Void)?
-    
-    func onRoomUserSnapshot(roomId: String, userList: [RTMSyncManager.AUIUserInfo]) {
-        onUserListCallback?(roomId, userList)
-    }
-    
-    func onRoomUserEnter(roomId: String, userInfo: RTMSyncManager.AUIUserInfo) {
-        onUserEnterCallback?(roomId, userInfo)
-    }
-    
-    func onRoomUserLeave(roomId: String, userInfo: RTMSyncManager.AUIUserInfo) {
-        onUserLeaveCallback?(roomId, userInfo)
-    }
-    
-    func onRoomUserUpdate(roomId: String, userInfo: RTMSyncManager.AUIUserInfo) {
-        onUserUpdateCallback?(roomId, userInfo)
-    }
-    
-    func onUserAudioMute(userId: String, mute: Bool) {
-        onUserAudioMuteCallback?(userId, mute)
-    }
-    
-    func onUserVideoMute(userId: String, mute: Bool) {
-        onUserVideoMuteCallback?(userId, mute)
-    }
-    
-    func onUserBeKicked(roomId: String, userId: String) {
-        onUserKickedCallback?(roomId, userId)
     }
 }
