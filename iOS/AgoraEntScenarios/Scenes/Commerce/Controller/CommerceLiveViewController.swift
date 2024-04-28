@@ -111,11 +111,11 @@ class CommerceLiveViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.startBidGoodsClosure = { [weak self] model in
             guard let self = self, let model = model else { return }
-            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
+            self.serviceImp?.addBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
         }
         view.endBidGoodsClosure = { [weak self] model in
             guard let self = self, let model = model else { return }
-            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
+            self.serviceImp?.endBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
         }
         view.bidInAuctionGoodsClosure = { [weak self] model in
             guard let self = self, let model = model else { return }
