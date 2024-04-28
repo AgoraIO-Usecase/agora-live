@@ -15,7 +15,7 @@ import YYModel
     private let rtmManager: AUIRtmManager!
     
     deinit {
-        aui_info("deinit AUIUserServiceImpl[\(channelName)]", tag: "AUIUserServiceImpl")
+        aui_info("deinit AUIUserServiceImpl[\(channelName)] \(self)", tag: "AUIUserServiceImpl")
         rtmManager.unsubscribeUser(channelName: channelName, delegate: self)
     }
     
@@ -23,7 +23,7 @@ import YYModel
         self.rtmManager = rtmManager
         self.channelName = channelName
         super.init()
-        aui_info("init AUIUserServiceImpl[\(channelName)]", tag: "AUIUserServiceImpl")
+        aui_info("init AUIUserServiceImpl[\(channelName)] \(self)", tag: "AUIUserServiceImpl")
         self.rtmManager.subscribeUser(channelName: channelName, delegate: self)
         //rtm2.2 支持预设置，在subscribe成功之后会更新
         _setupUserAttr(roomId: channelName) { _ in

@@ -77,6 +77,15 @@ class CommerceLivePagesViewController: ViewController {
         AppContext.unloadCommerceServiceImp()
     }
     
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        commerceLogger.info("init-- CommerceLivePagesViewController", context: kPagesVCTag)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.layer.contents = UIImage.commerce_sceneImage(name: "show_list_Bg")?.cgImage

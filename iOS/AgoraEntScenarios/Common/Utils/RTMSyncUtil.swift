@@ -13,10 +13,10 @@ class RTMSyncUtil: NSObject {
     private static var syncManager: AUISyncManager?
     private static var roomManager = AUIRoomManagerImpl(sceneId: kEcommerceSceneId)
     private static var isLogined: Bool = false
-    private static let roomDelegate = RTMSyncUtilRoomDeleage()
     private static let userDelegate = RTMSyncUtilUserDelegate()
     
     class func initRTMSyncManager() {
+        destroy()
         let config = AUICommonConfig()
         config.appId = KeyCenter.AppId
         let owner = AUIUserThumbnailInfo()
@@ -96,14 +96,16 @@ class RTMSyncUtil: NSObject {
         }
     }
     
-    class func logOut() {
+    class func logout() {
         guard isLogined else { return }
         syncManager?.logout()
         isLogined = false
     }
     
     class func destroy() {
+        logout()
         syncManager?.destroy()
+        syncManager = nil
     }
     
     class func scene(id: String) -> AUIScene? {
@@ -125,7 +127,6 @@ class RTMSyncUtil: NSObject {
         commercePrintLog("joinScene[\(id)]", tag: "RTMSyncUtil")
         _ = syncManager?.createScene(channelName: id)
         let scene = scene(id: id)
-        scene?.bindRespDelegate(delegate: roomDelegate)
         scene?.userService.bindRespDelegate(delegate: userDelegate)
         login(channelName: id, success: {
             if ownerId == VLUserCenter.user.id {
@@ -161,21 +162,16 @@ class RTMSyncUtil: NSObject {
         }, failure: failure)
     }
     
-    class func leaveScene(id: String, ownerId: String) {
+    class func leaveScene(id: String, asOwner: Bool) {
         commercePrintLog("leaveScene[\(id)]", tag: "RTMSyncUtil")
         let scene = scene(id: id)
-        if ownerId == VLUserCenter.user.id {
+        if asOwner {
             scene?.delete()
             roomManager.destroyRoom(roomId: id) { err in
             }
         } else {
             scene?.leave()
         }
-        scene?.unbindRespDelegate(delegate: roomDelegate)
-    }
-    
-    class func subscribeRoomDestroy(roomDestoryClosure: ((String) -> Void)?) {
-        roomDelegate.roomDestoryClosure = roomDestoryClosure
     }
     
     class func getUserList(id: String, callback: @escaping (_ roomId: String, _ userList: [AUIUserInfo]) -> Void) {
@@ -215,7 +211,8 @@ class RTMSyncUtil: NSObject {
     class func subscribeAttributesDidChanged(id: String,
                                              key: String,
                                              changeClosure: ((_ channelName: String, _ object: AUIAttributesModel) -> Void)?) {
-        collection(id: id, key: key)?.subscribeAttributesDidChanged(callback: { channelName, key, object in
+        let collection = collection(id: id, key: key)
+        collection?.subscribeAttributesDidChanged(callback: { channelName, key, object in
             changeClosure?(channelName, object)
         })
     }
@@ -252,7 +249,7 @@ class RTMSyncUtil: NSObject {
             group.enter()
             listCollection(id: id, key: key)?.addMetaData(valueCmd: nil, value: $0, filter: nil, callback: { error in
                 if error != nil {
-                    print("error == \(error?.localizedDescription ?? "")")
+                    commerceErrorLog("addMetaData error == \(error?.localizedDescription ?? "")")
                 }
                 group.leave()
             })
@@ -330,15 +327,6 @@ class RTMSyncUtil: NSObject {
             syncManager?.rtmManager.publish(channelName: channelName, message: message, completion: { _ in
             })
         }
-    }
-}
-
-class RTMSyncUtilRoomDeleage: NSObject, AUISceneRespDelegate {
-    var roomDestoryClosure: ((String) -> Void)?
-    func onSceneDestroy(roomId: String) {
-        print("房间销毁 == \(roomId)")
-        roomDestoryClosure?(roomId)
-        RTMSyncUtil.leaveScene(id: roomId, ownerId: VLUserCenter.user.id)
     }
 }
 

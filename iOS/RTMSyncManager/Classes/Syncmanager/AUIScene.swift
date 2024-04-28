@@ -142,8 +142,8 @@ public class AUIScene: NSObject {
 //                    self.ownerId = "owner unknown"
                     //如果没有获取到user信息，认为房间有问题
                     self._cleanScene()
-                    self._notifyError(error: NSError(domain: "get room owner fatel!", code: -1))
                     self.onMsgRecvEmpty(channelName: self.channelName)
+                    self._notifyError(error: NSError(domain: "get room owner fatel!", code: -1))
                     aui_error("get room owner fatel!")
                     return
                 }
