@@ -55,6 +55,7 @@ class CommerceRoomListVC: UIViewController {
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        AppContext.shared.sceneLocalizeBundleName = "CommerceResource"
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         hidesBottomBarWhenPushed = true
         commercePrintLog("init-- CommerceRoomListVC")
