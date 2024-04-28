@@ -54,6 +54,7 @@ class ShowRoomListVC: UIViewController {
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        AppContext.shared.sceneLocalizeBundleName = "showResource"
         showLogger.info("init-- ShowRoomListVC")
         VideoLoaderApiImpl.shared.printClosure = { msg in
             showLogger.info(msg, context: "VideoLoaderApi")
