@@ -19,7 +19,7 @@ import AgoraRtmKit
     private var arbiterDelegates: NSHashTable<AUIArbiterDelegate> = NSHashTable<AUIArbiterDelegate>()
     
     deinit {
-        aui_info("deinit AUIArbiter", tag: "AUIArbiter")
+        aui_info("deinit AUIArbiter[\(channelName)] \(self)", tag: "AUIArbiter")
         rtmManager.unsubscribeLock(channelName: channelName, lockName: kRTM_Referee_LockName, delegate: self)
     }
     
@@ -29,7 +29,7 @@ import AgoraRtmKit
         self.currentUserInfo = userInfo
         super.init()
         rtmManager.subscribeLock(channelName: channelName, lockName: kRTM_Referee_LockName, delegate: self)
-        aui_info("init AUIArbiter", tag: "AUIArbiter")
+        aui_info("init AUIArbiter[\(channelName)] \(self)", tag: "AUIArbiter")
     }
     
     public func subscribeEvent(delegate: AUIArbiterDelegate) {

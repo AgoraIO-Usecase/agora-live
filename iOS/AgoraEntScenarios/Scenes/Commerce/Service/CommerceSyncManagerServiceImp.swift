@@ -52,15 +52,23 @@ private func agoraAssert(_ condition: Bool, _ message: String) {
         return
     }
     
-    commerceLogger.error(message, context: "Service")
+    commerceErrorLog(message, tag: "Service")
 }
 
-func commercePrintLog(_ message: String, tag: String? = nil) {
+func commercePrintLog(_ message: String, tag: String? = "UI") {
     commerceLogger.info(message, context: tag)
 }
 
+func commerceWarnLog(_ message: String, tag: String? = "UI") {
+    commerceLogger.warning(message, context: tag)
+}
+
+func commerceErrorLog(_ message: String, tag: String? = "UI") {
+    commerceLogger.error(message, context: tag)
+}
+
 private func agoraPrint(_ message: String) {
-    commerceLogger.info(message, context: "Service")
+    commercePrintLog(message, tag: "Service")
 }
 
 class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
@@ -111,8 +119,8 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         return _roomId
     }
     
-    fileprivate func isOwner(_ room: CommerceRoomListModel) -> Bool {
-        return room.ownerId == VLUserCenter.user.id
+    fileprivate func isOwner(_ room: CommerceRoomListModel?) -> Bool {
+        return room?.ownerId == VLUserCenter.user.id
     }
     
     fileprivate func initScene(completion: @escaping (NSError?) -> Void) {
@@ -230,15 +238,19 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
             group.leave()
         }
         
-        group.notify(queue: .main) {
+        group.notify(queue: .main) {[weak self] in
+            guard let self = self else {return}
             if roomManagerError == nil, rtmError == nil {
                 completion(nil, roomModel)
                 return
             }
             
-            RTMSyncUtil.leaveScene(id: roomId, ownerId: VLUserCenter.user.id)
+            RTMSyncUtil.leaveScene(id: roomId, asOwner: self.isOwner(room))
             completion(roomManagerError ?? rtmError, nil)
         }
+        
+        let scene = RTMSyncUtil.scene(id: room.roomId)
+        scene?.bindRespDelegate(delegate: self)
     }
     
     @objc func joinRoom(room: CommerceRoomListModel,
@@ -260,7 +272,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
             roomModel.createdAt = room.createdAt
             self.roomList?.append(roomModel)
             self._startCheckExpire()
-            self._subscribeOnRoomDestroy(isOwner: self.isOwner(roomModel))
             self._subscribeAll()
             self.isJoined = true
             completion(nil, roomModel)
@@ -268,6 +279,9 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         } failure: { error in
             completion(error, nil)
         }
+        
+        let scene = RTMSyncUtil.scene(id: room.roomId)
+        scene?.bindRespDelegate(delegate: self)
     }
     
     private func _joinRoomRetry(room: CommerceRoomListModel,
@@ -291,13 +305,11 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
             return
         }
         
-        deinitRoom(roomId: roomId) { _ in }
         
-        //current user is room owner, remove room
-        if roomInfo.ownerId == VLUserCenter.user.id {
-            _removeRoom(completion: completion)
-            return
-        }
+        let scene = RTMSyncUtil.scene(id: roomInfo.roomId)
+        scene?.unbindRespDelegate(delegate: self)
+        
+        deinitRoom(roomId: roomId) { _ in }
         
         _leaveRoom(completion: completion)
     }
@@ -309,7 +321,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     }
     
     private func deinitRoom(roomId: String?, completion: @escaping (NSError?) -> Void) {
-        _removeUser(roomId: roomId, completion: completion)
         _sendMessageWithText(roomId: roomId, text: "leave_live_room".commerce_localized)
     }
     
@@ -416,20 +427,8 @@ extension CommerceSyncManagerServiceImp {
             agoraAssert("channelName = nil")
             return
         }
-        _removeUser(roomId: roomId) { error in
-        }
         
         _leaveScene(roomId: channelName)
-    }
-
-    private func _removeRoom(completion: @escaping (NSError?) -> Void) {
-        guard let channelName = roomId else {
-            agoraAssert("channelName = nil")
-            return
-        }
-        RTMSyncUtil.leaveScene(id: channelName, ownerId: room?.ownerId ?? "")
-        roomId = nil
-        completion(nil)
     }
     
     fileprivate func _subscribeAll() {
@@ -447,12 +446,12 @@ extension CommerceSyncManagerServiceImp {
         }
         agoraPrint("imp[\(roomId ?? "")] all unsubscribe...")
         RTMSyncUtil.unsubscribeMessage(channelName: "", delegate: self)
-        RTMSyncUtil.leaveScene(id: channelName, ownerId: room?.ownerId ?? "")
+        RTMSyncUtil.leaveScene(id: channelName, asOwner: isOwner(room))
     }
     
     private func _leaveScene(roomId: String) {
-        agoraPrint("imp leave scene: \(roomId)")
-        RTMSyncUtil.leaveScene(id: roomId, ownerId: room?.ownerId ?? "")
+        agoraPrint("_leaveScene: \(roomId)")
+        RTMSyncUtil.leaveScene(id: roomId, asOwner: isOwner(room))
     }
 }
 
@@ -733,29 +732,6 @@ extension CommerceSyncManagerServiceImp {
             }
         }
     }
-
-    private func _removeUser(roomId: String?, completion: @escaping (NSError?) -> Void) {
-        guard let _ = roomId else {
-            agoraAssert("channelName = nil")
-            return
-        }
-        
-        guard let objectId = userList?.filter({ $0.userId == VLUserCenter.user.id }).first?.objectId else {
-            agoraPrint("_removeUser objectId = nil")
-            return
-        }
-        agoraPrint("imp user delete... [\(objectId)]")
-        //TODO: 待完成
-//        RTMSyncUtil.removeMetaData(id: channelName, key: SYNC_SCENE_ROOM_USER_COLLECTION, filter: [["objectId": objectId]]) { error in
-//            if error != nil {
-//                agoraPrint("imp user delete fail \(error?.localizedDescription ?? "")...")
-//                completion(error)
-//                return
-//            }
-//            agoraPrint("imp user delete success...")
-//            completion(nil)
-//        }
-    }
     
     private func _updateUserCount() {
         self.subscribeDelegate?.onUserCountChanged(userCount: self.userList?.count ?? 1)
@@ -786,13 +762,6 @@ extension CommerceSyncManagerServiceImp {
                                    payload: params,
                                    ownerInfo: ownerInfo)
     }
-    
-    private func _subscribeOnRoomDestroy(isOwner: Bool) {
-        guard isOwner == false else { return }
-        RTMSyncUtil.subscribeRoomDestroy { roomId in
-            self.subscribeDelegate?.onRoomDestroy(roomId: roomId)
-        }
-    }
 }
 
 
@@ -817,67 +786,21 @@ extension CommerceSyncManagerServiceImp {
     }
 }
 
-class CommerceRobotSyncManagerServiceImp: CommerceSyncManagerServiceImp {
-    deinit {
-        agoraPrint("deinit-- ShowRobotSyncManagerServiceImp")
-    }
-    
-    override func isOwner(_ room: CommerceRoomListModel) -> Bool {
-        if room.roomId.count == 6 {
-            return super.isOwner(room)
-        }
-        
-        return true
-    }
-    
-    override func _checkRoomExpire() {
-        guard let room = self.room else { return }
-        if room.roomId.count == 6 {
-            return super._checkRoomExpire()
-        }
-        CommerceRobotService.shared.playerHeartBeat()
-    }
-    
-    @objc override func _getRoomList(page: Int, completion: @escaping (NSError?, [CommerceRoomListModel]?) -> Void) {
-        RTMSyncUtil.getRoomList { error, results in
-            agoraPrint("result == \(results?.compactMap { $0 } ?? [])")
-            if error != nil {
-                completion(error, nil)
-                return
-            }
-            let dataArray = results?.map({ info in
-                let roomModel = CommerceRoomDetailModel()
-                roomModel.ownerAvatar = info.owner?.userAvatar
-                roomModel.ownerId = info.owner?.userId ?? ""
-                roomModel.ownerName = info.owner?.userName
-                roomModel.roomId = info.roomId
-                roomModel.roomName = info.roomName
-                roomModel.thumbnailId = info.customPayload["thumbnailId"] as? String
-                roomModel.createdAt = (info.customPayload["createdAt"] as? Int64) ?? 0
-                roomModel.roomUserCount = (info.customPayload["roomUserCount"] as? Int) ?? 1
-                return roomModel
-            })
-            completion(nil, dataArray)
-        }
-    }
-    
-    @objc override func createRoom(roomName: String,
-                                   roomId: String,
-                                   thumbnailId: String,
-                                   completion: @escaping (NSError?, CommerceRoomDetailModel?) -> Void) {
-        super.createRoom(roomName: roomName, roomId: roomId, thumbnailId: thumbnailId, completion: completion)
-    }
-    
-    @objc override func joinRoom(room: CommerceRoomListModel,
-                        completion: @escaping (NSError?, CommerceRoomDetailModel?) -> Void) {
-        super.joinRoom(room: room, completion: completion)
-    }
-}
-
 extension CommerceSyncManagerServiceImp: AUIRtmMessageProxyDelegate {
     func onMessageReceive(publisher: String, channelName: String, message: String) {
         guard channelName == roomId, let model = CommerceMessage.yy_model(withJSON: message) else { return }
         agoraPrint("imp onMessageReceive... [\(message)] \(channelName)")
         self.subscribeDelegate?.onMessageDidAdded(message: model)
+    }
+}
+
+extension CommerceSyncManagerServiceImp: AUISceneRespDelegate {
+    func onSceneDestroy(roomId: String){
+        RTMSyncUtil.leaveScene(id: roomId, asOwner: true)
+        subscribeDelegate?.onRoomDestroy(roomId: roomId)
+    }
+    
+    func onSceneUserBeKicked(roomId: String,userId: String) {
+        
     }
 }

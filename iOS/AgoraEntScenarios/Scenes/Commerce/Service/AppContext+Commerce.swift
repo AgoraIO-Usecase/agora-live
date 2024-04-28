@@ -28,7 +28,7 @@ extension AppContext {
         }
         let commerceServiceImp = _commerceServiceImpMap[roomId]
         guard let commerceServiceImp = commerceServiceImp else {
-            let imp = roomId.count == 6 ? CommerceSyncManagerServiceImp() : CommerceRobotSyncManagerServiceImp()
+            let imp = CommerceSyncManagerServiceImp()
             _commerceServiceImpMap[roomId] = imp
             return imp
         }

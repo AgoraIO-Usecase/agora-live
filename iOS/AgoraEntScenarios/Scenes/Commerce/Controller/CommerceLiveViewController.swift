@@ -167,6 +167,15 @@ class CommerceLiveViewController: UIViewController {
 //        musicManager?.destory()
     }
     
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        commerceLogger.info("init-- CommerceLiveViewController")
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -343,13 +352,10 @@ extension CommerceLiveViewController {
                     if err.code == -1 {
                         self.onRoomExpired()
                     }
-                } else {
-                    self._subscribeServiceEvent()
                 }
             }
-        } else {
-            _subscribeServiceEvent()
         }
+        _subscribeServiceEvent()
     }
     
     func _leaveRoom(_ room: CommerceRoomListModel){

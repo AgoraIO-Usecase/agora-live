@@ -79,7 +79,7 @@ class CommerceNavigationBar: UIView {
 extension CommerceNavigationBar {
     
     @objc private func didClickLeftButtonAction(){
-        RTMSyncUtil.logOut()
+        commercePrintLog("didClickLeftButtonAction")
         RTMSyncUtil.destroy()
         currentNavigationController()?.popViewController(animated: true)
     }
