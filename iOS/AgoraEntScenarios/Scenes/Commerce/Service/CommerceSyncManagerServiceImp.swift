@@ -678,59 +678,8 @@ extension CommerceSyncManagerServiceImp {
             return
         }
         agoraPrint("imp user subscribe ...")
-        RTMSyncUtil.subscribeUserDidChange(id: channelName) { roomId, userInfo in
-            print("userEnter == \(roomId)  object == \(userInfo)")
-            userEnter(userInfo: userInfo)
-            
-        } userLeave: { roomId, userInfo in
-            print("userLeave == \(roomId)  object == \(userInfo)")
-            userLeave(userId: userInfo.userId)
-            
-        } userUpdate: { roomId, userInfo in
-            print("userUpdate == \(roomId)  object == \(userInfo)")
-            userEnter(userInfo: userInfo)
-            
-        } userKicked: { roomId, userId in
-            print("userKicked == \(roomId)  userId == \(userId)")
-            userLeave(userId: userId)
-            
-        } audioMute: { userId, mute in
-            print("userAudioMute == \(userId)  userId == \(mute)")
-        } videoMute: { userId, mute in
-            print("userVideoMute == \(userId)  userId == \(mute)")
-        }
-        
-        func userEnter(userInfo: AUIUserInfo) {
-            let user = CommerceUser()
-            user.userId = userInfo.userId
-            user.avatar = userInfo.userAvatar
-            user.userName = userInfo.userName
-            
-            if let userList = self.userList,
-                !userList.isEmpty,
-                !userList.map({ $0.userId }).contains(userInfo.userId) {
-                self.userList?.append(user)
-                
-            } else if (self.userList ?? []).isEmpty {
-                self.userList = [user]
-            }
-            
-            defer{
-                self._updateUserCount()
-            }
-            self.subscribeDelegate?.onUserJoinedRoom(user: user)
-            self.subscribeDelegate?.onUserCountChanged(userCount: self.userList?.count ?? 1)
-        }
-        
-        func userLeave(userId: String) {
-            if let index = self.userList?.firstIndex(where: { $0.userId == userId }) {
-                guard let model = self.userList?[index] else { return }
-                self.userList?.remove(at: index)
-                self._updateUserCount()
-                self.subscribeDelegate?.onUserLeftRoom(user: model)
-                self.subscribeDelegate?.onUserCountChanged(userCount: self.userList?.count ?? 1)
-            }
-        }
+        let scene = RTMSyncUtil.scene(id: channelName)
+        scene?.userService.bindRespDelegate(delegate: self)
     }
     
     private func _updateUserCount() {
@@ -802,5 +751,80 @@ extension CommerceSyncManagerServiceImp: AUISceneRespDelegate {
     
     func onSceneUserBeKicked(roomId: String,userId: String) {
         
+    }
+}
+
+extension CommerceSyncManagerServiceImp: AUIUserRespDelegate {
+    func onRoomUserSnapshot(roomId: String, userList: [AUIUserInfo]) {
+        let users = userList.compactMap({ item in
+            let user = CommerceUser()
+            user.userId = item.userId
+            user.avatar = item.userAvatar
+            user.userName = item.userName
+            return user
+        })
+        self.userList = users
+        _updateUserCount()
+    }
+    
+    func onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
+        agoraPrint("userEnter == \(roomId)  object == \(userInfo)")
+        _userEnter(userInfo: userInfo)
+    }
+    
+    func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
+        agoraPrint("userLeave == \(roomId)  object == \(userInfo)")
+        _userLeave(userId: userInfo.userId)
+    }
+    
+    func onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {
+        agoraPrint("userUpdate == \(roomId)  object == \(userInfo)")
+        _userEnter(userInfo: userInfo)
+    }
+    
+    func onUserAudioMute(userId: String, mute: Bool) {
+        
+    }
+    
+    func onUserVideoMute(userId: String, mute: Bool) {
+        
+    }
+    
+    func onUserBeKicked(roomId: String, userId: String) {
+        agoraPrint("userKicked == \(roomId)  userId == \(userId)")
+        _userLeave(userId: userId)
+    }
+    
+    func _userEnter(userInfo: AUIUserInfo) {
+        let user = CommerceUser()
+        user.userId = userInfo.userId
+        user.avatar = userInfo.userAvatar
+        user.userName = userInfo.userName
+        
+        if let userList = self.userList,
+            !userList.isEmpty,
+            !userList.map({ $0.userId }).contains(userInfo.userId) {
+            self.userList?.append(user)
+            
+        } else if (self.userList ?? []).isEmpty {
+            self.userList = [user]
+        }
+        
+        defer{
+            self._updateUserCount()
+        }
+        self.subscribeDelegate?.onUserJoinedRoom(user: user)
+        let count = self.userList?.count ?? 1
+        self.subscribeDelegate?.onUserCountChanged(userCount: count)
+    }
+    
+    func _userLeave(userId: String) {
+        if let index = self.userList?.firstIndex(where: { $0.userId == userId }) {
+            guard let model = self.userList?[index] else { return }
+            self.userList?.remove(at: index)
+            self._updateUserCount()
+            self.subscribeDelegate?.onUserLeftRoom(user: model)
+            self.subscribeDelegate?.onUserCountChanged(userCount: self.userList?.count ?? 1)
+        }
     }
 }

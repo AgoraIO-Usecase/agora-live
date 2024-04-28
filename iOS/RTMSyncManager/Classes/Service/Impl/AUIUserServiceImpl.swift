@@ -26,9 +26,7 @@ import YYModel
         aui_info("init AUIUserServiceImpl[\(channelName)] \(self)", tag: "AUIUserServiceImpl")
         self.rtmManager.subscribeUser(channelName: channelName, delegate: self)
         //rtm2.2 支持预设置，在subscribe成功之后会更新
-        _setupUserAttr(roomId: channelName) { _ in
-            //TODO: retry
-        }
+        setupUserAttr(roomId: channelName)
     }
 }
 
@@ -239,8 +237,22 @@ extension AUIUserServiceImpl {
                 return
             }
             
+            aui_info("_setupUserAttr[\(roomId)] finished", tag: "AUIUserServiceImpl")
             //rtm不会返回自己更新的数据，需要手动处理
             self.onUserDidUpdated(channelName: roomId, userId: userId, userInfo: userAttr)
+        }
+    }
+    
+    private func setupUserAttr(roomId: String) {
+        _setupUserAttr(roomId: roomId) {[weak self] err in
+            //retry
+            guard let _ = err else {
+                return
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                self?.setupUserAttr(roomId: roomId)
+            }
+
         }
     }
 }
