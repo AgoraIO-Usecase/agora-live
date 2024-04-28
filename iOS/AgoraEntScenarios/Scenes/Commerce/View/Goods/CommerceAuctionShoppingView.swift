@@ -142,7 +142,7 @@ class CommerceAuctionShoppingView: UIView {
         statusButton.setTitleColor(model.status.statusTitleColor, for: .normal)
         statusButton.setBackgroundImage(createGradientImage(colors: model.status.statusBackgroundColor), for: .normal)
         bidButton.setTitleColor(model.status.bidTitleColor, for: .normal)
-        bidButton.setBackgroundImage(createGradientImage(colors: model.status.bidBackgroundColor), for: .normal)
+        bidButton.setBackgroundImage(createGradientImage(colors: model.bidBackgroundColor()), for: .normal)
         bidButton.isUserInteractionEnabled = model.status == .started
         switch model.status {
         case .idle, .completion:
