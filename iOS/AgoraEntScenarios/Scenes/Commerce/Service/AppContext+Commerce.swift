@@ -60,15 +60,6 @@ extension AppContext {
         }
     }
     
-    public var commerceUserList: [CommerceUser]? {
-        set {
-            extDic[kCommerceUserListKey] = newValue
-        }
-        get {
-            return extDic[kCommerceUserListKey] as? [CommerceUser]
-        }
-    }
-    
     public var commerceRtcToken: String? {
         set {
             self.extDic[kRtcToken] = newValue
