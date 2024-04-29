@@ -84,14 +84,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     fileprivate var room: CommerceRoomListModel? {
         return self.roomList?.filter({ $0.roomId == roomId}).first
     }
-    private var userList: [CommerceUser]? {
-        set {
-            AppContext.shared.commerceUserList = newValue
-        }
-        get {
-            return AppContext.shared.commerceUserList
-        }
-    }
+    private var userList: [CommerceUser]? 
     private weak var subscribeDelegate: CommerceSubscribeServiceProtocol?
     
     private var userMuteLocalAudio: Bool = false
@@ -208,10 +201,10 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         group.enter()
         var rtmError: NSError? = nil
         let roomModel = CommerceRoomDetailModel()
+        self.roomId = roomId
         RTMSyncUtil.joinScene(id: roomId, ownerId: room.ownerId, payload: params) { [weak self] in
             guard let self = self else {return}
             let channelName = roomId
-            self.roomId = channelName
             roomModel.ownerAvatar = room.ownerAvatar
             roomModel.ownerId = room.ownerId
             roomModel.ownerName = room.ownerName
