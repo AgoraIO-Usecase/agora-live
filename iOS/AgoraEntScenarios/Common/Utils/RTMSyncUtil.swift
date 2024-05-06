@@ -259,9 +259,10 @@ class RTMSyncUtil: NSObject {
     
     class func updateMetaData(id: String,
                               key: String,
+                              valueCmd: String? = nil,
                               data: [String: Any],
                               callback: ((NSError?) -> Void)?) {
-        collection(id: id, key: key)?.updateMetaData(valueCmd: nil, value: data, filter: nil, callback: callback)
+        collection(id: id, key: key)?.updateMetaData(valueCmd: valueCmd, value: data, filter: nil, callback: callback)
     }
     
     class func updateListMetaData(id: String,

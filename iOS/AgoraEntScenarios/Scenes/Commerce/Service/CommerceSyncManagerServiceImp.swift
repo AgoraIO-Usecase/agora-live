@@ -21,6 +21,10 @@ private let SYNC_MANAGER_BUY_GOODS_COLLECTION = "commerce_goods_buy_collection"
 private let SYNC_MANAGER_UPVOTE_COLLECTION = "commerce_like_collection"
 
 
+private struct CommerceCmdKey {
+    static let updateBidGoodsInfo: String = "updateBidGoodsInfo"
+}
+
 enum CommerceError: Int, Error {
     case unknown = 1                   //unknown error
     case networkError                  //network fail
@@ -342,6 +346,10 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         _addBidGoodsInfo(roomId: roomId, goods: goods, completion: completion)
     }
     
+    func endBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel, completion: @escaping (NSError?) -> Void) {
+        _endBidGoodsInfo(roomId: roomId, goods: goods, completion: completion)
+    }
+    
     func updateBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel, completion: @escaping (NSError?) -> Void) {
         _updateBidGoodsInfo(roomId: roomId, goods: goods, completion: completion)
     }
@@ -470,19 +478,38 @@ extension CommerceSyncManagerServiceImp {
     private func _addBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel?, completion: @escaping (NSError?) -> Void) {
         guard let channelName = roomId,
               let params = goods?.yy_modelToJSONObject() as? [String: Any] else {
-            completion(NSError(domain: "roomId is empty", code: 0))
+            completion(NSError(domain: "_addBidGoodsInfo fail: roomId is nil or params is nil", code: 0))
             return
         }
         RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION, data: params, callback: completion)
     }
     
-    private func _updateBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel?, completion: @escaping (NSError?) -> Void) {
-        guard let channelName = roomId,
-              let params = goods?.yy_modelToJSONObject() as? [String: Any]  else {
-            completion(NSError(domain: "roomId is empty", code: 0))
+    private func _endBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel?, completion: @escaping (NSError?) -> Void) {
+        guard let channelName = roomId, let status = goods?.status else {
+            completion(NSError(domain: "_endBidGoodsInfo fail: roomId is nil or status == nil", code: 0))
             return
         }
-        RTMSyncUtil.updateMetaData(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION, data: params, callback: completion)
+        //结束只改状态，防止房主非仲裁者时，价格不是最终的导致回滚
+        RTMSyncUtil.updateMetaData(id: channelName, 
+                                   key: SYNC_MANAGER_BID_GOODS_COLLECTION,
+                                   valueCmd: CommerceCmdKey.updateBidGoodsInfo,
+                                   data: ["status": status.rawValue], 
+                                   callback: completion)
+    }
+    
+    private func _updateBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel?, completion: @escaping (NSError?) -> Void) {
+        guard let channelName = roomId,
+              var params = goods?.yy_modelToJSONObject() as? [String: Any]  else {
+            completion(NSError(domain: "roomId is nil or params is nil", code: 0))
+            return
+        }
+        //加价时不可修改状态
+        params.removeValue(forKey: "status")
+        RTMSyncUtil.updateMetaData(id: channelName, 
+                                   key: SYNC_MANAGER_BID_GOODS_COLLECTION,
+                                   valueCmd: CommerceCmdKey.updateBidGoodsInfo, 
+                                   data: params,
+                                   callback: completion)
     }
     
     private func _subscribeBidGoodsInfo(roomId: String?, completion: @escaping (NSError?, CommerceGoodsAuctionModel?) -> Void) {
@@ -490,6 +517,18 @@ extension CommerceSyncManagerServiceImp {
             completion(NSError(domain: "roomId is empty", code: 0), nil)
             return
         }
+        
+        let collection = RTMSyncUtil.collection(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION)
+        collection?.subscribeWillUpdate(callback: { uid, valueCmd, newItem, oldItem in
+            if let newBid = newItem["bid"] as? Int,
+               let oldBid = oldItem["bid"] as? Int,
+               oldBid >= newBid {
+                return NSError(domain: "Unable to proceed with the auction. The bid prices are identical", code: -1)
+            }
+            
+            return nil
+        })
+        
         RTMSyncUtil.subscribeAttributesDidChanged(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION) { channelName, object in
             guard let res = object.getMap() else { return }
             let auctionModel = CommerceGoodsAuctionModel.yy_model(with: res)
