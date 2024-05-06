@@ -67,6 +67,8 @@ open class AUIRtmManager: NSObject {
         aui_info("init AUIRtmManager", tag: "AUIRtmManager")
         super.init()
         self.rtmClient.addDelegate(proxy)
+        //publish timeout seconds = 3s
+        let _ = self.rtmClient.setParameters("{\"rtm.msg.tx_timeout\": 3000}")
     }
     
     public func login(token: String, completion: @escaping (NSError?)->()) {
