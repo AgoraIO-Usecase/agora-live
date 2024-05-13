@@ -7,6 +7,7 @@ import io.agora.rtmsyncmanager.model.AUICommonConfig
 import io.agora.rtmsyncmanager.model.AUIRoomContext
 import io.agora.rtmsyncmanager.service.rtm.AUIRtmException
 import io.agora.rtmsyncmanager.service.rtm.AUIRtmManager
+import io.agora.rtmsyncmanager.utils.AUILogger
 
 class SyncManager constructor(
     private val context: Context,
@@ -16,6 +17,7 @@ class SyncManager constructor(
     var rtmManager: AUIRtmManager
         private set
 
+    private val tag = "SyncManager"
     private var sceneMap = mutableMapOf<String, Scene>()
 
     init {
@@ -32,14 +34,29 @@ class SyncManager constructor(
         rtmManager.logout()
     }
 
-    fun getScene(channelName: String): Scene {
+    fun release() {
+        rtmManager.deInit()
+    }
+
+    fun createScene(channelName: String, roomExpiration: RoomExpirationPolicy? = null): Scene {
+        AUILogger.logger().d(tag, "createScene: $channelName")
+        getScene(channelName)?.let {
+            return it
+        }
+
+        val scene = Scene(channelName, rtmManager, roomExpiration = roomExpiration ?: RoomExpirationPolicy()) {
+            sceneMap.remove(channelName)
+        }
+        sceneMap[channelName] = scene
+        return scene
+    }
+
+    fun getScene(channelName: String): Scene? {
         val scene = sceneMap[channelName]
         if (scene != null) {
             return scene
         }
-        val newScene = Scene(channelName, rtmManager)
-        sceneMap[channelName] = newScene
-        return newScene
+        return null
     }
 
     fun removeScene(channelName: String) {
@@ -49,9 +66,7 @@ class SyncManager constructor(
     private fun createRtmClient(): RtmClient {
         val commonConfig = AUIRoomContext.shared().requireCommonConfig()
         val userInfo = AUIRoomContext.shared().currentUserInfo
-        val rtmConfig = RtmConfig.Builder(commonConfig.appId, userInfo.userId).apply {
-            presenceTimeout(60)
-        }.build()
+        val rtmConfig = RtmConfig.Builder(commonConfig.appId, userInfo.userId).build()
         if (rtmConfig.appId.isEmpty()) {
             assert(false) { "userId is empty" }
         }

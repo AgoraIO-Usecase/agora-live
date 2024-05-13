@@ -21,12 +21,12 @@ rootProject.name = "AgoraLive"
 include ':app'
 include ':common'
 
-include ':scenes:show'
+//include ':scenes:show'
 
 include ':RTMSyncManager'
-include ':scenes:eCommerce'
+//include ':scenes:eCommerce'
 
-include ':scenes:voice'
-include ':scenes:voice:common'
+//include ':scenes:voice'
+//include ':scenes:voice:common'
 
 include ':scenes:ktv'
