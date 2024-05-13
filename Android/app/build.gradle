@@ -95,6 +95,11 @@ dependencies {
         runtimeOnly project(chatRoomModule)
     }
 
+    def ktvModule = ':scenes:ktv'
+    if (findProject(ktvModule) != null) {
+        runtimeOnly project(ktvModule)
+    }
+
     //glide 图片加载
     api rootProject.ext.deps.glide
     kapt rootProject.ext.deps.glide_compiler

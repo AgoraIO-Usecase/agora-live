@@ -28,3 +28,5 @@ include ':scenes:eCommerce'
 
 include ':scenes:voice'
 include ':scenes:voice:common'
+
+include ':scenes:ktv'
