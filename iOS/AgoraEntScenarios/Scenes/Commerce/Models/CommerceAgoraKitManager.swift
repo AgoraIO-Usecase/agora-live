@@ -517,7 +517,7 @@ extension CommerceAgoraKitManager: AgoraRtcMediaPlayerDelegate {
 
 // MARK: token handler
 extension CommerceAgoraKitManager {
-    func preGenerateToken(completion: ()->()) {
+    func preGenerateToken(completion:@escaping ()->()) {
         commerceLogger.error("preGenerateToken start")
         AppContext.shared.commerceRtcToken = nil
         AppContext.shared.commerceRtmToken = nil
@@ -532,12 +532,14 @@ extension CommerceAgoraKitManager {
                   let rtmToken = tokenMap[NetworkManager.AgoraTokenType.rtm.rawValue],
                   rtmToken.count > 0 else {
                 commerceLogger.error("preGenerateToken fail: \(tokenMap)")
+                completion()
                 return
             }
             
             commerceLogger.info("[Timing]preGenerateToken cost: \(Int64(-date.timeIntervalSinceNow * 1000)) ms")
             AppContext.shared.commerceRtcToken = rtcToken
             AppContext.shared.commerceRtmToken = rtmToken
+            completion()
         }
     }
 }

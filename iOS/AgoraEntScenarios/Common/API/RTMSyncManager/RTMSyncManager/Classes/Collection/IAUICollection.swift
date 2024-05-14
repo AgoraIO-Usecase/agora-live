@@ -83,6 +83,68 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
     /// - Parameter callback: <#callback description#>
     func getMetaData(callback: AUICollectionGetClosure?)
     
+}
+
+
+@objc public protocol IAUIMapCollection: IAUICollection {
+    
+    /// 添加节点
+    /// - Parameters:
+    ///   - valueCmd: <#valueCmd description#>
+    ///   - value: <#value description#>
+    ///   - callback: <#callback description#>
+    func addMetaData(valueCmd: String?,
+                     value: [String: Any],
+                     callback: ((NSError?)->())?)
+    
+    /// 更新节点
+    /// - Parameters:
+    ///   - valueCmd: 命令类型
+    ///   - value: <#value description#>
+    ///   - callback: <#callback description#>
+    func updateMetaData(valueCmd: String?,
+                        value: [String: Any],
+                        callback: ((NSError?)->())?)
+    
+    /// 合并节点
+    /// - Parameters:
+    ///   - valueCmd: <#valueCmd description#>
+    ///   - value: <#value description#>
+    ///   - callback: <#callback description#>
+    func mergeMetaData(valueCmd: String?,
+                       value: [String: Any],
+                       callback: ((NSError?)->())?)
+    
+    /// 移除
+    /// - Parameters:
+    ///   - valueCmd: <#value description#>
+    ///   - callback: <#callback description#>
+    func removeMetaData(valueCmd: String?,
+                        callback: ((NSError?)->())?)
+    
+    /// 增加/减小节点(节点必须是Int)
+    /// - Parameters:
+    ///   - valueCmd: <#valueCmd description#>
+    ///   - key: <#key description#>
+    ///   - value: <#value description#>
+    ///   - min: <#min description#>
+    ///   - max: <#max description#>
+    ///   - callback: <#callback description#>
+    func calculateMetaData(valueCmd: String?,
+                           key: [String],
+                           value: Int,
+                           min: Int,
+                           max: Int,
+                           callback: ((NSError?)->())?)
+    
+    /// 移除整个collection对应的key
+    /// - Parameter callback: <#callback description#>
+    func cleanMetaData(callback: ((NSError?)->())?)
+}
+
+
+@objc public protocol IAUIListCollection: IAUICollection {
+    
     /// 添加节点
     /// - Parameters:
     ///   - valueCmd: <#valueCmd description#>
@@ -121,7 +183,7 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
     ///   - valueCmd: <#value description#>
     ///   - filter: <#value description#>
     ///   - callback: <#callback description#>
-    func removeMetaData(valueCmd: String?, 
+    func removeMetaData(valueCmd: String?,
                         filter: [[String: Any]]?,
                         callback: ((NSError?)->())?)
     
@@ -146,4 +208,3 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
     /// - Parameter callback: <#callback description#>
     func cleanMetaData(callback: ((NSError?)->())?)
 }
-

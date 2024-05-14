@@ -103,12 +103,12 @@ extension AUIArbiter: AUIRtmLockProxyDelegate {
         guard channelName == self.channelName else {return}
         /*
          下列两种情况需要刷新下metadata到最新
-         1. 如果lockOwnerId是自己，并且是切换了仲裁者(非首次获取，否则第一次roomService里onReceiveLockDetail拿到的是空)，需要在通知外部锁转移前刷新下
+         1. 如果lockOwnerId是自己，需要在通知外部锁转移前刷新下
          2. 如果lockOwnerId不是自己，而之前lockOwnerId是自己，说明自己从仲裁者切换成非仲裁者了，需要通知外部后刷新下(因为collection认为是锁主的情况下是不会用远端数据的)，可能自己的本地数据没有到最新
          */
-        let gotLockFromOthers = lockOwnerId.isEmpty == false && lockDetail.owner == currentUserInfo.userId
+        let gotLock = lockDetail.owner == currentUserInfo.userId
         let lossLockToOthers = lockOwnerId == currentUserInfo.userId && lockDetail.owner != currentUserInfo.userId
-        if gotLockFromOthers {
+        if gotLock {
             rtmManager.fetchMetaDataSnapshot(channelName: channelName) {[weak self] error in
                 guard let self = self else { return }
                 //TODO: error handler, retry?

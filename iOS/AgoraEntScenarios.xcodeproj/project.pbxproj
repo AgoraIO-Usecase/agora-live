@@ -107,7 +107,6 @@
 		BF370B5409C9BBA693EEFB80 /* Pods_AgoraEntScenarios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */; };
 		DD1603442963CAFD00182A04 /* AgoraEntLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD1603432963CAFD00182A04 /* AgoraEntLog.swift */; };
 		DD220BC9295B48FD00F57F30 /* QMUIHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DD220BC7295B48FD00F57F30 /* QMUIHelper.m */; };
-		DD227EC52BE9285900013A18 /* AppStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD227EC42BE9285900013A18 /* AppStateManager.swift */; };
 		DD2A43CB28FFCEE7004CEDCF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2A43CA28FFCEE7004CEDCF /* AppDelegate.swift */; };
 		DD2A43CF28FFCEE7004CEDCF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2A43CE28FFCEE7004CEDCF /* ViewController.swift */; };
 		DD2A43D228FFCEE7004CEDCF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DD2A43D028FFCEE7004CEDCF /* Main.storyboard */; };
@@ -634,7 +633,6 @@
 		DD220BC3295B48FD00F57F30 /* QMUICommonDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QMUICommonDefines.h; sourceTree = "<group>"; };
 		DD220BC5295B48FD00F57F30 /* QMUIHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QMUIHelper.h; sourceTree = "<group>"; };
 		DD220BC7295B48FD00F57F30 /* QMUIHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QMUIHelper.m; sourceTree = "<group>"; };
-		DD227EC42BE9285900013A18 /* AppStateManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStateManager.swift; sourceTree = "<group>"; };
 		DD227ECB2BE9CF3B00013A18 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		DD2A43C728FFCEE7004CEDCF /* AgoraEntScenarios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AgoraEntScenarios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD2A43CA28FFCEE7004CEDCF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -1300,7 +1298,6 @@
 		A84C2CB92B4FB01700D6EFCF /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				DD227EC32BE9283700013A18 /* StateManager */,
 				A84C2CBA2B4FB01700D6EFCF /* CommercePresentTransitioningDelegate.swift */,
 				A84C2CBB2B4FB01700D6EFCF /* View */,
 				A84C2CC62B4FB01700D6EFCF /* ViewController */,
@@ -1486,14 +1483,6 @@
 				DD220BC7295B48FD00F57F30 /* QMUIHelper.m */,
 			);
 			path = QMUI;
-			sourceTree = "<group>";
-		};
-		DD227EC32BE9283700013A18 /* StateManager */ = {
-			isa = PBXGroup;
-			children = (
-				DD227EC42BE9285900013A18 /* AppStateManager.swift */,
-			);
-			path = StateManager;
 			sourceTree = "<group>";
 		};
 		DD2A43BE28FFCEE7004CEDCF = {
@@ -3377,7 +3366,6 @@
 				E3735CA22A5E7E75004737EF /* BeautyAPI.m in Sources */,
 				DD36109629B70CDC00CE7984 /* ShowAdvancedSettingVC.swift in Sources */,
 				A84C2D4B2B4FB01700D6EFCF /* CommerceAuctionShoppingView.swift in Sources */,
-				DD227EC52BE9285900013A18 /* AppStateManager.swift in Sources */,
 				DD36106429B70CDC00CE7984 /* ShowAgoraKitManager.swift in Sources */,
 				A84C2D062B4FB01700D6EFCF /* CommerceThrottle.swift in Sources */,
 				A84C2D2F2B4FB01700D6EFCF /* CommerceAEACategoryTitleCell.swift in Sources */,
