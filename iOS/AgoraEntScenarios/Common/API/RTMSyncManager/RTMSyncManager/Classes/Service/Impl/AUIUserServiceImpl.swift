@@ -41,7 +41,12 @@ extension AUIUserServiceImpl: AUIRtmUserProxyDelegate {
     
     public func onUserDidUpdated(channelName: String, userId: String, userInfo: [String : Any]) {
         aui_info("onUserDidUpdated[\(channelName)]: \(userId) \(userInfo)", tag: "AUIUserServiceImpl")
-        let user = AUIUserInfo.yy_model(withJSON: userInfo)!
+        guard let user = AUIUserInfo.yy_model(withJSON: userInfo) else { return }
+        guard let idx = self.userList.firstIndex(where: {$0.userId == userId}) else {
+            onUserDidJoined(channelName: channelName, userId: userId, userInfo: userInfo)
+            return
+        }
+        
         user.userId = userId
         if let oldUser = self.userList.first(where: {$0.userId == userId}) {
             if oldUser.muteAudio != user.muteAudio {
@@ -61,11 +66,7 @@ extension AUIUserServiceImpl: AUIRtmUserProxyDelegate {
             }
         }
         
-        if let idx = self.userList.firstIndex(where: {$0.userId == userId}) {
-            self.userList.replaceSubrange(idx...idx, with: [user])
-        } else {
-            self.userList.append(user)
-        }
+        self.userList.replaceSubrange(idx...idx, with: [user])
         self.respDelegates.allObjects.forEach { obj in
             guard let obj = obj as? AUIUserRespDelegate else {return}
             obj.onRoomUserUpdate(roomId: channelName, userInfo: user)
@@ -90,6 +91,9 @@ extension AUIUserServiceImpl: AUIRtmUserProxyDelegate {
     
     public func onUserDidJoined(channelName: String, userId: String, userInfo: [String : Any]) {
         aui_info("onUserDidJoined[\(channelName)]: \(userId) \(userInfo)", tag: "AUIUserServiceImpl")
+        if userInfo.count <= 1 {
+            return
+        }
         let user = AUIUserInfo.yy_model(withJSON: userInfo)!
         user.userId = userId
         self.userList.append(user)
