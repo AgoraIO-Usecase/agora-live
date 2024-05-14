@@ -288,10 +288,10 @@ extension AUIRtmMsgProxy: AgoraRtmClientDelegate {
         let userId = event.publisher ?? ""
         aui_info("presence userId: \(userId) event_type: \(event.type.rawValue) userInfo: \(map)", tag: kAUIRtmMsgProxyKey)
         if event.type == .remoteJoinChannel {
-            if map.count == 0 {
-                aui_warn("join user fail, empty: userId: \(userId) \(map)", tag: kAUIRtmMsgProxyKey)
-                return
-            }
+//            if map.count == 0 {
+//                aui_warn("join user fail, empty: userId: \(userId) \(map)", tag: kAUIRtmMsgProxyKey)
+//                return
+//            }
             
             for element in userDelegates.allObjects {
                 element.onUserDidJoined(channelName: event.channelName, userId: userId, userInfo: map)
