@@ -21,7 +21,10 @@ public class AUIRoomService: NSObject {
         super.init()
     }
     
-    public func getRoomList(lastCreateTime: Int64, pageSize: Int, completion: @escaping (NSError?, Int64, [AUIRoomInfo]?)->()) {
+    public func getRoomList(lastCreateTime: Int64,
+                            pageSize: Int,
+                            cleanClosure: ((AUIRoomInfo) ->(Bool))? = nil,
+                            completion: @escaping (NSError?, Int64, [AUIRoomInfo]?)->()) {
         //房间列表会返回最新的服务端时间ts
         roomManager.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: pageSize) {[weak self] err, ts, roomList in
             guard let self = self else {return}
@@ -32,9 +35,18 @@ public class AUIRoomService: NSObject {
             
             var list: [AUIRoomInfo] = []
             roomList?.forEach({ roomInfo in
+                var needCleanRoom: Bool = false
                 //遍历每个房间信息，查询是否已经过期
                 if self.expirationPolicy.expirationTime > 0, ts - roomInfo.createTime >= self.expirationPolicy.expirationTime {
                     aui_info("remove expired room[\(roomInfo.roomId)]", tag: RoomServiceTag)
+                    needCleanRoom = true
+                    return
+                } else if cleanClosure?(roomInfo) ?? false {
+                    aui_info("external decision to delete room[\(roomInfo.roomId)]", tag: RoomServiceTag)
+                    needCleanRoom = true
+                }
+                
+                if needCleanRoom {
                     let scene = self.syncmanager.createScene(channelName: roomInfo.roomId, roomExpiration: self.expirationPolicy)
                     scene.delete()
                     self.roomManager.destroyRoom(roomId: roomInfo.roomId) { _ in

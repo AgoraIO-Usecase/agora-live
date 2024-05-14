@@ -70,7 +70,9 @@ class RTMSyncUtil: NSObject {
     class func getRoomList(lastCreateTime: Int64 = 0, callback: @escaping ((NSError?, [AUIRoomInfo]?) -> Void)) {
         let date = Date()
         login {
-            roomService?.getRoomList(lastCreateTime: lastCreateTime, pageSize: 50, completion: { err, ts, list in
+            roomService?.getRoomList(lastCreateTime: lastCreateTime, pageSize: 50, cleanClosure: { room in
+                return room.owner?.userId == VLUserCenter.user.id
+            }, completion: { err, ts, list in
                 commercePrintLog("[Timing] getRoomList success cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
                 roomList = list
                 callback(err, list)
@@ -182,7 +184,7 @@ class RTMSyncUtil: NSObject {
     }
     
     class func getUserList(id: String, callback: @escaping (_ roomId: String, _ userList: [AUIUserInfo]) -> Void) {
-        scene(id: id)?.userService.getUserInfoList(roomId: id, userIdList: [], callback: { _, userList in
+        scene(id: id)?.userService.getUserInfoList(roomId: id, callback: { _, userList in
             callback(id, userList ?? [])
         })
     }
