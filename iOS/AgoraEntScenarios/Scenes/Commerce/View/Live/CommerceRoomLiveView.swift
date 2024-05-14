@@ -15,6 +15,7 @@ protocol CommerceRoomLiveViewDelegate: CommerceRoomBottomBarDelegate {
     func onClickCloseButton()
     func onClickMoreButton()
     func onClickUpvoteButton(count: Int)
+    func getDuration() -> UInt64
 }
 
 class CommerceRoomLiveView: UIView {
@@ -27,7 +28,9 @@ class CommerceRoomLiveView: UIView {
     var room: CommerceRoomListModel? {
         didSet{
             clearChatModel()
-            roomInfoView.setRoomInfo(avatar: room?.ownerAvatar, name: room?.roomName, id: room?.roomId, time: room?.createdAt)
+            roomInfoView.setRoomInfo(avatar: room?.ownerAvatar, name: room?.roomName, id: room?.roomId) { [weak self] in
+                return self?.delegate?.getDuration() ?? 0
+            }
             guard let count = room?.roomUserCount else {
                 roomUserCount = 1
                 return

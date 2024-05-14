@@ -99,16 +99,21 @@ public class AUIRoomService: NSObject {
     }
     
     public func leaveRoom(roomId: String) {
-        let scene = syncmanager.getScene(channelName: roomId)
+        let scene = syncmanager.createScene(channelName: roomId)
         let isOwner = roomInfoMap[roomId]?.owner?.userId == AUIRoomContext.shared.currentUserInfo.userId
         if isOwner {
             roomManager.destroyRoom(roomId: roomId) { _ in
             }
-            scene?.delete()
+            scene.delete()
         } else {
-            scene?.leave()
+            scene.leave()
         }
         roomInfoMap[roomId] = nil
+    }
+    
+    public func leaveRoom(room: AUIRoomInfo) {
+        roomInfoMap[room.roomId] = room
+        leaveRoom(roomId: room.roomId)
     }
 }
 

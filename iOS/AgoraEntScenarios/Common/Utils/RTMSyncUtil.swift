@@ -14,6 +14,7 @@ class RTMSyncUtil: NSObject {
     private static var roomManager: AUIRoomManagerImpl?
     private static var roomService: AUIRoomService?
     private static var isLogined: Bool = false
+    private static var roomList: [AUIRoomInfo]?
     
     class func initRTMSyncManager() {
         destroy()
@@ -69,8 +70,9 @@ class RTMSyncUtil: NSObject {
     class func getRoomList(lastCreateTime: Int64 = 0, callback: @escaping ((NSError?, [AUIRoomInfo]?) -> Void)) {
         let date = Date()
         login {
-            roomService?.getRoomList(lastCreateTime: lastCreateTime, pageSize: 20, completion: { err, ts, list in
+            roomService?.getRoomList(lastCreateTime: lastCreateTime, pageSize: 50, completion: { err, ts, list in
                 commercePrintLog("[Timing] getRoomList success cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+                roomList = list
                 callback(err, list)
             })
         } failure: { err in
@@ -132,6 +134,12 @@ class RTMSyncUtil: NSObject {
         syncManager = nil
         roomManager = nil
         roomService = nil
+        roomList = nil
+    }
+    
+    class func getRoomDuration(roomId: String) -> UInt64 {
+        let scene = scene(id: roomId)
+        return scene?.getRoomDuration() ?? 0
     }
     
     class func scene(id: String) -> AUIScene? {
@@ -159,9 +167,18 @@ class RTMSyncUtil: NSObject {
         }
     }
     
-    class func leaveScene(id: String) {
-        commercePrintLog("leaveScene[\(id)]", tag: "RTMSyncUtil")
-        roomService?.leaveRoom(roomId: id)
+    class func leaveScene(roomId: String) {
+        commercePrintLog("leaveScene[\(roomId)]", tag: "RTMSyncUtil")
+        guard let room = roomList?.first(where: {$0.roomId == roomId}) else {
+            roomService?.leaveRoom(roomId: roomId)
+            return
+        }
+        leaveScene(room: room)
+    }
+    
+    class func leaveScene(room: AUIRoomInfo) {
+        commercePrintLog("leaveScene[\(room.roomId)]", tag: "RTMSyncUtil")
+        roomService?.leaveRoom(room: room)
     }
     
     class func getUserList(id: String, callback: @escaping (_ roomId: String, _ userList: [AUIUserInfo]) -> Void) {

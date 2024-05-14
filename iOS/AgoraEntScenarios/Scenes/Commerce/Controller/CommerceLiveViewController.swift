@@ -645,6 +645,10 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
     func onClickUpvoteButton(count: Int) {
         serviceImp?.upvote(roomId: roomId, count: count, completion: nil)
     }
+    
+    func getDuration() -> UInt64 {
+        return serviceImp?.getRoomDuration(roomId: room?.roomId ?? "") ?? 0
+    }
 }
 
 extension CommerceLiveViewController {

@@ -44,14 +44,10 @@ protocol CommerceServiceProtocol: NSObjectProtocol {
     func leaveRoom(completion: @escaping (NSError?) -> Void)
     
     
-    /// Initializes the room information
-    /// - Parameter completion: <#completion description#>
-//    func initRoom(roomId: String?, completion: @escaping (NSError?) -> Void)
-    
-    
-    /// Release the initialization room information
-    /// - Parameter completion: <#completion description#>
-//    func deinitRoom(roomId: String?, completion: @escaping (NSError?) -> Void)
+    /// 获取当前房间使用时长
+    /// - Parameter roomId: <#roomId description#>
+    /// - Returns: <#description#>
+    func getRoomDuration(roomId: String) -> UInt64
     
     
     /// Gets all users in the current room
