@@ -175,9 +175,11 @@ open class AUIRtmMsgProxy: NSObject {
         let items = data.items ?? []
         
         var cache = self.attributesCacheAttr[channelName] ?? [:]
+        var existKeys: [String] = []
         items.forEach { item in
 //            aui_info("\(item.key): \(item.value)", tag: kAUIRtmMsgProxyKey)
             //判断value和缓存里是否一致，这里用string可能会不准，例如不同终端序列化的时候json obj不同kv的位置不一样会造成生成的json string不同
+            existKeys.append(item.key)
             if cache[item.key] == item.value {
                 aui_info("processMetaData[\(channelName)] there are no changes of [\(item.key)]", tag: kAUIRtmMsgProxyKey)
                 return
@@ -195,6 +197,19 @@ open class AUIRtmMsgProxy: NSObject {
                 element.onAttributesDidChanged(channelName: channelName, key: item.key, value: itemValue)
             }
         }
+        
+        let cacheKeys = cache.keys
+        cacheKeys.forEach { key in
+            if existKeys.contains(key) {return}
+            //远端已经不存在对应的key了，需要通知所有的delegate
+            cache.removeValue(forKey: key)
+            let delegateKey = "\(channelName)__\(key)"
+            guard let value = self.attributesDelegates[delegateKey] else { return }
+            for element in value.allObjects {
+                element.onAttributesDidChanged(channelName: channelName, key: key, value: [:])
+            }
+        }
+        
         self.attributesCacheAttr[channelName] = cache
         if items.count > 0 {
             return

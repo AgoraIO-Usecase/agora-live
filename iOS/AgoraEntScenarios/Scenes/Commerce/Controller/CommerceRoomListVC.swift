@@ -119,7 +119,7 @@ class CommerceRoomListVC: UIViewController {
         
         if room.ownerId == VLUserCenter.user.id {
             ToastView.show(text: "show_join_own_room_error".commerce_localized)
-            RTMSyncUtil.leaveScene(id: room.roomId, asOwner: room.ownerId == VLUserCenter.user.id)
+            RTMSyncUtil.leaveScene(id: room.roomId)
             fetchRoomList()
         } else {
             let vc = CommerceLivePagesViewController()
@@ -151,7 +151,7 @@ class CommerceRoomListVC: UIViewController {
         AppContext.commerceServiceImp("")?.getRoomList(page: 1) { [weak self] error, roomList in
             self?.refreshControl.endRefreshing()
             guard let self = self else { return }
-            if let error = error {
+            if let _ = error {
                 return
             }
             let list = roomList ?? []

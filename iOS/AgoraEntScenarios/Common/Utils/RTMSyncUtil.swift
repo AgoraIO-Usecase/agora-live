@@ -11,11 +11,17 @@ import AgoraRtmKit
 
 class RTMSyncUtil: NSObject {
     private static var syncManager: AUISyncManager?
-    private static var roomManager = AUIRoomManagerImpl(sceneId: kEcommerceSceneId)
+    private static var roomManager: AUIRoomManagerImpl?
+    private static var roomService: AUIRoomService?
     private static var isLogined: Bool = false
     
     class func initRTMSyncManager() {
         destroy()
+        
+        //create room manager
+        roomManager = AUIRoomManagerImpl(sceneId: kEcommerceSceneId)
+        
+        //create syncmanager
         let config = AUICommonConfig()
         config.appId = KeyCenter.AppId
         let owner = AUIUserThumbnailInfo()
@@ -28,6 +34,11 @@ class RTMSyncUtil: NSObject {
         syncManager = AUISyncManager(rtmClient: nil, commonConfig: config)
         isLogined = false
         
+        //create roomService
+        let policy = RoomExpirationPolicy()
+        roomService = AUIRoomService(expirationPolicy: policy, roomManager: roomManager!, syncmanager: syncManager!)
+        
+        //print log
         AUIRoomContext.shared.displayLogClosure = { msg in
             commercePrintLog(msg)
         }
@@ -37,20 +48,34 @@ class RTMSyncUtil: NSObject {
                           roomId: String,
                           payload: [String: Any],
                           callback: @escaping ((NSError?, AUIRoomInfo?) -> Void)) {
-        let roomInfo = AUIRoomInfo()
-        roomInfo.roomName = roomName
-        roomInfo.roomId = roomId
-        roomInfo.customPayload = payload
-        let userInfo = AUIUserThumbnailInfo()
-        userInfo.userId = VLUserCenter.user.id
-        userInfo.userAvatar = VLUserCenter.user.headUrl
-        userInfo.userName = VLUserCenter.user.name
-        roomInfo.owner = userInfo
-        roomManager.createRoom(room: roomInfo, callback: callback)
+        login {
+            let roomInfo = AUIRoomInfo()
+            roomInfo.roomName = roomName
+            roomInfo.roomId = roomId
+            roomInfo.customPayload = payload
+            let userInfo = AUIUserThumbnailInfo()
+            userInfo.userId = VLUserCenter.user.id
+            userInfo.userAvatar = VLUserCenter.user.headUrl
+            userInfo.userName = VLUserCenter.user.name
+            roomInfo.owner = userInfo
+            roomService?.createRoom(room: roomInfo, completion: { err, roomInfo in
+                callback(err, roomInfo)
+            })
+        } failure: { err in
+            callback(err, nil)
+        }
     }
     
     class func getRoomList(lastCreateTime: Int64 = 0, callback: @escaping ((NSError?, [AUIRoomInfo]?) -> Void)) {
-        roomManager.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: 20, callback: callback)
+        let date = Date()
+        login {
+            roomService?.getRoomList(lastCreateTime: lastCreateTime, pageSize: 20, completion: { err, ts, list in
+                commercePrintLog("[Timing] getRoomList success cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+                callback(err, list)
+            })
+        } failure: { err in
+            callback(err, nil)
+        }
     }
     
     class func updateRoomInfo(roomName: String, roomId: String, payload: [String: Any], ownerInfo: AUIUserThumbnailInfo) {
@@ -59,14 +84,14 @@ class RTMSyncUtil: NSObject {
         roomInfo.roomId = roomId
         roomInfo.customPayload = payload
         roomInfo.owner = ownerInfo
-        roomManager.updateRoom(room: roomInfo) { _, _ in }
+        roomManager?.updateRoom(room: roomInfo) { _, _ in }
     }
     
     class func renew(rtmToken: String) {
         syncManager?.renew(token: rtmToken)
     }
     
-    class func login(channelName: String, success: (() -> Void)?, failure: ((NSError?) -> Void)?) {
+    class func login(success: (() -> Void)?, failure: ((NSError?) -> Void)?) {
         if isLogined == true {
             success?()
             return
@@ -76,8 +101,8 @@ class RTMSyncUtil: NSObject {
             let date = Date()
             //TODO: may cause infinite recursion
             CommerceAgoraKitManager.shared.preGenerateToken {
-                commercePrintLog("[Timing][\(channelName)] token generate cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
-                self.login(channelName: channelName, success: success, failure: failure)
+                commercePrintLog("[Timing] token generate cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+                self.login(success: success, failure: failure)
             }
             return
         }
@@ -85,11 +110,11 @@ class RTMSyncUtil: NSObject {
         let date = Date()
         self.syncManager?.login(with: rtmToken) { err in
             if let err = err {
-                print("login fail: \(err.localizedDescription)")
+                commerceErrorLog("login fail: \(err.localizedDescription)")
                 failure?(err)
                 return
             }
-            commercePrintLog("[Timing][\(channelName)] login cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+            commercePrintLog("[Timing] login success cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
             self.isLogined = true
             success?()
         }
@@ -105,6 +130,8 @@ class RTMSyncUtil: NSObject {
         logout()
         syncManager?.destroy()
         syncManager = nil
+        roomManager = nil
+        roomService = nil
     }
     
     class func scene(id: String) -> AUIScene? {
@@ -118,58 +145,23 @@ class RTMSyncUtil: NSObject {
         scene(id: id)?.getCollection(key: key)
     }
     
-    class func joinScene(id: String, 
-                         ownerId: String,
-                         payload: [String: Any]?,
-                         success: (() -> Void)?,
-                         failure: ((NSError?) -> Void)?) {
-        commercePrintLog("joinScene[\(id)]", tag: "RTMSyncUtil")
-        _ = syncManager?.createScene(channelName: id)
-        let scene = scene(id: id)
-        login(channelName: id, success: {
-            if ownerId == VLUserCenter.user.id {
-                let date = Date()
-                scene?.create(payload: payload) { err in
-                    commercePrintLog("[Timing][\(id)] rtm create scene cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
-                    if let err = err {
-                        print("create scene fail: \(err.localizedDescription)")
-                        failure?(err)
-                        return
-                    }
-                    let date = Date()
-                    scene?.enter(completion: { res, error in
-                        commercePrintLog("[Timing][\(id)] rtm enter scene cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
-                        if let err = err {
-                            print("enter scene fail: \(err.localizedDescription)")
-                            failure?(err)
-                            return
-                        }
-                        success?()
-                    })
-                }
-            } else {
-                scene?.enter(completion: { res, err in
-                    if let err = err {
-                        print("enter scene fail: \(err.localizedDescription)")
-                        failure?(err)
-                        return
-                    }
-                    success?()
-                })
+    class func joinScene(roomId: String,
+                         completion: ((NSError?, AUIRoomInfo?) -> Void)?) {
+        commercePrintLog("joinScene[\(roomId)]", tag: "RTMSyncUtil")
+        login {
+            let roomInfo = AUIRoomInfo()
+            roomInfo.roomId = roomId
+            roomService?.enterRoom(room: roomInfo) { err, info in
+                completion?(err, info)
             }
-        }, failure: failure)
+        } failure: { err in
+            completion?(err, nil)
+        }
     }
     
-    class func leaveScene(id: String, asOwner: Bool) {
+    class func leaveScene(id: String) {
         commercePrintLog("leaveScene[\(id)]", tag: "RTMSyncUtil")
-        let scene = scene(id: id)
-        if asOwner {
-            scene?.delete()
-            roomManager.destroyRoom(roomId: id) { err in
-            }
-        } else {
-            scene?.leave()
-        }
+        roomService?.leaveRoom(roomId: id)
     }
     
     class func getUserList(id: String, callback: @escaping (_ roomId: String, _ userList: [AUIUserInfo]) -> Void) {
@@ -219,7 +211,7 @@ class RTMSyncUtil: NSObject {
                            key: String,
                            data: [String: Any],
                            callback: ((NSError?) -> Void)?) {
-        collection(id: id, key: key)?.addMetaData(valueCmd: nil, value: data, filter: nil, callback: callback)
+        collection(id: id, key: key)?.addMetaData(valueCmd: nil, value: data, callback: callback)
     }
     
     class func addMetaData(id: String,
@@ -262,7 +254,7 @@ class RTMSyncUtil: NSObject {
                               valueCmd: String? = nil,
                               data: [String: Any],
                               callback: ((NSError?) -> Void)?) {
-        collection(id: id, key: key)?.updateMetaData(valueCmd: valueCmd, value: data, filter: nil, callback: callback)
+        collection(id: id, key: key)?.updateMetaData(valueCmd: valueCmd, value: data, callback: callback)
     }
     
     class func updateListMetaData(id: String,
@@ -277,7 +269,7 @@ class RTMSyncUtil: NSObject {
                              key: String,
                              data: [String: Any],
                              callback: ((NSError?) -> Void)?) {
-        collection(id: id, key: key)?.mergeMetaData(valueCmd: nil, value: data, filter: nil, callback: callback)
+        collection(id: id, key: key)?.mergeMetaData(valueCmd: nil, value: data, callback: callback)
     }
     
     class func calculateMetaData(id: String,
@@ -292,12 +284,11 @@ class RTMSyncUtil: NSObject {
                                                         value: value,
                                                         min: min,
                                                         max: max,
-                                                        filter: nil,
                                                         callback: callback)
     }
     
-    class func removeMetaData(id: String, key: String, filter: [[String: Any]]?, callback: ((NSError?) -> Void)?) {
-        collection(id: id, key: key)?.removeMetaData(valueCmd: nil, filter: filter, callback: callback)
+    class func removeMetaData(id: String, key: String, callback: ((NSError?) -> Void)?) {
+        collection(id: id, key: key)?.removeMetaData(valueCmd: nil, callback: callback)
     }
     
     class func cleanMetaData(id: String, key: String, callback: ((NSError?) -> Void)?) {

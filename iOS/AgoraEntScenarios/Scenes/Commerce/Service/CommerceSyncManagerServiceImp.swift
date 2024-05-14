@@ -120,14 +120,14 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         return room?.ownerId == VLUserCenter.user.id
     }
     
-    fileprivate func initScene(completion: @escaping (NSError?) -> Void) {
-        RTMSyncUtil.joinScene(id: kEcommerceSceneId, ownerId: room?.ownerId ?? VLUserCenter.user.id, payload: nil) {
-            self._subscribeAll()
-            completion(nil)
-        } failure: { error in
-            completion(error)
-        }
-    }
+//    fileprivate func initScene(completion: @escaping (NSError?) -> Void) {
+//        RTMSyncUtil.joinScene(id: kEcommerceSceneId, ownerId: room?.ownerId ?? VLUserCenter.user.id, payload: nil) {
+//            self._subscribeAll()
+//            completion(nil)
+//        } failure: { error in
+//            completion(error)
+//        }
+//    }
     
     private func cleanCache() {
         userList = [CommerceUser]()
@@ -193,57 +193,44 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         let group = DispatchGroup()
         
         group.enter()
-        var roomManagerError: NSError? = nil
+        let roomModel = CommerceRoomDetailModel()
         let date = Date()
         RTMSyncUtil.createRoom(roomName: roomName, roomId: room.roomId, payload: params) { error, roomInfo in
             commercePrintLog("[Timing][\(roomId)] restful createRoom cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
-            
-            roomManagerError = error
-            group.leave()
-        }
-        
-        group.enter()
-        var rtmError: NSError? = nil
-        let roomModel = CommerceRoomDetailModel()
-        self.roomId = roomId
-        RTMSyncUtil.joinScene(id: roomId, ownerId: room.ownerId, payload: params) { [weak self] in
-            guard let self = self else {return}
-            let channelName = roomId
-            roomModel.ownerAvatar = room.ownerAvatar
-            roomModel.ownerId = room.ownerId
-            roomModel.ownerName = room.ownerName
-            roomModel.roomId = channelName
-            roomModel.roomName = room.roomName
-            roomModel.thumbnailId = thumbnailId
-            roomModel.roomStatus = .end
-            roomModel.createdAt = Date().millionsecondSince1970()
-            self.roomList?.append(roomModel)
-            self._startCheckExpire()
-            self._subscribeAll()
-            self.isJoined = true
-            
-            let date = Date()
-            RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION,
-                                    data: ["userId": VLUserCenter.user.id, "count":  0, "createAt": Date().millionsecondSince1970()]) { err in
-                commercePrintLog("[Timing][\(channelName)] rtm addMetaData cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
-                rtmError = err
-                group.leave()
-            }
-            
-        } failure: { error in
-            rtmError = error
-            group.leave()
-        }
-        
-        group.notify(queue: .main) {[weak self] in
-            guard let self = self else {return}
-            if roomManagerError == nil, rtmError == nil {
-                completion(nil, roomModel)
+            if let err = error {
+                completion(error, nil)
                 return
             }
-            
-            RTMSyncUtil.leaveScene(id: roomId, asOwner: self.isOwner(room))
-            completion(roomManagerError ?? rtmError, nil)
+            RTMSyncUtil.addMetaData(id: room.roomId, key: SYNC_MANAGER_UPVOTE_COLLECTION,
+                                    data: ["userId": VLUserCenter.user.id, "count":  0, "createAt": Date().millionsecondSince1970()]) {[weak self] err in
+                guard let self = self else {return}
+                commercePrintLog("[Timing][\(room.roomId)] rtm addMetaData cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+                if let err = err {
+                    RTMSyncUtil.leaveScene(id: room.roomId)
+                    completion(err, nil)
+                    return
+                }
+                guard let roomInfo = roomInfo else {
+                    completion(err, nil)
+                    return
+                }
+                
+                self.roomId = roomId
+                roomModel.ownerAvatar = room.ownerAvatar
+                roomModel.ownerId = room.ownerId
+                roomModel.ownerName = room.ownerName
+                roomModel.roomId = room.roomId
+                roomModel.roomName = room.roomName
+                roomModel.thumbnailId = thumbnailId
+                roomModel.roomStatus = .end
+                roomModel.createdAt = roomInfo.createTime
+                
+                self.roomList?.append(roomModel)
+                self._startCheckExpire()
+                self._subscribeAll()
+                self.isJoined = true
+                completion(nil, roomModel)
+            }
         }
         
         let scene = RTMSyncUtil.scene(id: room.roomId)
@@ -255,7 +242,8 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         isJoined = false
         self.roomId = room.roomId
         let params = (room.yy_modelToJSONObject() as? [String: Any])
-        RTMSyncUtil.joinScene(id: room.roomId, ownerId: room.ownerId, payload: params) { [weak self] in
+        
+        RTMSyncUtil.joinScene(roomId: room.roomId) { [weak self] error, roomInfo in
             guard let self = self else {return}
             let roomModel = CommerceRoomDetailModel()
             roomModel.ownerAvatar = room.ownerAvatar
@@ -273,8 +261,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
             self.isJoined = true
             completion(nil, roomModel)
             self.initRoom(roomId: self.roomId) { _ in }
-        } failure: { error in
-            completion(error, nil)
         }
         
         let scene = RTMSyncUtil.scene(id: room.roomId)
@@ -410,7 +396,7 @@ extension CommerceSyncManagerServiceImp {
                 roomModel.roomId = info.roomId
                 roomModel.roomName = info.roomName
                 roomModel.thumbnailId = info.customPayload["thumbnailId"] as? String
-                roomModel.createdAt = (info.customPayload["createdAt"] as? Int64) ?? 0
+                roomModel.createdAt = info.createTime
                 return roomModel
             })
             completion(nil, dataArray)
@@ -447,12 +433,12 @@ extension CommerceSyncManagerServiceImp {
         }
         agoraPrint("imp[\(roomId ?? "")] all unsubscribe...")
         RTMSyncUtil.unsubscribeMessage(channelName: "", delegate: self)
-        RTMSyncUtil.leaveScene(id: channelName, asOwner: isOwner(room))
+        RTMSyncUtil.leaveScene(id: channelName)
     }
     
     private func _leaveScene(roomId: String) {
         agoraPrint("_leaveScene: \(roomId)")
-        RTMSyncUtil.leaveScene(id: roomId, asOwner: isOwner(room))
+        RTMSyncUtil.leaveScene(id: roomId)
     }
 }
 
@@ -648,7 +634,6 @@ extension CommerceSyncManagerServiceImp {
                                      value: 1,
                                      min: 0,
                                      max: Int(Int32.max),
-                                     filter: nil,
                                      callback: completion)
     }
     
@@ -777,7 +762,7 @@ extension CommerceSyncManagerServiceImp: AUIRtmMessageProxyDelegate {
 
 extension CommerceSyncManagerServiceImp: AUISceneRespDelegate {
     func onSceneDestroy(roomId: String){
-        RTMSyncUtil.leaveScene(id: roomId, asOwner: true)
+        RTMSyncUtil.leaveScene(id: roomId)
         subscribeDelegate?.onRoomDestroy(roomId: roomId)
     }
     

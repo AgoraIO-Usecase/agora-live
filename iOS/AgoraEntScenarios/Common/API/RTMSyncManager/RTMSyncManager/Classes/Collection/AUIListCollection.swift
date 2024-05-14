@@ -7,6 +7,7 @@
 
 import Foundation
 
+@objcMembers
 public class AUIListCollection: AUIBaseCollection {
     private var currentList: [[String: Any]] = []
 }
@@ -271,11 +272,11 @@ extension AUIListCollection {
 }
 
 //MARK: override IAUICollection
-extension AUIListCollection {
-    public override func updateMetaData(valueCmd: String?,
-                                        value: [String : Any],
-                                        filter: [[String: Any]]?,
-                                        callback: ((NSError?) -> ())?) {
+extension AUIListCollection: IAUIListCollection {
+    public func updateMetaData(valueCmd: String?,
+                               value: [String : Any],
+                               filter: [[String: Any]]?,
+                               callback: ((NSError?) -> ())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
             let currentUserId = AUIRoomContext.shared.currentUserInfo.userId
             rtmSetMetaData(publisherId: currentUserId, 
@@ -309,10 +310,10 @@ extension AUIListCollection {
                                          completion: callback)
     }
     
-    public override func mergeMetaData(valueCmd: String?,
-                                       value: [String : Any],
-                                       filter: [[String: Any]]?,
-                                       callback: ((NSError?) -> ())?) {
+    public func mergeMetaData(valueCmd: String?,
+                              value: [String : Any],
+                              filter: [[String: Any]]?,
+                              callback: ((NSError?) -> ())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
             let currentUserId = AUIRoomContext.shared.currentUserInfo.userId
             rtmMergeMetaData(publisherId: currentUserId,
@@ -346,10 +347,10 @@ extension AUIListCollection {
                                          completion: callback)
     }
     
-    public override func addMetaData(valueCmd: String?,
-                                     value: [String : Any],
-                                     filter: [[String: Any]]?,
-                                     callback: ((NSError?) -> ())?) {
+    public func addMetaData(valueCmd: String?,
+                            value: [String : Any],
+                            filter: [[String: Any]]?,
+                            callback: ((NSError?) -> ())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
             let currentUserId = AUIRoomContext.shared.currentUserInfo.userId
             rtmAddMetaData(publisherId: currentUserId,
@@ -384,9 +385,9 @@ extension AUIListCollection {
         
     }
     
-    public override func removeMetaData(valueCmd: String?,
-                                        filter: [[String: Any]]?,
-                                        callback: ((NSError?) -> ())?) {
+    public func removeMetaData(valueCmd: String?,
+                               filter: [[String: Any]]?,
+                               callback: ((NSError?) -> ())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
             let currentUserId = AUIRoomContext.shared.currentUserInfo.userId
             rtmRemoveMetaData(publisherId: currentUserId, 
@@ -419,13 +420,13 @@ extension AUIListCollection {
                                          completion: callback)
     }
     
-    public override func calculateMetaData(valueCmd: String?,
-                                           key: [String],
-                                           value: Int,
-                                           min: Int,
-                                           max: Int,
-                                           filter: [[String: Any]]?,
-                                           callback: ((NSError?)->())?) {
+    public func calculateMetaData(valueCmd: String?,
+                                  key: [String],
+                                  value: Int,
+                                  min: Int,
+                                  max: Int,
+                                  filter: [[String: Any]]?,
+                                  callback: ((NSError?)->())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
             let currentUserId = AUIRoomContext.shared.currentUserInfo.userId
             rtmCalculateMetaData(publisherId: currentUserId,
@@ -462,7 +463,7 @@ extension AUIListCollection {
                                          completion: callback)
     }
     
-    public override func cleanMetaData(callback: ((NSError?) -> ())?) {
+    public func cleanMetaData(callback: ((NSError?) -> ())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
             rtmCleanMetaData(callback: callback)
             return

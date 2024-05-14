@@ -7,6 +7,7 @@
 
 import Foundation
 
+@objcMembers
 public class AUIMapCollection: AUIBaseCollection {
     private var currentMap: [String: Any] = [:] 
 }
@@ -176,7 +177,7 @@ extension AUIMapCollection {
 }
 
 //MARK: override IAUICollection
-extension AUIMapCollection {
+extension AUIMapCollection: IAUIMapCollection {
     
     /// 更新，替换根节点
     /// - Parameters:
@@ -184,9 +185,8 @@ extension AUIMapCollection {
     ///   - value: <#value description#>
     ///   - filter: <#objectId description#>
     ///   - callback: <#callback description#>
-    public override func updateMetaData(valueCmd: String?,
+    public func updateMetaData(valueCmd: String?,
                                         value: [String: Any],
-                                        filter: [[String: Any]]?,
                                         callback: ((NSError?)->())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
             let currentUserId = AUIRoomContext.shared.currentUserInfo.userId
@@ -224,10 +224,9 @@ extension AUIMapCollection {
     ///   - value: <#value description#>
     ///   - filter: <#objectId description#>
     ///   - callback: <#callback description#>
-    public override func mergeMetaData(valueCmd: String?,
-                                       value: [String: Any],
-                                       filter: [[String: Any]]?,
-                                       callback: ((NSError?)->())?) {
+    public func mergeMetaData(valueCmd: String?,
+                              value: [String: Any],
+                              callback: ((NSError?)->())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
             let currentUserId = AUIRoomContext.shared.currentUserInfo.userId
             rtmMergeMetaData(publisherId: currentUserId, 
@@ -261,10 +260,9 @@ extension AUIMapCollection {
     
     /// 添加，mapCollection等价于update metadata
     /// - Parameter value: <#value description#>
-    public override func addMetaData(valueCmd: String?,
-                                     value: [String: Any],
-                                     filter: [[String: Any]]?,
-                                     callback: ((NSError?)->())?) {
+    public func addMetaData(valueCmd: String?,
+                            value: [String: Any],
+                            callback: ((NSError?)->())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
             let currentUserId = AUIRoomContext.shared.currentUserInfo.userId
             rtmSetMetaData(publisherId: currentUserId,
@@ -298,21 +296,18 @@ extension AUIMapCollection {
     /// 移除，map collection不支持
     /// - Parameters:
     ///   - valueCmd: <#value description#>
-    ///   - filter: <#value description#>
     ///   - callback: <#callback description#>
-    public override func removeMetaData(valueCmd: String?,
-                                        filter: [[String: Any]]?,
-                                        callback: ((NSError?)->())?) {
+    public func removeMetaData(valueCmd: String?,
+                               callback: ((NSError?)->())?) {
         callback?(AUICollectionOperationError.unsupportedAction.toNSError("map removeMetaData fail"))
     }
     
-    public override func calculateMetaData(valueCmd: String?,
-                                           key: [String],
-                                           value: Int,
-                                           min: Int,
-                                           max: Int,
-                                           filter: [[String: Any]]?,
-                                           callback: ((NSError?)->())?) {
+    public func calculateMetaData(valueCmd: String?,
+                                  key: [String],
+                                  value: Int,
+                                  min: Int,
+                                  max: Int,
+                                  callback: ((NSError?)->())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
             let currentUserId = AUIRoomContext.shared.currentUserInfo.userId
             rtmCalculateMetaData(publisherId: currentUserId,
@@ -349,7 +344,7 @@ extension AUIMapCollection {
     
     /// 清理，map collection就是删除该key
     /// - Parameter callback: <#callback description#>
-    public override func cleanMetaData(callback: ((NSError?)->())?) {
+    public func cleanMetaData(callback: ((NSError?)->())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
             rtmCleanMetaData(callback: callback)
             return

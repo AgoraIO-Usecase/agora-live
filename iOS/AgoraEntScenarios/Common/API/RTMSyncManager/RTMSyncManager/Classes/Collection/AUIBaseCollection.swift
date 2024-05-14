@@ -16,6 +16,7 @@ func aui_collection_warn(_ text: String) {
     aui_warn(text, tag: kCollectionTag)
 }
 
+@objcMembers
 public class AUIBaseCollection: NSObject {
     private(set) var channelName: String
     private(set) var observeKey: String
@@ -97,44 +98,6 @@ extension AUIBaseCollection: IAUICollection {
             
             callback?(nil, jsonDict)
         }
-    }
-    
-    public func updateMetaData(valueCmd: String?,
-                               value: [String : Any],
-                               filter: [[String: Any]]?,
-                               callback: ((NSError?) -> ())?) {
-    }
-    
-    public func mergeMetaData(valueCmd: String?,
-                              value: [String : Any],
-                              filter: [[String: Any]]?,
-                              callback: ((NSError?) -> ())?) {
-        
-    }
-    
-    public func addMetaData(valueCmd: String?,
-                            value: [String : Any],
-                            filter: [[String: Any]]?,
-                            callback: ((NSError?) -> ())?) {
-        
-    }
-    
-    public func removeMetaData(valueCmd: String?,
-                               filter: [[String: Any]]?,
-                               callback: ((NSError?) -> ())?) {
-        
-    }
-    
-    public func calculateMetaData(valueCmd: String?,
-                                  key: [String],
-                                  value: Int,
-                                  min: Int,
-                                  max: Int,
-                                  filter: [[String: Any]]?,
-                                  callback: ((NSError?)->())?) {
-    }
-    
-    public func cleanMetaData(callback: ((NSError?) -> ())?) {
     }
 }
 
