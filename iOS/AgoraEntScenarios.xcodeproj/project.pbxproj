@@ -27,13 +27,6 @@
 		A84C2D142B4FB01700D6EFCF /* CommerceSettingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2C9E2B4FB01700D6EFCF /* CommerceSettingKey.swift */; };
 		A84C2D152B4FB01700D6EFCF /* CommerceDebugPrivateParamsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2C9F2B4FB01700D6EFCF /* CommerceDebugPrivateParamsVC.swift */; };
 		A84C2D162B4FB01700D6EFCF /* CommerceDebug1TFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CA02B4FB01700D6EFCF /* CommerceDebug1TFModel.swift */; };
-		A84C2D172B4FB01700D6EFCF /* SensemeLicFile.png in Resources */ = {isa = PBXBuildFile; fileRef = A84C2CA22B4FB01700D6EFCF /* SensemeLicFile.png */; };
-		A84C2D182B4FB01700D6EFCF /* SenseLibPath.png in Resources */ = {isa = PBXBuildFile; fileRef = A84C2CA32B4FB01700D6EFCF /* SenseLibPath.png */; };
-		A84C2D192B4FB01700D6EFCF /* KeyCenter.png in Resources */ = {isa = PBXBuildFile; fileRef = A84C2CA42B4FB01700D6EFCF /* KeyCenter.png */; };
-		A84C2D1A2B4FB01700D6EFCF /* podinstallError.png in Resources */ = {isa = PBXBuildFile; fileRef = A84C2CA52B4FB01700D6EFCF /* podinstallError.png */; };
-		A84C2D1B2B4FB01700D6EFCF /* SamplePicture3.png in Resources */ = {isa = PBXBuildFile; fileRef = A84C2CA62B4FB01700D6EFCF /* SamplePicture3.png */; };
-		A84C2D1C2B4FB01700D6EFCF /* SamplePicture2.png in Resources */ = {isa = PBXBuildFile; fileRef = A84C2CA72B4FB01700D6EFCF /* SamplePicture2.png */; };
-		A84C2D1D2B4FB01700D6EFCF /* SamplePicture4.png in Resources */ = {isa = PBXBuildFile; fileRef = A84C2CA82B4FB01700D6EFCF /* SamplePicture4.png */; };
 		A84C2D1E2B4FB01700D6EFCF /* CommerceLiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CAA2B4FB01700D6EFCF /* CommerceLiveViewController.swift */; };
 		A84C2D1F2B4FB01700D6EFCF /* CommerceToolMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CAB2B4FB01700D6EFCF /* CommerceToolMenuViewController.swift */; };
 		A84C2D202B4FB01700D6EFCF /* CommerceRoomListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CAC2B4FB01700D6EFCF /* CommerceRoomListVC.swift */; };
@@ -46,7 +39,6 @@
 		A84C2D272B4FB01700D6EFCF /* CommerceCunstomNaviBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CB52B4FB01700D6EFCF /* CommerceCunstomNaviBar.swift */; };
 		A84C2D282B4FB01700D6EFCF /* CommerceDebugSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CB62B4FB01700D6EFCF /* CommerceDebugSettingVC.swift */; };
 		A84C2D292B4FB01700D6EFCF /* CommerceCreateLiveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CB72B4FB01700D6EFCF /* CommerceCreateLiveVC.swift */; };
-		A84C2D2A2B4FB01700D6EFCF /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A84C2CB82B4FB01700D6EFCF /* README.md */; };
 		A84C2D2B2B4FB01700D6EFCF /* CommercePresentTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CBA2B4FB01700D6EFCF /* CommercePresentTransitioningDelegate.swift */; };
 		A84C2D2C2B4FB01700D6EFCF /* CommerceAEAListContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CBE2B4FB01700D6EFCF /* CommerceAEAListContainerView.swift */; };
 		A84C2D2D2B4FB01700D6EFCF /* CommerceAEACategoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = A84C2CBF2B4FB01700D6EFCF /* CommerceAEACategoryView.m */; };
@@ -115,6 +107,7 @@
 		BF370B5409C9BBA693EEFB80 /* Pods_AgoraEntScenarios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */; };
 		DD1603442963CAFD00182A04 /* AgoraEntLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD1603432963CAFD00182A04 /* AgoraEntLog.swift */; };
 		DD220BC9295B48FD00F57F30 /* QMUIHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DD220BC7295B48FD00F57F30 /* QMUIHelper.m */; };
+		DD227EC52BE9285900013A18 /* AppStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD227EC42BE9285900013A18 /* AppStateManager.swift */; };
 		DD2A43CB28FFCEE7004CEDCF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2A43CA28FFCEE7004CEDCF /* AppDelegate.swift */; };
 		DD2A43CF28FFCEE7004CEDCF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2A43CE28FFCEE7004CEDCF /* ViewController.swift */; };
 		DD2A43D228FFCEE7004CEDCF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DD2A43D028FFCEE7004CEDCF /* Main.storyboard */; };
@@ -556,13 +549,6 @@
 		A84C2C9E2B4FB01700D6EFCF /* CommerceSettingKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceSettingKey.swift; sourceTree = "<group>"; };
 		A84C2C9F2B4FB01700D6EFCF /* CommerceDebugPrivateParamsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebugPrivateParamsVC.swift; sourceTree = "<group>"; };
 		A84C2CA02B4FB01700D6EFCF /* CommerceDebug1TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebug1TFModel.swift; sourceTree = "<group>"; };
-		A84C2CA22B4FB01700D6EFCF /* SensemeLicFile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SensemeLicFile.png; sourceTree = "<group>"; };
-		A84C2CA32B4FB01700D6EFCF /* SenseLibPath.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SenseLibPath.png; sourceTree = "<group>"; };
-		A84C2CA42B4FB01700D6EFCF /* KeyCenter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = KeyCenter.png; sourceTree = "<group>"; };
-		A84C2CA52B4FB01700D6EFCF /* podinstallError.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = podinstallError.png; sourceTree = "<group>"; };
-		A84C2CA62B4FB01700D6EFCF /* SamplePicture3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture3.png; sourceTree = "<group>"; };
-		A84C2CA72B4FB01700D6EFCF /* SamplePicture2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture2.png; sourceTree = "<group>"; };
-		A84C2CA82B4FB01700D6EFCF /* SamplePicture4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SamplePicture4.png; sourceTree = "<group>"; };
 		A84C2CAA2B4FB01700D6EFCF /* CommerceLiveViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceLiveViewController.swift; sourceTree = "<group>"; };
 		A84C2CAB2B4FB01700D6EFCF /* CommerceToolMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceToolMenuViewController.swift; sourceTree = "<group>"; };
 		A84C2CAC2B4FB01700D6EFCF /* CommerceRoomListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomListVC.swift; sourceTree = "<group>"; };
@@ -575,7 +561,6 @@
 		A84C2CB52B4FB01700D6EFCF /* CommerceCunstomNaviBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCunstomNaviBar.swift; sourceTree = "<group>"; };
 		A84C2CB62B4FB01700D6EFCF /* CommerceDebugSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceDebugSettingVC.swift; sourceTree = "<group>"; };
 		A84C2CB72B4FB01700D6EFCF /* CommerceCreateLiveVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceCreateLiveVC.swift; sourceTree = "<group>"; };
-		A84C2CB82B4FB01700D6EFCF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A84C2CBA2B4FB01700D6EFCF /* CommercePresentTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommercePresentTransitioningDelegate.swift; sourceTree = "<group>"; };
 		A84C2CBC2B4FB01700D6EFCF /* CommerceAEAListContainerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommerceAEAListContainerView.h; sourceTree = "<group>"; };
 		A84C2CBD2B4FB01700D6EFCF /* CommerceAEACategoryTitleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommerceAEACategoryTitleCell.h; sourceTree = "<group>"; };
@@ -649,6 +634,8 @@
 		DD220BC3295B48FD00F57F30 /* QMUICommonDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QMUICommonDefines.h; sourceTree = "<group>"; };
 		DD220BC5295B48FD00F57F30 /* QMUIHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QMUIHelper.h; sourceTree = "<group>"; };
 		DD220BC7295B48FD00F57F30 /* QMUIHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QMUIHelper.m; sourceTree = "<group>"; };
+		DD227EC42BE9285900013A18 /* AppStateManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStateManager.swift; sourceTree = "<group>"; };
+		DD227ECB2BE9CF3B00013A18 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		DD2A43C728FFCEE7004CEDCF /* AgoraEntScenarios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AgoraEntScenarios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD2A43CA28FFCEE7004CEDCF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DD2A43CE28FFCEE7004CEDCF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -1211,9 +1198,7 @@
 				A84C2C882B4FB01600D6EFCF /* CommerceResource.bundle */,
 				A84C2C892B4FB01600D6EFCF /* Utils */,
 				A84C2C922B4FB01700D6EFCF /* Models */,
-				A84C2CA12B4FB01700D6EFCF /* image */,
 				A84C2CA92B4FB01700D6EFCF /* Controller */,
-				A84C2CB82B4FB01700D6EFCF /* README.md */,
 				A84C2CB92B4FB01700D6EFCF /* Common */,
 				A84C2CC82B4FB01700D6EFCF /* View */,
 				A84C2CFC2B4FB01700D6EFCF /* Service */,
@@ -1277,20 +1262,6 @@
 			path = Setting;
 			sourceTree = "<group>";
 		};
-		A84C2CA12B4FB01700D6EFCF /* image */ = {
-			isa = PBXGroup;
-			children = (
-				A84C2CA22B4FB01700D6EFCF /* SensemeLicFile.png */,
-				A84C2CA32B4FB01700D6EFCF /* SenseLibPath.png */,
-				A84C2CA42B4FB01700D6EFCF /* KeyCenter.png */,
-				A84C2CA52B4FB01700D6EFCF /* podinstallError.png */,
-				A84C2CA62B4FB01700D6EFCF /* SamplePicture3.png */,
-				A84C2CA72B4FB01700D6EFCF /* SamplePicture2.png */,
-				A84C2CA82B4FB01700D6EFCF /* SamplePicture4.png */,
-			);
-			path = image;
-			sourceTree = "<group>";
-		};
 		A84C2CA92B4FB01700D6EFCF /* Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -1329,6 +1300,7 @@
 		A84C2CB92B4FB01700D6EFCF /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				DD227EC32BE9283700013A18 /* StateManager */,
 				A84C2CBA2B4FB01700D6EFCF /* CommercePresentTransitioningDelegate.swift */,
 				A84C2CBB2B4FB01700D6EFCF /* View */,
 				A84C2CC62B4FB01700D6EFCF /* ViewController */,
@@ -1516,6 +1488,14 @@
 			path = QMUI;
 			sourceTree = "<group>";
 		};
+		DD227EC32BE9283700013A18 /* StateManager */ = {
+			isa = PBXGroup;
+			children = (
+				DD227EC42BE9285900013A18 /* AppStateManager.swift */,
+			);
+			path = StateManager;
+			sourceTree = "<group>";
+		};
 		DD2A43BE28FFCEE7004CEDCF = {
 			isa = PBXGroup;
 			children = (
@@ -1556,6 +1536,7 @@
 				DD2A43D528FFCEE7004CEDCF /* LaunchScreen.storyboard */,
 				DDDDDA2928FFD5DD005F4E8B /* AgoraEntScenarios-Bridging-Header.h */,
 				E358F802293494BC00A7EBD1 /* InfoPlist.strings */,
+				DD227ECB2BE9CF3B00013A18 /* PrivacyInfo.xcprivacy */,
 			);
 			path = AgoraEntScenarios;
 			sourceTree = "<group>";
@@ -3100,17 +3081,11 @@
 				DD84177129090C520026B624 /* ic_play.png in Resources */,
 				DD84177529090C520026B624 /* product1.png in Resources */,
 				DD84176929090C520026B624 /* banner1.png in Resources */,
-				A84C2D172B4FB01700D6EFCF /* SensemeLicFile.png in Resources */,
 				DD84176B29090C520026B624 /* tab_home.png in Resources */,
 				DD84176829090C520026B624 /* ic_back_b.png in Resources */,
-				A84C2D182B4FB01700D6EFCF /* SenseLibPath.png in Resources */,
-				A84C2D1D2B4FB01700D6EFCF /* SamplePicture4.png in Resources */,
 				DD84177329090C520026B624 /* product2.png in Resources */,
-				A84C2D1C2B4FB01700D6EFCF /* SamplePicture2.png in Resources */,
 				A84C2D032B4FB01700D6EFCF /* CommerceResource.bundle in Resources */,
-				A84C2D1A2B4FB01700D6EFCF /* podinstallError.png in Resources */,
 				DD2A43D728FFCEE7004CEDCF /* LaunchScreen.storyboard in Resources */,
-				A84C2D2A2B4FB01700D6EFCF /* README.md in Resources */,
 				E732CCF82B47EC6D004D6FB9 /* VoiceChatRoomResource.bundle in Resources */,
 				DD84177929090C520026B624 /* product.html in Resources */,
 				DD84177429090C520026B624 /* product3.png in Resources */,
@@ -3120,13 +3095,11 @@
 				DD84177829090C520026B624 /* entertainment.js in Resources */,
 				E3735C9F2A5E7E75004737EF /* BeautyResource.bundle in Resources */,
 				E358F800293494BC00A7EBD1 /* InfoPlist.strings in Resources */,
-				A84C2D1B2B4FB01700D6EFCF /* SamplePicture3.png in Resources */,
 				DD84176729090C520026B624 /* tab_profile.png in Resources */,
 				DD2A43D228FFCEE7004CEDCF /* Main.storyboard in Resources */,
 				DD84176629090C520026B624 /* index.js in Resources */,
 				DD84176A29090C520026B624 /* ic_k.png in Resources */,
 				E36EC8BA2A6680F60089A374 /* Localizable.strings in Resources */,
-				A84C2D192B4FB01700D6EFCF /* KeyCenter.png in Resources */,
 				DD84176D29090C520026B624 /* bg_index.png in Resources */,
 				DD84177029090C520026B624 /* ic_back.png in Resources */,
 				DD84176F29090C520026B624 /* ic_live.png in Resources */,
@@ -3404,6 +3377,7 @@
 				E3735CA22A5E7E75004737EF /* BeautyAPI.m in Sources */,
 				DD36109629B70CDC00CE7984 /* ShowAdvancedSettingVC.swift in Sources */,
 				A84C2D4B2B4FB01700D6EFCF /* CommerceAuctionShoppingView.swift in Sources */,
+				DD227EC52BE9285900013A18 /* AppStateManager.swift in Sources */,
 				DD36106429B70CDC00CE7984 /* ShowAgoraKitManager.swift in Sources */,
 				A84C2D062B4FB01700D6EFCF /* CommerceThrottle.swift in Sources */,
 				A84C2D2F2B4FB01700D6EFCF /* CommerceAEACategoryTitleCell.swift in Sources */,
@@ -3905,9 +3879,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -4087,6 +4063,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -4103,9 +4080,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -4285,6 +4264,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

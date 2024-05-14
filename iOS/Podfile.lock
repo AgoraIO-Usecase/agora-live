@@ -72,9 +72,9 @@ DEPENDENCIES:
   - KakaJSON
   - LEEAlert (= 1.6.4)
   - Masonry (= 1.1.0)
-  - MJRefresh
+  - MJRefresh (= 3.7.9)
   - Protobuf (= 3.22.1)
-  - RTMSyncManager (from `RTMSyncManager.podspec`)
+  - RTMSyncManager (from `AgoraEntScenarios/Common/API/RTMSyncManager`)
   - SDWebImage (= 4.4.8)
   - SDWebImageAPNGCoder
   - SnapKit
@@ -120,7 +120,7 @@ EXTERNAL SOURCES:
   fuLib:
     :path: fu.podspec
   RTMSyncManager:
-    :path: RTMSyncManager.podspec
+    :path: AgoraEntScenarios/Common/API/RTMSyncManager
   VideoLoaderAPI:
     :path: AgoraEntScenarios/Common/API/VideoLoaderAPI
 
@@ -154,6 +154,6 @@ SPEC CHECKSUMS:
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: 4ddc3c4353b138e433b967880f5ef3438a22729f
+PODFILE CHECKSUM: 908cd5ff9701d90f4dadfa5e015cf42fe335d484
 
 COCOAPODS: 1.15.2
