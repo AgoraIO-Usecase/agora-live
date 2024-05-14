@@ -85,7 +85,7 @@ class AUIMapCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.recvErrorReceipt.toException()
+                    AUICollectionException.ErrorCode.recvErrorReceipt.toException("$error")
                 )
             } else {
                 callback?.invoke(null)

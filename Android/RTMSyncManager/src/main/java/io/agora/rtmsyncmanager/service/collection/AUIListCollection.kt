@@ -277,7 +277,7 @@ class AUIListCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.recvErrorReceipt.toException()
+                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(error.message)
                 )
             } else {
                 callback?.invoke(null)
@@ -623,7 +623,7 @@ class AUIListCollection(
             metadata = mapOf(Pair(observeKey, data)),
         ) { e ->
             if (e != null) {
-                callback?.invoke(AUICollectionException.ErrorCode.unknown.toException("rtm setBatchMetadata error: $e"))
+                callback?.invoke(AUICollectionException.ErrorCode.unknown.toException("rtm setBatchMetadata error: ${e.message}"))
             } else {
                 callback?.invoke(null)
             }

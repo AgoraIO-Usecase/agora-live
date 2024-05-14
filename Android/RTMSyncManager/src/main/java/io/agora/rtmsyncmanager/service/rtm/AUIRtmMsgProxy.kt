@@ -154,7 +154,7 @@ class AUIRtmMsgProxy : RtmEventListener {
     }
 
     override fun onStorageEvent(event: StorageEvent?) {
-        Log.d("rtm_event", "onStorageEvent update: $event")
+        AUILogger.logger().d("rtm_event", "onStorageEvent update: $event")
         originEventListeners?.onStorageEvent(event)
         event ?: return
         val channelName = event.target

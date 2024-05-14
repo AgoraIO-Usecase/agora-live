@@ -21,6 +21,9 @@ class SyncManager constructor(
     init {
         AUIRoomContext.shared().setCommonConfig(commonConfig)
         val rtm = rtmClient ?: createRtmClient()
+        rtm.setParameters("{\"rtm.msg.tx_timeout\": 3000}")
+        rtm.setParameters("{\"rtm.metadata.api_timeout\": 3000}")
+        rtm.setParameters("{\"rtm.metadata.api_max_retries\": 1}")
         rtmManager = AUIRtmManager(context, rtm, rtm == rtmClient)
     }
 
@@ -49,9 +52,7 @@ class SyncManager constructor(
     private fun createRtmClient(): RtmClient {
         val commonConfig = AUIRoomContext.shared().requireCommonConfig()
         val userInfo = AUIRoomContext.shared().currentUserInfo
-        val rtmConfig = RtmConfig.Builder(commonConfig.appId, userInfo.userId).apply {
-            presenceTimeout(60)
-        }.build()
+        val rtmConfig = RtmConfig.Builder(commonConfig.appId, userInfo.userId).build()
         if (rtmConfig.appId.isEmpty()) {
             assert(false) { "userId is empty" }
         }
