@@ -8,6 +8,13 @@ package io.agora.scene.ktv.service
  * TODO 注意⚠️：该场景的后端服务仅做场景演示使用，无法商用，如果需要上线，您必须自己部署后端服务或者云存储服务器（例如leancloud、环信等）并且重新实现这个模块！！！！！！！！！！！
  */
 
+object KTVParameters {
+    const val ROOM_USER_COUNT = "roomUserCount"
+    const val THUMBNAIL_ID = "thumbnailId"
+    const val IS_PRIVATE = "isPrivate"
+    const val PASSWORD = "password"
+}
+
 /**
  * Room list model
  *
@@ -98,19 +105,6 @@ data class CreateRoomInputModel constructor(
 )
 
 /**
- * Create room output model
- *
- * @property roomNo
- * @property password
- * @constructor Create empty Create room output model
- */
-data class CreateRoomOutputModel constructor(
-    val roomNo: String?,
-    val password: String?,
-)
-
-
-/**
  * Join room input model
  *
  * @property roomNo
@@ -129,7 +123,6 @@ data class JoinRoomInputModel constructor(
  * @property roomNo
  * @property creatorNo
  * @property creatorAvatar
- * @property bgOption
  * @property seatsArray
  * @property roomPeopleNum
  * @property agoraRTMToken
@@ -143,7 +136,6 @@ data class JoinRoomOutputModel constructor(
     val roomNo: String,
     val creatorNo: String,
     val creatorAvatar: String,
-    val bgOption: String,
     val seatsArray: List<RoomSeatModel>?,
     /**
      * 房间内人数
@@ -155,16 +147,6 @@ data class JoinRoomOutputModel constructor(
     val createdAt: String
 ) : java.io.Serializable
 
-
-/**
- * Change m v cover input model
- *
- * @property mvIndex
- * @constructor Create empty Change m v cover input model
- */
-data class ChangeMVCoverInputModel constructor(
-    val mvIndex: Int
-)
 
 /**
  * On seat input model
@@ -186,7 +168,7 @@ data class OnSeatInputModel constructor(
  * @property userOnSeat
  * @constructor Create empty Out seat input model
  */
-data class OutSeatInputModel(
+data class OutSeatInputModel constructor(
     val userNo: String,
     val userId: String,
     val userName: String,

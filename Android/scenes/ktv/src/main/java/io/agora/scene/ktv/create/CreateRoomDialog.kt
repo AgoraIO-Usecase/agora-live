@@ -12,14 +12,15 @@ import android.text.style.ForegroundColorSpan
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.ViewModelProvider
+import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.component.BaseBottomSheetDialogFragment
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.ktv.R
 import io.agora.scene.ktv.databinding.KtvDialogCreateRoomBinding
 import io.agora.scene.ktv.live.RoomLivingActivity
-import io.agora.scene.ktv.service.CreateRoomOutputModel
 import io.agora.scene.ktv.service.JoinRoomOutputModel
+import io.agora.scene.ktv.service.KTVParameters
 import java.util.*
 
 /**
@@ -107,9 +108,9 @@ class CreateRoomDialog constructor(
                 // 加入房间失败
             }
         }
-        roomCreateViewModel.createRoomResult.observe(this) { out: CreateRoomOutputModel? ->
+        roomCreateViewModel.createRoomResult.observe(this) { out: AUIRoomInfo? ->
             if (out != null) {
-                roomCreateViewModel.joinRoom(out.roomNo, out.password)
+                roomCreateViewModel.joinRoom(out.roomId, out.customPayload[KTVParameters.PASSWORD]?.toString())
             } else {
                 hideLoadingView()
                 mBinding.btnCreateRoom.isEnabled = true
