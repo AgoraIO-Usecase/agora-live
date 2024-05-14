@@ -144,7 +144,7 @@ extension AUIUserServiceImpl: AUIUserServiceDelegate {
         respDelegates.remove(delegate)
     }
     
-    public func getUserInfoList(roomId: String, userIdList: [String], callback:@escaping AUIUserListCallback) {
+    public func getUserInfoList(roomId: String, callback:@escaping AUIUserListCallback) {
         aui_info("getUserInfoList[\(channelName)]", tag: "AUIUserServiceImpl")
         self.rtmManager.whoNow(channelName: roomId) { error, userList in
             if let error = error {
