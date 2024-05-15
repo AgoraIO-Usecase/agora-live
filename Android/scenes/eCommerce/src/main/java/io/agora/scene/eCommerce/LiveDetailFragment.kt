@@ -27,9 +27,9 @@ import io.agora.rtc2.IRtcEngineEventHandler
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoCanvas
-import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
+import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.base.utils.UiUtil
 import io.agora.scene.eCommerce.databinding.CommerceLiveDetailFragmentBinding
 import io.agora.scene.eCommerce.databinding.CommerceLiveDetailMessageItemBinding
@@ -266,9 +266,8 @@ class LiveDetailFragment : Fragment() {
         CommerceLogger.d(TAG, "[commerce]$this $mRoomId stopLoadPage")
         isLoaded = false
         isLoadSafely = false
-        mService.sendChatMessage(mRoomInfo.roomId, getString(R.string.commerce_live_chat_leaving), {
-
-        })
+        removeAllMessage()
+        auctionFragment.release()
         destroy(isScrolling)
     }
 
@@ -531,7 +530,9 @@ class LiveDetailFragment : Fragment() {
                             msg,
                             System.currentTimeMillis().toDouble()
                     ))
-                })
+                }) { e ->
+                    ToastUtils.showToast(context?.getString(R.string.commerce_send_chat_message_failed, e.message))
+                }
                 dialog.dismiss()
             }
             .show()
@@ -706,6 +707,10 @@ class LiveDetailFragment : Fragment() {
         }
     }
 
+    private fun removeAllMessage() = runOnUiThread {
+        mMessageAdapter?.removeAll()
+    }
+
     private fun goodsListDialog() {
         val context = this.context ?: return
         GoodsListDialog(context, mRoomId).show()
@@ -817,7 +822,8 @@ class LiveDetailFragment : Fragment() {
                 success = {
                     initService()
                     CommerceLogger.d(TAG, "[commerce]$this $mRoomId initServiceWithJoinRoom mRoomInfo.roomId:${mRoomInfo.roomId}")
-                    mService.sendChatMessage(mRoomInfo.roomId, getString(R.string.commerce_live_chat_coming), {
+
+                    if (!isRoomOwner) {
                         insertMessageItem(
                             ShowMessage(
                                 UserManager.getInstance().user.id.toString(),
@@ -826,15 +832,14 @@ class LiveDetailFragment : Fragment() {
                                 System.currentTimeMillis().toDouble()
                             )
                         )
-                    })
+                    }
                 },
                 error = { e ->
-                    if ((e as? RoomException)?.currRoomNo == mRoomInfo.roomId) {
-                        runOnUiThread {
-                            destroy(false)
-                            showLivingEndLayout()
-                            CommerceLogger.d(TAG, "join room error!:${e.message}")
-                        }
+                    runOnUiThread {
+                        CommerceLogger.d(TAG, "join room error!:${e.message}")
+                        ToastUtils.showToastLong("You are disconnected. Error:${e.message}")
+                        destroy(false)
+                        activity?.finish()
                     }
                 })
         }
@@ -857,8 +862,28 @@ class LiveDetailFragment : Fragment() {
         mService.subscribeUser(mRoomId) { count ->
             refreshTopUserCount(count)
         }
+        mService.subscribeUserJoin(mRoomId) { id, name, _ ->
+            insertMessageItem(
+                ShowMessage(
+                    id,
+                    name,
+                    getString(R.string.commerce_live_chat_coming),
+                    System.currentTimeMillis().toDouble()
+                )
+            )
+        }
+        mService.subscribeUserLeave(mRoomId) { id, name, _ ->
+            insertMessageItem(
+                ShowMessage(
+                    id,
+                    name,
+                    getString(R.string.commerce_live_chat_leaving),
+                    System.currentTimeMillis().toDouble()
+                )
+            )
+        }
         mService.auctionSubscribe(mRoomId) { auctionModel ->
-            CommerceLogger.d(TAG, "[commerce]$this $mRoomId auctionSubscribe call back")
+            CommerceLogger.d(TAG, "[commerce]$this $mRoomId auctionSubscribe call back, auctionModel:$auctionModel")
             auctionFragment.updateAuction(auctionModel)
         }
         mService.likeSubscribe(mRoomId) {

@@ -57,29 +57,47 @@
         android:text="$1"
         />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnBuy"
+    <LinearLayout
+        android:id="@+id/layoutBuy"
         android:layout_width="96dp"
         android:layout_height="36dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/ivCommodity"
-        style="@style/Widget.AppCompat.Button.Borderless"
         android:background="@drawable/commerce_corner_radius_gradient_orange"
-        android:text="@string/commerce_shop_auction_buy"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="15sp"
+        android:gravity="center"
+        android:orientation="horizontal"
         android:visibility="gone"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/ivCommodity">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvBuy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/commerce_shop_auction_buy"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <ProgressBar
+            android:id="@+id/buyProgressLoading"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:indeterminateBehavior="repeat"
+            android:indeterminateDrawable="@drawable/commerce_progressbar_loading"
+            android:indeterminateDuration="500"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
     
     <LinearLayout
         android:id="@+id/llStepper"
         android:layout_width="120dp"
         android:layout_height="36dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintEnd_toStartOf="@+id/layoutSubmit"
         app:layout_constraintBottom_toBottomOf="@id/ivCommodity"
         android:background="@drawable/commerce_border_radius_gray">
-        
+
         <Button
             android:id="@+id/btnReduce"
             android:layout_width="32sp"
@@ -127,6 +145,37 @@
             android:background="@android:color/transparent"
             android:text="+"
             />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutSubmit"
+        android:layout_width="65dp"
+        android:layout_height="36dp"
+        android:background="@drawable/commerce_corner_radius_gradient_orange"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/ivCommodity">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/commerce_shop_set"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <ProgressBar
+            android:id="@+id/progressLoading"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:indeterminateBehavior="repeat"
+            android:indeterminateDrawable="@drawable/commerce_progressbar_loading"
+            android:indeterminateDuration="500"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
     
 </androidx.constraintlayout.widget.ConstraintLayout>

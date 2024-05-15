@@ -3,13 +3,17 @@ package io.agora.scene.eCommerce.shop
 import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
+import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.eCommerce.R
 import io.agora.scene.eCommerce.databinding.CommerceShopAuctionFragmentBinding
 import io.agora.scene.eCommerce.service.*
@@ -54,6 +58,15 @@ class LiveAuctionFragment: Fragment() {
         setupAuction()
     }
 
+    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
+    private fun runOnMainThread(r: Runnable) {
+        if (Thread.currentThread() == mainHandler.looper.thread) {
+            r.run()
+        } else {
+            mainHandler.post(r)
+        }
+    }
+
     private fun setupAuction() {
         mService.getRoomInfo(mRoomId)?.let { roomInfo ->
             isRoomOwner = roomInfo.ownerId.toLong() == UserManager.getInstance().user.id
@@ -64,6 +77,11 @@ class LiveAuctionFragment: Fragment() {
     fun updateAuction(auctionModel: AuctionModel) {
         data = auctionModel
         updateAuctionStatus()
+    }
+
+    fun release() {
+        countDownTimer?.cancel()
+        countDownTimer = null
     }
 
     private fun updateAuctionStatus() {
@@ -90,13 +108,13 @@ class LiveAuctionFragment: Fragment() {
         binding.tvBuyerName.visibility = View.INVISIBLE
         binding.tvPrice.text = getString(R.string.commerce_shop_auction_price, "1")
         if (isRoomOwner) {
-            binding.btnStart.visibility = View.VISIBLE
+            binding.layoutSubmit.visibility = View.VISIBLE
             binding.btnBid.visibility = View.GONE
         } else {
-            binding.btnStart.visibility = View.GONE
+            binding.layoutSubmit.visibility = View.GONE
             binding.tvCountDown.visibility = View.GONE
             binding.btnBid.visibility = View.VISIBLE
-            binding.btnBid.isEnabled = true
+            binding.btnBid.isEnabled = false
             binding.btnBid.setBackgroundResource(R.drawable.commerce_corner_radius_40white)
             binding.btnBid.text = getString(R.string.commerce_shop_auction_not_start)
             binding.btnBid.setTextColor(Color.parseColor("#FFFFFF"))
@@ -107,7 +125,7 @@ class LiveAuctionFragment: Fragment() {
         val auctionModel = data ?: return
         binding.tvCountDown.visibility = View.VISIBLE
         if (isRoomOwner) {
-            binding.btnStart.visibility = View.INVISIBLE
+            binding.layoutSubmit.visibility = View.INVISIBLE
             binding.btnBid.visibility = View.GONE
         } else {
             // bid button
@@ -183,12 +201,27 @@ class LiveAuctionFragment: Fragment() {
     }
 
     private fun setupView() {
-        binding.btnStart.setOnClickListener {
-            mService.auctionStart(mRoomId)
+        binding.layoutSubmit.setOnClickListener {
+            binding.tvStart.isVisible = false
+            binding.progressLoading.isVisible = true
+            mService.auctionStart(mRoomId) { e ->
+                if (e != null) {
+                    ToastUtils.showToast(context?.getString(R.string.commerce_start_auction_failed, e.message))
+                }
+
+                runOnMainThread {
+                    binding.tvStart.isVisible = true
+                    binding.progressLoading.isVisible = false
+                }
+            }
         }
         binding.btnBid.setOnClickListener {
             val bid = data?.bid ?: 0
-            mService.auctionBidding(mRoomId, (bid + 1))
+            mService.auctionBidding(mRoomId, (bid + 1)) { e ->
+                if (e != null) {
+                    ToastUtils.showToast(context?.getString(R.string.commerce_bid_failed, e.message))
+                }
+            }
         }
     }
 

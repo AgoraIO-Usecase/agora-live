@@ -98,6 +98,7 @@
     <string name="commerce_shop_alert_sold_out">Sold Out!</string>
     <string name="commerce_shop_alert_submit">OK</string>
     <string name="commerce_local_uid">Local UID：%s</string>
+    <string name="commerce_shop_set">Set</string>
 
     <!-- co-host  -->
     <string name="commerce_linking_request_message">Application</string>
@@ -223,6 +224,14 @@
 
     <string name="commerce_setting_preset_show_title">Live Streaming Mode</string>
     <string name="commerce_setting_preset_show_description">Typically, hosts adopt a seated position from the upper body to engage in chat-based live streaming. The focus of the frame is primarily on the host\'s makeup, upper clothing, and low-frequency movements.</string>
+
+    <string name="commerce_shop_update_success">Successfully updated!</string>
+    <string name="commerce_shop_buy_failed">Failed to buy the product. Error: %s</string>
+    <string name="commerce_adjust_quantity_failed">Failed to adjust the product quantity. Error: %s</string>
+    <string name="commerce_start_auction_failed">Failed to start the auction. Error: %s</string>
+    <string name="commerce_bid_failed">Failed to bid. Error: %s</string>
+    <string name="commerce_out_bid">You were outbid.</string>
+    <string name="commerce_send_chat_message_failed">Failed to send the message. Error: %s</string>
 
     <string-array name="commerce_encoder">
         <item>Hardware Encoder</item>

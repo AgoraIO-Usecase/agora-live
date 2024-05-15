@@ -83,18 +83,19 @@ interface ShowServiceProtocol {
     fun subscribeCurrRoomEvent(roomId: String, onUpdate: () -> Unit)
 
     fun subscribeUser(roomId: String, onChange: (count: Int) -> Unit)
+    fun subscribeUserJoin(roomId: String, onChange: (userId: String, userName: String, userAvatar: String) -> Unit)
+    fun subscribeUserLeave(roomId: String, onChange: (userId: String, userName: String, userAvatar: String) -> Unit)
 
     /** Bid Actions */
     fun auctionSubscribe(roomId: String, onChange: (AuctionModel) -> Unit)
-    fun auctionStart(roomId: String)
-    fun auctionBidding(roomId: String, value: Int)
+    fun auctionStart(roomId: String, onComplete: (Exception?) -> Unit)
+    fun auctionBidding(roomId: String, value: Int, onComplete: (Exception?) -> Unit)
     fun auctionComplete(roomId: String)
 
     /** Shop Actions */
     fun shopSubscribe(roomId: String, onChange: (List<GoodsModel>) -> Unit)
-    fun shopBuyOrMinusItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit)
-    fun shopAddItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit)
-    fun shopUpdateItem(roomId: String, itemId: String, count: Long)
+    fun shopBuyItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit)
+    fun shopUpdateItem(roomId: String, itemId: String, count: Long, onComplete: (Exception?) -> Unit)
 
     /** Chat Message Actions */
     fun sendChatMessage(roomId: String, message: String, success: (() -> Unit)? = null, error: ((Exception) -> Unit)? = null)

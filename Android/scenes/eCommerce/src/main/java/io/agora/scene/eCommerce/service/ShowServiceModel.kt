@@ -63,7 +63,8 @@ data class GoodsModel constructor(
     val title: String = "",
     var quantity: Long = 6,
     val price: Float? = null,
-    @Transient var picResource: Int = 0
+    @Transient var picResource: Int = 0,
+    var clickable: Boolean = true
 )
 
 data class LikeModel constructor(

@@ -11,15 +11,9 @@ class AUIListCollection(
     private val channelName: String,
     private val observeKey: String,
     private val rtmManager: AUIRtmManager
-) : AUIBaseCollection(channelName, observeKey, rtmManager) {
+) : AUIBaseCollection(channelName, observeKey, rtmManager), IAUIListCollection {
 
     private var currentList = listOf<Map<String, Any>>()
-
-    private fun updateCurrentListAndNotify(list: List<Map<String, Any>>, needNotify: Boolean) {
-        if (!needNotify) return
-        currentList = list
-        attributesDidChangedClosure?.invoke(channelName, observeKey, AUIAttributesModel(list))
-    }
 
     override fun getMetaData(callback: ((error: AUICollectionException?, value: Any?) -> Unit)?) {
         rtmManager.getMetadata(
@@ -376,7 +370,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
-        updateCurrentListAndNotify(list, true)
+        currentList = list
     }
 
     private fun rtmUpdateMetaData(
@@ -435,7 +429,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
-        updateCurrentListAndNotify(list, true)
+        currentList = list
     }
 
     private fun rtmMergeMetaData(
@@ -490,7 +484,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
-        updateCurrentListAndNotify(list, true)
+        currentList = list
     }
 
     private fun rtmRemoveMetaData(
@@ -545,7 +539,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
-        updateCurrentListAndNotify(list, true)
+        currentList = list
     }
 
     private fun rtmCalculateMetaData(
@@ -628,7 +622,7 @@ class AUIListCollection(
                 callback?.invoke(null)
             }
         }
-        updateCurrentListAndNotify(list, true)
+        currentList = list
     }
 
     private fun rtmCleanMetaData(callback: ((error: AUICollectionException?) -> Unit)?) {
@@ -646,13 +640,16 @@ class AUIListCollection(
     }
 
     override fun onAttributeChanged(value: Any) {
-        val strValue = value as? String ?: return
+        val strValue = value as? String ?: ""
         val list = GsonTools.toBean<List<Map<String, Any>>>(
             strValue,
             object : TypeToken<List<Map<String, Any>>>() {}.type
-        ) ?: return
+        ) ?: emptyList()
         //如果是仲裁者，不更新，因为本地已经修改了，否则这里收到的消息可能是老的数据，例如update1->update2->resp1->resp2，那么resp1的数据比update2要老，会造成ui上短暂的回滚
-        updateCurrentListAndNotify(list, !isArbiter())
+        if (!isArbiter()) {
+            currentList = list
+        }
+        attributesDidChangedClosure?.invoke(channelName, observeKey, AUIAttributesModel(list))
     }
 
     override fun onMessageReceive(publisherId: String, message: String) {

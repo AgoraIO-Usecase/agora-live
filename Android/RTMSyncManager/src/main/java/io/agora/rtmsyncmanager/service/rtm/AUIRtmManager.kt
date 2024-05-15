@@ -20,10 +20,6 @@ import io.agora.rtm.SubscribeOptions
 import io.agora.rtm.WhoNowResult
 import io.agora.rtmsyncmanager.utils.AUILogger
 import io.agora.rtmsyncmanager.utils.GsonTools
-import java.util.*
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.ArrayList
-import kotlin.concurrent.scheduleAtFixedRate
 
 class AUIRtmManager constructor(
     context: Context,
@@ -41,6 +37,11 @@ class AUIRtmManager constructor(
 
     init {
         rtmClient.addEventListener(proxy)
+
+        //publish message/set metadata timeout seconds = 3s
+        rtmClient.setParameters("{\"rtm.msg.tx_timeout\": 3000}")
+        rtmClient.setParameters("{\"rtm.metadata.api_timeout\": 3000}")
+        rtmClient.setParameters("{\"rtm.metadata.api_max_retries\": 1}")
     }
 
     fun deInit(){
@@ -307,10 +308,9 @@ class AUIRtmManager constructor(
     }
 
     fun cleanAllMetadata(channelName: String, lockName: String, completion: (AUIRtmException?) -> Unit) {
-        val removeKeys = proxy.keys(channelName) ?: emptyList()
         cleanMetadata(
             channelName = channelName,
-            removeKeys = removeKeys,
+            removeKeys = emptyList(),
             lockName = lockName,
             completion = completion
         )
@@ -804,6 +804,14 @@ class AUIRtmManager constructor(
             receiptTimeoutRun[uniqueId] = receipt
             receiptHandler.postDelayed(receipt.runnable, timeout)
         }
+    }
+
+    fun publish(
+        channelName: String,
+        message: String,
+        completion: (AUIRtmException?) -> Unit
+    ) {
+        this.publish(channelName, "", message, completion)
     }
 
     fun publish(

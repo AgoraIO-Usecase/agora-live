@@ -10,7 +10,7 @@ class AUIMapCollection(
     val channelName: String,
     val observeKey: String,
     val rtmManager: AUIRtmManager
-) : AUIBaseCollection(channelName, observeKey, rtmManager) {
+) : AUIBaseCollection(channelName, observeKey, rtmManager), IAUIMapCollection {
 
     private var currentMap: Map<String, Any> = mutableMapOf()
 
@@ -54,7 +54,6 @@ class AUIMapCollection(
     override fun updateMetaData(
         valueCmd: String?,
         value: Map<String, Any>,
-        filter: List<Map<String, Any>>?,
         callback: ((error: AUICollectionException?) -> Unit)?
     ) {
         if (isArbiter()) {
@@ -96,7 +95,6 @@ class AUIMapCollection(
     override fun mergeMetaData(
         valueCmd: String?,
         value: Map<String, Any>,
-        filter: List<Map<String, Any>>?,
         callback: ((error: AUICollectionException?) -> Unit)?
     ) {
         if (isArbiter()) {
@@ -143,15 +141,13 @@ class AUIMapCollection(
     override fun addMetaData(
         valueCmd: String?,
         value: Map<String, Any>,
-        filter: List<Map<String, Any>>?,
         callback: ((error: AUICollectionException?) -> Unit)?
     ) {
-        updateMetaData(valueCmd, value, filter, callback)
+        updateMetaData(valueCmd, value, callback)
     }
 
     override fun removeMetaData(
         valueCmd: String?,
-        filter: List<Map<String, Any>>?,
         callback: ((error: AUICollectionException?) -> Unit)?
     ) {
         callback?.invoke(AUICollectionException.ErrorCode.unsupportedAction.toException())
@@ -163,7 +159,6 @@ class AUIMapCollection(
         value: Int,
         min: Int,
         max: Int,
-        filter: List<Map<String, Any>>?,
         callback: ((error: AUICollectionException?) -> Unit)?
     ) {
         if (isArbiter()) {
@@ -295,7 +290,7 @@ class AUIMapCollection(
                 callback?.invoke(null)
             }
         }
-        updateCurrentListAndNotify(map, true)
+        currentMap = map
     }
 
     private fun rtmMergeMetaData(
@@ -338,7 +333,7 @@ class AUIMapCollection(
                 callback?.invoke(null)
             }
         }
-        updateCurrentListAndNotify(map, true)
+        currentMap = map
     }
 
     private fun rtmCalculateMetaData(
@@ -402,7 +397,7 @@ class AUIMapCollection(
                 callback?.invoke(null)
             }
         }
-        updateCurrentListAndNotify(tempMap, true)
+        currentMap = tempMap
     }
 
     private fun rtmCleanMetaData(callback: ((error: AUICollectionException?) -> Unit)?) {
@@ -421,14 +416,17 @@ class AUIMapCollection(
     }
 
     override fun onAttributeChanged(value: Any) {
-        val strValue = value as? String ?: return
+        val strValue = value as? String ?: ""
 
         val map = GsonTools.toBean<Map<String, Any>>(
             strValue,
             object : TypeToken<Map<String, Any>>() {}.type
-        ) ?: return
+        ) ?: emptyMap()
 
-        updateCurrentListAndNotify(map, !isArbiter())
+        if (!isArbiter()) {
+            currentMap = map
+        }
+        attributesDidChangedClosure?.invoke(channelName, observeKey, AUIAttributesModel(map))
     }
 
     override fun onMessageReceive(publisherId: String, message: String) {
