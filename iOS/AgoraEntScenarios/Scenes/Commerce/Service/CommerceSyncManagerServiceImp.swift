@@ -235,7 +235,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
             self._startCheckExpire()
             self._subscribeAll()
             self._sendJoinOrLeaveText(user: nil, isJoin: true)
-            completion(nil, roomModel)
+            completion(error, roomModel)
         }
         
         let scene = RTMSyncUtil.scene(id: room.roomId)
