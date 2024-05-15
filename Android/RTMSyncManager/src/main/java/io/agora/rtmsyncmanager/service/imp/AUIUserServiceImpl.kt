@@ -44,7 +44,6 @@ class AUIUserServiceImpl constructor(
 
     override fun getUserInfoList(
         roomId: String,
-        userIdList: MutableList<String>?,
         callback: AUIUserListCallback?
     ) {
         rtmManager.whoNow(roomId) { error, userList ->

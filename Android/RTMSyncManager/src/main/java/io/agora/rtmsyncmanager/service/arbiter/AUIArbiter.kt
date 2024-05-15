@@ -30,7 +30,7 @@ class AUIArbiter(
              1. 如果 lockOwnerId 是自己，并且是切换了仲裁者(非首次获取，否则第一次 roomService 里 onReceiveLock 拿到的是空)，需要在通知外部锁转移前刷新下
              2. 如果 lockOwnerId 不是自己，而之前lockOwnerId是自己，说明自己从仲裁者切换成非仲裁者了，需要通知外部后刷新下(因为 collection 认为是锁主的情况下是不会用远端数据的)，可能自己的本地数据没有到最新
             */
-            val gotLockFromOthers = lockOwnerId.isNotEmpty() && lockOwner == currentUserId
+            val gotLockFromOthers = lockOwner == currentUserId
             val lossLockToOthers = lockOwnerId == currentUserId && lockOwner != currentUserId
             if (gotLockFromOthers) {
                 rtmManager.fetchMetaDataSnapshot(channelName) {

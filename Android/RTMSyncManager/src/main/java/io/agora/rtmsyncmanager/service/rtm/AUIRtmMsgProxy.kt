@@ -169,7 +169,7 @@ class AUIRtmMsgProxy : RtmEventListener {
     fun processMetaData(channelName: String, metadata: Metadata?) {
         metadata ?: return
         val items = metadata.items
-        if (metadata.items.isEmpty()) {
+        if (items.isEmpty()) {
             if (isMetaEmpty) {
                 return
             }
@@ -182,7 +182,9 @@ class AUIRtmMsgProxy : RtmEventListener {
         isMetaEmpty = false
 
         val cache = msgCacheAttr[channelName] ?: mutableMapOf()
-        metadata.items.forEach { item ->
+        val existKeys = mutableListOf<String>()
+        items.forEach { item ->
+            existKeys.add(item.key)
             if (cache[item.key] == item.value) {
                 return@forEach
             }
@@ -193,11 +195,23 @@ class AUIRtmMsgProxy : RtmEventListener {
                 handler.onAttributeChanged(channelName, item.key, item.value)
             }
         }
+
+        val cacheKeys = cache.keys
+        cacheKeys.forEach { key ->
+            if (existKeys.contains(key)) return@forEach
+            //远端已经不存在对应的key了，需要通知所有的delegate
+            cache.remove(key)
+            val delegateKey = "${channelName}__${key}"
+            attributeRespObservers[delegateKey]?.forEach { handler ->
+                handler.onAttributeChanged(channelName, key, emptyMap<String, String>())
+            }
+        }
+
         msgCacheAttr[channelName] = cache
         return
     }
 
-    fun processTimeStampsDidUpdate(timeStamp: Long) {
+    private fun processTimeStampsDidUpdate(timeStamp: Long) {
         errorRespObservers.forEach { handler ->
             handler.onTimeStampsDidUpdate(timeStamp)
         }

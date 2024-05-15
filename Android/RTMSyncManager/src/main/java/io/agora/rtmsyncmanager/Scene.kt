@@ -215,6 +215,11 @@ class Scene constructor(
         cleanSDK()
         AUIRoomContext.shared().cleanRoom(channelName)
         removeCompletion.invoke()
+        respHandlers.unSubscribeAll()
+        collectionMap.values.forEach {
+            it.release()
+        }
+        collectionMap.clear()
     }
 
     /// 销毁scene，清理所有缓存（包括rtm的所有metadata）
@@ -225,6 +230,11 @@ class Scene constructor(
         cleanSDK()
         AUIRoomContext.shared().cleanRoom(channelName)
         removeCompletion.invoke()
+        respHandlers.unSubscribeAll()
+        collectionMap.values.forEach {
+            it.release()
+        }
+        collectionMap.clear()
     }
 
     /// 获取一个collection，例如let collection: AUIMapCollection = scene.getCollection("musicList")
