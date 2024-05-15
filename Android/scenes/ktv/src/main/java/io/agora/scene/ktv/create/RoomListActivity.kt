@@ -18,14 +18,15 @@ import io.agora.scene.ktv.R
 import io.agora.scene.ktv.databinding.KtvActivityRoomListBinding
 import io.agora.scene.ktv.databinding.KtvItemRoomListBinding
 import io.agora.scene.ktv.live.RoomLivingActivity
-import io.agora.scene.ktv.service.JoinRoomOutputModel
 import io.agora.scene.ktv.service.KTVParameters
 import io.agora.scene.ktv.service.KTVServiceProtocol.Companion.getImplInstance
 import io.agora.scene.widget.dialog.InputPasswordDialog
 import io.agora.scene.widget.utils.UiUtils
 
 /**
- * 房间列表
+ * Room list activity
+ *
+ * @constructor Create empty Room list activity
  */
 class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
 
@@ -41,21 +42,38 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
         return KtvActivityRoomListBinding.inflate(inflater)
     }
 
+    /**
+     * On resume
+     *
+     */
     override fun onResume() {
         super.onResume()
         setDarkStatusIcon(isBlackDarkStatus)
     }
 
+    /**
+     * On restart
+     *
+     */
     override fun onRestart() {
         super.onRestart()
         binding.smartRefreshLayout.autoRefresh()
     }
 
+    /**
+     * On destroy
+     *
+     */
     override fun onDestroy() {
         super.onDestroy()
         getImplInstance().reset()
     }
 
+    /**
+     * Init view
+     *
+     * @param savedInstanceState
+     */
     override fun initView(savedInstanceState: Bundle?) {
         mAdapter = RoomListAdapter(null, this, object : OnItemClickListener<AUIRoomInfo> {
             override fun onItemClick(data: AUIRoomInfo, view: View, position: Int, viewType: Long) {
@@ -82,6 +100,10 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
         binding.smartRefreshLayout.autoRefresh()
     }
 
+    /**
+     * Init listener
+     *
+     */
     override fun initListener() {
         binding.btnCreateRoom.setOnClickListener { view: View? ->
             if (UiUtils.isFastClick(1000)) {
@@ -103,12 +125,12 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
                 binding.ivBgMobile.setVisibility(View.GONE)
             }
         }
-        mRoomCreateViewModel.joinRoomResult.observe(this, Observer { ktvJoinRoomOutputModel: JoinRoomOutputModel? ->
+        mRoomCreateViewModel.joinRoomResult.observe(this, Observer { roomModel ->
             isJoining = false
-            if (ktvJoinRoomOutputModel == null) {
+            if (roomModel == null) {
                 setDarkStatusIcon(isBlackDarkStatus)
             } else {
-                RoomLivingActivity.launch(this, ktvJoinRoomOutputModel)
+                RoomLivingActivity.launch(this, roomModel)
             }
         })
     }
@@ -135,9 +157,9 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
         private val mListener: OnItemClickListener<AUIRoomInfo>
     ) : RecyclerView.Adapter<RoomListAdapter.ViewHolder>() {
         /**
-         * Sets data list.
+         * Set data list
          *
-         * @param list the list
+         * @param list
          */
         fun setDataList(list: List<AUIRoomInfo>?) {
             mList = list
@@ -176,10 +198,15 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
             }
         }
 
-        override fun getItemCount(): Int {
-            return mList?.size ?: 0
-        }
+        override fun getItemCount(): Int = mList?.size ?: 0
 
+
+        /**
+         * View holder
+         *
+         * @property binding
+         * @constructor Create empty View holder
+         */
         inner class ViewHolder constructor(val binding: KtvItemRoomListBinding) : RecyclerView.ViewHolder(binding.root)
     }
 }

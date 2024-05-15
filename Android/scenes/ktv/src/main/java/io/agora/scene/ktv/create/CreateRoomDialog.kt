@@ -19,7 +19,6 @@ import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.ktv.R
 import io.agora.scene.ktv.databinding.KtvDialogCreateRoomBinding
 import io.agora.scene.ktv.live.RoomLivingActivity
-import io.agora.scene.ktv.service.JoinRoomOutputModel
 import io.agora.scene.ktv.service.KTVParameters
 import java.util.*
 
@@ -99,11 +98,11 @@ class CreateRoomDialog constructor(
             }
         }
 
-        roomCreateViewModel.joinRoomResult.observe(this) { out: JoinRoomOutputModel? ->
+        roomCreateViewModel.joinRoomResult.observe(this) { roomModel  ->
             hideLoadingView()
-            if (out != null) {
+            if (roomModel != null) {
                 dismiss()
-                RoomLivingActivity.launch(context, out)
+                RoomLivingActivity.launch(context, roomModel)
             } else {
                 // 加入房间失败
             }

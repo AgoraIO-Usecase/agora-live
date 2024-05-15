@@ -1,5 +1,8 @@
 package io.agora.scene.ktv.service
 
+import io.agora.rtmsyncmanager.model.AUIRoomConfig
+import io.agora.rtmsyncmanager.model.AUIRoomInfo
+
 /*
  * service 模块
  * 简介：这个模块的作用是负责前端业务模块和业务服务器的交互(包括房间列表+房间内的业务数据同步等)
@@ -78,13 +81,11 @@ data class RoomSeatModel constructor(
     val isVideoMuted: Int,// 是否开启视频
 ) : java.io.Serializable {
 
-    companion object{
+    companion object {
         val MUTED_VALUE_TRUE = 1
-
         val MUTED_VALUE_FALSE = 0
     }
 }
-
 
 /**
  * Create room input model
@@ -119,34 +120,14 @@ data class JoinRoomInputModel constructor(
 /**
  * Join room output model
  *
- * @property roomName
- * @property roomNo
- * @property creatorNo
- * @property creatorAvatar
- * @property seatsArray
- * @property roomPeopleNum
- * @property agoraRTMToken
- * @property agoraRTCToken
- * @property agoraChorusToken
- * @property createdAt
+ * @property roomInfo
+ * @property roomConfig
  * @constructor Create empty Join room output model
  */
 data class JoinRoomOutputModel constructor(
-    val roomName: String,
-    val roomNo: String,
-    val creatorNo: String,
-    val creatorAvatar: String,
-    val seatsArray: List<RoomSeatModel>?,
-    /**
-     * 房间内人数
-     */
-    val roomPeopleNum: Int,
-    val agoraRTMToken: String,
-    val agoraRTCToken: String,
-    val agoraChorusToken: String,
-    val createdAt: String
+    val roomInfo: AUIRoomInfo,
+    val roomConfig: AUIRoomConfig,
 ) : java.io.Serializable
-
 
 /**
  * On seat input model
@@ -214,10 +195,10 @@ data class RoomSelSongModel(
     val isOriginal: Int = 0, //是否原唱
 
     // 排序字段
-    val status : Int, // 0 未开始 1.已唱 2.正在唱
+    val status: Int, // 0 未开始 1.已唱 2.正在唱
     val createAt: Long,
     val pinAt: Double
-){
+) {
     companion object {
         val STATUS_IDLE = 0
         val STATUS_PLAYED = 1

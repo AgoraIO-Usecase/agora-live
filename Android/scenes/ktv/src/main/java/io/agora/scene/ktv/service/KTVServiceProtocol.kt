@@ -12,7 +12,6 @@ import io.agora.scene.ktv.KTVLogger
  */
 interface KtvServiceListenerProtocol {
 
-    fun onReConnectEvent()
     /**
      * On user list did changed
      *
@@ -138,6 +137,24 @@ interface KTVServiceProtocol {
      * @receiver
      */
     fun leaveRoom(completion: (error: Exception?) -> Unit)
+
+    /**
+     * Update room
+     *
+     * @param inputModel
+     * @param completion
+     * @receiver
+     */
+    fun updateRoom(inputModel: AUIRoomInfo, completion: (error: Exception?) -> Unit)
+
+    /**
+     * Get all user list
+     *
+     * @param success
+     * @param error
+     * @receiver
+     */
+    fun getAllUserList(completion: (error: Exception?, list: List<AUIUserInfo>?) -> Unit)
 
     // ===================== 麦位相关 =================================
 

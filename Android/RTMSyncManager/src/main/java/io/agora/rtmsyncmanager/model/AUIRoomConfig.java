@@ -2,7 +2,9 @@ package io.agora.rtmsyncmanager.model;
 
 import androidx.annotation.NonNull;
 
-public class AUIRoomConfig {
+import java.io.Serializable;
+
+public class AUIRoomConfig implements Serializable {
 
     @NonNull public String channelName = "";     //正常rtm/rtc使用的频道
     @NonNull public String rtmToken = "";     //rtm login用

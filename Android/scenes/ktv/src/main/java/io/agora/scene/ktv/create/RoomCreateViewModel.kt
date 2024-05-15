@@ -25,13 +25,11 @@ class RoomCreateViewModel
     /**
      * The Room model list.
      */
-    @JvmField
     val roomModelList = MutableLiveData<List<AUIRoomInfo>>()
 
     /**
      * The Join room result.
      */
-    @JvmField
     val joinRoomResult = MutableLiveData<JoinRoomOutputModel?>()
 
     /**
@@ -43,9 +41,8 @@ class RoomCreateViewModel
      * 加载房间列表
      */
     fun loadRooms() {
-        ktvServiceProtocol.getRoomList { vlRoomListModels: List<AUIRoomInfo> ->
+        ktvServiceProtocol.getRoomList { vlRoomListModels ->
             roomModelList.postValue(vlRoomListModels)
-            null
         }
     }
 
@@ -58,21 +55,11 @@ class RoomCreateViewModel
      * @param userNo    the user no
      * @param icon      the icon
      */
-    fun createRoom(
-        isPrivate: Int, name: String, password: String, userNo: String, icon: String
-    ) {
-        ktvServiceProtocol.createRoom(
-            CreateRoomInputModel(icon, isPrivate, name, password, userNo)
-        ) { e: Exception?, roomInfo: AUIRoomInfo? ->
-            if (e == null && roomInfo != null) {
-                // success
-                createRoomResult.postValue(roomInfo)
-            } else {
-                // failed
-                if (e != null) {
-                    ToastUtils.showToast(e.message)
-                }
-                createRoomResult.postValue(null)
+    fun createRoom(isPrivate: Int, name: String, password: String, userNo: String, icon: String) {
+        ktvServiceProtocol.createRoom(CreateRoomInputModel(icon, isPrivate, name, password, userNo)) { err, roomInfo ->
+            createRoomResult.postValue(roomInfo)
+            err?.message?.let {
+                ToastUtils.showToast(it)
             }
         }
     }
@@ -83,22 +70,15 @@ class RoomCreateViewModel
      * @param roomNo   the room no
      * @param password the password
      */
-    fun joinRoom(roomNo: String?, password: String?) {
-        ktvServiceProtocol.joinRoom(
-            JoinRoomInputModel(
-                roomNo!!,
-                password
-            )
-        ) { e: Exception?, joinRoomOutputModel: JoinRoomOutputModel? ->
-            if (e == null && joinRoomOutputModel != null) {
-                // success
-                joinRoomResult.postValue(joinRoomOutputModel)
+    fun joinRoom(roomNo: String, password: String?) {
+        ktvServiceProtocol.joinRoom(JoinRoomInputModel(roomNo, password)) { error, roomInfo ->
+            if (error == null) {
+                joinRoomResult.postValue(roomInfo)
             } else {
-                // failed
-                if (e != null) {
-                    ToastUtils.showToast(e.message)
-                }
                 joinRoomResult.postValue(null)
+            }
+            error?.message?.let {
+                ToastUtils.showToast(it)
             }
         }
     }
