@@ -251,7 +251,11 @@ class Scene constructor(
     }
 
     fun getRoomDuration() : Long {
-        return expireCondition.roomUsageDuration() ?: 0
+        return expireCondition.roomUsageDuration() ?: 0L
+    }
+
+    fun getCurrentTs() : Long {
+        return expireCondition.roomCurrentTs() ?: 0L
     }
 
     private fun notifyError(error: AUIRtmException) {

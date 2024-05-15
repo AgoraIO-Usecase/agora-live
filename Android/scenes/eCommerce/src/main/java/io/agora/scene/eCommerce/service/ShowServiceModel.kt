@@ -54,7 +54,8 @@ data class AuctionModel constructor(
     var timestamp: String = "0",
     var goods: GoodsModel? = null,
     var bid: Int = 1,
-    var status: Int = 0
+    var status: Int = 0,
+    var endTimestamp: String = "0"
 )
 
 data class GoodsModel constructor(

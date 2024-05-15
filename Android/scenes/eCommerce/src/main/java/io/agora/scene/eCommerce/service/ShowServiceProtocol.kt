@@ -38,6 +38,8 @@ interface ShowServiceProtocol {
      */
     fun destroy()
 
+    fun getCurrentTimestamp(roomId: String): Long
+
     fun getRoomInfo(roomId: String): RoomDetailModel?
 
     fun getRoomList(): List<RoomDetailModel>
@@ -90,7 +92,7 @@ interface ShowServiceProtocol {
     fun auctionSubscribe(roomId: String, onChange: (AuctionModel) -> Unit)
     fun auctionStart(roomId: String, onComplete: (Exception?) -> Unit)
     fun auctionBidding(roomId: String, value: Int, onComplete: (Exception?) -> Unit)
-    fun auctionComplete(roomId: String)
+    fun auctionComplete(roomId: String, onComplete: (Exception?) -> Unit)
 
     /** Shop Actions */
     fun shopSubscribe(roomId: String, onChange: (List<GoodsModel>) -> Unit)

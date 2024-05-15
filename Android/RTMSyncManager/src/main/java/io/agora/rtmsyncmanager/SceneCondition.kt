@@ -144,11 +144,16 @@ class AUISceneExpiredCondition(private val channelName: String, private val room
      */
     fun roomUsageDuration(): Long? {
         Log.d("pig", "lastUpdateTimestamp:$lastUpdateTimestamp this:$this")
+        val currentTs = roomCurrentTs() ?: return null
+        val createTs = createTimestamp ?: return null
+        return currentTs - createTs
+    }
+
+    fun roomCurrentTs(): Long? {
         val updateTs = lastUpdateTimestamp ?: return null
         val date = lastUpdateDate ?: return null
-        val createTs = createTimestamp ?: return null
         val deltaDuration = (-date.time + Date().time)
-        val createDuration = updateTs - createTs
-        return createDuration + deltaDuration
+
+        return updateTs + deltaDuration
     }
 }

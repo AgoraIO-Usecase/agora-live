@@ -12,7 +12,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import io.agora.scene.base.manager.UserManager
-import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.eCommerce.R
 import io.agora.scene.eCommerce.databinding.CommerceShopAuctionFragmentBinding
@@ -35,7 +34,7 @@ class LiveAuctionFragment: Fragment() {
 
     private val tag = "LiveAuctionFragment"
 
-    private val kAuctionInterval = 30*1000
+    private val kAuctionInterval = 30 * 1000
 
     private lateinit var binding: CommerceShopAuctionFragmentBinding
 
@@ -92,9 +91,18 @@ class LiveAuctionFragment: Fragment() {
         when (AuctionStatus.fromValue(auctionModel.status)) {
             AuctionStatus.Start -> {
                 val startTS = auctionModel.timestamp.toLong()
-                val interval = TimeUtils.currentTimeMillis() - startTS
+                val interval = mService.getCurrentTimestamp(mRoomId) - startTS
                 val rest = kAuctionInterval - interval
                 inProgressAuctionStatus(rest)
+            }
+            AuctionStatus.Finish -> {
+                val bidUser = auctionModel.bidUser
+                if (bidUser != null && bidUser.id.isNotEmpty()) {
+                    context?.let {
+                        AuctionResultDialog(it, bidUser).show()
+                    }
+                }
+                idleAuctionStatus()
             }
             else -> {
                 idleAuctionStatus()
@@ -189,14 +197,12 @@ class LiveAuctionFragment: Fragment() {
         countDownTimer?.cancel()
         countDownTimer = null
         // show dialog
-        val bidUser = data?.bidUser
-        if (bidUser != null && bidUser.id.isNotEmpty()) {
-            context?.let {
-                AuctionResultDialog(it, bidUser).show()
-            }
-        }
         if (isRoomOwner) {
-            mService.auctionComplete(mRoomId)
+            mService.auctionComplete(mRoomId) {
+                if (it != null) {
+                    binding.root.postDelayed({ onAuctionFinish() }, 5000)
+                }
+            }
         }
     }
 
