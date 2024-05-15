@@ -217,6 +217,10 @@ public class AUIScene: NSObject {
     public func getRoomDuration() -> UInt64 {
         return expireCondition.roomUsageDuration() ?? 0
     }
+    
+    public func getCurrentTs() -> UInt64 {
+        return expireCondition.roomCurrentTs() ?? 0
+    }
 }
 
 //MARK: private

@@ -161,11 +161,16 @@ class AUISceneExpiredCondition: NSObject {
                                               (lastUpdateDate) --[deltaDuration]--> nowDate (nowDate - lastUpdateDate = deltaDuration)
      */
     func roomUsageDuration() -> UInt64? {
-        guard let updateTs = lastUpdateTimestemp, let date = lastUpdateDate, let createTs = createTimestemp else {return nil}
-        let deltaDuration = UInt64(-date.timeIntervalSinceNow * 1000)
-        let createDuration = updateTs - createTs
-        let duration = createDuration + deltaDuration
+        guard let currentTs = roomCurrentTs(), let createTs = createTimestemp else {return nil}
+        let duration = currentTs - createTs
         
         return duration
+    }
+    
+    func roomCurrentTs() -> UInt64? {
+        guard let updateTs = lastUpdateTimestemp, let date = lastUpdateDate else {return nil}
+        let deltaDuration = UInt64(-date.timeIntervalSinceNow * 1000)
+
+        return updateTs + deltaDuration
     }
 }
