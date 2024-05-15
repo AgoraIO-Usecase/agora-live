@@ -91,14 +91,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     private var userList: [CommerceUser]?
     private weak var subscribeDelegate: CommerceSubscribeServiceProtocol?
     
-    private var userMuteLocalAudio: Bool = false
-    
-    private var isAdded = false
-    
-    private var isJoined = false
-    
-    private var joinRetry = 0
-    
     fileprivate var roomId: String?
     
     deinit {
@@ -121,7 +113,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     
     private func cleanCache() {
         userList = [CommerceUser]()
-        userMuteLocalAudio = false
     }
     
     fileprivate func _checkRoomExpire() {
@@ -182,7 +173,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         let date = Date()
         RTMSyncUtil.createRoom(roomName: roomName, roomId: room.roomId, payload: params) { error, roomInfo in
             commercePrintLog("[Timing][\(roomId)] restful createRoom cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
-            if let err = error {
+            if let error = error {
                 completion(error, nil)
                 return
             }
@@ -215,7 +206,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
                 self.roomList?.append(roomModel)
                 self._startCheckExpire()
                 self._subscribeAll()
-                self.isJoined = true
+                self._sendJoinOrLeaveText(user: nil, isJoin: true)
                 completion(nil, roomModel)
             }
         }
@@ -226,7 +217,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     
     @objc func joinRoom(room: CommerceRoomListModel,
                         completion: @escaping (NSError?, CommerceRoomDetailModel?) -> Void) {
-        isJoined = false
         self.roomId = room.roomId
         
         RTMSyncUtil.joinScene(roomId: room.roomId) { [weak self] error, roomInfo in
@@ -244,9 +234,8 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
             self.roomList?.append(roomModel)
             self._startCheckExpire()
             self._subscribeAll()
-            self.isJoined = true
+            self._sendJoinOrLeaveText(user: nil, isJoin: true)
             completion(nil, roomModel)
-            self.initRoom(roomId: self.roomId) { _ in }
         }
         
         let scene = RTMSyncUtil.scene(id: room.roomId)
@@ -254,7 +243,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     }
     
     func leaveRoom(completion: @escaping (NSError?) -> Void) {
-        isJoined = false
         defer {
             cleanCache()
         }
@@ -264,23 +252,10 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
             return
         }
         
-        
         let scene = RTMSyncUtil.scene(id: roomInfo.roomId)
         scene?.unbindRespDelegate(delegate: self)
         
-        deinitRoom(roomId: roomId) { _ in }
-        
         _leaveRoom(completion: completion)
-    }
-    
-    private func initRoom(roomId: String?, completion: @escaping (NSError?) -> Void) {
-        if isJoined {
-            _sendMessageWithText(roomId: roomId, text: "join_live_room".commerce_localized)
-        }
-    }
-    
-    private func deinitRoom(roomId: String?, completion: @escaping (NSError?) -> Void) {
-        _sendMessageWithText(roomId: roomId, text: "leave_live_room".commerce_localized)
     }
     
     func getRoomDuration(roomId: String) -> UInt64 {
@@ -293,6 +268,15 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     
     func sendChatMessage(roomId: String?, message: CommerceMessage, completion: ((NSError?) -> Void)?) {
         _addMessage(roomId: roomId, message: message, finished: completion)
+    }
+    
+    private func _sendJoinOrLeaveText(user: AUIUserInfo?, isJoin: Bool) {
+        let message = CommerceMessage()
+        message.userId = user?.userId ?? VLUserCenter.user.id
+        message.userName = user?.userName ?? VLUserCenter.user.name
+        message.message = (isJoin ? "join_live_room" : "leave_live_room").commerce_localized
+        message.createAt = Date().millionsecondSince1970()
+        subscribeDelegate?.onMessageDidAdded(message: message)
     }
     
     private func _sendMessageWithText(roomId: String?, text: String) {
@@ -754,11 +738,13 @@ extension CommerceSyncManagerServiceImp: AUIUserRespDelegate {
     func onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
         agoraPrint("userEnter == \(roomId)  object == \(userInfo)")
         _userEnter(userInfo: userInfo)
+        _sendJoinOrLeaveText(user: userInfo, isJoin: true)
     }
     
     func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
         agoraPrint("userLeave == \(roomId)  object == \(userInfo)")
         _userLeave(userId: userInfo.userId)
+        _sendJoinOrLeaveText(user: userInfo, isJoin: false)
     }
     
     func onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {
