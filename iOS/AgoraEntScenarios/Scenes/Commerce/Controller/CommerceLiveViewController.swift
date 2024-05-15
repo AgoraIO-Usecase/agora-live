@@ -352,10 +352,9 @@ extension CommerceLiveViewController {
                     if err.code == -1 {
                         self.onRoomExpired()
                     } else {
-                        ToastView.show(text: err.localizedDescription)
-                        //TODO: leave?
-//                        self.leaveRoom()
-//                        self.dismiss(animated: true)
+                        ToastView.show(text: "\("show_join_fail_toast".commerce_localized): \(err.code)")
+                        self.leaveRoom()
+                        self.dismiss(animated: true)
                     }
                 }
             }
