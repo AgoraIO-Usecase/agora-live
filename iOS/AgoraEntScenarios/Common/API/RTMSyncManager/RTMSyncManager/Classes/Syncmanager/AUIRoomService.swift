@@ -37,7 +37,7 @@ public class AUIRoomService: NSObject {
             roomList?.forEach({ roomInfo in
                 var needCleanRoom: Bool = false
                 //遍历每个房间信息，查询是否已经过期
-                if self.expirationPolicy.expirationTime > 0, ts - roomInfo.createTime >= self.expirationPolicy.expirationTime {
+                if self.expirationPolicy.expirationTime > 0, ts - roomInfo.createTime >= self.expirationPolicy.expirationTime * 3 / 2 {
                     aui_info("remove expired room[\(roomInfo.roomId)]", tag: RoomServiceTag)
                     needCleanRoom = true
                     return
