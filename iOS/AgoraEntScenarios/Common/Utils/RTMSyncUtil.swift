@@ -144,6 +144,11 @@ class RTMSyncUtil: NSObject {
         return scene?.getRoomDuration() ?? 0
     }
     
+    class func getCurrentTs(roomId: String) -> UInt64 {
+        let scene = scene(id: roomId)
+        return scene?.getCurrentTs() ?? 0
+    }
+    
     class func scene(id: String) -> AUIScene? {
         syncManager?.getScene(channelName: id)
     }

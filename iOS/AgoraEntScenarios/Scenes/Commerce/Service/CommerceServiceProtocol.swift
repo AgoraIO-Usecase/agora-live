@@ -50,6 +50,12 @@ protocol CommerceServiceProtocol: NSObjectProtocol {
     func getRoomDuration(roomId: String) -> UInt64
     
     
+    /// 获取当前时间戳
+    /// - Parameter roomId: <#roomId description#>
+    /// - Returns: <#description#>
+    func getCurrentTs(roomId: String) -> UInt64
+    
+    
     /// Gets all users in the current room
     /// - Parameter completion: Completed callback (error message, user list)
     func getAllUserList(completion: @escaping (NSError?, [CommerceUser]?) -> Void)

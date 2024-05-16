@@ -109,20 +109,37 @@ class CommerceLiveViewController: UIViewController {
     private lazy var auctionView: CommerceAuctionShoppingView = {
         let view = CommerceAuctionShoppingView(isBroadcastor: role == .broadcaster)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.startBidGoodsClosure = { [weak self] model in
-            guard let self = self, let model = model else { return }
-            self.serviceImp?.addBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
+        view.startBidGoodsClosure = { [weak self, weak view] in
+            guard let self = self else { return }
+            view?.toggleLoadingIndicator(true)
+            self.addBidGoodsInfo(status: .started) { error in
+                view?.toggleLoadingIndicator(false)
+                if let error = error {
+                    ToastView.show(text: "\("show_auction_fail_toast".commerce_localized) Error:\(error.code)")
+                    return
+                }
+            }
         }
         view.endBidGoodsClosure = { [weak self] model in
             guard let self = self, let model = model else { return }
-            self.serviceImp?.endBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
+            self.serviceImp?.endBidGoodsInfo(roomId: self.roomId, goods: model) { error in
+                //TODO: retry
+            }
         }
-        view.bidInAuctionGoodsClosure = { [weak self] model in
+        view.bidInAuctionGoodsClosure = { [weak self, weak view] model in
             guard let self = self, let model = model else { return }
-            self.auctionView.isUserInteractionEnabled = false
-            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: {[weak self] err in
-                self?.auctionView.isUserInteractionEnabled = true
+            view?.toggleLoadingIndicator(true)
+            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: {[weak self] error in
+                view?.toggleLoadingIndicator(false)
+                if let error = error {
+                    ToastView.show(text: "\("show_bid_fail_toast".commerce_localized) Error:\(error.code)")
+                    return
+                }
             })
+        }
+        
+        view.getCurrentTsClosure = {[weak self] in
+            return self?.serviceImp?.getCurrentTs(roomId: self?.roomId ?? "") ?? 0
         }
         return view
     }()
@@ -282,7 +299,7 @@ class CommerceLiveViewController: UIViewController {
                                  completion: { _ in })
     }
     
-    private func addBidGoodsInfo() {
+    private func addBidGoodsInfo(status: CommerceAuctionStatus, completion: ((NSError?) -> ())?) {
         guard role == .broadcaster else { return }
         let auctionModel = CommerceGoodsAuctionModel()
         let goodsModel = CommerceGoodsModel()
@@ -291,12 +308,14 @@ class CommerceLiveViewController: UIViewController {
         goodsModel.price = 1
         goodsModel.quantity = 1
         auctionModel.goods = goodsModel
-        auctionModel.status = .idle
-        auctionModel.timestamp = Date().millionsecondSince1970()
+        auctionModel.status = status
+        auctionModel.startTimestamp = serviceImp?.getCurrentTs(roomId: roomId) ?? 0
+        auctionModel.endTimestamp = 30 * 1000 + auctionModel.startTimestamp
         auctionModel.bidUser = nil
         auctionModel.bid = 1
         serviceImp?.addBidGoodsInfo(roomId: roomId, goods: auctionModel, completion: { error in
             commerceLogger.info("error: \(error?.localizedDescription ?? "")")
+            completion?(error)
         })
     }
     
@@ -420,10 +439,9 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
             self.liveView.showHeartAnimation()
         })
         if role == .broadcaster {
-            addBidGoodsInfo()
+            addBidGoodsInfo(status: .idle) { error in
+            }
             addGoodsList()
-        } else {
-            getBidGoodsInfo()
         }
     }
         
