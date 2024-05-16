@@ -226,7 +226,7 @@ class CommerceGoodsListViewCell: UITableViewCell {
         return button
     }()
     
-    private lazy var activatiView: UIActivityIndicatorView = {
+    private lazy var activityView: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(style: .medium)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.hidesWhenStopped = true
@@ -275,13 +275,14 @@ class CommerceGoodsListViewCell: UITableViewCell {
         numberButton.isHidden = !isBroadcaster
         numberButton.textField.text = "\(model.goods?.quantity ?? 0)"
     }
+    
     func toggleLoadingIndicator(_ loading: Bool) {
         if loading {
-//            statusButton.isEnabled = false
-            activatiView.startAnimating()
+            statusButton.isUserInteractionEnabled = false
+            activityView.startAnimating()
         } else {
-//            statusButton.isEnabled = true
-            activatiView.stopAnimating()
+            statusButton.isUserInteractionEnabled = true
+            activityView.stopAnimating()
         }
     }
     
@@ -327,16 +328,12 @@ class CommerceGoodsListViewCell: UITableViewCell {
         numberButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
         numberButton.heightAnchor.constraint(equalToConstant: 36).isActive = true
         
-        statusButton.addSubview(activatiView)
-//        activatiView.topAnchor.constraint(equalTo: statusButton.topAnchor).isActive = true
-//        activatiView.leadingAnchor.constraint(equalTo: statusButton.leadingAnchor).isActive = true
-//        activatiView.trailingAnchor.constraint(equalTo: statusButton.trailingAnchor).isActive = true
-//        activatiView.bottomAnchor.constraint(equalTo: statusButton.bottomAnchor).isActive = true
+        statusButton.addSubview(activityView)
         NSLayoutConstraint.activate([
-            activatiView.widthAnchor.constraint(equalTo: statusButton.widthAnchor),
-            activatiView.heightAnchor.constraint(equalTo: statusButton.heightAnchor),
-            activatiView.centerXAnchor.constraint(equalTo: statusButton.centerXAnchor),
-            activatiView.centerYAnchor.constraint(equalTo: statusButton.centerYAnchor)
+            activityView.widthAnchor.constraint(equalTo: statusButton.widthAnchor),
+            activityView.heightAnchor.constraint(equalTo: statusButton.heightAnchor),
+            activityView.centerXAnchor.constraint(equalTo: statusButton.centerXAnchor),
+            activityView.centerYAnchor.constraint(equalTo: statusButton.centerYAnchor)
         ])
     }
     

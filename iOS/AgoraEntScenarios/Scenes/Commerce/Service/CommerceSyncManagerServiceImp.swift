@@ -262,6 +262,10 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
         return RTMSyncUtil.getRoomDuration(roomId: roomId)
     }
     
+    func getCurrentTs(roomId: String) -> UInt64 {
+        return RTMSyncUtil.getCurrentTs(roomId: roomId)
+    }
+    
     func getAllUserList(completion: @escaping (NSError?, [CommerceUser]?) -> Void) {
         _getUserList(roomId: roomId, finished: completion)
     }
@@ -430,7 +434,7 @@ extension CommerceSyncManagerServiceImp {
     }
     
     private func _endBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel?, completion: @escaping (NSError?) -> Void) {
-        guard let channelName = roomId, let status = goods?.status else {
+        guard let channelName = roomId else {
             completion(NSError(domain: "_endBidGoodsInfo fail: roomId is nil or status == nil", code: 0))
             return
         }
@@ -438,18 +442,19 @@ extension CommerceSyncManagerServiceImp {
         RTMSyncUtil.updateMetaData(id: channelName, 
                                    key: SYNC_MANAGER_BID_GOODS_COLLECTION,
                                    valueCmd: CommerceCmdKey.updateBidGoodsInfo,
-                                   data: ["status": status.rawValue], 
+                                   data: ["status": CommerceAuctionStatus.completion.rawValue],
                                    callback: completion)
     }
     
     private func _updateBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel?, completion: @escaping (NSError?) -> Void) {
-        guard let channelName = roomId,
-              var params = goods?.yy_modelToJSONObject() as? [String: Any]  else {
-            completion(NSError(domain: "roomId is nil or params is nil", code: 0))
+        guard let channelName = roomId, let goods = goods else {
+            completion(NSError(domain: "Service Error",
+                               code: -1,
+                               userInfo: [ NSLocalizedDescriptionKey : "roomId is nil or params is nil"]))
             return
         }
-        //加价时不可修改状态
-        params.removeValue(forKey: "status")
+        
+        let params = ["bidUser": VLUserCenter.user, "bid": goods.bid + 1] as [String : Any]
         RTMSyncUtil.updateMetaData(id: channelName, 
                                    key: SYNC_MANAGER_BID_GOODS_COLLECTION,
                                    valueCmd: CommerceCmdKey.updateBidGoodsInfo, 
@@ -465,10 +470,21 @@ extension CommerceSyncManagerServiceImp {
         
         let collection = RTMSyncUtil.collection(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION)
         collection?.subscribeWillUpdate(callback: { uid, valueCmd, newItem, oldItem in
+            
             if let newBid = newItem["bid"] as? Int,
-               let oldBid = oldItem["bid"] as? Int,
-               oldBid >= newBid {
-                return NSError(domain: "Unable to proceed with the auction. The bid prices are identical", code: -1)
+               let oldBid = oldItem["bid"] as? Int {
+                guard let endTimestamp = oldItem["endTimestamp"] as? Int,
+                      endTimestamp > RTMSyncUtil.getCurrentTs(roomId: channelName) else {
+                    return NSError(domain: "Service Error",
+                                   code: 200001,
+                                   userInfo: [ NSLocalizedDescriptionKey : "Timeout"])
+                }
+                
+                if oldBid >= newBid {
+                    return NSError(domain: "Service Error",
+                                   code: 200002,
+                                   userInfo: [ NSLocalizedDescriptionKey : "You were outbid"])
+                }
             }
             
             return nil

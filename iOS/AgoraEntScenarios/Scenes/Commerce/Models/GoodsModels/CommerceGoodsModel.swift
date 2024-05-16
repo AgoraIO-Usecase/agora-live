@@ -116,7 +116,8 @@ class CommerceGoodsBuyModel: NSObject, YYModel {
 class CommerceGoodsAuctionModel: NSObject, YYModel {
     var goods: CommerceGoodsModel?
     var status: CommerceAuctionStatus = .idle
-    var timestamp: Int64 = 0
+    var startTimestamp: UInt64 = 0
+    var endTimestamp: UInt64 = 0
     var bidUser: VLLoginModel?
     var bid: Int = 0
     
