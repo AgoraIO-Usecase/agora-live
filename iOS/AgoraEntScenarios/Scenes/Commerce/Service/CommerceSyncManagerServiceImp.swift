@@ -21,6 +21,26 @@ private let SYNC_MANAGER_BUY_GOODS_COLLECTION = "commerce_goods_buy_collection"
 private let SYNC_MANAGER_UPVOTE_COLLECTION = "commerce_like_collection"
 
 
+enum CommerceServiceError: Int {
+    case timeout = 200001
+    case outbid = 200002
+    
+    func toError() -> NSError {
+        
+        func createError(msg: String) -> NSError {
+            return NSError(domain: "Service Error",
+                           code: rawValue,
+                           userInfo: [ NSLocalizedDescriptionKey : msg])
+        }
+        switch self {
+        case .timeout:
+            return createError(msg: "Timeout")
+        case .outbid:
+            return createError(msg: "You were outbid")
+        }
+    }
+}
+
 private struct CommerceCmdKey {
     static let updateBidGoodsInfo: String = "updateBidGoodsInfo"
 }
@@ -475,15 +495,11 @@ extension CommerceSyncManagerServiceImp {
                let oldBid = oldItem["bid"] as? Int {
                 guard let endTimestamp = oldItem["endTimestamp"] as? Int,
                       endTimestamp > RTMSyncUtil.getCurrentTs(roomId: channelName) else {
-                    return NSError(domain: "Service Error",
-                                   code: 200001,
-                                   userInfo: [ NSLocalizedDescriptionKey : "Timeout"])
+                    return CommerceServiceError.timeout.toError()
                 }
                 
                 if oldBid >= newBid {
-                    return NSError(domain: "Service Error",
-                                   code: 200002,
-                                   userInfo: [ NSLocalizedDescriptionKey : "You were outbid"])
+                    return CommerceServiceError.outbid.toError()
                 }
             }
             

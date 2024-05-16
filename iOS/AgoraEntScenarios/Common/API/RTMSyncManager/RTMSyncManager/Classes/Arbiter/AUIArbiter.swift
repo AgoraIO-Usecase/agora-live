@@ -98,7 +98,7 @@ extension AUIArbiter {
 
 //MARK: AUIRtmLockProxyDelegate
 extension AUIArbiter: AUIRtmLockProxyDelegate {
-    public func onReceiveLockDetail(channelName: String, lockDetail: AgoraRtmLockDetail) {
+    public func onReceiveLockDetail(channelName: String, lockDetail: AgoraRtmLockDetail, eventType: AgoraRtmLockEventType) {
         aui_info("onReceiveLockDetail[\(channelName)]: \(lockDetail.owner)/\(currentUserInfo.userId)")
         guard channelName == self.channelName else {return}
         /*
@@ -126,11 +126,15 @@ extension AUIArbiter: AUIRtmLockProxyDelegate {
         }
     }
     
-    public func onReleaseLockDetail(channelName: String, lockDetail: AgoraRtmLockDetail) {
+    public func onReleaseLockDetail(channelName: String, lockDetail: AgoraRtmLockDetail, eventType: AgoraRtmLockEventType) {
         aui_info("onReleaseLockDetail[\(channelName)]: \(lockDetail.owner)")
         guard channelName == self.channelName else {return}
         rtmManager.acquireLock(channelName: channelName, lockName: kRTM_Referee_LockName) { err in
         }
-        self.lockOwnerId = ""
+        //过期可能会在获取锁之后收到，导致把正确的锁主清理了，因此只在锁主是自己的时候才处理
+        if eventType == .lockExpired, lockOwnerId == currentUserInfo.userId {
+            self.lockOwnerId = ""
+        }
+        
     }
 }

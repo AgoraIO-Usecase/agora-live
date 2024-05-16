@@ -52,8 +52,8 @@ private let kAUIRtmMsgProxyKey = "AUIRtmMsgProxy"
 }
 
 @objc public protocol AUIRtmLockProxyDelegate: NSObjectProtocol {
-    func onReceiveLockDetail(channelName: String, lockDetail: AgoraRtmLockDetail)
-    func onReleaseLockDetail(channelName: String, lockDetail: AgoraRtmLockDetail)
+    func onReceiveLockDetail(channelName: String, lockDetail: AgoraRtmLockDetail, eventType: AgoraRtmLockEventType)
+    func onReleaseLockDetail(channelName: String, lockDetail: AgoraRtmLockDetail, eventType: AgoraRtmLockEventType)
 }
 
 /// RTM消息转发器
@@ -160,7 +160,7 @@ open class AUIRtmMsgProxy: NSObject {
         
         //To ensure that the callback can be correctly received by using async dispatch of changes (such as direct callback but external incomplete forwarding processing)
         DispatchQueue.main.async {
-            delegate.onReceiveLockDetail(channelName: channelName, lockDetail: lockDetail)
+            delegate.onReceiveLockDetail(channelName: channelName, lockDetail: lockDetail, eventType: .lockAcquired)
         }
     }
     
@@ -371,7 +371,7 @@ extension AUIRtmMsgProxy: AgoraRtmClientDelegate {
             let delegateKey = "\(event.channelName)__\(lockDetail.lockName)"
             guard let value = self.lockDelegates[delegateKey] else { return }
             for element in value.allObjects {
-                element.onReceiveLockDetail(channelName: event.channelName, lockDetail: lockDetail)
+                element.onReceiveLockDetail(channelName: event.channelName, lockDetail: lockDetail, eventType: event.eventType)
             }
         }
         
@@ -379,7 +379,7 @@ extension AUIRtmMsgProxy: AgoraRtmClientDelegate {
             let delegateKey = "\(event.channelName)__\(lockDetail.lockName)"
             guard let value = self.lockDelegates[delegateKey] else { return }
             for element in value.allObjects {
-                element.onReleaseLockDetail(channelName: event.channelName, lockDetail: lockDetail)
+                element.onReleaseLockDetail(channelName: event.channelName, lockDetail: lockDetail, eventType: event.eventType)
             }
         }
     }

@@ -120,10 +120,15 @@ class CommerceLiveViewController: UIViewController {
                 }
             }
         }
-        view.endBidGoodsClosure = { [weak self] model in
+        view.endBidGoodsClosure = { [weak self, weak view] model in
             guard let self = self, let model = model else { return }
             self.serviceImp?.endBidGoodsInfo(roomId: self.roomId, goods: model) { error in
                 //TODO: retry
+                guard let _ = error else { return }
+                //retry every 5s
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    view?.endBidGoodsClosure?(model)
+                }
             }
         }
         view.bidInAuctionGoodsClosure = { [weak self, weak view] model in
@@ -132,6 +137,10 @@ class CommerceLiveViewController: UIViewController {
             self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: {[weak self] error in
                 view?.toggleLoadingIndicator(false)
                 if let error = error {
+                    if let _ = CommerceServiceError(rawValue: error.code) {
+                        ToastView.show(text: error.localizedDescription)
+                        return
+                    }
                     ToastView.show(text: "\("show_bid_fail_toast".commerce_localized) Error:\(error.code)")
                     return
                 }
