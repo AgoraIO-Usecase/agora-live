@@ -526,7 +526,11 @@ extension AUIListCollection {
                 } else if let err = AUICollectionOperationError(rawValue: code) {
                     callback(err.toNSError(reason))
                 } else {
-                    callback(AUICollectionOperationError.recvErrorReceipt.toNSError("code: \(code), reason: \(reason)"))
+                    let err = NSError(domain: "AUICollection Error",
+                                      code: code,
+                                      userInfo: [ NSLocalizedDescriptionKey : "\(reason)"])
+//                    callback(AUICollectionOperationError.recvErrorReceipt.toNSError("code: \(code), reason: \(reason)"))
+                    callback(err)
                 }
             }
             return
