@@ -454,7 +454,7 @@ extension CommerceSyncManagerServiceImp {
             return
         }
         
-        let params = ["bidUser": VLUserCenter.user, "bid": goods.bid + 1] as [String : Any]
+        let params = ["bidUser": VLUserCenter.user.yy_modelToJSONObject() as? [String: Any] ?? [:], "bid": goods.bid + 1] as [String : Any]
         RTMSyncUtil.updateMetaData(id: channelName, 
                                    key: SYNC_MANAGER_BID_GOODS_COLLECTION,
                                    valueCmd: CommerceCmdKey.updateBidGoodsInfo, 
