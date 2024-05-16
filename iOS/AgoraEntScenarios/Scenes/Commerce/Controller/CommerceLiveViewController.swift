@@ -357,6 +357,7 @@ class CommerceLiveViewController: UIViewController {
             //之前是start、现在是completion，才会显示完成弹窗
             if model.status == .completion,
                origGoodStatusValid,
+               model.bid > 1,
                model.bidUser?.id != "" {
                 let resultView = CommerceAuctionResultView()
                 resultView.setBidGoods(model: model)

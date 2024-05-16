@@ -22,45 +22,38 @@ private let SYNC_MANAGER_UPVOTE_COLLECTION = "commerce_like_collection"
 
 
 enum CommerceServiceError: Int {
+    case unknown = 100000
+    case networkError = 110000
+    case paramsInvalid = 120000
     case timeout = 200001
     case outbid = 200002
+    case soldout = 200010
     
     func toError() -> NSError {
-        
         func createError(msg: String) -> NSError {
-            return NSError(domain: "Service Error",
+            return NSError(domain: "ServiceError",
                            code: rawValue,
                            userInfo: [ NSLocalizedDescriptionKey : msg])
         }
         switch self {
+        case .unknown:
+            return createError(msg: "unknown error")
+        case .networkError:
+            return createError(msg: "unknown error")
+        case .paramsInvalid:
+            return createError(msg: "params is invalid")
         case .timeout:
             return createError(msg: "Timeout")
         case .outbid:
             return createError(msg: "You were outbid")
+        case .soldout:
+            return createError(msg: "show_buy_goods_soldout_toast".commerce_localized)
         }
     }
 }
 
 private struct CommerceCmdKey {
     static let updateBidGoodsInfo: String = "updateBidGoodsInfo"
-}
-
-enum CommerceError: Int, Error {
-    case unknown = 1                   //unknown error
-    case networkError                  //network fail
-    
-    func desc() -> String {
-        switch self {
-        case .networkError:
-            return "network fail"
-        default:
-            return "unknown error"
-        }
-    }
-    
-    func toNSError() -> NSError {
-        return NSError(domain: "Show Service Error", code: rawValue, userInfo: [ NSLocalizedDescriptionKey : self.desc()])
-    }
 }
 
 private func agoraAssert(_ message: String) {
@@ -409,7 +402,6 @@ extension CommerceSyncManagerServiceImp {
         agoraPrint("imp[\(roomId ?? "")] all subscribe...")
         _subscribeOnlineUsersChanged()
         _getUserList(roomId: room?.roomId) { _, list in
-            
         }
         RTMSyncUtil.subscribeMessage(channelName: "", delegate: self)
     }
@@ -429,7 +421,7 @@ extension CommerceSyncManagerServiceImp {
 extension CommerceSyncManagerServiceImp {
     private func _getBidGoodsInfo(roomId: String?, completion: @escaping (NSError?, CommerceGoodsAuctionModel?) -> Void) {
         guard let channelName = roomId else {
-            completion(NSError(domain: "roomId is empty", code: 0), nil)
+            completion(CommerceServiceError.paramsInvalid.toError(), nil)
             return
         }
         RTMSyncUtil.getMetaData(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION) { error, res in
@@ -447,7 +439,7 @@ extension CommerceSyncManagerServiceImp {
     private func _addBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel?, completion: @escaping (NSError?) -> Void) {
         guard let channelName = roomId,
               let params = goods?.yy_modelToJSONObject() as? [String: Any] else {
-            completion(NSError(domain: "_addBidGoodsInfo fail: roomId is nil or params is nil", code: 0))
+            completion(CommerceServiceError.paramsInvalid.toError())
             return
         }
         RTMSyncUtil.addMetaData(id: channelName, key: SYNC_MANAGER_BID_GOODS_COLLECTION, data: params, callback: completion)
@@ -455,7 +447,7 @@ extension CommerceSyncManagerServiceImp {
     
     private func _endBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel?, completion: @escaping (NSError?) -> Void) {
         guard let channelName = roomId else {
-            completion(NSError(domain: "_endBidGoodsInfo fail: roomId is nil or status == nil", code: 0))
+            completion(CommerceServiceError.paramsInvalid.toError())
             return
         }
         //结束只改状态，防止房主非仲裁者时，价格不是最终的导致回滚
@@ -468,9 +460,7 @@ extension CommerceSyncManagerServiceImp {
     
     private func _updateBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel?, completion: @escaping (NSError?) -> Void) {
         guard let channelName = roomId, let goods = goods else {
-            completion(NSError(domain: "Service Error",
-                               code: -1,
-                               userInfo: [ NSLocalizedDescriptionKey : "roomId is nil or params is nil"]))
+            completion(CommerceServiceError.paramsInvalid.toError())
             return
         }
         
@@ -484,7 +474,7 @@ extension CommerceSyncManagerServiceImp {
     
     private func _subscribeBidGoodsInfo(roomId: String?, completion: @escaping (NSError?, CommerceGoodsAuctionModel?) -> Void) {
         guard let channelName = roomId else {
-            completion(NSError(domain: "roomId is empty", code: 0), nil)
+            completion(CommerceServiceError.paramsInvalid.toError(), nil)
             return
         }
         
@@ -518,7 +508,7 @@ extension CommerceSyncManagerServiceImp {
 extension CommerceSyncManagerServiceImp {
     private func _addGoodsList(roomId: String?, goods: [CommerceGoodsModel]?, completion: @escaping (NSError?) -> Void) {
         guard let channelName = roomId else {
-            completion(NSError(domain: "roomId is empty", code: 0))
+            completion(CommerceServiceError.paramsInvalid.toError())
             return
         }
         let jsonArray = goods?.compactMap({ $0.yy_modelToJSONObject() as? [String: Any] })
@@ -527,7 +517,7 @@ extension CommerceSyncManagerServiceImp {
     
     private func _getGoodsList(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsBuyModel]?) -> Void) {
         guard let channelName = roomId else {
-            completion(NSError(domain: "roomId is empty", code: 0), nil)
+            completion(CommerceServiceError.paramsInvalid.toError(), nil)
             return
         }
         RTMSyncUtil.getListMetaData(id: channelName, key: SYNC_MANAGER_BUY_GOODS_COLLECTION) { error, res in
@@ -549,7 +539,7 @@ extension CommerceSyncManagerServiceImp {
     
     private func _updateGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, completion: @escaping (NSError?) -> Void) {
         guard let channelName = roomId, let params = goods?.yy_modelToJSONObject() as? [String: Any] else {
-            completion(NSError(domain: "roomId is empty", code: 0))
+            completion(CommerceServiceError.paramsInvalid.toError())
             return
         }
         agoraPrint("_updateGoodsInfo[\(roomId ?? "")] \(goods?.title ?? "")")
@@ -562,7 +552,7 @@ extension CommerceSyncManagerServiceImp {
     
     private func _calcGoodsInfo(roomId: String?, goods: CommerceGoodsModel?, increase: Bool, completion: @escaping (NSError?) -> Void) {
         guard let channelName = roomId else {
-            completion(NSError(domain: "roomId is empty", code: 0))
+            completion(CommerceServiceError.paramsInvalid.toError())
             return
         }
         agoraPrint("_calcGoodsInfo[\(roomId ?? "")] \(goods?.title ?? "")")
@@ -578,20 +568,17 @@ extension CommerceSyncManagerServiceImp {
                 completion(nil)
                 return
             }
-            var title = err.localizedDescription
             if err.code == AUICollectionOperationError.calculateMapOutOfRange.rawValue {
-                title = "Sold Out!"
+                completion(CommerceServiceError.soldout.toError())
+                return
             }
-            let error = NSError(domain: "Service Error",
-                                code: err.code,
-                                userInfo: [ NSLocalizedDescriptionKey : title])
-            completion(error)
+            completion(err)
         })
     }
     
     private func _subscribeGoodsInfo(roomId: String?, completion: @escaping (NSError?, [CommerceGoodsModel]?) -> Void) {
         guard let channelName = roomId else {
-            completion(NSError(domain: "roomId is empty", code: 0), nil)
+            completion(CommerceServiceError.paramsInvalid.toError(), nil)
             return
         }
         RTMSyncUtil.subscribeListAttributesDidChanged(id: channelName, key: SYNC_MANAGER_BUY_GOODS_COLLECTION) { channelName, object in
@@ -612,7 +599,7 @@ extension CommerceSyncManagerServiceImp {
 extension CommerceSyncManagerServiceImp {
     func upvote(roomId: String?, count: Int, completion: ((NSError?) -> Void)?) {
         guard let channelName = roomId else {
-            completion?(NSError(domain: "roomId is empty", code: 0))
+            completion?(CommerceServiceError.paramsInvalid.toError())
             return
         }
         let collecton = RTMSyncUtil.collection(id: channelName, key: SYNC_MANAGER_UPVOTE_COLLECTION)
@@ -641,7 +628,7 @@ extension CommerceSyncManagerServiceImp {
 extension CommerceSyncManagerServiceImp {
     private func _getUserList(roomId: String?, finished: @escaping (NSError?, [CommerceUser]?) -> Void) {
         guard let channelName = roomId else {
-            finished(NSError(domain: "roomId is empty", code: 0), nil)
+            finished(CommerceServiceError.paramsInvalid.toError(), nil)
             return
         }
         agoraPrint("_getUserList...")
