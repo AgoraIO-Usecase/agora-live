@@ -161,16 +161,14 @@ class RTMSyncUtil: NSObject {
     }
     
     class func joinScene(roomId: String,
-                         completion: ((NSError?, AUIRoomInfo?) -> Void)?) {
+                         completion: ((NSError?) -> Void)?) {
         commercePrintLog("joinScene[\(roomId)]", tag: "RTMSyncUtil")
         login {
-            let roomInfo = AUIRoomInfo()
-            roomInfo.roomId = roomId
-            roomService?.enterRoom(room: roomInfo) { err, info in
-                completion?(err, info)
+            roomService?.enterRoom(roomId: roomId) { err in
+                completion?(err)
             }
         } failure: { err in
-            completion?(err, nil)
+            completion?(err)
         }
     }
     
