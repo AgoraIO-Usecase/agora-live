@@ -67,12 +67,12 @@ public class VoiceHighlightDialog extends BaseBottomSheetDialogFragment<KtvDialo
             adapter.notifyItemChanged(i);
         }
         mListener.onUserItemChosen(data);
-        mSettings.setMHighLighterUid(data.user.getRtcUid());
+        mSettings.setMHighLighterUid(data.user.userId);
     }
 
     public void setUserList(List<VoiceHighlightBean> list) {
         list.forEach(bean -> {
-            if (bean.user.getRtcUid().equals(mSettings.getMHighLighterUid())) {
+            if (bean.user.userId.equals(mSettings.getMHighLighterUid())) {
                 bean.setSelect(true);
             }
         });
@@ -92,11 +92,11 @@ public class VoiceHighlightDialog extends BaseBottomSheetDialogFragment<KtvDialo
         @Override
         public void binding(@Nullable VoiceHighlightBean data, int selectedIndex) {
             GlideApp.with(mBinding.getRoot())
-                    .load(data.user.getHeadUrl())
+                    .load(data.user.userAvatar)
                     .error(io.agora.scene.base.R.mipmap.default_user_avatar)
                     .apply(RequestOptions.circleCropTransform())
                     .into(mBinding.ivBg);
-            mBinding.tvTitle.setText(data.user.getName());
+            mBinding.tvTitle.setText(data.user.userName);
             mBinding.select.setVisibility(data.isSelect() ? View.VISIBLE : View.GONE);
         }
     }

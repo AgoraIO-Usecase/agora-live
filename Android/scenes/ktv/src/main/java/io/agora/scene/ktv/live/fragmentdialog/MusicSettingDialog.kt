@@ -26,7 +26,7 @@ import io.agora.scene.ktv.live.bean.EffectVoiceBean
 import io.agora.scene.ktv.live.bean.MusicSettingBean
 import io.agora.scene.ktv.live.bean.ScoringDifficultyMode
 import io.agora.scene.ktv.live.bean.SoundCardSettingBean
-import io.agora.scene.ktv.service.RoomSelSongModel
+import io.agora.scene.ktv.service.RoomSongInfo
 import io.agora.scene.widget.utils.doOnProgressChanged
 import io.agora.scene.widget.toast.CustomToast
 import io.agora.scene.base.utils.dp
@@ -45,7 +45,7 @@ class MusicSettingDialog constructor(
     private var mSetting: MusicSettingBean,
     private var mSoundCardSetting: SoundCardSettingBean,
     private var isListener: Boolean, // 是否是观众
-    private var currentSong: RoomSelSongModel?, // 当前歌曲
+    private var currentSong: RoomSongInfo?, // 当前歌曲
 ) :
     BaseBottomSheetDialogFragment<KtvDialogMusicSettingBinding>() {
 

@@ -14,7 +14,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.ViewModelProvider
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.component.BaseBottomSheetDialogFragment
-import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.ktv.R
 import io.agora.scene.ktv.databinding.KtvDialogCreateRoomBinding
@@ -98,11 +97,11 @@ class CreateRoomDialog constructor(
             }
         }
 
-        roomCreateViewModel.joinRoomResult.observe(this) { roomModel  ->
+        roomCreateViewModel.joinRoomResult.observe(this) { joinRoomInfo  ->
             hideLoadingView()
-            if (roomModel != null) {
+            if (joinRoomInfo != null) {
                 dismiss()
-                RoomLivingActivity.launch(context, roomModel)
+                RoomLivingActivity.launch(context, joinRoomInfo)
             } else {
                 // 加入房间失败
             }
@@ -136,10 +135,8 @@ class CreateRoomDialog constructor(
             ToastUtils.showToast(getString(R.string.ktv_please_input_4_pwd))
             return
         }
-        val userNo = UserManager.getInstance().user.id.toString()
-        val numPrivate = if (isPrivate) 1 else 0
         showLoadingView()
-        roomCreateViewModel.createRoom(numPrivate, roomName, password, userNo, "1")
+        roomCreateViewModel.createRoom( roomName, password, "1")
     }
 
     private fun showLoadingView() {

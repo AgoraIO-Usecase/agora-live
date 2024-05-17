@@ -30,6 +30,7 @@ import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.bean.User
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.ktv.KTVLogger
+import io.agora.scene.ktv.widget.song.SongItem
 import kotlin.random.Random
 
 /**
@@ -37,18 +38,16 @@ import kotlin.random.Random
  *
  * @property mContext
  * @property mErrorHandler
- * @constructor Create empty K t v sync manager service imp
+ * @constructor Create empty Ktv sync manager service imp
  */
-class KTVSyncManagerServiceImp(
+class KTVSyncManagerServiceImp constructor(
     private val mContext: Context, private val mErrorHandler: ((Exception?) -> Unit)?
 ) : KTVServiceProtocol, ISceneResponse, IAUIUserService.AUIUserRespObserver {
     private val TAG = "KTV_Service_LOG"
     private val kSceneId = "scene_ktv_4.3.0"
     private val kCollectionIdChooseSong = "choose_song"
     private val kCollectionIdSeatInfo = "seat_info"
-
-    @Volatile
-    private var syncUtilsInited = false
+    private val kCollectionIdChoristerInfo = "chorister_info"
 
     private val mMainHandler by lazy { Handler(Looper.getMainLooper()) }
 
@@ -57,29 +56,24 @@ class KTVSyncManagerServiceImp(
     private val mRoomManager = AUIRoomManager()
     private val mRoomService: RoomService
 
-    private val mAppId: String
-        get() = BuildConfig.AGORA_APP_ID
+    private val mAppId: String get() = BuildConfig.AGORA_APP_ID
 
     private var mDiffTs: Long = 0
 
     private var mLastCreateTime: Long = -1
 
-    private val mCurrentServerTs: Long
-        get() {
-            return SystemClock.elapsedRealtime() + mDiffTs
-        }
+    private val mCurrentServerTs: Long get() = SystemClock.elapsedRealtime() + mDiffTs
 
     private val mCurRoomConfig: AUIRoomConfig = AUIRoomConfig("")
 
     @Volatile
     private var mCurRoomNo: String = ""
 
-    private val mUser: User
-        get() = UserManager.getInstance().user
+    private val mUser: User get() = UserManager.getInstance().user
 
     private val mUserList = mutableListOf<AUIUserInfo>()
-    private val mSeatMap = mutableMapOf<String, RoomSeatModel?>()
-    private val mSongChosenList = mutableListOf<RoomSelSongModel>()
+    private val mSeatMap = mutableMapOf<String, RoomMicSeatInfo>()
+    private val mSongChosenList = mutableListOf<RoomSongInfo>()
 
     private var mServiceLister: KtvServiceListenerProtocol? = null
 
@@ -132,12 +126,9 @@ class KTVSyncManagerServiceImp(
      *
      */
     override fun reset() {
-        if (syncUtilsInited) {
-            syncUtilsInited = false
-            mSeatMap.clear()
-            mSongChosenList.clear()
-            mCurRoomNo = ""
-        }
+        mSeatMap.clear()
+        mSongChosenList.clear()
+        mCurRoomNo = ""
     }
 
     private val mCurrentScene: Scene
@@ -194,12 +185,12 @@ class KTVSyncManagerServiceImp(
     /**
      * Create room
      *
-     * @param inputModel
+     * @param createRoomInfo
      * @param completion
      * @receiver
      */
     override fun createRoom(
-        inputModel: CreateRoomInputModel, completion: (error: Exception?, out: AUIRoomInfo?) -> Unit
+        createRoomInfo: CreateRoomInfo, completion: (error: Exception?, out: AUIRoomInfo?) -> Unit
     ) {
         KTVLogger.d(TAG, "createRoom start")
         initRtmSync {
@@ -210,7 +201,7 @@ class KTVSyncManagerServiceImp(
             val roomId = (Random(mCurrentServerTs).nextInt(100000) + 1000000).toString()
             val roomInfo = AUIRoomInfo().apply {
                 this.roomId = roomId
-                this.roomName = inputModel.name
+                this.roomName = createRoomInfo.name
                 this.roomOwner = AUIUserThumbnailInfo().apply {
                     userId = mUser.id.toString()
                     userName = mUser.name
@@ -218,8 +209,8 @@ class KTVSyncManagerServiceImp(
                 }
                 this.createTime = mCurrentServerTs
                 this.customPayload[KTVParameters.ROOM_USER_COUNT] = 1
-                this.customPayload[KTVParameters.THUMBNAIL_ID] = inputModel.icon
-                this.customPayload[KTVParameters.PASSWORD] = inputModel.password
+                this.customPayload[KTVParameters.THUMBNAIL_ID] = createRoomInfo.icon
+                this.customPayload[KTVParameters.PASSWORD] = createRoomInfo.password
             }
             mCurRoomNo = ""
             mRoomService.createRoom(mAppId, kSceneId, roomInfo, completion = { auiRtmException, auiRoomInfo ->
@@ -246,20 +237,19 @@ class KTVSyncManagerServiceImp(
      * @receiver
      */
     override fun joinRoom(
-        inputModel: JoinRoomInputModel,
-        completion: (error: Exception?, out: JoinRoomOutputModel?) -> Unit
+        roomId: String, password: String?, completion: (error: Exception?, out: JoinRoomInfo?) -> Unit
     ) {
         if (mCurRoomNo.isNotEmpty()) {
             completion.invoke(RuntimeException("The room $mCurRoomNo has been joined!"), null)
             return
         }
-        val cacheRoom = AUIRoomContext.shared().getRoomInfo(inputModel.roomNo)
+        val cacheRoom = AUIRoomContext.shared().getRoomInfo(roomId)
         if (cacheRoom == null) {
             completion.invoke(RuntimeException("The room is not available!"), null)
             return
         }
         val password = cacheRoom.customPayload[KTVParameters.PASSWORD] as? String
-        if (!password.isNullOrEmpty() && password != inputModel.password) {
+        if (!password.isNullOrEmpty() && password != roomId) {
             completion.invoke(RuntimeException("The password is error!"), null)
             return
         }
@@ -268,9 +258,9 @@ class KTVSyncManagerServiceImp(
                 completion.invoke(Exception(it.message), null)
                 return@initRtmSync
             }
-            mRoomService.enterRoom(mAppId, kSceneId, cacheRoom, completion = { auiRtmException, auiRoomInfo ->
-                if (auiRtmException == null && auiRoomInfo != null) {
-                    mCurRoomNo = auiRoomInfo.roomId
+            mRoomService.enterRoom(mAppId, kSceneId, cacheRoom, completion = { auiRtmException, roomInfo ->
+                if (auiRtmException == null) {
+                    mCurRoomNo = roomId
                     mCurRoomConfig.channelName = mCurRoomNo
                     mCurRoomConfig.rtcChorusChannelName = AUIRoomConfig(mCurRoomNo).rtcChorusChannelName
                     KTVLogger.d(TAG, "enterRoom success: $mCurRoomNo")
@@ -279,7 +269,9 @@ class KTVSyncManagerServiceImp(
                     scene.userService.registerRespObserver(this)
                     getListCollection(kCollectionIdChooseSong).subscribeAttributesDidChanged(this::onAttributeChanged)
                     getListCollection(kCollectionIdSeatInfo).subscribeAttributesDidChanged(this::onAttributeChanged)
+                    getListCollection(kCollectionIdChoristerInfo).subscribeAttributesDidChanged(this::onAttributeChanged)
 
+                    // TODO:  是否进入房间在获取麦位，以及上麦
                     innerAutoOnSeatIfNeed { error, seats ->
                         if (error != null) {
                             completion.invoke(error, null)
@@ -294,7 +286,13 @@ class KTVSyncManagerServiceImp(
                                     TokenGenerator.TokenGeneratorType.Token006, TokenGenerator.AgoraTokenType.Rtc,
                                     success = { chorusToken ->
                                         mCurRoomConfig.rtcChorusRtcToken = chorusToken
-                                        completion.invoke(null, JoinRoomOutputModel(cacheRoom, mCurRoomConfig))
+                                        val joinRoomInfo = JoinRoomInfo(roomConfig = mCurRoomConfig)
+                                        joinRoomInfo.roomOwner = cacheRoom.roomOwner
+                                        joinRoomInfo.roomName = cacheRoom.roomName
+                                        joinRoomInfo.roomId = cacheRoom.roomId
+                                        joinRoomInfo.customPayload = cacheRoom.customPayload
+
+                                        completion.invoke(null, joinRoomInfo)
                                     },
                                     failure = {
                                         mCurRoomNo = ""
@@ -311,7 +309,7 @@ class KTVSyncManagerServiceImp(
                 } else {
                     KTVLogger.e(TAG, "enterRoom failed: $auiRtmException")
                     runOnMainThread {
-                        completion.invoke(Exception(auiRtmException?.message), null)
+                        completion.invoke(Exception(auiRtmException.message), null)
                     }
                 }
             })
@@ -380,16 +378,14 @@ class KTVSyncManagerServiceImp(
     private fun resetCacheInfo(isRoomDestroyed: Boolean = false) {
         if (!isRoomDestroyed) {
             // 如果上麦了要下麦，并清空麦位信息
-            mSeatMap.forEach {
-                it.value?.let { seat ->
-                    if (seat.userNo == mUser.id.toString()) {
-                        innerRemoveSeat(seat, completion = {})
-                        return@forEach
-                    }
+            mSeatMap.values.forEach { seat ->
+                if (seat.user?.userId == mUser.id.toString()) {
+                    innerRemoveSeat(seat, completion = {})
+                    return@forEach
                 }
             }
             // 删除点歌信息
-            mSongChosenList.forEachIndexed { index: Int, songModel: RoomSelSongModel ->
+            mSongChosenList.forEachIndexed { index: Int, songModel: RoomSongInfo ->
                 if (songModel.userNo == mUser.id.toString()) {
                     innerRemoveChooseSong(mSongChosenList.removeAt(index)) {}
                 }
@@ -409,27 +405,29 @@ class KTVSyncManagerServiceImp(
      * @param completion
      * @receiver
      */
-    override fun getSeatStatusList(completion: (error: Exception?, list: List<RoomSeatModel>?) -> Unit) {
+    override fun getAllSeatList(completion: (error: Exception?, list: List<RoomMicSeatInfo>?) -> Unit) {
         innerGetSeatInfo(completion)
     }
 
     /**
      * On seat
      *
-     * @param inputModel
+     * @param seatIndex
      * @param completion
      * @receiver
      */
-    override fun onSeat(inputModel: OnSeatInputModel, completion: (error: Exception?) -> Unit) {
-        mSeatMap.forEach {
-            it.value?.let { seat ->
-                if (seat.userNo == mUser.id.toString()) {
-                    return
-                }
+    override fun onSeat(seatIndex: Int, completion: (error: Exception?) -> Unit) {
+        mSeatMap.values.forEach { seat ->
+            if (seat.user?.userId == mUser.id.toString()) {
+                return
             }
         }
-        val seatInfo = innerGenUserSeatInfo(inputModel.seatIndex)
-        innerAddSeatInfo(seatInfo, completion)
+        val targetSeatInfo = RoomMicSeatInfo(
+            user = AUIRoomContext.shared().currentUserInfo,
+            seatIndex = seatIndex,
+            seatStatus = RoomMicSeatStatus.used
+        )
+        innerAddSeatInfo(targetSeatInfo, completion)
     }
 
     /**
@@ -440,97 +438,84 @@ class KTVSyncManagerServiceImp(
      */
     override fun autoOnSeat(completion: (error: Exception?) -> Unit) {
         val list = mutableListOf(0, 1, 2, 3, 4, 5, 6, 7)
-        mSeatMap.forEach {
-            it.value?.let { seat ->
-                list.removeIf { index ->
-                    index == seat.seatIndex
-                }
-                if (seat.userNo == mUser.id.toString()) {
-                    completion.invoke(null)
-                    return
-                }
+        mSeatMap.values.forEach { seat ->
+            list.removeIf { it == seat.seatIndex }
+            if (seat.user?.userId == mUser.id.toString()) {
+                completion.invoke(null)
+                return
             }
         }
         if (list.isEmpty()) {
             completion.invoke(Exception("麦位已满，请在他人下麦后重试"))
         } else {
-            val seatInfo = innerGenUserSeatInfo(list[0])
-            innerAddSeatInfo(seatInfo, completion)
+            val targetSeatInfo = RoomMicSeatInfo(
+                user = AUIRoomContext.shared().currentUserInfo,
+                seatIndex = list[0],
+                seatStatus = RoomMicSeatStatus.used
+            )
+            innerAddSeatInfo(targetSeatInfo, completion)
         }
     }
 
     /**
      * Out seat
      *
-     * @param inputModel
+     * @param seatIndex
      * @param completion
      * @receiver
      */
-    override fun outSeat(inputModel: OutSeatInputModel, completion: (error: Exception?) -> Unit) {
-        val seatInfo = mSeatMap[inputModel.userOnSeat.toString()]
-        if (seatInfo != null) {
+    override fun outSeat(seatIndex: Int, completion: (error: Exception?) -> Unit) {
+        mSeatMap[seatIndex.toString()]?.let { roomSeat ->
             // 移除歌曲
-            innerRemoveAllUsersChooseSong(seatInfo.userNo)
+            roomSeat.user?.userId?.let { userId ->
+                innerRemoveAllUsersChooseSong(userId)
+            }
             // 移除座位
-            innerRemoveSeat(seatInfo) {}
+            innerRemoveSeat(roomSeat) {}
         }
         completion(null)
     }
 
     /**
-     * Update seat audio mute status
+     * Mute user audio
      *
      * @param mute
      * @param completion
      * @receiver
      */
-    override fun updateSeatAudioMuteStatus(mute: Boolean, completion: (error: Exception?) -> Unit) {
-        mSeatMap.forEach {
-            if (it.value?.userNo == mUser.id.toString()) {
-                val originSeatInfo = it.value
-                if (originSeatInfo != null) {
-                    val seatInfo = RoomSeatModel(
-                        originSeatInfo.isMaster,
-                        originSeatInfo.headUrl,
-                        originSeatInfo.userNo,
-                        originSeatInfo.rtcUid,
-                        originSeatInfo.name,
-                        originSeatInfo.seatIndex,
-                        originSeatInfo.chorusSongCode,
-                        if (mute) RoomSeatModel.MUTED_VALUE_TRUE else RoomSeatModel.MUTED_VALUE_FALSE, // update this
-                        originSeatInfo.isVideoMuted
-                    )
-                    innerUpdateSeat(seatInfo, completion)
-                }
+    override fun muteUserAudio(mute: Boolean, completion: (error: Exception?) -> Unit) {
+        mUserList.forEach { useInfo ->
+            if (useInfo.userId == mUser.id.toString()) {
+                mCurrentScene.userService.muteUserAudio(mute, callback = { auiException ->
+                    auiException?.let {
+                        completion.invoke(Exception("${it.message}(${it.code})"))
+                    } ?: run {
+                        completion.invoke(null)
+                    }
+                })
+                return@forEach
             }
         }
     }
 
     /**
-     * Update seat video mute status
+     * Mute user video
      *
      * @param mute
      * @param completion
      * @receiver
      */
-    override fun updateSeatVideoMuteStatus(mute: Boolean, completion: (error: Exception?) -> Unit) {
-        mSeatMap.forEach {
-            if (it.value?.userNo == mUser.id.toString()) {
-                val originSeatInfo = it.value
-                if (originSeatInfo != null) {
-                    val seatInfo = RoomSeatModel(
-                        originSeatInfo.isMaster,
-                        originSeatInfo.headUrl,
-                        originSeatInfo.userNo,
-                        originSeatInfo.rtcUid,
-                        originSeatInfo.name,
-                        originSeatInfo.seatIndex,
-                        originSeatInfo.chorusSongCode,
-                        originSeatInfo.isAudioMuted,
-                        if (mute) 1 else 0// update this
-                    )
-                    innerUpdateSeat(seatInfo, completion)
-                }
+    override fun muteUserVideo(mute: Boolean, completion: (error: Exception?) -> Unit) {
+        mUserList.forEach { useInfo ->
+            if (useInfo.userId == mUser.id.toString()) {
+                mCurrentScene.userService.muteUserVideo(mute, callback = { auiException ->
+                    auiException?.let {
+                        completion.invoke(Exception("${it.message}(${it.code})"))
+                    } ?: run {
+                        completion.invoke(null)
+                    }
+                })
+                return@forEach
             }
         }
     }
@@ -538,67 +523,41 @@ class KTVSyncManagerServiceImp(
     // ---------------------Inner Seat operation --------------------------
 
     /**
-     * Inner gen user seat info
-     *
-     * @param seatIndex
-     * @return
-     */
-    private fun innerGenUserSeatInfo(
-        seatIndex: Int,
-        isAudioMuted: Int = RoomSeatModel.MUTED_VALUE_TRUE,
-        isVideoMuted: Int = RoomSeatModel.MUTED_VALUE_TRUE
-    ): RoomSeatModel {
-        return RoomSeatModel(
-            AUIRoomContext.shared().isRoomOwner(mCurRoomNo),
-            mUser.fullHeadUrl,
-            mUser.id.toString(),
-            mUser.id.toString(),
-            mUser.name,
-            seatIndex,
-            "",
-            isAudioMuted,
-            isVideoMuted
-        )
-    }
-
-    /**
      * Inner auto on seat if need
      *
      * @param completion
      * @receiver
      */
-    private fun innerAutoOnSeatIfNeed(completion: (error: Exception?, seat: List<RoomSeatModel>?) -> Unit) {
+    private fun innerAutoOnSeatIfNeed(completion: (error: Exception?, seat: List<RoomMicSeatInfo>?) -> Unit) {
         innerGetSeatInfo { error, list ->
             if (error != null) {
                 completion.invoke(error, null)
                 return@innerGetSeatInfo
             }
             var hasMaster = false
-            val outList = mutableListOf<RoomSeatModel>()
-            mSeatMap.forEach {
-                it.value?.let { seat ->
-                    outList.add(seat)
-                    runOnMainThread {
-                        mServiceLister?.onRoomSeatDidChanged(KTVServiceProtocol.KTVSubscribe.KTVSubscribeCreated, seat)
-                    }
-                    if (seat.isMaster) {
-                        hasMaster = true
-                    }
+            val outList = mutableListOf<RoomMicSeatInfo>()
+            mSeatMap.values.forEach { seat ->
+                outList.add(seat)
+                runOnMainThread {
+                    mServiceLister?.onAddOrUpdateSeat(seat)
+                }
+                if (AUIRoomContext.shared().isRoomOwner(mCurRoomNo, seat.user?.userId)) {
+                    hasMaster = true
                 }
             }
             if (!hasMaster && AUIRoomContext.shared().isRoomOwner(mCurRoomNo)) {
-                val targetSeatInfo =
-                    innerGenUserSeatInfo(0, RoomSeatModel.MUTED_VALUE_FALSE, RoomSeatModel.MUTED_VALUE_TRUE)
-                innerAddSeatInfo(targetSeatInfo) { error ->
-                    if (error != null) {
-                        completion.invoke(error, null)
+                val targetSeatInfo = RoomMicSeatInfo(
+                    user = AUIRoomContext.shared().currentUserInfo,
+                    seatIndex = 0,
+                )
+                innerAddSeatInfo(targetSeatInfo) {
+                    if (it != null) {
+                        completion.invoke(it, null)
                         return@innerAddSeatInfo
                     }
                     outList.add(targetSeatInfo)
                     runOnMainThread {
-                        mServiceLister?.onRoomSeatDidChanged(
-                            KTVServiceProtocol.KTVSubscribe.KTVSubscribeCreated, targetSeatInfo
-                        )
+                        mServiceLister?.onAddOrUpdateSeat(targetSeatInfo)
                         completion.invoke(null, outList)
                     }
                 }
@@ -614,7 +573,7 @@ class KTVSyncManagerServiceImp(
      * @param completion
      * @receiver
      */
-    private fun innerGetSeatInfo(completion: (error: Exception?, list: List<RoomSeatModel>?) -> Unit) {
+    private fun innerGetSeatInfo(completion: (error: Exception?, list: List<RoomMicSeatInfo>?) -> Unit) {
         getListCollection(kCollectionIdSeatInfo).getMetaData { error, value ->
             if (error != null) {
                 KTVLogger.d(TAG, "innerGetSeatInfo failed roomId:$mCurRoomNo $error")
@@ -624,8 +583,14 @@ class KTVSyncManagerServiceImp(
                 return@getMetaData
             }
             try {
-                val out = GsonTools.toList(GsonTools.beanToString(value), RoomSeatModel::class.java)
+                val out = GsonTools.toList(GsonTools.beanToString(value), RoomMicSeatInfo::class.java)
                 KTVLogger.d(TAG, "innerGetSeatInfo onSuccess roomId:$mCurRoomNo $out")
+                out?.let { romSeats ->
+                    mSeatMap.clear()
+                    romSeats.forEachIndexed { index, roomSeatModel ->
+                        mSeatMap[roomSeatModel.seatIndex.toString()] = roomSeatModel
+                    }
+                }
                 runOnMainThread {
                     completion.invoke(null, out)
                 }
@@ -645,7 +610,7 @@ class KTVSyncManagerServiceImp(
      * @param completion
      * @receiver
      */
-    private fun innerAddSeatInfo(seatInfo: RoomSeatModel, completion: (error: Exception?) -> Unit) {
+    private fun innerAddSeatInfo(seatInfo: RoomMicSeatInfo, completion: (error: Exception?) -> Unit) {
         getListCollection(kCollectionIdSeatInfo).addMetaData(null, GsonTools.beanToMap(seatInfo), null, callback = {
             if (it == null) {
                 KTVLogger.d(TAG, "innerAddSeatInfo success roomId:$mCurRoomNo, seatInfo:$seatInfo")
@@ -665,7 +630,7 @@ class KTVSyncManagerServiceImp(
      * @param completion
      * @receiver
      */
-    private fun innerUpdateSeat(seatInfo: RoomSeatModel, completion: (error: Exception?) -> Unit) {
+    private fun innerUpdateSeat(seatInfo: RoomMicSeatInfo, completion: (error: Exception?) -> Unit) {
         getListCollection(kCollectionIdSeatInfo).updateMetaData(null, GsonTools.beanToMap(seatInfo), null, callback = {
             if (it == null) {
                 KTVLogger.d(TAG, "innerUpdateSeat success roomId:$mCurRoomNo, seatInfo:$seatInfo")
@@ -685,7 +650,7 @@ class KTVSyncManagerServiceImp(
      * @param completion
      * @receiver
      */
-    private fun innerRemoveSeat(seatInfo: RoomSeatModel, completion: (error: Exception?) -> Unit) {
+    private fun innerRemoveSeat(seatInfo: RoomMicSeatInfo, completion: (error: Exception?) -> Unit) {
         getListCollection(kCollectionIdSeatInfo).removeMetaData(null, filter = mutableListOf(
             mapOf(Pair("seatIndex", seatInfo.seatIndex))
         ), callback = {
@@ -700,27 +665,42 @@ class KTVSyncManagerServiceImp(
         })
     }
 
-
     // ============= song start =============================
-    override fun getChoosedSongsList(completion: (error: Exception?, list: List<RoomSelSongModel>?) -> Unit) {
+    /**
+     * Get all song list
+     *
+     * @param completion
+     * @receiver
+     */
+    override fun getAllSongList(completion: (error: Exception?, list: List<SongItem>) -> Unit) {
+
+    }
+
+    /**
+     * Get choosed songs list
+     *
+     * @param completion
+     * @receiver
+     */
+    override fun getChosenSongList(completion: (error: Exception?, list: List<RoomSongInfo>?) -> Unit) {
         innerGetChooseSongInfo(completion)
     }
 
-    override fun chooseSong(inputModel: ChooseSongInputModel, completion: (error: Exception?) -> Unit) {
-        val song = RoomSelSongModel(
-            inputModel.songName,
-            inputModel.songNo,
-            inputModel.singer,
-            inputModel.imageUrl,
+    override fun chooseSong(songInfo: RoomSongInfo, completion: (error: Exception?) -> Unit) {
+        val song = RoomSongInfo(
+            songInfo.songName,
+            songInfo.songNo,
+            songInfo.singer,
+            songInfo.imageUrl,
             userNo = mUser.id.toString(),
             name = mUser.name,
-            status = RoomSelSongModel.STATUS_IDLE,
+            status = RoomSongInfo.STATUS_IDLE,
             createAt = mCurrentServerTs, pinAt = 0.0
         )
         innerAddChooseSongInfo(song, completion)
     }
 
-    override fun makeSongTop(inputModel: MakeSongTopInputModel, completion: (error: Exception?) -> Unit) {
+    override fun makeSongTop(songCode: String, completion: (error: Exception?) -> Unit) {
         // move the song to second position
         if (mSongChosenList.size <= 0) {
             completion.invoke(RuntimeException("The chosen song list is empty!"))
@@ -731,7 +711,7 @@ class KTVSyncManagerServiceImp(
             return
         }
 
-        val filter = mSongChosenList.filter { it.songNo == inputModel.songNo }
+        val filter = mSongChosenList.filter { it.songNo == songCode }
         val targetSong = filter.getOrNull(0)
         if (targetSong == null) {
             completion.invoke(RuntimeException("The song no not found!"))
@@ -740,7 +720,7 @@ class KTVSyncManagerServiceImp(
 
         //net request and notify others
         val indexOf = mSongChosenList.indexOf(targetSong)
-        val newSong = RoomSelSongModel(
+        val newSong = RoomSongInfo(
             targetSong.songName,
             targetSong.songNo,
             targetSong.singer,
@@ -758,25 +738,25 @@ class KTVSyncManagerServiceImp(
         }
     }
 
-    override fun makeSongDidPlay(inputModel: RoomSelSongModel, completion: (error: Exception?) -> Unit) {
+    override fun makeSongDidPlay(songCode: String, completion: (error: Exception?) -> Unit) {
         if (mSongChosenList.size <= 0) {
             completion.invoke(RuntimeException("The chosen song list is empty!"))
             return
         }
 
-        val filter = mSongChosenList.filter { it.songNo == inputModel.songNo }
+        val filter = mSongChosenList.filter { it.songNo == songCode }
         val targetSong = filter.getOrNull(0)
         if (targetSong == null) {
             completion.invoke(RuntimeException("The song no not found!"))
             return
         }
-        if (targetSong.status == RoomSelSongModel.STATUS_PLAYING) {
+        if (targetSong.status == RoomSongInfo.STATUS_PLAYING) {
             completion.invoke(null)
             return
         }
 
         val indexOf = mSongChosenList.indexOf(targetSong)
-        val newSong = RoomSelSongModel(
+        val newSong = RoomSongInfo(
             targetSong.songName,
             targetSong.songNo,
             targetSong.singer,
@@ -784,7 +764,7 @@ class KTVSyncManagerServiceImp(
             userNo = targetSong.userNo,
             name = targetSong.name,
             isOriginal = targetSong.isOriginal,
-            status = RoomSelSongModel.STATUS_PLAYING,
+            status = RoomSongInfo.STATUS_PLAYING,
             createAt = targetSong.createAt,
             pinAt = targetSong.pinAt
         )
@@ -795,7 +775,7 @@ class KTVSyncManagerServiceImp(
     }
 
     override fun removeSong(
-        isSingingSong: Boolean, inputModel: RemoveSongInputModel, completion: (error: Exception?) -> Unit
+        isSingingSong: Boolean, inputModel: RoomSongInfo, completion: (error: Exception?) -> Unit
     ) {
         if (mSongChosenList.size <= 0) {
             completion.invoke(RuntimeException("The chosen song list is empty!"))
@@ -824,7 +804,7 @@ class KTVSyncManagerServiceImp(
      * @param completion
      * @receiver
      */
-    private fun innerGetChooseSongInfo(completion: (error: Exception?, list: List<RoomSelSongModel>?) -> Unit) {
+    private fun innerGetChooseSongInfo(completion: (error: Exception?, list: List<RoomSongInfo>?) -> Unit) {
         getListCollection(kCollectionIdChooseSong).getMetaData { error, value ->
             KTVLogger.d(TAG, "innerGetChooseSongInfo roomId:$mCurRoomNo $error $value")
             if (error != null) {
@@ -834,7 +814,7 @@ class KTVSyncManagerServiceImp(
                 return@getMetaData
             }
             try {
-                val out = GsonTools.toList(GsonTools.beanToString(value), RoomSelSongModel::class.java)
+                val out = GsonTools.toList(GsonTools.beanToString(value), RoomSongInfo::class.java)
                 KTVLogger.d(TAG, "innerGetChooseSongInfo onSuccess roomId:$mCurRoomNo $out")
                 runOnMainThread {
                     completion.invoke(null, out)
@@ -867,7 +847,7 @@ class KTVSyncManagerServiceImp(
      * @param completion
      * @receiver
      */
-    private fun innerAddChooseSongInfo(songInfo: RoomSelSongModel, completion: (error: Exception?) -> Unit) {
+    private fun innerAddChooseSongInfo(songInfo: RoomSongInfo, completion: (error: Exception?) -> Unit) {
         getListCollection(kCollectionIdChooseSong).addMetaData(null,
             GsonTools.beanToMap(songInfo),
             null,
@@ -890,7 +870,7 @@ class KTVSyncManagerServiceImp(
      * @param completion
      * @receiver
      */
-    private fun innerRemoveChooseSong(songModel: RoomSelSongModel, completion: (error: Exception?) -> Unit) {
+    private fun innerRemoveChooseSong(songModel: RoomSongInfo, completion: (error: Exception?) -> Unit) {
         getListCollection(kCollectionIdChooseSong).removeMetaData(null, filter = mutableListOf(
             mapOf(Pair("songCode", songModel.songNo))
         ), callback = {
@@ -912,7 +892,7 @@ class KTVSyncManagerServiceImp(
      * @param completion
      * @receiver
      */
-    private fun innerPinSong(songModel: RoomSelSongModel, completion: (error: Exception?) -> Unit) {
+    private fun innerPinSong(songModel: RoomSongInfo, completion: (error: Exception?) -> Unit) {
         getListCollection(kCollectionIdChooseSong).mergeMetaData(null,
             mapOf("pinAt" to mCurrentServerTs),
             filter = mutableListOf(
@@ -939,7 +919,7 @@ class KTVSyncManagerServiceImp(
      * @param completion
      * @receiver
      */
-    private fun innerDidPlaySong(song: RoomSelSongModel, completion: (error: Exception?) -> Unit) {
+    private fun innerDidPlaySong(song: RoomSongInfo, completion: (error: Exception?) -> Unit) {
         getListCollection(kCollectionIdChooseSong).mergeMetaData(null,
             mapOf("status" to song.status),
             filter = mutableListOf(
@@ -964,28 +944,16 @@ class KTVSyncManagerServiceImp(
     /**
      * Join chorus
      *
-     * @param inputModel
+     * @param songCode
      * @param completion
      * @receiver
      */
-    override fun joinChorus(inputModel: RoomSelSongModel, completion: (error: Exception?) -> Unit) {
+    override fun joinChorus(songCode: String, completion: (error: Exception?) -> Unit) {
         innerGetSeatInfo { error, list ->
             if (error == null && list != null) {
                 list.forEach { seat ->
-                    if (seat.userNo == mUser.id.toString()) {
-                        // 座位 joinSing -> true
-                        val seatInfo = RoomSeatModel(
-                            seat.isMaster,
-                            seat.headUrl,
-                            seat.userNo,
-                            seat.rtcUid,
-                            seat.name,
-                            seat.seatIndex,
-                            inputModel.songNo + inputModel.createAt,
-                            RoomSeatModel.MUTED_VALUE_FALSE,
-                            seat.isVideoMuted
-                        )
-                        innerUpdateSeat(seatInfo, completion)
+                    if (seat.user?.userId == mUser.id.toString()) {
+                        // TODO: 合唱 collection
                     }
                 }
             }
@@ -999,22 +967,9 @@ class KTVSyncManagerServiceImp(
      * @receiver
      */
     override fun leaveChorus(completion: (error: Exception?) -> Unit) {
-        mSeatMap.forEach {
-            if (it.value?.userNo == mUser.id.toString()) {
-                it.value?.let { originSeatInfo ->
-                    val seatInfo = RoomSeatModel(
-                        originSeatInfo.isMaster,
-                        originSeatInfo.headUrl,
-                        originSeatInfo.userNo,
-                        originSeatInfo.rtcUid,
-                        originSeatInfo.name,
-                        originSeatInfo.seatIndex,
-                        "",
-                        RoomSeatModel.MUTED_VALUE_TRUE,
-                        originSeatInfo.isVideoMuted
-                    )
-                    innerUpdateSeat(seatInfo, completion)
-                }
+        mSeatMap.values.forEach { seat ->
+            if (seat.user?.userId == mUser.id.toString()) {
+                // TODO: 合唱 collection
             }
         }
     }
@@ -1066,6 +1021,10 @@ class KTVSyncManagerServiceImp(
                 }
             })
         }
+    }
+
+    override fun getChoristerList(completion: (error: Exception?, choristerInfoList: List<RoomChoristerInfo>) -> Unit) {
+        // TODO:  
     }
 
     /**
@@ -1235,30 +1194,26 @@ class KTVSyncManagerServiceImp(
         KTVLogger.d(TAG, "onAttributeChanged, channelName:$channelName, key:$key class: ${value.javaClass}")
         when (key) {
             kCollectionIdSeatInfo -> {
-                val map: Map<String, Any> = HashMap()
-                val seats = value.getMap() ?: GsonTools.toBean(GsonTools.beanToString(value), map.javaClass)
+                val seats: List<RoomMicSeatInfo> =
+                    GsonTools.toList(GsonTools.beanToString(value.getList()), RoomMicSeatInfo::class.java)
+                        ?: mutableListOf()
                 KTVLogger.d(TAG, "$kCollectionIdSeatInfo seats: $seats")
-                seats?.values?.forEach {
-                    val ss = GsonTools.toList(GsonTools.beanToString(it), RoomSeatModel::class.java) ?: return
-                    ss.forEach { roomSeat ->
-                        mServiceLister?.onRoomSeatDidChanged(
-                            KTVServiceProtocol.KTVSubscribe.KTVSubscribeUpdated,
-                            roomSeat
-                        )
-                    }
+                // TODO: 移除麦位
+                seats.forEach { roomSeat ->
+                    mServiceLister?.onAddOrUpdateSeat(roomSeat)
                 }
             }
 
             kCollectionIdChooseSong -> {
-                val map: Map<String, Any> = HashMap()
-                val songs = value.getMap() ?: GsonTools.toBean(GsonTools.beanToString(value), map.javaClass)
+                val songs: List<RoomSongInfo> =
+                    GsonTools.toList(GsonTools.beanToString(value.getList()), RoomSongInfo::class.java)
+                        ?: mutableListOf()
+                mServiceLister?.onChosenSongListDidChanged(songs)
                 KTVLogger.d(TAG, "$kCollectionIdChooseSong songs: $songs")
-                songs?.values?.forEach {
-                    val ss = GsonTools.toList(GsonTools.beanToString(it), RoomSelSongModel::class.java) ?: return
-                    ss.forEach { song ->
-                        mServiceLister?.onChooseSong(KTVServiceProtocol.KTVSubscribe.KTVSubscribeUpdated, song)
-                    }
-                }
+            }
+
+            kCollectionIdChoristerInfo -> {
+                // TODO:
             }
         }
     }

@@ -7,8 +7,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,7 +15,7 @@ import java.util.Map;
 
 import io.agora.scene.base.utils.LiveDataUtils;
 import io.agora.scene.ktv.live.RoomLivingViewModel;
-import io.agora.scene.ktv.service.RoomSelSongModel;
+import io.agora.scene.ktv.service.RoomSongInfo;
 import io.agora.scene.ktv.widget.song.OnSongActionListener;
 import io.agora.scene.ktv.widget.song.SongDialog;
 import io.agora.scene.ktv.widget.song.SongItem;
@@ -102,7 +100,7 @@ public class SongActionListenerImpl implements OnSongActionListener {
     @Override
     public void onChooseSongChosen(@NonNull SongDialog dialog, @NonNull SongItem songItem) {
         // 点歌
-        RoomSelSongModel songModel = songItem.getTag(RoomSelSongModel.class);
+        RoomSongInfo songModel = songItem.getTag(RoomSongInfo.class);
         LiveDataUtils.observerThenRemove(mLifecycleOwner, mViewModel.chooseSong(songModel, isChorus), success -> {
             if (success && dialog.isVisible()) {
                 dialog.setChooseSongItemStatus(songItem, true);
@@ -113,14 +111,14 @@ public class SongActionListenerImpl implements OnSongActionListener {
     @Override
     public void onChosenSongDeleteClicked(@NonNull SongDialog dialog, @NonNull SongItem song) {
         // 删歌
-        RoomSelSongModel songModel = song.getTag(RoomSelSongModel.class);
+        RoomSongInfo songModel = song.getTag(RoomSongInfo.class);
         mViewModel.deleteSong(songModel);
     }
 
     @Override
     public void onChosenSongTopClicked(@NonNull SongDialog dialog, @NonNull SongItem song) {
         // 置顶
-        RoomSelSongModel songModel = song.getTag(RoomSelSongModel.class);
+        RoomSongInfo songModel = song.getTag(RoomSongInfo.class);
         mViewModel.topUpSong(songModel);
     }
 
@@ -169,10 +167,10 @@ public class SongActionListenerImpl implements OnSongActionListener {
      * @param data the data
      * @return the list
      */
-    public static List<SongItem> transSongModel(@Nullable List<RoomSelSongModel> data) {
+    public static List<SongItem> transSongModel(@Nullable List<RoomSongInfo> data) {
         ArrayList<SongItem> list = new ArrayList<>();
         if (data != null) {
-            for (RoomSelSongModel song : data) {
+            for (RoomSongInfo song : data) {
                 SongItem item = new SongItem(
                         song.getSongNo(),
                         song.getSongName(),
