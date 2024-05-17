@@ -66,6 +66,10 @@ data class GoodsModel constructor(
     @Transient var picResource: Int = 0
 )
 
+data class LikeModel constructor(
+    val count: Int
+)
+
 /**
  * Show message
  *

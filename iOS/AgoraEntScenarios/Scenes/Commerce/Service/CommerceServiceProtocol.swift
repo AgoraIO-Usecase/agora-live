@@ -44,14 +44,16 @@ protocol CommerceServiceProtocol: NSObjectProtocol {
     func leaveRoom(completion: @escaping (NSError?) -> Void)
     
     
-    /// Initializes the room information
-    /// - Parameter completion: <#completion description#>
-//    func initRoom(roomId: String?, completion: @escaping (NSError?) -> Void)
+    /// 获取当前房间使用时长
+    /// - Parameter roomId: <#roomId description#>
+    /// - Returns: <#description#>
+    func getRoomDuration(roomId: String) -> UInt64
     
     
-    /// Release the initialization room information
-    /// - Parameter completion: <#completion description#>
-//    func deinitRoom(roomId: String?, completion: @escaping (NSError?) -> Void)
+    /// 获取当前时间戳
+    /// - Parameter roomId: <#roomId description#>
+    /// - Returns: <#description#>
+    func getCurrentTs(roomId: String) -> UInt64
     
     
     /// Gets all users in the current room
@@ -78,6 +80,8 @@ protocol CommerceServiceProtocol: NSObjectProtocol {
     func getBidGoodsInfo(roomId: String?, completion: @escaping (NSError?, CommerceGoodsAuctionModel?) -> Void)
     
     func addBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel, completion: @escaping (NSError?) -> Void)
+    
+    func endBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel, completion: @escaping (NSError?) -> Void)
     
     func updateBidGoodsInfo(roomId: String?, goods: CommerceGoodsAuctionModel, completion: @escaping (NSError?) -> Void)
         
