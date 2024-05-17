@@ -232,7 +232,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
                         completion: @escaping (NSError?, CommerceRoomDetailModel?) -> Void) {
         self.roomId = room.roomId
         
-        RTMSyncUtil.joinScene(roomId: room.roomId) { [weak self] error, roomInfo in
+        RTMSyncUtil.joinScene(roomId: room.roomId) { [weak self] error in
             guard let self = self else {return}
             let roomModel = CommerceRoomDetailModel()
             roomModel.ownerAvatar = room.ownerAvatar

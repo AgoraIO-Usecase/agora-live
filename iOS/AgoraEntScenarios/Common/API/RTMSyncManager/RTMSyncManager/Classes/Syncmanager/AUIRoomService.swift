@@ -7,6 +7,8 @@
 
 import Foundation
 
+private let kPayloadOwnerId = "room_payload_owner_id"
+
 let RoomServiceTag = "AUIRoomService"
 public class AUIRoomService: NSObject {
     private var expirationPolicy: RoomExpirationPolicy
@@ -51,6 +53,7 @@ public class AUIRoomService: NSObject {
                     scene.delete()
                     self.roomManager.destroyRoom(roomId: roomInfo.roomId) { _ in
                     }
+                    self.roomInfoMap[roomInfo.roomId] = nil
                     return
                 }
                 
@@ -76,7 +79,7 @@ public class AUIRoomService: NSObject {
             
             self.roomInfoMap[roomInfo.roomId] = roomInfo
             //传入服务端设置的创建房间的时间戳createTime
-            scene.create(createTime: roomInfo.createTime, payload: nil) {[weak self] err in
+            scene.create(createTime: roomInfo.createTime, payload: [kPayloadOwnerId: room.owner?.userId ?? ""]) {[weak self] err in
                 if let err = err {
                     //失败需要清理脏房间信息
                     self?.createRoomRevert(roomId: room.roomId)
@@ -97,16 +100,22 @@ public class AUIRoomService: NSObject {
         }
     }
     
-    public func enterRoom(room: AUIRoomInfo, completion: @escaping ((NSError?, AUIRoomInfo?)->())) {
-        let scene = syncmanager.createScene(channelName: room.roomId, roomExpiration: self.expirationPolicy)
+    public func enterRoom(roomId: String, completion: @escaping ((NSError?)->())) {
+        let scene = syncmanager.createScene(channelName: roomId, roomExpiration: self.expirationPolicy)
         scene.enter {[weak self] payload, err in
+            let ownerId = payload?[kPayloadOwnerId] as? String ?? ""
+            let room = AUIRoomInfo()
+            room.roomId = roomId
+            let owner = AUIUserInfo()
+            owner.userId = ownerId
+            room.owner = owner
             self?.roomInfoMap[room.roomId] = room
             if let err = err {
                 self?.enterRoomRevert(roomId: room.roomId)
-                completion(err, nil)
+                completion(err)
                 return
             }
-            completion(nil, room)
+            completion(nil)
         }
     }
     
