@@ -8,9 +8,10 @@
 import UIKit
 
 class CommerceAuctionShoppingView: UIView {
-    var startBidGoodsClosure: ((CommerceGoodsAuctionModel?) -> Void)?
+    var startBidGoodsClosure: (() -> Void)?
     var endBidGoodsClosure: ((CommerceGoodsAuctionModel?) -> Void)?
     var bidInAuctionGoodsClosure: ((CommerceGoodsAuctionModel?) -> Void)?
+    var getCurrentTsClosure: (()->UInt64)?
     
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
@@ -105,6 +106,15 @@ class CommerceAuctionShoppingView: UIView {
         button.addTarget(self, action: #selector(onClickBidInAuctionButton(sender:)), for: .touchUpInside)
         return button
     }()
+    
+    private lazy var activityView: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .medium)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.hidesWhenStopped = true
+        view.color = .black
+        view.backgroundColor = UIColor(hex: "#DFE1E6", alpha: 1.0)
+        return view
+    }()
     private var isBroadcastor: Bool = false
     private var currentAuctionModel: CommerceGoodsAuctionModel?
     private var timer: Timer?
@@ -120,6 +130,20 @@ class CommerceAuctionShoppingView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func currentGoodStatus() -> CommerceAuctionStatus? {
+        return currentAuctionModel?.status
+    }
+    
+    func toggleLoadingIndicator(_ loading: Bool) {
+        if loading {
+            statusButton.isUserInteractionEnabled = false
+            activityView.startAnimating()
+        } else {
+            statusButton.isUserInteractionEnabled = true
+            activityView.stopAnimating()
+        }
+    }
+    
     func setGoodsData(model: CommerceGoodsAuctionModel, isBroadcaster: Bool) {
         currentAuctionModel = model
         coverImageView.sd_setImage(with: URL(string: model.goods?.imageName ?? ""),
@@ -132,14 +156,13 @@ class CommerceAuctionShoppingView: UIView {
         shoppingContainerView.layer.maskedCorners = isBroadcaster ? [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner] : [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
         bidUserView.isHidden = model.status == .completion || model.bidUser == nil || model.bidUser?.id == ""
-        model.status = (model.bidUser?.id == VLUserCenter.user.id && model.status == .started) ? .top_price : model.status
         bidUserView.setShoppingData(model: model)
         bidUserAnimation(uid: model.bidUser?.id ?? "")
         statusButton.isHidden = isBroadcaster ? false : (model.status == .idle || model.status == .completion)
         statusButton.setTitleColor(model.status.statusTitleColor, for: .normal)
         statusButton.setBackgroundImage(createGradientImage(colors: model.status.statusBackgroundColor), for: .normal)
         bidButton.setTitleColor(model.status.bidTitleColor, for: .normal)
-        bidButton.setBackgroundImage(createGradientImage(colors: model.status.bidBackgroundColor), for: .normal)
+        bidButton.setBackgroundImage(createGradientImage(colors: model.bidBackgroundColor()), for: .normal)
         bidButton.isUserInteractionEnabled = model.status == .started
         switch model.status {
         case .idle, .completion:
@@ -147,11 +170,7 @@ class CommerceAuctionShoppingView: UIView {
             statusButton.setTitle("Start", for: .normal)
             
         case .started:
-            bidButton.setTitle("Bid: $\(model.bid)", for: .normal)
-            setupTimer()
-            
-        case .top_price:
-            bidButton.setTitle("You are the leading bidder.", for: .normal)
+            bidButton.setTitle(model.isTopPrice() ? "You are the leading bidder." : "Bid: $\(model.bid)", for: .normal)
             setupTimer()
         }
     }
@@ -160,13 +179,14 @@ class CommerceAuctionShoppingView: UIView {
         guard timer == nil else { return }
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { [weak self] t in
             guard let self = self else { return }
-            let time = 30 - (Date().millionsecondSince1970() / 1000 - (self.currentAuctionModel?.timestamp ?? 0) / 1000)
+            let startTs = Int64(self.currentAuctionModel?.startTimestamp ?? 0)
+            let currentTs = Int64(self.getCurrentTsClosure?() ?? 0)
+            let time = max(30 - max((currentTs - startTs) / 1000, 0), 0)
             self.statusButton.setTitle(self.convertToTimeFormat(seconds: Int(time)), for: .normal)
             if time <= 0 {
                 t.invalidate()
                 self.timer = nil
                 guard self.isBroadcastor else { return }
-                self.currentAuctionModel?.status = .completion
                 self.endBidGoodsClosure?(self.currentAuctionModel)
             }
         })
@@ -229,26 +249,30 @@ class CommerceAuctionShoppingView: UIView {
         bidButton.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
         bidButton.bottomAnchor.constraint(equalTo: bidContainerView.bottomAnchor, constant: -8).isActive = true
         bidButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        
+        statusButton.addSubview(activityView)
+        NSLayoutConstraint.activate([
+            activityView.widthAnchor.constraint(equalTo: statusButton.widthAnchor),
+            activityView.heightAnchor.constraint(equalTo: statusButton.heightAnchor),
+            activityView.centerXAnchor.constraint(equalTo: statusButton.centerXAnchor),
+            activityView.centerYAnchor.constraint(equalTo: statusButton.centerYAnchor)
+        ])
     }
     
     @objc
     private func onClickStartAuctionButton(sender: UIButton) {
         guard let model = currentAuctionModel, isBroadcastor, model.status != .started else { return }
-        model.status = .started
-        model.timestamp = Date().millionsecondSince1970()
-        model.bidUser = VLLoginModel()
-        model.bid = 1
-        startBidGoodsClosure?(model)
+        startBidGoodsClosure?()
     }
     
     @objc
     private func onClickBidInAuctionButton(sender: UIButton) {
-        guard let model = currentAuctionModel else { return }
-        model.bidUser = VLUserCenter.user
-        model.bid += 1
+        guard let model = currentAuctionModel, model.isTopPrice() == false else { return }
+//        model.bidUser = VLUserCenter.user
+//        model.bid += 1
         bidInAuctionGoodsClosure?(model)
-        bidUserView.setShoppingData(model: model)
-        bidUserAnimation(uid: VLUserCenter.user.id)
+//        bidUserView.setShoppingData(model: model)
+//        bidUserAnimation(uid: VLUserCenter.user.id)
     }
     
     private func bidUserAnimation(uid: String) {

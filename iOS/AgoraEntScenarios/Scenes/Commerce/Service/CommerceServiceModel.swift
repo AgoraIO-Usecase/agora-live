@@ -38,7 +38,7 @@ class CommerceRoomListModel: CommerceBaseInfo, IVideoLoaderRoomInfo {
             if !ownerId.isEmpty {
                 anchorInfo.uid = UInt(ownerId)!
             }
-            anchorInfo.token = AppContext.shared.rtcToken ?? ""
+            anchorInfo.token = AppContext.shared.commerceRtcToken ?? ""
             
             return [anchorInfo] + interactionAnchorInfoList
         }
