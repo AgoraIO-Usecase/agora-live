@@ -877,10 +877,8 @@ class LiveDetailFragment : Fragment() {
             Log.d(TAG, "[commerce]$this $mRoomId auctionSubscribe call back")
             auctionFragment.updateAuction(auctionModel)
         }
-        if (isRoomOwner) {
-            mService.likeSubscribe(mRoomId) {
-                mBinding.vLike.addFavor()
-            }
+        mService.likeSubscribe(mRoomId) {
+            mBinding.vLike.addFavor()
         }
     }
 

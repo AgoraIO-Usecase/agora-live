@@ -39,7 +39,7 @@ dependencies {
     implementation project(":common")
     implementation project(":RTMSyncManager")
 
-    implementation rootProject.ext.deps.rtm
+//    implementation rootProject.ext.deps.rtm
     implementation rootProject.ext.deps.appcompat
     implementation rootProject.ext.deps.annotation
     api rootProject.ext.deps.material
