@@ -48,6 +48,12 @@ annotation class RoomMicSeatStatus {
     }
 }
 
+enum class RoomSeatCmd {
+    initSeatCmd,
+    enterSeatCmd,
+    leaveSeatCmd,
+}
+
 /**
  * Room mic seat info
  *
@@ -61,6 +67,11 @@ data class RoomMicSeatInfo constructor(
     @SerializedName("micSeatStatus") @RoomMicSeatStatus
     var seatStatus: Int = RoomMicSeatStatus.idle, // 麦位状态，预留
 ) : Serializable
+
+enum class RoomChoristerCmd {
+    joinChorusCmd,
+    leaveChorusCmd,
+}
 
 /**
  * Room chorister info
@@ -83,12 +94,24 @@ data class RoomChoristerInfo constructor(
  * @constructor Create empty Join room output model
  */
 data class JoinRoomInfo constructor(
-    var rtmToken:String = "",
+    var rtmToken: String = "",
     var rtcToken: String = "", //rtc join用
     var rtcChorusToken: String = "" //rtc 合唱join使用
 ) : AUIRoomInfo(), Serializable {
     val rtcChorusChannelName get() = roomName + "_rtc_ex"
 }
+
+
+@IntDef(PlayStatus.idle, PlayStatus.playing)
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD)
+annotation class PlayStatus {
+    companion object {
+        const val idle = 0 // 未播放
+        const val playing = 1 // 播放中
+    }
+}
+
 
 /**
  * Room song info

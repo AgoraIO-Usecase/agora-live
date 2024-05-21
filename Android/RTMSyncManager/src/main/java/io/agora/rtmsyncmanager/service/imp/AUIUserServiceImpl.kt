@@ -118,6 +118,9 @@ class AUIUserServiceImpl constructor(
                     )
                 )
             } else {
+                this.observableHelper.notifyEventHandlers {
+                    it.onUserVideoMute(currentUserId, isMute)
+                }
                 callback?.onResult(null)
             }
         }

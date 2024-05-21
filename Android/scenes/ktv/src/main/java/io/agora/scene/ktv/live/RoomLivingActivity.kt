@@ -46,6 +46,7 @@ import io.agora.scene.ktv.live.fragmentdialog.UserLeaveSeatMenuDialog
 import io.agora.scene.ktv.live.listener.LrcActionListenerImpl
 import io.agora.scene.ktv.live.listener.SongActionListenerImpl
 import io.agora.scene.ktv.service.JoinRoomInfo
+import io.agora.scene.ktv.service.RoomChoristerInfo
 import io.agora.scene.ktv.service.RoomMicSeatInfo
 import io.agora.scene.ktv.service.RoomSongInfo
 import io.agora.scene.ktv.service.ScoringAlgoControlModel
@@ -210,14 +211,17 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         binding.superLayout.setOnClickListener { view: View? -> setDarkStatusIcon(isBlackDarkStatus) }
         binding.cbMic.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
             if (!compoundButton.isPressed) return@setOnCheckedChangeListener
-            val seatLocal = roomLivingViewModel.seatLocal ?: return@setOnCheckedChangeListener
-            mRoomSpeakerAdapter?.getItem(seatLocal.seatIndex) ?: return@setOnCheckedChangeListener
-            if (b) {
-                toggleAudioRun = Runnable { roomLivingViewModel.toggleMic(true) }
-                requestRecordPermission(true)
-            } else {
-                roomLivingViewModel.toggleMic(false)
+            val seatLocal = roomLivingViewModel.seatLocal
+            if (seatLocal != null) {
+                mRoomSpeakerAdapter?.getItem(seatLocal.seatIndex) ?: return@setOnCheckedChangeListener
+                if (b) {
+                    toggleAudioRun = Runnable { roomLivingViewModel.toggleMic(true) }
+                    requestRecordPermission(true)
+                } else {
+                    roomLivingViewModel.toggleMic(false)
+                }
             }
+
         }
         binding.iBtnChooseSong.setOnClickListener { v: View? -> showChooseSongDialog() }
         binding.btnMenu.setOnClickListener { v: View? -> showMusicSettingDialog() }
@@ -263,12 +267,12 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             if (enterSeatInfo.user?.userId == mUser.id.toString() && enterSeatInfo.seatIndex >= 0) {
                 binding.groupBottomView.isVisible = true
                 binding.groupEmptyPrompt.isGone = true
-                val localUser = roomLivingViewModel.userLocal
-                binding.cbMic.setChecked(localUser?.muteAudio ?: false)
-                binding.cbVideo.setChecked(localUser?.muteVideo ?: false)
+                val localUser = roomLivingViewModel.getUserInfoBySeat(enterSeatInfo)
+                binding.cbMic.setChecked(!localUser.muteAudio)
+                binding.cbVideo.setChecked(!localUser.muteVideo)
                 binding.lrcControlView.onSeat(true)
             }
-            mRoomSpeakerAdapter?.updateSeatView(enterSeatInfo)
+            mRoomSpeakerAdapter?.replace(enterSeatInfo.seatIndex, enterSeatInfo)
         }
         roomLivingViewModel.userLeaveSeatLiveData.observe(this) { leaveSeatInfo ->
             if (leaveSeatInfo.user?.userId == mUser.id.toString() && leaveSeatInfo.seatIndex >= 0) {
@@ -278,22 +282,26 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                 binding.cbVideo.setChecked(false)
                 binding.lrcControlView.onSeat(true)
             }
-            mRoomSpeakerAdapter?.updateSeatView(leaveSeatInfo)
+            mRoomSpeakerAdapter?.replace(leaveSeatInfo.seatIndex, leaveSeatInfo)
         }
-        roomLivingViewModel.choristerInfoListLiveData.observe(this) { choristerInfoList ->
-            var songInfo = roomLivingViewModel.songPlayingLiveData.value
-            var chorusNowNum = 0
-            choristerInfoList.forEach { roomChoristerInfo ->
-                if (songInfo?.songNo==roomChoristerInfo.chorusSongNo){
-                    chorusNowNum++
-                }
+        roomLivingViewModel.updateSeatLiveData.observe(this) { updateSeat ->
+            mRoomSpeakerAdapter?.replace(updateSeat.seatIndex, updateSeat)
+        }
+        roomLivingViewModel.userJoinChorusLiveData.observe(this) { chorusInfo ->
+            val seatEntry = roomLivingViewModel.seatMap.entries.firstOrNull { mutableEntry ->
+                mutableEntry.value.user?.userId == chorusInfo.userId
             }
-            if (roomLivingViewModel.chorusNum == 0 && chorusNowNum > 0) { // 有人加入合唱
-                roomLivingViewModel.soloSingerJoinChorusMode(true)
-            } else if (roomLivingViewModel.chorusNum > 0 && chorusNowNum == 0) { // 最后一人退出合唱
-                roomLivingViewModel.soloSingerJoinChorusMode(false)
+            seatEntry?.value?.let { seatInfo ->
+                mRoomSpeakerAdapter?.replace(seatInfo.seatIndex, seatInfo)
             }
-            roomLivingViewModel.chorusNum = chorusNowNum
+        }
+        roomLivingViewModel.userLeaveChorusLiveData.observe(this) { chorusInfo ->
+            val seatEntry = roomLivingViewModel.seatMap.entries.firstOrNull { mutableEntry ->
+                mutableEntry.value.user?.userId == chorusInfo.userId
+            }
+            seatEntry?.value?.let { seatInfo ->
+                mRoomSpeakerAdapter?.replace(seatInfo.seatIndex, seatInfo)
+            }
         }
         roomLivingViewModel.volumeLiveData.observe(this) { value: VolumeModel ->
             var volumeModel = value
@@ -437,6 +445,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         roomLivingViewModel.scoringAlgoLiveData.observe(this) { difficulty: Int ->
             binding.lrcControlView.karaokeView.scoringLevel = difficulty
         }
+
     }
 
     private fun setNetWorkStatus(txQuality: Int, rxQuality: Int) {
@@ -783,7 +792,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                 binding.tvRoomOwner.isVisible =
                     userInfo.userId == roomLivingViewModel.roomOwnerId && seatInfo.seatIndex == 0
                 // microphone
-                if (!userInfo.muteAudio) {
+                if (userInfo.muteAudio) {
                     binding.vMicWave.endWave()
                     binding.ivMute.setVisibility(View.VISIBLE)
                 } else {
@@ -794,7 +803,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                     binding.avatarItemRoomSpeaker.setVisibility(View.VISIBLE)
                     binding.flVideoContainer.removeAllViews()
                     GlideApp.with(binding.getRoot())
-                        .load(userInfo?.userAvatar)
+                        .load(userInfo.userAvatar)
                         .error(io.agora.scene.base.R.mipmap.default_user_avatar)
                         .apply(RequestOptions.circleCropTransform())
                         .into(binding.avatarItemRoomSpeaker)
@@ -829,12 +838,6 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                     binding.tvHC.visibility = View.GONE
                 }
             }
-        }
-
-        fun updateSeatView(seatInfo: RoomMicSeatInfo) {
-            val holder =
-                binding.rvUserMember.findViewHolderForAdapterPosition(seatInfo.seatIndex) as BindingViewHolder<KtvItemRoomSpeakerBinding>
-            setSeatView(holder.binding, seatInfo)
         }
     }
 }
