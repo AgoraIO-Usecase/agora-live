@@ -14,13 +14,6 @@ import io.agora.scene.ktv.widget.song.SongItem
 interface KtvServiceListenerProtocol {
 
     /**
-     * On user list did changed
-     *
-     * @param userList
-     */
-    fun onUserListDidChanged(userList: List<AUIUserInfo>)
-
-    /**
      * On room did changed
      *
      * @param roomInfo
@@ -42,11 +35,11 @@ interface KtvServiceListenerProtocol {
     fun onRoomDestroy(channelName: String)
 
     /**
-     * On add or update seat
+     * On user list did changed
      *
-     * @param roomSeatModel
+     * @param userList
      */
-    fun onUserEnterSeat(roomSeatModel: RoomMicSeatInfo)
+    fun onUserListDidChanged(userList: List<AUIUserInfo>)
 
     /**
      * On user audio mute
@@ -63,6 +56,13 @@ interface KtvServiceListenerProtocol {
      * @param mute
      */
     fun onUserVideoMute(userId: String, mute: Boolean)
+
+    /**
+     * On add or update seat
+     *
+     * @param roomSeatModel
+     */
+    fun onUserEnterSeat(roomSeatModel: RoomMicSeatInfo)
 
     /**
      * On remove seat

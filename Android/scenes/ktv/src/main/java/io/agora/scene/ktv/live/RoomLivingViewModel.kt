@@ -107,26 +107,29 @@ class RoomLivingViewModel constructor(joinRoomInfo: JoinRoomInfo) : ViewModel() 
     /**
      * 麦位信息
      */
-    var isOnSeat = false
+    private var isOnSeat = false
 
     val userEnterSeatLiveData = MutableLiveData<RoomMicSeatInfo>()
     val userLeaveSeatLiveData = MutableLiveData<RoomMicSeatInfo>()
 
     val updateSeatLiveData = MutableLiveData<RoomMicSeatInfo>()
 
-    val seatMap = mutableMapOf<Int, RoomMicSeatInfo>()
+    private val seatMap = mutableMapOf<Int, RoomMicSeatInfo>()
 
-    val seatLocal: RoomMicSeatInfo?
-        get() = seatMap.entries.firstOrNull {
-            it.value.user?.userId == mUser.id.toString()
-        }?.value
+    fun getCacheSeat(userId: String): RoomMicSeatInfo? {
+        return seatMap.entries.firstOrNull { it.value.user?.userId == userId }?.value
+    }
 
     /**
      * User list live data
      */
     val userListLiveData = MutableLiveData<List<AUIUserInfo>>()
 
-    val choristerInfoListLiveData = MutableLiveData<List<RoomChoristerInfo>?>()
+    private val choristerInfoList = mutableListOf<RoomChoristerInfo>()
+
+    fun getSongChorusInfo(userId: String): RoomChoristerInfo? {
+        return choristerInfoList.firstOrNull { it.userId == userId }
+    }
 
     val userJoinChorusLiveData = MutableLiveData<RoomChoristerInfo>()
     val userLeaveChorusLiveData = MutableLiveData<RoomChoristerInfo>()
@@ -479,7 +482,8 @@ class RoomLivingViewModel constructor(joinRoomInfo: JoinRoomInfo) : ViewModel() 
             soloSingerJoinChorusMode(false)
         }
         chorusNum = chorusNowNum
-        choristerInfoListLiveData.value = choristerList
+        choristerInfoList.clear()
+        choristerInfoList.addAll(choristerList)
     }
 
     private fun initRoom() {
@@ -517,12 +521,7 @@ class RoomLivingViewModel constructor(joinRoomInfo: JoinRoomInfo) : ViewModel() 
     }
 
     fun getUserInfo(userId: String): AUIUserInfo {
-        return  ktvServiceProtocol.getUserInfo(userId) ?: AUIUserInfo()
-    }
-
-    fun getSongChorusInfoByUid(userId: String): RoomChoristerInfo {
-        val choristerInfo = choristerInfoListLiveData.value?.firstOrNull { it.userId == userId }
-        return choristerInfo ?: RoomChoristerInfo()
+        return ktvServiceProtocol.getUserInfo(userId) ?: AUIUserInfo()
     }
 
     /**
@@ -621,9 +620,8 @@ class RoomLivingViewModel constructor(joinRoomInfo: JoinRoomInfo) : ViewModel() 
                     }
                 }
                 val songPlayingValue = songPlayingLiveData.value ?: return@outSeat
-                val isJoinChorus = choristerInfoListLiveData.value?.firstOrNull {
-                    it.userId == mUser.id.toString() && it.chorusSongNo == songPlayingValue.songNo
-                } != null
+                val choristerInfo = getSongChorusInfo(mUser.id.toString())
+                val isJoinChorus = choristerInfo != null && choristerInfo?.chorusSongNo == songPlayingValue.songNo
                 if (isJoinChorus && seatModel.user?.userId == mUser.id.toString()) {
                     leaveChorus()
                 }

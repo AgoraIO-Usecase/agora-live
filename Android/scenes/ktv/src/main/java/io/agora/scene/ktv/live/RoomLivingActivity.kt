@@ -24,7 +24,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.card.MaterialCardView
 import io.agora.rtc2.Constants
-import io.agora.rtmsyncmanager.model.AUIUserInfo
 import io.agora.scene.base.GlideApp
 import io.agora.scene.base.bean.User
 import io.agora.scene.base.component.AgoraApplication
@@ -46,7 +45,6 @@ import io.agora.scene.ktv.live.fragmentdialog.UserLeaveSeatMenuDialog
 import io.agora.scene.ktv.live.listener.LrcActionListenerImpl
 import io.agora.scene.ktv.live.listener.SongActionListenerImpl
 import io.agora.scene.ktv.service.JoinRoomInfo
-import io.agora.scene.ktv.service.RoomChoristerInfo
 import io.agora.scene.ktv.service.RoomMicSeatInfo
 import io.agora.scene.ktv.service.RoomSongInfo
 import io.agora.scene.ktv.service.ScoringAlgoControlModel
@@ -211,7 +209,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         binding.superLayout.setOnClickListener { view: View? -> setDarkStatusIcon(isBlackDarkStatus) }
         binding.cbMic.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
             if (!compoundButton.isPressed) return@setOnCheckedChangeListener
-            val seatLocal = roomLivingViewModel.seatLocal
+            val seatLocal = roomLivingViewModel.getCacheSeat(mUser.id.toString())
             if (seatLocal != null) {
                 mRoomSpeakerAdapter?.getItem(seatLocal.seatIndex) ?: return@setOnCheckedChangeListener
                 if (b) {
@@ -288,18 +286,12 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             mRoomSpeakerAdapter?.replace(updateSeat.seatIndex, updateSeat)
         }
         roomLivingViewModel.userJoinChorusLiveData.observe(this) { chorusInfo ->
-            val seatEntry = roomLivingViewModel.seatMap.entries.firstOrNull { mutableEntry ->
-                mutableEntry.value.user?.userId == chorusInfo.userId
-            }
-            seatEntry?.value?.let { seatInfo ->
+            roomLivingViewModel.getCacheSeat(chorusInfo.userId)?.let { seatInfo ->
                 mRoomSpeakerAdapter?.replace(seatInfo.seatIndex, seatInfo)
             }
         }
         roomLivingViewModel.userLeaveChorusLiveData.observe(this) { chorusInfo ->
-            val seatEntry = roomLivingViewModel.seatMap.entries.firstOrNull { mutableEntry ->
-                mutableEntry.value.user?.userId == chorusInfo.userId
-            }
-            seatEntry?.value?.let { seatInfo ->
+            roomLivingViewModel.getCacheSeat(chorusInfo.userId)?.let { seatInfo ->
                 mRoomSpeakerAdapter?.replace(seatInfo.seatIndex, seatInfo)
             }
         }
@@ -757,7 +749,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                         showUserLeaveSeatMenuDialog(seatInfo)
                     }
                 } else { // 上麦
-                    val seatLocal = roomLivingViewModel.seatLocal
+                    val seatLocal = roomLivingViewModel.getCacheSeat(mUser.id.toString())
                     if (seatLocal == null || seatLocal.seatIndex < 0) {
                         toggleAudioRun = Runnable {
                             roomLivingViewModel.haveSeat(position)
@@ -819,13 +811,13 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                     }
                 }
                 val songModel = roomLivingViewModel.songPlayingLiveData.getValue()
-                val choristerInfo = roomLivingViewModel.getSongChorusInfoByUid(userInfo.userId)
+                val choristerInfo = roomLivingViewModel.getSongChorusInfo(userInfo.userId)
                 if (songModel != null) {
                     if (userInfo.userId == songModel.userNo) {
                         binding.tvZC.setText(R.string.ktv_zc)
                         binding.tvHC.visibility = View.GONE
                         binding.tvZC.visibility = View.VISIBLE
-                    } else if (choristerInfo.userId.isNotEmpty() && choristerInfo.userId == songModel.userNo) {
+                    } else if (!choristerInfo?.userId.isNullOrEmpty() && choristerInfo?.userId == songModel.userNo) {
                         binding.tvHC.setText(R.string.ktv_hc)
                         binding.tvZC.visibility = View.GONE
                         binding.tvHC.visibility = View.VISIBLE
