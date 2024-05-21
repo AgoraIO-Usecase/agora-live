@@ -29,12 +29,7 @@ class RoomCreateViewModel
     /**
      * The Join room result.
      */
-    val joinRoomResult = MutableLiveData<JoinRoomInfo?>()
-
-    /**
-     * The Create room result.
-     */
-    val createRoomResult = MutableLiveData<AUIRoomInfo>()
+    val roomInfoLiveData = MutableLiveData<JoinRoomInfo?>()
 
     /**
      * 加载房间列表
@@ -54,7 +49,11 @@ class RoomCreateViewModel
      */
     fun createRoom(name: String, password: String, icon: String) {
         ktvServiceProtocol.createRoom(CreateRoomInfo(icon, name, password)) { err, roomInfo ->
-            createRoomResult.postValue(roomInfo)
+            if (err==null){
+                roomInfoLiveData.postValue(roomInfo)
+            }else{
+                roomInfoLiveData.postValue(null)
+            }
             err?.message?.let {
                 ToastUtils.showToast(it)
             }
@@ -69,10 +68,10 @@ class RoomCreateViewModel
      */
     fun joinRoom(roomNo: String, password: String?) {
         ktvServiceProtocol.joinRoom(roomNo, password) { error, roomInfo ->
-            if (error == null) {
-                joinRoomResult.postValue(roomInfo)
-            } else {
-                joinRoomResult.postValue(null)
+            if (error==null){
+                roomInfoLiveData.postValue(roomInfo)
+            }else{
+                roomInfoLiveData.postValue(null)
             }
             error?.message?.let {
                 ToastUtils.showToast(it)

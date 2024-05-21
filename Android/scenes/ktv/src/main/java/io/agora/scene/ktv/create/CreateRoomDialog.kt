@@ -97,7 +97,7 @@ class CreateRoomDialog constructor(
             }
         }
 
-        roomCreateViewModel.joinRoomResult.observe(this) { joinRoomInfo  ->
+        roomCreateViewModel.roomInfoLiveData.observe(this) { joinRoomInfo  ->
             hideLoadingView()
             if (joinRoomInfo != null) {
                 dismiss()
@@ -106,15 +106,6 @@ class CreateRoomDialog constructor(
                 // 加入房间失败
             }
         }
-        roomCreateViewModel.createRoomResult.observe(this) { out: AUIRoomInfo? ->
-            if (out != null) {
-                roomCreateViewModel.joinRoom(out.roomId, out.customPayload[KTVParameters.PASSWORD]?.toString())
-            } else {
-                hideLoadingView()
-                mBinding.btnCreateRoom.isEnabled = true
-            }
-        }
-
     }
 
     private fun randomName() {

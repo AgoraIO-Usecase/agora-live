@@ -2,7 +2,6 @@ package io.agora.scene.ktv.service
 
 import androidx.annotation.IntDef
 import com.google.gson.annotations.SerializedName
-import io.agora.rtmsyncmanager.model.AUIRoomConfig
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
 import java.io.Serializable
@@ -84,8 +83,12 @@ data class RoomChoristerInfo constructor(
  * @constructor Create empty Join room output model
  */
 data class JoinRoomInfo constructor(
-    val roomConfig: AUIRoomConfig,
-) : AUIRoomInfo(), Serializable
+    var rtmToken:String = "",
+    var rtcToken: String = "", //rtc join用
+    var rtcChorusToken: String = "" //rtc 合唱join使用
+) : AUIRoomInfo(), Serializable {
+    val rtcChorusChannelName get() = roomName + "_rtc_ex"
+}
 
 /**
  * Room song info

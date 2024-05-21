@@ -17,6 +17,7 @@ import android.view.WindowManager
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -103,7 +104,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
     }
 
     private var musicSettingDialog: MusicSettingDialog? = null
-    private var mRoomSpeakerAdapter: BindingSingleAdapter<RoomMicSeatInfo, KtvItemRoomSpeakerBinding>? = null
+    private var mRoomSpeakerAdapter: SpeakerAdapter? = null
     private var creatorExitDialog: KtvCommonDialog? = null
     private var exitDialog: CommonDialog? = null
     private var mUserLeaveSeatMenuDialog: UserLeaveSeatMenuDialog? = null
@@ -133,103 +134,16 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         }
         window.decorView.keepScreenOn = true
         setOnApplyWindowInsetsListener(binding.superLayout)
-        mRoomSpeakerAdapter = object : BindingSingleAdapter<RoomMicSeatInfo, KtvItemRoomSpeakerBinding>() {
-            override fun onBindViewHolder(holder: BindingViewHolder<KtvItemRoomSpeakerBinding>, position: Int) {
-                val seatInfo = getItem(position)
-                val binding = holder.binding
-                val isOutSeat = TextUtils.isEmpty(seatInfo?.user?.userId)
-                binding.root.setOnClickListener { v: View? ->
-                    if (!isOutSeat) { // 下麦
-                        seatInfo ?: return@setOnClickListener
-                        if (roomLivingViewModel.isRoomOwner) { // 房主踢他人下麦
-                            if (seatInfo.user?.userId != mUser.id.toString()) {
-                                showUserLeaveSeatMenuDialog(seatInfo)
-                            }
-                        } else if (seatInfo.user?.userId == mUser.id.toString()) { // 自己下麦
-                            showUserLeaveSeatMenuDialog(seatInfo)
-                        }
-                    } else { // 上麦
-                        val seatLocal = roomLivingViewModel.seatLocalLiveData.getValue()
-                        if (seatLocal == null || seatLocal.seatIndex < 0) {
-                            toggleAudioRun = Runnable {
-                                roomLivingViewModel.haveSeat(position)
-                                getBinding().cbMic.setChecked(false)
-                                getBinding().cbVideo.setChecked(false)
-                            }
-                            requestRecordPermission()
-                        }
-                    }
-                }
-
-                val userInfo: AUIUserInfo? = roomLivingViewModel.getUserInfoBySeat(seatInfo)
-                if (isOutSeat) {
-                    binding.vMicWave.endWave()
-                    binding.vMicWave.visibility = View.INVISIBLE
-                    binding.avatarItemRoomSpeaker.setImageResource(R.mipmap.ktv_ic_seat)
-                    binding.avatarItemRoomSpeaker.setVisibility(View.VISIBLE)
-                    binding.tvZC.visibility = View.GONE
-                    binding.tvHC.visibility = View.GONE
-                    binding.tvRoomOwner.visibility = View.GONE
-                    binding.ivMute.setVisibility(View.GONE)
-                    binding.tvUserName.text = getString(R.string.ktv_seat_num, (position + 1).toString())
-                    binding.flVideoContainer.removeAllViews()
-                } else {
-                    binding.vMicWave.visibility = View.VISIBLE
-                    binding.tvUserName.text = userInfo?.userName
-                    binding.tvRoomOwner.isVisible = userInfo?.userId == roomLivingViewModel.roomOwnerId && position == 0
-                    // microphone
-                    if (userInfo?.muteAudio == false) {
-                        binding.vMicWave.endWave()
-                        binding.ivMute.setVisibility(View.VISIBLE)
-                    } else {
-                        binding.ivMute.setVisibility(View.GONE)
-                    }
-
-                    // video
-                    if (userInfo?.muteVideo != false) {
-                        binding.avatarItemRoomSpeaker.setVisibility(View.VISIBLE)
-                        binding.flVideoContainer.removeAllViews()
-                        GlideApp.with(binding.getRoot())
-                            .load(userInfo?.userAvatar)
-                            .error(io.agora.scene.base.R.mipmap.default_user_avatar)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(binding.avatarItemRoomSpeaker)
-                    } else {
-                        binding.avatarItemRoomSpeaker.setVisibility(View.INVISIBLE)
-                        binding.flVideoContainer.removeAllViews()
-                        val surfaceView = fillWithRenderView(binding.flVideoContainer)
-                        if (userInfo?.userId == mUser.id.toString()) { // 是本人
-                            roomLivingViewModel.renderLocalCameraVideo(surfaceView)
-                        } else {
-                            val uid = userInfo?.userId?.toIntOrNull() ?: -1
-                            roomLivingViewModel.renderRemoteCameraVideo(surfaceView, uid)
-                        }
-                    }
-                    val songModel = roomLivingViewModel.songPlayingLiveData.getValue()
-                    if (songModel != null) {
-                        if (userInfo?.userId == songModel.userNo) {
-                            binding.tvZC.setText(R.string.ktv_zc)
-                            binding.tvHC.visibility = View.GONE
-                            binding.tvZC.visibility = View.VISIBLE
-                        } else if (true) {
-                            // TODO: item?.chorusSongCode == songModel.songNo + songModel.createAt
-                            binding.tvHC.setText(R.string.ktv_hc)
-                            binding.tvZC.visibility = View.GONE
-                            binding.tvHC.visibility = View.VISIBLE
-                        } else {
-                            binding.tvZC.visibility = View.GONE
-                            binding.tvHC.visibility = View.GONE
-                        }
-                    } else {
-                        binding.tvZC.visibility = View.GONE
-                        binding.tvHC.visibility = View.GONE
-                    }
-                }
-            }
-        }
+        mRoomSpeakerAdapter = SpeakerAdapter()
         binding.rvUserMember.addItemDecoration(DividerDecoration(4, 24, 8))
         binding.rvUserMember.adapter = mRoomSpeakerAdapter
-        mRoomSpeakerAdapter?.resetAll(mutableListOf<RoomMicSeatInfo?>(null, null, null, null, null, null, null, null))
+        mRoomSpeakerAdapter?.resetAll(
+            mutableListOf(
+                RoomMicSeatInfo(seatIndex = 0), RoomMicSeatInfo(seatIndex = 1), RoomMicSeatInfo(seatIndex = 2),
+                RoomMicSeatInfo(seatIndex = 3), RoomMicSeatInfo(seatIndex = 4), RoomMicSeatInfo(seatIndex = 5),
+                RoomMicSeatInfo(seatIndex = 6), RoomMicSeatInfo(seatIndex = 7)
+            )
+        )
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
             binding.rvUserMember.setOverScrollMode(View.OVER_SCROLL_NEVER)
         }
@@ -296,7 +210,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         binding.superLayout.setOnClickListener { view: View? -> setDarkStatusIcon(isBlackDarkStatus) }
         binding.cbMic.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
             if (!compoundButton.isPressed) return@setOnCheckedChangeListener
-            val seatLocal = roomLivingViewModel.seatLocalLiveData.getValue() ?: return@setOnCheckedChangeListener
+            val seatLocal = roomLivingViewModel.seatLocal ?: return@setOnCheckedChangeListener
             mRoomSpeakerAdapter?.getItem(seatLocal.seatIndex) ?: return@setOnCheckedChangeListener
             if (b) {
                 toggleAudioRun = Runnable { roomLivingViewModel.toggleMic(true) }
@@ -345,68 +259,41 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             }
         }
 
-        // 麦位相关
-        roomLivingViewModel.seatLocalLiveData.observe(this) { seatInfo ->
-            val isOnSeat = seatInfo != null && seatInfo.seatIndex >= 0
-            binding.groupBottomView.visibility = if (isOnSeat) View.VISIBLE else View.GONE
-            binding.groupEmptyPrompt.visibility = if (isOnSeat) View.GONE else View.VISIBLE
-
-            var isAudioChecked = false
-            var isVideoChecked = false
-            roomLivingViewModel.userListLiveData.value?.firstOrNull { it.userId == seatInfo?.user?.userId }
-                ?.let { auiUserInfo ->
-                    isAudioChecked = auiUserInfo.muteAudio
-                    isVideoChecked = auiUserInfo.muteVideo
-                }
-            binding.cbMic.setChecked(isAudioChecked)
-            binding.cbVideo.setChecked(isVideoChecked)
-            binding.lrcControlView.onSeat(seatInfo != null)
+        roomLivingViewModel.userEnterSeatLiveData.observe(this) { enterSeatInfo ->
+            if (enterSeatInfo.user?.userId == mUser.id.toString() && enterSeatInfo.seatIndex >= 0) {
+                binding.groupBottomView.isVisible = true
+                binding.groupEmptyPrompt.isGone = true
+                val localUser = roomLivingViewModel.userLocal
+                binding.cbMic.setChecked(localUser?.muteAudio ?: false)
+                binding.cbVideo.setChecked(localUser?.muteVideo ?: false)
+                binding.lrcControlView.onSeat(true)
+            }
+            mRoomSpeakerAdapter?.updateSeatView(enterSeatInfo)
         }
-        roomLivingViewModel.seatListLiveData.observe(this) { seatInfolist ->
-            if (seatInfolist == null || roomLivingViewModel.mSetting == null) {
-                return@observe
+        roomLivingViewModel.userLeaveSeatLiveData.observe(this) { leaveSeatInfo ->
+            if (leaveSeatInfo.user?.userId == mUser.id.toString() && leaveSeatInfo.seatIndex >= 0) {
+                binding.groupBottomView.isVisible = false
+                binding.groupEmptyPrompt.isGone = false
+                binding.cbMic.setChecked(false)
+                binding.cbVideo.setChecked(false)
+                binding.lrcControlView.onSeat(true)
             }
+            mRoomSpeakerAdapter?.updateSeatView(leaveSeatInfo)
+        }
+        roomLivingViewModel.choristerInfoListLiveData.observe(this) { choristerInfoList ->
+            var songInfo = roomLivingViewModel.songPlayingLiveData.value
             var chorusNowNum = 0
-            for (seatInfo in seatInfolist) {
-                val oSeatModel = mRoomSpeakerAdapter?.getItem(seatInfo.seatIndex)
-                val userInfo: AUIUserInfo? = roomLivingViewModel.getUserInfoBySeat(seatInfo)
-                // TODO:
-//                if (oSeatModel == null ||  oSeatModel.chorusSongCode != seatModel.chorusSongCode) {
-//                    mRoomSpeakerAdapter?.replace(seatInfo.seatIndex, seatInfo)
-//                }
-//                roomLivingViewModel.songPlayingLiveData.getValue()?.let { songPlay ->
-//                    if (seatModel.chorusSongCode == songPlay.songNo + songPlay.createAt) {
-//                        chorusNowNum++
-//                    }
-//                }
-                if (roomLivingViewModel.chorusNum == 0 && chorusNowNum > 0) { // 有人加入合唱
-                    roomLivingViewModel.soloSingerJoinChorusMode(true)
-                } else if (roomLivingViewModel.chorusNum > 0 && chorusNowNum == 0) { // 最后一人退出合唱
-                    roomLivingViewModel.soloSingerJoinChorusMode(false)
-                }
-                roomLivingViewModel.chorusNum = chorusNowNum
-                mRoomSpeakerAdapter?.let { roomSpeakerAdapter ->
-                    for (i in 0 until roomSpeakerAdapter.itemCount) {
-                        val seatModel = roomSpeakerAdapter.getItem(i) ?: continue
-                        var exist = false
-                        for (model in seatInfolist) {
-                            if (seatModel.seatIndex == model.seatIndex) {
-                                exist = true
-                                break
-                            }
-                        }
-                        if (!exist) {
-                            onMemberLeave(seatModel)
-                        }
-                    }
-                }
-
-                if (seatInfolist.size == 8) {
-                    binding.lrcControlView.onSeatFull(true)
-                } else if (seatInfolist.size < 8) {
-                    binding.lrcControlView.onSeatFull(false)
+            choristerInfoList.forEach { roomChoristerInfo ->
+                if (songInfo?.songNo==roomChoristerInfo.chorusSongNo){
+                    chorusNowNum++
                 }
             }
+            if (roomLivingViewModel.chorusNum == 0 && chorusNowNum > 0) { // 有人加入合唱
+                roomLivingViewModel.soloSingerJoinChorusMode(true)
+            } else if (roomLivingViewModel.chorusNum > 0 && chorusNowNum == 0) { // 最后一人退出合唱
+                roomLivingViewModel.soloSingerJoinChorusMode(false)
+            }
+            roomLivingViewModel.chorusNum = chorusNowNum
         }
         roomLivingViewModel.volumeLiveData.observe(this) { value: VolumeModel ->
             var volumeModel = value
@@ -814,15 +701,6 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         ) { launchAppSetting(permission) }
     }
 
-    private fun onMemberLeave(seatInfo: RoomMicSeatInfo) {
-        if (seatInfo.user?.userId == mUser.id.toString()) {
-            binding.groupBottomView.visibility = View.GONE
-            binding.groupEmptyPrompt.visibility = View.VISIBLE
-        }
-        mRoomSpeakerAdapter?.getItem(seatInfo.seatIndex)?.let {
-            mRoomSpeakerAdapter?.replace(seatInfo.seatIndex, null)
-        }
-    }
 
     private fun showCreatorExitDialog() {
         if (creatorExitDialog == null) {
@@ -852,5 +730,111 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             return true
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    private inner class SpeakerAdapter : BindingSingleAdapter<RoomMicSeatInfo, KtvItemRoomSpeakerBinding>() {
+        override fun onBindViewHolder(holder: BindingViewHolder<KtvItemRoomSpeakerBinding>, position: Int) {
+            val seatInfo = getItem(position) ?: return
+            val isOutSeat = TextUtils.isEmpty(seatInfo.user?.userId)
+            setSeatView(holder.binding, seatInfo)
+            holder.binding.root.setOnClickListener { v: View? ->
+                if (!isOutSeat) { // 下麦
+                    seatInfo ?: return@setOnClickListener
+                    if (roomLivingViewModel.isRoomOwner) { // 房主踢他人下麦
+                        if (seatInfo.user?.userId != mUser.id.toString()) {
+                            showUserLeaveSeatMenuDialog(seatInfo)
+                        }
+                    } else if (seatInfo.user?.userId == mUser.id.toString()) { // 自己下麦
+                        showUserLeaveSeatMenuDialog(seatInfo)
+                    }
+                } else { // 上麦
+                    val seatLocal = roomLivingViewModel.seatLocal
+                    if (seatLocal == null || seatLocal.seatIndex < 0) {
+                        toggleAudioRun = Runnable {
+                            roomLivingViewModel.haveSeat(position)
+                            binding.cbMic.setChecked(false)
+                            binding.cbVideo.setChecked(false)
+                        }
+                        requestRecordPermission()
+                    }
+                }
+            }
+        }
+
+        private fun setSeatView(binding: KtvItemRoomSpeakerBinding, seatInfo: RoomMicSeatInfo) {
+            if (seatInfo.seatIndex >= itemCount) return
+            val userInfo = roomLivingViewModel.getUserInfoBySeat(seatInfo)
+
+            val isOutSeat = TextUtils.isEmpty(seatInfo.user?.userId)
+            if (isOutSeat) {
+                binding.vMicWave.endWave()
+                binding.vMicWave.visibility = View.INVISIBLE
+                binding.avatarItemRoomSpeaker.setImageResource(R.mipmap.ktv_ic_seat)
+                binding.avatarItemRoomSpeaker.setVisibility(View.VISIBLE)
+                binding.tvZC.visibility = View.GONE
+                binding.tvHC.visibility = View.GONE
+                binding.tvRoomOwner.visibility = View.GONE
+                binding.ivMute.setVisibility(View.GONE)
+                binding.tvUserName.text = getString(R.string.ktv_seat_num, (seatInfo.seatIndex + 1).toString())
+                binding.flVideoContainer.removeAllViews()
+            } else {
+                binding.vMicWave.visibility = View.VISIBLE
+                binding.tvUserName.text = userInfo.userName
+                binding.tvRoomOwner.isVisible =
+                    userInfo.userId == roomLivingViewModel.roomOwnerId && seatInfo.seatIndex == 0
+                // microphone
+                if (!userInfo.muteAudio) {
+                    binding.vMicWave.endWave()
+                    binding.ivMute.setVisibility(View.VISIBLE)
+                } else {
+                    binding.ivMute.setVisibility(View.GONE)
+                }
+                // video
+                if (userInfo.muteVideo) {
+                    binding.avatarItemRoomSpeaker.setVisibility(View.VISIBLE)
+                    binding.flVideoContainer.removeAllViews()
+                    GlideApp.with(binding.getRoot())
+                        .load(userInfo?.userAvatar)
+                        .error(io.agora.scene.base.R.mipmap.default_user_avatar)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(binding.avatarItemRoomSpeaker)
+                } else {
+                    binding.avatarItemRoomSpeaker.setVisibility(View.INVISIBLE)
+                    binding.flVideoContainer.removeAllViews()
+                    val surfaceView = fillWithRenderView(binding.flVideoContainer)
+                    if (userInfo.userId == mUser.id.toString()) { // 是本人
+                        roomLivingViewModel.renderLocalCameraVideo(surfaceView)
+                    } else {
+                        val uid = userInfo.userId.toIntOrNull() ?: -1
+                        roomLivingViewModel.renderRemoteCameraVideo(surfaceView, uid)
+                    }
+                }
+                val songModel = roomLivingViewModel.songPlayingLiveData.getValue()
+                val choristerInfo = roomLivingViewModel.getSongChorusInfoByUid(userInfo.userId)
+                if (songModel != null) {
+                    if (userInfo.userId == songModel.userNo) {
+                        binding.tvZC.setText(R.string.ktv_zc)
+                        binding.tvHC.visibility = View.GONE
+                        binding.tvZC.visibility = View.VISIBLE
+                    } else if (choristerInfo.userId.isNotEmpty() && choristerInfo.userId == songModel.userNo) {
+                        binding.tvHC.setText(R.string.ktv_hc)
+                        binding.tvZC.visibility = View.GONE
+                        binding.tvHC.visibility = View.VISIBLE
+                    } else {
+                        binding.tvZC.visibility = View.GONE
+                        binding.tvHC.visibility = View.GONE
+                    }
+                } else {
+                    binding.tvZC.visibility = View.GONE
+                    binding.tvHC.visibility = View.GONE
+                }
+            }
+        }
+
+        fun updateSeatView(seatInfo: RoomMicSeatInfo) {
+            val holder =
+                binding.rvUserMember.findViewHolderForAdapterPosition(seatInfo.seatIndex) as BindingViewHolder<KtvItemRoomSpeakerBinding>
+            setSeatView(holder.binding, seatInfo)
+        }
     }
 }

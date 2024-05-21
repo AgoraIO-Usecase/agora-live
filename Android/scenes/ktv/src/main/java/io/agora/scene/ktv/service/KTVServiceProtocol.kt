@@ -46,14 +46,14 @@ interface KtvServiceListenerProtocol {
      *
      * @param roomSeatModel
      */
-    fun onAddOrUpdateSeat(roomSeatModel: RoomMicSeatInfo)
+    fun onUserEnterSeat(roomSeatModel: RoomMicSeatInfo)
 
     /**
      * On remove seat
      *
      * @param roomSeatModel
      */
-    fun onRemoveSeat(roomSeatModel: RoomMicSeatInfo)
+    fun onUserLeaveSeat(roomSeatModel: RoomMicSeatInfo)
 
     /**
      * On update all choose songs
@@ -67,7 +67,7 @@ interface KtvServiceListenerProtocol {
      *
      * @param choristerInfo
      */
-    fun onChoristersListDidChanged(choristerInfo: List<RoomChoristerInfo>)
+    fun onChoristerListDidChanged(choristerInfo: List<RoomChoristerInfo>)
 }
 
 /**
@@ -109,7 +109,7 @@ interface KTVServiceProtocol {
      * @param completion
      * @receiver
      */
-    fun createRoom(createRoomInfo: CreateRoomInfo, completion: (error: Exception?, out: AUIRoomInfo?) -> Unit)
+    fun createRoom(createRoomInfo: CreateRoomInfo, completion: (error: Exception?, out: JoinRoomInfo?) -> Unit)
 
     /**
      * Join room
@@ -127,15 +127,6 @@ interface KTVServiceProtocol {
      * @receiver
      */
     fun leaveRoom(completion: (error: Exception?) -> Unit)
-
-    /**
-     * Update room
-     *
-     * @param roomInfo
-     * @param completion
-     * @receiver
-     */
-    fun updateRoom(roomInfo: AUIRoomInfo, completion: (error: Exception?) -> Unit)
 
     /**
      * Get all user list
@@ -170,24 +161,16 @@ interface KTVServiceProtocol {
      * @param completion
      * @receiver
      */
-    fun getAllSeatList(completion: (error: Exception?, list: List<RoomMicSeatInfo>?) -> Unit)
+    fun getAllSeatList(completion: (error: Exception?) -> Unit)
 
     /**
      * On seat
      *
-     * @param seatIndex
+     * @param seatIndex null autoOnseat
      * @param completion
      * @receiver
      */
-    fun onSeat(seatIndex: Int, completion: (error: Exception?) -> Unit)
-
-    /**
-     * Auto on seat
-     *
-     * @param completion
-     * @receiver
-     */
-    fun autoOnSeat(completion: (error: Exception?) -> Unit)
+    fun enterSeat(seatIndex: Int?, completion: (error: Exception?) -> Unit)
 
     /**
      * Out seat
@@ -217,12 +200,11 @@ interface KTVServiceProtocol {
     /**
      * Remove song
      *
-     * @param isSingingSong
      * @param songInfo
      * @param completion
      * @receiver
      */
-    fun removeSong(isSingingSong: Boolean, songInfo: RoomSongInfo, completion: (error: Exception?) -> Unit)
+    fun removeSong(songCode: String, completion: (error: Exception?) -> Unit)
 
     /**
      * Choose song
@@ -240,7 +222,7 @@ interface KTVServiceProtocol {
      * @param completion
      * @receiver
      */
-    fun makeSongTop(songCode: String, completion: (error: Exception?) -> Unit)
+    fun pinSong(songCode: String, completion: (error: Exception?) -> Unit)
 
     /**
      * Make song did play
@@ -274,7 +256,7 @@ interface KTVServiceProtocol {
      * @param completion
      * @receiver
      */
-    fun getChoristerList(completion: (error: Exception?, choristerInfoList: List<RoomChoristerInfo>) -> Unit)
+    fun getChoristerList(completion: (error: Exception?, choristerInfoList: List<RoomChoristerInfo>?) -> Unit)
 
     /**
      * Subscribe listener

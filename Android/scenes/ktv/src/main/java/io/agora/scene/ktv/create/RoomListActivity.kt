@@ -125,14 +125,14 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
                 binding.ivBgMobile.setVisibility(View.GONE)
             }
         }
-        mRoomCreateViewModel.joinRoomResult.observe(this, Observer { roomModel ->
+        mRoomCreateViewModel.roomInfoLiveData.observe(this) { roomModel ->
             isJoining = false
             if (roomModel == null) {
                 setDarkStatusIcon(isBlackDarkStatus)
             } else {
                 RoomLivingActivity.launch(this, roomModel)
             }
-        })
+        }
     }
 
     private fun showInputPwdDialog(data: AUIRoomInfo) {
