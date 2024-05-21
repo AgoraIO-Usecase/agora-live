@@ -154,6 +154,7 @@ class AUIUserServiceImpl constructor(
         userId: String,
         userInfo: Map<String, Any>
     ) {
+        if (userInfo.size <= 1) return
         GsonTools.toBean(GsonTools.beanToString(userInfo), AUIUserInfo::class.java)?.let { info ->
             info.userId = userId
             mUserList.add(info)
@@ -187,6 +188,10 @@ class AUIUserServiceImpl constructor(
             val index = mUserList.indexOfFirst{ it.userId == info.userId }
             if (index == -1) { // 不存在该用户
                 mUserList.add(info)
+                this.observableHelper.notifyEventHandlers {
+                    it.onRoomUserEnter(channelName, info)
+                }
+                return
             } else {
                 val oldInfo = mUserList[index]
                 mUserList[index] = info

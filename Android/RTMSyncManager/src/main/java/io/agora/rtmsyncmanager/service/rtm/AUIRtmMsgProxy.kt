@@ -17,7 +17,7 @@ import java.sql.Timestamp
 interface AUIRtmErrorRespObserver {
 
     /*
-     * token过期
+     * token即将过期
      */
     fun onTokenPrivilegeWillExpire(channelName: String?)
 
@@ -54,7 +54,7 @@ interface AUIRtmUserRespObserver {
 
 interface AUIRtmLockRespObserver {
     fun onReceiveLock(channelName: String, lockName: String, lockOwner: String)
-    fun onReleaseLock(channelName: String, lockName: String, lockOwner: String)
+    fun onReleaseLock(channelName: String, lockName: String, lockOwner: String, isExpire: Boolean)
 }
 
 class AUIRtmMsgProxy : RtmEventListener {
@@ -343,7 +343,7 @@ class AUIRtmMsgProxy : RtmEventListener {
         }
         removeLockDetails.forEach { lockDetail ->
             lockRespObservers.forEach { observer ->
-                observer.onReleaseLock(event.channelName, lockDetail.lockName, lockDetail.lockOwner)
+                observer.onReleaseLock(event.channelName, lockDetail.lockName, lockDetail.lockOwner, event.eventType == RtmConstants.RtmLockEventType.EXPIRED)
             }
         }
     }
