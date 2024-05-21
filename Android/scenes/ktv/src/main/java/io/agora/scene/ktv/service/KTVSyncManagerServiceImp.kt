@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import com.google.gson.reflect.TypeToken
 import io.agora.rtmsyncmanager.ISceneResponse
 import io.agora.rtmsyncmanager.RoomExpirationPolicy
 import io.agora.rtmsyncmanager.RoomService
@@ -24,6 +23,7 @@ import io.agora.rtmsyncmanager.service.room.AUIRoomManager
 import io.agora.rtmsyncmanager.service.rtm.AUIRtmException
 import io.agora.rtmsyncmanager.utils.AUILogger
 import io.agora.rtmsyncmanager.utils.GsonTools
+import io.agora.rtmsyncmanager.utils.ObservableHelper
 import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.ServerConfig
 import io.agora.scene.base.TokenGenerator
@@ -31,6 +31,7 @@ import io.agora.scene.base.bean.User
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.ktv.KTVLogger
 import io.agora.scene.ktv.widget.song.SongItem
+import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 /**
@@ -74,7 +75,7 @@ class KTVSyncManagerServiceImp constructor(
     private val mSongChosenList = mutableListOf<RoomSongInfo>()
     private val mChoristerList = mutableListOf<RoomChoristerInfo>()
 
-    private var mServiceLister: KtvServiceListenerProtocol? = null
+    private val observableHelper = ObservableHelper<KtvServiceListenerProtocol>()
 
     private var mRTmToken: String = ""
 
@@ -213,7 +214,7 @@ class KTVSyncManagerServiceImp constructor(
     /**
      * Create room
      *
-     * @param createRoomInfo
+     * @param createInfo
      * @param completion
      * @receiver
      */
@@ -419,7 +420,9 @@ class KTVSyncManagerServiceImp constructor(
                 KTVLogger.d(TAG, "getAllUserList success: $mCurRoomNo, $userList")
                 mUserList.clear()
                 mUserList.addAll(newUserList)
-                mServiceLister?.onUserListDidChanged(newUserList)
+                observableHelper.notifyEventHandlers { delegate->
+                    delegate.onUserListDidChanged(newUserList)
+                }
                 runOnMainThread {
                     completion.invoke(null, newUserList)
                 }
@@ -928,7 +931,7 @@ class KTVSyncManagerServiceImp constructor(
      * @param listener
      */
     override fun subscribeListener(listener: KtvServiceListenerProtocol) {
-        this.mServiceLister = listener
+        observableHelper.subscribeEvent(listener)
     }
 
 // =======================   ISceneResponse Start =======================
@@ -978,7 +981,9 @@ class KTVSyncManagerServiceImp constructor(
     override fun onSceneExpire(channelName: String) {
         KTVLogger.d(TAG, "onSceneExpire, channelName:$channelName")
         if (mCurRoomNo == channelName) {
-            mServiceLister?.onRoomExpire(channelName)
+            observableHelper.notifyEventHandlers { delegate->
+                delegate.onRoomExpire(channelName)
+            }
             mCurRoomNo = ""
         }
     }
@@ -991,7 +996,9 @@ class KTVSyncManagerServiceImp constructor(
     override fun onSceneDestroy(channelName: String) {
         KTVLogger.d(TAG, "onSceneExpire, channelName:$channelName")
         if (mCurRoomNo == channelName) {
-            mServiceLister?.onRoomDestroy(channelName)
+            observableHelper.notifyEventHandlers { delegate->
+                delegate.onRoomDestroy(channelName)
+            }
             mCurRoomNo = ""
         }
     }
@@ -1022,7 +1029,9 @@ class KTVSyncManagerServiceImp constructor(
                 this.mUserList.clear()
                 this.mUserList.addAll(it)
             }
-            mServiceLister?.onUserListDidChanged(mUserList)
+            observableHelper.notifyEventHandlers { delegate->
+                delegate.onUserListDidChanged(mUserList)
+            }
         }
     }
 
@@ -1036,7 +1045,9 @@ class KTVSyncManagerServiceImp constructor(
         KTVLogger.d(TAG, "onRoomUserEnter, roomId:$roomId, userInfo:$userInfo")
         mUserList.removeIf { it.userId == userInfo.userId }
         mUserList.add(userInfo)
-        mServiceLister?.onUserListDidChanged(mUserList)
+        observableHelper.notifyEventHandlers { delegate->
+            delegate.onUserListDidChanged(mUserList)
+        }
         val cacheRoom = AUIRoomContext.shared().getRoomInfo(roomId) ?: return
         if (mUser.id.toString() == cacheRoom.roomOwner?.userId) {
             cacheRoom.customPayload[KTVParameters.ROOM_USER_COUNT] = mUserList.count()
@@ -1059,7 +1070,9 @@ class KTVSyncManagerServiceImp constructor(
     override fun onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
         KTVLogger.d(TAG, "onRoomUserLeave, roomId:$roomId, userInfo:$userInfo")
         mUserList.removeIf { it.userId == userInfo.userId }
-        mServiceLister?.onUserListDidChanged(mUserList)
+        observableHelper.notifyEventHandlers { delegate->
+            delegate.onUserListDidChanged(mUserList)
+        }
         val cacheRoom = AUIRoomContext.shared().getRoomInfo(roomId) ?: return
         if (mUser.id.toString() == cacheRoom.roomOwner?.userId) {
             cacheRoom.customPayload[KTVParameters.ROOM_USER_COUNT] = mUserList.count()
@@ -1083,7 +1096,9 @@ class KTVSyncManagerServiceImp constructor(
         KTVLogger.d(TAG, "onRoomUserUpdate, roomId:$roomId, userInfo:$userInfo")
         mUserList.removeIf { it.userId == userInfo.userId }
         mUserList.add(userInfo)
-        mServiceLister?.onUserListDidChanged(mUserList)
+        observableHelper.notifyEventHandlers { delegate->
+            delegate.onUserListDidChanged(mUserList)
+        }
     }
 
     /**
@@ -1094,7 +1109,9 @@ class KTVSyncManagerServiceImp constructor(
      */
     override fun onUserAudioMute(userId: String, mute: Boolean) {
         KTVLogger.d(TAG, "onUserAudioMute, userId:$userId, mute:$mute")
-        mServiceLister?.onUserAudioMute(userId, mute)
+        observableHelper.notifyEventHandlers { delegate->
+            delegate.onUserAudioMute(userId, mute)
+        }
     }
 
     /**
@@ -1105,7 +1122,9 @@ class KTVSyncManagerServiceImp constructor(
      */
     override fun onUserVideoMute(userId: String, mute: Boolean) {
         KTVLogger.d(TAG, "onUserVideoMute, userId:$userId, mute:$mute")
-        mServiceLister?.onUserVideoMute(userId, mute)
+        observableHelper.notifyEventHandlers { delegate->
+            delegate.onUserVideoMute(userId, mute)
+        }
     }
     // =======================  AUIUserRespObserver End =======================
 
@@ -1135,14 +1154,14 @@ class KTVSyncManagerServiceImp constructor(
                     val oldSeatUserId = oldSeatInfo?.user?.userId ?: ""
                     if (oldSeatUserId.isEmpty() && newSeatUserId.isNotEmpty()) {
                         KTVLogger.d(TAG, "onAddOrUpdateSeat: $newSeatInfo")
-                        runOnMainThread {
-                            mServiceLister?.onUserEnterSeat(newSeatInfo)
+                        observableHelper.notifyEventHandlers { delegate->
+                            delegate.onUserEnterSeat(newSeatInfo)
                         }
                     }
                     if (oldSeatUserId.isNotEmpty() && newSeatUserId.isEmpty()) {
                         KTVLogger.d(TAG, "onRemoveSeat: $oldSeatInfo")
-                        runOnMainThread {
-                            mServiceLister?.onUserLeaveSeat(oldSeatInfo!!)
+                        observableHelper.notifyEventHandlers { delegate->
+                            delegate.onUserEnterSeat(oldSeatInfo!!)
                         }
                     }
                 }
@@ -1153,8 +1172,8 @@ class KTVSyncManagerServiceImp constructor(
                     GsonTools.toList(GsonTools.beanToString(value.getList()), RoomSongInfo::class.java)
                         ?: emptyList()
                 KTVLogger.d(TAG, "$kCollectionChosenSong songList: $songList")
-                runOnMainThread {
-                    mServiceLister?.onChosenSongListDidChanged(songList)
+                observableHelper.notifyEventHandlers { delegate->
+                    delegate.onChosenSongListDidChanged(songList)
                 }
             }
 
@@ -1171,8 +1190,8 @@ class KTVSyncManagerServiceImp constructor(
                         }
                     }
                     if (!hasChorister) {
-                        runOnMainThread {
-                            mServiceLister?.onChoristerDidEnter(newChorister)
+                        observableHelper.notifyEventHandlers { delegate->
+                            delegate.onChoristerDidEnter(newChorister)
                         }
                     }
                 }
@@ -1184,15 +1203,15 @@ class KTVSyncManagerServiceImp constructor(
                         }
                     }
                     if (!hasChorister) {
-                        runOnMainThread {
-                            mServiceLister?.onChoristerDidLeave(oldChorister)
+                        observableHelper.notifyEventHandlers { delegate->
+                            delegate.onChoristerDidLeave(oldChorister)
                         }
                     }
                 }
                 this.mChoristerList.clear()
                 this.mChoristerList.addAll(choristerList)
-                runOnMainThread {
-                    mServiceLister?.onChoristerListDidChanged(choristerList)
+                observableHelper.notifyEventHandlers { delegate->
+                    delegate.onChoristerListDidChanged(choristerList)
                 }
             }
         }
