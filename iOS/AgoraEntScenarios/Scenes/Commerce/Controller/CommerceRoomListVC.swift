@@ -43,7 +43,13 @@ class CommerceRoomListVC: UIViewController {
         }
     }
     
-    private lazy var naviBar = CommerceNavigationBar()
+    private lazy var naviBar:CommerceNavigationBar = {
+        let bar = CommerceNavigationBar()
+        bar.didCloseClosure = {
+            RTMSyncUtil.destroy()
+        }
+        return bar
+    }()
     
     private var needUpdateAudiencePresetType = false
     private var isHasToken: Bool = true

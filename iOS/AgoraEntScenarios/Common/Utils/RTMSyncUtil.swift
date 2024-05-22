@@ -92,8 +92,8 @@ class RTMSyncUtil: NSObject {
     }
     
     class func renew(rtmToken: String) {
-        syncManager?.renew(token: rtmToken) { _ in
-        }
+        syncManager?.renew(token: rtmToken, completion: { _ in
+        })
     }
     
     class func login(success: (() -> Void)?, failure: ((NSError?) -> Void)?) {
