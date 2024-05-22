@@ -11,6 +11,14 @@ import YYModel
 import SVProgressHUD
 private let kSceneId = "scene_ktv_4.3.0"
 
+extension NSError {
+    static func auiError(_ description: String) -> NSError {
+        return NSError(domain: "AUIKit Error",
+                       code: -1,
+                       userInfo: [ NSLocalizedDescriptionKey : description])
+    }
+}
+
 /// 座位信息
 private let SYNC_MANAGER_SEAT_INFO = "seat_info"
 // 选歌
@@ -19,10 +27,8 @@ private let SYNC_MANAGER_CHOOSE_SONG_INFO = "choose_song"
 private enum AUIMicSeatCmd: String {
     case leaveSeatCmd = "leaveSeatCmd"
     case enterSeatCmd = "enterSeatCmd"
-    case kickSeatCmd = "kickSeatCmd"
     case muteAudioCmd = "muteAudioCmd"
     case muteVideoCmd = "muteVideoCmd"
-    case closeSeatCmd = "closeSeatCmd"
     case chorusCmd = "chorusCmd"
 }
 
@@ -162,7 +168,8 @@ private enum AUIMusicCmd: String {
     private func _subscribeAll() {
         guard let roomNo = self.roomNo else {return}
         let _ = self.syncManager.createScene(channelName: roomNo)
-        getCurrentSongCollection(with: roomNo)?.subscribeAttributesDidChanged(callback: {[weak self] str1, str2, model in
+        let songCollection = getCurrentSongCollection(with: roomNo)
+        songCollection?.subscribeAttributesDidChanged(callback: {[weak self] str1, str2, model in
             guard let self = self,
                   let list = model.getList(),
                   let songs = NSArray.yy_modelArray(with: VLRoomSelSongModel.self, json: list) as? [VLRoomSelSongModel] else {
@@ -171,7 +178,72 @@ private enum AUIMusicCmd: String {
             self.delegate?.onUpdateAllChooseSongs(songs: songs)
         })
         
-        getCurrentSeatCollection(with: roomNo)?.subscribeAttributesDidChanged(callback: {[weak self] str1, str2, model in
+        songCollection?.subscribeWillAdd {[weak self] publisherId, dataCmd, newItem in
+            guard let dataCmd = AUIMusicCmd(rawValue: dataCmd ?? "") else {
+                return AUICommonError.unknown.toNSError()
+            }
+            
+            let owner = newItem["owner"] as? [String: Any]
+            let userId = owner?["userId"] as? String ?? ""
+            switch dataCmd {
+            case .chooseSongCmd:
+    //            if self.chooseSongList.contains(where: { $0.songCode == songCode }) {
+    //                return AUICommonError.chooseSongAlreadyExist.toNSError()
+    //            }
+                //过滤条件在filter里包含
+        
+                return nil
+            default:
+                break
+            }
+            
+            return NSError.auiError("add music cmd incorrect")
+        }
+        
+        songCollection?.subscribeWillMerge { [weak self] publisherId, dataCmd, updateMap, currentMap in
+            guard let dataCmd = AUIMusicCmd(rawValue: dataCmd ?? "") else {
+                return AUICommonError.unknown.toNSError()
+            }
+            
+            switch dataCmd {
+            case .pingSongCmd:
+                //过滤条件在filter里包含
+                return nil
+            case .updatePlayStatusCmd:
+                //过滤条件在filter里包含
+                return nil
+            default:
+                break
+            }
+            
+            return NSError.auiError("merge music cmd incorrect")
+        }
+        
+        songCollection?.subscribeWillRemove { [weak self] publisherId, dataCmd, item in
+            guard let self = self else {return nil}
+            guard let dataCmd = AUIMusicCmd(rawValue: dataCmd ?? "") else {
+                return AUICommonError.unknown.toNSError()
+            }
+            
+            let owner = item["owner"] as? [String: Any]
+            let userId = owner?["userId"] as? String ?? ""
+            let songCode = item["songCode"] as? String ?? ""
+            switch dataCmd {
+            case .removeSongCmd:
+                //点歌本人/房主可操作
+//                guard publiserId == self.currentUserId() || getRoomContext().isRoomOwner(channelName: channelName, userId: publiserId) else {
+//                    return AUICommonError.noPermission.toNSError()
+//                }
+                return nil
+            default:
+                break
+            }
+            
+            return NSError.auiError("remove music cmd incorrect")
+        }
+        
+        let seatCollection = getCurrentSongCollection(with: roomNo)
+        seatCollection?.subscribeAttributesDidChanged(callback: {[weak self] str1, str2, model in
             guard let self = self, let map = model.getMap() as? [String: [String: Any]] else { return }
             var seatMap: [String: VLRoomSeatModel] = [:]
             map.values.forEach { element in
@@ -212,6 +284,76 @@ private enum AUIMusicCmd: String {
                 }
             }
         })
+        
+        seatCollection?.subscribeWillMerge {[weak self] publisherId, dataCmd, updateMap, currentMap in
+            guard let dataCmd = AUIMicSeatCmd(rawValue: dataCmd ?? ""),
+                  updateMap.keys.count == 1,
+                  let seatIndex = Int(updateMap.keys.first ?? ""),
+                  let value = updateMap["\(seatIndex)"] else {
+                return AUICommonError.unknown.toNSError()
+            }
+            
+            let owner = (value as? [String: Any])?["owner"] as? [String: Any]
+            var userId: String = owner?["userId"] as? String ?? ""
+            switch dataCmd {
+            case .enterSeatCmd:
+//                if self.micSeats.values.contains(where: { $0.user?.userId == userId }) {
+//                    return AUICommonError.micSeatAlreadyEnter.toNSError()
+//                }
+//                guard let seat = self.micSeats[seatIndex],
+//                      seat.lockSeat == .idle,
+//                      seat.user?.isEmpty() ?? true else {
+//                    return AUICommonError.micSeatNotIdle.toNSError()
+//                }
+                break
+            case .leaveSeatCmd:
+//                if seatIndex == 0 {
+//                    return AUICommonError.noPermission.toNSError()
+//                }
+//                guard micSeats[seatIndex]?.user?.userId == publiserId
+//                        || getRoomContext().isRoomOwner(channelName: channelName, userId: publiserId) else {
+//                    return AUICommonError.userNoEnterSeat.toNSError()
+//                }
+//                var err: NSError?
+//                //TODO: onSeatWillLeave不需要metaData？
+//                let metaData = NSMutableDictionary()//rtmLeaveSeatMetaData(userId: userId)
+//                userId = self.micSeats[seatIndex]?.user?.userId ?? ""
+//                for obj in respDelegates.allObjects {
+//                    err = obj.onSeatWillLeave?(userId: userId, metaData: metaData)
+//                    if let err = err {
+//                        return err
+//                    }
+//                }
+                break
+            case .muteAudioCmd:
+                break
+            case .chorusCmd:
+                break
+            }
+            
+            return nil
+        }
+        
+        seatCollection?.subscribeWillAdd {[weak self] publisherId, dataCmd, newItem in
+            guard let self = self else {return nil}
+            guard let dataCmd = AUIMusicCmd(rawValue: dataCmd ?? "") else {
+                return AUICommonError.unknown.toNSError()
+            }
+            
+            let owner = newItem["owner"] as? [String: Any]
+            let userId = owner?["userId"] as? String ?? ""
+            switch dataCmd {
+            case .chooseSongCmd:
+                //过滤条件在filter里包含
+        
+                return nil
+            default:
+                break
+            }
+            
+            return NSError.auiError("add music cmd incorrect")
+        }
+        
     }
 }
 
@@ -794,8 +936,9 @@ extension KTVRTMManagerServiceImpl {
         let collection = getCurrentSeatCollection(with: channelName)
         let model = VLRoomSeatModel()
         model.seatIndex = seatInfo.seatIndex
-        let params = mapConvert(model: model)
-        collection?.addMetaData(valueCmd: AUIMicSeatCmd.leaveSeatCmd.rawValue, value: params, callback: { err in
+        var params = mapConvert(model: model)
+        params["seatIndex"] = nil
+        collection?.mergeMetaData(valueCmd: AUIMicSeatCmd.leaveSeatCmd.rawValue, value: params, callback: { err in
             finished(err)
         })
     }
@@ -811,9 +954,10 @@ extension KTVRTMManagerServiceImpl {
         }
         
         agoraPrint("imp seat add...")
-        let params = mapConvert(model: seatInfo)
+        var params = mapConvert(model: seatInfo)
+        params["seatIndex"] = nil
         let collection = getCurrentSeatCollection(with: channelName)
-        collection?.addMetaData(valueCmd: AUIMicSeatCmd.enterSeatCmd.rawValue, value: params, callback: { err in
+        collection?.mergeMetaData(valueCmd: AUIMicSeatCmd.enterSeatCmd.rawValue, value: params, callback: { err in
             finished(err)
         })
     }
