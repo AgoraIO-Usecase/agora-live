@@ -97,8 +97,28 @@ public class AUIScene: NSObject {
         }
         
         let date = Date()
+        
+        for obj in self.respDelegates.allObjects {
+            let collectionDataMap = obj.onWillInitSceneMetadata?(channelName: channelName)
+            collectionDataMap?.forEach({ key, value in
+                if let metadata = value as? [String: Any] {
+                    let collection: AUIMapCollection? = getCollection(key: key)
+                    collection?.initMetaData(channelName: channelName, metadata: metadata, fetchImmediately: false, completion: { err in
+                        
+                    })
+                } else if let metadata = value as? [[String: Any]] {
+                    let collection: AUIListCollection? = getCollection(key: key)
+                    collection?.initMetaData(channelName: channelName, metadata: metadata, fetchImmediately: false, completion: { err in
+                    })
+                } else {
+                    aui_warn("init meta data fail[\(channelName)] key: \(key) value: \(value)")
+                }
+            })
+        }
+        
         roomCollection.initMetaData(channelName: channelName,
-                                    metadata: roomInfo) { err in
+                                    metadata: roomInfo,
+                                    fetchImmediately: true) { err in
             aui_benchmark("rtm initMetaData", cost: -date.timeIntervalSinceNow, tag: kSceneTag)
             if let err = err {
                 completion(err)

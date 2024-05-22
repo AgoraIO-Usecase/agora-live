@@ -375,7 +375,7 @@ public let kMPK_RTC_UID: UInt = 1
         let contentCenterConfiguration = AgoraMusicContentCenterConfig()
         contentCenterConfiguration.appId = KeyCenter.AppId
         contentCenterConfiguration.mccUid = Int(VLUserCenter.user.id) ?? 0
-        contentCenterConfiguration.token = VLUserCenter.user.agoraRTMToken
+        contentCenterConfiguration.token = AppContext.shared.agoraRTMToken
         contentCenterConfiguration.rtcEngine = rtcKit
         
         mcc = AgoraMusicContentCenter.sharedContentCenter(config: contentCenterConfiguration)

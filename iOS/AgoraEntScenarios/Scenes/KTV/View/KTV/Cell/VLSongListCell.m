@@ -110,6 +110,8 @@
     self.chooserLabel.text = formattedString;
     
     if (selSongModel.status == VLSongPlayStatusIdle) {
+#if DEBUG
+#else
         if(!VLUserCenter.user.ifMaster) {
             if ([selSongModel.userNo isEqualToString:VLUserCenter.user.id]){
                 self.sortBtn.hidden = YES;
@@ -123,6 +125,7 @@
             self.sortBtn.hidden = self.deleteBtn.hidden = NO;
             self.singingBtn.hidden = YES;
         }
+#endif
     }else if (selSongModel.status == VLSongPlayStatusPlaying){
         self.sortBtn.hidden = self.deleteBtn.hidden = YES;
         self.singingBtn.hidden = NO;

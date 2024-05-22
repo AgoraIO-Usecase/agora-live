@@ -25,9 +25,9 @@ class VLRoomSelSongModel: VLBaseModel {
     /// 歌词
     //@property (nonatomic, copy) NSString *lyric;
     /// 创建时间
-    @objc var createAt: Int64 = 0
+    @objc var createAt: UInt64 = 0
     // 置顶时间
-    @objc var pinAt: Int64 = 0
+    @objc var pinAt: UInt64 = 0
     
     /// 0 未开始 1.已唱 2.正在唱 3. match完毕
     @objc var status: VLSongPlayStatus = .idle
@@ -36,8 +36,6 @@ class VLRoomSelSongModel: VLBaseModel {
     
     /// 点歌人昵称
     @objc var name: String?
-    
-    @objc var objectId: String?
     
     @objc func isSongOwner() -> Bool {
         if VLUserCenter.user.id == self.userNo {

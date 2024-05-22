@@ -19,11 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *id;  //uid (mpk)
 
 //Whether you are a homeowner
-@property (nonatomic, assign) BOOL ifMaster;
-@property (nonatomic, copy) NSString *agoraRTMToken;
-@property (nonatomic, copy) NSString *agoraRTCToken;
+//@property (nonatomic, assign) BOOL ifMaster;
+//@property (nonatomic, copy) NSString *agoraRTMToken;
+//@property (nonatomic, copy) NSString *agoraRTCToken;
 @property (nonatomic, readonly) UInt32 agoraPlayerRTCUid;
-@property (nonatomic, copy) NSString *agoraPlayerRTCToken;
+//@property (nonatomic, copy) NSString *agoraPlayerRTCToken;
 
 //for sync manager
 @property (nonatomic, copy, nullable) NSString* objectId;
@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 //Extended fields reserved for each scenario
 @property (nonatomic, strong, readonly) NSMutableDictionary* extraDic;
-+ (UInt32)mediaPlayerUidWithUid:(NSString*)uid;
+//+ (UInt32)mediaPlayerUidWithUid:(NSString*)uid;
 @end
 
 NS_ASSUME_NONNULL_END
