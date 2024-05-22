@@ -127,7 +127,7 @@ class CommerceLiveViewController: UIViewController {
                 guard let _ = error else { return }
                 //retry every 5s
                 DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                    view?.endBidGoodsClosure?(model)
+                    view?.checkRetryCompletion()
                 }
             }
         }
