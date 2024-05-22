@@ -196,6 +196,14 @@ class CommerceAuctionShoppingView: UIView {
         }
     }
     
+    func checkRetryCompletion() {
+        let startTs = Int64(self.currentAuctionModel?.startTimestamp ?? 0)
+        let currentTs = Int64(self.getCurrentTsClosure?() ?? 0)
+        let time = max(30 - max((currentTs - startTs) / 1000, 0), 0)
+        guard self.isBroadcastor, time <= 0, currentAuctionModel?.status == .started else { return }
+        self.endBidGoodsClosure?(self.currentAuctionModel)
+    }
+    
     private func convertToTimeFormat(seconds: Int) -> String {
         let minutes = (seconds % 3600) / 60
         let seconds = (seconds % 3600) % 60
