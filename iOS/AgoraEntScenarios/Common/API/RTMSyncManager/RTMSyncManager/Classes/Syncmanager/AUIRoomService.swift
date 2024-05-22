@@ -42,7 +42,6 @@ public class AUIRoomService: NSObject {
                 if self.expirationPolicy.expirationTime > 0, ts - roomInfo.createTime >= self.expirationPolicy.expirationTime + 60 * 1000 {
                     aui_info("remove expired room[\(roomInfo.roomId)]", tag: RoomServiceTag)
                     needCleanRoom = true
-                    return
                 } else if cleanClosure?(roomInfo) ?? false {
                     aui_info("external decision to delete room[\(roomInfo.roomId)]", tag: RoomServiceTag)
                     needCleanRoom = true
@@ -135,6 +134,10 @@ public class AUIRoomService: NSObject {
     public func leaveRoom(room: AUIRoomInfo) {
         roomInfoMap[room.roomId] = room
         leaveRoom(roomId: room.roomId)
+    }
+    
+    public func isRoomOwner(roomId: String) -> Bool {
+        return AUIRoomContext.shared.isRoomOwner(channelName: roomId)
     }
 }
 
