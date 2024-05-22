@@ -235,7 +235,7 @@ extension VRRoomsViewController {
     private func loginIMThenPush(room: VRRoomEntity) {
         SVProgressHUD.show(withStatus: "voice_loading".voice_localized)
         NetworkManager.shared.generateToken(channelName: room.channel_id ?? "", uid: VLUserCenter.user.id, tokenType: .token007, type: .rtc) { token in
-            VLUserCenter.user.agoraRTCToken = token ?? ""
+            AppContext.shared.agoraRTCToken = token ?? ""
             ChatRoomServiceImp.getSharedInstance().joinRoom(room.room_id ?? "") { error, room_entity in
                 SVProgressHUD.dismiss()
                 self.normal.roomList.isUserInteractionEnabled = true

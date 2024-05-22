@@ -10,9 +10,9 @@ import Foundation
 class VLRoomSeatModel: VLBaseModel {
     /// 是否是房主
     @objc var isMaster: Bool = false
-    /// 头像
+    /// 上麦用户头像
     @objc var headUrl: String?
-    /// userNO
+    /// 上麦用户uid
     @objc var userNo: String?
     // rtc uid(rtc join with uid)
     @objc var rtcUid: String?
@@ -28,9 +28,6 @@ class VLRoomSeatModel: VLBaseModel {
     @objc var isVideoMuted: Int = 0
     /// 新增, 判断当前歌曲是否是自己点的
     @objc var isOwner: Bool = false
-
-    /// for sync manager
-    @objc var objectId: String?
     
     override init() {
         super.init()

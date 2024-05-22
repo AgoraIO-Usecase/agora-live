@@ -30,7 +30,10 @@ NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
 + (id<KTVServiceProtocol>)ktvServiceImp {
     id<KTVServiceProtocol> ktvServiceImp = [[AppContext shared].extDic valueForKey:kServiceImpKey];
     if (ktvServiceImp == nil) {
-        ktvServiceImp = [[KTVRTMManagerServiceImpl alloc]initWithAppId:KeyCenter.AppId host:KeyCenter.RTMHostUrl appCertificate:KeyCenter.Certificate user:VLUserCenter.user rtmClient:nil];
+        ktvServiceImp = [[KTVRTMManagerServiceImpl alloc] initWithAppId:KeyCenter.AppId
+                                                                   host:KeyCenter.RTMHostUrl
+                                                         appCertificate:KeyCenter.Certificate
+                                                                   user:VLUserCenter.user];
       //  ktvServiceImp = [KTVSyncManagerServiceImp new];
         [[AppContext shared].extDic setValue:ktvServiceImp forKey:kServiceImpKey];
     }

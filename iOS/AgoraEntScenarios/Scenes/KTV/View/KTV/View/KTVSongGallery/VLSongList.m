@@ -58,20 +58,26 @@
         if (model.status == VLSongPlayStatusPlaying) {
             return;
         }
+#if DEBUG
+#else
         if (VLUserCenter.user.ifMaster) {
             [weakSelf sortSongEvent:model];
         }
+#endif
     };
     cell.deleteBtnClickBlock = ^(VLRoomSelSongModel * _Nonnull model) {
         if (model.status == VLSongPlayStatusPlaying) {
             return;
         }
+#if DEBUG
+#else
         if (VLUserCenter.user.ifMaster || [VLUserCenter.user.id isEqualToString:cell.selSongModel.userNo]) {
             [weakSelf deleteSongEvent:model];
         }
-        
+#endif
     };
-    
+#if DEBUG
+#else
     if(VLUserCenter.user.ifMaster) {
         if(indexPath.row == 0 || indexPath.row == 1) {
             cell.sortBtn.hidden = YES;
@@ -80,6 +86,7 @@
             cell.sortBtn.hidden = NO;
         }
     }
+#endif
     return cell;
 }
 
@@ -89,24 +96,14 @@
 
 
 - (void)sortSongEvent:(VLRoomSelSongModel *)model {
-    
-    KTVMakeSongTopInputModel* inputModel = [KTVMakeSongTopInputModel new];
-    inputModel.songNo = model.songNo;
-    inputModel.objectId = model.objectId;
-    [[AppContext ktvServiceImp] pinSongWithInputModel:inputModel
-                                           completion:^(NSError * error) {
+    [[AppContext ktvServiceImp] pinSongWithSongCode:model.songNo completion:^(NSError * error) {
+        //
     }];
 }
 
 - (void)deleteSongEvent:(VLRoomSelSongModel *)model {
-    KTVRemoveSongInputModel* inputModel = [KTVRemoveSongInputModel new];
-    inputModel.songNo = model.songNo;
-    inputModel.objectId = model.objectId;
-    [[AppContext ktvServiceImp] removeSongWithInputModel:inputModel
-                                              completion:^(NSError * error) {
-        if (error != nil) {
-            return;
-        }
+    [[AppContext ktvServiceImp] removeSongWithSongCode:model.songNo completion:^(NSError * error) {
+        //
     }];
 }
 

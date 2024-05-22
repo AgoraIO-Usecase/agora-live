@@ -101,9 +101,11 @@ open class AUIRtmManager: NSObject {
         isLogin = false
     }
     
-    public func renew(token: String) {
+    public func renew(token: String, completion: ((NSError?)->())?) {
         aui_info("renew: \(token)", tag: "AUIRtmManager")
-        rtmClient.renewToken(token)
+        rtmClient.renewToken(token) { _, err in
+            completion?(err)
+        }
     }
 }
 
@@ -568,9 +570,9 @@ extension AUIRtmManager {
                 callbackError = AUICommonError.httpError(error.errorCode.rawValue, error.reason).toNSError()
             }
             completion(callbackError)
-            aui_info("publish '\(message)' to '\(channelName)': \(error?.errorCode.rawValue ?? 0)", tag: "AUIRtmManager")
+            aui_info("publish '\(message)' to user '\(userId)': \(error?.errorCode.rawValue ?? 0)", tag: "AUIRtmManager")
         }
-        aui_info("publish '\(message)' to '\(channelName)'", tag: "AUIRtmManager")
+        aui_info("publish '\(message)' to user '\(userId)'", tag: "AUIRtmManager")
     }
     
     public func publish(channelName: String, 
@@ -587,9 +589,9 @@ extension AUIRtmManager {
                 callbackError = AUICommonError.httpError(error.errorCode.rawValue, error.reason).toNSError()
             }
             completion(callbackError)
-            aui_info("publish '\(message)' to '\(channelName)': \(error?.errorCode.rawValue ?? 0)", tag: "AUIRtmManager")
+            aui_info("publish '\(message)' to channelName '\(channelName)': \(error?.errorCode.rawValue ?? 0)", tag: "AUIRtmManager")
         }
-        aui_info("publish '\(message)' to '\(channelName)'", tag: "AUIRtmManager")
+        aui_info("publish '\(message)' to channelName '\(channelName)'", tag: "AUIRtmManager")
     }
     
     public func sendReceipt(userId: String, 

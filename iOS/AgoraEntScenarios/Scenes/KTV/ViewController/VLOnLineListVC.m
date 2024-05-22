@@ -95,7 +95,7 @@
     [self.view addSubview:presentView];
 }
 
-- (void)listItemClickAction:(VLRoomListModel *)listModel {
+- (void)listItemClickAction:(AUIRoomInfo *)listModel {
 
     if (listModel.isPrivate) {
         NSArray *array = [[NSArray alloc]initWithObjects:KTVLocalizedString(@"ktv_cancel"),KTVLocalizedString(@"ktv_confirm"), nil];
@@ -109,32 +109,25 @@
     }
 }
 
-- (void)joinInRoomWithModel:(VLRoomListModel *)listModel withInPutText:(NSString *)inputText {
+- (void)joinInRoomWithModel:(AUIRoomInfo *)listModel withInPutText:(NSString *)inputText {
     if (listModel.isPrivate && ![listModel.password isEqualToString:inputText]) {
         [VLToast toast:KTVLocalizedString(@"PasswordError")];
         return;
     }
-    
-    KTVJoinRoomInputModel* inputModel = [KTVJoinRoomInputModel new];
-    inputModel.roomNo = listModel.roomNo;
-//    inputModel.userNo = VLUserCenter.user.id;
-    inputModel.password = inputText;
-
     VL(weakSelf);
-    [[AppContext ktvServiceImp] joinRoomWithInputModel:inputModel completion:^(NSError * _Nullable error, KTVJoinRoomOutputModel * _Nullable outputModel) {
+    [[AppContext ktvServiceImp] joinRoomWithRoomId:listModel.roomNo password:inputText completion:^(NSError * _Nullable error) {
         if (error != nil) {
             [VLToast toast:error.description];
             return;
         }
         
-        listModel.creatorNo = outputModel.creatorNo;
-        listModel.roomPeopleNum = [NSString stringWithFormat:@"%li",[listModel.roomPeopleNum integerValue] + 1] ;
+//        listModel.creatorNo = outputModel.creatorNo;
+//        listModel.roomPeopleNum = [NSString stringWithFormat:@"%li",[listModel.roomPeopleNum integerValue] + 1] ;
         VLKTVViewController *ktvVC = [[VLKTVViewController alloc]init];
         ktvVC.roomModel = listModel;
-        ktvVC.seatsArray = outputModel.seatsArray;
+//        ktvVC.seatsArray = outputModel.seatsArray;
         [weakSelf.navigationController pushViewController:ktvVC animated:YES];
     }];
-
 }
 
 //- (NSArray *)configureSeatsWithArray:(NSArray *)seatsArray songArray:(NSArray *)songArray {
