@@ -246,7 +246,7 @@ class LiveDetailFragment : Fragment() {
             initRtcEngine()
             initServiceWithJoinRoom()
         } else {
-            val roomLeftTime = ShowServiceProtocol.ROOM_AVAILABLE_DURATION - (TimeUtils.currentTimeMillis() - mRoomInfo.createdAt)
+            val roomLeftTime = ShowServiceProtocol.ROOM_AVAILABLE_DURATION - mService.getCurrentRoomDuration(mRoomId)
             if (roomLeftTime > 0) {
                 mBinding.root.postDelayed(timerRoomEndRun, roomLeftTime)
                 initRtcEngine()
@@ -380,7 +380,7 @@ class LiveDetailFragment : Fragment() {
      */
     private fun initLivingEndLayout() {
         val livingEndLayout = mBinding.livingEndLayout
-        livingEndLayout.root.isVisible = ShowServiceProtocol.ROOM_AVAILABLE_DURATION < (TimeUtils.currentTimeMillis() - mRoomInfo.createdAt) && !isRoomOwner && !mRoomInfo.isRobotRoom()
+        livingEndLayout.root.isVisible = ShowServiceProtocol.ROOM_AVAILABLE_DURATION < (mService.getCurrentRoomDuration(mRoomId)) && !isRoomOwner && !mRoomInfo.isRobotRoom()
         livingEndLayout.tvUserName.text = mRoomInfo.ownerName
         Glide.with(this@LiveDetailFragment)
             .load(mRoomInfo.getOwnerAvatarFullUrl())
@@ -424,7 +424,7 @@ class LiveDetailFragment : Fragment() {
         topLayout.tvTimer.post(object : Runnable {
             override fun run() {
                 topLayout.tvTimer.text =
-                    dataFormat.format(Date(TimeUtils.currentTimeMillis() - mRoomInfo.createdAt))
+                    dataFormat.format(Date(mService.getCurrentRoomDuration(mRoomId)))
                 topLayout.tvTimer.postDelayed(this, 1000)
                 topLayout.tvTimer.tag = this
             }
@@ -883,7 +883,7 @@ class LiveDetailFragment : Fragment() {
             )
         }
         mService.auctionSubscribe(mRoomId) { auctionModel ->
-            CommerceLogger.d(TAG, "[commerce]$this $mRoomId auctionSubscribe call back, auctionModel:$auctionModel")
+            CommerceLogger.d("LiveAuctionFragment", "[commerce]$this $mRoomId auctionSubscribe call back, auctionModel:$auctionModel")
             auctionFragment.updateAuction(auctionModel)
         }
         mService.likeSubscribe(mRoomId) {
@@ -1092,6 +1092,12 @@ class LiveDetailFragment : Fragment() {
         } else {
             mRtcEngine.addHandlerEx(eventListener, mMainRtcConnection)
         }
+
+        VideoSetting.updateBroadcastSetting(
+            VideoSetting.LiveMode.OneVOne,
+            isJoinedRoom = true,
+            rtcConnection = mMainRtcConnection
+        )
     }
 
     /**

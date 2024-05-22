@@ -47,10 +47,11 @@ class AUIArbiter(
             }
         }
 
-        override fun onReleaseLock(channelName: String, lockName: String, lockOwner: String) {
+        override fun onReleaseLock(channelName: String, lockName: String, lockOwner: String, isExpire: Boolean) {
             AUILogger.logger().d(tag, "onReleaseLock channelName: $channelName lockName: $lockName lockOwner: $lockOwner")
             if (channelName == this@AUIArbiter.channelName) {
                 acquire()
+                if (isExpire && lockOwnerId != currentUserId) return
                 lockOwnerId = ""
             }
         }

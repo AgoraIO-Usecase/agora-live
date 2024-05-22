@@ -34,11 +34,12 @@ interface ShowServiceProtocol {
 
     /**
      * Destroy
-     *
      */
     fun destroy()
 
     fun getCurrentTimestamp(roomId: String): Long
+
+    fun getCurrentRoomDuration(roomId: String): Long
 
     fun getRoomInfo(roomId: String): RoomDetailModel?
 
@@ -91,7 +92,7 @@ interface ShowServiceProtocol {
     /** Bid Actions */
     fun auctionSubscribe(roomId: String, onChange: (AuctionModel) -> Unit)
     fun auctionStart(roomId: String, onComplete: (Exception?) -> Unit)
-    fun auctionBidding(roomId: String, value: Int, onComplete: (Exception?) -> Unit)
+    fun auctionBidding(roomId: String, value: Long, onComplete: (Exception?) -> Unit)
     fun auctionComplete(roomId: String, onComplete: (Exception?) -> Unit)
 
     /** Shop Actions */

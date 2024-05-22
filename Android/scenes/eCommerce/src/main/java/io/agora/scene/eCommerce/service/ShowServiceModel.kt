@@ -39,23 +39,23 @@ data class ShowUser constructor(
     }
 }
 
-enum class AuctionStatus(val value: Int) {
+enum class AuctionStatus(val value: Long) {
     Idle(0),
     Start(1),
     Finish(2);
     companion object {
-        fun fromValue(value: Int): AuctionStatus {
+        fun fromValue(value: Long): AuctionStatus {
             return values().first { it.value == value }
         }
     }
 }
 data class AuctionModel constructor(
     var bidUser: ShowUser? = null,
-    var timestamp: String = "0",
+    var startTimestamp: Long = 0,
     var goods: GoodsModel? = null,
-    var bid: Int = 1,
-    var status: Int = 0,
-    var endTimestamp: String = "0"
+    var bid: Long = 1,
+    var status: Long = 0,
+    var endTimestamp: Long = 0
 )
 
 data class GoodsModel constructor(

@@ -8,9 +8,9 @@ import io.agora.rtmsyncmanager.utils.GsonTools
 import java.util.UUID
 
 class AUIListCollection(
-    private val channelName: String,
-    private val observeKey: String,
-    private val rtmManager: AUIRtmManager
+    val channelName: String,
+    val observeKey: String,
+    val rtmManager: AUIRtmManager
 ) : AUIBaseCollection(channelName, observeKey, rtmManager), IAUIListCollection {
 
     private var currentList = listOf<Map<String, Any>>()
@@ -20,7 +20,7 @@ class AUIListCollection(
             channelName = channelName,
             completion = { error, metaData ->
                 if (error != null) {
-                    callback?.invoke(AUICollectionException.ErrorCode.unknown.toException("rtm getMetadata error: $error"), null)
+                    callback?.invoke(AUICollectionException.ErrorCode.unknown.toException(null, "rtm getMetadata error: $error"), null)
                     return@getMetadata
                 }
                 val data = metaData?.items?.find { it.key == observeKey }
@@ -271,7 +271,7 @@ class AUIListCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(error.message)
+                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(null, error.message)
                 )
             } else {
                 callback?.invoke(null)
@@ -364,7 +364,7 @@ class AUIListCollection(
         ) { e ->
             if (e != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.unknown.toException("rtm setBatchMetadata error: $e")
+                    AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: $e")
                 )
             } else {
                 callback?.invoke(null)
@@ -423,7 +423,7 @@ class AUIListCollection(
         ) { e ->
             if (e != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.unknown.toException("rtm setBatchMetadata error: $e")
+                    AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: $e")
                 )
             } else {
                 callback?.invoke(null)
@@ -478,7 +478,7 @@ class AUIListCollection(
         ) { e ->
             if (e != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.unknown.toException("rtm setBatchMetadata error: $e")
+                    AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: $e")
                 )
             } else {
                 callback?.invoke(null)
@@ -533,7 +533,7 @@ class AUIListCollection(
         ) { e ->
             if (e != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.unknown.toException("rtm setBatchMetadata error: $e")
+                    AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: $e")
                 )
             } else {
                 callback?.invoke(null)
@@ -617,7 +617,7 @@ class AUIListCollection(
             metadata = mapOf(Pair(observeKey, data)),
         ) { e ->
             if (e != null) {
-                callback?.invoke(AUICollectionException.ErrorCode.unknown.toException("rtm setBatchMetadata error: ${e.message}"))
+                callback?.invoke(AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: ${e.message}"))
             } else {
                 callback?.invoke(null)
             }

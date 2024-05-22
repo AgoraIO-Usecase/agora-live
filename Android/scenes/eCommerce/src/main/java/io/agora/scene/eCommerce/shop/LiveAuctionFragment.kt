@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.ToastUtils
+import io.agora.scene.eCommerce.CommerceLogger
 import io.agora.scene.eCommerce.R
 import io.agora.scene.eCommerce.databinding.CommerceShopAuctionFragmentBinding
 import io.agora.scene.eCommerce.service.*
@@ -83,6 +85,7 @@ class LiveAuctionFragment: Fragment() {
         countDownTimer = null
     }
 
+    private var hasStart = false
     private fun updateAuctionStatus() {
         val auctionModel = data ?: run {
             idleAuctionStatus()
@@ -90,14 +93,16 @@ class LiveAuctionFragment: Fragment() {
         }
         when (AuctionStatus.fromValue(auctionModel.status)) {
             AuctionStatus.Start -> {
-                val startTS = auctionModel.timestamp.toLong()
+                hasStart = true
+                val startTS = auctionModel.startTimestamp
                 val interval = mService.getCurrentTimestamp(mRoomId) - startTS
                 val rest = kAuctionInterval - interval
+                CommerceLogger.d(tag, "start auction, startTS:$startTS, interval:$interval, rest:$rest")
                 inProgressAuctionStatus(rest)
             }
             AuctionStatus.Finish -> {
                 val bidUser = auctionModel.bidUser
-                if (bidUser != null && bidUser.id.isNotEmpty()) {
+                if (bidUser != null && bidUser.id.isNotEmpty() && hasStart) {
                     context?.let {
                         AuctionResultDialog(it, bidUser).show()
                     }
@@ -181,16 +186,17 @@ class LiveAuctionFragment: Fragment() {
             binding.tvBuyerName.visibility = View.INVISIBLE
         }
         // timer
-        if (countDownTimer == null) {
-            countDownTimer = object: CountDownTimer(interval, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
-                    binding.tvCountDown.text = formatTime(millisUntilFinished)
-                }
-                override fun onFinish() {
-                    onAuctionFinish()
-                }
-            }.start()
-        }
+        countDownTimer?.cancel()
+        countDownTimer = null
+        countDownTimer = object: CountDownTimer(interval, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                Log.d(tag, "auction tick:$millisUntilFinished")
+                binding.tvCountDown.text = formatTime(millisUntilFinished)
+            }
+            override fun onFinish() {
+                onAuctionFinish()
+            }
+        }.start()
     }
 
     private fun onAuctionFinish() {
@@ -199,7 +205,7 @@ class LiveAuctionFragment: Fragment() {
         // show dialog
         if (isRoomOwner) {
             mService.auctionComplete(mRoomId) {
-                if (it != null) {
+                if (it != null && data?.status != 2L) {
                     binding.root.postDelayed({ onAuctionFinish() }, 5000)
                 }
             }

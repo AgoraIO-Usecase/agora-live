@@ -129,8 +129,9 @@ class RoomListActivity : AppCompatActivity() {
         mBinding.smartRefreshLayout.setOnRefreshListener {
             mService.fetchRoomList(
                 success = {
+                    val filterRoom = it.filter { it.ownerId != UserManager.getInstance().user.id.toString() }
                     mRoomList.clear()
-                    mRoomList.addAll(it)
+                    mRoomList.addAll(filterRoom)
                     if (isFirstLoad) {
                         val roomList = arrayListOf<VideoLoader.RoomInfo>( )
                         it.forEach { room ->
