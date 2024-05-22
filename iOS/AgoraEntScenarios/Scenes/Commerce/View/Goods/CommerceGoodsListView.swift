@@ -117,10 +117,6 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
             
             let topVC = UIViewController.cl_topViewController()
             if topVC is UIAlertController {
-                topVC?.dismiss(animated: false)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-                    showAlert(title: title)
-                })
                 return
             }
             topVC?.present(alertVC, animated: false)
