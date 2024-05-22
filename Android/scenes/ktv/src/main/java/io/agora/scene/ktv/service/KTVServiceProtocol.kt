@@ -18,86 +18,93 @@ interface KtvServiceListenerProtocol {
      *
      * @param roomInfo
      */
-    fun onRoomDidChanged(roomInfo: AUIRoomInfo)
+    fun onRoomDidChanged(roomInfo: AUIRoomInfo) {}
 
     /**
      * On room expire
      *
      * @param channelName
      */
-    fun onRoomExpire(channelName: String)
+    fun onRoomExpire(channelName: String) {}
 
     /**
      * On room destroy
      *
      * @param channelName
      */
-    fun onRoomDestroy(channelName: String)
+    fun onRoomDestroy(channelName: String) {}
 
     /**
      * On user list did changed
      *
      * @param userList
      */
-    fun onUserListDidChanged(userList: List<AUIUserInfo>)
+    fun onUserListDidChanged(userList: List<AUIUserInfo>) {}
 
     /**
-     * On user audio mute
+     * On current user audio mute
      *
      * @param userId
      * @param mute
      */
-    fun onUserAudioMute(userId: String, mute: Boolean)
+    fun onUserAudioMute(userId: String, mute: Boolean) {}
 
     /**
-     * On user video mute
+     * On current user video mute
      *
      * @param userId
      * @param mute
      */
-    fun onUserVideoMute(userId: String, mute: Boolean)
+    fun onUserVideoMute(userId: String, mute: Boolean) {}
 
     /**
-     * On add or update seat
+     * On seat map did changed
      *
-     * @param roomSeatModel
+     * @param setMap
      */
-    fun onUserEnterSeat(roomSeatModel: RoomMicSeatInfo)
+    fun onSeatMapDidChanged(setMap: Map<Int, RoomMicSeatInfo>) {}
+
+    /**
+     * On user enter seat
+     *
+     * @param enterSeatInfo
+     */
+    fun onUserEnterSeat(enterSeatInfo: RoomMicSeatInfo) {}
 
     /**
      * On remove seat
      *
-     * @param roomSeatModel
+     * @param leaveSeatInfo
      */
-    fun onUserLeaveSeat(roomSeatModel: RoomMicSeatInfo)
+    fun onUserLeaveSeat(leaveSeatInfo: RoomMicSeatInfo) {}
 
     /**
      * On update all choose songs
      *
-     * @param chosenSongs
+     * @param chosenSongList
      */
-    fun onChosenSongListDidChanged(chosenSongList: List<RoomSongInfo>)
+    fun onChosenSongListDidChanged(chosenSongList: List<RoomSongInfo>) {}
 
     /**
      * On choristers list did changed
      *
-     * @param choristerInfo
+     * @param choristerList
      */
-    fun onChoristerListDidChanged(choristerList: List<RoomChoristerInfo>)
+    fun onChoristerListDidChanged(choristerList: List<RoomChoristerInfo>) {}
 
     /**
      * On chorister did enter
      *
      * @param chorister
      */
-    fun onChoristerDidEnter(chorister: RoomChoristerInfo)
+    fun onChoristerDidEnter(chorister: RoomChoristerInfo) {}
 
     /**
      * On chorister did leave
      *
      * @param chorister
      */
-    fun onChoristerDidLeave(chorister: RoomChoristerInfo)
+    fun onChoristerDidLeave(chorister: RoomChoristerInfo) {}
 }
 
 /**
@@ -194,14 +201,6 @@ interface KTVServiceProtocol {
     fun muteUserVideo(mute: Boolean, completion: (error: Exception?) -> Unit)
 
     /**
-     * Get all seat list
-     *
-     * @param completion
-     * @receiver
-     */
-    fun getAllSeatMap(completion: (error: Exception?, map: Map<Int, RoomMicSeatInfo>) -> Unit)
-
-    /**
      * On seat
      *
      * @param seatIndex null autoOnseat
@@ -294,7 +293,7 @@ interface KTVServiceProtocol {
      * @param completion
      * @receiver
      */
-    fun getChoristerList(completion: (error: Exception?, choristerInfoList: List<RoomChoristerInfo>) -> Unit)
+    fun getChoristerList(completion: (error: Exception?, choristerInfoList: List<RoomChoristerInfo>?) -> Unit)
 
     /**
      * Subscribe listener
@@ -302,4 +301,6 @@ interface KTVServiceProtocol {
      * @param listener
      */
     fun subscribeListener(listener: KtvServiceListenerProtocol)
+
+    fun unsubscribeListener(listener: KtvServiceListenerProtocol)
 }

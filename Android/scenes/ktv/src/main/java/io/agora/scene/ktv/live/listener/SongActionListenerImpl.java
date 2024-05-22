@@ -171,14 +171,20 @@ public class SongActionListenerImpl implements OnSongActionListener {
         ArrayList<SongItem> list = new ArrayList<>();
         if (data != null) {
             for (RoomSongInfo song : data) {
+                String userName = "";
+                String chooserUserId = "" ;
+                if (song.getOrderUser()!=null){
+                    userName = song.getOrderUser().userName;
+                    chooserUserId = song.getOrderUser().userId;
+                }
                 SongItem item = new SongItem(
                         song.getSongNo(),
                         song.getSongName(),
                         song.getImageUrl(),
                         song.getSinger(),
-                        song.getName(),
-                        !TextUtils.isEmpty(song.getName()),
-                        song.getUserNo()
+                        userName,
+                        !TextUtils.isEmpty(userName),
+                        chooserUserId
                 );
                 item.setTag(song);
                 list.add(item);

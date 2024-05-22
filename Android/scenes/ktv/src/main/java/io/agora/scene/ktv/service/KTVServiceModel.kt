@@ -112,7 +112,12 @@ annotation class PlayStatus {
     }
 }
 
-
+enum class RoomSongCmd {
+    chooseSongCmd,
+    removeSongCmd,
+    pingSongCmd,
+    updatePlayStatusCmd
+}
 /**
  * Room song info
  *
@@ -120,9 +125,7 @@ annotation class PlayStatus {
  * @property songNo
  * @property singer
  * @property imageUrl
- * @property userNo
- * @property name
- * @property isOriginal
+ * @property orderUser
  * @property status
  * @property createAt
  * @property pinAt
@@ -135,55 +138,12 @@ data class RoomSongInfo constructor(
     val singer: String, // 演唱者
     val imageUrl: String,// 歌曲封面
 
-    // 获取已点歌记返回的歌词信息，同时也包含上面信息
-    val userNo: String? = null,// 点歌人No
-    val name: String? = null,// 点歌人昵称
-    val isOriginal: Int = 0, //是否原唱
+    var orderUser: AUIUserThumbnailInfo? = null, // 点个人
 
     // 排序字段
-    val status: Int, // 0 未开始 1.已唱 2.正在唱
+    @PlayStatus
+    val status: Int, // 0 未开始 1.播放中
     val createAt: Long,
     val pinAt: Double
-) {
-    companion object {
-        val STATUS_IDLE = 0
-        val STATUS_PLAYED = 1
-        val STATUS_PLAYING = 2
-    }
-}
-
-/**
- * Scoring algo control model
- *
- * @property level
- * @property offset
- * @constructor Create empty Scoring algo control model
- */
-data class ScoringAlgoControlModel constructor(
-    val level: Int,
-    val offset: Int
 )
 
-/**
- * Scoring average model
- *
- * @property isLocal
- * @property score
- * @constructor Create empty Scoring average model
- */
-data class ScoringAverageModel constructor(
-    val isLocal: Boolean,
-    val score: Int
-)
-
-/**
- * Volume model
- *
- * @property uid
- * @property volume
- * @constructor Create empty Volume model
- */
-data class VolumeModel constructor(
-    val uid: Int,
-    val volume: Int
-)

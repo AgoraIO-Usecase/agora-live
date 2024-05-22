@@ -68,8 +68,8 @@ public class SongItem {
         this.imageUrl = imageUrl;
         this.singer = singer;
         this.chooser = chooser;
-        this.chooserId = chooserId;
         this.isChosen = isChosen;
+        this.chooserId = chooserId;
     }
 
     // 用于存放原始数据

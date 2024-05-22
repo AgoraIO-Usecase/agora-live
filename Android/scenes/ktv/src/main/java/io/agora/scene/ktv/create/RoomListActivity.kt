@@ -34,7 +34,6 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
         ViewModelProvider(this)[RoomCreateViewModel::class.java]
     }
 
-
     private var mAdapter: RoomListAdapter? = null
     private var inputPasswordDialog: InputPasswordDialog? = null
     private var isJoining = false
@@ -77,8 +76,8 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
     override fun initView(savedInstanceState: Bundle?) {
         mAdapter = RoomListAdapter(null, this, object : OnItemClickListener<AUIRoomInfo> {
             override fun onItemClick(data: AUIRoomInfo, view: View, position: Int, viewType: Long) {
-                val isPrivate = (data.customPayload[KTVParameters.PASSWORD] as? String) !=null
-                if (isPrivate) {
+                val password = data.customPayload[KTVParameters.PASSWORD] as? String
+                if (!password.isNullOrEmpty()) {
                     showInputPwdDialog(data)
                 } else {
                     if (!isJoining) {
@@ -186,8 +185,8 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
             val userCount = data.customPayload[KTVParameters.ROOM_USER_COUNT] as? Long
             holder.binding.tvPersonNum.text = mContext.getString(R.string.ktv_people_count, userCount ?: 0)
             holder.binding.tvUserName.text = data.roomOwner?.userName ?: ""
-            val isPrivate = (data.customPayload[KTVParameters.PASSWORD] as? String) !=null
-            holder.binding.ivLock.isVisible = isPrivate
+            val password = data.customPayload[KTVParameters.PASSWORD] as? String
+            holder.binding.ivLock.isVisible = !password.isNullOrEmpty()
             holder.itemView.setOnClickListener { view: View? ->
                 mListener.onItemClick(
                     data,
