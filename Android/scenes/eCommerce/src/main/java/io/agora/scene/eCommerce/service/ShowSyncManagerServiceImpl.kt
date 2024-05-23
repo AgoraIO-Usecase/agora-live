@@ -12,11 +12,7 @@ import io.agora.rtmsyncmanager.service.IAUIUserService
 import io.agora.rtmsyncmanager.service.collection.AUICollectionException
 import io.agora.rtmsyncmanager.service.collection.AUIListCollection
 import io.agora.rtmsyncmanager.service.collection.AUIMapCollection
-import io.agora.rtmsyncmanager.service.http.CommonResp
 import io.agora.rtmsyncmanager.service.http.HttpManager
-import io.agora.rtmsyncmanager.service.http.token.TokenGenerateReq
-import io.agora.rtmsyncmanager.service.http.token.TokenGenerateResp
-import io.agora.rtmsyncmanager.service.http.token.TokenInterface
 import io.agora.rtmsyncmanager.service.room.AUIRoomManager
 import io.agora.rtmsyncmanager.service.rtm.AUIRtmMessageRespObserver
 import io.agora.rtmsyncmanager.utils.AUILogger
@@ -25,9 +21,9 @@ import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.eCommerce.CommerceLogger
+import io.agora.scene.eCommerce.RtcEngineInstance
 import org.json.JSONException
 import org.json.JSONObject
-import retrofit2.Response
 import java.util.*
 
 
@@ -133,7 +129,7 @@ class ShowSyncManagerServiceImpl constructor(
         var userLeaveSubscriber: ((String, String, String) -> Unit)? = null,
         var auctionChangeSubscriber: ((AuctionModel) -> Unit)? = null,
         var shopChangeSubscriber: ((List<GoodsModel>) -> Unit)? = null,
-        var roomChangeSubscriber: (() -> Unit)? = null,
+        var roomChangeSubscriber: ((event: ShowRoomStatus) -> Unit)? = null,
         var messageChangeSubscriber: ((ShowMessage) -> Unit)? = null,
         var likeChangeSubscriber: (() -> Unit)? = null,
     )
@@ -221,7 +217,7 @@ class ShowSyncManagerServiceImpl constructor(
             owner.userAvatar = UserManager.getInstance().user.headUrl
             roomInfo.roomOwner = owner
             // TODO roomInfo.thumbnail = thumbnailId
-            roomInfo.createTime = TimeUtils.currentTimeMillis()
+            // roomInfo.createTime = TimeUtils.currentTimeMillis()
             val roomDetailModel = RoomDetailModel(
                 roomId,
                 roomName,
@@ -231,8 +227,8 @@ class ShowSyncManagerServiceImpl constructor(
                 UserManager.getInstance().user.headUrl,
                 UserManager.getInstance().user.name,
                 ShowRoomStatus.activity.value,
-                TimeUtils.currentTimeMillis(),
-                TimeUtils.currentTimeMillis()
+                System.currentTimeMillis(),
+                System.currentTimeMillis()
             )
             roomInfo.customPayload = GsonTools.beanToMap(roomDetailModel)
             roomService.createRoom(BuildConfig.AGORA_APP_ID, kSceneId, roomInfo) { e, info ->
@@ -312,9 +308,9 @@ class ShowSyncManagerServiceImpl constructor(
         }
     }
 
-    override fun subscribeCurrRoomEvent(roomId: String, onUpdate: () -> Unit) {
+    override fun subscribeCurrRoomEvent(roomId: String, onRoomEvent: (event: ShowRoomStatus) -> Unit) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
-        controller.roomChangeSubscriber = onUpdate
+        controller.roomChangeSubscriber = onRoomEvent
     }
     private fun cleanRoomInfoController(controller: RoomInfoController) {
         CommerceLogger.d(TAG, "cleanRoomInfoController: ${controller.roomId}")
@@ -591,7 +587,8 @@ class ShowSyncManagerServiceImpl constructor(
         }
         controller.auctionChangeSubscriber = onChange
     }
-    override fun auctionStart(roomId: String, onComplete: (Exception?) -> Unit) {
+
+    override fun auctionStart(roomId: String, onComplete: (AUICollectionException?) -> Unit) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val startTs = controller.scene.getCurrentTs()
         val endTs = startTs + 30 * 1000
@@ -608,7 +605,8 @@ class ShowSyncManagerServiceImpl constructor(
             onComplete.invoke(e)
         }
     }
-    override fun auctionBidding(roomId: String, value: Long, onComplete: (Exception?) -> Unit) {
+
+    override fun auctionBidding(roomId: String, value: Long, onComplete: (AUICollectionException?) -> Unit) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val user = ShowUser(
             UserManager.getInstance().user.id.toString(),
@@ -625,7 +623,8 @@ class ShowSyncManagerServiceImpl constructor(
             onComplete.invoke(it)
         }
     }
-    override fun auctionComplete(roomId: String, onComplete: (Exception?) -> Unit) {
+
+    override fun auctionComplete(roomId: String, onComplete: (AUICollectionException?) -> Unit) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val map = mapOf(
             "status" to 2L
@@ -645,7 +644,8 @@ class ShowSyncManagerServiceImpl constructor(
         }
         controller.shopChangeSubscriber = onChange
     }
-    override fun shopBuyItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit) {
+
+    override fun shopBuyItem(roomId: String, itemId: String, onComplete: (AUICollectionException?) -> Unit) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val keys = listOf("quantity")
         val filter = listOf(mapOf<String, Any>("goodsId" to itemId))
@@ -662,7 +662,7 @@ class ShowSyncManagerServiceImpl constructor(
         roomId: String,
         itemId: String,
         count: Long,
-        onComplete: (Exception?) -> Unit
+        onComplete: (AUICollectionException?) -> Unit
     ) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
         val map = mapOf("quantity" to count)
@@ -679,49 +679,26 @@ class ShowSyncManagerServiceImpl constructor(
             return
         }
         CommerceLogger.d("ShowSyncManagerServiceImpl", "1.rtmLogin request start -> rtm login")
-        HttpManager
-            .getService(TokenInterface::class.java)
-            .tokenGenerate(
-                TokenGenerateReq(
-                    appId = BuildConfig.AGORA_APP_ID,
-                    appCert = "",
-                    channelName = "111",
-                    userId = UserManager.getInstance().user.id.toString()
-                )
-            )
-            .enqueue(object : retrofit2.Callback<CommonResp<TokenGenerateResp>> {
-                override fun onResponse(
-                    call: retrofit2.Call<CommonResp<TokenGenerateResp>>,
-                    response: Response<CommonResp<TokenGenerateResp>>
-                ) {
-                    val rspObj = response.body()?.data
-                    if (rspObj != null) {
-                        syncManager.login(rspObj.rtmToken) { error ->
-                            if (error == null) {
-                                isRtmLogin = true
-                                complete.invoke(true)
-                            } else {
-                                complete.invoke(false)
-                            }
-                        }
-                    } else {
-                        complete.invoke(false)
-                    }
-                }
-                override fun onFailure(call: retrofit2.Call<CommonResp<TokenGenerateResp>>, t: Throwable) {
-                    complete.invoke(false)
-                }
-            })
+        syncManager.login(RtcEngineInstance.generalRtmToken()) { error ->
+            if (error == null) {
+                isRtmLogin = true
+                complete.invoke(true)
+            } else {
+                complete.invoke(false)
+            }
+        }
     }
 
     override fun onSceneDestroy(channelName: String) {
         val controller = roomInfoControllers.firstOrNull { it.roomId == channelName } ?: return
-        controller.roomChangeSubscriber?.invoke()
+        controller.roomChangeSubscriber?.invoke(ShowRoomStatus.end)
         leaveRoom(channelName)
     }
 
     override fun onSceneExpire(channelName: String) {
-        super.onSceneExpire(channelName)
+        val controller = roomInfoControllers.firstOrNull { it.roomId == channelName } ?: return
+        controller.roomChangeSubscriber?.invoke(ShowRoomStatus.Expire)
+        leaveRoom(channelName)
     }
 
     override fun onWillInitSceneMetadata(channelName: String): Map<String, Any>? {

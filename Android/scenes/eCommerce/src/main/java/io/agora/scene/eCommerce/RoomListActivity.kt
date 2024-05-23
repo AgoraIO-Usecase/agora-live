@@ -85,7 +85,7 @@ class RoomListActivity : AppCompatActivity() {
                             VideoLoader.AnchorInfo(
                                 room.roomId,
                                 room.ownerId.toInt(),
-                                RtcEngineInstance.generalToken()
+                                RtcEngineInstance.generalRtcToken()
                             )
                         )
                     )
@@ -110,7 +110,8 @@ class RoomListActivity : AppCompatActivity() {
         mBinding.titleView.setLeftClick {
             mService.destroy()
             RtcEngineInstance.destroy()
-            RtcEngineInstance.setupGeneralToken("")
+            RtcEngineInstance.setupGeneralRtcToken("")
+            RtcEngineInstance.setupGeneralRtmToken("")
             finish()
         }
         mRoomAdapter = object : BindingSingleAdapter<RoomDetailModel, CommerceRoomItemBinding>() {
@@ -142,7 +143,7 @@ class RoomListActivity : AppCompatActivity() {
                                         VideoLoader.AnchorInfo(
                                             room.roomId,
                                             room.ownerId.toInt(),
-                                            RtcEngineInstance.generalToken()
+                                            RtcEngineInstance.generalRtcToken()
                                         )
                                     )
                                 )
@@ -204,7 +205,7 @@ class RoomListActivity : AppCompatActivity() {
                     VideoLoader.AnchorInfo(
                         roomInfo.roomId,
                         roomInfo.ownerId.toInt(),
-                        RtcEngineInstance.generalToken()
+                        RtcEngineInstance.generalRtcToken()
                     )
                 )
             ),
@@ -221,7 +222,7 @@ class RoomListActivity : AppCompatActivity() {
                 } else {
                     when (event!!.action) {
                         MotionEvent.ACTION_DOWN -> {
-                            if (RtcEngineInstance.generalToken() == "") {
+                            if (RtcEngineInstance.generalRtcToken() == "") {
                                 fetchUniversalToken({
                                 }, {
                                     ToastUtils.showToast("Fetch Token Failed")
@@ -238,7 +239,7 @@ class RoomListActivity : AppCompatActivity() {
                             super.onTouch(v, event)
                         }
                         MotionEvent.ACTION_UP -> {
-                            if (RtcEngineInstance.generalToken() != "") {
+                            if (RtcEngineInstance.generalRtcToken() != "") {
                                 super.onTouch(v, event)
                                 goLiveDetailActivity(list, position, roomInfo)
                             }
@@ -290,7 +291,8 @@ class RoomListActivity : AppCompatActivity() {
         super.onBackPressed()
         mService.destroy()
         RtcEngineInstance.destroy()
-        RtcEngineInstance.setupGeneralToken("")
+        RtcEngineInstance.setupGeneralRtcToken("")
+        RtcEngineInstance.setupGeneralRtmToken("")
     }
 
     /**
@@ -305,12 +307,18 @@ class RoomListActivity : AppCompatActivity() {
         error: ((Exception?) -> Unit)? = null
     ) {
         val localUId = UserManager.getInstance().user.id
-        TokenGenerator.generateToken("", localUId.toString(),
+        TokenGenerator.generateTokens("", localUId.toString(),
             TokenGenerator.TokenGeneratorType.Token007,
-            TokenGenerator.AgoraTokenType.Rtc,
+            arrayOf(
+                TokenGenerator.AgoraTokenType.Rtc,
+                TokenGenerator.AgoraTokenType.Rtm
+            ),
             success = {
                 //ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
-                RtcEngineInstance.setupGeneralToken(it)
+                val rtcToken = it[TokenGenerator.AgoraTokenType.Rtc] ?: return@generateTokens
+                val rtmToken = it[TokenGenerator.AgoraTokenType.Rtm] ?: return@generateTokens
+                RtcEngineInstance.setupGeneralRtcToken(rtcToken)
+                RtcEngineInstance.setupGeneralRtmToken(rtmToken)
                 success.invoke()
             },
             failure = {

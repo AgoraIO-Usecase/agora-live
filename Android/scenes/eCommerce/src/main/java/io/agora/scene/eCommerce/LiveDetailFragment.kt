@@ -324,7 +324,7 @@ class LiveDetailFragment : Fragment() {
                 VideoLoader.AnchorInfo(
                     mRoomInfo.roomId,
                     mRoomInfo.ownerId.toIntOrNull() ?: 0,
-                    RtcEngineInstance.generalToken()
+                    RtcEngineInstance.generalRtcToken()
                 ),
                 UserManager.getInstance().user.id.toInt(),
                 VideoLoader.VideoCanvasContainer(
@@ -415,12 +415,12 @@ class LiveDetailFragment : Fragment() {
         val topLayout = mBinding.topLayout
         val dataFormat =
             SimpleDateFormat("HH:mm:ss").apply { timeZone = TimeZone.getTimeZone("GMT") }
-        CommerceLogger.d(
-           TAG,
-           "TopTimer curr=${TimeUtils.currentTimeMillis()}, createAt=${mRoomInfo.createdAt}, diff=${TimeUtils.currentTimeMillis() - mRoomInfo.createdAt}, time=${
-               dataFormat.format(Date(TimeUtils.currentTimeMillis() - mRoomInfo.createdAt))
-           }"
-       )
+//        CommerceLogger.d(
+//           TAG,
+//           "TopTimer curr=${TimeUtils.currentTimeMillis()}, createAt=${mRoomInfo.createdAt}, diff=${TimeUtils.currentTimeMillis() - mRoomInfo.createdAt}, time=${
+//               dataFormat.format(Date(TimeUtils.currentTimeMillis() - mRoomInfo.createdAt))
+//           }"
+//       )
         topLayout.tvTimer.post(object : Runnable {
             override fun run() {
                 topLayout.tvTimer.text =
@@ -1088,7 +1088,7 @@ class LiveDetailFragment : Fragment() {
         }
 
         if (isRoomOwner) {
-            mRtcEngine.joinChannelEx(RtcEngineInstance.generalToken(), mMainRtcConnection, channelMediaOptions, eventListener)
+            mRtcEngine.joinChannelEx(RtcEngineInstance.generalRtcToken(), mMainRtcConnection, channelMediaOptions, eventListener)
         } else {
             mRtcEngine.addHandlerEx(eventListener, mMainRtcConnection)
         }

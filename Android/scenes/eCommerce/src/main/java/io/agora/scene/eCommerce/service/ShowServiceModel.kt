@@ -26,7 +26,9 @@ enum class ShowRoomStatus(val value: Int) {
      *
      * @constructor Create empty End
      */
-    end(1)
+    end(1),
+
+    Expire(2),
 }
 
 data class ShowUser constructor(

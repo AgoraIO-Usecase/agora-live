@@ -271,7 +271,7 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
                 VideoLoader.AnchorInfo(
                     it.roomId,
                     it.ownerId.toInt(),
-                    RtcEngineInstance.generalToken()
+                    RtcEngineInstance.generalRtcToken()
                 )
             )
             list.add(
@@ -302,7 +302,7 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
                             VideoLoader.AnchorInfo(
                                 roomInfo.roomId,
                                 roomInfo.ownerId.toInt(),
-                                RtcEngineInstance.generalToken()
+                                RtcEngineInstance.generalRtcToken()
                             )
                         )
                         onPageScrollEventHandler?.onRoomCreated(position,

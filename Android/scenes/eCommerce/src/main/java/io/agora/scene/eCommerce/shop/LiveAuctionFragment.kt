@@ -200,12 +200,15 @@ class LiveAuctionFragment: Fragment() {
     }
 
     private fun onAuctionFinish() {
+        CommerceLogger.d(tag, "onAuctionFinish")
         countDownTimer?.cancel()
         countDownTimer = null
         // show dialog
         if (isRoomOwner) {
-            mService.auctionComplete(mRoomId) {
-                if (it != null && data?.status != 2L) {
+            CommerceLogger.d(tag, "finish bid")
+            mService.auctionComplete(mRoomId) { e ->
+                if (e != null && data?.status != 2L) {
+                    CommerceLogger.d(tag, "failed to finish bid, code: ${e.code}, message: ${e.message}")
                     binding.root.postDelayed({ onAuctionFinish() }, 5000)
                 }
             }
@@ -216,9 +219,11 @@ class LiveAuctionFragment: Fragment() {
         binding.layoutSubmit.setOnClickListener {
             binding.tvStart.isVisible = false
             binding.progressLoading.isVisible = true
+            CommerceLogger.d(tag, "start bid click")
             mService.auctionStart(mRoomId) { e ->
                 if (e != null) {
-                    ToastUtils.showToast(context?.getString(R.string.commerce_start_auction_failed, e.message))
+                    CommerceLogger.d(tag, "failed to start bid, code: ${e.code}, message: ${e.message}")
+                    ToastUtils.showToast(context?.getString(R.string.commerce_start_auction_failed, e.code))
                 }
 
                 runOnMainThread {
@@ -229,9 +234,11 @@ class LiveAuctionFragment: Fragment() {
         }
         binding.btnBid.setOnClickListener {
             val bid = data?.bid ?: 0
+            CommerceLogger.d(tag, "click bid")
             mService.auctionBidding(mRoomId, (bid + 1)) { e ->
                 if (e != null) {
-                    ToastUtils.showToast(context?.getString(R.string.commerce_bid_failed, e.message))
+                    CommerceLogger.d(tag, "failed bid, code: ${e.code}, message: ${e.message}")
+                    ToastUtils.showToast(context?.getString(R.string.commerce_bid_failed, e.code))
                 }
             }
         }

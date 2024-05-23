@@ -1,5 +1,6 @@
 package io.agora.scene.eCommerce.service
 
+import io.agora.rtmsyncmanager.service.collection.AUICollectionException
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.utils.ToastUtils
 
@@ -83,7 +84,7 @@ interface ShowServiceProtocol {
 
     fun deleteRoom(roomId: String, complete: () -> Unit)
 
-    fun subscribeCurrRoomEvent(roomId: String, onUpdate: () -> Unit)
+    fun subscribeCurrRoomEvent(roomId: String, onRoomEvent: (event: ShowRoomStatus) -> Unit)
 
     fun subscribeUser(roomId: String, onChange: (count: Int) -> Unit)
     fun subscribeUserJoin(roomId: String, onChange: (userId: String, userName: String, userAvatar: String) -> Unit)
@@ -91,14 +92,14 @@ interface ShowServiceProtocol {
 
     /** Bid Actions */
     fun auctionSubscribe(roomId: String, onChange: (AuctionModel) -> Unit)
-    fun auctionStart(roomId: String, onComplete: (Exception?) -> Unit)
-    fun auctionBidding(roomId: String, value: Long, onComplete: (Exception?) -> Unit)
-    fun auctionComplete(roomId: String, onComplete: (Exception?) -> Unit)
+    fun auctionStart(roomId: String, onComplete: (AUICollectionException?) -> Unit)
+    fun auctionBidding(roomId: String, value: Long, onComplete: (AUICollectionException?) -> Unit)
+    fun auctionComplete(roomId: String, onComplete: (AUICollectionException?) -> Unit)
 
     /** Shop Actions */
     fun shopSubscribe(roomId: String, onChange: (List<GoodsModel>) -> Unit)
-    fun shopBuyItem(roomId: String, itemId: String, onComplete: (Exception?) -> Unit)
-    fun shopUpdateItem(roomId: String, itemId: String, count: Long, onComplete: (Exception?) -> Unit)
+    fun shopBuyItem(roomId: String, itemId: String, onComplete: (AUICollectionException?) -> Unit)
+    fun shopUpdateItem(roomId: String, itemId: String, count: Long, onComplete: (AUICollectionException?) -> Unit)
 
     /** Chat Message Actions */
     fun sendChatMessage(roomId: String, message: String, success: (() -> Unit)? = null, error: ((Exception) -> Unit)? = null)

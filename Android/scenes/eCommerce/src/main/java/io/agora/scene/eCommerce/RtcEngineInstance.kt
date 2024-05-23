@@ -33,19 +33,37 @@ object RtcEngineInstance {
     private val workingExecutor = Executors.newSingleThreadExecutor()
 
     @Volatile
-    private var generalToken: String = ""
+    private var generalRtcToken: String = ""
+
+    @Volatile
+    private var generalRtmToken: String = ""
 
     /**
      * Setup general token
      *
      * @param generalToken
      */
-    fun setupGeneralToken(generalToken: String) {
+    fun setupGeneralRtcToken(generalToken: String) {
         if (generalToken.isEmpty()) {
-            this.generalToken = ""
+            this.generalRtcToken = ""
         } else {
-            if (this.generalToken.isEmpty()) {
-                this.generalToken = generalToken
+            if (this.generalRtcToken.isEmpty()) {
+                this.generalRtcToken = generalToken
+            }
+        }
+    }
+
+    /**
+     * Setup general token
+     *
+     * @param generalToken
+     */
+    fun setupGeneralRtmToken(generalToken: String) {
+        if (generalToken.isEmpty()) {
+            this.generalRtmToken = ""
+        } else {
+            if (this.generalRtmToken.isEmpty()) {
+                this.generalRtmToken = generalToken
             }
         }
     }
@@ -55,7 +73,14 @@ object RtcEngineInstance {
      *
      * @return
      */
-    fun generalToken(): String = generalToken
+    fun generalRtcToken(): String = generalRtcToken
+
+    /**
+     * General token
+     *
+     * @return
+     */
+    fun generalRtmToken(): String = generalRtmToken
 
     private var innerRtcEngine: RtcEngineEx? = null
 

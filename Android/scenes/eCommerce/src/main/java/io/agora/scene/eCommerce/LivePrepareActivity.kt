@@ -227,19 +227,26 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
 
         binding.btnStartLive.isEnabled = false
 
-        mayFetchUniversalToken {
-            mService.createRoom(mRoomId, roomName, mThumbnailId, {
+        mayFetchUniversalToken { e ->
+            if (e == null) {
+                mService.createRoom(mRoomId, roomName, mThumbnailId, {
+                    runOnUiThread {
+                        isFinishToLiveDetail = true
+                        LiveDetailActivity.launch(this@LivePrepareActivity, it)
+                        finish()
+                    }
+                }, {
+                    runOnUiThread {
+                        ToastUtils.showToast(it.message)
+                        binding.btnStartLive.isEnabled = true
+                    }
+                })
+            } else {
                 runOnUiThread {
-                    isFinishToLiveDetail = true
-                    LiveDetailActivity.launch(this@LivePrepareActivity, it)
-                    finish()
-                }
-            }, {
-                runOnUiThread {
-                    ToastUtils.showToast(it.message)
+                    ToastUtils.showToast(e.message)
                     binding.btnStartLive.isEnabled = true
                 }
-            })
+            }
         }
     }
 
@@ -250,24 +257,29 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      * @receiver
      */
     private fun mayFetchUniversalToken(
-        complete: () -> Unit
+        complete: ((Exception?) -> Unit)? = null
     ) {
-        if(RtcEngineInstance.generalToken().isNotEmpty()){
-            complete.invoke()
+        if (RtcEngineInstance.generalRtmToken() != "" && RtcEngineInstance.generalRtcToken() != "") {
+            complete?.invoke(null)
             return
         }
         val localUId = UserManager.getInstance().user.id
-        TokenGenerator.generateToken("", localUId.toString(),
+        TokenGenerator.generateTokens("", localUId.toString(),
             TokenGenerator.TokenGeneratorType.Token007,
-            TokenGenerator.AgoraTokenType.Rtc,
+            arrayOf(
+                TokenGenerator.AgoraTokenType.Rtc,
+                TokenGenerator.AgoraTokenType.Rtm
+            ),
             success = {
-                //ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
-                RtcEngineInstance.setupGeneralToken(it)
-                complete.invoke()
+                val rtcToken = it[TokenGenerator.AgoraTokenType.Rtc] ?: return@generateTokens
+                val rtmToken = it[TokenGenerator.AgoraTokenType.Rtm] ?: return@generateTokens
+                RtcEngineInstance.setupGeneralRtcToken(rtcToken)
+                RtcEngineInstance.setupGeneralRtmToken(rtmToken)
+                complete?.invoke(null)
             },
             failure = {
-                //ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
                 ToastUtils.showToast(it?.message ?: "generate token failure")
+                complete?.invoke(it)
             })
     }
 
@@ -277,14 +289,14 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      *
      */
     private fun getRandomRoomId() =
-        (Random(TimeUtils.currentTimeMillis()).nextInt(10000) + 100000).toString()
+        (Random(System.currentTimeMillis()).nextInt(10000) + 100000).toString()
 
     /**
      * Get random thumbnail id
      *
      */
     private fun getRandomThumbnailId() =
-        Random(TimeUtils.currentTimeMillis()).nextInt(0, 3).toString()
+        Random(System.currentTimeMillis()).nextInt(0, 3).toString()
 
     /**
      * Get thumbnail icon

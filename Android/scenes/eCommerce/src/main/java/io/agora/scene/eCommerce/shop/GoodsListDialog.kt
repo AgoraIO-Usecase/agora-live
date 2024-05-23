@@ -8,11 +8,9 @@ import android.os.Looper
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import androidx.core.view.isVisible
 import io.agora.rtc2.internal.CommonUtility.getSystemService
 import io.agora.scene.base.manager.UserManager
-import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.eCommerce.R
 import io.agora.scene.eCommerce.databinding.CommerceShopGoodsItemLayoutBinding
 import io.agora.scene.eCommerce.databinding.CommerceShopGoodsListDialogBinding
@@ -92,7 +90,7 @@ class GoodsListDialog constructor(
             mService.shopBuyItem(roomId, goodsId) { e ->
                 runOnMainThread {
                     if (e != null) {
-                        showOperationInfo(context.getString(R.string.commerce_shop_buy_failed, e.message))
+                        showOperationInfo(context.getString(R.string.commerce_shop_buy_failed, e.code))
                     } else {
                         showOperationInfo(context.getString(R.string.commerce_shop_alert_bought))
                     }
@@ -111,7 +109,7 @@ class GoodsListDialog constructor(
             mService.shopUpdateItem(roomId, goodsId, qty) { e ->
                 runOnMainThread {
                     if (e != null) {
-                        showOperationInfo(context.getString(R.string.commerce_adjust_quantity_failed, e.message))
+                        showOperationInfo(context.getString(R.string.commerce_adjust_quantity_failed, e.code))
                     } else {
                         showOperationInfo(context.getString(R.string.commerce_shop_update_success))
                     }
