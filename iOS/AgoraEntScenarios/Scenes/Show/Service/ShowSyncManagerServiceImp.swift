@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import AgoraSyncManager_overseas
 
-private let kSceneId = "scene_show_0.2.0"
+private let kSceneId = "scene_show_1.2.0_20240523"
 
 private let SYNC_MANAGER_MESSAGE_COLLECTION = "show_message_collection"
 private let SYNC_MANAGER_SEAT_APPLY_COLLECTION = "show_seat_apply_collection"
@@ -173,29 +173,29 @@ class ShowSyncManagerServiceImp: NSObject, ShowServiceProtocol {
     }
     
     fileprivate func _checkRoomExpire() {
-        guard let room = self.room else { return }
-        
-        let currentTs = Int64(Date().timeIntervalSince1970 * 1000)
-        let expiredDuration = 20 * 60 * 1000
-//        agoraPrint("checkRoomExpire: \(currentTs - room.createdAt) / \(expiredDuration)")
-        guard currentTs - room.createdAt > expiredDuration else { return }
-        
-        self.subscribeDelegate?.onRoomExpired()
+//        guard let room = self.room else { return }
+//        
+//        let currentTs = Int64(Date().timeIntervalSince1970 * 1000)
+//        let expiredDuration = 20 * 60 * 1000
+////        agoraPrint("checkRoomExpire: \(currentTs - room.createdAt) / \(expiredDuration)")
+//        guard currentTs - room.createdAt > expiredDuration else { return }
+//        
+//        self.subscribeDelegate?.onRoomExpired()
     }
     
     fileprivate func _startCheckExpire() {
-        Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] timer in
-            guard let self = self else { return }
-            
-            self._checkRoomExpire()
-            if self.roomId == nil {
-                timer.invalidate()
-            }
-        }
-        
-        DispatchQueue.main.async {
-            self._checkRoomExpire()
-        }
+//        Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] timer in
+//            guard let self = self else { return }
+//            
+//            self._checkRoomExpire()
+//            if self.roomId == nil {
+//                timer.invalidate()
+//            }
+//        }
+//        
+//        DispatchQueue.main.async {
+//            self._checkRoomExpire()
+//        }
     }
     
     //MARK: ShowServiceProtocol

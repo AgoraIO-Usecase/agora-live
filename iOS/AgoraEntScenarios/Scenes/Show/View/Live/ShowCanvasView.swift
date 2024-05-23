@@ -139,7 +139,7 @@ class ShowCanvasView: UIView {
                 localUser.isHidden = false
                 remoteUser.isHidden = false
                 remoteView.isHidden = false
-                timerView.isHidden = false
+                timerView.isHidden = true
                 pkView.isHidden = false
                 broadcastorImgView.isHidden = true
                 audienceImgView.isHidden = true
@@ -153,16 +153,16 @@ class ShowCanvasView: UIView {
                 localUserBottomCons?.constant = -10
                 remoteView.cornerRadius(0)
                 remoteBgView.cornerRadius(0)
-                timer.scheduledSecondsTimer(withName: "pk", timeInterval: 1, queue: .main) { [weak self] _, duration in
-                    guard let self = self else { return }
-                    var timeLeft = 120 - duration
-                    if timeLeft < 0 {
-                        self.timer.destoryAllTimer()
-                        self.delegate?.onPKDidTimeout()
-                        timeLeft = 0
-                    }
-                    self.timerView.setTitle("PK "+"".timeFormat(secounds: timeLeft), for: .normal)
-                }
+//                timer.scheduledSecondsTimer(withName: "pk", timeInterval: 1, queue: .main) { [weak self] _, duration in
+//                    guard let self = self else { return }
+//                    var timeLeft = 120 - duration
+//                    if timeLeft < 0 {
+//                        self.timer.destoryAllTimer()
+//                        self.delegate?.onPKDidTimeout()
+//                        timeLeft = 0
+//                    }
+//                    self.timerView.setTitle("PK "+"".timeFormat(secounds: timeLeft), for: .normal)
+//                }
                 
             case .joint_broadcasting:
                 remoteView.isHidden = false
