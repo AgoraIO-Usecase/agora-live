@@ -17,6 +17,9 @@
 
 @property (nonatomic, strong) UITableView  *tableView;
 
+@property (nonatomic, strong) NSArray *selSongsArray;
+@property (nonatomic, assign) BOOL isOwner;
+
 @end
 
 @implementation VLSongList
@@ -28,6 +31,11 @@
         [self setupView];
     }
     return self;
+}
+
+- (void)setSelSongsArray:(NSArray *)selSongsArray isOwner:(BOOL)isOwner {
+    self.selSongsArray = selSongsArray;
+    self.isOwner = isOwner;
 }
 
 - (void)setupView {
@@ -52,33 +60,27 @@
     if (cell == nil) {
         cell = [[VLSongListCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseCell];
     }
-    cell.selSongModel = self.selSongsArray[indexPath.row];
+    VLRoomSelSongModel* selSongModel = self.selSongsArray[indexPath.row];
+    [cell setSelSongModel:selSongModel isOwner:self.isOwner];
     cell.numberLabel.text = [NSString stringWithFormat:@"%d",(int)(indexPath.row+1)];
     cell.sortBtnClickBlock = ^(VLRoomSelSongModel * _Nonnull model) {
         if (model.status == VLSongPlayStatusPlaying) {
             return;
         }
-#if DEBUG
-#else
-        if (VLUserCenter.user.ifMaster) {
+        if (self.isOwner) {
             [weakSelf sortSongEvent:model];
         }
-#endif
     };
     cell.deleteBtnClickBlock = ^(VLRoomSelSongModel * _Nonnull model) {
         if (model.status == VLSongPlayStatusPlaying) {
             return;
         }
-#if DEBUG
-#else
-        if (VLUserCenter.user.ifMaster || [VLUserCenter.user.id isEqualToString:cell.selSongModel.userNo]) {
+        if (self.isOwner || [VLUserCenter.user.id isEqualToString:selSongModel.userNo]) {
             [weakSelf deleteSongEvent:model];
         }
-#endif
     };
-#if DEBUG
-#else
-    if(VLUserCenter.user.ifMaster) {
+    
+    if(self.isOwner) {
         if(indexPath.row == 0 || indexPath.row == 1) {
             cell.sortBtn.hidden = YES;
         }
@@ -86,7 +88,6 @@
             cell.sortBtn.hidden = NO;
         }
     }
-#endif
     return cell;
 }
 
