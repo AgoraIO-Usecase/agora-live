@@ -232,6 +232,7 @@
     <string name="commerce_bid_failed">Failed to bid. Error: %s</string>
     <string name="commerce_out_bid">You were outbid.</string>
     <string name="commerce_send_chat_message_failed">Failed to send the message. Error: %s</string>
+    <string name="commerce_user_joined">%s joined 👋</string>
 
     <string-array name="commerce_encoder">
         <item>Hardware Encoder</item>

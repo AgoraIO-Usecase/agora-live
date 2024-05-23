@@ -1,10 +1,15 @@
 package io.agora.scene.eCommerce
 
+import android.animation.AnimatorInflater
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.*
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.util.Size
 import android.view.LayoutInflater
 import android.view.SurfaceView
@@ -863,6 +868,7 @@ class LiveDetailFragment : Fragment() {
             refreshTopUserCount(count)
         }
         mService.subscribeUserJoin(mRoomId) { id, name, _ ->
+            animateUserEntryExit(name, mBinding.root)
             insertMessageItem(
                 ShowMessage(
                     id,
@@ -1187,4 +1193,22 @@ class LiveDetailFragment : Fragment() {
             localVideoCanvas = null
         }
     }
+
+    private fun animateUserEntryExit(userName: String, view: View) {
+        val fadeIn = AnimatorInflater.loadAnimator(context, R.animator.commerce_slide_and_fade_in)
+        val fadeOut = AnimatorInflater.loadAnimator(context, R.animator.commerce_fade_out)
+
+        val spannableString = SpannableString(activity?.getString(R.string.commerce_user_joined, userName))
+        val styleSpan = StyleSpan(Typeface.BOLD)
+        spannableString.setSpan(styleSpan, 0, userName.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        mBinding.userView.text = spannableString
+        fadeIn.setTarget(mBinding.userView)
+        fadeIn.start()
+
+        view.postDelayed({
+            fadeOut.setTarget(mBinding.userView)
+            fadeOut.start()
+        }, 1500)
+    }
+
 }
