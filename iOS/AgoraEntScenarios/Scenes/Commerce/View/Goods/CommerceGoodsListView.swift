@@ -110,6 +110,17 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shoppingCell", for: indexPath) as! CommerceGoodsListViewCell
         let model = goodsList[indexPath.row]
         cell.setShoppingData(model: model, isBroadcaster: isBroadcaster)
+        func showAlert(title: String) {
+            let alertVC = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "OK", style: .default)
+            alertVC.addAction(okAction)
+            
+            let topVC = UIViewController.cl_topViewController()
+            if topVC is UIAlertController {
+                return
+            }
+            topVC?.present(alertVC, animated: false)
+        }
         cell.onClickStatusButtonClosure = { [weak self, weak cell] in
             cell?.toggleLoadingIndicator(true)
             self?.calcGoodsInfo(goods: model.goods, increase: false) { err in
@@ -118,10 +129,8 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
                 if let err = err {
                     title = "\("show_update_goods_fail_toast".commerce_localized) Error:\(err.code)"
                 }
-                let alertVC = UIAlertController(title: title, message: nil, preferredStyle: .alert)
-                let okAction = UIAlertAction(title: "OK", style: .default)
-                alertVC.addAction(okAction)
-                UIViewController.cl_topViewController()?.present(alertVC, animated: true)
+                
+                showAlert(title: title)
             }
         }
         
@@ -131,10 +140,7 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
                 title = "\("show_update_goods_fail_toast".commerce_localized) Error:\(err.code)"
             }
             
-            let alertVC = UIAlertController(title: title, message: nil, preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "OK", style: .default)
-            alertVC.addAction(okAction)
-            UIViewController.cl_topViewController()?.present(alertVC, animated: true)
+            showAlert(title: title)
         }
 
         cell.onClickNumberButtonClosure = { [weak self, weak cell] number, isIncrease in
