@@ -1,7 +1,9 @@
 package io.agora.scene.ktv.service
 
+import io.agora.rtc2.UserInfo
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.rtmsyncmanager.model.AUIUserInfo
+import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.ktv.KTVLogger
 import io.agora.scene.ktv.widget.song.SongItem
@@ -12,13 +14,6 @@ import io.agora.scene.ktv.widget.song.SongItem
  * @constructor Create empty Ktv service listener protocol
  */
 interface KtvServiceListenerProtocol {
-
-    /**
-     * On room did changed
-     *
-     * @param roomInfo
-     */
-    fun onRoomDidChanged(roomInfo: AUIRoomInfo) {}
 
     /**
      * On room expire
@@ -42,6 +37,13 @@ interface KtvServiceListenerProtocol {
     fun onUserListDidChanged(userList: List<AUIUserInfo>) {}
 
     /**
+     * On mic seat snapshot
+     *
+     * @param seatMap
+     */
+    fun onMicSeatSnapshot(seatMap:Map<Int,RoomMicSeatInfo>){}
+
+    /**
      * On current user audio mute
      *
      * @param userId
@@ -58,25 +60,20 @@ interface KtvServiceListenerProtocol {
     fun onUserVideoMute(userId: String, mute: Boolean) {}
 
     /**
-     * On seat map did changed
-     *
-     * @param setMap
-     */
-    fun onSeatMapDidChanged(setMap: Map<Int, RoomMicSeatInfo>) {}
-
-    /**
      * On user enter seat
      *
-     * @param enterSeatInfo
+     * @param seatIndex
+     * @param userInfo
      */
-    fun onUserEnterSeat(enterSeatInfo: RoomMicSeatInfo) {}
+    fun onUserEnterSeat(seatIndex: Int,userInfo: AUIUserThumbnailInfo) {}
 
     /**
-     * On remove seat
+     * On user leave seat
      *
-     * @param leaveSeatInfo
+     * @param seatIndex
+     * @param userInfo
      */
-    fun onUserLeaveSeat(leaveSeatInfo: RoomMicSeatInfo) {}
+    fun onUserLeaveSeat(seatIndex: Int,userInfo: AUIUserThumbnailInfo) {}
 
     /**
      * On update all choose songs
@@ -302,5 +299,37 @@ interface KTVServiceProtocol {
      */
     fun subscribeListener(listener: KtvServiceListenerProtocol)
 
+    /**
+     * Unsubscribe listener
+     *
+     * @param listener
+     */
     fun unsubscribeListener(listener: KtvServiceListenerProtocol)
+
+    /**
+     * Get seat map
+     *
+     * @return
+     */
+    fun getSeatMap():Map<Int,RoomMicSeatInfo>{
+        return emptyMap()
+    }
+
+    /**
+     * Get chorister list
+     *
+     * @return
+     */
+    fun getChoristerList():List<RoomChoristerInfo>{
+        return emptyList()
+    }
+
+    /**
+     * Get chosen song list
+     *
+     * @return
+     */
+    fun getChosenSongList(): List<RoomSongInfo>{
+        return emptyList()
+    }
 }

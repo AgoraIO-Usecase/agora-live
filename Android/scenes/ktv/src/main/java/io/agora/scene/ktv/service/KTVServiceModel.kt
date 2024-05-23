@@ -60,7 +60,7 @@ enum class RoomSeatCmd {
  * @constructor Create empty Room mic seat info
  */
 data class RoomMicSeatInfo constructor(
-    var user: AUIUserThumbnailInfo? = null,
+    var owner: AUIUserThumbnailInfo? = null,
     var seatIndex: Int = 0,
     var seatAudioMute: Boolean = false, // 麦位禁用声音，预留
     var seatVideoMute: Boolean = false, // 麦位禁用视频，预留
@@ -77,12 +77,12 @@ enum class RoomChoristerCmd {
  * Room chorister info
  *
  * @property userId
- * @property chorusSongNo
+ * @property songCode
  * @constructor Create empty Room chorister info
  */
 data class RoomChoristerInfo constructor(
     var userId: String = "",
-    var chorusSongNo: String = ""   //合唱者演唱歌曲  RoomSelSongModel.songCode + RoomSelSongModel.createAt
+    var songCode: String = ""   //合唱者演唱歌曲
 ) : Serializable
 
 
@@ -138,7 +138,7 @@ data class RoomSongInfo constructor(
     val singer: String, // 演唱者
     val imageUrl: String,// 歌曲封面
 
-    var orderUser: AUIUserThumbnailInfo? = null, // 点个人
+    var owner: AUIUserThumbnailInfo? = null, // 点歌人
 
     // 排序字段
     @PlayStatus

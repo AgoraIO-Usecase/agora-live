@@ -25,6 +25,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.card.MaterialCardView
 import io.agora.rtc2.Constants
 import io.agora.rtmsyncmanager.model.AUIUserInfo
+import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
 import io.agora.scene.base.GlideApp
 import io.agora.scene.base.bean.User
 import io.agora.scene.base.component.AgoraApplication
@@ -49,7 +50,6 @@ import io.agora.scene.ktv.live.fragmentdialog.UserLeaveSeatMenuDialog
 import io.agora.scene.ktv.live.listener.LrcActionListenerImpl
 import io.agora.scene.ktv.live.listener.SongActionListenerImpl
 import io.agora.scene.ktv.service.JoinRoomInfo
-import io.agora.scene.ktv.service.KTVServiceProtocol
 import io.agora.scene.ktv.service.KtvServiceListenerProtocol
 import io.agora.scene.ktv.service.RoomChoristerInfo
 import io.agora.scene.ktv.service.RoomMicSeatInfo
@@ -220,34 +220,18 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         }
 
         override fun onUserAudioMute(userId: String, mute: Boolean) {
-            val updateSeatInfo = roomLivingViewModel.getCacheSeat(userId) ?: return
+            val updateSeatInfo = roomLivingViewModel.getSeatByUserId(userId) ?: return
             mRoomSpeakerAdapter?.replace(updateSeatInfo.seatIndex, updateSeatInfo)
         }
 
         override fun onUserVideoMute(userId: String, mute: Boolean) {
-            val updateSeatInfo = roomLivingViewModel.getCacheSeat(userId) ?: return
+            val updateSeatInfo = roomLivingViewModel.getSeatByUserId(userId) ?: return
             mRoomSpeakerAdapter?.replace(updateSeatInfo.seatIndex, updateSeatInfo)
         }
 
-        override fun onSeatMapDidChanged(seatMap: Map<Int, RoomMicSeatInfo>) {
-            val seatList = mutableListOf<RoomMicSeatInfo>()
-            seatMap.values.forEach { roomMicSeatInfo ->
-                seatList.add(roomMicSeatInfo)
-            }
-            mRoomSpeakerAdapter?.resetAll(seatList.sortedBy { it.seatIndex })
-            val localSeat = seatList.firstOrNull { it.user?.userId == mUser.id.toString() } ?: return
-            if (localSeat.seatIndex >= 0) {
-                binding.groupBottomView.isVisible = true
-                binding.groupEmptyPrompt.isGone = true
-                val localUser = roomLivingViewModel.getUserInfoBySeat(localSeat)
-                binding.cbMic.setChecked(!localUser.muteAudio)
-                binding.cbVideo.setChecked(!localUser.muteVideo)
-                binding.lrcControlView.onSeat(true)
-            }
-        }
-
-        override fun onUserEnterSeat(enterSeatInfo: RoomMicSeatInfo) {
-            if (enterSeatInfo.user?.userId == mUser.id.toString() && enterSeatInfo.seatIndex >= 0) {
+        override fun onUserEnterSeat(seatIndex: Int, userInfo: AUIUserThumbnailInfo) {
+            val enterSeatInfo = roomLivingViewModel.getSeatByUserId(userInfo.userId) ?: return
+            if (enterSeatInfo.owner?.userId == mUser.id.toString() && enterSeatInfo.seatIndex >= 0) {
                 binding.groupBottomView.isVisible = true
                 binding.groupEmptyPrompt.isGone = true
                 val localUser = roomLivingViewModel.getUserInfoBySeat(enterSeatInfo)
@@ -258,35 +242,54 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             mRoomSpeakerAdapter?.replace(enterSeatInfo.seatIndex, enterSeatInfo)
         }
 
-        override fun onUserLeaveSeat(leaveSeatInfo: RoomMicSeatInfo) {
-            if (leaveSeatInfo.user?.userId == mUser.id.toString() && leaveSeatInfo.seatIndex >= 0) {
+        override fun onUserLeaveSeat(seatIndex: Int, userInfo: AUIUserThumbnailInfo) {
+            if (userInfo.userId == mUser.id.toString() && seatIndex >= 0) {
                 binding.groupBottomView.isVisible = false
                 binding.groupEmptyPrompt.isGone = false
                 binding.cbMic.setChecked(false)
                 binding.cbVideo.setChecked(false)
-                binding.lrcControlView.onSeat(true)
+                binding.lrcControlView.onSeat(false)
             }
-            mRoomSpeakerAdapter?.replace(leaveSeatInfo.seatIndex, leaveSeatInfo)
+            roomLivingViewModel.getSeatByIndex(seatIndex)?.let { leaveSeatInfo ->
+                mRoomSpeakerAdapter?.replace(seatIndex, leaveSeatInfo)
+            }
+        }
+
+        override fun onMicSeatSnapshot(seatMap: Map<Int, RoomMicSeatInfo>) {
+            val seatList = mutableListOf<RoomMicSeatInfo>()
+            seatMap.values.forEach { roomMicSeatInfo ->
+                seatList.add(roomMicSeatInfo)
+            }
+            mRoomSpeakerAdapter?.resetAll(seatList.sortedBy { it.seatIndex })
+
+            val localSeat =
+                seatList.firstOrNull { it.owner?.userId == mUser.id.toString() && it.seatIndex >= 0 } ?: return
+            binding.groupBottomView.isVisible = true
+            binding.groupEmptyPrompt.isGone = true
+            val localUser = roomLivingViewModel.getUserInfoBySeat(localSeat)
+            binding.cbMic.setChecked(!localUser.muteAudio)
+            binding.cbVideo.setChecked(!localUser.muteVideo)
+            binding.lrcControlView.onSeat(true)
         }
 
         override fun onChoristerDidEnter(chorister: RoomChoristerInfo) {
-            val updateSeatInfo = roomLivingViewModel.getCacheSeat(chorister.userId) ?: return
+            val updateSeatInfo = roomLivingViewModel.getSeatByUserId(chorister.userId) ?: return
             mRoomSpeakerAdapter?.replace(updateSeatInfo.seatIndex, updateSeatInfo)
         }
 
         override fun onChoristerDidLeave(chorister: RoomChoristerInfo) {
-            val updateSeatInfo = roomLivingViewModel.getCacheSeat(chorister.userId) ?: return
+            val updateSeatInfo = roomLivingViewModel.getSeatByUserId(chorister.userId) ?: return
             mRoomSpeakerAdapter?.replace(updateSeatInfo.seatIndex, updateSeatInfo)
         }
     }
 
     override fun initListener() {
-        KTVServiceProtocol.getImplInstance().subscribeListener(mServiceListenerProtocol)
+        roomLivingViewModel.subscribeServiceListener(mServiceListenerProtocol)
         binding.ivExit.setOnClickListener { view: View? -> showExitDialog() }
         binding.superLayout.setOnClickListener { view: View? -> setDarkStatusIcon(isBlackDarkStatus) }
         binding.cbMic.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
             if (!compoundButton.isPressed) return@setOnCheckedChangeListener
-            val seatLocal = roomLivingViewModel.getCacheSeat(mUser.id.toString())
+            val seatLocal = roomLivingViewModel.getSeatByUserId(mUser.id.toString())
             if (seatLocal != null) {
                 mRoomSpeakerAdapter?.getItem(seatLocal.seatIndex) ?: return@setOnCheckedChangeListener
                 if (b) {
@@ -326,7 +329,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             mRoomSpeakerAdapter?.let { roomSpeakerAdapter ->
                 for (i in 0 until roomSpeakerAdapter.itemCount) {
                     val seatInfo = roomSpeakerAdapter.getItem(i)
-                    if (seatInfo != null && seatInfo.user?.userId?.toIntOrNull() == volumeModel.uid) {
+                    if (seatInfo != null && seatInfo.owner?.userId?.toIntOrNull() == volumeModel.uid) {
                         val holder =
                             binding.rvUserMember.findViewHolderForAdapterPosition(i) as BindingViewHolder<KtvItemRoomSpeakerBinding>?
                                 ?: return@observe
@@ -558,7 +561,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
     private fun onMusicChanged(music: RoomSongInfo) {
         hideMusicSettingDialog()
         binding.lrcControlView.setMusic(music)
-        if (mUser.id.toString() == music.orderUser?.userId) {
+        if (mUser.id.toString() == music.owner?.userId) {
             binding.lrcControlView.setRole(LrcControlView.Role.Singer)
         } else {
             binding.lrcControlView.setRole(LrcControlView.Role.Listener)
@@ -738,9 +741,9 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
     }
 
     override fun onDestroy() {
+        roomLivingViewModel.unSubscribeServiceListener(mServiceListenerProtocol)
+        roomLivingViewModel.reset()
         super.onDestroy()
-        KTVServiceProtocol.getImplInstance().reset()
-        KTVServiceProtocol.getImplInstance().unsubscribeListener(mServiceListenerProtocol)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -754,22 +757,22 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
     private inner class SpeakerAdapter : BindingSingleAdapter<RoomMicSeatInfo, KtvItemRoomSpeakerBinding>() {
         override fun onBindViewHolder(holder: BindingViewHolder<KtvItemRoomSpeakerBinding>, position: Int) {
             val seatInfo = getItem(position) ?: return
-            val isOutSeat = TextUtils.isEmpty(seatInfo.user?.userId)
+            val isOutSeat = TextUtils.isEmpty(seatInfo.owner?.userId)
             setSeatView(holder.binding, seatInfo)
             holder.binding.root.setOnClickListener { v: View? ->
                 if (!isOutSeat) { // 下麦
                     if (roomLivingViewModel.isRoomOwner) { // 房主踢他人下麦
-                        if (seatInfo.user?.userId != mUser.id.toString()) {
+                        if (seatInfo.owner?.userId != mUser.id.toString()) {
                             showUserLeaveSeatMenuDialog(seatInfo)
                         }
-                    } else if (seatInfo.user?.userId == mUser.id.toString()) { // 自己下麦
+                    } else if (seatInfo.owner?.userId == mUser.id.toString()) { // 自己下麦
                         showUserLeaveSeatMenuDialog(seatInfo)
                     }
                 } else { // 上麦
-                    val seatLocal = roomLivingViewModel.getCacheSeat(mUser.id.toString())
+                    val seatLocal = roomLivingViewModel.getSeatByUserId(mUser.id.toString())
                     if (seatLocal == null || seatLocal.seatIndex < 0) {
                         toggleAudioRun = Runnable {
-                            roomLivingViewModel.haveSeat(position)
+                            roomLivingViewModel.enterSeat(position)
                             binding.cbMic.setChecked(false)
                             binding.cbVideo.setChecked(false)
                         }
@@ -783,7 +786,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             if (seatInfo.seatIndex < 0 || seatInfo.seatIndex >= itemCount) return
             val userInfo = roomLivingViewModel.getUserInfoBySeat(seatInfo)
 
-            val isOutSeat = TextUtils.isEmpty(seatInfo.user?.userId)
+            val isOutSeat = TextUtils.isEmpty(seatInfo.owner?.userId)
             if (isOutSeat) {
                 binding.vMicWave.endWave()
                 binding.vMicWave.visibility = View.INVISIBLE
@@ -828,13 +831,13 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                     }
                 }
                 val songModel = roomLivingViewModel.songPlayingLiveData.getValue()
-                val choristerInfo = roomLivingViewModel.getSongChorusInfo(userInfo.userId)
+                val choristerInfo = roomLivingViewModel.getSongChorusInfo(userInfo.userId, songModel?.songNo ?: "null")
                 if (songModel != null) {
-                    if (userInfo.userId == songModel.orderUser?.userId) {
+                    if (userInfo.userId == songModel.owner?.userId) {
                         binding.tvZC.setText(R.string.ktv_zc)
                         binding.tvHC.visibility = View.GONE
                         binding.tvZC.visibility = View.VISIBLE
-                    } else if (!choristerInfo?.userId.isNullOrEmpty() && choristerInfo?.userId == songModel.orderUser?.userId) {
+                    } else if (!choristerInfo?.userId.isNullOrEmpty() && choristerInfo?.userId == songModel.owner?.userId) {
                         binding.tvHC.setText(R.string.ktv_hc)
                         binding.tvZC.visibility = View.GONE
                         binding.tvHC.visibility = View.VISIBLE

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import com.google.gson.reflect.TypeToken
 import io.agora.rtmsyncmanager.ISceneResponse
 import io.agora.rtmsyncmanager.RoomExpirationPolicy
@@ -236,6 +237,7 @@ class KTVSyncManagerServiceImp constructor(
             KTVLogger.d(TAG, "initRtmSync, renewToken start")
             renewRtmToken { rtmToken, exception ->
                 rtmToken ?: return@renewRtmToken
+                mRTmToken = rtmToken
                 mSyncManager.login(rtmToken, completion = {
                     if (it == null) {
                         completion.invoke(null)
@@ -265,17 +267,23 @@ class KTVSyncManagerServiceImp constructor(
      */
     override fun getRoomList(completion: (list: List<AUIRoomInfo>) -> Unit) {
         KTVLogger.d(TAG, "getRoomList start")
-        mRoomService.getRoomList(mAppId, kSceneId, 0, 20) { uiException, ts, roomList ->
-            if (uiException == null) {
-                ts?.let { serverTs ->
-                    mDiffTs = SystemClock.elapsedRealtime() - serverTs
+        initRtmSync {
+            if (it != null) {
+                completion.invoke(emptyList())
+                return@initRtmSync
+            }
+            mRoomService.getRoomList(mAppId, kSceneId, 0, 20) { uiException, ts, roomList ->
+                if (uiException == null) {
+                    ts?.let { serverTs ->
+                        mDiffTs = serverTs - SystemClock.elapsedRealtime()
+                    }
+                    val newRoomList = roomList?.sortedBy { it.createTime } ?: emptyList()
+                    KTVLogger.d(TAG, "getRoomList success, roomCount:${newRoomList.size}")
+                    runOnMainThread { completion.invoke(newRoomList) }
+                } else {
+                    KTVLogger.e(TAG, "getRoomList error, $uiException")
+                    runOnMainThread { completion.invoke(emptyList()) }
                 }
-                val newRoomList = roomList?.sortedBy { it.createTime } ?: emptyList()
-                KTVLogger.d(TAG, "getRoomList success, roomCount:${newRoomList.size}")
-                runOnMainThread { completion.invoke(newRoomList) }
-            } else {
-                KTVLogger.e(TAG, "getRoomList error, $uiException")
-                runOnMainThread { completion.invoke(emptyList()) }
             }
         }
     }
@@ -290,15 +298,15 @@ class KTVSyncManagerServiceImp constructor(
     override fun createRoom(createInfo: CreateRoomInfo, completion: (error: Exception?, out: JoinRoomInfo?) -> Unit) {
         KTVLogger.d(TAG, "createRoom start")
         val roomId = (Random(mCurrentServerTs).nextInt(100000) + 1000000).toString()
-        renewRtcToken(roomId, callback = { rtcToken, rtcChorusToken, exception ->
-            if (rtcToken.isNullOrEmpty() || rtcChorusToken.isNullOrEmpty()) {
-                completion.invoke(exception, null)
-                return@renewRtcToken
+        initRtmSync {
+            if (it != null) {
+                completion.invoke(Exception("${it.message}(${it.code})"), null)
+                return@initRtmSync
             }
-            initRtmSync {
-                if (it != null) {
-                    completion.invoke(Exception("${it.message}(${it.code})"), null)
-                    return@initRtmSync
+            renewRtcToken(roomId, callback = { rtcToken, rtcChorusToken, exception ->
+                if (rtcToken.isNullOrEmpty() || rtcChorusToken.isNullOrEmpty()) {
+                    completion.invoke(exception, null)
+                    return@renewRtcToken
                 }
                 val roomInfo = AUIRoomInfo().apply {
                     this.roomId = roomId
@@ -317,7 +325,7 @@ class KTVSyncManagerServiceImp constructor(
                 scene.bindRespDelegate(this)
                 scene.userService.registerRespObserver(this)
                 initCollection(roomId)
-                mSeatInfoCollection?.subscribeWillMerge(this::onMetadataWillMerge)
+                mSeatInfoCollection?.subscribeWillMerge(this::onSeatWillMerge)
                 mSeatInfoCollection?.subscribeAttributesDidChanged(this::onAttributeChanged)
                 mChosenSongCollection?.subscribeAttributesDidChanged(this::onAttributeChanged)
                 mChoristerInfoCollection?.subscribeAttributesDidChanged(this::onAttributeChanged)
@@ -341,8 +349,8 @@ class KTVSyncManagerServiceImp constructor(
                         }
                     }
                 })
-            }
-        })
+            })
+        }
     }
 
     /**
@@ -368,21 +376,21 @@ class KTVSyncManagerServiceImp constructor(
             completion.invoke(Exception("password is wrong!"), null)
             return
         }
-        renewRtcToken(roomId, callback = { rtcToken, rtcChorusToken, exception ->
-            if (rtcToken.isNullOrEmpty() || rtcChorusToken.isNullOrEmpty()) {
-                completion.invoke(exception, null)
-                return@renewRtcToken
+        initRtmSync {
+            if (it != null) {
+                completion.invoke(Exception("${it.message}(${it.code})"), null)
+                return@initRtmSync
             }
-            initRtmSync {
-                if (it != null) {
-                    completion.invoke(Exception("${it.message}(${it.code})"), null)
-                    return@initRtmSync
+            renewRtcToken(roomId, callback = { rtcToken, rtcChorusToken, exception ->
+                if (rtcToken.isNullOrEmpty() || rtcChorusToken.isNullOrEmpty()) {
+                    completion.invoke(exception, null)
+                    return@renewRtcToken
                 }
                 val scene = mSyncManager.createScene(roomId)
                 scene.bindRespDelegate(this)
                 scene.userService.registerRespObserver(this)
                 initCollection(roomId)
-                mSeatInfoCollection?.subscribeWillMerge(this::onMetadataWillMerge)
+                mSeatInfoCollection?.subscribeWillMerge(this::onSeatWillMerge)
                 mSeatInfoCollection?.subscribeAttributesDidChanged(this::onAttributeChanged)
                 mChosenSongCollection?.subscribeAttributesDidChanged(this::onAttributeChanged)
                 mChoristerInfoCollection?.subscribeAttributesDidChanged(this::onAttributeChanged)
@@ -406,8 +414,10 @@ class KTVSyncManagerServiceImp constructor(
                         }
                     }
                 })
-            }
-        })
+            })
+
+        }
+
     }
 
     /**
@@ -423,57 +433,7 @@ class KTVSyncManagerServiceImp constructor(
         mSeatInfoCollection?.subscribeAttributesDidChanged(null)
         mChosenSongCollection?.subscribeAttributesDidChanged(null)
         mChoristerInfoCollection?.subscribeAttributesDidChanged(null)
-        val isOwner = AUIRoomContext.shared().isRoomOwner(mCurRoomNo)
         mRoomService.leaveRoom(mAppId, kSceneId, mCurRoomNo)
-        val roomId = mCurRoomNo
-        val currentUserId = mCurrentUser.userId
-        if (!isOwner) {
-            // 如果上麦了要下麦，并清空麦位信息, cmd 不需要填
-            val seatIndex = mSeatMap.values.firstOrNull { it.user?.userId == currentUserId }?.seatIndex
-            if (seatIndex != null) {
-                mSeatInfoCollection?.mergeMetaData(
-                    valueCmd = null,
-                    value = mapOf(
-                        seatIndex.toString() to mapOf(
-                            "user" to GsonTools.beanToMap(AUIUserThumbnailInfo())
-                        )
-                    ),
-                    callback = {
-                        if (it == null) {
-                            KTVLogger.d(
-                                TAG, "leaveRoom-->removeSeatByIndex success roomId:$roomId, index:$seatIndex"
-                            )
-                        } else {
-                            KTVLogger.e(
-                                TAG,
-                                "leaveRoom-->removeSeatByIndex failed roomId:$roomId, index:$seatIndex, $it"
-                            )
-                        }
-                    })
-            }
-            // 删除点歌信息， cmd 不需要填
-            mChosenSongCollection?.removeMetaData(
-                valueCmd = null,
-                filter = listOf(mapOf("userNo" to currentUserId)),
-                callback = {
-                    if (it == null) {
-                        KTVLogger.d(TAG, "leaveRoom-->removeSongByUid success roomId:$roomId, uid:$currentUserId")
-                    } else {
-                        KTVLogger.e(TAG, "leaveRoom-->removeSongByUid failed roomId:$roomId, uid:$currentUserId $it")
-                    }
-                })
-            // 离开合唱， cmd 不需要填
-            mChoristerInfoCollection?.removeMetaData(
-                valueCmd = null,
-                filter = listOf(mapOf("userId" to currentUserId)),
-                callback = {
-                    if (it == null) {
-                        KTVLogger.d(TAG, "leaveRoom-->leaveChorus success roomId:$roomId, useId:$currentUserId")
-                    } else {
-                        KTVLogger.e(TAG, "leaveRoom-->leaveChorus failed roomId:$roomId,useId:$currentUserId, $it")
-                    }
-                })
-        }
         mUserList.clear()
         mSeatMap.clear()
         mSongChosenList.clear()
@@ -541,7 +501,7 @@ class KTVSyncManagerServiceImp constructor(
      * @receiver
      */
     override fun enterSeat(seatIndex: Int?, completion: (error: Exception?) -> Unit) {
-        val seatInfo = mSeatMap.values.firstOrNull { it.user?.userId == mCurrentUser.userId }
+        val seatInfo = mSeatMap.values.firstOrNull { it.owner?.userId == mCurrentUser.userId }
         if (seatInfo != null) {
             completion.invoke(Exception("already on seat"))
             return
@@ -551,7 +511,7 @@ class KTVSyncManagerServiceImp constructor(
             val list = mutableListOf(0, 1, 2, 3, 4, 5, 6, 7)
             mSeatMap.values.forEach { seat ->
                 list.removeIf { it == seat.seatIndex }
-                if (seat.user?.userId == mCurrentUser.userId) {
+                if (seat.owner?.userId == mCurrentUser.userId) {
                     completion.invoke(Exception("already on seat"))
                     return
                 }
@@ -569,7 +529,7 @@ class KTVSyncManagerServiceImp constructor(
                 valueCmd = RoomSeatCmd.enterSeatCmd.name,
                 value = mapOf(
                     seatIndex.toString() to mapOf(
-                        "user" to GsonTools.beanToMap(AUIRoomContext.shared().currentUserInfo)
+                        "owner" to GsonTools.beanToMap(AUIRoomContext.shared().currentUserInfo)
                     )
                 ),
                 callback = { collectionException ->
@@ -596,7 +556,7 @@ class KTVSyncManagerServiceImp constructor(
      * @receiver
      */
     override fun outSeat(seatIndex: Int, completion: (error: Exception?) -> Unit) {
-        val targetSeatInfo = mSeatMap.values.find { it.user?.userId == mCurrentUser.userId }
+        val targetSeatInfo = mSeatMap.values.find { it.owner?.userId == mCurrentUser.userId }
         if (targetSeatInfo == null) {
             completion.invoke(Exception("You are not on seat"))
         } else {
@@ -604,7 +564,7 @@ class KTVSyncManagerServiceImp constructor(
                 valueCmd = RoomSeatCmd.leaveSeatCmd.name,
                 value = mapOf(
                     seatIndex.toString() to mapOf(
-                        "user" to GsonTools.beanToMap(AUIUserThumbnailInfo())
+                        "owner" to GsonTools.beanToMap(AUIUserThumbnailInfo())
                     )
                 ),
                 callback = { collectionException ->
@@ -705,7 +665,7 @@ class KTVSyncManagerServiceImp constructor(
                     mSongChosenList.addAll(it)
                 }
                 runOnMainThread {
-                    completion.invoke(null, out)
+                    completion.invoke(null, mSongChosenList)
                 }
 
             } catch (e: Exception) {
@@ -726,7 +686,7 @@ class KTVSyncManagerServiceImp constructor(
      */
     override fun chooseSong(songInfo: RoomSongInfo, completion: (error: Exception?) -> Unit) {
         val chosenSong = songInfo.copy(
-            orderUser = mCurrentUser,
+            owner = mCurrentUser,
             status = PlayStatus.idle,
             createAt = mCurrentServerTs,
             pinAt = 0.0
@@ -779,7 +739,7 @@ class KTVSyncManagerServiceImp constructor(
             valueCmd = RoomSongCmd.pingSongCmd.name,
             value = mapOf("pinAt" to newSong.pinAt),
             filter = listOf(
-                mapOf("songNo" to songCode, "userNo" to mCurrentUser.userId)
+                mapOf("songNo" to songCode, "userId" to mCurrentUser.userId)
             ),
             callback = { collectionException ->
                 if (collectionException == null) {
@@ -822,7 +782,7 @@ class KTVSyncManagerServiceImp constructor(
             valueCmd = RoomSongCmd.updatePlayStatusCmd.name,
             value = mapOf("status" to newSong.status),
             filter = listOf(
-                mapOf("songNo" to songCode, "userNo" to mCurrentUser.userId)
+                mapOf("songNo" to songCode, "userId" to mCurrentUser.userId)
             ),
             callback = { collectionException ->
                 if (collectionException == null) {
@@ -974,7 +934,7 @@ class KTVSyncManagerServiceImp constructor(
             listener.onChoristerListDidChanged(mChoristerList)
         }
         if (mSeatMap.isNotEmpty()) {
-            listener.onSeatMapDidChanged(mSeatMap)
+            listener.onMicSeatSnapshot(mSeatMap)
         }
     }
 
@@ -985,6 +945,18 @@ class KTVSyncManagerServiceImp constructor(
      */
     override fun unsubscribeListener(listener: KtvServiceListenerProtocol) {
         mObservableHelper.unSubscribeEvent(listener)
+    }
+
+    override fun getSeatMap(): Map<Int, RoomMicSeatInfo> {
+        return mSeatMap
+    }
+
+    override fun getChoristerList(): List<RoomChoristerInfo> {
+        return mChoristerList
+    }
+
+    override fun getChosenSongList(): List<RoomSongInfo> {
+        return mSongChosenList
     }
 
     /**
@@ -999,10 +971,10 @@ class KTVSyncManagerServiceImp constructor(
             val seat = RoomMicSeatInfo().apply {
                 seatIndex = i
                 if (i == 0) {
-                    user = AUIRoomContext.shared().currentUserInfo
+                    owner = AUIRoomContext.shared().currentUserInfo
                     seatStatus = RoomMicSeatStatus.used
                 } else {
-                    user = AUIUserThumbnailInfo()
+                    owner = AUIUserThumbnailInfo()
                 }
             }
             seatMap[i.toString()] = seat
@@ -1133,6 +1105,9 @@ class KTVSyncManagerServiceImp constructor(
         if (mCurRoomNo != roomId) {
             return
         }
+        if (AUIRoomContext.shared().isRoomOwner(roomId)) {
+            innerCleanUserInfo(userInfo.userId)
+        }
         mUserList.removeIf { it.userId == userInfo.userId }
         mObservableHelper.notifyEventHandlers { delegate ->
             delegate.onUserListDidChanged(mUserList)
@@ -1148,6 +1123,54 @@ class KTVSyncManagerServiceImp constructor(
                 }
             })
         }
+    }
+
+    /**
+     * Inner clean user info
+     *
+     * @param userId
+     */
+    private fun innerCleanUserInfo(userId: String) {
+        val seatIndex = mSeatMap.values.firstOrNull { it.owner?.userId == userId }?.seatIndex
+        if (seatIndex != null) {
+            // 移除麦位信息
+            mSeatInfoCollection?.mergeMetaData(
+                valueCmd = RoomSeatCmd.leaveSeatCmd.name,
+                value = mapOf(
+                    seatIndex.toString() to mapOf(
+                        "owner" to GsonTools.beanToMap(AUIUserThumbnailInfo())
+                    )
+                ),
+                callback = {
+                    if (it == null) {
+                        KTVLogger.d(TAG, "innerCleanUserInfo-->removeSeat success, index:$seatIndex")
+                    } else {
+                        KTVLogger.e(TAG, "innerCleanUserInfo-->removeSeat failed, index:$seatIndex, $it")
+                    }
+                })
+        }
+        // 移除点歌信息，
+        mChosenSongCollection?.removeMetaData(
+            valueCmd = RoomSongCmd.removeSongCmd.name,
+            filter = listOf(mapOf("owner" to mapOf("userId" to userId))),
+            callback = {
+                if (it == null) {
+                    KTVLogger.d(TAG, "innerCleanUserInfo-->removeSongByUid success, uid:$userId")
+                } else {
+                    KTVLogger.e(TAG, "innerCleanUserInfo-->removeSongByUid failed, uid:$userId $it")
+                }
+            })
+        // 移除合唱信息
+        mChoristerInfoCollection?.removeMetaData(
+            valueCmd = null,
+            filter = listOf(mapOf("userId" to userId)),
+            callback = {
+                if (it == null) {
+                    KTVLogger.d(TAG, "innerCleanUserInfo-->leaveChorus success, useId:$userId")
+                } else {
+                    KTVLogger.e(TAG, "innerCleanUserInfo-->leaveChorus failed, useId:$userId, $it")
+                }
+            })
     }
 
     /**
@@ -1203,28 +1226,36 @@ class KTVSyncManagerServiceImp constructor(
      */
     private fun onAttributeChanged(channelId: String, key: String, value: AUIAttributesModel) {
         KTVLogger.d(
-            TAG, "onAttributeChanged, channelId:$channelId, key:$key, list:${value.getList()}, map:${value.getMap()}"
+            TAG,
+            "onAttributeChanged, channelId:$channelId, key:$key, list:${value.getList()}, map:${value.getMap()}"
         )
         when (key) {
             kCollectionSeatInfo -> { // 麦位信息
-                val seats = value.getMap() ?: GsonTools.toBean(GsonTools.beanToString(value), object : TypeToken<Map<String, Any>>() {}.type)
+                val seats = value.getMap() ?: GsonTools.toBean(
+                    GsonTools.beanToString(value),
+                    object : TypeToken<Map<String, Any>>() {}.type
+                )
                 seats?.values?.forEach {
-                    val newSeatInfo = GsonTools.toBean(GsonTools.beanToString(it), RoomMicSeatInfo::class.java) ?: return
+                    val newSeatInfo =
+                        GsonTools.toBean(GsonTools.beanToString(it), RoomMicSeatInfo::class.java) ?: return
                     val index = newSeatInfo.seatIndex
                     val oldSeatInfo = mSeatMap[index]
                     mSeatMap[index] = newSeatInfo
-                    val newSeatUserId = newSeatInfo.user?.userId ?: ""
-                    val oldSeatUserId = oldSeatInfo?.user?.userId ?: ""
+                    val newSeatUserId = newSeatInfo.owner?.userId ?: ""
+                    val oldSeatUserId = oldSeatInfo?.owner?.userId ?: ""
                     if (oldSeatUserId.isEmpty() && newSeatUserId.isNotEmpty()) {
                         KTVLogger.d(TAG, "onUserEnterSeat: $newSeatInfo")
+                        val newUser = newSeatInfo.owner ?: return
                         mObservableHelper.notifyEventHandlers { delegate ->
-                            delegate.onUserEnterSeat(newSeatInfo)
+                            delegate.onUserEnterSeat(index, newUser)
                         }
                     }
                     if (oldSeatUserId.isNotEmpty() && newSeatUserId.isEmpty()) {
                         KTVLogger.d(TAG, "onUserLeaveSeat: $oldSeatInfo")
+                        val originUser = oldSeatInfo?.owner ?: return
+
                         mObservableHelper.notifyEventHandlers { delegate ->
-                            delegate.onUserLeaveSeat(newSeatInfo!!)
+                            delegate.onUserLeaveSeat(index, originUser)
                         }
                     }
                 }
@@ -1278,45 +1309,74 @@ class KTVSyncManagerServiceImp constructor(
         }
     }
 
-    private fun onMetadataWillMerge(
+    private fun onSeatWillMerge(
         publisherId: String, valueCmd: String?, newValue: Map<String, Any>, oldValue: Map<String, Any>
     ): AUICollectionException? {
+        Log.d(TAG, "onMetadataWillMerge $valueCmd $newValue $oldValue")
+
         val seatInfoPair = newValue.toList()[0]
         val seatIndex = seatInfoPair.first.toInt()
+        val seatInfoMap = seatInfoPair.second as? Map<*, *>
+        val userId = (seatInfoMap?.get("owner") as? Map<*, *>)?.get("userId") as? String
         when (valueCmd) {
             RoomSeatCmd.enterSeatCmd.name -> {
-
+                if (mSeatMap.values.any { it.owner?.userId == userId }) {
+                    return AUICollectionException.ErrorCode.unknown.toException(msg = "user already in seat")
+                }
             }
 
             RoomSeatCmd.leaveSeatCmd.name -> {
                 if (seatIndex == 0) {
-                    return AUICollectionException.ErrorCode.unknown.toException()
+                    return AUICollectionException.ErrorCode.unknown.toException(msg = "can't leave seat 0")
                 }
-
-                // 离开麦位后清空歌曲
+                if (mSeatMap[seatIndex]?.owner?.userId != publisherId ||
+                    AUIRoomContext.shared().isRoomOwner(mCurRoomNo, publisherId)
+                ) {
+                    return AUICollectionException.ErrorCode.unknown.toException(msg = "seat not mine")
+                }
+                innerOnSeatWillLeave(publisherId)
+                // 离开麦位后清空该麦位用户已点歌曲
                 mChosenSongCollection?.removeMetaData(
                     valueCmd = RoomSongCmd.removeSongCmd.name,
-                    filter = listOf(mapOf("userNo" to mCurrentUser.userId)),
-                    callback = {
-                        if (it == null) {
-                            KTVLogger.d(TAG, "outSeat removeSongWithMineOrder success roomId:$mCurRoomNo")
-                        } else {
-                            KTVLogger.e(TAG, "outSeat removeSongWithMineOrder failed roomId:$mCurRoomNo, $it")
-                        }
-                    })
-                //  离开麦位后移除合唱
+                    filter = listOf(mapOf("userId" to publisherId)),
+                    callback = {})
+                //  离开麦位后移除该用户合唱
                 mChoristerInfoCollection?.removeMetaData(
                     valueCmd = RoomChoristerCmd.leaveChorusCmd.name,
-                    filter = listOf(mapOf("userNo" to mCurrentUser.userId)),
-                    callback = {
-                        if (it == null) {
-                            KTVLogger.d(TAG, "outSeat removeChoristerWithMine success roomId:$mCurRoomNo")
-                        } else {
-                            KTVLogger.e(TAG, "outSeat removeChoristerWithMine failed roomId:$mCurRoomNo, $it")
-                        }
-                    })
+                    filter = listOf(mapOf("userId" to publisherId)),
+                    callback = {})
             }
         }
         return null
+    }
+
+    /**
+     * Inner on seat will leave
+     *
+     * @param userId
+     */
+    private fun innerOnSeatWillLeave(userId: String) {
+        // 移除点歌信息，
+        mChosenSongCollection?.removeMetaData(
+            valueCmd = RoomSongCmd.removeSongCmd.name,
+            filter = listOf(mapOf("owner" to mapOf("userId" to userId))),
+            callback = {
+                if (it == null) {
+                    KTVLogger.d(TAG, "innerOnSeatWillLeave-->removeSongByUid success, uid:$userId")
+                } else {
+                    KTVLogger.e(TAG, "innerOnSeatWillLeave-->removeSongByUid failed, uid:$userId $it")
+                }
+            })
+        // 移除合唱信息
+        mChoristerInfoCollection?.removeMetaData(
+            valueCmd = null,
+            filter = listOf(mapOf("userId" to userId)),
+            callback = {
+                if (it == null) {
+                    KTVLogger.d(TAG, "innerOnSeatWillLeave-->removeChorusByUid success, useId:$userId")
+                } else {
+                    KTVLogger.e(TAG, "innerOnSeatWillLeave-->removeChorusByUid failed, useId:$userId, $it")
+                }
+            })
     }
 }

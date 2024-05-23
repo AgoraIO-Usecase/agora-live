@@ -173,9 +173,9 @@ public class SongActionListenerImpl implements OnSongActionListener {
             for (RoomSongInfo song : data) {
                 String userName = "";
                 String chooserUserId = "" ;
-                if (song.getOrderUser()!=null){
-                    userName = song.getOrderUser().userName;
-                    chooserUserId = song.getOrderUser().userId;
+                if (song.getOwner()!=null){
+                    userName = song.getOwner().userName;
+                    chooserUserId = song.getOwner().userId;
                 }
                 SongItem item = new SongItem(
                         song.getSongNo(),
