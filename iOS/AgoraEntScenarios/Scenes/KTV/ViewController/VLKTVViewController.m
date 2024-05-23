@@ -463,6 +463,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 - (void)popUpChooseSongView:(BOOL)ifChorus {
     LSTPopView* popChooseSongView =
     [LSTPopView popUpChooseSongViewWithParentView:self.view
+                                          isOwner:[self.roomModel.creatorNo isEqualToString:VLUserCenter.user.userNo]
                                          isChorus:ifChorus
                                   chooseSongArray:self.selSongsArray
                                        withRoomNo:self.roomModel.roomNo
@@ -2417,7 +2418,8 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     _selSongsArray = [NSMutableArray arrayWithArray:selSongsArray];
     self.chorusNum = [self getChorusNumWithSeatArray:self.seatsArray];
     if (self.chooseSongView) {
-        self.chooseSongView.selSongsArray = _selSongsArray; //刷新已点歌曲UI
+        BOOL isOwner = [self.roomModel.creatorNo isEqualToString:VLUserCenter.user.id];
+        [self.chooseSongView setSelSongsArray:_selSongsArray isOwner:isOwner]; //刷新已点歌曲UI
     }
     
     //    if([self isRoomOwner]){

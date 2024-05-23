@@ -48,7 +48,7 @@ private enum AUIMusicCmd: String {
     
     private var roomList: [AUIRoomInfo]?
 //    private var userList: [VLLoginModel] = .init()
-    private var seatMap: [Int: VLRoomSeatModel] = [:]
+    private var seatMap: [String: VLRoomSeatModel] = [:]
     private var songList: [VLRoomSelSongModel] = .init()
     
     private weak var delegate: KTVServiceListenerProtocol?
@@ -242,7 +242,7 @@ private enum AUIMusicCmd: String {
             return NSError.auiError("remove music cmd incorrect")
         }
         
-        let seatCollection = getCurrentSongCollection(with: roomNo)
+        let seatCollection = getCurrentSeatCollection(with: roomNo)
         seatCollection?.subscribeAttributesDidChanged(callback: {[weak self] str1, str2, model in
             guard let self = self, let map = model.getMap() as? [String: [String: Any]] else { return }
             var seatMap: [String: VLRoomSeatModel] = [:]
@@ -257,9 +257,9 @@ private enum AUIMusicCmd: String {
             
             seatMap.values.forEach { micSeat in
                 let index = micSeat.seatIndex
-                let origMicSeat = self.seatMap[index]
+                let origMicSeat = self.seatMap["\(index)"]
                 
-                self.seatMap[index] = micSeat
+                self.seatMap["\(index)"] = micSeat
                 if let origMicSeat = origMicSeat,
                    let userNo = origMicSeat.userNo, userNo.count > 0,
                    micSeat.userNo != userNo {
@@ -329,6 +329,8 @@ private enum AUIMusicCmd: String {
                 break
             case .chorusCmd:
                 break
+            case .muteVideoCmd:
+                break
             }
             
             return nil
@@ -397,7 +399,6 @@ extension KTVRTMManagerServiceImpl {
         
         _showLoadingView()
         self.roomNo = roomModel.roomId
-        let date = Date()
         func create(roomInfo: AUIRoomInfo) {
             _subscribeAll()
             roomService.createRoom(room: roomInfo) { [weak self] err, room in
@@ -411,6 +412,7 @@ extension KTVRTMManagerServiceImpl {
                 self.roomList?.append(room!)
                 _hideLoadingView()
                 completion(nil, room!)
+                
             }
         }
 
@@ -652,6 +654,9 @@ extension KTVRTMManagerServiceImpl {
 extension KTVRTMManagerServiceImpl {
     func subscribe(listener: KTVServiceListenerProtocol?) {
         self.delegate = listener
+        if self.seatMap.isEmpty == false {
+            self.delegate?.onMicSeatSnapshot(seat: self.seatMap)
+        }
     }
     
     public func subscribeRoomWillExpire(changedBlock: @escaping () -> Void) {

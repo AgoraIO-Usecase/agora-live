@@ -21,6 +21,9 @@
 @property (nonatomic, copy) NSString *roomNo;
 
 @property (nonatomic, assign) BOOL ifChorus;
+@property (nonatomic, strong) NSArray *selSongsArray;
+
+@property (nonatomic, assign) BOOL isOwner;
 
 @end
 
@@ -74,8 +77,9 @@
 }
 
 #pragma mark --setter,getter
-- (void)setSelSongsArray:(NSArray *)selSongsArray {
-    _selSongsArray = selSongsArray;
+- (void)setSelSongsArray:(NSArray *)selSongsArray isOwner:(BOOL)isOwner {
+    self.selSongsArray = selSongsArray;
+    self.isOwner = isOwner;
     if (selSongsArray.count > 0) {
         self.choosedCountLabel.hidden = NO;
     }else{
@@ -83,7 +87,7 @@
     }
 
     self.selsectSongView.selSongsArray = selSongsArray;
-    self.choosedSongView.selSongsArray = selSongsArray;
+    [self.choosedSongView setSelSongsArray:selSongsArray isOwner:isOwner];
 
     self.choosedCountLabel.text = [NSString stringWithFormat:@"%d",(int)selSongsArray.count];
 }
