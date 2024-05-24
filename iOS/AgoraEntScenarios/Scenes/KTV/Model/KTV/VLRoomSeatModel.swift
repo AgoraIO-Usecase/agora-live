@@ -11,17 +11,17 @@ class VLRoomSeatModel: VLBaseModel {
     /// 是否是房主
     @objc var isMaster: Bool = false
     /// 上麦用户头像
-    @objc var headUrl: String?
+    @objc var headUrl: String = ""
     /// 上麦用户uid
-    @objc var userNo: String?
+    @objc var userNo: String = ""
     // rtc uid(rtc join with uid)
-    @objc var rtcUid: String?
+    @objc var rtcUid: String = ""
     /// 昵称
-    @objc var name: String?
+    @objc var name: String = ""
     /// 在哪个座位
     @objc var seatIndex: Int = 0
     /// 合唱歌曲code
-    @objc var chorusSongCode: String?
+    @objc var chorusSongCode: String = ""
     /// 是否自己静音
     @objc var isAudioMuted: Int = 0
     /// 是否开启视频
@@ -43,14 +43,14 @@ class VLRoomSeatModel: VLBaseModel {
         self.headUrl = seatInfo?.headUrl ?? ""
         self.name = seatInfo?.name ?? ""
         self.userNo = seatInfo?.userNo ?? ""
-        self.rtcUid = seatInfo?.rtcUid
+        self.rtcUid = seatInfo?.rtcUid ?? ""
         self.isAudioMuted = seatInfo?.isAudioMuted ?? 0
         self.isVideoMuted = seatInfo?.isVideoMuted ?? 0
-        self.chorusSongCode = seatInfo?.chorusSongCode
+        self.chorusSongCode = seatInfo?.chorusSongCode ?? ""
     }
     
     override var description: String {
-        return "i: \(seatIndex) - userNo: \(userNo ?? "null") - isAudioMuted: \(isAudioMuted)"
+        return "i: \(seatIndex) - userNo: \(userNo) - isAudioMuted: \(isAudioMuted)"
     }
 
 }

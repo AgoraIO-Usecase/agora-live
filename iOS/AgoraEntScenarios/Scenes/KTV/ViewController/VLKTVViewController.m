@@ -2656,6 +2656,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         [setsArray addObject:model];
     }
     [self setSeatsArray:setsArray];
+    [self.roomPersonView reloadData];
 }
 
 - (void)onRoomDidDestroy {
