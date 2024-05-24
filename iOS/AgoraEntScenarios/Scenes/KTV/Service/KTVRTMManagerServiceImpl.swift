@@ -252,44 +252,39 @@ private enum AUIMusicCmd: String {
                 
             }
             if self.seatMap.isEmpty {
+                self.seatMap = seatMap
                 self.delegate?.onMicSeatSnapshot(seat: seatMap)
-            }
-            
-            seatMap.values.forEach { micSeat in
-                let index = micSeat.seatIndex
-                let origMicSeat = self.seatMap["\(index)"]
-                
-                self.seatMap["\(index)"] = micSeat
-                if let origMicSeat = origMicSeat,
-                   let userNo = origMicSeat.userNo, userNo.count > 0,
-                   micSeat.userNo != userNo {
-//                    delegate.onAnchorLeaveSeat(seatIndex: index, user: origUser)
-                    self.delegate?.onAnchorLeaveSeat(seat: micSeat)
-                }
-                
-                if let userNo = micSeat.userNo, userNo.count > 0, origMicSeat?.userNo != userNo {
-//                    delegate.onAnchorEnterSeat(seatIndex: index, user: user)
-//                    self.seatListDidChanged?(.created, micSeat)
-                    self.delegate?.onAnchorEnterSeat(seat: micSeat)
-                }
-                
-                if origMicSeat?.isAudioMuted != micSeat.isAudioMuted {
-//                    delegate.onSeatAudioMute(seatIndex: index, isMute: micSeat.muteAudio)
-                    self.delegate?.onSeatAudioMute(seat: micSeat)
-                }
-                
-                if origMicSeat?.isVideoMuted != micSeat.isVideoMuted {
-//                    delegate.onSeatVideoMute(seatIndex: index, isMute: micSeat.muteVideo)
-                    self.delegate?.onSeatVideoMute(seat: micSeat)
+            } else {
+                seatMap.values.forEach { micSeat in
+                    let index = micSeat.seatIndex
+                    let origMicSeat = self.seatMap["\(index)"]
+                    
+                    self.seatMap["\(index)"] = micSeat
+                    if let origMicSeat = origMicSeat,
+                       origMicSeat.userNo.count > 0,
+                       micSeat.userNo != origMicSeat.userNo {
+                        self.delegate?.onAnchorLeaveSeat(seat: micSeat)
+                    }
+                    
+                    if micSeat.userNo.count > 0, origMicSeat?.userNo != micSeat.userNo {
+                        self.delegate?.onAnchorEnterSeat(seat: micSeat)
+                    }
+                    
+                    if origMicSeat?.isAudioMuted != micSeat.isAudioMuted {
+                        self.delegate?.onSeatAudioMute(seat: micSeat)
+                    }
+                    
+                    if origMicSeat?.isVideoMuted != micSeat.isVideoMuted {
+                        self.delegate?.onSeatVideoMute(seat: micSeat)
+                    }
                 }
             }
         })
         
         seatCollection?.subscribeWillMerge {[weak self] publisherId, dataCmd, updateMap, currentMap in
             guard let dataCmd = AUIMicSeatCmd(rawValue: dataCmd ?? ""),
-                  updateMap.keys.count == 1,
-                  let seatIndex = Int(updateMap.keys.first ?? ""),
-                  let value = updateMap["\(seatIndex)"] else {
+                  let seatIndex = updateMap.keys.first,
+                  let value = updateMap[seatIndex] else {
                 return AUICommonError.unknown.toNSError()
             }
             
@@ -433,6 +428,7 @@ extension KTVRTMManagerServiceImpl {
         _showLoadingView()
         let date = Date()
         let enterScene: () -> Void = {[weak self] in
+            self?.roomNo = roomId
             self?._subscribeAll()
             self?.roomService.enterRoom(roomId: roomId) {[weak self] err in
                 guard let self = self else { return }
@@ -443,7 +439,6 @@ extension KTVRTMManagerServiceImpl {
                     completion(err)
                     return
                 }
-                self.roomNo = roomId
                 _hideLoadingView()
                 completion(nil)
             }
@@ -528,6 +523,7 @@ extension KTVRTMManagerServiceImpl {
 //only for seat
 extension KTVRTMManagerServiceImpl {
     func enterSeat(seatIndex: NSNumber?, completion: @escaping (Error?) -> Void) {
+        let seatNo = Int(seatIndex?.intValue ?? 0)
         let seatInfo = _getUserSeatInfo(seatIndex: Int(seatIndex?.intValue ?? 0))
         _addSeatInfo(seatInfo: seatInfo,
                      finished: completion)
@@ -917,7 +913,7 @@ extension KTVRTMManagerServiceImpl {
             seatInfo.chorusSongCode = m.chorusSongCode
         } else {
             /// 是否自己静音
-            seatInfo.isAudioMuted = 1
+            seatInfo.isAudioMuted = 0
             /// 是否开启视频
             seatInfo.isVideoMuted = 1
 
@@ -943,7 +939,9 @@ extension KTVRTMManagerServiceImpl {
         model.seatIndex = seatInfo.seatIndex
         var params = mapConvert(model: model)
         params["seatIndex"] = nil
-        collection?.mergeMetaData(valueCmd: AUIMicSeatCmd.leaveSeatCmd.rawValue, value: params, callback: { err in
+        collection?.mergeMetaData(valueCmd: AUIMicSeatCmd.leaveSeatCmd.rawValue, 
+                                  value: ["\(seatInfo.seatIndex)": params],
+                                  callback: { err in
             finished(err)
         })
     }
@@ -962,7 +960,9 @@ extension KTVRTMManagerServiceImpl {
         var params = mapConvert(model: seatInfo)
         params["seatIndex"] = nil
         let collection = getCurrentSeatCollection(with: channelName)
-        collection?.mergeMetaData(valueCmd: AUIMicSeatCmd.enterSeatCmd.rawValue, value: params, callback: { err in
+        collection?.mergeMetaData(valueCmd: AUIMicSeatCmd.enterSeatCmd.rawValue, 
+                                  value: ["\(seatInfo.seatIndex)": params],
+                                  callback: { err in
             finished(err)
         })
     }

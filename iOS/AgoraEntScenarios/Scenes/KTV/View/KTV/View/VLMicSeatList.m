@@ -62,7 +62,7 @@
     [self.personCollectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:seatIndex inSection:0]]];
 }
 
-- (void)updateIfNeeded {
+- (void)reloadData {
     [self.personCollectionView reloadData];
 }
 
@@ -101,7 +101,7 @@
     if (seatModel.headUrl.length > 0) {
         cell.avatarImgView.image = [UIImage imageNamed:seatModel.headUrl];
     }else{
-        cell.avatarImgView.image = [UIImage ktv_sceneImageWithName:@"ktv_emptySeat_icon" ];
+        cell.avatarImgView.image = [UIImage ktv_sceneImageWithName:@"ktv_emptySeat_icon"];
         cell.volume = 0;
     }
     cell.singingBtn.hidden = !seatModel.isOwner;
@@ -125,7 +125,7 @@
     }
     
     //only display when rtcUid exists (on mic seat), and video is not muted
-    cell.videoView.hidden = !(seatModel.rtcUid != nil && !seatModel.isVideoMuted);
+    cell.videoView.hidden = !([seatModel.rtcUid length] > 0 && !seatModel.isVideoMuted);
     //avatar or camera will only be displayed 1 at atime
     cell.avatarImgView.hidden = !cell.videoView.isHidden;
     if (!seatModel.isVideoMuted && seatModel.rtcUid != nil) { //开启了视频
