@@ -555,7 +555,7 @@ class KTVSyncManagerServiceImp constructor(
      * @param completion
      * @receiver
      */
-    override fun outSeat(seatIndex: Int, completion: (error: Exception?) -> Unit) {
+    override fun leaveSeat(seatIndex: Int, completion: (error: Exception?) -> Unit) {
         val targetSeatInfo = mSeatMap.values.find { it.owner?.userId == mCurrentUser.userId }
         if (targetSeatInfo == null) {
             completion.invoke(Exception("You are not on seat"))
@@ -569,12 +569,12 @@ class KTVSyncManagerServiceImp constructor(
                 ),
                 callback = { collectionException ->
                     if (collectionException == null) {
-                        KTVLogger.d(TAG, "outSeat success roomId:$mCurRoomNo, seatInfo:$targetSeatInfo")
+                        KTVLogger.d(TAG, "leaveSeat success, seatInfo:$targetSeatInfo")
                         runOnMainThread {
                             completion.invoke(collectionException)
                         }
                     } else {
-                        KTVLogger.e(TAG, "outSeat failed roomId:$mCurRoomNo, $collectionException")
+                        KTVLogger.e(TAG, "leaveSeat failed, $collectionException")
                         runOnMainThread {
                             completion.invoke(Exception("${collectionException.message}(${collectionException.code})"))
                         }
@@ -584,51 +584,71 @@ class KTVSyncManagerServiceImp constructor(
     }
 
     /**
-     * Mute user audio
+     * Update seat audio mute status
      *
      * @param mute
      * @param completion
      * @receiver
      */
-    override fun muteUserAudio(mute: Boolean, completion: (error: Exception?) -> Unit) {
-        val scene = mSyncManager.createScene(mCurRoomNo)
-        scene.userService.muteUserAudio(mute, callback = { uiException ->
-            if (uiException == null) {
-                KTVLogger.d(TAG, "muteUserAudio success mute:$mute")
-                runOnMainThread {
-                    completion.invoke(null)
-                }
-            } else {
-                KTVLogger.e(TAG, "muteUserAudio failed mute:$mute $uiException")
-                runOnMainThread {
-                    completion.invoke(Exception("${uiException.message}(${uiException.code})"))
-                }
-            }
-        })
+    override fun updateSeatAudioMuteStatus(mute: Boolean, completion: (error: Exception?) -> Unit) {
+        val targetSeatInfo = mSeatMap.values.find { it.owner?.userId == mCurrentUser.userId }
+        if (targetSeatInfo == null) {
+            completion.invoke(Exception("You are not on seat"))
+        } else {
+            val seatIndex = targetSeatInfo.seatIndex
+            mSeatInfoCollection?.mergeMetaData(
+                valueCmd = RoomSeatCmd.muteAudioCmd.name,
+                value = mapOf(
+                    seatIndex.toString() to mapOf("seatAudioMute" to mute)
+                ),
+                callback = { collectionException ->
+                    if (collectionException == null) {
+                        KTVLogger.d(TAG, "updateSeatAudioMuteStatus success  seatInfo:$targetSeatInfo")
+                        runOnMainThread {
+                            completion.invoke(collectionException)
+                        }
+                    } else {
+                        KTVLogger.e(TAG, "updateSeatAudioMuteStatus failed, $collectionException")
+                        runOnMainThread {
+                            completion.invoke(Exception("${collectionException.message}(${collectionException.code})"))
+                        }
+                    }
+                })
+        }
     }
 
     /**
-     * Mute user video
+     * Update seat video mute status
      *
      * @param mute
      * @param completion
      * @receiver
      */
-    override fun muteUserVideo(mute: Boolean, completion: (error: Exception?) -> Unit) {
-        val scene = mSyncManager.createScene(mCurRoomNo)
-        scene.userService.muteUserVideo(mute, callback = { uiException ->
-            if (uiException == null) {
-                KTVLogger.d(TAG, "muteUserVideo success mute:$mute")
-                runOnMainThread {
-                    completion.invoke(null)
-                }
-            } else {
-                KTVLogger.e(TAG, "muteUserVideo failed mute:$mute $uiException")
-                runOnMainThread {
-                    completion.invoke(Exception("${uiException.message}(${uiException.code})"))
-                }
-            }
-        })
+    override fun updateSeatVideoMuteStatus(mute: Boolean, completion: (error: Exception?) -> Unit) {
+        val targetSeatInfo = mSeatMap.values.find { it.owner?.userId == mCurrentUser.userId }
+        if (targetSeatInfo == null) {
+            completion.invoke(Exception("You are not on seat"))
+        } else {
+            val seatIndex = targetSeatInfo.seatIndex
+            mSeatInfoCollection?.mergeMetaData(
+                valueCmd = RoomSeatCmd.muteVideoCmd.name,
+                value = mapOf(
+                    seatIndex.toString() to mapOf("seatVideoMute" to mute)
+                ),
+                callback = { collectionException ->
+                    if (collectionException == null) {
+                        KTVLogger.d(TAG, "updateSeatAudioMuteStatus success  seatInfo:$targetSeatInfo")
+                        runOnMainThread {
+                            completion.invoke(collectionException)
+                        }
+                    } else {
+                        KTVLogger.e(TAG, "updateSeatAudioMuteStatus failed, $collectionException")
+                        runOnMainThread {
+                            completion.invoke(Exception("${collectionException.message}(${collectionException.code})"))
+                        }
+                    }
+                })
+        }
     }
 
     // ============= song start =============================
@@ -972,7 +992,8 @@ class KTVSyncManagerServiceImp constructor(
                 seatIndex = i
                 if (i == 0) {
                     owner = AUIRoomContext.shared().currentUserInfo
-                    seatStatus = RoomMicSeatStatus.used
+                    seatAudioMute = false
+                    seatVideoMute = true
                 } else {
                     owner = AUIUserThumbnailInfo()
                 }
@@ -1192,32 +1213,6 @@ class KTVSyncManagerServiceImp constructor(
     }
 
     /**
-     * On user audio mute
-     *
-     * @param userId
-     * @param mute
-     */
-    override fun onUserAudioMute(userId: String, mute: Boolean) {
-        KTVLogger.d(TAG, "onUserAudioMute, userId:$userId, mute:$mute")
-        mObservableHelper.notifyEventHandlers { delegate ->
-            delegate.onUserAudioMute(userId, mute)
-        }
-    }
-
-    /**
-     * On user video mute
-     *
-     * @param userId
-     * @param mute
-     */
-    override fun onUserVideoMute(userId: String, mute: Boolean) {
-        KTVLogger.d(TAG, "onUserVideoMute, userId:$userId, mute:$mute")
-        mObservableHelper.notifyEventHandlers { delegate ->
-            delegate.onUserVideoMute(userId, mute)
-        }
-    }
-
-    /**
      * On attribute changed
      *
      * @param channelId
@@ -1251,11 +1246,23 @@ class KTVSyncManagerServiceImp constructor(
                         }
                     }
                     if (oldSeatUserId.isNotEmpty() && newSeatUserId.isEmpty()) {
-                        KTVLogger.d(TAG, "onUserLeaveSeat: $oldSeatInfo")
+                        KTVLogger.d(TAG, "onUserLeaveSeat: $it")
                         val originUser = oldSeatInfo?.owner ?: return
 
                         mObservableHelper.notifyEventHandlers { delegate ->
                             delegate.onUserLeaveSeat(index, originUser)
+                        }
+                    }
+                    if (oldSeatInfo?.seatAudioMute != newSeatInfo.seatAudioMute) {
+                        KTVLogger.d(TAG, "onSeatAudioMute: $it")
+                        mObservableHelper.notifyEventHandlers { delegate ->
+                            delegate.onSeatAudioMute(index, newSeatInfo.seatAudioMute)
+                        }
+                    }
+                    if (oldSeatInfo?.seatVideoMute != newSeatInfo.seatVideoMute) {
+                        KTVLogger.d(TAG, "onSeatVideoMute: $it")
+                        mObservableHelper.notifyEventHandlers { delegate ->
+                            delegate.onSeatVideoMute(index, newSeatInfo.seatVideoMute)
                         }
                     }
                 }
@@ -1335,16 +1342,6 @@ class KTVSyncManagerServiceImp constructor(
                     return AUICollectionException.ErrorCode.unknown.toException(msg = "seat not mine")
                 }
                 innerOnSeatWillLeave(publisherId)
-                // 离开麦位后清空该麦位用户已点歌曲
-                mChosenSongCollection?.removeMetaData(
-                    valueCmd = RoomSongCmd.removeSongCmd.name,
-                    filter = listOf(mapOf("userId" to publisherId)),
-                    callback = {})
-                //  离开麦位后移除该用户合唱
-                mChoristerInfoCollection?.removeMetaData(
-                    valueCmd = RoomChoristerCmd.leaveChorusCmd.name,
-                    filter = listOf(mapOf("userId" to publisherId)),
-                    callback = {})
             }
         }
         return null

@@ -52,6 +52,8 @@ enum class RoomSeatCmd {
     initSeatCmd,
     enterSeatCmd,
     leaveSeatCmd,
+    muteAudioCmd,
+    muteVideoCmd,
 }
 
 /**
@@ -62,8 +64,8 @@ enum class RoomSeatCmd {
 data class RoomMicSeatInfo constructor(
     var owner: AUIUserThumbnailInfo? = null,
     var seatIndex: Int = 0,
-    var seatAudioMute: Boolean = false, // 麦位禁用声音，预留
-    var seatVideoMute: Boolean = false, // 麦位禁用视频，预留
+    var seatAudioMute: Boolean = false, // 麦位禁用声音
+    var seatVideoMute: Boolean = true, // 麦位禁用视频
     @SerializedName("micSeatStatus") @RoomMicSeatStatus
     var seatStatus: Int = RoomMicSeatStatus.idle, // 麦位状态，预留
 ) : Serializable
@@ -82,9 +84,8 @@ enum class RoomChoristerCmd {
  */
 data class RoomChoristerInfo constructor(
     var userId: String = "",
-    var songCode: String = ""   //合唱者演唱歌曲
+    var songCode: String = ""  //合唱演唱歌曲
 ) : Serializable
-
 
 /**
  * Join room output model

@@ -1,6 +1,5 @@
 package io.agora.scene.ktv.service
 
-import io.agora.rtc2.UserInfo
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.rtmsyncmanager.model.AUIUserInfo
 import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
@@ -41,23 +40,7 @@ interface KtvServiceListenerProtocol {
      *
      * @param seatMap
      */
-    fun onMicSeatSnapshot(seatMap:Map<Int,RoomMicSeatInfo>){}
-
-    /**
-     * On current user audio mute
-     *
-     * @param userId
-     * @param mute
-     */
-    fun onUserAudioMute(userId: String, mute: Boolean) {}
-
-    /**
-     * On current user video mute
-     *
-     * @param userId
-     * @param mute
-     */
-    fun onUserVideoMute(userId: String, mute: Boolean) {}
+    fun onMicSeatSnapshot(seatMap: Map<Int, RoomMicSeatInfo>) {}
 
     /**
      * On user enter seat
@@ -65,7 +48,7 @@ interface KtvServiceListenerProtocol {
      * @param seatIndex
      * @param userInfo
      */
-    fun onUserEnterSeat(seatIndex: Int,userInfo: AUIUserThumbnailInfo) {}
+    fun onUserEnterSeat(seatIndex: Int, userInfo: AUIUserThumbnailInfo) {}
 
     /**
      * On user leave seat
@@ -73,7 +56,23 @@ interface KtvServiceListenerProtocol {
      * @param seatIndex
      * @param userInfo
      */
-    fun onUserLeaveSeat(seatIndex: Int,userInfo: AUIUserThumbnailInfo) {}
+    fun onUserLeaveSeat(seatIndex: Int, userInfo: AUIUserThumbnailInfo) {}
+
+    /**
+     * On seat audio mute
+     *
+     * @param seatIndex
+     * @param mute
+     */
+    fun onSeatAudioMute(seatIndex: Int, mute: Boolean) {}
+
+    /**
+     * On seat video mute
+     *
+     * @param seatIndex
+     * @param mute
+     */
+    fun onSeatVideoMute(seatIndex: Int, mute: Boolean) {}
 
     /**
      * On update all choose songs
@@ -179,23 +178,6 @@ interface KTVServiceProtocol {
      */
     fun getUserInfo(userId: String): AUIUserInfo?
 
-    /**
-     * Mute user audio
-     *
-     * @param mute
-     * @param completion
-     * @receiver
-     */
-    fun muteUserAudio(mute: Boolean, completion: (error: Exception?) -> Unit)
-
-    /**
-     * Mute user video
-     *
-     * @param mute
-     * @param completion
-     * @receiver
-     */
-    fun muteUserVideo(mute: Boolean, completion: (error: Exception?) -> Unit)
 
     /**
      * On seat
@@ -213,7 +195,25 @@ interface KTVServiceProtocol {
      * @param completion
      * @receiver
      */
-    fun outSeat(seatIndex: Int, completion: (error: Exception?) -> Unit)
+    fun leaveSeat(seatIndex: Int, completion: (error: Exception?) -> Unit)
+
+    /**
+     * Mute user audio
+     *
+     * @param mute
+     * @param completion
+     * @receiver
+     */
+    fun updateSeatAudioMuteStatus(mute: Boolean, completion: (error: Exception?) -> Unit)
+
+    /**
+     * Mute user video
+     *
+     * @param mute
+     * @param completion
+     * @receiver
+     */
+    fun updateSeatVideoMuteStatus(mute: Boolean, completion: (error: Exception?) -> Unit)
 
     /**
      * Get all song
@@ -311,7 +311,7 @@ interface KTVServiceProtocol {
      *
      * @return
      */
-    fun getSeatMap():Map<Int,RoomMicSeatInfo>{
+    fun getSeatMap(): Map<Int, RoomMicSeatInfo> {
         return emptyMap()
     }
 
@@ -320,7 +320,7 @@ interface KTVServiceProtocol {
      *
      * @return
      */
-    fun getChoristerList():List<RoomChoristerInfo>{
+    fun getChoristerList(): List<RoomChoristerInfo> {
         return emptyList()
     }
 
@@ -329,7 +329,7 @@ interface KTVServiceProtocol {
      *
      * @return
      */
-    fun getChosenSongList(): List<RoomSongInfo>{
+    fun getChosenSongList(): List<RoomSongInfo> {
         return emptyList()
     }
 }
