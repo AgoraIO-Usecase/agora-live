@@ -45,4 +45,80 @@ NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
     [[AppContext shared].extDic removeAllObjects];
 }
 
++ (NSDictionary<NSString*, VLRoomSeatModel*>* __nullable)ktvSeatMap {
+    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
+    if (![ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+        return nil;
+    }
+    return [ktvServiceImp seatMap];
+}
+
++ (NSArray<VLRoomSelSongModel*>* __nullable)ktvSongList {
+    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
+    if (![ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+        return nil;
+    }
+    return [ktvServiceImp songList];
+}
+
++ (NSArray<KTVChoristerModel*>* __nullable)ktvChoristerList {
+    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
+    if (![ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+        return nil;
+    }
+    return [ktvServiceImp choristerList];
+}
+
+
++ (BOOL)isKtvRoomOwnerWithSeat:(VLRoomSeatModel*)seat {
+    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
+    if (![ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+        return NO;
+    }
+    
+    if ([ktvServiceImp.room.owner.userId length] == 0 && [seat.owner.userId length] == 0) {
+        return NO;
+    }
+    
+    return [ktvServiceImp.room.owner.userId isEqualToString:seat.owner.userId];
+}
+
+
++ (BOOL)isKtvChorusingWithSeat:(VLRoomSeatModel*)seat {
+    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
+    if (![ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+        return NO;
+    }
+    
+    NSArray<KTVChoristerModel*>* choristerList = [self ktvChoristerList];
+    for (KTVChoristerModel* chorister in choristerList) {
+        if ([seat.owner.userId isEqualToString:chorister.userId]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
++ (BOOL)isKtvChorusingWithUserId:(NSString*)userId {
+    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
+    if (![ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+        return NO;
+    }
+    
+    NSArray<KTVChoristerModel*>* choristerList = [self ktvChoristerList];
+    for (KTVChoristerModel* chorister in choristerList) {
+        if ([userId isEqualToString:chorister.userId]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
++ (BOOL)isKtvSongOwnerWithSeat:(VLRoomSeatModel*)seat {
+    VLRoomSelSongModel* song = [[self ktvSongList] firstObject];
+    
+    return [song.owner.userId isEqualToString:VLUserCenter.user.id] && [song status] == VLSongPlayStatusPlaying;
+}
 @end

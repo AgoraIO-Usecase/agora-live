@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RTMSyncManager
 
 @objc enum VLSongPlayStatus: Int {
     case idle = 0 //未播放
@@ -14,16 +15,13 @@ import Foundation
 
 
 class VLRoomSelSongModel: VLBaseModel {
-    @objc var imageUrl: String?
-    
-    /// 是否原唱
-    @objc var isOriginal: String?
-    @objc var singer: String?
     @objc var songName: String?
     @objc var songNo: String?
-    //@property (nonatomic, copy) NSString *songUrl;
-    /// 歌词
-    //@property (nonatomic, copy) NSString *lyric;
+    @objc var singer: String?
+    @objc var imageUrl: String?
+    
+    @objc var owner: AUIUserThumbnailInfo?
+    
     /// 创建时间
     @objc var createAt: UInt64 = 0
     // 置顶时间
@@ -31,14 +29,9 @@ class VLRoomSelSongModel: VLBaseModel {
     
     /// 0 未开始 1.已唱 2.正在唱 3. match完毕
     @objc var status: VLSongPlayStatus = .idle
-    // 是谁点的歌
-    @objc var userNo: String?
-    
-    /// 点歌人昵称
-    @objc var name: String?
     
     @objc func isSongOwner() -> Bool {
-        if VLUserCenter.user.id == self.userNo {
+        if VLUserCenter.user.id == self.owner?.userId {
             return true
         }
         return false

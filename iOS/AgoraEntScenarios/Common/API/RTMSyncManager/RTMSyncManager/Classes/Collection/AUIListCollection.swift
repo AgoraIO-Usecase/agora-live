@@ -26,13 +26,16 @@ extension AUIListCollection {
             callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmAddMetaData: '\(filter)'"))
             return
         }
-        if let err = self.metadataWillAddClosure?(publisherId, valueCmd, value) {
+        
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
+        if let err = self.metadataWillAddClosure?(publisherId, valueCmd, newValue) {
             callback?(err)
             return
         }
         var list = currentList
-        list.append(value)
-        if let attr = self.attributesWillSetClosure?(channelName, 
+        list.append(newValue)
+        if let attr = self.attributesWillSetClosure?(channelName,
                                                      observeKey,
                                                      valueCmd,
                                                      AUIAttributesModel(list: list)),
@@ -65,17 +68,20 @@ extension AUIListCollection {
             callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmSetMetaData: '\(filter ?? [])'"))
             return
         }
+        
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
         var list = currentList
         for itemIdx in itemIndexes {
             let item = list[itemIdx]
             //once break, always break
-            if let err = self.metadataWillUpdateClosure?(publisherId, valueCmd, value, item) {
+            if let err = self.metadataWillUpdateClosure?(publisherId, valueCmd, newValue, item) {
                 callback?(err)
                 return
             }
             
             var tempItem = item
-            value.forEach { (key, value) in
+            newValue.forEach { (key, value) in
                 tempItem[key] = value
             }
             list[itemIdx] = tempItem
@@ -114,16 +120,18 @@ extension AUIListCollection {
             return
         }
         
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
         var list = currentList
         for itemIdx in itemIndexes {
             let item = list[itemIdx]
             //once break, always break
-            if let err = self.metadataWillMergeClosure?(publisherId, valueCmd, value, item) {
+            if let err = self.metadataWillMergeClosure?(publisherId, valueCmd, newValue, item) {
                 callback?(err)
                 return
             }
             
-            let tempItem = mergeMap(origMap: item, newMap: value)
+            let tempItem = mergeMap(origMap: item, newMap: newValue)
             list[itemIdx] = tempItem
         }
         if let attr = self.attributesWillSetClosure?(channelName,
@@ -486,6 +494,10 @@ extension AUIListCollection: IAUIListCollection {
                                          message: jsonStr,
                                          uniqueId: message.uniqueId,
                                          completion: callback)
+    }
+    
+    public override func getLocalMetaData() -> AUIAttributesModel? {
+        return AUIAttributesModel(list: currentList)
     }
 }
 
