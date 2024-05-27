@@ -939,8 +939,8 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 
 }
 
-- (void)enterSeatWithIndex:(NSInteger)index completion:(void(^)(NSError*))completion {
-    [[AppContext ktvServiceImp] enterSeatWithSeatIndex:@(index) completion:completion];
+- (void)enterSeatWithIndex:(NSNumber*)index completion:(void(^)(NSError*))completion {
+    [[AppContext ktvServiceImp] enterSeatWithSeatIndex:index completion:completion];
     [self _checkEnterSeatAudioAuthorized];
 }
 
@@ -1020,27 +1020,18 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     
     //没有上麦需要先上麦
     if ([self getCurrentUserSeatInfo] == nil) {
-        for (int i = 1; i < self.seatsArray.count; i++) {
-            VLRoomSeatModel* seat = self.seatsArray[i];
-            
-            if ([seat.owner.userId integerValue] == 0) {
-                VL(weakSelf);
-                KTVLogError(@"before enterSeat error");
-                
-                [self enterSeatWithIndex:i completion:^(NSError *error) {
-                    if(error){
-                        KTVLogError(@"enterSeat error:%@", error.description);
-                       // weakSelf.MVView.joinCoSingerState = KTVJoinCoSingerStateWaitingForJoin;
-                        [self.MVView setMvState: [self isRoomOwner] ? VLKTVMVViewStateOwnerAudience : VLKTVMVViewStateAudience];
-                        weakSelf.isJoinChorus = false;
-                        [VLToast toast:KTVLocalizedString(@"ktv_join_chorus_failed")];
-                        return;
-                    }
-                    [weakSelf _joinChorus];
-                }];
+        VL(weakSelf);
+        [self enterSeatWithIndex:nil completion:^(NSError *error) {
+            if(error){
+                KTVLogError(@"enterSeat error:%@", error.description);
+               // weakSelf.MVView.joinCoSingerState = KTVJoinCoSingerStateWaitingForJoin;
+                [self.MVView setMvState: [self isRoomOwner] ? VLKTVMVViewStateOwnerAudience : VLKTVMVViewStateAudience];
+                weakSelf.isJoinChorus = false;
+                [VLToast toast:KTVLocalizedString(@"ktv_join_chorus_failed")];
                 return;
             }
-        }
+            [weakSelf _joinChorus];
+        }];
         
         //TODO(chenpan):没有空麦位，show error
         [VLToast toast:KTVLocalizedString(@"ktv_mic_full")];
@@ -1561,7 +1552,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             BOOL isOnSeat = [self getCurrentUserSeatInfo] == nil ? NO : YES;
             if (!isOnSeat) {
                 //not yet seated
-                [self enterSeatWithIndex:seatIndex completion:^(NSError *error) {
+                [self enterSeatWithIndex:@(seatIndex) completion:^(NSError *error) {
                 }];
             }
         }

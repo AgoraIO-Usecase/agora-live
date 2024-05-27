@@ -211,16 +211,16 @@ private enum AUIChorusCMd: String {
                 seatMap.values.forEach { micSeat in
                     let index = micSeat.seatIndex
                     let origMicSeat = self.seatMap["\(index)"]
+                    let origUserId = origMicSeat?.owner.userId ?? ""
                     
                     self.seatMap["\(index)"] = micSeat
-                    if let origUserId = origMicSeat?.owner.userId,
-                       origUserId.count > 0,
+                    if origUserId.count > 0,
                        micSeat.owner.userId != origUserId {
                         self.delegate?.onUserLeaveSeat(seatIndex: micSeat.seatIndex, user: micSeat.owner)
                     }
                     
                     if micSeat.owner.userId.count > 0,
-                       origMicSeat?.owner.userId != micSeat.owner.userId {
+                       origUserId != micSeat.owner.userId {
                         self.delegate?.onUserEnterSeat(seatIndex: micSeat.seatIndex, user: micSeat.owner)
                     }
                     
@@ -787,7 +787,7 @@ extension KTVRTMManagerServiceImpl {
             return
         }
         let collection = getSongCollection(with: roomNo)
-        collection?.mergeMetaData(valueCmd: nil,
+        collection?.mergeMetaData(valueCmd: AUIMusicCmd.updatePlayStatusCmd.rawValue,
                                   value: ["status": VLSongPlayStatus.playing.rawValue],
                                   filter: [["songNo": songCode]],
                                   callback: completion)
