@@ -214,22 +214,31 @@ private enum AUIChorusCMd: String {
                     let origUserId = origMicSeat?.owner.userId ?? ""
                     
                     self.seatMap["\(index)"] = micSeat
+                    var micSeatDidChanged = false
                     if origUserId.count > 0,
                        micSeat.owner.userId != origUserId {
+                        micSeatDidChanged = true
                         self.delegate?.onUserLeaveSeat(seatIndex: micSeat.seatIndex, user: micSeat.owner)
                     }
                     
                     if micSeat.owner.userId.count > 0,
                        origUserId != micSeat.owner.userId {
+                        micSeatDidChanged = true
                         self.delegate?.onUserEnterSeat(seatIndex: micSeat.seatIndex, user: micSeat.owner)
                     }
                     
                     if origMicSeat?.isAudioMuted != micSeat.isAudioMuted {
+                        micSeatDidChanged = true
                         self.delegate?.onSeatAudioMute(seatIndex: micSeat.seatIndex, isMute: micSeat.isAudioMuted)
                     }
                     
                     if origMicSeat?.isVideoMuted != micSeat.isVideoMuted {
+                        micSeatDidChanged = true
                         self.delegate?.onSeatVideoMute(seatIndex: micSeat.seatIndex, isMute: micSeat.isVideoMuted)
+                    }
+                    
+                    if micSeatDidChanged {
+                        self.delegate?.onUserSeatUpdate(seat: micSeat)
                     }
                 }
             }

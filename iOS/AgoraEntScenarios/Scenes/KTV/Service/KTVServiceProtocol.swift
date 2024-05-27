@@ -18,9 +18,13 @@ import RTMSyncManager
     
     func onUserCountUpdate(userCount: UInt)
     
-    /// 麦位全量更新
+    /// 麦位更新
     /// - Parameter seat: <#seat description#>
     func onMicSeatSnapshot(seat: [String: VLRoomSeatModel])
+    
+    /// <#Description#>
+    /// - Parameter seat: <#seat description#>
+    func onUserSeatUpdate(seat: VLRoomSeatModel)
     
     /// 有成员上麦（主动上麦/房主抱人上麦）
     /// - Parameters:
