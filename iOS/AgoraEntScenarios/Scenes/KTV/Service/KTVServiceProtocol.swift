@@ -155,9 +155,6 @@ import RTMSyncManager
     ///   - completion: 完成回调
     func leaveChorus(songCode: String, completion: @escaping (Error?) -> Void)
     
-    /// 当前歌曲合唱改为独唱
-    func enterSoloMode()
-    
     func subscribe(listener: KTVServiceListenerProtocol?) 
     
     func getCurrentDuration(channelName: String) -> UInt64
