@@ -999,7 +999,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 - (void)joinChorus {
 
     [self.MVView setMvState:VLKTVMVViewStateJoinChorus];
-    self.isJoinChorus = true;
+    self.isJoinChorus = YES;
     if([self getOnMicUserCount] == 8 && !_isOnMicSeat){
         [VLToast toast:KTVLocalizedString(@"ktv_mic_full")];
         return;
@@ -1026,7 +1026,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
                 KTVLogError(@"enterSeat error:%@", error.description);
                // weakSelf.MVView.joinCoSingerState = KTVJoinCoSingerStateWaitingForJoin;
                 [self.MVView setMvState: [self isRoomOwner] ? VLKTVMVViewStateOwnerAudience : VLKTVMVViewStateAudience];
-                weakSelf.isJoinChorus = false;
+                weakSelf.isJoinChorus = NO;
                 [VLToast toast:KTVLocalizedString(@"ktv_join_chorus_failed")];
                 return;
             }
@@ -1059,7 +1059,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     VL(weakSelf);
     self.loadMusicCallBack = ^(BOOL isSuccess, NSInteger songCode) {
         if (!isSuccess) {
-            weakSelf.isJoinChorus = false;
+            weakSelf.isJoinChorus = NO;
            [VLToast toast:KTVLocalizedString(@"ktv_join_chorus_failed")];
             return;
         }
@@ -1070,16 +1070,16 @@ receiveStreamMessageFromUid:(NSUInteger)uid
                                    onSwitchRoleState:^( KTVSwitchRoleState state, KTVSwitchRoleFailReason reason) {
             if (state == KTVSwitchRoleStateFail && reason != KTVSwitchRoleFailReasonNoPermission) {
                 [weakSelf.MVView setMvState: [weakSelf isRoomOwner] ? VLKTVMVViewStateOwnerAudience : VLKTVMVViewStateAudience];
+                weakSelf.isJoinChorus = NO;
                 [VLToast toast:[NSString stringWithFormat:@"join chorus fail: %ld", reason]];
-                weakSelf.isJoinChorus = false;
                 KTVLogInfo(@"join chorus fail");
                 //TODO: error toast?
                 [VLToast toast:KTVLocalizedString(@"ktv_join_chorus_failed")];
                 return;
             }
 
-            [weakSelf.MVView setMvState: [weakSelf isRoomOwner] ? VLKTVMVViewStateOwnerChorus : VLKTVMVViewStateNotOwnerChorus];;
-            weakSelf.isJoinChorus = false;
+            [weakSelf.MVView setMvState: [weakSelf isRoomOwner] ? VLKTVMVViewStateOwnerChorus : VLKTVMVViewStateNotOwnerChorus];
+            weakSelf.isJoinChorus = NO;
             
             weakSelf.isNowMicMuted = role == KTVSingRoleAudience;
 
@@ -2051,8 +2051,12 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 
 /// 获取当前用户的麦位
 - (VLRoomSeatModel*)getCurrentUserSeatInfo {
+    return [self gettUserSeatInfoWithUserId:VLUserCenter.user.id];
+}
+
+- (VLRoomSeatModel*)gettUserSeatInfoWithUserId:(NSString*)userId {
     for (VLRoomSeatModel *model in self.seatsArray) {
-        if ([model.owner.userId isEqualToString:VLUserCenter.user.id]) {
+        if ([model.owner.userId isEqualToString:userId]) {
             return model;
         }
     }
@@ -2176,7 +2180,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 }
 
 - (void)setRoomUsersCount:(NSUInteger)userCount {
-    self.roomModel.roomPeopleNum = [NSString stringWithFormat:@"%ld", userCount];
+    self.roomModel.roomPeopleNum = userCount;
     self.topView.listModel = self.roomModel;
 }
 
@@ -2542,7 +2546,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         
         if(self.singRole == KTVSingRoleSoloSinger 
            || self.singRole == KTVSingRoleLeadSinger
-           || self.isJoinChorus == true
+           || self.isJoinChorus
            || [topSong.owner.userId isEqualToString:VLUserCenter.user.id]){
             self.MVView.loadingProgress = percent;
         }
@@ -2730,11 +2734,19 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 }
 
 - (void)onChoristerDidEnterWithChorister:(KTVChoristerModel *)chorister {
-    
+    VLRoomSeatModel* model = [self gettUserSeatInfoWithUserId:chorister.userId];
+    if (model == nil) {
+        return;
+    }
+    [self.roomPersonView reloadSeatIndex:model.seatIndex];
 }
 
 - (void)onChoristerDidLeaveWithChorister:(KTVChoristerModel *)chorister {
-    
+    VLRoomSeatModel* model = [self gettUserSeatInfoWithUserId:chorister.userId];
+    if (model == nil) {
+        return;
+    }
+    [self.roomPersonView reloadSeatIndex:model.seatIndex];
 }
 
 @end

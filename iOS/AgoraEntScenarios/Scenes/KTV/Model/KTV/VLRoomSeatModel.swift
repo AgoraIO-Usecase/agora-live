@@ -15,7 +15,7 @@ class VLRoomSeatModel: VLBaseModel {
     //上麦用户信息
     @objc var owner: AUIUserThumbnailInfo = AUIUserThumbnailInfo()
     /// 麦位是否静音
-    @objc var isAudioMuted: Bool = false
+    @objc var isAudioMuted: Bool = true
     /// 麦位是否禁视频
     @objc var isVideoMuted: Bool = true
     

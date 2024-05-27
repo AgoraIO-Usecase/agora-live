@@ -340,14 +340,15 @@ private enum AUIChorusCMd: String {
             return (((map as? [String: Any])?["owner"]) as? [String: Any])?["userId"] as? String
         }
         
-        collection.subscribeAttributesDidChanged(callback: {[weak self] str1, str2, model in
+        collection.subscribeAttributesDidChanged {[weak self] str1, str2, model in
             guard let self = self,
                   let list = model.getList(),
                   let songs = NSArray.yy_modelArray(with: VLRoomSelSongModel.self, json: list) as? [VLRoomSelSongModel] else {
                 return
             }
+            self.songList = songs
             self.delegate?.onChosenSongListDidChanged(songs: songs)
-        })
+        }
         
         collection.subscribeWillAdd {[weak self] publisherId, dataCmd, newItem in
             guard let self = self, let dataCmd = AUIMusicCmd(rawValue: dataCmd ?? "") else {
@@ -465,6 +466,7 @@ private enum AUIChorusCMd: String {
             var unChangesOldList = self.choristerList
             //TODO: optimize
             let difference = chorusList.difference(from: self.choristerList)
+            self.choristerList = chorusList
             for change in difference {
                 switch change {
                 case let .remove(offset, oldElement, _):
@@ -474,8 +476,6 @@ private enum AUIChorusCMd: String {
                     self.delegate?.onChoristerDidEnter(chorister: newElement)
                 }
             }
-            
-            self.choristerList = choristerList
         }
         
         collection.subscribeWillAdd {[weak self] publisherId, dataCmd, newItem in
@@ -992,7 +992,9 @@ extension KTVRTMManagerServiceImpl {
 extension KTVRTMManagerServiceImpl: AUISceneRespDelegate {
     func onWillInitSceneMetadata(channelName: String) -> [String : Any]? {
         var map: [String: Any] = [:]
-        map["0"] = self._createCurrentUserSeat(seatIndex: 0).yy_modelToJSONObject()
+        let ownerSeat = _createCurrentUserSeat(seatIndex: 0)
+        ownerSeat.isAudioMuted = false
+        map["0"] = ownerSeat.yy_modelToJSONObject()
         for i in 1...7 {
             let seat = VLRoomSeatModel()
             seat.seatIndex = i
@@ -1006,15 +1008,13 @@ extension KTVRTMManagerServiceImpl: AUISceneRespDelegate {
     func onSceneExpire(channelName: String) {
         KTVLog.info(text: "onSceneExpire: \(channelName)")
         roomService.leaveRoom(roomId: channelName)
-        //TODO: expire notify
+        self.delegate?.onRoomDidExpire()
     }
     
     func onSceneDestroy(channelName: String) {
         KTVLog.info(text: "onSceneDestroy: \(channelName)")
         roomService.leaveRoom(roomId: channelName)
-        //self.listener?.onRoomDidDestroy(roomInfo: model)
-        
-        //TODO: destroy notify
+        self.delegate?.onRoomDidDestroy()
     }
     
     func onTokenPrivilegeWillExpire(channelName: String?) {
@@ -1135,7 +1135,7 @@ extension KTVRTMManagerServiceImpl {
         }
         let collection = getChorusCollection(with: roomNo)
         collection?.removeMetaData(valueCmd: AUIChorusCMd.leaveCmd.rawValue,
-                                   filter: [["userId": currentUserId()]],
+                                   filter: [["userId": userId]],
                                    callback: completion)
     }
     
