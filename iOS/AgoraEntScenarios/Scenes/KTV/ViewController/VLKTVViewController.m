@@ -2656,7 +2656,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     
     // 下麦消息
     // 下麦重置占位模型
-    model.owner = nil;
+    model.owner = [AUIUserThumbnailInfo new];
     [self setSeatsArray:self.seatsArray];
     
     VLRoomSelSongModel *song = self.selSongsArray.firstObject;

@@ -412,6 +412,13 @@ private enum AUIChorusCMd: String {
                 guard isRoomOwner || seatValues.contains(where: { getUserId($0) == userId }) else {
                     return KTVCommonError.noPermission.toNSError()
                 }
+                
+                if item["status"] as? Int == VLSongPlayStatus.playing.rawValue {
+                    //clean chorus list when remove playing song
+                    self._removeAllChorus { _ in
+                    }
+                }
+                
                 return nil
             default:
                 break
@@ -715,21 +722,20 @@ extension KTVRTMManagerServiceImpl {
                                   callback: completion)
     }
     
-    func kickSeat(userId: String, completion: @escaping (NSError?) -> ()) {
-        guard let roomNo = roomNo,
-              let seatInfo = seatMap.values.filter({ $0.owner.userId == userId }).first else {
+    func kickSeat(seatIndex: Int, completion: @escaping (NSError?) -> ()) {
+        guard let roomNo = roomNo else {
             completion(NSError(domain: "kickSeat fail", code: -1))
             return
         }
         
-        agoraPrint("kickSeat [\(seatInfo.owner.userId)]")
+        agoraPrint("kickSeat [\(seatIndex)]")
         let collection = getSeatCollection(with: roomNo)
         let model = VLRoomSeatModel()
-        model.seatIndex = seatInfo.seatIndex
+        model.seatIndex = seatIndex
         var params = mapConvert(model: model)
         params["seatIndex"] = nil
         collection?.mergeMetaData(valueCmd: AUIMicSeatCmd.kickSeatCmd.rawValue,
-                                  value: ["\(seatInfo.seatIndex)": params],
+                                  value: ["\(seatIndex)": params],
                                   callback: completion)
     }
     
@@ -857,10 +863,6 @@ extension KTVRTMManagerServiceImpl {
         collection?.removeMetaData(valueCmd: AUIChorusCMd.leaveCmd.rawValue,
                                    filter: [["chorusSongNo": songCode, "userId": currentUserId()]],
                                    callback: completion)
-    }
-    
-    func enterSoloMode() {
-        _markSoloSongIfNeed()
     }
 }
 
@@ -1028,7 +1030,6 @@ extension KTVRTMManagerServiceImpl: AUIUserRespDelegate {
     
     func onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
         KTVLog.info(text: "user: enter\(userInfo.userName)")
-        let user = convertAUIUserInfo2UserInfo(with: userInfo)
         let userCount = getCurrentScene(with: roomId)?.userService.userList.count ?? 0
 //        self.userDidChanged?(.created, user)
         self.delegate?.onUserCountUpdate(userCount: UInt(userCount))
@@ -1040,7 +1041,6 @@ extension KTVRTMManagerServiceImpl: AUIUserRespDelegate {
     
     func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
         KTVLog.info(text: "user: leave\(userInfo.userName)")
-        let user = convertAUIUserInfo2UserInfo(with: userInfo)
 //        self.userDidChanged?(.deleted, user)
         let userCount = getCurrentScene(with: roomId)?.userService.userList.count ?? 0
         self.delegate?.onUserCountUpdate(userCount: UInt(userCount))
@@ -1052,13 +1052,14 @@ extension KTVRTMManagerServiceImpl: AUIUserRespDelegate {
             return
         }
         
-        kickSeat(userId: userInfo.userId) { _ in
+        if let seatInfo = seatMap.values.filter({ $0.owner.userId == userInfo.userId }).first {
+            kickSeat(seatIndex: seatInfo.seatIndex) { _ in
+            }
         }
     }
     
     func onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {
         KTVLog.info(text: "user: update\(userInfo.userName)")
-        let user = convertAUIUserInfo2UserInfo(with: userInfo)
 //        self.userDidChanged?(.updated, user)
         let userCount = getCurrentScene(with: roomId)?.userService.userList.count ?? 0
         self.delegate?.onUserCountUpdate(userCount: UInt(userCount))
@@ -1126,6 +1127,17 @@ extension KTVRTMManagerServiceImpl {
         let collection = getChorusCollection(with: roomNo)
         collection?.removeMetaData(valueCmd: AUIChorusCMd.leaveCmd.rawValue,
                                    filter: [["userId": currentUserId()]],
+                                   callback: completion)
+    }
+    
+    private func _removeAllChorus(completion: @escaping (Error?) -> Void) {
+        guard let roomNo = roomNo else {
+            completion(NSError(domain: "_removeAllChorus fail", code: -1))
+            return
+        }
+        let collection = getChorusCollection(with: roomNo)
+        collection?.removeMetaData(valueCmd: AUIChorusCMd.leaveCmd.rawValue,
+                                   filter: nil,
                                    callback: completion)
     }
 }
