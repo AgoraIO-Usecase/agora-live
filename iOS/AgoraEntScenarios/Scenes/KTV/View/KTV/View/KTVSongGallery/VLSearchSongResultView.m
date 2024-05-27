@@ -26,7 +26,6 @@ UITableViewDelegate
 @property (nonatomic, assign) NSInteger        page;
 @property (nonatomic, copy) NSString *keyWord;
 @property (nonatomic, copy) NSString *roomNo;
-@property (nonatomic, assign) BOOL ifChorus;
 
 @end
 
@@ -37,11 +36,9 @@ UITableViewDelegate
 
 - (instancetype)initWithFrame:(CGRect)frame
                  withDelegate:(id<VLSearchSongResultViewDelegate>)delegate
-                   withRoomNo:(nonnull NSString *)roomNo
-                     ifChorus:(BOOL)ifChorus{
+                   withRoomNo:(nonnull NSString *)roomNo{
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = UIColorMakeWithHex(@"#152164");
-        self.ifChorus = ifChorus;
         self.roomNo = roomNo;
         self.delegate = delegate;
         [self setupView];
@@ -191,7 +188,6 @@ UITableViewDelegate
 
 - (void)dianGeWithModel:(VLSongItmModel*)model {
     KTVChooseSongInputModel* inputModel = [KTVChooseSongInputModel new];
-    inputModel.isChorus = self.ifChorus;
     inputModel.songName = model.songName;
     inputModel.songNo = model.songNo;
     inputModel.imageUrl = model.imageUrl;

@@ -483,9 +483,9 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     if(array.count > 1){
         for(int i=0;i<array.count;i++){
             VLRoomSeatModel *model = array[i];
-            [nameArray addObject:model.name];
-            [imgArray addObject:model.headUrl];
-            [userNoArray addObject:model.userNo];
+            [nameArray addObject:model.owner.userName];
+            [imgArray addObject:model.owner.userAvatar];
+            [userNoArray addObject:model.owner.userId];
         }
     }
 
@@ -901,7 +901,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     KTVSongConfiguration* songConfig = [[KTVSongConfiguration alloc] init];
   //  songConfig.autoPlay = (role == KTVSingRoleAudience || role == KTVSingRoleCoSinger) ? NO : YES ;
     songConfig.mode = (role == KTVSingRoleAudience || role == KTVSingRoleCoSinger) ? KTVLoadMusicModeLoadLrcOnly : KTVLoadMusicModeLoadMusicAndLrc;
-    songConfig.mainSingerUid = [model.userNo integerValue];
+    songConfig.mainSingerUid = [model.owner.userId integerValue];
     songConfig.songIdentifier = model.songNo;
 
     VL(weakSelf);
@@ -955,7 +955,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 
 - (void)leaveSeatWithSeatModel:(VLRoomSeatModel * __nonnull)seatModel
                  withCompletion:(void(^ __nullable)(NSError*))completion {
-    if(seatModel.rtcUid == VLUserCenter.user.id) {
+    if([seatModel.owner.userId isEqualToString:VLUserCenter.user.id]) {
         if(seatModel.isVideoMuted == 1) {
             [self.RTCkit stopPreview];
         }
@@ -1023,7 +1023,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         for (int i = 1; i < self.seatsArray.count; i++) {
             VLRoomSeatModel* seat = self.seatsArray[i];
             
-            if (seat.rtcUid == 0) {
+            if ([seat.owner.userId integerValue] == 0) {
                 VL(weakSelf);
                 KTVLogError(@"before enterSeat error");
                 
@@ -1062,7 +1062,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     KTVSingRole role = KTVSingRoleCoSinger;
     KTVSongConfiguration* songConfig = [[KTVSongConfiguration alloc] init];
     songConfig.mode = KTVLoadMusicModeLoadMusicOnly;
-    songConfig.mainSingerUid = [model.userNo integerValue];
+    songConfig.mainSingerUid = [model.owner.userId integerValue];
     songConfig.songIdentifier = model.songNo;
     
     VL(weakSelf);
@@ -1155,10 +1155,10 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     
     NSDictionary *dict = @{
         @"cmd": @"checkVoiceHighlight",
-        @"uid": model.userNo,
+        @"uid": model.owner.userId,
     };
     [self sendStreamMessageWithDict:dict success:nil];
-    if([model.userNo isEqualToString:VLUserCenter.user.id]){
+    if([model.owner.userId isEqualToString:VLUserCenter.user.id]){
         _isHighlightSinger = YES;
         [self.RTCkit setAudioEffectPreset:AgoraAudioEffectPresetOff];
         [self sendVoiceShowEffect];
@@ -1265,7 +1265,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     [self.RTCkit createDataStream:&ktvStreamId
                            config:config];
     
-    NSString* exChannelToken = AppContext.shared.agoraPlayerRTCToken;
+    NSString* exChannelToken = AppContext.shared.agoraRTCToken;
     KTVApiConfig* apiConfig = [[KTVApiConfig alloc] initWithAppId:[[AppContext shared] appId]
                                                          rtmToken:AppContext.shared.agoraRTMToken
                                                            engine:self.RTCkit
@@ -1421,7 +1421,8 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 //        [self.MVView setPerViewAvatar:@""];
 //    }
     
-    [[AppContext ktvServiceImp] coSingerLeaveChorusWithCompletion:^(NSError * error) {
+    [[AppContext ktvServiceImp] leaveChorusWithSongCode:self.selSongsArray.firstObject.songNo
+                                             completion:^(NSError * error) {
     }];
     [self stopPlaySong];
     self.isNowMicMuted = true;
@@ -1436,8 +1437,6 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     [[AppContext ktvServiceImp] updateSeatAudioMuteStatusWithMuted:YES
                                                         completion:^(NSError * error) {
     }];
-    
-    
 }
 
 - (void)didShowVoiceChooseView {
@@ -1544,17 +1543,17 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     BOOL isOwner = [self.roomModel.creatorNo isEqualToString:VLUserCenter.user.id];
     if(isOwner) {
         //is owner
-        if ([model.userNo isEqualToString:VLUserCenter.user.id]) {
+        if ([model.owner.userId isEqualToString:VLUserCenter.user.id]) {
             //self, return
             return;
         }
-        if (model.userNo.length > 0) {
+        if (model.owner.userId.length > 0) {
             return [self popDropLineViewWithSeatModel:model];
         }
     } else {
-        if (model.userNo.length > 0) {
+        if (model.owner.userId.length > 0) {
             //occupied
-            if ([model.userNo isEqualToString:VLUserCenter.user.id]) {//点击的是自己
+            if ([model.owner.userId isEqualToString:VLUserCenter.user.id]) {//点击的是自己
                 return [self popDropLineViewWithSeatModel:model];
             }
         } else{
@@ -1572,10 +1571,10 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 - (void)onVLRoomPersonView:(VLMicSeatList *)view onRenderVideo:(VLRoomSeatModel *)model inView:(UIView *)videoView atIndex:(NSInteger)seatIndex
 {
     AgoraRtcVideoCanvas *videoCanvas = [[AgoraRtcVideoCanvas alloc] init];
-    videoCanvas.uid = [model.rtcUid unsignedIntegerValue];
+    videoCanvas.uid = [model.owner.userId unsignedIntegerValue];
     videoCanvas.view = videoView;
     videoCanvas.renderMode = AgoraVideoRenderModeHidden;
-    if([model.userNo isEqual:VLUserCenter.user.id]) {
+    if([model.owner.userId isEqual:VLUserCenter.user.id]) {
         //is self
         [self.RTCkit setupLocalVideo:videoCanvas];
     } else {
@@ -1698,7 +1697,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     KTVSongConfiguration* songConfig = [[KTVSongConfiguration alloc] init];
     KTVSingRole role = [self getUserSingRole];
     songConfig.mode = KTVLoadMusicModeLoadLrcOnly;
-    songConfig.mainSingerUid = [model.userNo integerValue];
+    songConfig.mainSingerUid = [model.owner.userId integerValue];
     songConfig.songIdentifier = model.songNo;
 
     [self.MVView setMvState:VLKTVMVViewStateMusicLoading];
@@ -1929,7 +1928,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         return;
     }
     self.voiceShowHasSeted = true;
-    self.selectUserNo = self.seatsArray[ItemIndex].userNo;
+    self.selectUserNo = self.seatsArray[ItemIndex].owner.userId;
     [self checkVoiceShowEffect: ItemIndex];
 }
 
@@ -2036,7 +2035,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 #pragma mark - getter/handy utils
 - (BOOL)isCurrentSongMainSinger:(NSString *)userNo {
     VLRoomSelSongModel *selSongModel = self.selSongsArray.firstObject;
-    return [selSongModel.userNo isEqualToString:userNo];
+    return [selSongModel.owner.userId isEqualToString:userNo];
 }
 
 - (BOOL)isRoomOwner {
@@ -2062,7 +2061,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 /// 获取当前用户的麦位
 - (VLRoomSeatModel*)getCurrentUserSeatInfo {
     for (VLRoomSeatModel *model in self.seatsArray) {
-        if ([model.userNo isEqualToString:VLUserCenter.user.id]) {
+        if ([model.owner.userId isEqualToString:VLUserCenter.user.id]) {
             return model;
         }
     }
@@ -2085,7 +2084,8 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     //如果房主是观众则不添加到列表中，否则添加进去
     BOOL flag = false;
     VLRoomSeatModel *model = seatArray.firstObject;
-    if(model.isOwner || [self checkIfCosingerWith:0]){
+
+    if([AppContext isKtvSongOwnerWithSeat:model] || [self checkIfCosingerWith:0]){
         flag = true;
     }
     if(flag){
@@ -2093,7 +2093,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     }
     
     for(VLRoomSeatModel *seatModel in seatArray){
-        if(seatModel.isOwner && !seatModel.isMaster){
+        if([AppContext isKtvSongOwnerWithSeat:seatModel] && ![AppContext isKtvRoomOwnerWithSeat:seatModel]){
             [singerSeatArray addObject:seatModel];
         }
     }
@@ -2104,18 +2104,8 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 }
 
 -(BOOL)checkIfCosingerWith:(NSInteger)index{
-    VLRoomSelSongModel *topSong = [self.selSongsArray firstObject];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"chorusSongCode == %@", topSong.chorusSongId];
-    for(int i = 0;i< self.seatsArray.count; i++){
-        if (i == index) {
-            VLRoomSeatModel *model = self.seatsArray[i];
-            if([model.chorusSongCode isEqualToString: topSong.chorusSongId]){
-                return true;
-            }
-        }
-        continue;
-    }
-    return false;
+    VLRoomSeatModel *model = self.seatsArray[index];
+    return [AppContext isKtvChorusingWithSeat:model];
 }
 
 /// 根据麦位索引获取麦位
@@ -2133,7 +2123,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 /// 计算当前歌曲用户的演唱角色
 - (KTVSingRole)getUserSingRole {
     VLRoomSelSongModel* songModel = [[self selSongsArray] firstObject];
-    BOOL currentSongIsJoinSing = [[self getCurrentUserSeatInfo].chorusSongCode isEqualToString:songModel.chorusSongId];
+    BOOL currentSongIsJoinSing = [AppContext isKtvChorusingWithUserId:VLUserCenter.user.id];
     BOOL currentSongIsSongOwner = [songModel isSongOwner];
     BOOL currentSongIsChorus = [self getChorusNumWithSeatArray:self.seatsArray] > 0;
     if (currentSongIsSongOwner) {
@@ -2150,18 +2140,11 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 /// @param seatArray <#seatArray description#>
 - (NSUInteger)getChorusNumWithSeatArray:(NSArray*)seatArray {
     NSUInteger chorusNum = 0;
-    VLRoomSelSongModel* topSong = [self.selSongsArray firstObject];
     for(VLRoomSeatModel* seat in seatArray) {
         //TODO: validate songCode
-        if([seat.chorusSongCode isEqualToString:[topSong chorusSongId]]) {
+        if([AppContext isKtvChorusingWithSeat:seat]) {
             chorusNum += 1;
         }
-        // else if ([seat.chorusSongCode length] > 0) {
-        //            KTVLogError(@"calc seat chorus status fail! chorusSongCode: %@, playSongCode: %@", seat.chorusSongCode, topSong.songNo);
-        //        }
-        //        if ([seat.chorusSongCode length] > 0) {
-        //            chorusNum += 1;
-        //        }
     }
     
     return chorusNum;
@@ -2187,7 +2170,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     NSInteger num = 0;
     if(self.seatsArray){
         for(VLRoomSeatModel *model in self.seatsArray){
-            if(model.rtcUid){
+            if(model.owner.userId.length > 0){
                 num++;
             }
         }
@@ -2566,7 +2549,10 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         
         VLRoomSelSongModel *topSong = self.selSongsArray.firstObject;
         
-        if(self.singRole == KTVSingRoleSoloSinger || self.singRole == KTVSingRoleLeadSinger || self.isJoinChorus == true || [topSong.userNo isEqualToString:VLUserCenter.user.id]){
+        if(self.singRole == KTVSingRoleSoloSinger 
+           || self.singRole == KTVSingRoleLeadSinger
+           || self.isJoinChorus == true
+           || [topSong.owner.userId isEqualToString:VLUserCenter.user.id]){
             self.MVView.loadingProgress = percent;
         }
     });
@@ -2610,55 +2596,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 
 
 #pragma mark KTVServiceListenerProtocol
-- (void)onAnchorEnterSeatWithSeat:(VLRoomSeatModel * _Nonnull)seat { 
-    VLRoomSeatModel* model = [self getUserSeatInfoWithIndex:seat.seatIndex];
-    if (model == nil) {
-        return;
-    }
     
-    //上麦消息 / 是否打开视频 / 是否静音
-    [model resetWithSeatInfo:seat];
-    [self setSeatsArray:self.seatsArray];
-    
-    VLRoomSelSongModel *song = self.selSongsArray.firstObject;
-    if(!self.isJoinChorus){
-        [self setMVViewStateWith:song];
-    }
-    [self.roomPersonView reloadSeatIndex:model.seatIndex];
-    
-    [self onSeatFull];
-}
-
-- (void)onAnchorLeaveSeatWithSeat:(VLRoomSeatModel * _Nonnull)seat { 
-    VLRoomSeatModel* model = [self getUserSeatInfoWithIndex:seat.seatIndex];
-    if (model == nil) {
-        return;
-    }
-    
-    // 下麦消息
-    // 下麦重置占位模型
-    [model resetWithSeatInfo:nil];
-    [self setSeatsArray:self.seatsArray];
-    
-    VLRoomSelSongModel *song = self.selSongsArray.firstObject;
-    if(!self.isJoinChorus){
-        [self setMVViewStateWith:song];
-    }
-    [self.roomPersonView reloadSeatIndex:model.seatIndex];
-    
-    [self onSeatFull];
-}
-
-- (void)onMicSeatSnapshotWithSeat:(NSDictionary<NSString *,VLRoomSeatModel *> * _Nonnull)seat {
-    NSMutableArray<VLRoomSeatModel*>* setsArray = [NSMutableArray array];
-    for (int i = 0; i < seat.count; i++) {
-        VLRoomSeatModel* model = [seat objectForKey:[NSString stringWithFormat:@"%d", i]];
-        [setsArray addObject:model];
-    }
-    [self setSeatsArray:setsArray];
-    [self.roomPersonView reloadData];
-}
-
 - (void)onRoomDidDestroy {
     BOOL isOwner = [self.roomModel.creatorNo isEqualToString:VLUserCenter.user.id];
     //房主关闭房间
@@ -2675,7 +2613,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     [self popForceLeaveRoom];
 }
 
-- (void)onRoomDidExpire { 
+- (void)onRoomDidExpire {
     BOOL isOwner = [self.roomModel.creatorNo isEqualToString:VLUserCenter.user.id];
     NSString *mes = isOwner ? KTVLocalizedString(@"ktv_room_timeout") : KTVLocalizedString(@"ktv_room_offline");
     kWeakSelf(self);
@@ -2684,13 +2622,79 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         [weakself leaveRoom];
     }];
 }
-
-- (void)onSeatAudioMuteWithSeat:(VLRoomSeatModel * _Nonnull)seat { 
-    [self onAnchorEnterSeatWithSeat:seat];
+    
+    
+- (void)onUserCountUpdateWithUserCount:(NSUInteger)userCount {
+    [self setRoomUsersCount:userCount];
+}
+    
+- (void)onMicSeatSnapshotWithSeat:(NSDictionary<NSString *,VLRoomSeatModel *> *)seat {
+    NSMutableArray<VLRoomSeatModel*>* setsArray = [NSMutableArray array];
+    for (int i = 0; i < seat.count; i++) {
+        VLRoomSeatModel* model = [seat objectForKey:[NSString stringWithFormat:@"%d", i]];
+        [setsArray addObject:model];
+    }
+    [self setSeatsArray:setsArray];
+    [self.roomPersonView reloadData];
+}
+    
+- (void)onUserEnterSeatWithSeatIndex:(NSInteger)seatIndex user:(AUIUserThumbnailInfo *)user {
+    VLRoomSeatModel* model = [self getUserSeatInfoWithIndex:seatIndex];
+    if (model == nil) {
+        return;
+    }
+    
+    //上麦消息 / 是否打开视频 / 是否静音
+    model.owner = user;
+    [self setSeatsArray:self.seatsArray];
+    
+    VLRoomSelSongModel *song = self.selSongsArray.firstObject;
+    if(!self.isJoinChorus){
+        [self setMVViewStateWith:song];
+    }
+    [self.roomPersonView reloadSeatIndex:model.seatIndex];
+    
+    [self onSeatFull];
 }
 
-- (void)onSeatVideoMuteWithSeat:(VLRoomSeatModel * _Nonnull)seat { 
-    [self onAnchorEnterSeatWithSeat:seat];
+- (void)onUserLeaveSeatWithSeatIndex:(NSInteger)seatIndex user:(AUIUserThumbnailInfo *)user {
+    VLRoomSeatModel* model = [self getUserSeatInfoWithIndex:seatIndex];
+    if (model == nil) {
+        return;
+    }
+    
+    // 下麦消息
+    // 下麦重置占位模型
+    model.owner = nil;
+    [self setSeatsArray:self.seatsArray];
+    
+    VLRoomSelSongModel *song = self.selSongsArray.firstObject;
+    if(!self.isJoinChorus){
+        [self setMVViewStateWith:song];
+    }
+    [self.roomPersonView reloadSeatIndex:model.seatIndex];
+    
+    [self onSeatFull];
+}
+  
+- (void)onSeatAudioMuteWithSeatIndex:(NSInteger)seatIndex isMute:(BOOL)isMute {
+    VLRoomSeatModel* model = [self getUserSeatInfoWithIndex:seatIndex];
+    if (model == nil) {
+        return;
+    }
+    
+    model.isAudioMuted = isMute;
+    [self.roomPersonView reloadSeatIndex:model.seatIndex];
+}
+    
+- (void)onSeatVideoMuteWithSeatIndex:(NSInteger)seatIndex isMute:(BOOL)isMute {
+    VLRoomSeatModel* model = [self getUserSeatInfoWithIndex:seatIndex];
+    if (model == nil) {
+        return;
+    }
+    
+    model.isVideoMuted = isMute;
+    [self.roomPersonView reloadSeatIndex:model.seatIndex];
 }
 
 - (void)onAddChooseSongWithSong:(VLRoomSelSongModel * _Nonnull)songInfo {
@@ -2699,37 +2703,44 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     NSMutableArray* songArray = [NSMutableArray arrayWithArray:self.selSongsArray];
     VLRoomSelSongModel* song = [self selSongWithSongNo:songInfo.songNo];
     //add new song
-    KTVLogInfo(@"song did updated: %@ status: %ld", song.name, songInfo.status);
+    KTVLogInfo(@"song did updated: %@ status: %ld", song.owner.userName, songInfo.status);
     self.selSongsArray = [NSMutableArray arrayWithArray:songArray];
 }
+    
 
-- (void)onRemoveChooseSongWithSong:(VLRoomSelSongModel * _Nonnull)songInfo {
+//- (void)onRemoveChooseSongWithSong:(VLRoomSelSongModel * _Nonnull)songInfo {
+//    [self _checkInEarMonitoring];
+//    NSMutableArray* songArray = [NSMutableArray arrayWithArray:self.selSongsArray];
+//    BOOL success = [self removeSelSongWithSongNo:[songInfo.songNo integerValue] sync:NO];
+//    if (!success) {
+//        self.selSongsArray = songArray;
+//        KTVLogInfo(@"removeSelSongWithSongNo fail, reload it");
+//    }
+//    //清除合唱者总分
+//    self.coSingerDegree = 0;
+//    [LSTPopView removeAllPopView];
+//}
+
+
+- (void)onChosenSongListDidChangedWithSongs:(NSArray<VLRoomSelSongModel *> *)songs {
     [self _checkInEarMonitoring];
-    NSMutableArray* songArray = [NSMutableArray arrayWithArray:self.selSongsArray];
-    BOOL success = [self removeSelSongWithSongNo:[songInfo.songNo integerValue] sync:NO];
-    if (!success) {
-        self.selSongsArray = songArray;
-        KTVLogInfo(@"removeSelSongWithSongNo fail, reload it");
+    NSString* origTopSongNo = NullToString(self.selSongsArray.firstObject.songNo);
+    NSString* currentTopSongNo = NullToString(songs.firstObject.songNo);
+    if (![origTopSongNo isEqualToString:currentTopSongNo]) {
+        [self stopPlaySong];
+        self.coSingerDegree = 0;
+        [LSTPopView removeAllPopView];
     }
-    //清除合唱者总分
-    self.coSingerDegree = 0;
-    [LSTPopView removeAllPopView];
-}
-
-
-- (void)onUpdateAllChooseSongsWithSongs:(NSArray<VLRoomSelSongModel *> * _Nonnull)songs { 
-    [self _checkInEarMonitoring];
     self.selSongsArray = [NSMutableArray arrayWithArray:songs];
 }
 
-- (void)onUpdateChooseSongWithSong:(VLRoomSelSongModel * _Nonnull)song { 
+- (void)onChoristerDidEnterWithChorister:(KTVChoristerModel *)chorister {
     
 }
 
-- (void)onUserCountUpdateWithUserCount:(NSUInteger)userCount { 
-    [self setRoomUsersCount:userCount];
+- (void)onChoristerDidLeaveWithChorister:(KTVChoristerModel *)chorister {
+    
 }
-
 
 @end
 

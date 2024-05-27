@@ -111,12 +111,12 @@
     self.selSongModel = selSongModel;
     self.nameLabel.text = selSongModel.songName;
     NSString *localizedPropertyName = KTVLocalizedString(@"ktv_song_ordering_person");
-    NSString *formattedString = [NSString stringWithFormat:@"%@ %@", localizedPropertyName, selSongModel.name];
+    NSString *formattedString = [NSString stringWithFormat:@"%@ %@", localizedPropertyName, selSongModel.owner.userName];
     self.chooserLabel.text = formattedString;
     
     if (selSongModel.status == VLSongPlayStatusIdle) {
         if(!isOwner) {
-            if ([selSongModel.userNo isEqualToString:VLUserCenter.user.id]){
+            if ([selSongModel.owner.userName isEqualToString:VLUserCenter.user.id]){
                 self.sortBtn.hidden = YES;
                 self.deleteBtn.hidden = NO;
             } else {

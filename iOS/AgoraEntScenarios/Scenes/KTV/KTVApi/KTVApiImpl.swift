@@ -440,7 +440,7 @@ extension KTVApiImpl {
         #if DEBUG
             print(message)
         #else
-            apiConfig?.engine?.writeLog(.info, content: "ktv_info:\(message)")
+//            apiConfig?.engine?.writeLog(.info, content: "ktv_info:\(message)")
         #endif
     }
     
@@ -448,7 +448,7 @@ extension KTVApiImpl {
         #if DEBUG
             print(message)
         #else
-            apiConfig?.engine?.writeLog(.error, content: "ktv_err:\(message)")
+//            apiConfig?.engine?.writeLog(.error, content: "ktv_err:\(message)")
         #endif
     }
 }

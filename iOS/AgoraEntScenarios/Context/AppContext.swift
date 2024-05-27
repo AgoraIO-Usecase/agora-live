@@ -21,7 +21,6 @@ import Foundation
     
     @objc var agoraRTCToken: String = ""
     @objc var agoraRTMToken: String = ""
-    @objc var agoraPlayerRTCToken: String = ""
     
     @objc var isAgreeLicense: Bool = false {
         didSet {

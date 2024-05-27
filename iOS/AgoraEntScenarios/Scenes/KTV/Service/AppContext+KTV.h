@@ -21,6 +21,13 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)unloadServiceImp;
 
 
++ (NSDictionary<NSString*, VLRoomSeatModel*>* __nullable)ktvSeatMap;
++ (NSArray<VLRoomSelSongModel*>* __nullable)ktvSongList;
++ (NSArray<KTVChoristerModel*>* __nullable)ktvChoristerList;
++ (BOOL)isKtvRoomOwnerWithSeat:(VLRoomSeatModel*)seat;
++ (BOOL)isKtvChorusingWithSeat:(VLRoomSeatModel*)seat;
++ (BOOL)isKtvChorusingWithUserId:(NSString*)userId;
++ (BOOL)isKtvSongOwnerWithSeat:(VLRoomSeatModel*)seat;
 @end
 
 NS_ASSUME_NONNULL_END

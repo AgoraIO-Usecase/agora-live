@@ -75,7 +75,7 @@
         if (model.status == VLSongPlayStatusPlaying) {
             return;
         }
-        if (self.isOwner || [VLUserCenter.user.id isEqualToString:selSongModel.userNo]) {
+        if (self.isOwner || [VLUserCenter.user.id isEqualToString:selSongModel.owner.userId]) {
             [weakSelf deleteSongEvent:model];
         }
     };

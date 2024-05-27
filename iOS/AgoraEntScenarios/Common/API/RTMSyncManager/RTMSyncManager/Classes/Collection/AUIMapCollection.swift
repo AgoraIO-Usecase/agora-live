@@ -23,7 +23,9 @@ extension AUIMapCollection {
             return
         }
         
-        var map = value
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
+        var map = newValue
         if let attr = self.attributesWillSetClosure?(channelName,
                                                      observeKey,
                                                      valueCmd,
@@ -50,13 +52,15 @@ extension AUIMapCollection {
                                    valueCmd: String?,
                                    value: [String: Any],
                                    callback: ((NSError?)->())?) {
-        if let err = self.metadataWillUpdateClosure?(publisherId, valueCmd, value, currentMap) {
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
+        if let err = self.metadataWillUpdateClosure?(publisherId, valueCmd, newValue, currentMap) {
             callback?(err)
             return
         }
         
         var map = currentMap
-        value.forEach { (key: String, value: Any) in
+        newValue.forEach { (key: String, value: Any) in
             map[key] = value
         }
         if let attr = self.attributesWillSetClosure?(channelName,
@@ -383,6 +387,10 @@ extension AUIMapCollection {
         }
         
         self.attributesDidChangedClosure?(channelName, observeKey, AUIAttributesModel(map: map))
+    }
+    
+    public override func getLocalMetaData() -> AUIAttributesModel? {
+        return AUIAttributesModel(map: currentMap)
     }
 }
 

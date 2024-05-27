@@ -10,6 +10,12 @@ import RTMSyncManager
 
 @objc protocol KTVServiceListenerProtocol: NSObjectProtocol {
     
+    /// 房间过期
+    func onRoomDidExpire()
+    
+    /// 房间被销毁
+    func onRoomDidDestroy()
+    
     func onUserCountUpdate(userCount: UInt)
     
     /// 麦位全量更新
@@ -18,49 +24,40 @@ import RTMSyncManager
     
     /// 有成员上麦（主动上麦/房主抱人上麦）
     /// - Parameters:
-    ///   - seat: 麦位信息
-    func onAnchorEnterSeat(seat: VLRoomSeatModel)
-    
+    ///   - seatIndex: 麦位索引
+    ///   - user: 用户信息
+    func onUserEnterSeat(seatIndex: Int, user: AUIUserThumbnailInfo)
     
     /// 有成员下麦（主动下麦/房主踢人下麦）
     /// - Parameters:
-    ///   - seat: 麦位信息
-    func onAnchorLeaveSeat(seat: VLRoomSeatModel)
-    
+    ///   - seatIndex: 麦位索引
+    ///   - user: 用户信息
+    func onUserLeaveSeat(seatIndex: Int, user: AUIUserThumbnailInfo)
     
     /// 房主对麦位进行了静音/解禁
     /// - Parameters:
-    ///   - seat: 麦位信息
-    func onSeatAudioMute(seat: VLRoomSeatModel)
+    ///   - seatIndex: 麦位索引
+    ///   - isMute:麦克风开关状态
+    func onSeatAudioMute(seatIndex: Int, isMute: Bool)
 
-    
     /// 房主对麦位摄像头进行禁用/启用
     /// - Parameters:
-    ///   - seat: 麦位信息
-    func onSeatVideoMute(seat: VLRoomSeatModel)
-    
-    
-    
-    /// 新增一首歌曲回调
-    /// - Parameter song: <#song description#>
-    func onAddChooseSong(song: VLRoomSelSongModel)
-    
-    /// 删除一首歌歌曲回调
-    /// - Parameter song: <#song description#>
-    func onRemoveChooseSong(song: VLRoomSelSongModel)
-    
-    /// 更新一首歌曲回调（例如修改play status）
-    /// - Parameter song: <#song description#>
-    func onUpdateChooseSong(song: VLRoomSelSongModel)
+    ///   - seatIndex: 麦位索引
+    ///   - isMute: 摄像头开关状态
+    func onSeatVideoMute(seatIndex: Int, isMute: Bool)
     
     /// 更新所有歌曲回调（例如pin）
     /// - Parameter song: <#song description#>
-    func onUpdateAllChooseSongs(songs: [VLRoomSelSongModel])
+    func onChosenSongListDidChanged(songs: [VLRoomSelSongModel])
     
+    /// 合唱者加入
+    /// - Parameter chorus: 加入的合唱者信息
+    func onChoristerDidEnter(chorister: KTVChoristerModel)
     
-    func onRoomDidExpire()
+    /// 合唱者离开
+    /// - Parameter chorister: 离开的合唱者
+    func onChoristerDidLeave(chorister: KTVChoristerModel)
     
-    func onRoomDidDestroy()
 }
 
 @objc protocol KTVServiceProtocol: NSObjectProtocol {
@@ -146,8 +143,6 @@ import RTMSyncManager
     ///   - completion: 完成回调
     func pinSong(songCode: String, completion: @escaping (Error?) -> Void)
     
-    // lyrics
-    
     /// 加入合唱
     /// - Parameters:
     ///   - songCode: 歌曲id
@@ -155,8 +150,10 @@ import RTMSyncManager
     func joinChorus(songCode: String, completion: @escaping (Error?) -> Void)
     
     /// 伴唱取消合唱
-    /// - Parameter completion: 完成回调
-    func coSingerLeaveChorus(completion: @escaping (Error?) -> Void)
+    /// - Parameters:
+    ///   - songCode: 歌曲id
+    ///   - completion: 完成回调
+    func leaveChorus(songCode: String, completion: @escaping (Error?) -> Void)
     
     /// 当前歌曲合唱改为独唱
     func enterSoloMode()
