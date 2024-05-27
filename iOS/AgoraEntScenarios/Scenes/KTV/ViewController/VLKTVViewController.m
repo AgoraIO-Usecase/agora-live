@@ -1033,8 +1033,8 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             [weakSelf _joinChorus];
         }];
         
-        //TODO(chenpan):没有空麦位，show error
-        [VLToast toast:KTVLocalizedString(@"ktv_mic_full")];
+//        //TODO(chenpan):没有空麦位，show error
+//        [VLToast toast:KTVLocalizedString(@"ktv_mic_full")];
         return;
     }
     
@@ -2686,6 +2686,10 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     
     model.isVideoMuted = isMute;
     [self.roomPersonView reloadSeatIndex:model.seatIndex];
+}
+
+- (void)onUserSeatUpdateWithSeat:(VLRoomSeatModel *)seat {
+    
 }
 
 - (void)onAddChooseSongWithSong:(VLRoomSelSongModel * _Nonnull)songInfo {
