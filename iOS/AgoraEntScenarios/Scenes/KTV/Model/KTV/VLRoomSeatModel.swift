@@ -13,7 +13,7 @@ class VLRoomSeatModel: VLBaseModel {
     /// 在哪个座位
     @objc var seatIndex: Int = 0
     //上麦用户信息
-    @objc var owner: AUIUserThumbnailInfo?
+    @objc var owner: AUIUserThumbnailInfo = AUIUserThumbnailInfo()
     /// 麦位是否静音
     @objc var isAudioMuted: Bool = false
     /// 麦位是否禁视频
@@ -39,7 +39,7 @@ class VLRoomSeatModel: VLBaseModel {
     }
     
     override var description: String {
-        return "seatIndex: \(seatIndex), userNo: \(owner?.userId ?? ""), isAudioMuted: \(isAudioMuted)"
+        return "seatIndex: \(seatIndex), userNo: \(owner.userId), isAudioMuted: \(isAudioMuted)"
     }
 
 }

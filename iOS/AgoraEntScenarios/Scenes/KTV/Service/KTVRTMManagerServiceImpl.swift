@@ -213,18 +213,15 @@ private enum AUIChorusCMd: String {
                     let origMicSeat = self.seatMap["\(index)"]
                     
                     self.seatMap["\(index)"] = micSeat
-                    if let origMicSeat = origMicSeat,
-                       let origUserId = origMicSeat.owner?.userId,
+                    if let origUserId = origMicSeat?.owner.userId,
                        origUserId.count > 0,
-                       let owner = micSeat.owner,
-                        owner.userId != origUserId {
-                        self.delegate?.onUserLeaveSeat(seatIndex: micSeat.seatIndex, user: owner)
+                       micSeat.owner.userId != origUserId {
+                        self.delegate?.onUserLeaveSeat(seatIndex: micSeat.seatIndex, user: micSeat.owner)
                     }
                     
-                    if let owner = micSeat.owner,
-                       owner.userId.count > 0,
-                       origMicSeat?.owner?.userId != owner.userId {
-                        self.delegate?.onUserEnterSeat(seatIndex: micSeat.seatIndex, user: owner)
+                    if micSeat.owner.userId.count > 0,
+                       origMicSeat?.owner.userId != micSeat.owner.userId {
+                        self.delegate?.onUserEnterSeat(seatIndex: micSeat.seatIndex, user: micSeat.owner)
                     }
                     
                     if origMicSeat?.isAudioMuted != micSeat.isAudioMuted {
@@ -248,20 +245,23 @@ private enum AUIChorusCMd: String {
                 return KTVCommonError.unknown.toNSError()
             }
             
+            let currentSeatValue = currentMap[key] ?? [:]
+            let seatUserId = getSeatUserId(currentSeatValue) ?? ""
+            
             switch dataCmd {
             case .enterSeatCmd:
-                let userId = getSeatUserId(value) ?? ""
+                let willEnterSeatUserId = getSeatUserId(value) ?? ""
                 //check wheather the user has entered the seat
-                if currentMap.values.contains(where: { getSeatUserId($0) == userId }) {
+                if currentMap.values.contains(where: { getSeatUserId($0) == willEnterSeatUserId }) {
                     return KTVCommonError.micSeatAlreadyEnter.toNSError()
                 }
                 
                 //check current seat already has user
-                if getSeatUserId(value)?.isEmpty == false {
+                if seatUserId.isEmpty != true {
                     return KTVCommonError.micSeatNotIdle.toNSError()
                 }
             case .leaveSeatCmd, .kickSeatCmd:
-                guard let seatIndex = Int(key), let currentValue = currentMap[key] else {
+                guard let seatIndex = Int(key) else {
                     return KTVCommonError.unknown.toNSError()
                 }
                 
@@ -269,7 +269,7 @@ private enum AUIChorusCMd: String {
                 if seatIndex == 0 {
                     return KTVCommonError.noPermission.toNSError()
                 }
-                let seatUserId = getSeatUserId(currentValue) ?? ""
+                
                 if dataCmd == .leaveSeatCmd {
                     let isRoomOwner = AUIRoomContext.shared.isRoomOwner(channelName: roomNo, userId: publisherId)
                     //only the user who entered the seat or room owner can leave the seat
@@ -284,14 +284,10 @@ private enum AUIChorusCMd: String {
                 self._removeChorus(userId: seatUserId) { _ in
                 }
             case .muteAudioCmd, .muteVideoCmd:
-                guard let seatIndex = Int(key), let currentValue = currentMap[key] else {
+                guard let currentValue = currentMap[key] else {
                     return KTVCommonError.unknown.toNSError()
                 }
                 
-                //room owner can not be leave seat
-                if seatIndex == 0 {
-                    return KTVCommonError.noPermission.toNSError()
-                }
                 let seatUserId = getSeatUserId(currentValue) ?? ""
                 let isRoomOwner = AUIRoomContext.shared.isRoomOwner(channelName: roomNo, userId: publisherId)
                 //only the user who entered the seat or room owner can leave the seat
@@ -703,12 +699,12 @@ extension KTVRTMManagerServiceImpl {
     
     func leaveSeat(completion: @escaping (Error?) -> Void) {
         guard let roomNo = roomNo,
-              let seatInfo = seatMap.values.filter({ $0.owner?.userId == self.currentUserId() }).first else {
+              let seatInfo = seatMap.values.filter({ $0.owner.userId == self.currentUserId() }).first else {
             completion(NSError(domain: "leaveSeat fail", code: -1))
             return
         }
         
-        agoraPrint("leaveSeat [\(seatInfo.owner?.userId ?? "")]")
+        agoraPrint("leaveSeat [\(seatInfo.owner.userId)]")
         let collection = getSeatCollection(with: roomNo)
         let model = VLRoomSeatModel()
         model.seatIndex = seatInfo.seatIndex
@@ -721,12 +717,12 @@ extension KTVRTMManagerServiceImpl {
     
     func kickSeat(userId: String, completion: @escaping (NSError?) -> ()) {
         guard let roomNo = roomNo,
-              let seatInfo = seatMap.values.filter({ $0.owner?.userId == userId }).first else {
+              let seatInfo = seatMap.values.filter({ $0.owner.userId == userId }).first else {
             completion(NSError(domain: "kickSeat fail", code: -1))
             return
         }
         
-        agoraPrint("kickSeat [\(seatInfo.owner?.userId ?? "")]")
+        agoraPrint("kickSeat [\(seatInfo.owner.userId)]")
         let collection = getSeatCollection(with: roomNo)
         let model = VLRoomSeatModel()
         model.seatIndex = seatInfo.seatIndex
@@ -739,7 +735,7 @@ extension KTVRTMManagerServiceImpl {
     
     func updateSeatAudioMuteStatus(muted: Bool, completion: @escaping (Error?) -> Void) {
         guard let seatInfo = self.seatMap
-            .filter({ $0.value.owner?.userId == VLUserCenter.user.id })
+            .filter({ $0.value.owner.userId == VLUserCenter.user.id })
             .first?.value else {
             agoraAssert("mute seat not found")
             completion(nil)
@@ -753,7 +749,7 @@ extension KTVRTMManagerServiceImpl {
     
     func updateSeatVideoMuteStatus(muted: Bool, completion: @escaping (Error?) -> Void) {
         guard let seatInfo = self.seatMap
-            .filter({ $0.value.owner?.userId == VLUserCenter.user.id })
+            .filter({ $0.value.owner.userId == VLUserCenter.user.id })
             .first?.value else {
             agoraAssert("open video seat not found")
             completion(nil)
