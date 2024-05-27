@@ -16,14 +16,16 @@ import RTMSyncManager
     /// 房间被销毁
     func onRoomDidDestroy()
     
+    /// 房间用户数量变更
+    /// - Parameter userCount: 用户数
     func onUserCountUpdate(userCount: UInt)
     
     /// 麦位更新
-    /// - Parameter seat: <#seat description#>
+    /// - Parameter seat: 麦位对象
     func onMicSeatSnapshot(seat: [String: VLRoomSeatModel])
     
-    /// <#Description#>
-    /// - Parameter seat: <#seat description#>
+    /// 麦位更新
+    /// - Parameter seat: 麦位对象
     func onUserSeatUpdate(seat: VLRoomSeatModel)
     
     /// 有成员上麦（主动上麦/房主抱人上麦）
@@ -51,7 +53,7 @@ import RTMSyncManager
     func onSeatVideoMute(seatIndex: Int, isMute: Bool)
     
     /// 更新所有歌曲回调（例如pin）
-    /// - Parameter song: <#song description#>
+    /// - Parameter song: 歌曲列表
     func onChosenSongListDidChanged(songs: [VLRoomSelSongModel])
     
     /// 合唱者加入
@@ -65,7 +67,6 @@ import RTMSyncManager
 }
 
 @objc protocol KTVServiceProtocol: NSObjectProtocol {
-    
     // room info
     
     /// 获取房间列表
@@ -79,7 +80,6 @@ import RTMSyncManager
     ///   - inputModel: 输入模型
     ///   - completion: 完成回调
     func createRoom(inputModel: KTVCreateRoomInfo, completion: @escaping (Error?, AUIRoomInfo?) -> Void)
-    
     
     /// 加入房间
     /// - Parameters:
@@ -104,6 +104,12 @@ import RTMSyncManager
     /// - Parameters:
     ///   - completion: 完成回调
     func leaveSeat(completion: @escaping (Error?) -> Void)
+    
+    /// 踢人下麦
+    /// - Parameters:
+    ///   - seatIndex: 麦位index
+    ///   - completion: 完成回调
+    func kickSeat(seatIndex: Int, completion: @escaping (NSError?) -> ())
     
     /// 设置麦位声音
     /// - Parameters:
@@ -159,7 +165,12 @@ import RTMSyncManager
     ///   - completion: 完成回调
     func leaveChorus(songCode: String, completion: @escaping (Error?) -> Void)
     
-    func subscribe(listener: KTVServiceListenerProtocol?) 
+    /// 订阅监听者
+    /// - Parameter listener: 监听者对象
+    func subscribe(listener: KTVServiceListenerProtocol?)
     
+    /// 获取当前房间使用时长
+    /// - Parameter channelName: 频道名
+    /// - Returns: 使用时长，单位ms
     func getCurrentDuration(channelName: String) -> UInt64
 }
