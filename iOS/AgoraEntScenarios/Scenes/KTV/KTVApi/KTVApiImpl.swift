@@ -1295,7 +1295,7 @@ extension KTVApiImpl {
         if code != 0 {
             agoraPrint("sendStreamMessage fail: \(String(describing: code))")
         }
-        print("totalSize:\(totalSize)")
+//        print("totalSize:\(totalSize)")
     }
 
     private func syncPlayState(_ state: AgoraMediaPlayerState) {

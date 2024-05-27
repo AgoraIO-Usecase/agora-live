@@ -18,12 +18,12 @@ extension AUIMapCollection {
                                 valueCmd: String?,
                                 value: [String: Any],
                                 callback: ((NSError?)->())?) {
-        if let err = self.metadataWillAddClosure?(publisherId, valueCmd, value) {
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
+        if let err = self.metadataWillAddClosure?(publisherId, valueCmd, newValue) {
             callback?(err)
             return
         }
-        
-        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
         
         var map = newValue
         if let attr = self.attributesWillSetClosure?(channelName,
@@ -89,12 +89,14 @@ extension AUIMapCollection {
                                   valueCmd: String?,
                                   value: [String: Any],
                                   callback: ((NSError?)->())?) {
-        if let err = self.metadataWillMergeClosure?(publisherId, valueCmd, value, currentMap) {
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
+        if let err = self.metadataWillMergeClosure?(publisherId, valueCmd, newValue, currentMap) {
             callback?(err)
             return
         }
         
-        var map = mergeMap(origMap: currentMap, newMap: value)
+        var map = mergeMap(origMap: currentMap, newMap: newValue)
         if let attr = self.attributesWillSetClosure?(channelName,
                                                      observeKey,
                                                      valueCmd,
