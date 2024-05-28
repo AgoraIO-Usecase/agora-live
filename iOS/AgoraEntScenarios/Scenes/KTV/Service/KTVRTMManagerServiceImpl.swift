@@ -342,15 +342,12 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
                 return AUICommonError.unknown.toNSError()
             }
             
-            guard let seatValues = self.getSeatCollection(with: roomNo)?.getLocalMetaData()?.getMap()?.values else {
-                return AUICommonError.unknown.toNSError()
-            }
             let userId = getUserId(item) ?? ""
             switch dataCmd {
             case .removeSongCmd:
                 //only room owner or song owner can remove song
                 let isRoomOwner = AUIRoomContext.shared.isRoomOwner(channelName: roomNo, userId: publisherId)
-                guard isRoomOwner || seatValues.contains(where: { getUserId($0) == userId }) else {
+                guard isRoomOwner || userId == publisherId else {
                     return KTVCommonError.noPermission.toNSError()
                 }
                 
@@ -360,6 +357,8 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
                     }
                 }
                 
+                return nil
+            case .removedUserSongs:
                 return nil
             default:
                 break
@@ -411,7 +410,7 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
         }
         
         collection.subscribeWillAdd {[weak self] publisherId, dataCmd, newItem in
-            guard let self = self, let dataCmd = AUIChorusCMd(rawValue: dataCmd ?? "") else {
+            guard let self = self, let dataCmd = AUIChorusCmd(rawValue: dataCmd ?? "") else {
                 return AUICommonError.unknown.toNSError()
             }
             
@@ -445,7 +444,7 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
         }
         
         collection.subscribeWillRemove { [weak self] publisherId, dataCmd, item in
-            guard let self = self, let dataCmd = AUIChorusCMd(rawValue: dataCmd ?? "") else {
+            guard let self = self, let dataCmd = AUIChorusCmd(rawValue: dataCmd ?? "") else {
                 return AUICommonError.unknown.toNSError()
             }
             
@@ -460,6 +459,8 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
                 guard isRoomOwner || seatValues.contains(where: { getSeatUserId($0) == userId }) else {
                     return KTVCommonError.noPermission.toNSError()
                 }
+                return nil
+            case .kickAllCmd, .kickUserCmd:
                 return nil
             default:
                 break
@@ -804,7 +805,7 @@ extension KTVSyncManagerServiceImp {
         
         let value = mapConvert(model: model)
         let collection = getChorusCollection(with: roomNo)
-        collection?.addMetaData(valueCmd: AUIChorusCMd.joinCmd.rawValue,
+        collection?.addMetaData(valueCmd: AUIChorusCmd.joinCmd.rawValue,
                                 value: value,
                                 filter: [["chorusSongNo": songCode, "userId": currentUserId()]],
                                 callback: completion)
@@ -816,7 +817,7 @@ extension KTVSyncManagerServiceImp {
             return
         }
         let collection = getChorusCollection(with: roomNo)
-        collection?.removeMetaData(valueCmd: AUIChorusCMd.leaveCmd.rawValue,
+        collection?.removeMetaData(valueCmd: AUIChorusCmd.leaveCmd.rawValue,
                                    filter: [["chorusSongNo": songCode, "userId": currentUserId()]],
                                    callback: completion)
     }
@@ -1081,7 +1082,7 @@ extension KTVSyncManagerServiceImp {
             return
         }
         let collection = getChorusCollection(with: roomNo)
-        collection?.removeMetaData(valueCmd: AUIChorusCMd.leaveCmd.rawValue,
+        collection?.removeMetaData(valueCmd: AUIChorusCmd.kickUserCmd.rawValue,
                                    filter: [["userId": userId]],
                                    callback: completion)
     }
@@ -1092,7 +1093,7 @@ extension KTVSyncManagerServiceImp {
             return
         }
         let collection = getChorusCollection(with: roomNo)
-        collection?.removeMetaData(valueCmd: AUIChorusCMd.leaveCmd.rawValue,
+        collection?.removeMetaData(valueCmd: AUIChorusCmd.kickAllCmd.rawValue,
                                    filter: nil,
                                    callback: completion)
     }
@@ -1154,7 +1155,7 @@ extension KTVSyncManagerServiceImp {
         }
         agoraPrint("imp song delete... userId[\(userId)]")
         let collection = getSongCollection(with: channelName)
-        collection?.removeMetaData(valueCmd: AUIMusicCmd.removeSongCmd.rawValue,
+        collection?.removeMetaData(valueCmd: AUIMusicCmd.removedUserSongs.rawValue,
                                    filter: [["owner": ["userId": userId]]],
                                    callback: completion)
     }
