@@ -108,7 +108,10 @@ private enum AUIChorusCMd: String {
     private var isConnected: Bool = false
     
     @objc var room: AUIRoomInfo? {
-        return self.roomList?.filter({ $0.roomId == self.roomNo }).first
+        if let room = self.roomList?.filter({ $0.roomId == self.roomNo }).first {
+            return room
+        }
+        return roomService.getRoomInfo(roomId: roomNo ?? "")
     }
     
     private lazy var roomManager = AUIRoomManagerImpl(sceneId: kSceneId)
@@ -576,15 +579,14 @@ extension KTVRTMManagerServiceImpl {
         self.roomNo = roomModel.roomId
         func create(roomInfo: AUIRoomInfo) {
             _subscribeAll()
-            roomService.createRoom(room: roomInfo) { [weak self] err, room in
-                guard let self = self else {return}
+            roomService.createRoom(room: roomInfo) {  err, room in
                 if let err = err {
                     KTVLog.info(text: "enter scene fail: \(err.localizedDescription)")
                     _hideLoadingView()
                     completion(err, nil)
                     return
                 }
-                self.roomList?.append(room!)
+                
                 _hideLoadingView()
                 completion(nil, room!)
                 
@@ -611,7 +613,6 @@ extension KTVRTMManagerServiceImpl {
             self?.roomNo = roomId
             self?._subscribeAll()
             self?.roomService.enterRoom(roomId: roomId) {[weak self] err in
-                guard let self = self else { return }
                 agoraPrint("joinRoom joinScene cost: \(-date.timeIntervalSinceNow * 1000) ms")
                 if let err = err {
                     agoraPrint("enter scene fail: \(err.localizedDescription)")
@@ -669,7 +670,7 @@ extension KTVRTMManagerServiceImpl {
     }
     
     func updateRoom(with userCount: Int, completion: @escaping (NSError?) -> Void) {
-        guard let roomInfo = roomList?.filter({ $0.roomNo == self.roomNo }).first else {
+        guard let roomInfo = room else {
             completion(NSError(domain: "not found roominfo", code: -1))
             return
         }
@@ -1037,9 +1038,7 @@ extension KTVRTMManagerServiceImpl: AUISceneRespDelegate {
 
 extension KTVRTMManagerServiceImpl: AUIUserRespDelegate {
     func onRoomUserSnapshot(roomId: String, userList: [AUIUserInfo]) {
-        if roomService.isRoomOwner(roomId: roomId) {
-            self.updateRoom(with: userList.count) { err in
-            }
+        updateRoom(with: userList.count) { err in
         }
     }
     

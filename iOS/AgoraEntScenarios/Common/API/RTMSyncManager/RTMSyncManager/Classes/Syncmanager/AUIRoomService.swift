@@ -136,6 +136,10 @@ public class AUIRoomService: NSObject {
         leaveRoom(roomId: room.roomId)
     }
     
+    public func getRoomInfo(roomId: String) -> AUIRoomInfo? {
+        return roomInfoMap[roomId]
+    }
+    
     public func isRoomOwner(roomId: String) -> Bool {
         return AUIRoomContext.shared.isRoomOwner(channelName: roomId)
     }
