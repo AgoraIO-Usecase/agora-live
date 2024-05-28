@@ -462,19 +462,20 @@ private enum AUIChorusCMd: String {
                   let chorusList = NSArray.yy_modelArray(with: KTVChoristerModel.self, json: list) as? [KTVChoristerModel] else {
                 return
             }
-                
-            var unChangesOldList = self.choristerList
-            //TODO: optimize
-            let difference = chorusList.difference(from: self.choristerList)
+            
+            let setA = Set(self.choristerList)
+            let setB = Set(chorusList)
             self.choristerList = chorusList
-            for change in difference {
-                switch change {
-                case let .remove(offset, oldElement, _):
-                    unChangesOldList.remove(at: offset)
-                    self.delegate?.onChoristerDidLeave(chorister: oldElement)
-                case let .insert(_, newElement, _):
-                    self.delegate?.onChoristerDidEnter(chorister: newElement)
-                }
+
+            let addedItems = setB.subtracting(setA)
+            let removedItems = setA.subtracting(setB)
+
+            removedItems.forEach {
+                self.delegate?.onChoristerDidLeave(chorister: $0)
+            }
+            
+            addedItems.forEach {
+                self.delegate?.onChoristerDidEnter(chorister: $0)
             }
         }
         

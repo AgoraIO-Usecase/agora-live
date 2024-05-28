@@ -43,4 +43,19 @@ extension AUIUserThumbnailInfo {
 open class KTVChoristerModel: NSObject {
     var userId: String = ""
     var chorusSongNo: String?          //合唱者演唱歌曲
+ 
+    open override func isEqual(_ object: Any?) -> Bool {
+        if let other = object as? KTVChoristerModel {
+            return self.userId == other.userId && self.chorusSongNo == other.chorusSongNo
+        }
+        return false
+    }
+    
+    open override var hash: Int {
+        return userId.hashValue ^ (chorusSongNo?.hashValue ?? 0)
+    }
+    
+    open override var description: String {
+        return "\(userId)-\(chorusSongNo ?? "")"
+    }
 }
