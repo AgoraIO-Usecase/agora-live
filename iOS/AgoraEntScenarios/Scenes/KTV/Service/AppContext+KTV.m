@@ -41,7 +41,11 @@ NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
     return ktvServiceImp;
 }
 
-+ (void)unloadServiceImp {
++ (void)unloadKtvServiceImp {
+    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
+    if ([ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+        [ktvServiceImp destroy];
+    }
     [[AppContext shared].extDic removeAllObjects];
 }
 

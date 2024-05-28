@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (id<KTVServiceProtocol>)ktvServiceImp;
 
 /// free service imp instance, thread unsafe
-+ (void)unloadServiceImp;
++ (void)unloadKtvServiceImp;
 
 
 + (NSDictionary<NSString*, VLRoomSeatModel*>* __nullable)ktvSeatMap;
