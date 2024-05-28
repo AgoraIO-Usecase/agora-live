@@ -7,6 +7,7 @@
 
 #import "AppContext+KTV.h"
 #import "AgoraEntScenarios-Swift.h"
+#import "AESMacro.h"
 
 NSString* kServiceImpKey = @"ServiceImpKey";
 NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
@@ -122,7 +123,8 @@ NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
 
 + (BOOL)isKtvSongOwnerWithSeat:(VLRoomSeatModel*)seat {
     VLRoomSelSongModel* song = [[self ktvSongList] firstObject];
-    
-    return [song.owner.userId isEqualToString:VLUserCenter.user.id] && [song status] == VLSongPlayStatusPlaying;
+    BOOL isSongOwner = [song.owner.userId isEqualToString:NullToString(seat.owner.userId)];
+    BOOL isPlaying = [song status] == VLSongPlayStatusPlaying;
+    return isSongOwner && isPlaying;
 }
 @end

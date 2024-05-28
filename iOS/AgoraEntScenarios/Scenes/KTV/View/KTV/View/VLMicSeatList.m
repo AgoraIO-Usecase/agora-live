@@ -109,10 +109,10 @@
     
     cell.singingBtn.hidden = ![AppContext isKtvSongOwnerWithSeat:seatModel];
     if (seatModel.isAudioMuted) {
-        cell.muteImgView.hidden = false;
+        cell.muteImgView.hidden = NO;
         cell.volume = 0;
     } else {
-        cell.muteImgView.hidden = true;
+        cell.muteImgView.hidden = YES;
     }
     
     if ([AppContext isKtvChorusingWithSeat:seatModel]) {
