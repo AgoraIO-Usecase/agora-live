@@ -60,23 +60,26 @@ extension NSError {
 
 
 enum AUIMicSeatCmd: String {
-    case leaveSeatCmd = "leaveSeatCmd"
-    case enterSeatCmd = "enterSeatCmd"
-    case muteAudioCmd = "muteAudioCmd"
-    case muteVideoCmd = "muteVideoCmd"
-    case kickSeatCmd = "kickSeatCmd"
+    case leaveSeatCmd = "leaveSeatCmd"    //下麦
+    case enterSeatCmd = "enterSeatCmd"    //上麦
+    case muteAudioCmd = "muteAudioCmd"    //mute/unmute audio
+    case muteVideoCmd = "muteVideoCmd"    //mute/unmute video
+    case kickSeatCmd = "kickSeatCmd"      //把某一个上麦用户踢下麦
 }
 
 enum AUIMusicCmd: String {
-    case chooseSongCmd = "chooseSongCmd"
-    case removeSongCmd = "removeSongCmd"
-    case pingSongCmd = "pingSongCmd"
-    case updatePlayStatusCmd = "updatePlayStatusCmd"
+    case chooseSongCmd = "chooseSongCmd"   //添加一首歌
+    case removeSongCmd = "removeSongCmd"   //移除一首歌
+    case pingSongCmd = "pingSongCmd"       //置顶一首歌
+    case updatePlayStatusCmd = "updatePlayStatusCmd"   //更新歌曲播放状态
+    case removedUserSongs = "removedUserSongsCmd"   //移除指定用户所有歌曲
 }
 
-enum AUIChorusCMd: String {
-    case joinCmd = "joinChorusCmd"
-    case leaveCmd = "leaveChorusCmd"
+enum AUIChorusCmd: String {
+    case joinCmd = "joinChorusCmd" //加入合唱
+    case leaveCmd = "leaveChorusCmd" //退出合唱
+    case kickAllCmd = "kickAllOutOfChorusCmd"  //移除所有合唱
+    case kickUserCmd = "KickUserOutOfChorusCmd"   //踢出指定用户出合唱列表
 }
 
 @objcMembers
