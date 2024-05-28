@@ -31,10 +31,10 @@ NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
 + (id<KTVServiceProtocol>)ktvServiceImp {
     id<KTVServiceProtocol> ktvServiceImp = [[AppContext shared].extDic valueForKey:kServiceImpKey];
     if (ktvServiceImp == nil) {
-        ktvServiceImp = [[KTVRTMManagerServiceImpl alloc] initWithAppId:KeyCenter.AppId
-                                                                   host:KeyCenter.RTMHostUrl
-                                                         appCertificate:KeyCenter.Certificate
-                                                                   user:VLUserCenter.user];
+        ktvServiceImp = [[KTVSyncManagerServiceImp alloc] initWithAppId:KeyCenter.AppId
+                                                                host:KeyCenter.RTMHostUrl
+                                                      appCertificate:KeyCenter.Certificate
+                                                                user:VLUserCenter.user];
       //  ktvServiceImp = [KTVSyncManagerServiceImp new];
         [[AppContext shared].extDic setValue:ktvServiceImp forKey:kServiceImpKey];
     }
@@ -43,32 +43,32 @@ NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
 }
 
 + (void)unloadKtvServiceImp {
-    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
-    if ([ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+    KTVSyncManagerServiceImp* ktvServiceImp = (KTVSyncManagerServiceImp*)[self ktvServiceImp];
+    if ([ktvServiceImp isKindOfClass:[KTVSyncManagerServiceImp class]]) {
         [ktvServiceImp destroy];
     }
     [[AppContext shared].extDic removeAllObjects];
 }
 
 + (NSDictionary<NSString*, VLRoomSeatModel*>* __nullable)ktvSeatMap {
-    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
-    if (![ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+    KTVSyncManagerServiceImp* ktvServiceImp = (KTVSyncManagerServiceImp*)[self ktvServiceImp];
+    if (![ktvServiceImp isKindOfClass:[KTVSyncManagerServiceImp class]]) {
         return nil;
     }
     return [ktvServiceImp seatMap];
 }
 
 + (NSArray<VLRoomSelSongModel*>* __nullable)ktvSongList {
-    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
-    if (![ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+    KTVSyncManagerServiceImp* ktvServiceImp = (KTVSyncManagerServiceImp*)[self ktvServiceImp];
+    if (![ktvServiceImp isKindOfClass:[KTVSyncManagerServiceImp class]]) {
         return nil;
     }
     return [ktvServiceImp songList];
 }
 
 + (NSArray<KTVChoristerModel*>* __nullable)ktvChoristerList {
-    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
-    if (![ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+    KTVSyncManagerServiceImp* ktvServiceImp = (KTVSyncManagerServiceImp*)[self ktvServiceImp];
+    if (![ktvServiceImp isKindOfClass:[KTVSyncManagerServiceImp class]]) {
         return nil;
     }
     return [ktvServiceImp choristerList];
@@ -76,8 +76,8 @@ NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
 
 
 + (BOOL)isKtvRoomOwnerWithSeat:(VLRoomSeatModel*)seat {
-    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
-    if (![ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+    KTVSyncManagerServiceImp* ktvServiceImp = (KTVSyncManagerServiceImp*)[self ktvServiceImp];
+    if (![ktvServiceImp isKindOfClass:[KTVSyncManagerServiceImp class]]) {
         return NO;
     }
     
@@ -90,8 +90,8 @@ NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
 
 
 + (BOOL)isKtvChorusingWithSeat:(VLRoomSeatModel*)seat {
-    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
-    if (![ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+    KTVSyncManagerServiceImp* ktvServiceImp = (KTVSyncManagerServiceImp*)[self ktvServiceImp];
+    if (![ktvServiceImp isKindOfClass:[KTVSyncManagerServiceImp class]]) {
         return NO;
     }
     
@@ -106,8 +106,8 @@ NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
 }
 
 + (BOOL)isKtvChorusingWithUserId:(NSString*)userId {
-    KTVRTMManagerServiceImpl* ktvServiceImp = (KTVRTMManagerServiceImpl*)[self ktvServiceImp];
-    if (![ktvServiceImp isKindOfClass:[KTVRTMManagerServiceImpl class]]) {
+    KTVSyncManagerServiceImp* ktvServiceImp = (KTVSyncManagerServiceImp*)[self ktvServiceImp];
+    if (![ktvServiceImp isKindOfClass:[KTVSyncManagerServiceImp class]]) {
         return NO;
     }
     

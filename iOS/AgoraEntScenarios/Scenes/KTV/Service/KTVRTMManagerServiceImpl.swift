@@ -9,57 +9,8 @@ import Foundation
 import RTMSyncManager
 import YYModel
 import SVProgressHUD
+
 private let kSceneId = "scene_ktv_4.3.0"
-
-
-public enum KTVCommonError {
-    case unknown      //未知错误
-    case micSeatNotIdle   //麦位不空闲
-    case micSeatAlreadyEnter   //已经上麦过了
-    case userNoEnterSeat   //观众未上麦
-    case chooseSongAlreadyExist   //歌曲已经选择过了
-    case chooseSongNotExist   //歌曲已经选择过了
-    case choristerAlreadyExist   //合唱用户已存在
-    case choristerNotExist    //合唱用户不存在
-    case noPermission   //无权限
-    case chooseSongIsFail   //选择歌曲失败
-    
-    public func toNSError() -> NSError {
-        func createError(code: Int = -1, msg: String) -> NSError {
-            return NSError(domain: "AUIKit Error", code: Int(code), userInfo: [ NSLocalizedDescriptionKey : msg])
-        }
-        switch self {
-        case .micSeatNotIdle:
-            return createError(msg: "mic seat not idle")
-        case .micSeatAlreadyEnter:
-            return createError(msg: "user already enter seat")
-        case .userNoEnterSeat:
-            return createError(msg: "user not enter seat")
-        case .chooseSongAlreadyExist:
-            return createError(msg: "already choose song")
-        case .chooseSongNotExist:
-            return createError(msg: "song not exist")
-        case .choristerAlreadyExist:
-            return createError(msg: "chorister already exist")
-        case .choristerNotExist:
-            return createError(msg: "chorister not exist")
-        case .noPermission:
-            return createError(msg: "no permission")
-        case .chooseSongIsFail:
-            return createError(msg: "choost song model fail")
-        default:
-            return createError(msg: "unknown error")
-        }
-    }
-}
-
-extension NSError {
-    static func auiError(_ description: String) -> NSError {
-        return NSError(domain: "AUIKit Error",
-                       code: -1,
-                       userInfo: [ NSLocalizedDescriptionKey : description])
-    }
-}
 
 /// 座位信息
 private let SYNC_MANAGER_SEAT_INFO = "seat_info"
@@ -68,27 +19,7 @@ private let SYNC_MANAGER_CHOOSE_SONG_INFO = "choose_song"
 //合唱
 private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
 
-private enum AUIMicSeatCmd: String {
-    case leaveSeatCmd = "leaveSeatCmd"
-    case enterSeatCmd = "enterSeatCmd"
-    case muteAudioCmd = "muteAudioCmd"
-    case muteVideoCmd = "muteVideoCmd"
-    case kickSeatCmd = "kickSeatCmd"
-}
-
-private enum AUIMusicCmd: String {
-    case chooseSongCmd = "chooseSongCmd"
-    case removeSongCmd = "removeSongCmd"
-    case pingSongCmd = "pingSongCmd"
-    case updatePlayStatusCmd = "updatePlayStatusCmd"
-}
-
-private enum AUIChorusCMd: String {
-    case joinCmd = "joinChorusCmd"
-    case leaveCmd = "leaveChorusCmd"
-}
-
-@objcMembers class KTVRTMManagerServiceImpl: NSObject, KTVServiceProtocol {
+@objcMembers class KTVSyncManagerServiceImp: NSObject, KTVServiceProtocol {
     
     private var appId: String
     private var user: VLLoginModel
@@ -484,13 +415,23 @@ private enum AUIChorusCMd: String {
                 return AUICommonError.unknown.toNSError()
             }
             
-            guard let seatValues = self.getSeatCollection(with: roomNo)?.getLocalMetaData()?.getMap()?.values else {
-                return AUICommonError.unknown.toNSError()
-            }
-            
             let userId = getSeatUserId(newItem) ?? ""
             switch dataCmd {
             case .joinCmd:
+                guard let seatValues = self.getSeatCollection(with: roomNo)?.getLocalMetaData()?.getMap()?.values else {
+                    return AUICommonError.unknown.toNSError()
+                }
+                
+                guard let songValue = self.getSongCollection(with: roomNo)?.getLocalMetaData()?.getList()?.first else {
+                    return AUICommonError.unknown.toNSError()
+                }
+                
+                //check if the top song is currently playing
+                guard songValue["songNo"] as? String == newItem["chorusSongNo"] as? String,
+                      songValue["status"] as? Int == VLSongPlayStatus.playing.rawValue else {
+                    return KTVCommonError.noPermission.toNSError()
+                }
+                
                 //check whether the song owner entered the seat
                 guard seatValues.contains(where: { getSeatUserId($0) == userId }) else {
                     return KTVCommonError.userNoEnterSeat.toNSError()
@@ -530,7 +471,7 @@ private enum AUIChorusCMd: String {
 }
 
 //only for room
-extension KTVRTMManagerServiceImpl {
+extension KTVSyncManagerServiceImp {
     @objc func destroy() {
         AppContext.shared.agoraRTCToken = ""
         AppContext.shared.agoraRTMToken = ""
@@ -611,7 +552,7 @@ extension KTVRTMManagerServiceImpl {
         let enterScene: () -> Void = {[weak self] in
             self?.roomNo = roomId
             self?._subscribeAll()
-            self?.roomService.enterRoom(roomId: roomId) {[weak self] err in
+            self?.roomService.enterRoom(roomId: roomId) { err in
                 agoraPrint("joinRoom joinScene cost: \(-date.timeIntervalSinceNow * 1000) ms")
                 if let err = err {
                     agoraPrint("enter scene fail: \(err.localizedDescription)")
@@ -701,7 +642,7 @@ extension KTVRTMManagerServiceImpl {
 }
 
 //only for seat
-extension KTVRTMManagerServiceImpl {
+extension KTVSyncManagerServiceImp {
     func enterSeat(seatIndex: NSNumber?, completion: @escaping (Error?) -> Void) {
         guard let roomNo = roomNo else {
             completion(NSError(domain: "enterSeat fail", code: -1))
@@ -784,7 +725,7 @@ extension KTVRTMManagerServiceImpl {
 }
 
 // only for music
-extension KTVRTMManagerServiceImpl {
+extension KTVSyncManagerServiceImp {
     func removeSong(songCode: String, completion: @escaping (Error?) -> Void) {
         guard let channelName = roomNo else {
             completion(NSError(domain: "removeSong fail", code: -1))
@@ -851,7 +792,7 @@ extension KTVRTMManagerServiceImpl {
 }
 
 //for chorus
-extension KTVRTMManagerServiceImpl {
+extension KTVSyncManagerServiceImp {
     func joinChorus(songCode: String, completion: @escaping (Error?) -> Void) {
         guard let roomNo = roomNo else {
             completion(NSError(domain: "joinChorus fail", code: -1))
@@ -882,7 +823,7 @@ extension KTVRTMManagerServiceImpl {
 }
 
 // for subscribe
-extension KTVRTMManagerServiceImpl {
+extension KTVSyncManagerServiceImp {
     func subscribe(listener: KTVServiceListenerProtocol?) {
         self.delegate = listener
         if self.seatMap.isEmpty == false {
@@ -945,7 +886,7 @@ extension KTVRTMManagerServiceImpl {
 }
 
 // model, dict convert tool
-extension KTVRTMManagerServiceImpl {
+extension KTVSyncManagerServiceImp {
     private func convertAUIUserInfo2UserInfo(with userInfo: AUIUserInfo) -> VLLoginModel {
         let user = VLLoginModel()
         user.userNo = userInfo.userId
@@ -995,7 +936,7 @@ extension KTVRTMManagerServiceImpl {
     }
 }
 
-extension KTVRTMManagerServiceImpl: AUISceneRespDelegate {
+extension KTVSyncManagerServiceImp: AUISceneRespDelegate {
     func onWillInitSceneMetadata(channelName: String) -> [String : Any]? {
         var map: [String: Any] = [:]
         let ownerSeat = _createCurrentUserSeat(seatIndex: 0)
@@ -1035,7 +976,7 @@ extension KTVRTMManagerServiceImpl: AUISceneRespDelegate {
     }
 }
 
-extension KTVRTMManagerServiceImpl: AUIUserRespDelegate {
+extension KTVSyncManagerServiceImp: AUIUserRespDelegate {
     func onRoomUserSnapshot(roomId: String, userList: [AUIUserInfo]) {
         updateRoom(with: userList.count) { err in
         }
@@ -1091,7 +1032,7 @@ extension KTVRTMManagerServiceImpl: AUIUserRespDelegate {
     }
 }
 
-extension KTVRTMManagerServiceImpl: AUIRtmErrorProxyDelegate {
+extension KTVSyncManagerServiceImp: AUIRtmErrorProxyDelegate {
     
     private func getCurrentScene(with channelName: String) -> AUIScene? {
         let scene = self.syncManager.getScene(channelName: channelName)
@@ -1122,7 +1063,7 @@ extension KTVRTMManagerServiceImpl: AUIRtmErrorProxyDelegate {
 }
 
 // seat
-extension KTVRTMManagerServiceImpl {
+extension KTVSyncManagerServiceImp {
     private func _createCurrentUserSeat(seatIndex: Int) -> VLRoomSeatModel {
         let seatInfo = VLRoomSeatModel()
         seatInfo.seatIndex = seatIndex
@@ -1133,7 +1074,7 @@ extension KTVRTMManagerServiceImpl {
 }
 
 //chorus
-extension KTVRTMManagerServiceImpl {
+extension KTVSyncManagerServiceImp {
     private func _removeChorus(userId: String, completion: @escaping (Error?) -> Void) {
         guard let roomNo = roomNo else {
             completion(NSError(domain: "_removeChorus fail", code: -1))
@@ -1158,7 +1099,7 @@ extension KTVRTMManagerServiceImpl {
 }
 
 // for song
-extension KTVRTMManagerServiceImpl {
+extension KTVSyncManagerServiceImp {
     private func _sortChooseSongList(chooseSongList: [[String: Any]]) -> [[String: Any]] {
         let songList = chooseSongList.sorted(by: { model1, model2 in
             //歌曲播放中优先（只会有一个，多个目前没有，如果有需要修改排序策略）
