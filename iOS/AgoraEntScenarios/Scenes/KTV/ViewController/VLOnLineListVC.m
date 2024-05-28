@@ -26,10 +26,6 @@
 
 @implementation VLOnLineListVC
 
-- (void)dealloc {
-    [AppContext unloadServiceImp];
-}
-
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         [AppContext setupKtvConfig];
@@ -71,6 +67,11 @@
 }
 - (BOOL)preferredNavigationBarHidden {
     return true;
+}
+
+- (void)backBtnClickEvent {
+    [super backBtnClickEvent];
+    [AppContext unloadKtvServiceImp];
 }
 
 #pragma mark --NetWork

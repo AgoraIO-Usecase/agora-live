@@ -531,6 +531,11 @@ private enum AUIChorusCMd: String {
 
 //only for room
 extension KTVRTMManagerServiceImpl {
+    @objc func destroy() {
+        syncManager.logout()
+        syncManager.destroy()
+    }
+    
     func getRoomList(page: UInt, completion: @escaping (Error?, [AUIRoomInfo]?) -> Void) {
         let fetchRoomList: () -> Void = {[weak self] in
             self?.roomService.getRoomList(lastCreateTime: 0, pageSize: 50) {[weak self] err, ts, list in
