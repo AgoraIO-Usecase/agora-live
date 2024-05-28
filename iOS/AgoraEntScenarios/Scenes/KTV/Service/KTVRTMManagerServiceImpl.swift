@@ -147,9 +147,6 @@ private enum AUIChorusCMd: String {
         }
         super.init()
         syncManager.rtmManager.subscribeError(channelName: "", delegate: self)
-        login { err in
-            self.isConnected = err == nil ? true : false
-        }
     }
     
     private func currentUserId() -> String {
@@ -157,7 +154,7 @@ private enum AUIChorusCMd: String {
     }
     
     private func preGenerateToken(completion:@escaping (NSError?)->()) {
-        commerceLogger.error("preGenerateToken start")
+        agoraPrint("preGenerateToken start")
         AppContext.shared.agoraRTCToken = ""
         AppContext.shared.agoraRTMToken = ""
         
@@ -176,7 +173,7 @@ private enum AUIChorusCMd: String {
                 return
             }
             
-            commerceLogger.info("[Timing]preGenerateToken rtc & rtm cost: \(Int64(-date.timeIntervalSinceNow * 1000)) ms")
+            agoraPrint("[Timing]preGenerateToken rtc & rtm cost: \(Int64(-date.timeIntervalSinceNow * 1000)) ms")
             AppContext.shared.agoraRTCToken = rtcToken
             AppContext.shared.agoraRTMToken = rtmToken
             completion(nil)
@@ -535,6 +532,8 @@ private enum AUIChorusCMd: String {
 //only for room
 extension KTVRTMManagerServiceImpl {
     @objc func destroy() {
+        AppContext.shared.agoraRTCToken = ""
+        AppContext.shared.agoraRTMToken = ""
         syncManager.logout()
         syncManager.destroy()
     }
@@ -1104,7 +1103,9 @@ extension KTVRTMManagerServiceImpl: AUIRtmErrorProxyDelegate {
     private func login(completion:(@escaping (Error?)-> Void)) {
         let token = AppContext.shared.agoraRTMToken
         if !token.isEmpty {
+            let date = Date()
             self.syncManager.rtmManager.login(token: token) { err in
+                agoraPrint("[Timing]login cost: \(Int64(-date.timeIntervalSinceNow * 1000))ms")
                 self.isConnected = err == nil ? true : false
                 completion(err)
             }
@@ -1249,10 +1250,7 @@ private func agoraAssert(_ condition: Bool, _ message: String) {
 }
 
 private func agoraPrint(_ message: String) {
-//    #if DEBUG
     KTVLog.info(text: message, tag: "KTVService")
-//    #else
-//    #endif
 }
 
 private func _showLoadingView() {
