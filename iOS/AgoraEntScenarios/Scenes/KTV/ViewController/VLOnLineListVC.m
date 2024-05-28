@@ -52,10 +52,10 @@
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
+- (void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
     [VLUserCenter clearUserRoomInfo];
-    [self.listView getRoomListIfRefresh:YES];
+    [self.listView loadData];
 }
 
 - (void)setUpUI {
