@@ -28,7 +28,9 @@ public class AUIRoomService: NSObject {
                             cleanClosure: ((AUIRoomInfo) ->(Bool))? = nil,
                             completion: @escaping (NSError?, Int64, [AUIRoomInfo]?)->()) {
         //房间列表会返回最新的服务端时间ts
+        let date = Date()
         roomManager.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: pageSize) {[weak self] err, ts, roomList in
+            aui_info("[Timing]getRoomList cost: \(Int64(-date.timeIntervalSinceNow * 1000))ms", tag: RoomServiceTag)
             guard let self = self else {return}
             if let err = err {
                 completion(err, ts, nil)
@@ -65,6 +67,7 @@ public class AUIRoomService: NSObject {
     //TODO: AUIRoomInfo替换成协议IAUIRoomInfo？服务端会创建房间id，这里是否roomManager创建后往外抛roomId
     public func createRoom(room: AUIRoomInfo, completion: @escaping ((NSError?, AUIRoomInfo?)->())) {
         let scene = self.syncmanager.createScene(channelName: room.roomId, roomExpiration: self.expirationPolicy)
+        let date = Date()
         roomManager.createRoom(room: room) {[weak self] err, roomInfo in
             guard let self = self else { return }
             if let err = err {
@@ -76,9 +79,11 @@ public class AUIRoomService: NSObject {
                 return
             }
             
+            aui_info("[Timing]createRoom create restful[\(roomInfo.roomId)] cost: \(Int64(-date.timeIntervalSinceNow * 1000))ms", tag: RoomServiceTag)
             self.roomInfoMap[roomInfo.roomId] = roomInfo
             //传入服务端设置的创建房间的时间戳createTime
             scene.create(createTime: roomInfo.createTime, payload: [kPayloadOwnerId: room.owner?.userId ?? ""]) {[weak self] err in
+                aui_info("[Timing]createRoom create scene[\(roomInfo.roomId)] cost: \(Int64(-date.timeIntervalSinceNow * 1000))ms", tag: RoomServiceTag)
                 if let err = err {
                     //失败需要清理脏房间信息
                     self?.createRoomRevert(roomId: room.roomId)
@@ -87,6 +92,7 @@ public class AUIRoomService: NSObject {
                 }
                 
                 scene.enter { payload, err in
+                    aui_info("[Timing]createRoom enter scene[\(roomInfo.roomId)] cost: \(Int64(-date.timeIntervalSinceNow * 1000))ms", tag: RoomServiceTag)
                     if let err = err {
                         //失败需要清理脏房间信息
                         self?.createRoomRevert(roomId: room.roomId)
@@ -101,7 +107,9 @@ public class AUIRoomService: NSObject {
     
     public func enterRoom(roomId: String, completion: @escaping ((NSError?)->())) {
         let scene = syncmanager.createScene(channelName: roomId, roomExpiration: self.expirationPolicy)
+        let date = Date()
         scene.enter {[weak self] payload, err in
+            aui_info("[Timing]enterRoom enter restful[\(roomId)] cost: \(Int64(-date.timeIntervalSinceNow * 1000))ms", tag: RoomServiceTag)
             let ownerId = payload?[kPayloadOwnerId] as? String ?? ""
             let room = AUIRoomInfo()
             room.roomId = roomId
