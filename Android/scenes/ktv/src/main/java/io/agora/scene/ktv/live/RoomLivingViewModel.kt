@@ -23,15 +23,16 @@ import io.agora.rtc2.RtcEngineEx
 import io.agora.rtc2.video.ContentInspectConfig
 import io.agora.rtc2.video.ContentInspectConfig.ContentInspectModule
 import io.agora.rtc2.video.VideoCanvas
-import io.agora.rtmsyncmanager.model.AUIUserInfo
+import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
 import io.agora.scene.base.AudioModeration
 import io.agora.scene.base.AudioModeration.moderationAudio
-import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.bean.User
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.ktv.KTVLogger
+import io.agora.scene.ktv.KtvCenter
+import io.agora.scene.ktv.KtvCenter.rtcChorusChannelName
 import io.agora.scene.ktv.R
 import io.agora.scene.ktv.debugSettings.KTVDebugSettingBean
 import io.agora.scene.ktv.debugSettings.KTVDebugSettingsDialog
@@ -61,14 +62,15 @@ import io.agora.scene.ktv.live.bean.ScoringAverageModel
 import io.agora.scene.ktv.live.bean.SoundCardSettingBean
 import io.agora.scene.ktv.live.bean.VolumeModel
 import io.agora.scene.ktv.live.fragmentdialog.MusicSettingCallback
-import io.agora.scene.ktv.service.JoinRoomInfo
+import io.agora.scene.ktv.service.ChooseSongInputModel
 import io.agora.scene.ktv.service.KTVServiceProtocol.Companion.getImplInstance
 import io.agora.scene.ktv.service.KtvServiceListenerProtocol
 import io.agora.scene.ktv.service.PlayStatus
 import io.agora.scene.ktv.service.RoomChoristerInfo
 import io.agora.scene.ktv.service.RoomMicSeatInfo
-import io.agora.scene.ktv.service.RoomSongInfo
+import io.agora.scene.ktv.service.ChosenSongInfo
 import io.agora.scene.ktv.widget.lrcView.LrcControlView
+import io.agora.scene.ktv.widget.song.SongItem
 import io.agora.scene.widget.toast.CustomToast
 import org.json.JSONException
 import org.json.JSONObject
@@ -76,7 +78,7 @@ import org.json.JSONObject
 /**
  * The type Room living view model.
  */
-class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() {
+class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() {
     private val TAG = "KTV_Scene_LOG"
     private var mainHandler: Handler? = null
     private fun runOnMainThread(runnable: Runnable) {
@@ -93,81 +95,69 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
     private val ktvServiceProtocol = getImplInstance()
     private lateinit var ktvApiProtocol: KTVApi
 
-    private val isOnSeat get() = getSeatByUserId(mUser.id.toString()) != null
+    // 房间销毁
+    val roomDestroyLiveData = MutableLiveData<Boolean>()
 
-    fun getSeatByUserId(userId: String): RoomMicSeatInfo? {
-        return ktvServiceProtocol.getSeatMap().entries.firstOrNull { it.value.owner?.userId == userId }?.value
-    }
+    // 房间超时
+    val roomExpireLiveData = MutableLiveData<Boolean>()
 
-    fun getSeatByIndex(seatInt: Int): RoomMicSeatInfo? {
-        return ktvServiceProtocol.getSeatMap()[seatInt]
-    }
+    // 房间人数
+    val userCountLiveData = MutableLiveData<Int>()
 
+    // 麦位集合
+    val seatListLiveData = MutableLiveData<MutableList<RoomMicSeatInfo>>()
+
+    // 麦位更新
+    val seatUpdateLiveData = MutableLiveData<RoomMicSeatInfo>()
+
+    // 当前用户麦位
+    val localSeatInfo: RoomMicSeatInfo? get() = seatListLiveData.value?.firstOrNull { it.owner?.userId == mUser.id.toString() }
+
+    // 已选歌单
+    val chosenSongListLiveData = MutableLiveData<List<ChosenSongInfo>?>()
+
+    // 合唱列表
+    val choristerList = mutableListOf<RoomChoristerInfo>()
+
+    // 获取合唱用户
     fun getSongChorusInfo(userId: String, songCode: String): RoomChoristerInfo? {
-        return ktvServiceProtocol.getChoristerList().firstOrNull { it.userId == userId && it.songCode == songCode }
+        return choristerList.firstOrNull { it.userId == userId && it.chorusSongNo == songCode }
     }
 
-    /**
-     * The Volume live data.
-     */
+    // 音量
     val volumeLiveData = MutableLiveData<VolumeModel>()
 
-    /**
-     * The Song playing live data.
-     */
-    val songPlayingLiveData = MutableLiveData<RoomSongInfo?>()
+    // 当前播放歌曲
+    val songPlayingLiveData = MutableLiveData<ChosenSongInfo?>()
 
-    /**
-     * The Main singer score live data.
-     */
-    @JvmField
+    // 主唱分数
     val mainSingerScoreLiveData = MutableLiveData<LineScore>()
 
-    /**
-     * Player/RTC信息
-     */
+    // rtc stream id
     var streamId = 0
 
-    /**
-     * The Player music status live data.
-     */
+    // 音乐播放状态
     val playerMusicStatusLiveData = MutableLiveData<PlayerMusicStatus>()
 
-    /**
-     * The Load music progress live data.
-     */
     // 加载音乐进度
     val loadMusicProgressLiveData = MutableLiveData<Int>()
 
-
-    /**
-     * The Joinchorus status live data.
-     */
+    // 当前用户合唱状态
     val joinchorusStatusLiveData = MutableLiveData<JoinChorusStatus>()
 
-    /**
-     * The No lrc live data.
-     */
+    // 无歌词
     val noLrcLiveData = MutableLiveData<Boolean>()
 
-    /**
-     * The Player music open duration live data.
-     */
+    // 音乐时长
     val playerMusicOpenDurationLiveData = MutableLiveData<Long>()
 
-    /**
-     * The Player music play complete live data.
-     */
+    // 音乐播放完后分数
     val playerMusicPlayCompleteLiveData = MutableLiveData<ScoringAverageModel>()
 
-    /**
-     * The Network status live data.
-     */
+    // 网络状态
     val networkStatusLiveData = MutableLiveData<NetWorkEvent>()
 
-    /**
-     * The Scoring algo control live data.
-     */
+    // 当分难度
     val scoringAlgoControlLiveData = MutableLiveData<ScoringAlgoControlModel>()
 
     /**
@@ -208,12 +198,12 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
     /**
      * Is room owner
      */
-    val isRoomOwner: Boolean get() = roomInfo.roomOwner?.userId == mUser.id.toString()
+    val isRoomOwner: Boolean get() = mRoomInfo.roomOwner?.userId == mUser.id.toString()
 
     /**
      * Room owner id
      */
-    val roomOwnerId: String get() = roomInfo.roomOwner?.userId ?: ""
+    val roomOwnerId: String get() = mRoomInfo.roomOwner?.userId ?: ""
 
     /**
      * local user
@@ -253,9 +243,39 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
 
     private val serviceListenerProtocol = object : KtvServiceListenerProtocol {
 
-        override fun onUserEnterSeat(seatIndex: Int, userInfo: AUIUserThumbnailInfo) {
-            val seatInfo = ktvServiceProtocol.getSeatMap()[seatIndex] ?: return
-            if (seatInfo.owner?.userId == mUser.id.toString()) {
+        override fun onRoomDestroy() {
+            release()
+            roomDestroyLiveData.value = true
+        }
+
+        override fun onRoomExpire() {
+            release()
+            roomExpireLiveData.value = true
+        }
+
+
+        override fun onUserCountUpdate(userCount: Int) {
+            userCountLiveData.value = userCount
+        }
+
+        override fun onMicSeatSnapshot(seatMap: Map<Int, RoomMicSeatInfo>) {
+            val seatList = mutableListOf<RoomMicSeatInfo>()
+            seatMap.values.forEach { roomMicSeatInfo ->
+                seatList.add(roomMicSeatInfo)
+            }
+            seatList.sortBy { it.seatIndex }
+            seatListLiveData.value = seatList
+        }
+
+        override fun onUserSeatUpdate(seatInfo: RoomMicSeatInfo) {
+            seatUpdateLiveData.value = seatInfo
+        }
+
+        override fun onUserEnterSeat(seatIndex: Int, user: AUIUserThumbnailInfo) {
+            val originSeat = seatListLiveData.value?.firstOrNull { it.seatIndex == seatIndex } ?: return
+            originSeat.owner = user
+            seatListLiveData.value?.set(seatIndex, originSeat)
+            if (user.userId == mUser.id.toString()) {
                 // 自己上麦
                 mRtcEngine?.let {
                     mainChannelMediaOption.publishCameraTrack = false
@@ -266,12 +286,15 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
                     mainChannelMediaOption.clientRoleType = Constants.CLIENT_ROLE_BROADCASTER
                     it.updateChannelMediaOptions(mainChannelMediaOption)
                 }
-                toggleMic(!seatInfo.seatAudioMute)
             }
         }
 
-        override fun onUserLeaveSeat(seatIndex: Int, userInfo: AUIUserThumbnailInfo) {
-            if (userInfo.userId == mUser.id.toString()) {
+        override fun onUserLeaveSeat(seatIndex: Int, user: AUIUserThumbnailInfo) {
+            val originSeat = seatListLiveData.value?.firstOrNull { it.seatIndex == seatIndex } ?: return
+            originSeat.owner = user
+            originSeat.owner = AUIUserThumbnailInfo()
+            seatListLiveData.value?.set(seatIndex, originSeat)
+            if (user.userId == mUser.id.toString()) {
                 mRtcEngine?.let {
                     mainChannelMediaOption.publishCameraTrack = false
                     mainChannelMediaOption.publishMicrophoneTrack = false
@@ -281,51 +304,70 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
                     mainChannelMediaOption.clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
                     it.updateChannelMediaOptions(mainChannelMediaOption)
                 }
-                updateVolumeStatus(false)
                 ktvApiProtocol.switchSingerRole(KTVSingRole.Audience, null)
             }
         }
 
+        override fun onSeatAudioMute(seatIndex: Int, isMute: Boolean) {
+            val originSeat = seatListLiveData.value?.firstOrNull { it.seatIndex == seatIndex } ?: return
+            originSeat.seatAudioMute = isMute
+            seatListLiveData.value?.set(seatIndex, originSeat)
+            if (originSeat.owner?.userId == mUser.id.toString()) {// 开关麦克风
+                toggleSelfAudioBySign(!isMute)
+            }
+        }
+
+        override fun onSeatVideoMute(seatIndex: Int, isMute: Boolean) {
+            val originSeat = seatListLiveData.value?.firstOrNull { it.seatIndex == seatIndex } ?: return
+            originSeat.seatVideoMute = isMute
+            seatListLiveData.value?.set(seatIndex, originSeat)
+            if (originSeat.owner?.userId == mUser.id.toString()) {// 开关摄像头
+                toggleSelfVideoBySign(!isMute)
+            }
+        }
 
         override fun onChoristerDidEnter(chorister: RoomChoristerInfo) {
+            val index = choristerList.indexOfFirst { it.userId == chorister.userId }
+            if (index >= 0) {
+                choristerList[index] = chorister
+            }
+            val originSeat = seatListLiveData.value?.firstOrNull { it.owner?.userId == chorister.userId }
+            if (originSeat != null) {
+                onUserSeatUpdate(originSeat)
+            }
             val songPlaying = songPlayingLiveData.getValue() ?: return
-            if (chorister.userId == mUser.id.toString() && songPlaying.songNo == chorister.songCode) {
+            if (chorister.userId == mUser.id.toString() && songPlaying.songNo == chorister.chorusSongNo) {
                 joinchorusStatusLiveData.postValue(JoinChorusStatus.ON_JOIN_CHORUS)
             }
         }
 
         override fun onChoristerDidLeave(chorister: RoomChoristerInfo) {
+            val index = choristerList.indexOfFirst { it.userId == chorister.userId }
+            if (index >= 0) {
+                choristerList.removeAt(index)
+            }
+            val originSeat = seatListLiveData.value?.firstOrNull { it.owner?.userId == chorister.userId }
+            if (originSeat != null) {
+                onUserSeatUpdate(originSeat)
+            }
             val songPlaying = songPlayingLiveData.getValue() ?: return
-            if (chorister.userId == mUser.id.toString() && songPlaying.songNo == chorister.songCode) {
+            if (chorister.userId == mUser.id.toString() && songPlaying.songNo == chorister.chorusSongNo) {
                 joinchorusStatusLiveData.postValue(JoinChorusStatus.ON_LEAVE_CHORUS)
             }
         }
 
-        override fun onChoristerListDidChanged(choristerList: List<RoomChoristerInfo>) {
-            val songInfo = songPlayingLiveData.value
-            var chorusNowNum = 0
-            choristerList.forEach { roomChoristerInfo ->
-                if (songInfo?.songNo == roomChoristerInfo.songCode) {
-                    chorusNowNum++
-                }
-            }
-            if (chorusNum == 0 && chorusNowNum > 0) { // 有人加入合唱
-                soloSingerJoinChorusMode(true)
-            } else if (chorusNum > 0 && chorusNowNum == 0) { // 最后一人退出合唱
-                soloSingerJoinChorusMode(false)
-            }
-            chorusNum = chorusNowNum
+        override fun onChosenSongListDidChanged(chosenSongList: List<ChosenSongInfo>) {
+            onUpdateAllChooseSongs(chosenSongList)
         }
     }
 
     private fun initRoom() {
         // 获取已点歌单
-        ktvServiceProtocol.getChosenSongList { _, _ ->
-            // 获取合唱列表
-            ktvServiceProtocol.getChoristerList { _, _ ->
-                // 订阅消息
-                subscribeServiceListener(serviceListenerProtocol)
+        ktvServiceProtocol.getChosenSongList { error, songList ->
+            if (error == null) {
+                chosenSongListLiveData.value = songList
             }
+            subscribeServiceListener(serviceListenerProtocol)
         }
     }
 
@@ -337,24 +379,6 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
     fun unSubscribeServiceListener(listener: KtvServiceListenerProtocol) {
         // 取消订阅消息
         ktvServiceProtocol.unsubscribeListener(listener)
-    }
-
-    fun getUserInfoBySeat(seatInfo: RoomMicSeatInfo): AUIUserInfo {
-        var userInfo = ktvServiceProtocol.getUserInfo(seatInfo.owner?.userId ?: "")
-        if (userInfo == null) {
-            seatInfo.owner?.let { seatUser ->
-                userInfo = AUIUserInfo().apply {
-                    userId = seatUser.userId
-                    userName = seatUser.userName
-                    userAvatar = seatUser.userAvatar
-                }
-            }
-        }
-        return userInfo ?: AUIUserInfo()
-    }
-
-    fun getUserInfo(userId: String): AUIUserInfo {
-        return ktvServiceProtocol.getUserInfo(userId) ?: AUIUserInfo()
     }
 
     /**
@@ -419,32 +443,11 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
      */
     fun leaveSeat(seatModel: RoomMicSeatInfo) {
         KTVLogger.d(TAG, "RoomLivingViewModel.leaveSeat() called")
-        ktvServiceProtocol.leaveSeat(seatModel.seatIndex) { e: Exception? ->
+        ktvServiceProtocol.leaveSeat() { e: Exception? ->
             if (e == null) { // success
                 KTVLogger.d(TAG, "RoomLivingViewModel.leaveSeat() success")
-                if (seatModel.owner?.userId == mUser.id.toString()) {
-                    val userInfo = getUserInfoBySeat(seatModel)
-                    val isAudioMuted = seatModel.seatAudioMute
-                    if (isAudioMuted) {
-                        mRtcEngine?.let {
-                            mainChannelMediaOption.publishCameraTrack = false
-                            mainChannelMediaOption.publishMicrophoneTrack = false
-                            mainChannelMediaOption.enableAudioRecordingOrPlayout = true
-                            mainChannelMediaOption.autoSubscribeVideo = true
-                            mainChannelMediaOption.autoSubscribeAudio = true
-                            mainChannelMediaOption.clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
-                            it.updateChannelMediaOptions(mainChannelMediaOption)
-                        }
-                        updateVolumeStatus(false)
-                    }
-                }
-                val songPlayingValue = songPlayingLiveData.value ?: return@leaveSeat
-                val choristerInfo = getSongChorusInfo(mUser.id.toString(), songPlayingValue.songNo)
-                if (choristerInfo != null && seatModel.owner?.userId == mUser.id.toString()) {
-                    leaveChorus()
-                }
             } else { // failure
-                KTVLogger.e(TAG, "RoomLivingViewModel.leaveSeat() failed: " + e.message)
+                KTVLogger.e(TAG, "RoomLivingViewModel.leaveSeat() failed: $e")
             }
             e?.message?.let { error ->
                 CustomToast.show(error, Toast.LENGTH_SHORT)
@@ -458,22 +461,17 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
     private var isCameraOpened = false
 
     /**
-     * Toggle self video.
+     * Update seat video mute status
      *
-     * @param isOpen the is open
+     * @param mute
      */
-    fun toggleSelfVideo(isOpen: Boolean) {
-        KTVLogger.d(TAG, "RoomLivingViewModel.toggleSelfVideo() called：$isOpen")
-        ktvServiceProtocol.updateSeatVideoMuteStatus(!isOpen) { e: Exception? ->
+    fun updateSeatVideoMuteStatus(mute: Boolean) {
+        KTVLogger.d(TAG, "RoomLivingViewModel.updateSeatVideoMuteStatus() called mute：$mute")
+        ktvServiceProtocol.updateSeatVideoMuteStatus(mute) { e: Exception? ->
             if (e == null) { // success
-                KTVLogger.d(TAG, "RoomLivingViewModel.toggleSelfVideo() success")
-                isCameraOpened = isOpen
-                mRtcEngine?.enableLocalVideo(isOpen)
-                val channelMediaOption = ChannelMediaOptions()
-                channelMediaOption.publishCameraTrack = isOpen
-                mRtcEngine?.updateChannelMediaOptions(channelMediaOption)
+                KTVLogger.d(TAG, "RoomLivingViewModel.updateSeatVideoMuteStatus() success")
             } else { // failure
-                KTVLogger.e(TAG, "RoomLivingViewModel.toggleSelfVideo() failed: " + e.message)
+                KTVLogger.e(TAG, "RoomLivingViewModel.updateSeatVideoMuteStatus() failed: $e")
             }
             e?.message?.let { error ->
                 CustomToast.show(error, Toast.LENGTH_SHORT)
@@ -481,41 +479,47 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
         }
     }
 
-    /**
-     * Toggle mic
-     *
-     * @param isUnMute
-     */
-    fun toggleMic(isUnMute: Boolean) {
-        KTVLogger.d(TAG, "RoomLivingViewModel.toggleMic() called：$isUnMute")
-        updateVolumeStatus(isUnMute)
-        ktvServiceProtocol.updateSeatAudioMuteStatus(!isUnMute) { e: Exception? ->
-            if (e == null) { // success
-                KTVLogger.d(TAG, "RoomLivingViewModel.toggleMic() success")
-            } else { // failure
-                KTVLogger.e(TAG, "RoomLivingViewModel.toggleMic() failed: " + e.message)
-            }
-            e?.message?.let { error ->
-                CustomToast.show(error, Toast.LENGTH_SHORT)
-            }
-        }
+    // 根据信令开关摄像头
+    private fun toggleSelfVideoBySign(isOpen: Boolean) {
+        KTVLogger.d(TAG, "RoomLivingViewModel.toggleSelfVideoBySign() isOpen:$isOpen")
+        isCameraOpened = isOpen
+        mRtcEngine?.enableLocalVideo(isOpen)
+        val channelMediaOption = ChannelMediaOptions()
+        channelMediaOption.publishCameraTrack = isOpen
+        mRtcEngine?.updateChannelMediaOptions(channelMediaOption)
     }
 
-    /**
-     * Update volume status
-     *
-     * @param isUnMute
-     */
-    private fun updateVolumeStatus(isUnMute: Boolean) {
-        ktvApiProtocol.muteMic(!isUnMute)
-        if (!isUnMute && mSetting?.mEarBackEnable == true) {
+    // 根据信令开关麦克风
+    private fun toggleSelfAudioBySign(isOpen: Boolean) {
+        KTVLogger.d(TAG, "RoomLivingViewModel.toggleSelfAudioBySign() isOpen:$isOpen")
+        ktvApiProtocol.muteMic(!isOpen)
+        if (!isOpen && mSetting?.mEarBackEnable == true) {
             mRtcEngine?.enableInEarMonitoring(false, Constants.EAR_MONITORING_FILTER_NONE)
-        } else if (isUnMute && mSetting?.mEarBackEnable == true) {
+        } else if (isOpen && mSetting?.mEarBackEnable == true) {
             mRtcEngine?.enableInEarMonitoring(true, Constants.EAR_MONITORING_FILTER_NONE)
         }
-        if (isUnMute) {
-            KTVLogger.d(TAG, "unmute! setMicVolume: $micOldVolume")
+        if (isOpen) {
+            KTVLogger.d(TAG, "RoomLivingViewModel unmute! setMicVolume: $micOldVolume")
             mRtcEngine?.adjustRecordingSignalVolume(micOldVolume)
+        }
+    }
+
+    /**
+     * Update seat audio mute status
+     *
+     * @param mute
+     */
+    fun updateSeatAudioMuteStatus(mute: Boolean) {
+        KTVLogger.d(TAG, "RoomLivingViewModel.updateSeatAudioMuteStatus() called mute：$mute")
+        ktvServiceProtocol.updateSeatAudioMuteStatus(mute) { e: Exception? ->
+            if (e == null) { // success
+                KTVLogger.d(TAG, "RoomLivingViewModel.updateSeatAudioMuteStatus() success")
+            } else { // failure
+                KTVLogger.e(TAG, "RoomLivingViewModel.updateSeatAudioMuteStatus() failed: $e")
+            }
+            e?.message?.let { error ->
+                CustomToast.show(error, Toast.LENGTH_SHORT)
+            }
         }
     }
 
@@ -523,10 +527,9 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
      * Song chosen list
      */
     fun getSongChosenList() {
-        ktvServiceProtocol.getChosenSongList { e: Exception?, data: List<RoomSongInfo>? ->
+        ktvServiceProtocol.getChosenSongList { e: Exception?, data: List<ChosenSongInfo>? ->
             if (e == null && data != null) { // success
                 KTVLogger.d(TAG, "RoomLivingViewModel.getSongChosenList() success")
-                onUpdateAllChooseSongs(data)
             } else { // failed
                 if (e != null) {
                     KTVLogger.e(TAG, "RoomLivingViewModel.getSongChosenList() failed: " + e.message)
@@ -538,7 +541,7 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
         }
     }
 
-    private fun onUpdateAllChooseSongs(songList: List<RoomSongInfo>?) {
+    private fun onUpdateAllChooseSongs(songList: List<ChosenSongInfo>?) {
         if (!songList.isNullOrEmpty()) {
             val value = songPlayingLiveData.getValue()
             val songPlaying = songList[0]
@@ -608,9 +611,9 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
      * @param page
      * @return
      */
-    fun getSongList(type: Int, page: Int): LiveData<List<RoomSongInfo>> {
+    fun getSongList(type: Int, page: Int): LiveData<List<ChosenSongInfo>> {
         KTVLogger.d(TAG, "RoomLivingViewModel.getSongList() called, type:$type page:$page")
-        val liveData = MutableLiveData<List<RoomSongInfo>>()
+        val liveData = MutableLiveData<List<ChosenSongInfo>>()
         val jsonOption = "{\"pitchType\":1,\"needLyric\":true}"
         ktvApiProtocol.searchMusicByMusicChartId(
             type,
@@ -620,22 +623,20 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
         ) { id: String?, status: Int, p: Int, size: Int, total: Int, list: Array<out Music>? ->
             KTVLogger.d(TAG, "RoomLivingViewModel.getSongList() return")
             val musicList: List<Music> = if (list == null) emptyList() else listOf(*list)
-            val songs: MutableList<RoomSongInfo> = ArrayList()
+            val songs: MutableList<ChosenSongInfo> = ArrayList()
             // 需要再调一个接口获取当前已点的歌单来补充列表信息 >_<
-            ktvServiceProtocol.getChosenSongList { e: Exception?, songsChosen: List<RoomSongInfo>? ->
+            ktvServiceProtocol.getChosenSongList { e: Exception?, songsChosen: List<ChosenSongInfo>? ->
                 if (e == null && songsChosen != null) { // success
                     for (music in musicList) {
                         var songItem = songsChosen.firstOrNull { it.songNo == music.songCode.toString() }
                         if (songItem == null) {
-                            songItem = RoomSongInfo(
+                            songItem = ChosenSongInfo(
                                 songName = music.name,
                                 songNo = music.songCode.toString(),
                                 singer = music.singer,
                                 imageUrl = music.poster,
                                 owner = AUIUserThumbnailInfo(),
                                 status = PlayStatus.idle,
-                                createAt = 0,
-                                pinAt = 0.0
                             )
                         }
                         songs.add(songItem)
@@ -659,10 +660,10 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
      * @param condition the condition
      * @return the live data
      */
-    fun searchSong(condition: String): LiveData<List<RoomSongInfo>> {
+    fun searchSong(condition: String): LiveData<List<ChosenSongInfo>> {
         // 从RTC中搜索歌曲
         KTVLogger.d(TAG, "RoomLivingViewModel.searchSong() called, condition:$condition")
-        val liveData = MutableLiveData<List<RoomSongInfo>>()
+        val liveData = MutableLiveData<List<ChosenSongInfo>>()
 
         // 过滤没有歌词的歌曲
         val jsonOption = "{\"pitchType\":1,\"needLyric\":true}"
@@ -671,24 +672,22 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
         ) { id: String?, status: Int, p: Int, size: Int, total: Int, list: Array<out Music>? ->
             val musicList: List<Music> = if (list == null) emptyList() else listOf(*list)
 
-            val songs: MutableList<RoomSongInfo> = ArrayList()
+            val songs: MutableList<ChosenSongInfo> = ArrayList()
 
             // 需要再调一个接口获取当前已点的歌单来补充列表信息 >_<
-            ktvServiceProtocol.getChosenSongList { e: Exception?, songsChosen: List<RoomSongInfo>? ->
+            ktvServiceProtocol.getChosenSongList { e: Exception?, songsChosen: List<ChosenSongInfo>? ->
                 if (e == null && songsChosen != null) {
                     // success
                     for (music in musicList) {
                         var songItem = songsChosen.firstOrNull { it.songNo == music.songCode.toString() }
                         if (songItem == null) {
-                            songItem = RoomSongInfo(
+                            songItem = ChosenSongInfo(
                                 songName = music.name,
                                 songNo = music.songCode.toString(),
                                 singer = music.singer,
                                 imageUrl = music.poster,
                                 owner = AUIUserThumbnailInfo(),
                                 status = PlayStatus.idle,
-                                createAt = 0,
-                                pinAt = 0.0
                             )
                         }
                         songs.add(songItem)
@@ -707,17 +706,20 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
     /**
      * 点歌
      *
-     * @param songModel the song model
+     * @param songItem the song model
      * @param isChorus  the is chorus
      * @return the live data
      */
-    fun chooseSong(songModel: RoomSongInfo, isChorus: Boolean): LiveData<Boolean> {
-        KTVLogger.d(
-            TAG,
-            "RoomLivingViewModel.chooseSong() called, name:" + songModel.songName + " isChorus:" + isChorus
-        )
+    fun chooseSong(songItem: SongItem, isChorus: Boolean): LiveData<Boolean> {
+        KTVLogger.d(TAG, "RoomLivingViewModel.chooseSong() called, name:" + songItem.songName + " isChorus:" + isChorus)
         val liveData = MutableLiveData<Boolean>()
-        ktvServiceProtocol.chooseSong(songModel) { e: Exception? ->
+        val chosenSong = ChooseSongInputModel(
+            songName = songItem.songName,
+            songNo = songItem.songNo,
+            singer = songItem.singer,
+            imageUrl = songItem.imageUrl,
+        )
+        ktvServiceProtocol.chooseSong(chosenSong) { e: Exception? ->
             if (e == null) { // success
                 KTVLogger.d(TAG, "RoomLivingViewModel.chooseSong() success")
             } else { // failure
@@ -736,7 +738,7 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
      *
      * @param songModel the song model
      */
-    fun deleteSong(songModel: RoomSongInfo) {
+    fun deleteSong(songModel: ChosenSongInfo) {
         KTVLogger.d(TAG, "RoomLivingViewModel.deleteSong() called, name:" + songModel.songName)
         ktvServiceProtocol.removeSong(songModel.songNo) { e ->
             if (e == null) { // success: do nothing for subscriber dealing with the event already
@@ -755,7 +757,7 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
      *
      * @param songModel the song model
      */
-    fun topUpSong(songModel: RoomSongInfo) {
+    fun topUpSong(songModel: ChosenSongInfo) {
         KTVLogger.d(TAG, "RoomLivingViewModel.topUpSong() called, name:" + songModel.songName)
         ktvServiceProtocol.pinSong(songModel.songNo) { e: Exception? ->
             if (e == null) { // success: do nothing for subscriber dealing with the event already
@@ -784,7 +786,7 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
             joinchorusStatusLiveData.postValue(JoinChorusStatus.ON_JOIN_FAILED)
             return
         }
-        if (!isOnSeat) { // 不在麦上， 自动上麦
+        if (localSeatInfo == null) { // 不在麦上， 自动上麦
             ktvServiceProtocol.enterSeat(null) { err: Exception? ->
                 if (err == null) { //自动开麦
                     mainChannelMediaOption.publishMicrophoneTrack = true
@@ -836,7 +838,7 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
                         }
 
                         override fun onSwitchRoleSuccess() {
-                            if (isOnSeat) {
+                            if (localSeatInfo != null) {
                                 // 成为合唱成功
                                 // 麦位UI 同步
                                 val songModel = songPlayingLiveData.value ?: return
@@ -865,8 +867,9 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
      */
     fun leaveChorus() {
         KTVLogger.d(TAG, "RoomLivingViewModel.leaveChorus() called")
-        if (isOnSeat) {
-            ktvServiceProtocol.leaveChorus { e: Exception? ->
+        val songCode = songPlayingLiveData.value?.songNo
+        if (localSeatInfo != null && songCode != null) {
+            ktvServiceProtocol.leaveChorus(songCode) { e: Exception? ->
                 if (e == null) { // success
                     KTVLogger.d(TAG, "RoomLivingViewModel.leaveChorus() called")
                     ktvApiProtocol.switchSingerRole(KTVSingRole.Audience, null)
@@ -950,8 +953,7 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
         mSetting = MusicSettingBean(object : MusicSettingCallback {
             override fun onEarChanged(earBackEnable: Boolean) {
                 KTVLogger.d(TAG, "onEarChanged: $earBackEnable")
-                val localSeat = getSeatByUserId(mUser.id.toString())
-                val isAudioMuted = localSeat?.seatAudioMute ?: true
+                val isAudioMuted = localSeatInfo?.seatAudioMute ?: true
                 if (isAudioMuted) {
                     return
                 }
@@ -1081,8 +1083,7 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
     }
 
     private fun initRTCPlayer() {
-        val roomModel = roomInfo
-        val rtcAppId = BuildConfig.AGORA_APP_ID
+        val rtcAppId = KtvCenter.mAppId
         if (TextUtils.isEmpty(rtcAppId)) {
             throw NullPointerException("please check \"gradle.properties\"")
         }
@@ -1183,12 +1184,12 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
         ktvApiProtocol = createKTVApi(
             KTVApiConfig(
                 appId = rtcAppId,
-                rtmToken = roomModel.rtmToken,
+                rtmToken = KtvCenter.mRtmToken,
                 engine = mRtcEngine!!,
-                channelName = roomModel.roomId,
+                channelName = mRoomInfo.roomId,
                 localUid = mUser.id.toInt(),
-                chorusChannelName = roomModel.rtcChorusChannelName,
-                chorusChannelToken = roomModel.rtcChorusToken,
+                chorusChannelName = mRoomInfo.rtcChorusChannelName,
+                chorusChannelToken = KtvCenter.mRtcToken,
                 maxCacheSize = 10,
                 type = KTVType.Normal,
                 musicType = KTVMusicType.SONG_CODE
@@ -1262,9 +1263,9 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
             enableAudio()
             setAudioProfile(Constants.AUDIO_PROFILE_MUSIC_HIGH_QUALITY_STEREO, Constants.AUDIO_SCENARIO_GAME_STREAMING)
             enableAudioVolumeIndication(50, 10, true)
-            setClientRole(if (isOnSeat) Constants.CLIENT_ROLE_BROADCASTER else Constants.CLIENT_ROLE_AUDIENCE)
+            setClientRole(if (localSeatInfo != null) Constants.CLIENT_ROLE_BROADCASTER else Constants.CLIENT_ROLE_AUDIENCE)
             setAudioEffectPreset(mSetting?.mAudioEffect ?: Constants.ROOM_ACOUSTICS_KTV)
-            val ret = joinChannel(roomModel.rtcToken, roomModel.roomId, null, mUser.id.toInt())
+            val ret = joinChannel(KtvCenter.mRtcToken, mRoomInfo.roomId, null, mUser.id.toInt())
             if (ret != Constants.ERR_OK) {
                 KTVLogger.e(TAG, "joinRTC() called error: $ret")
             }
@@ -1288,7 +1289,7 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
         }
 
         // ------------------ 开启语音鉴定服务 ------------------
-        moderationAudio(roomModel.roomId, mUser.id, AudioModeration.AgoraChannelType.rtc, "ktv")
+        moderationAudio(mRoomInfo.roomId, mUser.id, AudioModeration.AgoraChannelType.rtc, "ktv")
 
         // 外部使用的StreamId
         if (streamId == 0) {
@@ -1307,8 +1308,7 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
     }
 
     private fun setMicVolume(v: Int) {
-        val localSeat = getSeatByUserId(mUser.id.toString())
-        val isAudioMuted = localSeat?.seatAudioMute ?: true
+        val isAudioMuted = localSeatInfo?.seatAudioMute ?: true
         if (isAudioMuted) {
             KTVLogger.d(TAG, "muted! setMicVolume: $v")
             micOldVolume = v
@@ -1392,7 +1392,7 @@ class RoomLivingViewModel constructor(val roomInfo: JoinRoomInfo) : ViewModel() 
      *
      * @param music the music
      */
-    fun musicStartPlay(music: RoomSongInfo) {
+    fun musicStartPlay(music: ChosenSongInfo) {
         KTVLogger.d(TAG, "RoomLivingViewModel.musicStartPlay() called")
         if (music.owner?.userId.isNullOrEmpty()) return
         playerMusicStatusLiveData.postValue(PlayerMusicStatus.ON_PREPARE)

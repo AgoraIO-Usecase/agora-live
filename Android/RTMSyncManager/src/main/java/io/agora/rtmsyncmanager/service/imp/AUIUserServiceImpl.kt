@@ -29,6 +29,11 @@ class AUIUserServiceImpl constructor(
         rtmManager.subscribeUser(this)
     }
 
+    fun release() {
+        observableHelper.unSubscribeAll()
+        rtmManager.unsubscribeUser(this)
+    }
+
     override fun registerRespObserver(observer: IAUIUserService.AUIUserRespObserver?) {
         observableHelper.subscribeEvent(observer)
         if(mUserList.isNotEmpty()){
@@ -118,9 +123,6 @@ class AUIUserServiceImpl constructor(
                     )
                 )
             } else {
-                this.observableHelper.notifyEventHandlers {
-                    it.onUserVideoMute(currentUserId, isMute)
-                }
                 callback?.onResult(null)
             }
         }
@@ -157,6 +159,7 @@ class AUIUserServiceImpl constructor(
         userId: String,
         userInfo: Map<String, Any>
     ) {
+        if (this.channelName != channelName) return
         if (userInfo.size <= 1) return
         GsonTools.toBean(GsonTools.beanToString(userInfo), AUIUserInfo::class.java)?.let { info ->
             info.userId = userId

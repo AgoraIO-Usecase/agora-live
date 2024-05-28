@@ -44,7 +44,7 @@ import io.agora.scene.ktv.R;
 import io.agora.scene.ktv.databinding.KtvLayoutLrcControlViewBinding;
 import io.agora.scene.ktv.databinding.KtvLayoutLrcPrepareBinding;
 import io.agora.scene.ktv.ktvapi.ILrcView;
-import io.agora.scene.ktv.service.RoomSongInfo;
+import io.agora.scene.ktv.service.ChosenSongInfo;
 import io.agora.scene.widget.toast.CustomToast;
 import io.agora.scene.widget.utils.OutlineSpan;
 import io.agora.scene.widget.utils.UiUtils;
@@ -370,14 +370,14 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
         mPrepareBinding.pbLoadingMusic.setProgress(percent);
     }
 
-    private RoomSongInfo songPlaying;
+    private ChosenSongInfo songPlaying;
 
     /**
      * On play status.
      *
      * @param songPlaying the song playing
      */
-    public void onPlayStatus(RoomSongInfo songPlaying) {
+    public void onPlayStatus(ChosenSongInfo songPlaying) {
         this.songPlaying = songPlaying;
 
         mBinding.ilIDLE.getRoot().setVisibility(View.GONE);
@@ -475,7 +475,7 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
      *
      * @param mMusic the m music
      */
-    public void setMusic(@NonNull RoomSongInfo mMusic) {
+    public void setMusic(@NonNull ChosenSongInfo mMusic) {
         mKaraokeView.reset();
         if (mComboControl != null) {
             mComboControl.reset(mBinding);

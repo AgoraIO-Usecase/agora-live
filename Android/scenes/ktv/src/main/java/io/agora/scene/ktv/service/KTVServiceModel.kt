@@ -1,7 +1,6 @@
 package io.agora.scene.ktv.service
 
 import androidx.annotation.IntDef
-import com.google.gson.annotations.SerializedName
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
 import java.io.Serializable
@@ -49,11 +48,11 @@ annotation class RoomMicSeatStatus {
 }
 
 enum class RoomSeatCmd {
-    initSeatCmd,
     enterSeatCmd,
     leaveSeatCmd,
     muteAudioCmd,
     muteVideoCmd,
+    kickSeatCmd,
 }
 
 /**
@@ -66,42 +65,26 @@ data class RoomMicSeatInfo constructor(
     var seatIndex: Int = 0,
     var seatAudioMute: Boolean = false, // 麦位禁用声音
     var seatVideoMute: Boolean = true, // 麦位禁用视频
-    @SerializedName("micSeatStatus") @RoomMicSeatStatus
-    var seatStatus: Int = RoomMicSeatStatus.idle, // 麦位状态，预留
 ) : Serializable
 
-enum class RoomChoristerCmd {
+enum class RoomChorusCmd {
     joinChorusCmd,
     leaveChorusCmd,
+    kickAllOutOfChorusCmd, //移除所有合唱
+    KickUserOutOfChorusCmd, //踢出指定用户出合唱列表
 }
 
 /**
  * Room chorister info
  *
  * @property userId
- * @property songCode
+ * @property chorusSongNo
  * @constructor Create empty Room chorister info
  */
 data class RoomChoristerInfo constructor(
     var userId: String = "",
-    var songCode: String = ""  //合唱演唱歌曲
+    var chorusSongNo: String = ""  //合唱演唱歌曲
 ) : Serializable
-
-/**
- * Join room output model
- *
- * @property roomInfo
- * @property roomConfig
- * @constructor Create empty Join room output model
- */
-data class JoinRoomInfo constructor(
-    var rtmToken: String = "",
-    var rtcToken: String = "", //rtc join用
-    var rtcChorusToken: String = "" //rtc 合唱join使用
-) : AUIRoomInfo(), Serializable {
-    val rtcChorusChannelName get() = roomName + "_rtc_ex"
-}
-
 
 @IntDef(PlayStatus.idle, PlayStatus.playing)
 @Retention(AnnotationRetention.RUNTIME)
@@ -114,11 +97,20 @@ annotation class PlayStatus {
 }
 
 enum class RoomSongCmd {
-    chooseSongCmd,
-    removeSongCmd,
-    pingSongCmd,
-    updatePlayStatusCmd
+    chooseSongCmd, //添加一首歌
+    removeSongCmd, //移除一首歌
+    pingSongCmd,  //置顶一首歌
+    updatePlayStatusCmd, //更新歌曲播放状态
+    removedUserSongsCmd,  //移除指定用户所有歌曲
 }
+
+data class ChooseSongInputModel constructor(
+    val songName: String,
+    val songNo: String,
+    val singer: String,
+    val imageUrl: String,
+)
+
 /**
  * Room song info
  *
@@ -126,13 +118,13 @@ enum class RoomSongCmd {
  * @property songNo
  * @property singer
  * @property imageUrl
- * @property orderUser
+ * @property owner
  * @property status
  * @property createAt
  * @property pinAt
  * @constructor Create empty Room sel song model
  */
-data class RoomSongInfo constructor(
+data class ChosenSongInfo constructor(
     // 获取歌词列表返回的歌词信息
     val songName: String,// 歌曲名
     val songNo: String, // 歌词唯一标识
@@ -143,8 +135,22 @@ data class RoomSongInfo constructor(
 
     // 排序字段
     @PlayStatus
-    val status: Int, // 0 未开始 1.播放中
-    val createAt: Long,
-    val pinAt: Double
+    val status: Int = PlayStatus.idle, // 0 未开始 1.播放中
+    val createAt: Long = 0,
+    val pinAt: Long = 0, // 置顶时间
 )
 
+/**
+ * Enum value or null
+ *
+ * @param T
+ * @param name
+ * @return
+ */
+inline fun <reified T : Enum<T>> enumValueOrNull(name: String?): T? {
+    return try {
+        enumValueOf<T>(name ?: "")
+    } catch (e: IllegalArgumentException) {
+        null
+    }
+}

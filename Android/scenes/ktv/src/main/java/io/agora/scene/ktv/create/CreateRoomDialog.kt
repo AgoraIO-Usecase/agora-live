@@ -12,13 +12,11 @@ import android.text.style.ForegroundColorSpan
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.ViewModelProvider
-import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.component.BaseBottomSheetDialogFragment
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.ktv.R
 import io.agora.scene.ktv.databinding.KtvDialogCreateRoomBinding
 import io.agora.scene.ktv.live.RoomLivingActivity
-import io.agora.scene.ktv.service.KTVParameters
 import java.util.*
 
 /**
@@ -97,11 +95,11 @@ class CreateRoomDialog constructor(
             }
         }
 
-        roomCreateViewModel.roomInfoLiveData.observe(this) { joinRoomInfo  ->
+        roomCreateViewModel.roomInfoLiveData.observe(this) { roomInfo  ->
             hideLoadingView()
-            if (joinRoomInfo != null) {
+            if (roomInfo != null) {
                 dismiss()
-                RoomLivingActivity.launch(context, joinRoomInfo)
+                RoomLivingActivity.launch(context, roomInfo)
             } else {
                 // 加入房间失败
             }

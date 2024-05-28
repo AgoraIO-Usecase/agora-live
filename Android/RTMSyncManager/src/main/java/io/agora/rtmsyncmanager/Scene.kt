@@ -261,6 +261,7 @@ class Scene constructor(
             it.release()
         }
         collectionMap.clear()
+        userService.release()
     }
 
     /// 获取一个collection，例如let collection: AUIMapCollection = scene.getCollection("musicList")

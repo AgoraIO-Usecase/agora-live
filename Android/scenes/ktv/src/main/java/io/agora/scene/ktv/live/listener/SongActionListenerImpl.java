@@ -15,7 +15,7 @@ import java.util.Map;
 
 import io.agora.scene.base.utils.LiveDataUtils;
 import io.agora.scene.ktv.live.RoomLivingViewModel;
-import io.agora.scene.ktv.service.RoomSongInfo;
+import io.agora.scene.ktv.service.ChosenSongInfo;
 import io.agora.scene.ktv.widget.song.OnSongActionListener;
 import io.agora.scene.ktv.widget.song.SongDialog;
 import io.agora.scene.ktv.widget.song.SongItem;
@@ -100,8 +100,7 @@ public class SongActionListenerImpl implements OnSongActionListener {
     @Override
     public void onChooseSongChosen(@NonNull SongDialog dialog, @NonNull SongItem songItem) {
         // 点歌
-        RoomSongInfo songModel = songItem.getTag(RoomSongInfo.class);
-        LiveDataUtils.observerThenRemove(mLifecycleOwner, mViewModel.chooseSong(songModel, isChorus), success -> {
+        LiveDataUtils.observerThenRemove(mLifecycleOwner, mViewModel.chooseSong(songItem, isChorus), success -> {
             if (success && dialog.isVisible()) {
                 dialog.setChooseSongItemStatus(songItem, true);
             }
@@ -111,14 +110,14 @@ public class SongActionListenerImpl implements OnSongActionListener {
     @Override
     public void onChosenSongDeleteClicked(@NonNull SongDialog dialog, @NonNull SongItem song) {
         // 删歌
-        RoomSongInfo songModel = song.getTag(RoomSongInfo.class);
+        ChosenSongInfo songModel = song.getTag(ChosenSongInfo.class);
         mViewModel.deleteSong(songModel);
     }
 
     @Override
     public void onChosenSongTopClicked(@NonNull SongDialog dialog, @NonNull SongItem song) {
         // 置顶
-        RoomSongInfo songModel = song.getTag(RoomSongInfo.class);
+        ChosenSongInfo songModel = song.getTag(ChosenSongInfo.class);
         mViewModel.topUpSong(songModel);
     }
 
@@ -167,10 +166,10 @@ public class SongActionListenerImpl implements OnSongActionListener {
      * @param data the data
      * @return the list
      */
-    public static List<SongItem> transSongModel(@Nullable List<RoomSongInfo> data) {
+    public static List<SongItem> transSongModel(@Nullable List<ChosenSongInfo> data) {
         ArrayList<SongItem> list = new ArrayList<>();
         if (data != null) {
-            for (RoomSongInfo song : data) {
+            for (ChosenSongInfo song : data) {
                 String userName = "";
                 String chooserUserId = "" ;
                 if (song.getOwner()!=null){

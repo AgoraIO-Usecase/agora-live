@@ -82,7 +82,7 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
                 } else {
                     if (!isJoining) {
                         isJoining = true
-                        mRoomCreateViewModel.joinRoom(data.roomId, null)
+                        mRoomCreateViewModel.joinRoom(data, null)
                     }
                 }
             }
@@ -124,12 +124,12 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
                 binding.ivBgMobile.setVisibility(View.GONE)
             }
         }
-        mRoomCreateViewModel.roomInfoLiveData.observe(this) { roomModel ->
+        mRoomCreateViewModel.roomInfoLiveData.observe(this) { roomInfo ->
             isJoining = false
-            if (roomModel == null) {
+            if (roomInfo == null) {
                 setDarkStatusIcon(isBlackDarkStatus)
             } else {
-                RoomLivingActivity.launch(this, roomModel)
+                RoomLivingActivity.launch(this, roomInfo)
             }
         }
     }
@@ -140,11 +140,8 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
         }
         inputPasswordDialog?.apply {
             clearContent()
-            onDefineClickListener = InputPasswordDialog.OnDefineClickListener { password: String? ->
-                mRoomCreateViewModel.joinRoom(
-                    data.roomId,
-                    password
-                )
+            onDefineClickListener = InputPasswordDialog.OnDefineClickListener { password ->
+                mRoomCreateViewModel.joinRoom(data, password)
             }
             show()
         }

@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.ktv.service.CreateRoomInfo
-import io.agora.scene.ktv.service.JoinRoomInfo
 import io.agora.scene.ktv.service.KTVServiceProtocol.Companion.getImplInstance
 
 /**
@@ -24,19 +23,22 @@ class RoomCreateViewModel
     /**
      * The Room model list.
      */
-    val roomModelList = MutableLiveData<List<AUIRoomInfo>>()
+    val roomModelList = MutableLiveData<List<AUIRoomInfo>?>()
 
     /**
      * The Join room result.
      */
-    val roomInfoLiveData = MutableLiveData<JoinRoomInfo?>()
+    val roomInfoLiveData = MutableLiveData<AUIRoomInfo?>()
 
     /**
      * 加载房间列表
      */
     fun loadRooms() {
-        ktvServiceProtocol.getRoomList { vlRoomListModels ->
+        ktvServiceProtocol.getRoomList { error, vlRoomListModels ->
             roomModelList.postValue(vlRoomListModels)
+            error?.message?.let {
+                ToastUtils.showToast(it)
+            }
         }
     }
 
@@ -49,9 +51,9 @@ class RoomCreateViewModel
      */
     fun createRoom(name: String, password: String, icon: String) {
         ktvServiceProtocol.createRoom(CreateRoomInfo(icon, name, password)) { err, roomInfo ->
-            if (err==null){
+            if (err == null && roomInfo != null) {
                 roomInfoLiveData.postValue(roomInfo)
-            }else{
+            } else {
                 roomInfoLiveData.postValue(null)
             }
             err?.message?.let {
@@ -66,11 +68,11 @@ class RoomCreateViewModel
      * @param roomNo   the room no
      * @param password the password
      */
-    fun joinRoom(roomNo: String, password: String?) {
-        ktvServiceProtocol.joinRoom(roomNo, password) { error, roomInfo ->
-            if (error==null){
+    fun joinRoom(roomInfo: AUIRoomInfo, password: String?) {
+        ktvServiceProtocol.joinRoom(roomInfo.roomId, password) { error ->
+            if (error == null) { // success
                 roomInfoLiveData.postValue(roomInfo)
-            }else{
+            } else {
                 roomInfoLiveData.postValue(null)
             }
             error?.message?.let {
