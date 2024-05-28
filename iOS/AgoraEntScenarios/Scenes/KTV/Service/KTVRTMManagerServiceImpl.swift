@@ -443,20 +443,17 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
             return KTVCommonError.unknown.toNSError()
         }
         
-        collection.subscribeWillRemove { [weak self] publisherId, dataCmd, item in
-            guard let self = self, let dataCmd = AUIChorusCmd(rawValue: dataCmd ?? "") else {
+        collection.subscribeWillRemove { publisherId, dataCmd, item in
+            guard let dataCmd = AUIChorusCmd(rawValue: dataCmd ?? "") else {
                 return AUICommonError.unknown.toNSError()
             }
             
-            guard let seatValues = self.getSeatCollection(with: roomNo)?.getLocalMetaData()?.getMap()?.values else {
-                return AUICommonError.unknown.toNSError()
-            }
-            let userId = getSeatUserId(item) ?? ""
+            let userId = item["userId"] as? String ?? ""
             switch dataCmd {
             case .leaveCmd:
                 //only room owner or song owner can remove song
                 let isRoomOwner = AUIRoomContext.shared.isRoomOwner(channelName: roomNo, userId: publisherId)
-                guard isRoomOwner || seatValues.contains(where: { getSeatUserId($0) == userId }) else {
+                guard isRoomOwner || publisherId == userId else {
                     return KTVCommonError.noPermission.toNSError()
                 }
                 return nil
