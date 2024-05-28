@@ -70,7 +70,7 @@ enum AUIMicSeatCmd: String {
 enum AUIMusicCmd: String {
     case chooseSongCmd = "chooseSongCmd"   //添加一首歌
     case removeSongCmd = "removeSongCmd"   //移除一首歌
-    case pingSongCmd = "pingSongCmd"       //置顶一首歌
+    case pinSongCmd = "pinSongCmd"       //置顶一首歌
     case updatePlayStatusCmd = "updatePlayStatusCmd"   //更新歌曲播放状态
     case removedUserSongs = "removedUserSongsCmd"   //移除指定用户所有歌曲
 }

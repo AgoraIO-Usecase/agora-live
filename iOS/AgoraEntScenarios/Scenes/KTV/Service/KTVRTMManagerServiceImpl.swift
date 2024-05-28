@@ -316,7 +316,7 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
             
             let userId = getUserId(updateMap) ?? ""
             switch dataCmd {
-            case .pingSongCmd:
+            case .pinSongCmd:
                 //only room owner or song owner can ping
                 let isRoomOwner = AUIRoomContext.shared.isRoomOwner(channelName: roomNo, userId: publisherId)
                 guard isRoomOwner else {
@@ -369,7 +369,7 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
         
         collection.subscribeAttributesWillSet {[weak self] channelName, key, valueCmd, attr in
             guard let self = self,
-                  valueCmd == AUIMusicCmd.pingSongCmd.rawValue,
+                  valueCmd == AUIMusicCmd.pinSongCmd.rawValue,
                   let value = attr.getList() else {
                 return attr
             }
@@ -782,7 +782,7 @@ extension KTVSyncManagerServiceImp {
             return
         }
         let collection = getSongCollection(with: roomNo)
-        collection?.mergeMetaData(valueCmd: nil, 
+        collection?.mergeMetaData(valueCmd: AUIMusicCmd.pinSongCmd.rawValue,
                                   value: ["pinAt": getCurrentTs(channelName: roomNo)],
                                   filter: [["songNo": songCode]],
                                   callback: completion)
@@ -1108,17 +1108,17 @@ extension KTVSyncManagerServiceImp {
                 return false
             }
             
-            let pinAt1 = model1["pinAt"] as? Int64 ?? 0
-            let pinAt2 = model2["pinAt"] as? Int64 ?? 0
-            let createAt1 = model1["createAt"] as? Int64 ?? 0
-            let createAt2 = model2["createAt"] as? Int64 ?? 0
+            let pinAt1 = model1["pinAt"] as? UInt64 ?? 0
+            let pinAt2 = model2["pinAt"] as? UInt64 ?? 0
+            let createAt1 = model1["createAt"] as? UInt64 ?? 0
+            let createAt2 = model2["createAt"] as? UInt64 ?? 0
             //都没有置顶时间，比较创建时间，创建时间小的在前（即创建早的在前）
             if pinAt1 < 1,  pinAt2 < 1 {
-                return createAt1 - createAt2 < 0 ? true : false
+                return createAt1 < createAt2 ? true : false
             }
             
             //有一个有置顶时间，置顶时间大的在前（即后置顶的在前）
-            return pinAt1 - pinAt2 > 0 ? true : false
+            return pinAt1 > pinAt2 ? true : false
         })
         
         return songList
