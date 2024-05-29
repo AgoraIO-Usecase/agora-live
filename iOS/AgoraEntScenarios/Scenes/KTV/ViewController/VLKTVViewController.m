@@ -140,6 +140,15 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 
 @implementation VLKTVViewController
 
+- (VLAudienceIndicator *)customView {
+    if (!_requestOnLineView) {
+        _requestOnLineView = [[VLAudienceIndicator alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-kSafeAreaBottomHeight-56-VLREALVALUE_WIDTH(30), SCREEN_WIDTH, 56)
+                                                           withDelegate:self];
+    }
+    
+    return _requestOnLineView;
+}
+
 #pragma mark view lifecycles
 - (void)dealloc {
     NSLog(@"dealloc:%s",__FUNCTION__);
@@ -199,14 +208,12 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     [self.view addSubview:personView];
 
     //空位上麦视图
-    VLAudienceIndicator *requestOnLineView = [[VLAudienceIndicator alloc]initWithFrame:CGRectMake(0, SCREEN_HEIGHT-kSafeAreaBottomHeight-56-VLREALVALUE_WIDTH(30), SCREEN_WIDTH, 56) withDelegate:self];
-    self.requestOnLineView = requestOnLineView;
-    [self.view addSubview:requestOnLineView];
+    [self.view addSubview:self.requestOnLineView];
     
     //start join
     [self joinRTCChannel];
     
-    self.isOnMicSeat = [self getCurrentUserSeatInfo] == nil ? NO : YES;
+//    self.isOnMicSeat = [self getCurrentUserSeatInfo] == nil ? NO : YES;
     
     //处理背景
     [self prepareBgImage];
@@ -955,13 +962,16 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 
 - (void)leaveSeatWithSeatModel:(VLRoomSeatModel * __nonnull)seatModel
                  withCompletion:(void(^ __nullable)(NSError*))completion {
-    if([seatModel.owner.userId isEqualToString:VLUserCenter.user.id]) {
-        if(seatModel.isVideoMuted == 1) {
-            [self.RTCkit stopPreview];
-        }
+//    if([seatModel.owner.userId isEqualToString:VLUserCenter.user.id]) {
+//        if(seatModel.isVideoMuted == 1) {
+//            [self.RTCkit stopPreview];
+//        }
+//    }
+    if ([seatModel.owner.userId isEqualToString:VLUserCenter.user.id]) {
+        [[AppContext ktvServiceImp] leaveSeatWithCompletion:completion];
+    } else {
+        [[AppContext ktvServiceImp] kickSeatWithSeatIndex:seatModel.seatIndex completion:completion];
     }
-    
-    [[AppContext ktvServiceImp] leaveSeatWithCompletion:completion];
 }
 
 - (void)refreshChoosedSongList:(void (^ _Nullable)(void))block{
@@ -1498,26 +1508,26 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 //            [self popVoiceShowView];
 //            break;
         case VLKTVBottomBtnClickTypeAudio:
-            if (self.isNowMicMuted) {
-                [AgoraEntAuthorizedManager checkAudioAuthorizedWithParent:self completion:nil];
-            }
-            self.isNowMicMuted = !self.isNowMicMuted;
-            // 开关麦克风会对耳返状态进行检查并临时关闭
-            if(self.isEarOn){
-                [self.RTCkit enableInEarMonitoring:!self.isNowMicMuted includeAudioFilters:AgoraEarMonitoringFilterNone];
-            }
+//            if (self.isNowMicMuted) {
+//                [AgoraEntAuthorizedManager checkAudioAuthorizedWithParent:self completion:nil];
+//            }
+//            self.isNowMicMuted = !self.isNowMicMuted;
+//            // 开关麦克风会对耳返状态进行检查并临时关闭
+//            if(self.isEarOn){
+//                [self.RTCkit enableInEarMonitoring:!self.isNowMicMuted includeAudioFilters:AgoraEarMonitoringFilterNone];
+//            }
          //   self.checkType = checkAuthTypeAudio;
-            [[AppContext ktvServiceImp] updateSeatAudioMuteStatusWithMuted:self.isNowMicMuted
+            [[AppContext ktvServiceImp] updateSeatAudioMuteStatusWithMuted:!self.isNowMicMuted
                                                                 completion:^(NSError * error) {
             }];
             break;
         case VLKTVBottomBtnClickTypeVideo:
-            if (self.isNowCameraMuted) {
-                [AgoraEntAuthorizedManager checkCameraAuthorizedWithParent:self completion:nil];
-            }
-            self.isNowCameraMuted = !self.isNowCameraMuted;
+//            if (self.isNowCameraMuted) {
+//                [AgoraEntAuthorizedManager checkCameraAuthorizedWithParent:self completion:nil];
+//            }
+//            self.isNowCameraMuted = !self.isNowCameraMuted;
         //    self.checkType = checkAuthTypeVideo;
-            [[AppContext ktvServiceImp] updateSeatVideoMuteStatusWithMuted:self.isNowCameraMuted
+            [[AppContext ktvServiceImp] updateSeatVideoMuteStatusWithMuted:!self.isNowCameraMuted
                                                                 completion:^(NSError * error) {
             }];
             break;
@@ -2261,7 +2271,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         return;
     }
     NSInteger count = [self getOnMicUserCount];
-    if(!_isOnMicSeat && count >=8){
+    if(!_isOnMicSeat && count >= 8){
         VLRoomSelSongModel *topSong = self.selSongsArray.firstObject;
         if(topSong){
             [self.MVView setMvState:[self isRoomOwner] ? VLKTVMVViewStateOwnerAudience : VLKTVMVViewStateAudience];
@@ -2320,16 +2330,16 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     self.bottomView.hidden = !_isOnMicSeat;
     self.requestOnLineView.hidden = !self.bottomView.hidden;
     
-    VLRoomSeatModel* info = [self getCurrentUserSeatInfo];
-    if(onMicSeatStatusDidChanged){
-        if(info == nil){
-            self.isNowMicMuted = true;
-            self.isNowCameraMuted = true;
-        } else {
-            self.isNowMicMuted = info.isAudioMuted;
-            self.isNowCameraMuted = info.isVideoMuted;
-        }
-    }
+//    VLRoomSeatModel* info = [self getCurrentUserSeatInfo];
+//    if(onMicSeatStatusDidChanged){
+//        if(info == nil){
+//            self.isNowMicMuted = true;
+//            self.isNowCameraMuted = true;
+//        } else {
+//            self.isNowMicMuted = info.isAudioMuted;
+//            self.isNowCameraMuted = info.isVideoMuted;
+//        }
+//    }
 }
 
 - (void)setIsNowMicMuted:(BOOL)isNowMicMuted {
@@ -2348,6 +2358,9 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     _isNowCameraMuted = isNowCameraMuted;
     
     [self.RTCkit enableLocalVideo:!isNowCameraMuted];
+    if (isNowCameraMuted) {
+        [self.RTCkit stopPreview];
+    }
     AgoraRtcChannelMediaOptions *option = [AgoraRtcChannelMediaOptions new];
     [option setPublishCameraTrack:!self.isNowCameraMuted];
     [self.RTCkit updateChannelWithMediaOptions:option];
@@ -2627,6 +2640,10 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     NSMutableArray<VLRoomSeatModel*>* setsArray = [NSMutableArray array];
     for (int i = 0; i < seat.count; i++) {
         VLRoomSeatModel* model = [seat objectForKey:[NSString stringWithFormat:@"%d", i]];
+        if ([model.owner.userId isEqualToString:VLUserCenter.user.id]) {
+            [self updateNowMicMuted:model.isAudioMuted];
+            [self updateNowCameraMuted:model.isVideoMuted];
+        }
         [setsArray addObject:model];
     }
     [self setSeatsArray:setsArray];
@@ -2668,8 +2685,18 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         [self setMVViewStateWith:song];
     }
     [self.roomPersonView reloadSeatIndex:model.seatIndex];
-    
     [self onSeatFull];
+}
+
+- (void)updateNowMicMuted:(BOOL)isMute {
+    self.isNowMicMuted = isMute;
+    // 开关麦克风会对耳返状态进行检查并临时关闭
+    if(self.isEarOn){
+        [self.RTCkit enableInEarMonitoring:!self.isNowMicMuted includeAudioFilters:AgoraEarMonitoringFilterNone];
+    }
+    if (!isMute) {
+        [AgoraEntAuthorizedManager checkAudioAuthorizedWithParent:self completion:nil];
+    }
 }
   
 - (void)onSeatAudioMuteWithSeatIndex:(NSInteger)seatIndex isMute:(BOOL)isMute {
@@ -2678,14 +2705,28 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         return;
     }
     
+    if ([model.owner.userId isEqualToString:VLUserCenter.user.id]) {
+        [self updateNowMicMuted:isMute];
+    }
+    
     model.isAudioMuted = isMute;
     [self.roomPersonView reloadSeatIndex:model.seatIndex];
+}
+
+- (void)updateNowCameraMuted: (BOOL)isMute {
+    self.isNowCameraMuted = isMute;
+    if (!isMute) {
+        [AgoraEntAuthorizedManager checkCameraAuthorizedWithParent:self completion:nil];
+    }
 }
     
 - (void)onSeatVideoMuteWithSeatIndex:(NSInteger)seatIndex isMute:(BOOL)isMute {
     VLRoomSeatModel* model = [self getUserSeatInfoWithIndex:seatIndex];
     if (model == nil) {
         return;
+    }
+    if ([model.owner.userId isEqualToString:VLUserCenter.user.id]) {
+        [self updateNowCameraMuted:isMute];
     }
     
     model.isVideoMuted = isMute;

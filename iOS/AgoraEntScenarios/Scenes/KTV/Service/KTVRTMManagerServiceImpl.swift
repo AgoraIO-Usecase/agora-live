@@ -146,6 +146,17 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
                     
                     self.seatMap["\(index)"] = micSeat
                     var micSeatDidChanged = false
+                    
+                    if origMicSeat?.isAudioMuted != micSeat.isAudioMuted {
+                        micSeatDidChanged = true
+                        self.delegate?.onSeatAudioMute(seatIndex: micSeat.seatIndex, isMute: micSeat.isAudioMuted)
+                    }
+                    
+                    if origMicSeat?.isVideoMuted != micSeat.isVideoMuted {
+                        micSeatDidChanged = true
+                        self.delegate?.onSeatVideoMute(seatIndex: micSeat.seatIndex, isMute: micSeat.isVideoMuted)
+                    }
+                    
                     if origUserId.count > 0,
                        micSeat.owner.userId != origUserId {
                         micSeatDidChanged = true
@@ -156,16 +167,6 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
                        origUserId != micSeat.owner.userId {
                         micSeatDidChanged = true
                         self.delegate?.onUserEnterSeat(seatIndex: micSeat.seatIndex, user: micSeat.owner)
-                    }
-                    
-                    if origMicSeat?.isAudioMuted != micSeat.isAudioMuted {
-                        micSeatDidChanged = true
-                        self.delegate?.onSeatAudioMute(seatIndex: micSeat.seatIndex, isMute: micSeat.isAudioMuted)
-                    }
-                    
-                    if origMicSeat?.isVideoMuted != micSeat.isVideoMuted {
-                        micSeatDidChanged = true
-                        self.delegate?.onSeatVideoMute(seatIndex: micSeat.seatIndex, isMute: micSeat.isVideoMuted)
                     }
                     
                     if micSeatDidChanged {
