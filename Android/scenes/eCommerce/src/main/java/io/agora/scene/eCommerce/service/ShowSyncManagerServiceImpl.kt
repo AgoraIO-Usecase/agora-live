@@ -22,6 +22,7 @@ import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.eCommerce.CommerceLogger
 import io.agora.scene.eCommerce.RtcEngineInstance
+import io.agora.scene.eCommerce.utils.CommerceConstants
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
@@ -184,6 +185,7 @@ class ShowSyncManagerServiceImpl constructor(
             }
             if (list != null) {
                 roomList = toDetailList(list)
+                roomList = removeReportRooms(roomList)
                 roomList.forEach {
                     if (it.ownerId == UserManager.getInstance().user.id.toString()) {
                         if (isRtmLogin) {
@@ -775,5 +777,20 @@ class ShowSyncManagerServiceImpl constructor(
             list.add(model)
         }
         return list
+    }
+
+    private fun removeReportRooms(roomList: List<RoomDetailModel>): MutableList<RoomDetailModel> {
+        val retRoomList = mutableListOf<RoomDetailModel>()
+        retRoomList.addAll(roomList)
+
+        val reportRoomList = roomList.filter {
+            (CommerceConstants.reportContents.contains(it.roomName) || CommerceConstants.reportUsers.contains(it.ownerId))
+        }
+        if (reportRoomList.isNotEmpty()) {
+            reportRoomList.forEach {
+                retRoomList.remove(it)
+            }
+        }
+        return retRoomList
     }
 }

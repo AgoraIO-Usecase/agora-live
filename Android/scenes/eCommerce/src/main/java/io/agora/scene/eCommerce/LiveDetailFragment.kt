@@ -42,11 +42,13 @@ import io.agora.scene.eCommerce.databinding.CommerceLivingEndDialogBinding
 import io.agora.scene.eCommerce.service.*
 import io.agora.scene.eCommerce.shop.GoodsListDialog
 import io.agora.scene.eCommerce.shop.LiveAuctionFragment
+import io.agora.scene.eCommerce.utils.CommerceConstants
 import io.agora.scene.eCommerce.videoLoaderAPI.OnPageScrollEventHandler
 import io.agora.scene.eCommerce.videoLoaderAPI.VideoLoader
 import io.agora.scene.eCommerce.widget.*
 import io.agora.scene.widget.basic.BindingSingleAdapter
 import io.agora.scene.widget.basic.BindingViewHolder
+import io.agora.scene.widget.dialog.TopFunctionDialog
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -302,6 +304,21 @@ class LiveDetailFragment : Fragment() {
         }
     }
 
+    private fun onClickMore() {
+        context?.let {
+            val dialog = TopFunctionDialog(it)
+            dialog.reportContentCallback = {
+                CommerceConstants.reportContents[mRoomInfo.roomName] = true
+                activity?.finish()
+            }
+            dialog.reportUserCallback = {
+                CommerceConstants.reportUsers[mRoomInfo.ownerId] = true
+                activity?.finish()
+            }
+            dialog.show()
+        }
+    }
+
     //================== UI Operation ===============
 
     /**
@@ -410,6 +427,8 @@ class LiveDetailFragment : Fragment() {
         topLayout.tvRoomId.text = getString(R.string.commerce_room_id, mRoomInfo.roomId)
         topLayout.tvUserCount.text = mRoomInfo.roomUserCount.toString()
         topLayout.ivClose.setOnClickListener { onBackPressed() }
+        topLayout.ivMore.setOnClickListener { onClickMore() }
+        topLayout.ivMore.isVisible = !isRoomOwner
     }
 
     /**

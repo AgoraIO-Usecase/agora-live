@@ -88,6 +88,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/clRoomTitle" />
 
+    <ImageView
+        android:id="@+id/ivMore"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingVertical="8dp"
+        android:layout_marginEnd="2dp"
+        app:layout_constraintDimensionRatio="1:1"
+        android:background="@drawable/commerce_live_detail_top_view_bg"
+        app:layout_constraintTop_toTopOf="@id/ivClose"
+        app:layout_constraintEnd_toStartOf="@id/ivClose"
+        app:layout_constraintBottom_toBottomOf="@id/ivClose"
+        android:src="@drawable/commerce_icon_more" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvUserCount"
@@ -103,7 +115,7 @@
         android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="@id/ivClose"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@id/ivClose"
+        app:layout_constraintEnd_toStartOf="@id/ivMore"
         app:layout_constraintTop_toTopOf="@id/ivClose"
         tools:text="1.5K" />
 
