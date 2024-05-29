@@ -1,24 +1,101 @@
 package io.agora.scene.show.videoLoaderAPI.report
 
 import android.util.Log
+import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcEngine
 import org.json.JSONObject
 import java.util.HashMap
 
+/**
+ * A p i type
+ *
+ * @property value
+ * @constructor Create empty A p i type
+ */
 enum class APIType(val value: Int) {
-    KTV(1),             // K歌
-    CALL(2),            // 呼叫连麦
-    BEAUTY(3),          // 美颜
-    VIDEO_LOADER(4),    // 秒开秒切
-    PK(5),              // 团战
-    VIRTUAL_SPACE(6),   //
-    SCREEN_SPACE(7),    // 屏幕共享
-    AUDIO_SCENARIO(8)   // 音频
+    /**
+     * Ktv
+     *
+     * @constructor Create empty Ktv
+     */
+    KTV(1),
+
+    /**
+     * Call
+     *
+     * @constructor Create empty Call
+     */
+    CALL(2),
+
+    /**
+     * Beauty
+     *
+     * @constructor Create empty Beauty
+     */
+    BEAUTY(3),
+
+    /**
+     * Video Loader
+     *
+     * @constructor Create empty Video Loader
+     */
+    VIDEO_LOADER(4),
+
+    /**
+     * Pk
+     *
+     * @constructor Create empty Pk
+     */
+    PK(5),
+
+    /**
+     * Virtual Space
+     *
+     * @constructor Create empty Virtual Space
+     */
+    VIRTUAL_SPACE(6),
+
+    /**
+     * Screen Space
+     *
+     * @constructor Create empty Screen Space
+     */
+    SCREEN_SPACE(7),
+
+    /**
+     * Audio Scenario
+     *
+     * @constructor Create empty Audio Scenario
+     */
+    AUDIO_SCENARIO(8)
 }
 
+/**
+ * Api event type
+ *
+ * @property value
+ * @constructor Create empty Api event type
+ */
 enum class ApiEventType(val value: Int) {
+    /**
+     * Api
+     *
+     * @constructor Create empty Api
+     */
     API(0),
+
+    /**
+     * Cost
+     *
+     * @constructor Create empty Cost
+     */
     COST(1),
+
+    /**
+     * Custom
+     *
+     * @constructor Create empty Custom
+     */
     CUSTOM(2)
 }
 
@@ -31,11 +108,19 @@ object ApiEventKey {
 }
 
 object ApiCostEvent {
-    const val CHANNEL_USAGE = "channelUsage"                 //频道使用耗时
-    const val FIRST_FRAME_ACTUAL = "firstFrameActual"        //首帧实际耗时
-    const val FIRST_FRAME_PERCEIVED = "firstFramePerceived"  //首帧感官耗时
+    const val CHANNEL_USAGE = "channelUsage"
+    const val FIRST_FRAME_ACTUAL = "firstFrameActual"
+    const val FIRST_FRAME_PERCEIVED = "firstFramePerceived"
 }
 
+/**
+ * A p i reporter
+ *
+ * @property type
+ * @property version
+ * @property rtcEngine
+ * @constructor Create empty A p i reporter
+ */
 class APIReporter(
     private val type: APIType,
     private val version: String,
@@ -50,7 +135,13 @@ class APIReporter(
         configParameters()
     }
 
-    // 上报普通场景化API
+    /**
+     * Report func event
+     *
+     * @param name
+     * @param value
+     * @param ext
+     */
     fun reportFuncEvent(name: String, value: Map<String, Any>, ext: Map<String, Any>) {
         Log.d(tag, "reportFuncEvent: $name value: $value ext: $ext")
         val eventMap = mapOf(ApiEventKey.TYPE to ApiEventType.API.value, ApiEventKey.DESC to name)
@@ -60,11 +151,22 @@ class APIReporter(
         rtcEngine.sendCustomReportMessage(messageId, category, event, label, 0)
     }
 
+    /**
+     * Start duration event
+     *
+     * @param name
+     */
     fun startDurationEvent(name: String) {
         Log.d(tag, "startDurationEvent: $name")
         durationEventStartMap[name] = getCurrentTs()
     }
 
+    /**
+     * End duration event
+     *
+     * @param name
+     * @param ext
+     */
     fun endDurationEvent(name: String, ext: Map<String, Any>) {
         Log.d(tag, "endDurationEvent: $name")
         val beginTs = durationEventStartMap[name] ?: return
@@ -75,7 +177,13 @@ class APIReporter(
         innerReportCostEvent(ts, name, cost, ext)
     }
 
-    // 上报耗时打点信息
+    /**
+     * Report cost event
+     *
+     * @param name
+     * @param cost
+     * @param ext
+     */
     fun reportCostEvent(name: String, cost: Int, ext: Map<String, Any>) {
         durationEventStartMap.remove(name)
         innerReportCostEvent(
@@ -86,7 +194,12 @@ class APIReporter(
         )
     }
 
-    // 上报自定义信息
+    /**
+     * Report custom event
+     *
+     * @param name
+     * @param ext
+     */
     fun reportCustomEvent(name: String, ext: Map<String, Any>) {
         Log.d(tag, "reportCustomEvent: $name ext: $ext")
         val eventMap = mapOf(ApiEventKey.TYPE to ApiEventType.CUSTOM.value, ApiEventKey.DESC to name)
@@ -96,10 +209,20 @@ class APIReporter(
         rtcEngine.sendCustomReportMessage(messageId, category, event, label, 0)
     }
 
+    /**
+     * Write log
+     *
+     * @param content
+     * @param level
+     */
     fun writeLog(content: String, level: Int) {
         //rtcEngine.writeLog(level, content)
     }
 
+    /**
+     * Clean cache
+     *
+     */
     fun cleanCache() {
         durationEventStartMap.clear()
     }
@@ -108,9 +231,7 @@ class APIReporter(
 
     private fun configParameters() {
         //rtcEngine.setParameters("{\"rtc.qos_for_test_purpose\": true}") //测试环境使用
-        // 数据上报
         rtcEngine.setParameters("{\"rtc.direct_send_custom_event\": true}")
-        // 日志写入
         rtcEngine.setParameters("{\"rtc.log_external_input\": true}")
     }
 

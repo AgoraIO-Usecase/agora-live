@@ -11,6 +11,12 @@ import io.agora.rtc2.video.VideoCanvas
 import io.agora.scene.show.videoLoaderAPI.report.ApiCostEvent
 import java.util.*
 
+/**
+ * Video loader impl
+ *
+ * @property rtcEngine
+ * @constructor Create empty Video loader impl
+ */
 class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoader {
     private val tag = "VideoLoader"
     private val anchorStateMap = Collections.synchronizedMap(mutableMapOf<RtcConnectionWrap, AnchorState>())
@@ -62,7 +68,6 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
         remoteVideoCanvasList.firstOrNull {
             it.connection.channelId == anchorInfo.channelId && it.uid == container.uid && it.renderMode == container.renderMode && it.lifecycleOwner == container.lifecycleOwner
         }?.let {
-            // remoteVideoCanvasList 内已经存在这个view
             VideoLoader.videoLoaderApiLog(tag, "remoteVideoCanvasList contains this view")
 
             val videoView = it.view
@@ -121,6 +126,12 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
         )
     }
 
+    /**
+     * Get profiler
+     *
+     * @param roomId
+     * @return
+     */
     fun getProfiler(roomId: String): VideoLoaderProfiler {
         val profiler = videoProfileMap[roomId] ?: VideoLoaderProfiler(roomId)
         videoProfileMap[roomId] = profiler
@@ -128,15 +139,6 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
     }
 
     // ------------------------------- inner private -------------------------------
-
-    /**
-     * 切换指定主播的状态
-     * @param newState 目标状态
-     * @param anchorUid 主播 uid
-     * @param connection 对应频道的 RtcConnection
-     * @param token 对应频道的 token
-     * @param mediaOptions 自定义的 ChannelMediaOptions
-     */
     private fun innerSwitchAnchorState(
         newState: AnchorState,
         anchorUid: Int,
@@ -146,13 +148,11 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
     ) {
         VideoLoader.videoLoaderApiLog(tag, "innerSwitchAnchorState, newState: $newState, connection: $connection, anchorStateMap: $anchorStateMap")
         val roomId = connection.channelId
-        // anchorStateMap 无当前主播记录
         if (anchorStateMap.none {it.key.isSameChannel(connection)}) {
             val rtcConnectionWrap = RtcConnectionWrap(connection)
             VideoLoader.videoLoaderApiLog(tag, "null ==> $newState, connection:$connection")
             when (newState) {
                 AnchorState.PRE_JOINED -> {
-                    // 加入频道但不收流
                     joinRtcChannel(token, connection, mediaOptions ?: ChannelMediaOptions().apply {
                         clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
                         audienceLatencyLevel = Constants.AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
@@ -161,7 +161,6 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
                     })
                 }
                 AnchorState.JOINED -> {
-                    // 加入频道且收流
                     getProfiler(roomId).actualStartTime = System.currentTimeMillis()
                     joinRtcChannel(token, connection, mediaOptions ?: ChannelMediaOptions().apply {
                         clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
@@ -178,7 +177,6 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
                         autoSubscribeVideo = true
                         autoSubscribeAudio = true
                     })
-                    // 防止音画不同步， 我们采用先订阅再将播放调为0的方式
                     rtcEngine.adjustUserPlaybackSignalVolumeEx(anchorUid, 0, connection)
                 }
 
@@ -199,7 +197,6 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
                 VideoLoader.videoLoaderApiLog(tag, "$oldState ==> $newState, connection:$connection")
                 when {
                     oldState == AnchorState.IDLE && newState == AnchorState.PRE_JOINED -> {
-                        // 加入频道但不收流
                         joinRtcChannel(token, connection, mediaOptions ?: ChannelMediaOptions().apply {
                             clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
                             audienceLatencyLevel = Constants.AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
@@ -208,7 +205,6 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
                         })
                     }
                     (oldState == AnchorState.PRE_JOINED || oldState == AnchorState.JOINED_WITHOUT_AUDIO) && newState == AnchorState.JOINED -> {
-                        // 保持在频道内, 收流
                         if (oldState == AnchorState.PRE_JOINED) {
                             getProfiler(roomId).actualStartTime = System.currentTimeMillis()
                         }
@@ -223,7 +219,6 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
                         rtcEngine.adjustUserPlaybackSignalVolumeEx(anchorUid, 100, connection)
                     }
                     (oldState == AnchorState.JOINED || oldState == AnchorState.JOINED_WITHOUT_AUDIO)  && newState == AnchorState.PRE_JOINED -> {
-                        // 保持在频道内，不收流
                         val options = mediaOptions ?: ChannelMediaOptions().apply {
                             clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
                             audienceLatencyLevel = Constants.AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
@@ -235,7 +230,6 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
                         VideoLoader.videoLoaderApiLog(tag, "updateChannelMediaOptionsEx, connection:$connection, ret:$ret")
                     }
                     oldState == AnchorState.IDLE && newState == AnchorState.JOINED -> {
-                        // 加入频道，且收流
                         getProfiler(roomId).actualStartTime = System.currentTimeMillis()
                         joinRtcChannel(token, connection, mediaOptions ?: ChannelMediaOptions().apply {
                             clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
@@ -245,7 +239,6 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
                         })
                     }
                     oldState == AnchorState.IDLE && newState == AnchorState.JOINED_WITHOUT_AUDIO -> {
-                        // 加入频道，且收流
                         getProfiler(roomId).actualStartTime = System.currentTimeMillis()
                         joinRtcChannel(token, connection, mediaOptions ?: ChannelMediaOptions().apply {
                             clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
@@ -253,11 +246,9 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
                             autoSubscribeVideo = true
                             autoSubscribeAudio = true
                         })
-                        // 防止音画不同步， 我们采用先订阅再将播放调为0的方式
                         rtcEngine.adjustUserPlaybackSignalVolumeEx(anchorUid, 0, connection)
                     }
                     oldState == AnchorState.PRE_JOINED && newState == AnchorState.JOINED_WITHOUT_AUDIO -> {
-                        // 保持在频道内, 收流
                         getProfiler(roomId).actualStartTime = System.currentTimeMillis()
                         val options = mediaOptions ?: ChannelMediaOptions().apply {
                             clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
@@ -267,11 +258,9 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
                         }
                         val ret = rtcEngine.updateChannelMediaOptionsEx(options, connection)
                         VideoLoader.videoLoaderApiLog(tag, "updateChannelMediaOptionsEx, connection:$connection, ret:$ret")
-                        // 防止音画不同步， 我们采用先订阅再将播放调为0的方式
                         rtcEngine.adjustUserPlaybackSignalVolumeEx(anchorUid, 0, connection)
                     }
                     newState == AnchorState.IDLE -> {
-                        // 退出频道
                         leaveRtcChannel(it.key)
                     }
                 }
@@ -297,9 +286,21 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
         return "elapsedTime:${info.elapsedTime} start2JoinChannel:${info.start2JoinChannel} join2JoinSuccess:${info.join2JoinSuccess} joinSuccess2RemoteJoined:${info.joinSuccess2RemoteJoined} remoteJoined2SetView:${info.remoteJoined2SetView} remoteJoined2UnmuteVideo:${info.remoteJoined2UnmuteVideo} remoteJoined2PacketReceived:${info.remoteJoined2PacketReceived}"
     }
 
+    /**
+     * Rtc connection wrap
+     *
+     * @constructor
+     *
+     * @param connection
+     */
     inner class RtcConnectionWrap constructor(connection: RtcConnection) :
         RtcConnection(connection.channelId, connection.localUid) {
 
+        /**
+         * Is same channel
+         *
+         * @param connection
+         */
         fun isSameChannel(connection: RtcConnection?) =
             connection != null && channelId == connection.channelId && localUid == connection.localUid
 
@@ -308,6 +309,17 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
         }
     }
 
+    /**
+     * Remote video canvas wrap
+     *
+     * @property connection
+     * @property lifecycleOwner
+     * @constructor
+     *
+     * @param view
+     * @param renderMode
+     * @param uid
+     */
     inner class RemoteVideoCanvasWrap constructor(
         val connection: RtcConnection,
         val lifecycleOwner: LifecycleOwner,
@@ -334,6 +346,10 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
             }
         }
 
+        /**
+         * Release
+         *
+         */
         fun release() {
             lifecycleOwner.lifecycle.removeObserver(this)
             setupMode = VIEW_SETUP_MODE_REMOVE
@@ -343,6 +359,12 @@ class VideoLoaderImpl constructor(private val rtcEngine: RtcEngineEx) : VideoLoa
         }
     }
 
+    /**
+     * Video loader profiler
+     *
+     * @property channelId
+     * @constructor Create empty Video loader profiler
+     */
     inner class VideoLoaderProfiler(
         private val channelId: String
     ) : IRtcEngineEventHandler() {

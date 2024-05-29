@@ -10,21 +10,44 @@ import io.agora.scene.show.videoLoaderAPI.report.APIReporter
 import io.agora.scene.show.videoLoaderAPI.report.APIType
 
 /**
- * 房间状态
- * @param IDLE 默认状态
- * @param PRE_JOINED 预加入房间状态
- * @param JOINED 已进入房间状态
- * @param JOINED_WITHOUT_AUDIO 不播放音频
+ * Anchor state
+ *
+ * @constructor Create empty Anchor state
  */
 enum class AnchorState {
+    /**
+     * Idle
+     *
+     * @constructor Create empty Idle
+     */
     IDLE,
+
+    /**
+     * Pre Joined
+     *
+     * @constructor Create empty Pre Joined
+     */
     PRE_JOINED,
+
+    /**
+     * Joined
+     *
+     * @constructor Create empty Joined
+     */
     JOINED,
+
+    /**
+     * Joined Without Audio
+     *
+     * @constructor Create empty Joined Without Audio
+     */
     JOINED_WITHOUT_AUDIO,
 }
 
 /**
- * 视频流管理模块
+ * Video loader
+ *
+ * @constructor Create empty Video loader
  */
 interface VideoLoader {
 
@@ -44,13 +67,11 @@ interface VideoLoader {
             return instance as VideoLoader
         }
 
-        // 日志输出
         fun videoLoaderApiLog(tag: String, msg: String) {
             Logging.i(msg)
             //reporter?.writeLog("[$tag] $msg", Constants.LOG_LEVEL_INFO)
         }
 
-        // 日志输出
         fun videoLoaderApiLogWarning(tag: String, msg: String) {
             Logging.w(msg)
             //reporter?.writeLog("[$tag] $msg", Constants.LOG_LEVEL_WARNING)
@@ -64,12 +85,14 @@ interface VideoLoader {
     }
 
     /**
-     * 视频容器
-     * @param lifecycleOwner 视频容器所在的生命周期, 推荐为Fragment的viewLifecycleOwner
-     * @param container 视频容器
-     * @param uid 需要渲染对象视频流的uid
-     * @param viewIndex 视频view在container上的区域index
-     * @param renderMode 需要渲染对象视频流方式
+     * Video canvas container
+     *
+     * @property lifecycleOwner
+     * @property container
+     * @property uid
+     * @property viewIndex
+     * @property renderMode
+     * @constructor Create empty Video canvas container
      */
     data class VideoCanvasContainer(
         val lifecycleOwner: LifecycleOwner,
@@ -80,10 +103,12 @@ interface VideoLoader {
     )
 
     /**
-     * 房间内单个主播用户信息
-     * @param channelId 频道名
-     * @param anchorUid 主播uid
-     * @param token 加入channel需要的token（建议使用万能token）
+     * Anchor info
+     *
+     * @property channelId
+     * @property anchorUid
+     * @property token
+     * @constructor Create empty Anchor info
      */
     data class AnchorInfo constructor(
         val channelId: String = "",
@@ -96,9 +121,11 @@ interface VideoLoader {
     }
 
     /**
-     * 房间信息
-     * @param roomId 房主频道
-     * @param anchorList 主播列表
+     * Room info
+     *
+     * @property roomId
+     * @property anchorList
+     * @constructor Create empty Room info
      */
     data class RoomInfo(
         val roomId: String,
@@ -106,23 +133,26 @@ interface VideoLoader {
     )
 
     /**
-     * 清除缓存、离开所有已加入的频道连接
+     * Clean cache
+     *
      */
     fun cleanCache()
 
     /**
-     * 预加载主播频道
-     * @param anchorList 主播列表
-     * @param uid 用户uid
+     * Preload anchor
+     *
+     * @param anchorList
+     * @param uid
      */
     fun preloadAnchor(anchorList: List<AnchorInfo>, uid: Int)
 
     /**
-     * 切换指定主播的状态
-     * @param newState 目标状态
-     * @param anchorInfo 主播信息
-     * @param localUid 本地用户 uid
-     * @param mediaOptions 自定义的 ChannelMediaOptions
+     * Switch anchor state
+     *
+     * @param newState
+     * @param anchorInfo
+     * @param localUid
+     * @param mediaOptions
      */
     fun switchAnchorState(
         newState: AnchorState,
@@ -132,18 +162,21 @@ interface VideoLoader {
     )
 
     /**
-     * 获取指定房间的状态
-     * @param channelId 频道名
-     * @param localUid 用户id
+     * Get anchor state
+     *
+     * @param channelId
+     * @param localUid
+     * @return
      */
     fun getAnchorState(channelId: String, localUid: Int): AnchorState?
 
 
     /**
-     * 渲染远端视频，相比于RtcEngineEx.setupRemoteVideoEx，这里会缓存渲染视图，减少渲染时不断重复创建渲染视图，提高渲染速度
-     * @param anchorInfo 主播信息
-     * @param localUid 用户id
-     * @param container 视频渲染的容器，内部会把view显示在容器的指定区域
+     * Render video
+     *
+     * @param anchorInfo
+     * @param localUid
+     * @param container
      */
     fun renderVideo(anchorInfo: AnchorInfo, localUid: Int, container: VideoCanvasContainer)
 }

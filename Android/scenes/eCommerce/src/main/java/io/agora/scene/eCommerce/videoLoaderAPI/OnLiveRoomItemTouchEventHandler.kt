@@ -8,10 +8,12 @@ import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.RtcEngineEx
 
 /**
- * 直播间item触摸事件
- * @param mRtcEngine RtcEngineEx对象
- * @param roomInfo 房间信息
- * @param localUid 观众uid
+ * On live room item touch event handler
+ *
+ * @property mRtcEngine
+ * @property roomInfo
+ * @property localUid
+ * @constructor Create empty On live room item touch event handler
  */
 abstract class OnLiveRoomItemTouchEventHandler constructor(
     private val mRtcEngine: RtcEngineEx,
@@ -23,19 +25,15 @@ abstract class OnLiveRoomItemTouchEventHandler constructor(
     private val clickInternal = 500L
     private var lastClickTime = 0L
 
-    // View.OnTouchListener
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-        // 处理频繁点击事件
         if (System.currentTimeMillis() - lastClickTime <= clickInternal) return true
         val motionEvent = event ?: return true
         when (motionEvent.action) {
             MotionEvent.ACTION_DOWN -> {
                 VideoLoader.videoLoaderApiLog(tag, "click down, roomInfo:${roomInfo}")
                 roomInfo.anchorList.forEach { anchorInfo->
-                    // 加入频道并将远端音量调为0
                     videoLoader.switchAnchorState(AnchorState.JOINED_WITHOUT_AUDIO, anchorInfo, localUid)
-                    // 触发视频渲染最佳时机
                     onRequireRenderVideo(anchorInfo)?.let { canvas ->
                         videoLoader.renderVideo(anchorInfo, localUid, canvas)
                     }
@@ -52,7 +50,6 @@ abstract class OnLiveRoomItemTouchEventHandler constructor(
                 lastClickTime = System.currentTimeMillis()
                 roomInfo.anchorList.forEach { anchorInfo ->
                     videoLoader.switchAnchorState(AnchorState.JOINED, anchorInfo, localUid)
-                    // 打点
                     mRtcEngine.startMediaRenderingTracingEx(RtcConnection(anchorInfo.channelId, localUid))
                     (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId).perceivedStartTime = System.currentTimeMillis()
                 }
@@ -61,6 +58,11 @@ abstract class OnLiveRoomItemTouchEventHandler constructor(
         return true
     }
 
-    // 推荐设置视图的最佳时机
+    /**
+     * On require render video
+     *
+     * @param info
+     * @return
+     */
     abstract fun onRequireRenderVideo(info: VideoLoader.AnchorInfo): VideoLoader.VideoCanvasContainer?
 }

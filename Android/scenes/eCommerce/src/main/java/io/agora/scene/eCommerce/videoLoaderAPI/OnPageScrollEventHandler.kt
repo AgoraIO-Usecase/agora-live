@@ -10,24 +10,49 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 /**
- * 直播间出图模式
- * @param VISIBLE 立即出图
- * @param END_DRAG 松手出图
- * @param END_SCROLL 停下出图
+ * A g slicing type
+ *
+ * @property value
+ * @constructor Create empty A g slicing type
  */
 enum class AGSlicingType(val value :Int) {
-    VISIBLE(0),  //立即出图
-    END_DRAG(1),  //松手出图
-    END_SCROLL(2),  //停下出图
+    /**
+     * Visible
+     *
+     * @constructor Create empty Visible
+     */
+    VISIBLE(0),
+
+    /**
+     * End Drag
+     *
+     * @constructor Create empty End Drag
+     */
+    END_DRAG(1),
+
+    /**
+     * End Scroll
+     *
+     * @constructor Create empty End Scroll
+     */
+    END_SCROLL(2),
+
+    /**
+     * Never
+     *
+     * @constructor Create empty Never
+     */
     NEVER(3)
 }
 
 /**
- * 直播间 item 触摸事件
- * @param mRtcEngine RtcEngineEx 对象
- * @param localUid 观众 uid
- * @param needPreJoin 房间是否需要 preJoin
- * @param videoScrollMode 视频出图模式
+ * On page scroll event handler
+ *
+ * @property mRtcEngine
+ * @property localUid
+ * @property needPreJoin
+ * @property videoScrollMode
+ * @constructor Create empty On page scroll event handler
  */
 abstract class OnPageScrollEventHandler constructor(
     private val mRtcEngine: RtcEngineEx,
@@ -39,6 +64,10 @@ abstract class OnPageScrollEventHandler constructor(
     private val videoLoader by lazy { VideoLoader.getImplInstance(mRtcEngine) }
     private val roomList = SparseArray<VideoLoader.RoomInfo>()
 
+    /**
+     * Clean cache
+     *
+     */
     fun cleanCache() {
         mainHandler.removeCallbacksAndMessages(null)
         roomsForPreloading.clear()
@@ -58,15 +87,19 @@ abstract class OnPageScrollEventHandler constructor(
 
     private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
 
-    // call in createFragment
+    /**
+     * On room created
+     *
+     * @param position
+     * @param info
+     * @param isCurrentItem
+     */// call in createFragment
     fun onRoomCreated(position: Int, info: VideoLoader.RoomInfo, isCurrentItem: Boolean) {
         VideoLoader.videoLoaderApiLog(tag, "onRoomCreated position:$position, info:$info, isCurrentItem:$isCurrentItem")
         roomList.put(position, info)
         if (isCurrentItem) {
             info.anchorList.forEach { anchorInfo ->
-                // 加入频道
                 videoLoader.switchAnchorState(AnchorState.JOINED, anchorInfo, localUid)
-                // 视频渲染最佳时机
                 onRequireRenderVideo(position, anchorInfo)?.let {
                     videoLoader.renderVideo(
                         anchorInfo,
@@ -74,7 +107,6 @@ abstract class OnPageScrollEventHandler constructor(
                         it
                     )
                 }
-                // 打点
                 mRtcEngine.startMediaRenderingTracingEx(RtcConnection(anchorInfo.channelId, localUid))
                 (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId).perceivedStartTime = System.currentTimeMillis()
                 (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId).reportExt = mutableMapOf("videoScrollMode" to videoScrollMode, "needPreJoin" to needPreJoin)
@@ -90,10 +122,21 @@ abstract class OnPageScrollEventHandler constructor(
         }
     }
 
+    /**
+     * Update room list
+     *
+     * @param list
+     */
     fun updateRoomList(list: ArrayList<VideoLoader.RoomInfo>) {
         roomsForPreloading.addAll(list)
     }
 
+    /**
+     * Update room info
+     *
+     * @param position
+     * @param info
+     */
     fun updateRoomInfo(position: Int, info: VideoLoader.RoomInfo) {
         if (info.roomId != roomList[position].roomId) return
         val oldAnchorList = roomList[position].anchorList
@@ -121,6 +164,11 @@ abstract class OnPageScrollEventHandler constructor(
         roomList[position] = info
     }
 
+    /**
+     * Get current room position
+     *
+     * @return
+     */
     fun getCurrentRoomPosition(): Int {
         return currLoadPosition
     }
@@ -132,11 +180,9 @@ abstract class OnPageScrollEventHandler constructor(
         when (state) {
             ViewPager2.SCROLL_STATE_IDLE -> {
                 if(preLoadPosition != POSITION_NONE){
-                    // TODO preLoadPosition 页面消失
                     leaveRoom(roomList[preLoadPosition] ?: return)
                     onPageLeft(preLoadPosition)
                 }
-                // TODO currLoadPosition 页面显示完成
                 joinRoomAndStartAudio(roomList[currLoadPosition] ?: return)
                 roomsJoined.add(roomList[currLoadPosition] ?: return)
                 preJoinRooms()
@@ -145,7 +191,6 @@ abstract class OnPageScrollEventHandler constructor(
                 lastOffset = 0f
             }
             ViewPager2.SCROLL_STATE_SETTLING -> {
-                // 松手事件
             }
             ViewPager2.SCROLL_STATE_DRAGGING -> {
 
@@ -168,13 +213,11 @@ abstract class OnPageScrollEventHandler constructor(
                 if (((lastOffset < PRE_LOAD_OFFSET && lastOffset >= 0) && (1 - positionOffset) < PRE_LOAD_OFFSET) || (lastOffset == 0f && !isMoveUp && positionOffset > 0.5)) {
                     Log.d(tag, "page up")
                     preLoadPosition = currLoadPosition - 1
-                    // TODO preLoadPosition 页面开始显示
                     joinRoomWithoutAudio(preLoadPosition, roomList[preLoadPosition] ?: return, localUid)
                     onPageStartLoading(preLoadPosition)
                 } else if ((positionOffset < PRE_LOAD_OFFSET && ((1 - lastOffset) < PRE_LOAD_OFFSET && (1 - lastOffset) >= 0)) || (lastOffset == 0f && isMoveUp && positionOffset > 0)) {
                     Log.d(tag, "page down")
                     preLoadPosition = currLoadPosition + 1
-                    // TODO preLoadPosition 页面开始显示
                     joinRoomWithoutAudio(preLoadPosition, roomList[preLoadPosition] ?: return, localUid)
                     onPageStartLoading(preLoadPosition)
                 }
@@ -191,15 +234,12 @@ abstract class OnPageScrollEventHandler constructor(
         if (currLoadPosition != POSITION_NONE) {
             if (preLoadPosition != POSITION_NONE) {
                 if (position == preLoadPosition) {
-                    // TODO currLoadPosition 页面消失
                     leaveRoom(roomList[currLoadPosition] ?: return)
                     onPageLeft(currLoadPosition)
                 } else {
-                    // TODO preLoadPosition 页面消失
                     leaveRoom(roomList[preLoadPosition] ?: return)
                     onPageLeft(preLoadPosition)
 
-                    // TODO currLoadPosition 页面显示完成
                     roomsJoined.add(roomList[currLoadPosition] ?: return)
                     preJoinRooms()
                     joinRoomAndStartAudio(roomList[currLoadPosition] ?: return)
@@ -208,7 +248,6 @@ abstract class OnPageScrollEventHandler constructor(
             }
 
 //            if (currLoadPosition != position) {
-//                // TODO currLoadPosition 页面消失
 //                leaveRoom(roomList[currLoadPosition] ?: return)
 //                onPageLeft(currLoadPosition)
 //
@@ -221,13 +260,34 @@ abstract class OnPageScrollEventHandler constructor(
         lastOffset = 0f
     }
 
-    // OnPageStateEventHandler
+    /**
+     * On page start loading
+     *
+     * @param position
+     */// OnPageStateEventHandler
     abstract fun onPageStartLoading(position: Int)
 
+    /**
+     * On page loaded
+     *
+     * @param position
+     */
     abstract fun onPageLoaded(position: Int)
 
+    /**
+     * On page left
+     *
+     * @param position
+     */
     abstract fun onPageLeft(position: Int)
 
+    /**
+     * On require render video
+     *
+     * @param position
+     * @param info
+     * @return
+     */
     abstract fun onRequireRenderVideo(position: Int, info: VideoLoader.AnchorInfo): VideoLoader.VideoCanvasContainer?
 
     // ------------------------ inner ---------------------------
@@ -246,7 +306,6 @@ abstract class OnPageScrollEventHandler constructor(
                 }
             }
 
-            // 打点
             mRtcEngine.startMediaRenderingTracingEx(RtcConnection(anchorInfo.channelId, localUid))
             (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId).perceivedStartTime = System.currentTimeMillis()
             (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId).reportExt = mutableMapOf("videoScrollMode" to videoScrollMode.value, "needPreJoin" to needPreJoin)
@@ -278,7 +337,6 @@ abstract class OnPageScrollEventHandler constructor(
         VideoLoader.videoLoaderApiLog(tag, "switchRoomState, index: $index, connectionsJoined:$roomsJoined")
         VideoLoader.videoLoaderApiLog(tag, "switchRoomState, roomsForPreloading: $roomsForPreloading")
 
-        // joined房间的上下两个房间
         val roomPreLoaded = mutableListOf<VideoLoader.RoomInfo>()
         val anchorPreJoined = mutableListOf<VideoLoader.AnchorInfo>()
         for (i in (index - 1)..(index + 3 / 2)) {
