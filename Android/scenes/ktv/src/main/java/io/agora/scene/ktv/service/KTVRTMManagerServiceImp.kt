@@ -384,29 +384,6 @@ class KTVSyncManagerServiceImp constructor(
      * @receiver
      */
     override fun enterSeat(seatIndex: Int?, completion: (error: Exception?) -> Unit) {
-//        val seatInfo = mSeatMap.values.firstOrNull { it.owner?.userId == mCurrentUser.userId }
-//        if (seatInfo != null) {
-//            completion.invoke(Exception("already on seat"))
-//            return
-//        }
-//        var needEnter = false
-//        if (seatIndex == null) {
-//            val list = mutableListOf(0, 1, 2, 3, 4, 5, 6, 7)
-//            mSeatMap.values.forEach { seat ->
-//                list.removeIf { seat.owner?.userId != null && it == seat.seatIndex }
-//                if (seat.owner?.userId == mCurrentUser.userId) {
-//                    completion.invoke(Exception("already on seat"))
-//                    return
-//                }
-//            }
-//            if (list.isEmpty()) {
-//                completion.invoke(Exception("no empty seat"))
-//            } else {
-//                needEnter = true
-//            }
-//        } else {
-//            needEnter = true
-//        }
         val collection = getSeatCollection(mCurRoomNo) ?: return
         val targetSeat = RoomMicSeatInfo(
             seatIndex = seatIndex ?: -1,
@@ -414,11 +391,12 @@ class KTVSyncManagerServiceImp constructor(
             isAudioMuted = seatIndex != null, // seatIndex=null 自动上麦，需要默认开启麦克风
             isVideoMuted = true
         )
+        val seatMap = GsonTools.beanToMap(targetSeat).toMutableMap()
+        // 移除对象中 seatIndex 字段，merger 不需要修改 index
+        seatMap.remove("seatIndex")
         collection.mergeMetaData(
             valueCmd = RoomSeatCmd.enterSeatCmd.name,
-            value = mapOf(
-                seatIndex.toString() to GsonTools.beanToMap(targetSeat)
-            ),
+            value = mapOf(seatIndex.toString() to seatMap),
             callback = { collectionException ->
                 if (collectionException == null) {
                     KTVLogger.d(TAG, "enterSeat success roomId:$mCurRoomNo")
@@ -1232,15 +1210,9 @@ class KTVSyncManagerServiceImp constructor(
 
             for (i in 0 until 7) {
                 val value = seatValueMap["$i"]
-                if (getUserId(value).isNullOrEmpty()) {
+                if (getUserId(value).isNullOrEmpty()) { //寻找空买为上麦
                     val newValue = newItem.values.first()
-
-                    val roomSeatInfo = GsonTools.toBean(GsonTools.beanToString(newValue), RoomMicSeatInfo::class.java)
-                    // 修改麦位索引
-                    roomSeatInfo?.let {
-                        it.seatIndex = i
-                        tempItem["$i"] = GsonTools.beanToMap(it)
-                    }
+                    tempItem["$i"] = newValue
                     return@subscribeValueWillChange tempItem
                 }
             }

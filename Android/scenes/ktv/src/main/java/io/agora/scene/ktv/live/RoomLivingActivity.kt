@@ -472,7 +472,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                 roomLivingViewModel.leaveSeat(setInfo)
             }
         }
-        mUserLeaveSeatMenuDialog?.setAgoraMember(setInfo.owner?.userName ?: "", setInfo.owner?.userAvatar ?: "")
+        mUserLeaveSeatMenuDialog?.setAgoraMember(setInfo.owner?.userName ?: "", setInfo.owner?.fullHeadUrl ?: "")
         mUserLeaveSeatMenuDialog?.show()
     }
 
