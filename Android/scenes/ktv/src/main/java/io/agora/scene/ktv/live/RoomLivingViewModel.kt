@@ -282,7 +282,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
 
         override fun onSeatAudioMute(seatIndex: Int, isMute: Boolean) {
             val originSeat = seatListLiveData.value?.firstOrNull { it.seatIndex == seatIndex } ?: return
-            originSeat.seatAudioMute = isMute
+            originSeat.isAudioMuted = isMute
             seatListLiveData.value?.set(seatIndex, originSeat)
             if (originSeat.owner?.userId == KtvCenter.mUser.id.toString()) {// 开关麦克风
                 toggleSelfAudioBySign(!isMute)
@@ -291,7 +291,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
 
         override fun onSeatVideoMute(seatIndex: Int, isMute: Boolean) {
             val originSeat = seatListLiveData.value?.firstOrNull { it.seatIndex == seatIndex } ?: return
-            originSeat.seatVideoMute = isMute
+            originSeat.isVideoMuted = isMute
             seatListLiveData.value?.set(seatIndex, originSeat)
             if (originSeat.owner?.userId == KtvCenter.mUser.id.toString()) {// 开关摄像头
                 toggleSelfVideoBySign(!isMute)
@@ -476,6 +476,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
     fun getSongChosenList() {
         ktvServiceProtocol.getChosenSongList { e: Exception?, data: List<ChosenSongInfo>? ->
             if (e == null && data != null) { // success
+                chosenSongListLiveData.value = data
                 KTVLogger.d(TAG, "RoomLivingViewModel.getSongChosenList() success")
             } else { // failed
                 if (e != null) {
@@ -897,7 +898,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
         mMusicSetting = MusicSettingBean(object : MusicSettingCallback {
             override fun onEarChanged(earBackEnable: Boolean) {
                 KTVLogger.d(TAG, "onEarChanged: $earBackEnable")
-                val isAudioMuted = localSeatInfo?.seatAudioMute ?: true
+                val isAudioMuted = localSeatInfo?.isAudioMuted ?: true
                 if (isAudioMuted) {
                     return
                 }
@@ -1191,7 +1192,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
 
             override fun onTokenPrivilegeWillExpire() {
                 super.onTokenPrivilegeWillExpire()
-                // TODO: renewRtmToken 
+
             }
         }
         )
@@ -1252,7 +1253,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
     }
 
     private fun setMicVolume(v: Int) {
-        val isAudioMuted = localSeatInfo?.seatAudioMute ?: true
+        val isAudioMuted = localSeatInfo?.isAudioMuted ?: true
         if (isAudioMuted) {
             KTVLogger.d(TAG, "muted! setMicVolume: $v")
             micOldVolume = v

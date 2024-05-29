@@ -2,12 +2,13 @@ package io.agora.scene.ktv.live.bean;
 
 
 import io.agora.rtmsyncmanager.model.AUIUserInfo;
+import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo;
 
 /**
  * 人声突出
  */
 public class VoiceHighlightBean {
-    public AUIUserInfo user;
+    public AUIUserThumbnailInfo user;
 
     private boolean select;
 

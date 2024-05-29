@@ -12,9 +12,10 @@ import java.io.Serializable
  * @constructor Create empty Ktv parameters
  */
 object KTVParameters {
-    const val ROOM_USER_COUNT = "roomUserCount"
-    const val THUMBNAIL_ID = "thumbnailId"
+    const val ROOM_USER_COUNT = "roomPeopleNum"
+    const val THUMBNAIL_ID = "icon"
     const val PASSWORD = "password"
+    const val IS_PRIVATE = "isPrivate"
 }
 
 /**
@@ -63,8 +64,8 @@ enum class RoomSeatCmd {
 data class RoomMicSeatInfo constructor(
     var owner: AUIUserThumbnailInfo? = null,
     var seatIndex: Int = 0,
-    var seatAudioMute: Boolean = false, // 麦位禁用声音
-    var seatVideoMute: Boolean = true, // 麦位禁用视频
+    var isAudioMuted: Boolean = false, // 麦位禁用声音
+    var isVideoMuted: Boolean = true, // 麦位禁用视频
 ) : Serializable
 
 enum class RoomChorusCmd {
@@ -154,3 +155,10 @@ inline fun <reified T : Enum<T>> enumValueOrNull(name: String?): T? {
         null
     }
 }
+
+val AUIUserThumbnailInfo.fullHeadUrl
+    get() = if (this.userAvatar.startsWith("http")) {
+        this.userAvatar
+    } else {
+        "file:///android_asset/" + this.userAvatar + ".png"
+    }

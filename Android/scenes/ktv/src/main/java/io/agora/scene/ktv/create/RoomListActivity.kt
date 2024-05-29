@@ -20,6 +20,7 @@ import io.agora.scene.ktv.databinding.KtvItemRoomListBinding
 import io.agora.scene.ktv.live.RoomLivingActivity
 import io.agora.scene.ktv.service.KTVParameters
 import io.agora.scene.ktv.service.KTVServiceProtocol.Companion.getImplInstance
+import io.agora.scene.ktv.service.fullHeadUrl
 import io.agora.scene.widget.dialog.InputPasswordDialog
 import io.agora.scene.widget.utils.UiUtils
 
@@ -172,7 +173,7 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
             val data = mList?.get(position) ?: return
             if (data.roomOwner != null) {
                 GlideApp.with(mContext)
-                    .load(data.roomOwner!!.userAvatar)
+                    .load(data.roomOwner!!.fullHeadUrl)
                     .into(holder.binding.ivAvatar)
             } else {
                 holder.binding.ivAvatar.setImageResource(R.mipmap.default_user_avatar)

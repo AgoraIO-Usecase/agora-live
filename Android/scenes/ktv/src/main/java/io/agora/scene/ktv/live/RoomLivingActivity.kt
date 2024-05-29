@@ -17,7 +17,6 @@ import android.view.WindowManager
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -26,11 +25,9 @@ import com.google.android.material.card.MaterialCardView
 import io.agora.rtc2.Constants
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.GlideApp
-import io.agora.scene.base.bean.User
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.component.OnButtonClickListener
-import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.LiveDataUtils
 import io.agora.scene.ktv.KTVLogger.d
 import io.agora.scene.ktv.KtvCenter
@@ -52,6 +49,7 @@ import io.agora.scene.ktv.live.listener.SongActionListenerImpl
 import io.agora.scene.ktv.service.RoomMicSeatInfo
 import io.agora.scene.ktv.service.ChosenSongInfo
 import io.agora.scene.ktv.service.KTVParameters
+import io.agora.scene.ktv.service.fullHeadUrl
 import io.agora.scene.ktv.widget.KtvCommonDialog
 import io.agora.scene.ktv.widget.lrcView.LrcControlView
 import io.agora.scene.ktv.widget.song.SongDialog
@@ -158,7 +156,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         val userCount = roomModel.customPayload[KTVParameters.ROOM_USER_COUNT] as? Int ?: 0
         binding.tvRoomMCount.text = getString(R.string.ktv_room_count, userCount.toString())
         GlideApp.with(binding.getRoot())
-            .load(roomModel.roomOwner?.userAvatar)
+            .load(roomModel.roomOwner?.fullHeadUrl)
             .error(io.agora.scene.base.R.mipmap.default_user_avatar)
             .apply(RequestOptions.circleCropTransform())
             .into(binding.ivOwnerAvatar)
@@ -258,8 +256,8 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             if (localSeat != null) {
                 binding.groupBottomView.isVisible = true
                 binding.groupEmptyPrompt.isVisible = false
-                binding.cbMic.setChecked(!localSeat.seatAudioMute)
-                binding.cbVideo.setChecked(!localSeat.seatVideoMute)
+                binding.cbMic.setChecked(!localSeat.isAudioMuted)
+                binding.cbVideo.setChecked(!localSeat.isVideoMuted)
                 binding.lrcControlView.onSeat(true)
             } else {
                 binding.groupBottomView.isVisible = false
@@ -276,8 +274,8 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             if (seatInfo.owner?.userId == KtvCenter.mUser.id.toString()) { // 上麦
                 binding.groupBottomView.isVisible = true
                 binding.groupEmptyPrompt.isVisible = false
-                binding.cbMic.setChecked(!seatInfo.seatAudioMute)
-                binding.cbVideo.setChecked(!seatInfo.seatVideoMute)
+                binding.cbMic.setChecked(!seatInfo.isAudioMuted)
+                binding.cbVideo.setChecked(!seatInfo.isVideoMuted)
                 binding.lrcControlView.onSeat(true)
             }
             if (seatInfo.owner?.userId.isNullOrEmpty()) { //有人离开麦位
@@ -313,7 +311,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                         val holder =
                             binding.rvUserMember.findViewHolderForAdapterPosition(i) as BindingViewHolder<KtvItemRoomSpeakerBinding>?
                                 ?: return@observe
-                        if (volumeModel.volume == 0 || seatInfo.seatAudioMute) {
+                        if (volumeModel.volume == 0 || seatInfo.isAudioMuted) {
                             holder.binding.vMicWave.endWave()
                         } else {
                             holder.binding.vMicWave.startWave()
@@ -772,18 +770,18 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                 binding.tvRoomOwner.isVisible =
                     seatInfo.owner?.userId == roomInfo.roomOwner?.userId && seatInfo.seatIndex == 0
                 // microphone
-                if (seatInfo.seatAudioMute) {
+                if (seatInfo.isAudioMuted) {
                     binding.vMicWave.endWave()
                     binding.ivMute.setVisibility(View.VISIBLE)
                 } else {
                     binding.ivMute.setVisibility(View.GONE)
                 }
                 // video
-                if (seatInfo.seatVideoMute) {
+                if (seatInfo.isVideoMuted) {
                     binding.avatarItemRoomSpeaker.setVisibility(View.VISIBLE)
                     binding.flVideoContainer.removeAllViews()
                     GlideApp.with(binding.getRoot())
-                        .load(seatInfo.owner?.userAvatar)
+                        .load(seatInfo.owner?.fullHeadUrl)
                         .error(io.agora.scene.base.R.mipmap.default_user_avatar)
                         .apply(RequestOptions.circleCropTransform())
                         .into(binding.avatarItemRoomSpeaker)

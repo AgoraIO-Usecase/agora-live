@@ -22,6 +22,7 @@ import io.agora.scene.ktv.R;
 import io.agora.scene.ktv.databinding.KtvDialogVoiceHighlightBinding;
 import io.agora.scene.ktv.live.bean.MusicSettingBean;
 import io.agora.scene.ktv.live.bean.VoiceHighlightBean;
+import io.agora.scene.ktv.service.KTVServiceModelKt;
 import io.agora.scene.widget.utils.DividerDecoration;
 
 /**
@@ -92,7 +93,7 @@ public class VoiceHighlightDialog extends BaseBottomSheetDialogFragment<KtvDialo
         @Override
         public void binding(@Nullable VoiceHighlightBean data, int selectedIndex) {
             GlideApp.with(mBinding.getRoot())
-                    .load(data.user.userAvatar)
+                    .load( KTVServiceModelKt.getFullHeadUrl(data.user))
                     .error(io.agora.scene.base.R.mipmap.default_user_avatar)
                     .apply(RequestOptions.circleCropTransform())
                     .into(mBinding.ivBg);

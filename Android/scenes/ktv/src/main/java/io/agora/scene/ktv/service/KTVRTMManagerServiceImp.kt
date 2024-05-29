@@ -41,7 +41,7 @@ class KTVSyncManagerServiceImp constructor(
     private val mContext: Context, private val mErrorHandler: ((Exception?) -> Unit)?
 ) : KTVServiceProtocol, ISceneResponse, IAUIUserService.AUIUserRespObserver {
     private val TAG = "KTV_Service_LOG"
-    private val kSceneId = "scene_ktv_1.3.0"
+    private val kSceneId = "scene_ktv_4.3.0"
     private val kCollectionSeatInfo = "seat_info" // map collection
     private val kCollectionChosenSong = "choose_song" // list collection
     private val kCollectionChorusInfo = "chorister_info" // list collection
@@ -150,7 +150,7 @@ class KTVSyncManagerServiceImp constructor(
             owner = AUIUserThumbnailInfo().apply {
                 userId = UserManager.getInstance().user.id.toString()
                 userName = UserManager.getInstance().user.name
-                userAvatar = UserManager.getInstance().user.fullHeadUrl
+                userAvatar = UserManager.getInstance().user.headUrl
             }
             host = ServerConfig.toolBoxUrl
         }
@@ -274,6 +274,7 @@ class KTVSyncManagerServiceImp constructor(
                     this.customPayload[KTVParameters.ROOM_USER_COUNT] = 1
                     this.customPayload[KTVParameters.THUMBNAIL_ID] = createInfo.icon
                     this.customPayload[KTVParameters.PASSWORD] = createInfo.password
+                    this.customPayload[KTVParameters.IS_PRIVATE] = createInfo.password.isNotEmpty()
                 }
                 val scene = mSyncManager.createScene(roomInfo.roomId)
                 scene.bindRespDelegate(this)
@@ -410,8 +411,8 @@ class KTVSyncManagerServiceImp constructor(
         val targetSeat = RoomMicSeatInfo(
             seatIndex = seatIndex ?: -1,
             owner = AUIRoomContext.shared().currentUserInfo,
-            seatAudioMute = seatIndex != null, // seatIndex=null 自动上麦，需要默认开启麦克风
-            seatVideoMute = true
+            isAudioMuted = seatIndex != null, // seatIndex=null 自动上麦，需要默认开启麦克风
+            isVideoMuted = true
         )
         collection.mergeMetaData(
             valueCmd = RoomSeatCmd.enterSeatCmd.name,
@@ -507,7 +508,7 @@ class KTVSyncManagerServiceImp constructor(
             collection.mergeMetaData(
                 valueCmd = RoomSeatCmd.muteAudioCmd.name,
                 value = mapOf(
-                    seatIndex.toString() to mapOf("seatAudioMute" to mute)
+                    seatIndex.toString() to mapOf("isAudioMuted" to mute)
                 ),
                 callback = { collectionException ->
                     if (collectionException == null) {
@@ -539,7 +540,7 @@ class KTVSyncManagerServiceImp constructor(
             collection.mergeMetaData(
                 valueCmd = RoomSeatCmd.muteVideoCmd.name,
                 value = mapOf(
-                    seatIndex.toString() to mapOf("seatVideoMute" to mute)
+                    seatIndex.toString() to mapOf("isVideoMuted" to mute)
                 ),
                 callback = { collectionException ->
                     if (collectionException == null) {
@@ -561,7 +562,7 @@ class KTVSyncManagerServiceImp constructor(
      * @receiver
      */
     override fun getChosenSongList(completion: (error: Exception?, list: List<ChosenSongInfo>?) -> Unit) {
-        val collection = getChorusCollection(mCurRoomNo) ?: return
+        val collection = getChosenSongCollection(mCurRoomNo) ?: return
         collection.getMetaData { collectionException, value ->
             if (collectionException != null) {
                 KTVLogger.e(TAG, "getChosenSongList $collectionException")
@@ -849,10 +850,10 @@ class KTVSyncManagerServiceImp constructor(
                 seatIndex = i
                 if (i == 0) {
                     owner = AUIRoomContext.shared().currentUserInfo
-                    seatAudioMute = false
+                    isAudioMuted = false
                 } else {
                     owner = AUIUserThumbnailInfo()
-                    seatAudioMute = true
+                    isAudioMuted = true
                 }
             }
             seatMap[i.toString()] = seat
@@ -1111,7 +1112,7 @@ class KTVSyncManagerServiceImp constructor(
                     val newSeatUserId = newSeatInfo.owner?.userId ?: ""
                     val oldSeatUserId = oldSeatInfo?.owner?.userId ?: ""
                     // 用户不同，或者音频状态，或者视频状态不同
-                    if (newSeatUserId != oldSeatUserId || newSeatInfo.seatAudioMute != oldSeatInfo?.seatAudioMute || newSeatInfo.seatVideoMute != oldSeatInfo.seatVideoMute
+                    if (newSeatUserId != oldSeatUserId || newSeatInfo.isAudioMuted != oldSeatInfo?.isAudioMuted || newSeatInfo.isVideoMuted != oldSeatInfo.isVideoMuted
                     ) {
                         mObservableHelper.notifyEventHandlers { delegate ->
                             delegate.onUserSeatUpdate(newSeatInfo)
@@ -1133,16 +1134,16 @@ class KTVSyncManagerServiceImp constructor(
                             }
                         }
                     }
-                    if (oldSeatInfo?.seatAudioMute != newSeatInfo.seatAudioMute) {
+                    if (oldSeatInfo?.isAudioMuted != newSeatInfo.isAudioMuted) {
                         KTVLogger.d(TAG, "onSeatAudioMute: $newSeatInfo")
                         mObservableHelper.notifyEventHandlers { delegate ->
-                            delegate.onSeatAudioMute(index, newSeatInfo.seatAudioMute)
+                            delegate.onSeatAudioMute(index, newSeatInfo.isAudioMuted)
                         }
                     }
-                    if (oldSeatInfo?.seatVideoMute != newSeatInfo.seatVideoMute) {
+                    if (oldSeatInfo?.isVideoMuted != newSeatInfo.isVideoMuted) {
                         KTVLogger.d(TAG, "onSeatVideoMute: $newSeatInfo")
                         mObservableHelper.notifyEventHandlers { delegate ->
-                            delegate.onSeatVideoMute(index, newSeatInfo.seatVideoMute)
+                            delegate.onSeatVideoMute(index, newSeatInfo.isVideoMuted)
                         }
                     }
 
@@ -1447,8 +1448,17 @@ class KTVSyncManagerServiceImp constructor(
             when (chorusCmd) {
                 RoomChorusCmd.joinChorusCmd -> {// 需要上麦才能加入合唱
                     val chorusUserId = value["userId"] as? String
-                    val onSeat = seatValueMap.values.any { getUserId(it) == chorusUserId }
-                    if (!onSeat) {
+                    var userSeatIndex = -1
+                    seatValueMap.forEach { (key, seatValue) ->
+                        val userId = getUserId(seatValue)
+                        if (userId == chorusUserId) {
+                            key.toIntOrNull()?.let { seatIndex ->
+                                userSeatIndex = seatIndex
+                            }
+                        }
+
+                    }
+                    if (userSeatIndex < 0) {
                         return@subscribeWillAdd AUICollectionException.ErrorCode.unknown.toException(msg = "not permitted")
                     }
 
@@ -1458,6 +1468,9 @@ class KTVSyncManagerServiceImp constructor(
                     if (!canJoin) {
                         return@subscribeWillAdd AUICollectionException.ErrorCode.unknown.toException(msg = "not permitted")
                     }
+
+                    // 加入合唱主动开麦克风
+                    innerMuteAudio(userSeatIndex, false) {}
                     return@subscribeWillAdd null
                 }
 
@@ -1481,6 +1494,19 @@ class KTVSyncManagerServiceImp constructor(
                     if (!canLeave) {
                         return@subscribeWillRemove AUICollectionException.ErrorCode.unknown.toException(msg = "not permitted")
                     }
+
+                    val seatValueMap = getSeatCollection(mCurRoomNo)?.getLocalMetaData()?.getMap()
+                    seatValueMap?.forEach { (key, seatValue) ->
+                        val userId = getUserId(seatValue)
+                        if (userId == chorusUserId) {
+                            key.toIntOrNull()?.let { seatIndex ->
+                                // 麦位静音
+                                innerMuteAudio(seatIndex, true) {}
+                            }
+                        }
+
+                    }
+
                     return@subscribeWillRemove null
                 }
 
@@ -1542,6 +1568,26 @@ class KTVSyncManagerServiceImp constructor(
                 }
                 runOnMainThread {
                     completion.invoke(it)
+                }
+            })
+    }
+
+    // 指定麦位开关麦克风
+    private fun innerMuteAudio(seatIndex: Int, mute: Boolean, completion: (error: Exception?) -> Unit) {
+        val collection = getSeatCollection(mCurRoomNo) ?: return
+        collection.mergeMetaData(
+            valueCmd = RoomSeatCmd.muteAudioCmd.name,
+            value = mapOf(
+                seatIndex.toString() to mapOf("isAudioMuted" to mute)
+            ),
+            callback = { collectionException ->
+                if (collectionException == null) {
+                    KTVLogger.d(TAG, "innerMuteAudio success  seatIndex:$seatIndex")
+                } else {
+                    KTVLogger.e(TAG, "innerMuteAudio failed, $collectionException")
+                }
+                runOnMainThread {
+                    completion.invoke(collectionException)
                 }
             })
     }
