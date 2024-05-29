@@ -119,12 +119,6 @@ interface KTVServiceProtocol {
     }
 
     /**
-     * Reset
-     *
-     */
-    fun reset()
-
-    /**
      * Get room list
      *
      * @param completion

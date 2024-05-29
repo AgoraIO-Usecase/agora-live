@@ -395,7 +395,7 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
         mBinding.ilActive.downloadLrcFailedView.setVisibility(View.INVISIBLE);
         mBinding.ilActive.downloadLrcFailedBtn.setVisibility(View.INVISIBLE);
         if (this.mRole == Role.Singer) {
-            mBinding.ilActive.lyricsView.enableDragging(false);
+//            mBinding.ilActive.lyricsView.enableDragging(false);
             mBinding.ilActive.ivMusicStart.setVisibility(View.VISIBLE);
             mBinding.ilActive.switchOriginal.setVisibility(View.VISIBLE);
             mBinding.ilActive.rlMusicControlMenu.setVisibility(View.VISIBLE);
@@ -406,7 +406,7 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
             mBinding.ilActive.ivJoinChorusBtn.setVisibility(View.INVISIBLE);
             mBinding.ilActive.ivLeaveChorus.setVisibility(View.INVISIBLE);
         } else if (this.mRole == Role.Listener) {
-            mBinding.ilActive.lyricsView.enableDragging(false);
+//            mBinding.ilActive.lyricsView.enableDragging(false);
             mBinding.ilActive.rlMusicControlMenu.setVisibility(View.GONE);
             if (!isSeatFull || isOnSeat) {
                 mBinding.ilActive.ivJoinChorusBtn.setVisibility(View.VISIBLE);

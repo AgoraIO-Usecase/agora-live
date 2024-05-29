@@ -3,6 +3,7 @@ package io.agora.scene.ktv
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.TokenGenerator
+import io.agora.scene.base.bean.User
 import io.agora.scene.base.manager.UserManager
 
 /**
@@ -13,8 +14,10 @@ object KtvCenter {
 
     val mAppId:String get() = BuildConfig.AGORA_APP_ID
 
+    val mUser: User get() = UserManager.getInstance().user
+
     val AUIRoomInfo.rtcChorusChannelName
-        get() = this.roomName + "_rtc_ex"
+        get() = this.roomId + "_rtc_ex"
 
     var mRtmToken: String = ""
         private set(value) {

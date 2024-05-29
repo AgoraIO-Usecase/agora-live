@@ -279,6 +279,7 @@ class KTVSyncManagerServiceImp constructor(
                 scene.bindRespDelegate(this)
                 scene.userService.registerRespObserver(this)
                 innerSubscribeAll(roomId)
+                mCurRoomNo = roomInfo.roomId
                 mRoomService.createRoom(KtvCenter.mAppId, kSceneId, roomInfo, completion = { rtmException, _ ->
                     if (rtmException == null) {
                         KTVLogger.d(TAG, "createRoom success: $roomInfo")
@@ -287,6 +288,7 @@ class KTVSyncManagerServiceImp constructor(
                             completion.invoke(null, roomInfo)
                         }
                     } else {
+                        mCurRoomNo = ""
                         KTVLogger.e(TAG, "createRoom failed: $rtmException")
                         runOnMainThread {
                             completion.invoke(Exception("${rtmException.message}(${rtmException.code})"), null)
@@ -333,6 +335,7 @@ class KTVSyncManagerServiceImp constructor(
                 scene.bindRespDelegate(this)
                 scene.userService.registerRespObserver(this)
                 innerSubscribeAll(roomId)
+                mCurRoomNo = roomId
                 mRoomService.enterRoom(KtvCenter.mAppId, kSceneId, roomId, completion = { rtmException ->
                     if (rtmException == null) {
                         KTVLogger.d(TAG, "enterRoom success: ${cacheRoom.roomId}")
@@ -341,6 +344,7 @@ class KTVSyncManagerServiceImp constructor(
                             completion.invoke(null)
                         }
                     } else {
+                        mCurRoomNo = ""
                         KTVLogger.e(TAG, "enterRoom failed: $rtmException")
                         runOnMainThread {
                             completion.invoke(Exception("${rtmException.message}(${rtmException.code})"))
@@ -369,19 +373,6 @@ class KTVSyncManagerServiceImp constructor(
         mChoristerList.clear()
         mCurRoomNo = ""
         completion.invoke(null)
-    }
-
-    /**
-     * Reset
-     *
-     */
-    override fun reset() {
-        mObservableHelper.unSubscribeAll()
-        mUserList.clear()
-        mSeatMap.clear()
-        mSongChosenList.clear()
-        mChoristerList.clear()
-        mCurRoomNo = ""
     }
 
     /**
@@ -419,7 +410,7 @@ class KTVSyncManagerServiceImp constructor(
         val targetSeat = RoomMicSeatInfo(
             seatIndex = seatIndex ?: -1,
             owner = AUIRoomContext.shared().currentUserInfo,
-            seatAudioMute = true,
+            seatAudioMute = seatIndex != null, // seatIndex=null 自动上麦，需要默认开启麦克风
             seatVideoMute = true
         )
         collection.mergeMetaData(
@@ -1075,14 +1066,6 @@ class KTVSyncManagerServiceImp constructor(
      */
     override fun onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {
         KTVLogger.d(TAG, "onRoomUserUpdate, roomId:$roomId, userInfo:$userInfo")
-        if (mCurRoomNo != roomId) {
-            return
-        }
-        mUserList.removeIf { it.userId == userInfo.userId }
-        mUserList.add(userInfo)
-        mObservableHelper.notifyEventHandlers { delegate ->
-            delegate.onUserCountUpdate(mUserList.size)
-        }
     }
 
     // 订阅 collection
@@ -1103,6 +1086,7 @@ class KTVSyncManagerServiceImp constructor(
 
         seatCollection.subscribeAttributesDidChanged { channelName, observeKey, value ->
             if (observeKey != kCollectionSeatInfo) return@subscribeAttributesDidChanged
+            KTVLogger.d(TAG, "AttributesDidChanged $channelName $observeKey $value")
 
             val seats = value.getMap() ?: GsonTools.toBean(
                 GsonTools.beanToString(value),
@@ -1239,7 +1223,6 @@ class KTVSyncManagerServiceImp constructor(
             }
             val seatValueMap = seatCollection.getLocalMetaData().getMap() ?: return@subscribeValueWillChange newItem
 
-            // Only support enter one seat
             if (newItem.size != 1 || seatValueMap.containsKey(newItem.keys.first())) {
                 return@subscribeValueWillChange newItem
             }
@@ -1249,7 +1232,14 @@ class KTVSyncManagerServiceImp constructor(
             for (i in 0 until 7) {
                 val value = seatValueMap["$i"]
                 if (getUserId(value).isNullOrEmpty()) {
-                    tempItem["$i"] = newItem.values.first()
+                    val newValue = newItem.values.first()
+
+                    val roomSeatInfo = GsonTools.toBean(GsonTools.beanToString(newValue), RoomMicSeatInfo::class.java)
+                    // 修改麦位索引
+                    roomSeatInfo?.let {
+                        it.seatIndex = i
+                        tempItem["$i"] = GsonTools.beanToMap(it)
+                    }
                     return@subscribeValueWillChange tempItem
                 }
             }
@@ -1273,6 +1263,7 @@ class KTVSyncManagerServiceImp constructor(
 
         songCollection.subscribeAttributesDidChanged { channelName, observeKey, value ->
             if (observeKey != kCollectionChosenSong) return@subscribeAttributesDidChanged
+            KTVLogger.d(TAG, "AttributesDidChanged $channelName $observeKey $value")
 
             val songList = GsonTools.toList(GsonTools.beanToString(value.getList()), ChosenSongInfo::class.java)
             KTVLogger.d(TAG, "$kCollectionChosenSong songList: $songList")
@@ -1400,6 +1391,8 @@ class KTVSyncManagerServiceImp constructor(
 
         chorusCollection.subscribeAttributesDidChanged { channelName, observeKey, value ->
             if (observeKey != kCollectionChorusInfo) return@subscribeAttributesDidChanged
+            KTVLogger.d(TAG, "AttributesDidChanged $channelName $observeKey $value")
+
             val choristerList = GsonTools.toList(GsonTools.beanToString(value.getList()), RoomChoristerInfo::class.java)
 
             KTVLogger.d(TAG, "$kCollectionChorusInfo choristerList: $choristerList")

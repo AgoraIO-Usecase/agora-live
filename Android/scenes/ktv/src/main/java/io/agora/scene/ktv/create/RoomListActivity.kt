@@ -65,7 +65,6 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
      */
     override fun onDestroy() {
         super.onDestroy()
-        getImplInstance().reset()
     }
 
     /**

@@ -92,6 +92,7 @@
         app:currentLineTextColor="@color/white"
         app:currentLineTextSize="20sp"
         app:labelWhenNoLyrics=" "
+        app:enableDragging="true"
         app:layout_constraintBottom_toTopOf="@+id/bgd_control_layout_lrc"
         app:layout_constraintTop_toBottomOf="@+id/scoringView"
         app:layout_constraintVertical_bias="0.0"
