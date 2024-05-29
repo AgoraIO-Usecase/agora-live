@@ -1167,7 +1167,9 @@ class KTVSyncManagerServiceImp constructor(
         }
 
         seatCollection.subscribeWillMerge { publisherId, valueCmd, newValue, oldValue ->
-            val seatCmd = enumValueOrNull<RoomSeatCmd>(valueCmd) ?: run {
+            val seatCmd = enumValueOrNull<RoomSeatCmd>(valueCmd)
+            if (seatCmd == null) {
+                KTVLogger.e(TAG, "illegal seatCmd $valueCmd ")
                 return@subscribeWillMerge AUICollectionException.ErrorCode.unsupportedAction.toException()
             }
             // 仅支持修改一个人
@@ -1282,7 +1284,9 @@ class KTVSyncManagerServiceImp constructor(
         }
 
         songCollection.subscribeWillAdd { publisherId, valueCmd, value ->
-            val songCmd = enumValueOrNull<RoomSongCmd>(valueCmd) ?: run {
+            val songCmd = enumValueOrNull<RoomSongCmd>(valueCmd)
+            if (songCmd == null) {
+                KTVLogger.e(TAG, "illegal songCmd $valueCmd ")
                 return@subscribeWillAdd AUICollectionException.ErrorCode.unsupportedAction.toException()
             }
             val seatValueMap = getSeatCollection(mCurRoomNo)?.getLocalMetaData()?.getMap() ?: run {
@@ -1292,7 +1296,7 @@ class KTVSyncManagerServiceImp constructor(
                 RoomSongCmd.chooseSongCmd -> {
                     val userId = getUserId(value)
                     // 需要上麦才能点歌
-                    val onSeat = seatValueMap.any { getUserId(it) == userId }
+                    val onSeat = seatValueMap.values.any { getUserId(it) == userId }
                     if (!onSeat) {
                         return@subscribeWillAdd AUICollectionException.ErrorCode.unknown.toException(msg = "not permitted")
                     }
@@ -1306,7 +1310,9 @@ class KTVSyncManagerServiceImp constructor(
         }
 
         songCollection.subscribeWillMerge { publisherId, valueCmd, newValue, oldValue ->
-            val songCmd = enumValueOrNull<RoomSongCmd>(valueCmd) ?: run {
+            val songCmd = enumValueOrNull<RoomSongCmd>(valueCmd)
+            if (songCmd == null) {
+                KTVLogger.e(TAG, "illegal songCmd $valueCmd ")
                 return@subscribeWillMerge AUICollectionException.ErrorCode.unsupportedAction.toException()
             }
 
@@ -1325,7 +1331,7 @@ class KTVSyncManagerServiceImp constructor(
 
                 RoomSongCmd.updatePlayStatusCmd -> {  // 只有在麦位并且是点歌者才能更新状态
                     val userId = getUserId(oldValue)
-                    val onSeat = seatValueMap.any { getUserId(it) == userId }
+                    val onSeat = seatValueMap.values.any { getUserId(it) == userId }
                     if (!onSeat) {
                         return@subscribeWillMerge AUICollectionException.ErrorCode.unknown.toException(msg = "not permitted")
                     }
@@ -1342,7 +1348,9 @@ class KTVSyncManagerServiceImp constructor(
         }
 
         songCollection.subscribeWillRemove { publisherId, valueCmd, value ->
-            val songCmd = enumValueOrNull<RoomSongCmd>(valueCmd) ?: run {
+            val songCmd = enumValueOrNull<RoomSongCmd>(valueCmd)
+            if (songCmd == null) {
+                KTVLogger.e(TAG, "illegal songCmd $valueCmd ")
                 return@subscribeWillRemove AUICollectionException.ErrorCode.unsupportedAction.toException()
             }
 
@@ -1428,7 +1436,9 @@ class KTVSyncManagerServiceImp constructor(
         }
 
         chorusCollection.subscribeWillAdd { publisherId, valueCmd, value ->
-            val chorusCmd = enumValueOrNull<RoomChorusCmd>(valueCmd) ?: run {
+            val chorusCmd = enumValueOrNull<RoomChorusCmd>(valueCmd)
+            if (chorusCmd == null) {
+                KTVLogger.e(TAG, "illegal chorusCmd $valueCmd ")
                 return@subscribeWillAdd AUICollectionException.ErrorCode.unsupportedAction.toException()
             }
 
@@ -1444,7 +1454,7 @@ class KTVSyncManagerServiceImp constructor(
             when (chorusCmd) {
                 RoomChorusCmd.joinChorusCmd -> {// 需要上麦才能加入合唱
                     val chorusUserId = value["userId"] as? String
-                    val onSeat = seatValueMap.any { getUserId(it) == chorusUserId }
+                    val onSeat = seatValueMap.values.any { getUserId(it) == chorusUserId }
                     if (!onSeat) {
                         return@subscribeWillAdd AUICollectionException.ErrorCode.unknown.toException(msg = "not permitted")
                     }
@@ -1465,13 +1475,16 @@ class KTVSyncManagerServiceImp constructor(
         }
 
         chorusCollection.subscribeWillRemove { publisherId, valueCmd, value ->
-            val chorusCmd = enumValueOrNull<RoomChorusCmd>(valueCmd) ?: run {
+            val chorusCmd = enumValueOrNull<RoomChorusCmd>(valueCmd)
+            if (chorusCmd == null) {
+                KTVLogger.e(TAG, "illegal chorusCmd $valueCmd ")
                 return@subscribeWillRemove AUICollectionException.ErrorCode.unsupportedAction.toException()
             }
             when (chorusCmd) {
                 RoomChorusCmd.leaveChorusCmd -> {
                     val chorusUserId = value["userId"] as? String
-                    val canLeave = publisherId == chorusUserId || AUIRoomContext.shared().isRoomOwner(mCurRoomNo, publisherId)
+                    val canLeave =
+                        publisherId == chorusUserId || AUIRoomContext.shared().isRoomOwner(mCurRoomNo, publisherId)
                     if (!canLeave) {
                         return@subscribeWillRemove AUICollectionException.ErrorCode.unknown.toException(msg = "not permitted")
                     }

@@ -50,6 +50,7 @@ import io.agora.scene.ktv.live.listener.LrcActionListenerImpl
 import io.agora.scene.ktv.live.listener.SongActionListenerImpl
 import io.agora.scene.ktv.service.RoomMicSeatInfo
 import io.agora.scene.ktv.service.ChosenSongInfo
+import io.agora.scene.ktv.service.KTVParameters
 import io.agora.scene.ktv.widget.KtvCommonDialog
 import io.agora.scene.ktv.widget.lrcView.LrcControlView
 import io.agora.scene.ktv.widget.song.SongDialog
@@ -154,7 +155,9 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             }
         }
         val roomModel = roomLivingViewModel.mRoomInfo
-        binding.tvRoomName.text = roomModel.roomName ?: ""
+        binding.tvRoomName.text = roomModel.roomName
+        val userCount = roomModel.customPayload[KTVParameters.ROOM_USER_COUNT] as? Int?:0
+        binding.tvRoomMCount.text = getString(R.string.ktv_room_count, userCount.toString())
         GlideApp.with(binding.getRoot())
             .load(roomModel.roomOwner?.userAvatar)
             .error(io.agora.scene.base.R.mipmap.default_user_avatar)
@@ -410,10 +413,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             }
         }
         roomLivingViewModel.networkStatusLiveData.observe(this) { netWorkStatus: NetWorkEvent ->
-            setNetWorkStatus(
-                netWorkStatus.txQuality,
-                netWorkStatus.rxQuality
-            )
+            setNetWorkStatus(netWorkStatus.txQuality, netWorkStatus.rxQuality)
         }
         roomLivingViewModel.loadMusicProgressLiveData.observe(this) { percent: Int ->
             binding.lrcControlView.onMusicLoadProgress(percent)

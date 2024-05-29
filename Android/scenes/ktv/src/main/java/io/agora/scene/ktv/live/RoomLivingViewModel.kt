@@ -3,6 +3,7 @@ package io.agora.scene.ktv.live
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
+import android.util.Log
 import android.view.SurfaceView
 import android.widget.Toast
 import androidx.lifecycle.LiveData
@@ -362,12 +363,12 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
     }
 
     private fun initRoom() {
+        subscribeServiceListener(serviceListenerProtocol)
         // 获取已点歌单
         ktvServiceProtocol.getChosenSongList { error, songList ->
             if (error == null) {
                 chosenSongListLiveData.value = songList
             }
-            subscribeServiceListener(serviceListenerProtocol)
         }
     }
 
