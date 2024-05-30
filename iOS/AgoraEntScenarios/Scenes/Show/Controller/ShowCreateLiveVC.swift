@@ -25,7 +25,7 @@ class ShowCreateLiveVC: UIViewController {
         setUpUI()
         configNaviBar()
         
-        CommerceAgoraKitManager.shared.setupBroadcasterProfile()
+        ShowAgoraKitManager.shared.setupBroadcasterProfile()
         if let e = ShowAgoraKitManager.shared.engine {
             BeautyManager.shareManager.configBeautyAPIWithRtcEngine(engine: e)
         }
