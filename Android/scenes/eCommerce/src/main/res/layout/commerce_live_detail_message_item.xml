@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:background="@drawable/show_live_message_item_bg"
+        android:background="@drawable/commerce_live_message_item_bg"
         android:lineSpacingExtra="3dp"
         android:maxWidth="300dp"
         android:paddingHorizontal="12dp"

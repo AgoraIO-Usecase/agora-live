@@ -88,21 +88,7 @@
         android:textSize="15sp"
         tools:text="a**"
         />
-    
-    <Button
-        android:id="@+id/btnStart"
-        android:layout_width="96dp"
-        android:layout_height="36dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/ivCommodity"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:background="@drawable/commerce_corner_radius_gradient_orange"
-        android:text="@string/commerce_shop_auction_start"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        />
-    
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvCountDown"
         android:layout_width="96dp"
@@ -117,6 +103,38 @@
         android:text="00:26"
         android:visibility="invisible"
         />
+
+    <LinearLayout
+        android:id="@+id/layoutSubmit"
+        android:layout_width="96dp"
+        android:layout_height="36dp"
+        android:background="@drawable/commerce_corner_radius_gradient_orange"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/ivCommodity">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/commerce_shop_auction_start"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="15sp" />
+
+        <ProgressBar
+            android:id="@+id/progressLoading"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:indeterminateBehavior="repeat"
+            android:indeterminateDrawable="@drawable/commerce_progressbar_loading"
+            android:indeterminateDuration="500"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnBid"

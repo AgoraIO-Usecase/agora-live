@@ -24,9 +24,7 @@ import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.eCommerce.databinding.CommerceLivePrepareActivityBinding
-import io.agora.scene.eCommerce.debugSettings.DebugSettingDialog
 import io.agora.scene.eCommerce.service.ShowServiceProtocol
-import io.agora.scene.eCommerce.widget.PictureQualityDialog
 import io.agora.scene.eCommerce.widget.PresetDialog
 import io.agora.scene.widget.dialog.PermissionLeakDialog
 import io.agora.scene.widget.utils.StatusBarUtil
@@ -125,11 +123,7 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
 //            RtcEngineInstance.isFrontCamera = !RtcEngineInstance.isFrontCamera
         }
         binding.tvSetting.setOnClickListener {
-            if (AgoraApplication.the().isDebugModeOpen) {
-                showDebugModeDialog()
-            } else {
-                showPresetDialog()
-            }
+            showPresetDialog()
         }
 
         toggleVideoRun = Runnable {
@@ -171,12 +165,6 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      *
      */
     private fun showPresetDialog() = PresetDialog(this, mRtcEngine.queryDeviceScore(), RtcConnection(mRoomId, UserManager.getInstance().user.id.toInt())).show()
-
-    /**
-     * Show debug mode dialog
-     *
-     */
-    private fun showDebugModeDialog() = DebugSettingDialog(this).show()
 
     /**
      * On resume
@@ -239,19 +227,26 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
 
         binding.btnStartLive.isEnabled = false
 
-        mayFetchUniversalToken {
-            mService.createRoom(mRoomId, roomName, mThumbnailId, {
+        mayFetchUniversalToken { e ->
+            if (e == null) {
+                mService.createRoom(mRoomId, roomName, mThumbnailId, {
+                    runOnUiThread {
+                        isFinishToLiveDetail = true
+                        LiveDetailActivity.launch(this@LivePrepareActivity, it)
+                        finish()
+                    }
+                }, {
+                    runOnUiThread {
+                        ToastUtils.showToast(it.message)
+                        binding.btnStartLive.isEnabled = true
+                    }
+                })
+            } else {
                 runOnUiThread {
-                    isFinishToLiveDetail = true
-                    LiveDetailActivity.launch(this@LivePrepareActivity, it)
-                    finish()
-                }
-            }, {
-                runOnUiThread {
-                    ToastUtils.showToast(it.message)
+                    ToastUtils.showToast(e.message)
                     binding.btnStartLive.isEnabled = true
                 }
-            })
+            }
         }
     }
 
@@ -262,24 +257,29 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      * @receiver
      */
     private fun mayFetchUniversalToken(
-        complete: () -> Unit
+        complete: ((Exception?) -> Unit)? = null
     ) {
-        if(RtcEngineInstance.generalToken().isNotEmpty()){
-            complete.invoke()
+        if (RtcEngineInstance.generalRtmToken() != "" && RtcEngineInstance.generalRtcToken() != "") {
+            complete?.invoke(null)
             return
         }
         val localUId = UserManager.getInstance().user.id
-        TokenGenerator.generateToken("", localUId.toString(),
+        TokenGenerator.generateTokens("", localUId.toString(),
             TokenGenerator.TokenGeneratorType.Token007,
-            TokenGenerator.AgoraTokenType.Rtc,
+            arrayOf(
+                TokenGenerator.AgoraTokenType.Rtc,
+                TokenGenerator.AgoraTokenType.Rtm
+            ),
             success = {
-                ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
-                RtcEngineInstance.setupGeneralToken(it)
-                complete.invoke()
+                val rtcToken = it[TokenGenerator.AgoraTokenType.Rtc] ?: return@generateTokens
+                val rtmToken = it[TokenGenerator.AgoraTokenType.Rtm] ?: return@generateTokens
+                RtcEngineInstance.setupGeneralRtcToken(rtcToken)
+                RtcEngineInstance.setupGeneralRtmToken(rtmToken)
+                complete?.invoke(null)
             },
             failure = {
-                ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
                 ToastUtils.showToast(it?.message ?: "generate token failure")
+                complete?.invoke(it)
             })
     }
 
@@ -289,14 +289,14 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      *
      */
     private fun getRandomRoomId() =
-        (Random(TimeUtils.currentTimeMillis()).nextInt(10000) + 100000).toString()
+        (Random(System.currentTimeMillis()).nextInt(10000) + 100000).toString()
 
     /**
      * Get random thumbnail id
      *
      */
     private fun getRandomThumbnailId() =
-        Random(TimeUtils.currentTimeMillis()).nextInt(0, 3).toString()
+        Random(System.currentTimeMillis()).nextInt(0, 3).toString()
 
     /**
      * Get thumbnail icon

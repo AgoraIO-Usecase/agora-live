@@ -8,6 +8,7 @@ import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoEncoderConfiguration
 import io.agora.rtc2.video.VirtualBackgroundSource
 import io.agora.scene.base.component.AgoraApplication
+import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.show.beauty.BeautyProcessorImpl
 import io.agora.scene.show.beauty.IBeautyProcessor
 import io.agora.scene.show.debugSettings.DebugSettingModel
@@ -68,6 +69,8 @@ object RtcEngineInstance {
     @Volatile
     private var generalToken: String = ""
 
+    private var lastTokenFetchTime: Long = 0L
+
     /**
      * Setup general token
      *
@@ -76,7 +79,9 @@ object RtcEngineInstance {
     fun setupGeneralToken(generalToken: String) {
         if (generalToken.isEmpty()) {
             this.generalToken = ""
+            this.lastTokenFetchTime = 0L
         } else {
+            this.lastTokenFetchTime = TimeUtils.currentTimeMillis()
             if (this.generalToken.isEmpty()) {
                 this.generalToken = generalToken
             }
@@ -90,7 +95,13 @@ object RtcEngineInstance {
      */
     fun generalToken(): String = generalToken
 
+    fun lastTokenFetchTime(): Long = lastTokenFetchTime
+
+
+
     private var innerRtcEngine: RtcEngineEx? = null
+
+    const val tokenExpireTime = 20 * 60 * 60 * 1000 // 20h
 
     /**
      * Rtc engine

@@ -764,7 +764,7 @@ object VideoSetting {
         isByAudience: Boolean = false,
         rtcConnection: RtcConnection? = null
     ) {
-        ShowLogger.d("VideoSettings", "updateBroadcastSetting, deviceLevel:$deviceLevel networkLevel:$networkLevel broadcastStrategy:$broadcastStrategy")
+        //CommerceLogger.d("VideoSettings", "updateBroadcastSetting, deviceLevel:$deviceLevel networkLevel:$networkLevel broadcastStrategy:$broadcastStrategy")
         var liveMode = LiveMode.OneVOne
         if (isByAudience) {
             setCurrAudienceDeviceLevel(deviceLevel)
@@ -824,7 +824,7 @@ object VideoSetting {
         isJoinedRoom: Boolean = true,
         rtcConnection: RtcConnection? = null
     ) {
-        ShowLogger.d("VideoSettings", "updateBroadcastSetting2, liveMode: $liveMode")
+        //CommerceLogger.d("VideoSettings", "updateBroadcastSetting2, liveMode: $liveMode")
 
         val deviceLevel = when (currBroadcastSetting) {
             RecommendBroadcastSetting.LowDevice1v1, RecommendBroadcastSetting.LowDevicePK -> DeviceLevel.Low
@@ -869,7 +869,7 @@ object VideoSetting {
         isJoinedRoom: Boolean,
         rtcConnection: RtcConnection? = null
     ) {
-        ShowLogger.d("VideoSettings", "updateBroadcastSetting3, lowStreamSetting: $lowStreamSetting")
+        //CommerceLogger.d("VideoSettings", "updateBroadcastSetting3, lowStreamSetting: $lowStreamSetting")
         setCurrBroadcastSetting(recommendSetting)
         setCurrLowStreamSetting(lowStreamSetting)
         updateRTCBroadcastSetting(
@@ -1035,10 +1035,10 @@ object VideoSetting {
         SR?.let {
             val enableSR = currAudienceEnhanceSwitch && SR != SuperResolution.SR_NONE
             val autoSR = currAudienceEnhanceSwitch && SR == SuperResolution.SR_AUTO
-            ShowLogger.d(
-                "VideoSetting",
-                "SR_Config -- enable=$enableSR sr_type=$SR currAudienceEnhanceSwitch=$currAudienceEnhanceSwitch"
-            )
+//            CommerceLogger.d(
+//                "VideoSetting",
+//                "SR_Config -- enable=$enableSR sr_type=$SR currAudienceEnhanceSwitch=$currAudienceEnhanceSwitch"
+//            )
 
             if (enableSR) {
                 if (autoSR) {
@@ -1094,7 +1094,7 @@ object VideoSetting {
         recordingSignalVolume: Int? = null,
         audioMixingVolume: Int? = null
     ) {
-        ShowLogger.d("VideoSettings", "updateRTCBroadcastSetting, frameRate:$frameRate")
+        //CommerceLogger.d("VideoSettings", "updateRTCBroadcastSetting, frameRate:$frameRate")
         val rtcEngine = RtcEngineInstance.rtcEngine
         val videoEncoderConfiguration = RtcEngineInstance.videoEncoderConfiguration
         h265?.let {
@@ -1199,7 +1199,7 @@ object VideoSetting {
         bitRate: Int? = null,
         svc: Boolean? = null
     ) {
-        ShowLogger.d("VideoSettings", "updateRTCLowStreamSetting, enableLowStream:$enableLowStream, svc:$svc")
+        //CommerceLogger.d("VideoSettings", "updateRTCLowStreamSetting, enableLowStream:$enableLowStream, svc:$svc")
         val rtcEngine = RtcEngineInstance.rtcEngine
 
         val connection = rtcConnection ?: return

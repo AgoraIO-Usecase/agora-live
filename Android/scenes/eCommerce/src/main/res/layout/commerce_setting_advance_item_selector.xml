@@ -15,14 +15,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/show_setting_advance_quality_enhance" />
+        tools:text="@string/commerce_setting_advance_quality_enhance" />
 
     <ImageView
         android:id="@+id/ivTip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="4dp"
-        android:src="@mipmap/show_setting_advance_ic_tip"
+        android:src="@drawable/commerce_setting_advance_ic_tip"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/tvTitle"
         app:layout_constraintStart_toEndOf="@id/tvTitle"
@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:src="@mipmap/show_setting_advance_ic_arrow"
+        android:src="@drawable/commerce_setting_advance_ic_arrow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
