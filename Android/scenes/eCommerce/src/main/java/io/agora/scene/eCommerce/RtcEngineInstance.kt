@@ -7,7 +7,6 @@ import io.agora.rtc2.RtcEngineEx
 import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoEncoderConfiguration
 import io.agora.scene.base.component.AgoraApplication
-import io.agora.scene.eCommerce.debugSettings.DebugSettingModel
 import io.agora.scene.eCommerce.videoLoaderAPI.VideoLoader
 import java.util.concurrent.Executors
 
@@ -31,27 +30,40 @@ object RtcEngineInstance {
         followEncodeDimensionRatio = false
     }
 
-    /**
-     * Debug setting model
-     */
-    val debugSettingModel = DebugSettingModel().apply { }
-
     private val workingExecutor = Executors.newSingleThreadExecutor()
 
     @Volatile
-    private var generalToken: String = ""
+    private var generalRtcToken: String = ""
+
+    @Volatile
+    private var generalRtmToken: String = ""
 
     /**
      * Setup general token
      *
      * @param generalToken
      */
-    fun setupGeneralToken(generalToken: String) {
+    fun setupGeneralRtcToken(generalToken: String) {
         if (generalToken.isEmpty()) {
-            this.generalToken = ""
+            this.generalRtcToken = ""
         } else {
-            if (this.generalToken.isEmpty()) {
-                this.generalToken = generalToken
+            if (this.generalRtcToken.isEmpty()) {
+                this.generalRtcToken = generalToken
+            }
+        }
+    }
+
+    /**
+     * Setup general token
+     *
+     * @param generalToken
+     */
+    fun setupGeneralRtmToken(generalToken: String) {
+        if (generalToken.isEmpty()) {
+            this.generalRtmToken = ""
+        } else {
+            if (this.generalRtmToken.isEmpty()) {
+                this.generalRtmToken = generalToken
             }
         }
     }
@@ -61,7 +73,14 @@ object RtcEngineInstance {
      *
      * @return
      */
-    fun generalToken(): String = generalToken
+    fun generalRtcToken(): String = generalRtcToken
+
+    /**
+     * General token
+     *
+     * @return
+     */
+    fun generalRtmToken(): String = generalRtmToken
 
     private var innerRtcEngine: RtcEngineEx? = null
 
@@ -77,7 +96,7 @@ object RtcEngineInstance {
                 config.mEventHandler = object : IRtcEngineEventHandler() {
                     override fun onError(err: Int) {
                         super.onError(err)
-                        ShowLogger.d(
+                        CommerceLogger.d(
                             "RtcEngineInstance",
                             "Rtc Error code:$err, msg:" + RtcEngine.getErrorDescription(err)
                         )
@@ -108,24 +127,6 @@ object RtcEngineInstance {
         innerRtcEngine?.let {
             workingExecutor.execute { RtcEngineEx.destroy() }
             innerRtcEngine = null
-        }
-        debugSettingModel.apply {
-            pvcEnabled = true
-            autoFocusFaceModeEnabled = true
-            exposurePositionX = null
-            exposurePositionY = null
-            cameraSelect = null
-            videoFullrangeExt = null
-            matrixCoefficientsExt = null
-            enableHWEncoder = true
-            codecType = 3     // 2 -> h264, 3 -> h265
-            mirrorMode = false
-            renderMode = 0       // 0 -> hidden, 1 -> fix
-            colorEnhance = false
-            dark = false
-            noise = false
-            srEnabled = false
-            srType = 1.0
         }
     }
 }

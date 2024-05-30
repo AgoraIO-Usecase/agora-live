@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         tools:layout_height="100dp"
         android:paddingTop="20dp"
-        android:background="@drawable/show_bottom_dark_dialog_bg"/>
+        android:background="@drawable/commerce_bottom_dark_dialog_bg"/>
 
 
 </LinearLayout>

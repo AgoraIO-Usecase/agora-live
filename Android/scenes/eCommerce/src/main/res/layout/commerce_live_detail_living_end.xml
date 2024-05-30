@@ -41,7 +41,7 @@
         app:layout_constraintBottom_toBottomOf="@id/tvLivingEnd"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="12dp"
-        android:background="@drawable/show_live_detail_living_end_btn_bg"/>
+        android:background="@drawable/commerce_live_detail_living_end_btn_bg"/>
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/ivAvatar"

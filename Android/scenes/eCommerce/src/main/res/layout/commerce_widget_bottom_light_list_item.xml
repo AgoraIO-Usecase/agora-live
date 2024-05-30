@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center"
-        android:textColor="@color/show_bottom_list_item_text"
+        android:textColor="@color/black"
         android:textSize="14sp"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="112234" />

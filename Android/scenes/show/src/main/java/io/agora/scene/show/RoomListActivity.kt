@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import io.agora.scene.base.SceneAliveTime
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.manager.UserManager
+import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.show.databinding.ShowRoomItemBinding
 import io.agora.scene.show.databinding.ShowRoomListActivityBinding
@@ -361,6 +362,11 @@ class RoomListActivity : AppCompatActivity() {
 
     override fun onRestart() {
         super.onRestart()
+        if (RtcEngineInstance.generalToken() != "" && TimeUtils.currentTimeMillis() - RtcEngineInstance.lastTokenFetchTime() >= RtcEngineInstance.tokenExpireTime) {
+            ShowLogger.d("RoomListActivity", "token need renew!")
+            RtcEngineInstance.setupGeneralToken("")
+            fetchUniversalToken({})
+        }
         mBinding.smartRefreshLayout.autoRefresh()
     }
 }

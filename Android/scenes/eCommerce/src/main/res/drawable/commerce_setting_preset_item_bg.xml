@@ -14,7 +14,7 @@
 
             </item>
 
-            <item android:drawable="@mipmap/show_setting_preset_ic_checked" android:gravity="end|center_vertical" android:left="10dp" android:right="10dp" />
+            <item android:drawable="@drawable/commerce_setting_preset_ic_checked" android:gravity="end|center_vertical" android:left="10dp" android:right="10dp" />
 
         </layer-list>
 
