@@ -10,7 +10,7 @@ import RTMSyncManager
 
 @objc enum VLSongPlayStatus: Int {
     case idle = 0 //未播放
-    case playing = 2 //正在播放
+    case playing = 1 //正在播放
 }
 
 
