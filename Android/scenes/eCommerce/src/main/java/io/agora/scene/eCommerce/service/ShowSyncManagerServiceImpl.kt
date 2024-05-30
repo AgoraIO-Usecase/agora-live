@@ -110,6 +110,31 @@ class ShowSyncManagerServiceImpl constructor(
         }
     }
 
+    /**
+     * Room info controller
+     *
+     * @property roomId
+     * @property scene
+     * @property roomInfo
+     * @property rtmChannel
+     * @property userList
+     * @property goodsList
+     * @property auctionModel
+     * @property shopCollection
+     * @property auctionCollection
+     * @property messageCollection
+     * @property likeCollection
+     * @property likeCount
+     * @property userChangeSubscriber
+     * @property userJoinSubscriber
+     * @property userLeaveSubscriber
+     * @property auctionChangeSubscriber
+     * @property shopChangeSubscriber
+     * @property roomChangeSubscriber
+     * @property messageChangeSubscriber
+     * @property likeChangeSubscriber
+     * @constructor Create empty Room info controller
+     */
     data class RoomInfoController constructor(
         val roomId: String,
         val scene: Scene,
