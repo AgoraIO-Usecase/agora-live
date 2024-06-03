@@ -157,7 +157,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         binding.tvRoomMCount.text = getString(R.string.ktv_room_count, userCount.toString())
         GlideApp.with(binding.getRoot())
             .load(roomModel.roomOwner?.fullHeadUrl)
-            .error(io.agora.scene.base.R.mipmap.default_user_avatar)
+            .error(R.mipmap.default_user_avatar)
             .apply(RequestOptions.circleCropTransform())
             .into(binding.ivOwnerAvatar)
         binding.btnDebug.isVisible = AgoraApplication.the().isDebugModeOpen
@@ -371,16 +371,24 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             }
         }
         roomLivingViewModel.joinchorusStatusLiveData.observe(this) { status: JoinChorusStatus ->
-            if (status == JoinChorusStatus.ON_JOIN_CHORUS) {
-                binding.cbMic.setChecked(true)
-                binding.lrcControlView.onSelfJoinedChorus()
-            } else if (status == JoinChorusStatus.ON_JOIN_FAILED) {
-                binding.lrcControlView.onSelfJoinedChorusFailed()
-                val yOfChorusBtn = binding.lrcControlView.getYOfChorusBtn()
-                CustomToast.showByPosition(R.string.ktv_join_chorus_failed, Gravity.TOP, yOfChorusBtn)
-            } else if (status == JoinChorusStatus.ON_LEAVE_CHORUS) {
-                binding.cbMic.setChecked(false)
-                binding.lrcControlView.onSelfLeavedChorus()
+            when (status) {
+                JoinChorusStatus.ON_JOIN_CHORUS -> {
+                    binding.lrcControlView.onSelfJoinedChorus()
+                }
+
+                JoinChorusStatus.ON_JOIN_FAILED -> {
+                    binding.lrcControlView.onSelfJoinedChorusFailed()
+                    val yOfChorusBtn = binding.lrcControlView.getYOfChorusBtn()
+                    CustomToast.showByPosition(R.string.ktv_join_chorus_failed, Gravity.TOP, yOfChorusBtn)
+                }
+
+                JoinChorusStatus.ON_LEAVE_CHORUS -> {
+                    binding.lrcControlView.onSelfLeavedChorus()
+                }
+
+                JoinChorusStatus.ON_IDLE -> {
+                    //nothing
+                }
             }
         }
         roomLivingViewModel.playerMusicOpenDurationLiveData.observe(this) { duration: Long ->
@@ -457,7 +465,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
     /**
      * 下麦提示
      */
-    private fun showUserLeaveSeatMenuDialog(setInfo: RoomMicSeatInfo) {
+    private fun showUserLeaveSeatMenuDialog(setInfo: RoomMicSeatInfo, kickSeat: Boolean) {
         if (mUserLeaveSeatMenuDialog == null) {
             mUserLeaveSeatMenuDialog = UserLeaveSeatMenuDialog(this)
         }
@@ -469,7 +477,11 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
 
             override fun onRightButtonClick() {
                 setDarkStatusIcon(isBlackDarkStatus)
-                roomLivingViewModel.leaveSeat(setInfo)
+                if (kickSeat) {
+                    roomLivingViewModel.kickSeat(setInfo)
+                } else {
+                    roomLivingViewModel.leaveSeat(setInfo)
+                }
             }
         }
         mUserLeaveSeatMenuDialog?.setAgoraMember(setInfo.owner?.userName ?: "", setInfo.owner?.fullHeadUrl ?: "")
@@ -515,7 +527,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
 
                     override fun onRightButtonClick() {
                         setDarkStatusIcon(isBlackDarkStatus)
-                        roomLivingViewModel.exitRoom(true)
+                        roomLivingViewModel.exitRoom()
                         finish()
                     }
                 }
@@ -727,23 +739,24 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         override fun onBindViewHolder(holder: BindingViewHolder<KtvItemRoomSpeakerBinding>, position: Int) {
             val seatInfo = getItem(position) ?: return
             val isIdleSeat = seatInfo.owner?.userId.isNullOrEmpty()
-            val isRoomOwner = seatInfo.owner?.userId == roomInfo.roomOwner?.userId
             setSeatView(holder.binding, seatInfo)
             holder.binding.root.setOnClickListener { v: View? ->
-                if (isIdleSeat) {// 上麦
-                    toggleAudioRun = Runnable {
-                        roomLivingViewModel.enterSeat(position)
-                        binding.cbMic.setChecked(false)
-                        binding.cbVideo.setChecked(false)
-                    }
-                    requestRecordPermission()
-                } else { // 下麦
-                    if (isRoomOwner) { // 房主踢他人下麦
+                if (!isIdleSeat) { // 下麦
+                    if (roomLivingViewModel.isRoomOwner) { // 房主踢他人下麦
                         if (seatInfo.owner?.userId != KtvCenter.mUser.id.toString()) {
-                            showUserLeaveSeatMenuDialog(seatInfo)
+                            showUserLeaveSeatMenuDialog(seatInfo, kickSeat = true)
                         }
                     } else if (seatInfo.owner?.userId == KtvCenter.mUser.id.toString()) { // 自己下麦
-                        showUserLeaveSeatMenuDialog(seatInfo)
+                        showUserLeaveSeatMenuDialog(seatInfo, kickSeat = false)
+                    }
+                } else { // 上麦
+                    if (roomLivingViewModel.localSeatInfo == null) {
+                        toggleAudioRun = Runnable {
+                            roomLivingViewModel.enterSeat(position)
+                            binding.cbMic.setChecked(false)
+                            binding.cbVideo.setChecked(false)
+                        }
+                        requestRecordPermission()
                     }
                 }
             }
@@ -782,7 +795,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                     binding.flVideoContainer.removeAllViews()
                     GlideApp.with(binding.getRoot())
                         .load(seatInfo.owner?.fullHeadUrl)
-                        .error(io.agora.scene.base.R.mipmap.default_user_avatar)
+                        .error(R.mipmap.default_user_avatar)
                         .apply(RequestOptions.circleCropTransform())
                         .into(binding.avatarItemRoomSpeaker)
                 } else {
@@ -804,7 +817,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                         binding.tvZC.setText(R.string.ktv_zc)
                         binding.tvHC.visibility = View.GONE
                         binding.tvZC.visibility = View.VISIBLE
-                    } else if (!choristerInfo?.userId.isNullOrEmpty() && choristerInfo?.userId == songModel.owner?.userId) {
+                    } else if (!choristerInfo?.userId.isNullOrEmpty() && choristerInfo?.chorusSongNo == songModel.songNo) {
                         binding.tvHC.setText(R.string.ktv_hc)
                         binding.tvZC.visibility = View.GONE
                         binding.tvHC.visibility = View.VISIBLE

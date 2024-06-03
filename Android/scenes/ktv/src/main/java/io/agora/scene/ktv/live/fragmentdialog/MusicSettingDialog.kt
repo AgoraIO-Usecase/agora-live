@@ -27,9 +27,9 @@ import io.agora.scene.ktv.live.bean.MusicSettingBean
 import io.agora.scene.ktv.live.bean.ScoringDifficultyMode
 import io.agora.scene.ktv.live.bean.SoundCardSettingBean
 import io.agora.scene.ktv.service.ChosenSongInfo
-import io.agora.scene.widget.utils.doOnProgressChanged
 import io.agora.scene.widget.toast.CustomToast
 import io.agora.scene.base.utils.dp
+import io.agora.scene.widget.utils.doOnProgressChanged
 
 
 /**

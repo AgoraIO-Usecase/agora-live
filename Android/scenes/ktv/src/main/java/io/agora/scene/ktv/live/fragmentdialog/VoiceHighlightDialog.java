@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.divider.MaterialDividerItemDecoration;
 
 import java.util.List;
 
@@ -68,12 +67,12 @@ public class VoiceHighlightDialog extends BaseBottomSheetDialogFragment<KtvDialo
             adapter.notifyItemChanged(i);
         }
         mListener.onUserItemChosen(data);
-        mSettings.setMHighLighterUid(data.user.userId);
+        mSettings.setMHighLighterUid(data.getUser().userId);
     }
 
     public void setUserList(List<VoiceHighlightBean> list) {
         list.forEach(bean -> {
-            if (bean.user.userId.equals(mSettings.getMHighLighterUid())) {
+            if (bean.getUser().userId.equals(mSettings.getMHighLighterUid())) {
                 bean.setSelect(true);
             }
         });
@@ -93,11 +92,11 @@ public class VoiceHighlightDialog extends BaseBottomSheetDialogFragment<KtvDialo
         @Override
         public void binding(@Nullable VoiceHighlightBean data, int selectedIndex) {
             GlideApp.with(mBinding.getRoot())
-                    .load( KTVServiceModelKt.getFullHeadUrl(data.user))
-                    .error(io.agora.scene.base.R.mipmap.default_user_avatar)
+                    .load( KTVServiceModelKt.getFullHeadUrl(data.getUser()))
+                    .error(R.mipmap.default_user_avatar)
                     .apply(RequestOptions.circleCropTransform())
                     .into(mBinding.ivBg);
-            mBinding.tvTitle.setText(data.user.userName);
+            mBinding.tvTitle.setText(data.getUser().userName);
             mBinding.select.setVisibility(data.isSelect() ? View.VISIBLE : View.GONE);
         }
     }

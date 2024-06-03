@@ -1,5 +1,8 @@
 package io.agora.scene.ktv.live.bean
 
+import androidx.annotation.DrawableRes
+import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
+
 /**
  * The enum Player music status.
  */
@@ -67,29 +70,22 @@ enum class JoinChorusStatus {
 }
 
 /**
+ * The type Net work event.
+ */
+data class NetWorkEvent constructor(
+    var txQuality: Int,
+    var rxQuality: Int
+)
+
+/**
  * The type Line score.
  */
-class LineScore {
-    /**
-     * The Score.
-     */
-    var score = 0
-
-    /**
-     * The Index.
-     */
-    var index = 0
-
-    /**
-     * The Cumulative score.
-     */
-    var cumulativeScore = 0
-
-    /**
-     * The Total.
-     */
-    var total = 0
-}
+data class LineScore constructor(
+    var score: Int = 0,
+    var index: Int = 0,
+    var cumulativeScore: Int = 0,
+    var total: Int = 0,
+)
 
 /**
  * Scoring algo control model
@@ -126,3 +122,37 @@ data class VolumeModel constructor(
     val uid: Int,
     val volume: Int
 )
+
+/**
+ * Effect voice bean
+ *
+ * @property id
+ * @property audioEffect
+ * @property resId
+ * @property title
+ * @property isSelect
+ * @constructor Create empty Effect voice bean
+ */
+data class EffectVoiceBean constructor(
+    var id: Int,
+    var audioEffect: Int,
+    @field:DrawableRes var resId: Int,
+    var title: String,
+    var isSelect: Boolean = false
+)
+
+/**
+ * 人声突出
+ */
+data class VoiceHighlightBean constructor(
+    var user: AUIUserThumbnailInfo? = null
+) {
+
+    var isSelect = false
+        private set
+
+    fun setSelect(select: Boolean): VoiceHighlightBean {
+        isSelect = select
+        return this
+    }
+}

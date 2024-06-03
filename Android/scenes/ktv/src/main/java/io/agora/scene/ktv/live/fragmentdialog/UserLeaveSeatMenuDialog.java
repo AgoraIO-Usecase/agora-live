@@ -31,7 +31,7 @@ public class UserLeaveSeatMenuDialog extends BaseDialog<io.agora.scene.ktv.datab
     public void setAgoraMember(String name, String headUrl) {
         getBinding().tvName.setText(name);
         Glide.with(getContext())
-                .load(headUrl).error(io.agora.scene.base.R.mipmap.default_user_avatar)
+                .load(headUrl).error(R.mipmap.default_user_avatar)
                 .into(getBinding().ivUser);
     }
 
