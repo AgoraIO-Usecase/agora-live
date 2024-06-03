@@ -40,7 +40,6 @@ enum CommerceAuctionStatus: Int {
     case idle = 0
     case started = 1
     case completion = 2
-    case top_price = 3
     
     var statusTitleColor: UIColor? {
         switch self {
@@ -59,13 +58,6 @@ enum CommerceAuctionStatus: Int {
         switch self {
         case .idle, .completion: return UIColor(hex: "#FFFFFF", alpha: 1.0)
         default: return UIColor(hex: "#191919", alpha: 1.0)
-        }
-    }
-    var bidBackgroundColor: [UIColor] {
-        switch self {
-        case .idle, .completion: return [UIColor(hex: "#FFFFFF", alpha: 0.25)]
-        case .started: return [UIColor(hex: "#FFEF4F", alpha: 1.0), UIColor(hex: "#FF416F", alpha: 1.0)]
-        default: return [UIColor(hex: "#9ADDFE", alpha: 1.0)]
         }
     }
 }
@@ -124,7 +116,20 @@ class CommerceGoodsBuyModel: NSObject, YYModel {
 class CommerceGoodsAuctionModel: NSObject, YYModel {
     var goods: CommerceGoodsModel?
     var status: CommerceAuctionStatus = .idle
-    var timestamp: Int64 = 0
+    var startTimestamp: UInt64 = 0
+    var endTimestamp: UInt64 = 0
     var bidUser: VLLoginModel?
     var bid: Int = 0
+    
+    func isTopPrice() -> Bool {
+        return bidUser?.id == VLUserCenter.user.id && status == .started
+    }
+    
+    func bidBackgroundColor() -> [UIColor] {
+        switch status {
+        case .idle, .completion: return [UIColor(hex: "#FFFFFF", alpha: 0.25)]
+        case .started:
+            return isTopPrice() ? [UIColor(hex: "#9ADDFE", alpha: 1.0)] : [UIColor(hex: "#FFEF4F", alpha: 1.0), UIColor(hex: "#FF416F", alpha: 1.0)]
+        }
+    }
 }

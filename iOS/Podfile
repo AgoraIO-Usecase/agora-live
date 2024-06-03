@@ -33,7 +33,7 @@ def all_pods
   pod 'fuLib', :path => 'fu.podspec'
   
   pod 'AgoraSyncManager-overseas', '~> 3.0.8'
-  pod 'RTMSyncManager', :path => 'RTMSyncManager.podspec'
+  pod 'RTMSyncManager', :path => 'AgoraEntScenarios/Common/API/RTMSyncManager'
 
 #  pod 'sdk', :path => 'sdk.podspec'
 #  pod 'AgoraRtcEngine_iOS', '~> 4.2.2'
@@ -51,9 +51,10 @@ def all_pods
 #  pod 'AgoraLyricsScore', '1.1.1-beta-3'
 ##  pod 'AgoraLyricsScore', :git => 'https://github.com/AgoraIO-Community/LrcView-iOS.git', :commit => 'cc0951f11f5fa6113ec2b9df2a509efa881d5bd7'
 ##  pod 'AgoraLyricsScore', :path => '../../AgoraLyricsScore/AgoraLyricsScore.podspec'
-#  pod 'AgoraRtm_iOS', '1.5.1'
+  pod 'AgoraRtm', :path => 'AgoraRtm.podspec'
 #  pod 'Zip'
-  pod 'MJRefresh'
+  pod 'MJRefresh', '3.7.9'
+#  pod 'RealReachability', '1.4.1'
   
   
   # Swift Code Formatter

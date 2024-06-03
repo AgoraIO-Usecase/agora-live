@@ -13,9 +13,7 @@ private let bgViewHeight: CGFloat = 40
 private let imgViewHeight: CGFloat = 32
 
 class CommerceRoomInfoView: UIView {
-    
-    private var startTime: Int64!
-    
+    private var durationClosure: (() -> (UInt64))?
     private lazy var timer: Timer = {
         let timer = Timer.scheduledTimer(withTimeInterval: 1, block: {[weak self] t in
             self?.updateTime()
@@ -123,7 +121,8 @@ class CommerceRoomInfoView: UIView {
         }
     }
     
-    func setRoomInfo(avatar: String?, name: String?, id: String?, time: Int64?) {
+    func setRoomInfo(avatar: String?, name: String?, id: String?, durationClosure:@escaping (()->(UInt64))) {
+        self.durationClosure = durationClosure
         if (avatar ?? "").hasPrefix("http") {
             headImgView.sd_setImage(with: URL(string: avatar ?? ""))
         } else {
@@ -131,15 +130,12 @@ class CommerceRoomInfoView: UIView {
         }
         nameLabel.text = name
         idLabel.text = id
-        if let startTime = time {
-            self.startTime = startTime
-            updateTime()
-            timer.fire()
-        }
+        updateTime()
+        timer.fire()
     }
     
     private func updateTime(){
-        let duration = Int64(Date().timeIntervalSince1970) - startTime / 1000
+        let duration = (durationClosure?() ?? 0) / 1000
         let seconds = duration % 60
         let minutes = duration / 60 % 60
         let hours = duration / 3600

@@ -66,14 +66,14 @@ class CommerceGoodsListView: UIView {
         })
     }
     
-    private func updateGoodsInfo(goods: CommerceGoodsModel?, completion: @escaping (Error?)-> ()) {
+    private func updateGoodsInfo(goods: CommerceGoodsModel?, completion: @escaping (NSError?)-> ()) {
         serviceImp?.updateGoodsInfo(roomId: roomId, goods: goods, completion: { error in
             commerceLogger.error("error == \(error?.localizedDescription ?? "")")
             completion(error)
         })
     }
     
-    private func calcGoodsInfo(goods: CommerceGoodsModel?, increase: Bool, completion: @escaping (Error?)-> ()) {
+    private func calcGoodsInfo(goods: CommerceGoodsModel?, increase: Bool, completion: @escaping (NSError?)-> ()) {
         serviceImp?.calcGoodsInfo(roomId: roomId, goods: goods, increase: increase, completion: { error in
             commerceLogger.error("error == \(error?.localizedDescription ?? "")")
             completion(error)
@@ -110,36 +110,52 @@ extension CommerceGoodsListView: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shoppingCell", for: indexPath) as! CommerceGoodsListViewCell
         let model = goodsList[indexPath.row]
         cell.setShoppingData(model: model, isBroadcaster: isBroadcaster)
-        cell.onClickStatusButtonClosure = { [weak self] in
-            guard let self = self else { return }
-            var title = "Bought!"
-            if (model.goods?.quantity ?? 0) > 0 {
-                model.goods?.quantity -= 1
-                self.calcGoodsInfo(goods: model.goods, increase: false) { err in
-                    guard let err = err else { return }
-                    //error msg
-                }
-            } else {
-                title = "Sold Out!"
-            }
+        func showAlert(title: String) {
             let alertVC = UIAlertController(title: title, message: nil, preferredStyle: .alert)
             let okAction = UIAlertAction(title: "OK", style: .default)
             alertVC.addAction(okAction)
-            UIViewController.cl_topViewController()?.present(alertVC, animated: true)
+            
+            let topVC = UIViewController.cl_topViewController()
+            if topVC is UIAlertController {
+                return
+            }
+            topVC?.present(alertVC, animated: false)
+        }
+        cell.onClickStatusButtonClosure = { [weak self, weak cell] in
+            cell?.toggleLoadingIndicator(true)
+            self?.calcGoodsInfo(goods: model.goods, increase: false) { err in
+                cell?.toggleLoadingIndicator(false)
+                var title = "show_buy_goods_success_toast".commerce_localized
+                if let err = err {
+                    title = "\("show_update_goods_fail_toast".commerce_localized) Error:\(err.code)"
+                }
+                
+                showAlert(title: title)
+            }
+        }
+        
+        func makeRequestCompletion(error: NSError?) {
+            var title = "show_update_goods_success_toast".commerce_localized
+            if let err = error  {
+                title = "\("show_update_goods_fail_toast".commerce_localized) Error:\(err.code)"
+            }
+            
+            showAlert(title: title)
         }
 
-        cell.onClickNumberButtonClosure = { [weak self] number, isIncrease in
+        cell.onClickNumberButtonClosure = { [weak self, weak cell] number, isIncrease in
             guard let self = self else { return }
+            cell?.toggleLoadingIndicator(true)
             if let isIncrease = isIncrease {
                 self.calcGoodsInfo(goods: model.goods, increase: isIncrease) { err in
-                    guard let err = err else { return }
-                    //error msg
+                    cell?.toggleLoadingIndicator(false)
+                    makeRequestCompletion(error: err)
                 }
             } else {
                 model.goods?.quantity = number
                 self.updateGoodsInfo(goods: model.goods) { err in
-                    guard let err = err else { return }
-                    //error msg
+                    cell?.toggleLoadingIndicator(false)
+                    makeRequestCompletion(error: err)
                 }
             }
         }
@@ -183,8 +199,9 @@ class CommerceGoodsListViewCell: UITableViewCell {
     }()
     private lazy var statusButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Buy", for: .normal)
-        button.setTitleColor(UIColor(hex: "#191919", alpha: 1.0), for: .normal)
+        button.setTitle("show_goods_set_title".commerce_localized, for: .selected)
+        button.setTitleColor(UIColor(hex: "#191919", alpha: 1.0), for: .selected)
+        button.setBackgroundImage(createGradientImage(colors: CommerceBuyStatus.buy.backgroundColor), for: .selected)
         button.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
         button.cornerRadius(20)
         button.backgroundColor = UIColor(hex: "#DFE1E6", alpha: 1.0)
@@ -198,12 +215,13 @@ class CommerceGoodsListViewCell: UITableViewCell {
         button.maxValue = 99
         button.shakeAnimation = true
         button.numberResult { [weak self] number, isIncrease in
-            let qty = Int(number) ?? 0
-            self?.onClickNumberButtonClosure?(qty, isIncrease)
+//            let qty = Int(number) ?? 0
+//            self?.onClickNumberButtonClosure?(qty, isIncrease)
         }
         button.textField.textColor = UIColor(hex: "#191919", alpha: 1.0)
         button.textField.font = .systemFont(ofSize: 15)
         button.layer.cornerRadius = 20
+        button.clipsToBounds = true
         button.backgroundColor = UIColor(hex: "#FAFAFA", alpha: 1.0)
         button.borderWidth = 1
         button.borderColor = UIColor(hex: "#DFE1E6", alpha: 1.0)
@@ -212,6 +230,15 @@ class CommerceGoodsListViewCell: UITableViewCell {
         button.textFieldHighlightBorderColor = UIColor(hex: "#099DFD", alpha: 1.0)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
+    }()
+    
+    private lazy var activityView: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .medium)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.hidesWhenStopped = true
+        view.color = .black
+        view.backgroundColor = UIColor(hex: "#DFE1E6", alpha: 1.0)
+        return view
     }()
     
     
@@ -233,12 +260,36 @@ class CommerceGoodsListViewCell: UITableViewCell {
         priceLabel.text = "$\(model.goods?.price ?? 0)"
         model.status = (model.goods?.quantity ?? 0) <= 0 ? .sold_out : .buy
         statusButton.setTitle(model.status.title, for: .normal)
-        statusButton.setTitleColor(model.status.titleColor, for: .normal)
-        statusButton.setBackgroundImage(createGradientImage(colors: model.status.backgroundColor), for: .normal)
-        statusButton.isUserInteractionEnabled = model.status != .sold_out
-        statusButton.isHidden = isBroadcaster
+        statusButton.isSelected = isBroadcaster
+        print("aaaa \(model.goods?.title ?? ""): \(model.goods?.quantity ?? 0)")
+        if isBroadcaster {
+            statusButton.widthAnchor.constraint(equalToConstant: 64).isActive = true
+        } else {
+            statusButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
+            if model.status != .sold_out {
+                statusButton.isEnabled = true
+                statusButton.setTitleColor(model.status.titleColor, for: .normal)
+                statusButton.setBackgroundImage(createGradientImage(colors: model.status.backgroundColor), for: .normal)
+            } else {
+                statusButton.isEnabled = false
+                statusButton.setTitleColor(model.status.titleColor, for: .disabled)
+                statusButton.setBackgroundImage(createGradientImage(colors: model.status.backgroundColor), for: .disabled)
+            }
+        }
+        setNeedsUpdateConstraints()
+        updateConstraintsIfNeeded()
         numberButton.isHidden = !isBroadcaster
         numberButton.textField.text = "\(model.goods?.quantity ?? 0)"
+    }
+    
+    func toggleLoadingIndicator(_ loading: Bool) {
+        if loading {
+            statusButton.isUserInteractionEnabled = false
+            activityView.startAnimating()
+        } else {
+            statusButton.isUserInteractionEnabled = true
+            activityView.stopAnimating()
+        }
     }
     
     private func setupUI() {
@@ -264,22 +315,41 @@ class CommerceGoodsListViewCell: UITableViewCell {
         priceLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor).isActive = true
         priceLabel.bottomAnchor.constraint(equalTo: coverImageView.bottomAnchor, constant: -4).isActive = true
         
+        
+//        contentView.addSubview(confirmButton)
+//        confirmButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
+//        confirmButton.bottomAnchor.constraint(equalTo: priceLabel.bottomAnchor).isActive = true
+//        confirmButton.widthAnchor.constraint(equalToConstant: 64).isActive = true
+//        confirmButton.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        
         contentView.addSubview(statusButton)
-        statusButton.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
+        statusButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
         statusButton.bottomAnchor.constraint(equalTo: priceLabel.bottomAnchor).isActive = true
         statusButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
         statusButton.heightAnchor.constraint(equalToConstant: 36).isActive = true
-        statusButton.isHidden = true
         
         contentView.addSubview(numberButton)
-        numberButton.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
+        numberButton.trailingAnchor.constraint(equalTo: statusButton.leadingAnchor, constant: -10).isActive = true
         numberButton.bottomAnchor.constraint(equalTo: priceLabel.bottomAnchor).isActive = true
-        numberButton.widthAnchor.constraint(equalToConstant: 120).isActive = true
+        numberButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
         numberButton.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        
+        statusButton.addSubview(activityView)
+        NSLayoutConstraint.activate([
+            activityView.widthAnchor.constraint(equalTo: statusButton.widthAnchor),
+            activityView.heightAnchor.constraint(equalTo: statusButton.heightAnchor),
+            activityView.centerXAnchor.constraint(equalTo: statusButton.centerXAnchor),
+            activityView.centerYAnchor.constraint(equalTo: statusButton.centerYAnchor)
+        ])
     }
     
     @objc
     private func onClickStatusButton() {
-        self.onClickStatusButtonClosure?()
+        if statusButton.isSelected {
+            guard let number = Int(numberButton.currentNumber ?? "") else { return }
+            onClickNumberButtonClosure?(number, nil)
+        } else {
+            self.onClickStatusButtonClosure?()
+        }
     }
 }

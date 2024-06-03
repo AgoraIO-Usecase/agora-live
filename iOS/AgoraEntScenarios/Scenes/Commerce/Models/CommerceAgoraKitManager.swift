@@ -23,7 +23,7 @@ class CommerceAgoraKitManager: NSObject {
     public var deviceLevel: DeviceLevel = .medium
     public var deviceScore: Int = 100
     public var netCondition: NetCondition = .good
-    public var performanceMode: PerformanceMode = .smooth
+    public var performanceMode: PerformanceMode = .fluent
     
     private var broadcasterConnection: AgoraRtcConnection?
     
@@ -64,12 +64,12 @@ class CommerceAgoraKitManager: NSObject {
         config.rtcEngine = engine
         loader.setup(config: config)
         
-        commerceLogger.info("load AgoraRtcEngineKit, sdk version: \(AgoraRtcEngineKit.getSdkVersion())", context: kCommerceLogBaseContext)
+        commercePrintLog("load AgoraRtcEngineKit, sdk version: \(AgoraRtcEngineKit.getSdkVersion())", tag: kCommerceLogBaseContext)
     }
     
     func destoryEngine() {
         AgoraRtcEngineKit.destroy()
-        commerceLogger.info("deinit-- CommerceAgoraKitManager")
+        commercePrintLog("deinit-- CommerceAgoraKitManager", tag: kCommerceLogBaseContext)
     }
 
     func leaveAllRoom() {
@@ -195,22 +195,12 @@ class CommerceAgoraKitManager: NSObject {
         VideoLoaderApiImpl.shared.removeRTCListener(anchorId: roomId, listener: delegate)
     }
     
-    func renewToken(channelId: String) {
+    func renewToken(channelId: String, rtcToken: String) {
         commerceLogger.info("renewToken with channelId: \(channelId)",
                         context: kCommerceLogBaseContext)
-        NetworkManager.shared.generateToken(channelName: channelId,
-                                            uid: UserInfo.userId,
-                                            tokenType: .token007,
-                                            type: .rtc) {[weak self] token in
-            guard let token = token else {
-                commerceLogger.error("renewToken fail: token is empty")
-                return
-            }
-            let option = AgoraRtcChannelMediaOptions()
-            option.token = token
-            AppContext.shared.rtcToken = token
-            self?.updateChannelEx(channelId: channelId, options: option)
-        }
+        let option = AgoraRtcChannelMediaOptions()
+        option.token = rtcToken
+        updateChannelEx(channelId: channelId, options: option)
     }
     
     private var callTimeStampsSaved: Date?
@@ -263,7 +253,7 @@ class CommerceAgoraKitManager: NSObject {
     func updateChannelEx(channelId: String, options: AgoraRtcChannelMediaOptions) {
         guard let engine = engine,
               let connection = (broadcasterConnection?.channelId == channelId ? broadcasterConnection : nil) ?? VideoLoaderApiImpl.shared.getConnectionMap()[channelId] else {
-            commerceLogger.error("updateChannelEx fail: connection is empty")
+            commerceLogger.error("updateChannelEx[\(channelId)] fail: connection is empty")
             return
         }
         commerceLogger.info("updateChannelEx[\(channelId)]: \(options.publishMicrophoneTrack) \(options.publishCameraTrack)")
@@ -359,19 +349,16 @@ class CommerceAgoraKitManager: NSObject {
             return
         }
         
-        NetworkManager.shared.generateToken(channelName: targetChannelId,
-                                            uid: VLUserCenter.user.id,
-                                            tokenType: .token007,
-                                            type: .rtc) {[weak self] token in
+        preGenerateToken { [weak self] in
             defer {
                 completion?()
             }
             
-            guard let token = token else {
+            guard let token = AppContext.shared.commerceRtcToken else {
                 commerceLogger.error("joinChannelEx fail: token is empty")
                 return
             }
-            AppContext.shared.rtcToken = token
+            
             self?._joinChannelEx(currentChannelId: currentChannelId,
                                  targetChannelId: targetChannelId,
                                  ownerId: ownerId,
@@ -481,7 +468,7 @@ extension CommerceAgoraKitManager {
         let anchorInfo = AnchorInfo()
         anchorInfo.channelName = channelId
         anchorInfo.uid = uid ?? (UInt(VLUserCenter.user.id) ?? 0)
-        anchorInfo.token = AppContext.shared.rtcToken ?? ""
+        anchorInfo.token = AppContext.shared.commerceRtcToken ?? ""
         
         return anchorInfo
     }
@@ -524,6 +511,35 @@ extension CommerceAgoraKitManager: AgoraRtcMediaPlayerDelegate {
     func AgoraRtcMediaPlayer(_ playerKit: AgoraRtcMediaPlayerProtocol, didChangedTo state: AgoraMediaPlayerState, error: AgoraMediaPlayerError) {
         if state == .openCompleted {
             playerKit.play()
+        }
+    }
+}
+
+// MARK: token handler
+extension CommerceAgoraKitManager {
+    func preGenerateToken(completion:@escaping ()->()) {
+        commerceLogger.error("preGenerateToken start")
+        AppContext.shared.commerceRtcToken = nil
+        AppContext.shared.commerceRtmToken = nil
+        let date = Date()
+        NetworkManager.shared.generateTokens(channelName: "",
+                                             uid: "\(UserInfo.userId)",
+                                             tokenGeneratorType: .token007,
+                                             tokenTypes: [.rtc, .rtm],
+                                             expire: 24 * 60 * 60) {  tokenMap in
+            guard let rtcToken = tokenMap[NetworkManager.AgoraTokenType.rtc.rawValue],
+                  rtcToken.count > 0,
+                  let rtmToken = tokenMap[NetworkManager.AgoraTokenType.rtm.rawValue],
+                  rtmToken.count > 0 else {
+                commerceLogger.error("preGenerateToken fail: \(tokenMap)")
+                completion()
+                return
+            }
+            
+            commerceLogger.info("[Timing]preGenerateToken cost: \(Int64(-date.timeIntervalSinceNow * 1000)) ms")
+            AppContext.shared.commerceRtcToken = rtcToken
+            AppContext.shared.commerceRtmToken = rtmToken
+            completion()
         }
     }
 }
