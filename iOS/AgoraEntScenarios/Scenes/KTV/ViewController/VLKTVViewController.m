@@ -140,7 +140,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 
 @implementation VLKTVViewController
 
-- (VLAudienceIndicator *)customView {
+- (VLAudienceIndicator *)requestOnLineView {
     if (!_requestOnLineView) {
         _requestOnLineView = [[VLAudienceIndicator alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-kSafeAreaBottomHeight-56-VLREALVALUE_WIDTH(30), SCREEN_WIDTH, 56)
                                                            withDelegate:self];
