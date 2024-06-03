@@ -11,13 +11,18 @@ import AgoraRtmKit
 
 class RTMSyncUtil: NSObject {
     private static var syncManager: AUISyncManager?
-    private static var syncManagerImpl = AUIRoomManagerImpl(sceneId: kEcommerceSceneId)
+    private static var roomManager: AUIRoomManagerImpl?
+    private static var roomService: AUIRoomService?
     private static var isLogined: Bool = false
-    private static let roomDelegate = RTMSyncUtilRoomDeleage()
-    private static let userDelegate = RTMSyncUtilUserDelegate()
-    private static let rtmDeleagete = RTMDelegate()
+    private static var roomList: [AUIRoomInfo]?
     
     class func initRTMSyncManager() {
+        destroy()
+        
+        //create room manager
+        roomManager = AUIRoomManagerImpl(sceneId: kEcommerceSceneId)
+        
+        //create syncmanager
         let config = AUICommonConfig()
         config.appId = KeyCenter.AppId
         let owner = AUIUserThumbnailInfo()
@@ -29,10 +34,14 @@ class RTMSyncUtil: NSObject {
         config.host = KeyCenter.RTMHostUrl
         syncManager = AUISyncManager(rtmClient: nil, commonConfig: config)
         isLogined = false
-        syncManager?.logout()
         
+        //create roomService
+        let policy = RoomExpirationPolicy()
+        roomService = AUIRoomService(expirationPolicy: policy, roomManager: roomManager!, syncmanager: syncManager!)
+        
+        //print log
         AUIRoomContext.shared.displayLogClosure = { msg in
-            commerceLogger.info(msg)
+            commercePrintLog(msg)
         }
     }
     
@@ -40,29 +49,37 @@ class RTMSyncUtil: NSObject {
                           roomId: String,
                           payload: [String: Any],
                           callback: @escaping ((NSError?, AUIRoomInfo?) -> Void)) {
-        logOut()
-        let roomInfo = AUIRoomInfo()
-        roomInfo.roomName = roomName
-        roomInfo.roomId = roomId
-        roomInfo.customPayload = payload
-        let userInfo = AUIUserThumbnailInfo()
-        userInfo.userId = VLUserCenter.user.id
-        userInfo.userAvatar = VLUserCenter.user.headUrl
-        userInfo.userName = VLUserCenter.user.name
-        roomInfo.owner = userInfo
-        login(channelName: roomId, success: {
-            self.syncManagerImpl.createRoom(room: roomInfo, callback: callback)
-        }) { error in
-            if error?.code == 10002 {
-                createRoom(roomName: roomName, roomId: roomId, payload: payload, callback: callback)
-                return
-            }
-            callback(error, nil)
+        login {
+            let roomInfo = AUIRoomInfo()
+            roomInfo.roomName = roomName
+            roomInfo.roomId = roomId
+            roomInfo.customPayload = payload
+            let userInfo = AUIUserThumbnailInfo()
+            userInfo.userId = VLUserCenter.user.id
+            userInfo.userAvatar = VLUserCenter.user.headUrl
+            userInfo.userName = VLUserCenter.user.name
+            roomInfo.owner = userInfo
+            roomService?.createRoom(room: roomInfo, completion: { err, roomInfo in
+                callback(err, roomInfo)
+            })
+        } failure: { err in
+            callback(err, nil)
         }
     }
     
     class func getRoomList(lastCreateTime: Int64 = 0, callback: @escaping ((NSError?, [AUIRoomInfo]?) -> Void)) {
-        syncManagerImpl.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: 20, callback: callback)
+        let date = Date()
+        login {
+            roomService?.getRoomList(lastCreateTime: lastCreateTime, pageSize: 50, cleanClosure: { room in
+                return room.owner?.userId == VLUserCenter.user.id
+            }, completion: { err, ts, list in
+                commercePrintLog("[Timing] getRoomList success cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+                roomList = list
+                callback(err, list)
+            })
+        } failure: { err in
+            callback(err, nil)
+        }
     }
     
     class func updateRoomInfo(roomName: String, roomId: String, payload: [String: Any], ownerInfo: AUIUserThumbnailInfo) {
@@ -71,36 +88,66 @@ class RTMSyncUtil: NSObject {
         roomInfo.roomId = roomId
         roomInfo.customPayload = payload
         roomInfo.owner = ownerInfo
-        syncManagerImpl.updateRoom(room: roomInfo) { _, _ in }
+        roomManager?.updateRoom(room: roomInfo) { _, _ in }
     }
     
-    class func login(channelName: String, success: (() -> Void)?, failure: ((NSError?) -> Void)?) {
+    class func renew(rtmToken: String) {
+        syncManager?.renew(token: rtmToken, completion: { _ in
+        })
+    }
+    
+    class func login(success: (() -> Void)?, failure: ((NSError?) -> Void)?) {
         if isLogined == true {
             success?()
             return
         }
-        let model = SyncTokenGenerateNetworkModel()
-        model.channelName = channelName
-        model.userId = VLUserCenter.user.id
-        model.request { err, result in
-            let result = result as? [String: String]
-            let rtmToken = (result?["rtmToken"]) ?? ""
-            self.syncManager?.login(with: rtmToken) { err in
-                if let err = err {
-                    print("login fail: \(err.localizedDescription)")
-                    failure?(err)
-                    return
-                }
-                self.isLogined = true
-                success?()
+        
+        guard let rtmToken = AppContext.shared.commerceRtmToken else {
+            let date = Date()
+            //TODO: may cause infinite recursion
+            CommerceAgoraKitManager.shared.preGenerateToken {
+                commercePrintLog("[Timing] token generate cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+                self.login(success: success, failure: failure)
             }
+            return
+        }
+        
+        let date = Date()
+        self.syncManager?.login(with: rtmToken) { err in
+            if let err = err {
+                commerceErrorLog("login fail: \(err.localizedDescription)")
+                failure?(err)
+                return
+            }
+            commercePrintLog("[Timing] login success cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+            self.isLogined = true
+            success?()
         }
     }
     
-    class func logOut() {
+    class func logout() {
         guard isLogined else { return }
         syncManager?.logout()
         isLogined = false
+    }
+    
+    class func destroy() {
+        logout()
+        syncManager?.destroy()
+        syncManager = nil
+        roomManager = nil
+        roomService = nil
+        roomList = nil
+    }
+    
+    class func getRoomDuration(roomId: String) -> UInt64 {
+        let scene = scene(id: roomId)
+        return scene?.getRoomDuration() ?? 0
+    }
+    
+    class func getCurrentTs(roomId: String) -> UInt64 {
+        let scene = scene(id: roomId)
+        return scene?.getCurrentTs() ?? 0
     }
     
     class func scene(id: String) -> AUIScene? {
@@ -114,90 +161,36 @@ class RTMSyncUtil: NSObject {
         scene(id: id)?.getCollection(key: key)
     }
     
-    class func joinScene(id: String, 
-                         ownerId: String,
-                         payload: [String: Any]?,
-                         success: (() -> Void)?,
-                         failure: ((NSError?) -> Void)?) {
-        commercePrintLog("joinScene[\(id)]", tag: "RTMSyncUtil")
-        _ = syncManager?.createScene(channelName: id)
-        let scene = scene(id: id)
-        scene?.bindRespDelegate(delegate: roomDelegate)
-        scene?.userService.bindRespDelegate(delegate: userDelegate)
-        syncManager?.rtmManager.subscribeMessage(channelName: "", delegate: rtmDeleagete)
-        login(channelName: id, success: {
-            if ownerId == VLUserCenter.user.id {
-                scene?.create(payload: payload) { err in
-                    if let err = err {
-                        print("create scene fail: \(err.localizedDescription)")
-                        failure?(err)
-                        return
-                    }
-                    scene?.enter(completion: { res, error in
-                        if let err = err {
-                            print("enter scene fail: \(err.localizedDescription)")
-                            failure?(err)
-                            return
-                        }
-                        success?()
-                    })
-                }
-            } else {
-                scene?.enter(completion: { res, err in
-                    if let err = err {
-                        print("enter scene fail: \(err.localizedDescription)")
-                        failure?(err)
-                        return
-                    }
-                    success?()
-                })
+    class func joinScene(roomId: String,
+                         completion: ((NSError?) -> Void)?) {
+        commercePrintLog("joinScene[\(roomId)]", tag: "RTMSyncUtil")
+        login {
+            roomService?.enterRoom(roomId: roomId) { err in
+                completion?(err)
             }
-        }, failure: failure)
-    }
-    
-    class func leaveScene(id: String, ownerId: String) {
-        commercePrintLog("leaveScene[\(id)]", tag: "RTMSyncUtil")
-        let scene = scene(id: id)
-        if ownerId == VLUserCenter.user.id {
-            scene?.delete()
-            let model = SyncRoomDestroyNetworkModel()
-            model.roomId = id
-            model.sceneId = kEcommerceSceneId
-            model.request { err, _ in
-                print("error == \(err?.localizedDescription ?? "")")
-                scene?.unbindRespDelegate(delegate: self.roomDelegate)
-            }
-        } else {
-            scene?.leave()
-            scene?.unbindRespDelegate(delegate: roomDelegate)
+        } failure: { err in
+            completion?(err)
         }
-        syncManager?.rtmManager.unsubscribeMessage(channelName: "", delegate: rtmDeleagete)
     }
     
-    class func subscribeRoomDestroy(roomDestoryClosure: ((String) -> Void)?) {
-        roomDelegate.roomDestoryClosure = roomDestoryClosure
+    class func leaveScene(roomId: String) {
+        commercePrintLog("leaveScene[\(roomId)]", tag: "RTMSyncUtil")
+        guard let room = roomList?.first(where: {$0.roomId == roomId}) else {
+            roomService?.leaveRoom(roomId: roomId)
+            return
+        }
+        leaveScene(room: room)
+    }
+    
+    class func leaveScene(room: AUIRoomInfo) {
+        commercePrintLog("leaveScene[\(room.roomId)]", tag: "RTMSyncUtil")
+        roomService?.leaveRoom(room: room)
     }
     
     class func getUserList(id: String, callback: @escaping (_ roomId: String, _ userList: [AUIUserInfo]) -> Void) {
-        userDelegate.onUserListCallback = callback
-        scene(id: id)?.userService.getUserInfoList(roomId: id, userIdList: [], callback: { _, userList in
+        scene(id: id)?.userService.getUserInfoList(roomId: id, callback: { _, userList in
             callback(id, userList ?? [])
         })
-    }
-    
-    class func subscribeUserDidChange(id: String,
-                                      userEnter: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?,
-                                      userLeave: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?,
-                                      userUpdate: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?,
-                                      userKicked: ((_ roomId: String, _ userId: String) -> Void)?,
-                                      audioMute: ((_ userId: String, _ mute: Bool) -> Void)?,
-                                      videoMute: ((_ userId: String, _ mute: Bool) -> Void)?) {
-        userDelegate.onUserEnterCallback = userEnter
-        userDelegate.onUserLeaveCallback = userLeave
-        userDelegate.onUserUpdateCallback = userUpdate
-        userDelegate.onUserKickedCallback = userKicked
-        userDelegate.onUserAudioMuteCallback = audioMute
-        userDelegate.onUserVideoMuteCallback = videoMute
     }
     
     class func muteAudio(channelName: String, isMute: Bool, callback: ((NSError?) -> Void)?) {
@@ -215,7 +208,8 @@ class RTMSyncUtil: NSObject {
     class func subscribeAttributesDidChanged(id: String,
                                              key: String,
                                              changeClosure: ((_ channelName: String, _ object: AUIAttributesModel) -> Void)?) {
-        collection(id: id, key: key)?.subscribeAttributesDidChanged(callback: { channelName, key, object in
+        let collection = collection(id: id, key: key)
+        collection?.subscribeAttributesDidChanged(callback: { channelName, key, object in
             changeClosure?(channelName, object)
         })
     }
@@ -228,11 +222,19 @@ class RTMSyncUtil: NSObject {
         })
     }
     
+    class func subscribeMessage(channelName: String, delegate: AUIRtmMessageProxyDelegate) {
+        syncManager?.rtmManager.subscribeMessage(channelName: channelName, delegate: delegate)
+    }
+    
+    class func unsubscribeMessage(channelName: String, delegate: AUIRtmMessageProxyDelegate) {
+        syncManager?.rtmManager.unsubscribeMessage(channelName: channelName, delegate: delegate)
+    }
+    
     class func addMetaData(id: String,
                            key: String,
                            data: [String: Any],
                            callback: ((NSError?) -> Void)?) {
-        collection(id: id, key: key)?.addMetaData(valueCmd: nil, value: data, filter: nil, callback: callback)
+        collection(id: id, key: key)?.addMetaData(valueCmd: nil, value: data, callback: callback)
     }
     
     class func addMetaData(id: String,
@@ -244,7 +246,7 @@ class RTMSyncUtil: NSObject {
             group.enter()
             listCollection(id: id, key: key)?.addMetaData(valueCmd: nil, value: $0, filter: nil, callback: { error in
                 if error != nil {
-                    print("error == \(error?.localizedDescription ?? "")")
+                    commerceErrorLog("addMetaData error == \(error?.localizedDescription ?? "")")
                 }
                 group.leave()
             })
@@ -272,9 +274,10 @@ class RTMSyncUtil: NSObject {
     
     class func updateMetaData(id: String,
                               key: String,
+                              valueCmd: String? = nil,
                               data: [String: Any],
                               callback: ((NSError?) -> Void)?) {
-        collection(id: id, key: key)?.updateMetaData(valueCmd: nil, value: data, filter: nil, callback: callback)
+        collection(id: id, key: key)?.updateMetaData(valueCmd: valueCmd, value: data, callback: callback)
     }
     
     class func updateListMetaData(id: String,
@@ -289,7 +292,7 @@ class RTMSyncUtil: NSObject {
                              key: String,
                              data: [String: Any],
                              callback: ((NSError?) -> Void)?) {
-        collection(id: id, key: key)?.mergeMetaData(valueCmd: nil, value: data, filter: nil, callback: callback)
+        collection(id: id, key: key)?.mergeMetaData(valueCmd: nil, value: data, callback: callback)
     }
     
     class func calculateMetaData(id: String,
@@ -304,12 +307,11 @@ class RTMSyncUtil: NSObject {
                                                         value: value,
                                                         min: min,
                                                         max: max,
-                                                        filter: nil,
                                                         callback: callback)
     }
     
-    class func removeMetaData(id: String, key: String, filter: [[String: Any]]?, callback: ((NSError?) -> Void)?) {
-        collection(id: id, key: key)?.removeMetaData(valueCmd: nil, filter: filter, callback: callback)
+    class func removeMetaData(id: String, key: String, callback: ((NSError?) -> Void)?) {
+        collection(id: id, key: key)?.removeMetaData(valueCmd: nil, callback: callback)
     }
     
     class func cleanMetaData(id: String, key: String, callback: ((NSError?) -> Void)?) {
@@ -322,65 +324,5 @@ class RTMSyncUtil: NSObject {
             syncManager?.rtmManager.publish(channelName: channelName, message: message, completion: { _ in
             })
         }
-    }
-    
-    class func subscribeMessageDidReceive(id: String,
-                                          key: String,
-                                          changeClosure: ((String, String) -> Void)?) {
-        rtmDeleagete.onReceiveMessageClosure = changeClosure
-    }
-}
-
-class RTMDelegate: NSObject, AUIRtmMessageProxyDelegate {
-    var onReceiveMessageClosure: ((String, String) -> Void)?
-    func onMessageReceive(publisher: String, channelName: String, message: String) {
-        onReceiveMessageClosure?(message, channelName)
-    }
-}
-
-class RTMSyncUtilRoomDeleage: NSObject, AUISceneRespDelegate {
-    var roomDestoryClosure: ((String) -> Void)?
-    func onSceneDestroy(roomId: String) {
-        print("房间销毁 == \(roomId)")
-        roomDestoryClosure?(roomId)
-        RTMSyncUtil.leaveScene(id: roomId, ownerId: VLUserCenter.user.id)
-    }
-}
-
-class RTMSyncUtilUserDelegate: NSObject, AUIUserRespDelegate {
-    var onUserListCallback: ((_ roomId: String, _ userList: [AUIUserInfo]) -> Void)?
-    var onUserEnterCallback: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?
-    var onUserLeaveCallback: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?
-    var onUserUpdateCallback: ((_ roomId: String, _ userInfo: AUIUserInfo) -> Void)?
-    var onUserKickedCallback: ((_ roomId: String, _ userId: String) -> Void)?
-    var onUserAudioMuteCallback: ((_ userId: String, _ mute: Bool) -> Void)?
-    var onUserVideoMuteCallback: ((_ userId: String, _ mute: Bool) -> Void)?
-    
-    func onRoomUserSnapshot(roomId: String, userList: [RTMSyncManager.AUIUserInfo]) {
-        onUserListCallback?(roomId, userList)
-    }
-    
-    func onRoomUserEnter(roomId: String, userInfo: RTMSyncManager.AUIUserInfo) {
-        onUserEnterCallback?(roomId, userInfo)
-    }
-    
-    func onRoomUserLeave(roomId: String, userInfo: RTMSyncManager.AUIUserInfo) {
-        onUserLeaveCallback?(roomId, userInfo)
-    }
-    
-    func onRoomUserUpdate(roomId: String, userInfo: RTMSyncManager.AUIUserInfo) {
-        onUserUpdateCallback?(roomId, userInfo)
-    }
-    
-    func onUserAudioMute(userId: String, mute: Bool) {
-        onUserAudioMuteCallback?(userId, mute)
-    }
-    
-    func onUserVideoMute(userId: String, mute: Bool) {
-        onUserVideoMuteCallback?(userId, mute)
-    }
-    
-    func onUserBeKicked(roomId: String, userId: String) {
-        onUserKickedCallback?(roomId, userId)
     }
 }

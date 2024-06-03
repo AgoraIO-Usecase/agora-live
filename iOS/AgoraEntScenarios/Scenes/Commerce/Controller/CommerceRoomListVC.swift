@@ -43,7 +43,13 @@ class CommerceRoomListVC: UIViewController {
         }
     }
     
-    private lazy var naviBar = CommerceNavigationBar()
+    private lazy var naviBar:CommerceNavigationBar = {
+        let bar = CommerceNavigationBar()
+        bar.didCloseClosure = {
+            RTMSyncUtil.destroy()
+        }
+        return bar
+    }()
     
     private var needUpdateAudiencePresetType = false
     private var isHasToken: Bool = true
@@ -51,13 +57,14 @@ class CommerceRoomListVC: UIViewController {
     deinit {
         AppContext.unloadCommerceServiceImp()
         CommerceAgoraKitManager.shared.destoryEngine()
-        commerceLogger.info("deinit-- CommerceRoomListVC")
+        commercePrintLog("deinit-- CommerceRoomListVC")
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        AppContext.shared.sceneLocalizeBundleName = "CommerceResource"
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         hidesBottomBarWhenPushed = true
-        commerceLogger.info("init-- CommerceRoomListVC")
+        commercePrintLog("init-- CommerceRoomListVC")
     }
     
     required init?(coder: NSCoder) {
@@ -85,6 +92,9 @@ class CommerceRoomListVC: UIViewController {
     }
     
     @objc private func didClickCreateButton(){
+        if AppContext.shared.commerceRtcToken == nil {
+            preGenerateToken()
+        }
         let preVC = CommerceCreateLiveVC()
         let preNC = UINavigationController(rootViewController: preVC)
         preNC.navigationBar.setBackgroundImage(UIImage(), for: .default)
@@ -115,7 +125,7 @@ class CommerceRoomListVC: UIViewController {
         
         if room.ownerId == VLUserCenter.user.id {
             ToastView.show(text: "show_join_own_room_error".commerce_localized)
-            RTMSyncUtil.leaveScene(id: room.roomId, ownerId: room.ownerId)
+            RTMSyncUtil.leaveScene(roomId: room.roomId)
             fetchRoomList()
         } else {
             let vc = CommerceLivePagesViewController()
@@ -147,7 +157,7 @@ class CommerceRoomListVC: UIViewController {
         AppContext.commerceServiceImp("")?.getRoomList(page: 1) { [weak self] error, roomList in
             self?.refreshControl.endRefreshing()
             guard let self = self else { return }
-            if let error = error {
+            if let _ = error {
                 return
             }
             let list = roomList ?? []
@@ -159,18 +169,10 @@ class CommerceRoomListVC: UIViewController {
     }
 
     private func preGenerateToken() {
-        AppContext.shared.rtcToken = nil
-        NetworkManager.shared.generateToken(
-            channelName: "",
-            uid: "\(UserInfo.userId)",
-            tokenType: .token007,
-            type: .rtc,
-            expire: 24 * 60 * 60
-        ) {[weak self] token in
-            guard let self = self, let rtcToken = token, rtcToken.count > 0 else {
-                return
-            }
-            AppContext.shared.rtcToken = rtcToken
+        CommerceAgoraKitManager.shared.preGenerateToken { [weak self] in
+            guard let self = self,
+                  let _ = AppContext.shared.commerceRtcToken,
+                  let _ = AppContext.shared.commerceRtmToken else { return }
             self.delegateHandler.preLoadVisibleItems(scrollView: self.collectionView)
         }
     }
@@ -191,11 +193,11 @@ extension CommerceRoomListVC: UICollectionViewDataSource, UICollectionViewDelega
                        id: room.roomId,
                        count: room.roomUserCount)
         cell.ag_addPreloadTap(roomInfo: room, localUid: delegateHandler.localUid) {[weak self] state in
-            if AppContext.shared.rtcToken?.count ?? 0 == 0 {
+            if AppContext.shared.commerceRtcToken?.count ?? 0 == 0 {
                 if state == .began {
                     self?.preGenerateToken()
                 } else if state == .ended {
-                    ToastView.show(text: "Token is not exit, try again!")
+                    ToastView.show(text: "show_token_is_empty".commerce_localized)
                 }
                 return false
             }

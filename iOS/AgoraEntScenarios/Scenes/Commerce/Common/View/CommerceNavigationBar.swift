@@ -16,7 +16,7 @@ struct CommerceBarButtonItem {
 
 
 class CommerceNavigationBar: UIView {
-    
+    var didCloseClosure: (()->())?
     var title: String? {
         didSet {
             titleLabel.text = title
@@ -79,7 +79,8 @@ class CommerceNavigationBar: UIView {
 extension CommerceNavigationBar {
     
     @objc private func didClickLeftButtonAction(){
-        RTMSyncUtil.logOut()
+        commercePrintLog("didClickLeftButtonAction")
+        self.didCloseClosure?()
         currentNavigationController()?.popViewController(animated: true)
     }
     

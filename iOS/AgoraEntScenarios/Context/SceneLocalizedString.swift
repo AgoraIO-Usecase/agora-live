@@ -41,11 +41,11 @@ func sceneLocalized(_ string: String, bundleName: String? = nil) -> String {
     }
 
     var lang = language
-    if lang.contains("zh") {
-        lang = "zh-Hans"
-    } else {
+//    if lang.contains("zh") {
+//        lang = "zh-Hans"
+//    } else {
         lang = "en"
-    }
+//    }
 
     guard let path = bundle.path(forResource: lang, ofType: "lproj"),
           let langBundle = Bundle(path: path)
