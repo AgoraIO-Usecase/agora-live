@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    tools:background="@drawable/show_alert_dialog_bg"
+    tools:background="@drawable/commerce_alert_dialog_bg"
     android:gravity="center"
     android:orientation="vertical"
     android:paddingHorizontal="80dp"
