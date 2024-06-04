@@ -31,6 +31,9 @@ object KtvCenter {
 
     private const val TAG = "KtvCenter"
 
+    // 显示在线用户需要多加
+    const val userAddMore: Int = 1
+
     /**
      * Renew rtm token
      *

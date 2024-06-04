@@ -114,14 +114,12 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
     // 已选歌单
     val chosenSongListLiveData = MutableLiveData<List<ChosenSongInfo>?>()
 
-    val playingSongInfo: ChosenSongInfo? get() = chosenSongListLiveData.value?.firstOrNull()
-
     // 合唱列表
-    val choristerList = mutableListOf<RoomChoristerInfo>()
+    private val chorusInfoList = mutableListOf<RoomChoristerInfo>()
 
     // 获取合唱用户
     fun getSongChorusInfo(userId: String, songCode: String): RoomChoristerInfo? {
-        return choristerList.firstOrNull { it.userId == userId && it.chorusSongNo == songCode }
+        return chorusInfoList.firstOrNull { it.userId == userId && it.chorusSongNo == songCode }
     }
 
     // 音量
@@ -299,12 +297,11 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
         }
 
         override fun onChoristerDidEnter(chorister: RoomChoristerInfo) {
-            val index = choristerList.indexOfFirst { it.userId == chorister.userId }
-            if (index >= 0) {
-                choristerList[index] = chorister
-            }else{
-                choristerList.add(chorister)
-            }
+            val lastChorusNum = chorusInfoList.size
+            chorusInfoList.removeIf { it.userId == chorister.userId }
+            chorusInfoList.add(chorister)
+            soloSingerJoinChorusMode(lastChorusNum)
+
             val originSeat = seatListLiveData.value?.firstOrNull { it.owner?.userId == chorister.userId }
             if (originSeat != null) {
                 onUserSeatUpdate(originSeat)
@@ -316,10 +313,10 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
         }
 
         override fun onChoristerDidLeave(chorister: RoomChoristerInfo) {
-            val index = choristerList.indexOfFirst { it.userId == chorister.userId }
-            if (index >= 0) {
-                choristerList.removeAt(index)
-            }
+            val lastChorusNum = chorusInfoList.size
+            chorusInfoList.removeIf { it.userId == chorister.userId }
+            soloSingerJoinChorusMode(lastChorusNum)
+
             val originSeat = seatListLiveData.value?.firstOrNull { it.owner?.userId == chorister.userId }
             if (originSeat != null) {
                 onUserSeatUpdate(originSeat)
@@ -1426,9 +1423,9 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 }
                 if (isOwnSong) {
                     // 需要判断此时是否有合唱者，如果有需要切换成LeaderSinger身份
-                    if (choristerList.size == 0) {
+                    if (chorusInfoList.size == 0) {
                         ktvApiProtocol.switchSingerRole(KTVSingRole.SoloSinger, null)
-                    } else if (choristerList.size > 0) {
+                    } else if (chorusInfoList.size > 0) {
                         ktvApiProtocol.switchSingerRole(KTVSingRole.LeadSinger, null)
                     }
                     ktvApiProtocol.startSing(songCode, 0)
@@ -1464,6 +1461,17 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 }
             }
         })
+    }
+
+    private fun soloSingerJoinChorusMode(lastChorusNum: Int) {
+        if (songPlayingLiveData.getValue() == null || seatListLiveData.getValue() == null) return
+        if (songPlayingLiveData.value?.owner?.userId == KtvCenter.mUser.id.toString()) {
+            if (lastChorusNum == 0 && chorusInfoList.size > 0) { // 有人加入合唱
+                ktvApiProtocol.switchSingerRole(KTVSingRole.LeadSinger, null)
+            } else if (lastChorusNum > 0 && chorusInfoList.size == 0) { // 最后一人退出合唱
+                ktvApiProtocol.switchSingerRole(KTVSingRole.SoloSinger, null)
+            }
+        }
     }
 
     /**
