@@ -37,7 +37,7 @@
     <string name="voice_room_tab_layout_count">(%1$s)</string>
     <string name="voice_room_online_count">%d Online</string>
     <string name="voice_room_click_count">%d Watching</string>
-    <string name="voice_room_mic_number">seat %d</string>
+    <string name="voice_room_mic_number">%d</string>
     <string name="voice_room_profile_update_name_fail">Failed to update</string>
     <string name="voice_room_profile_update_name_suc">Successfully updated</string>
     <string name="voice_empty_invite_hands">No audience yet</string>
@@ -47,6 +47,7 @@
     <string name="voice_room_kick_member">Kicked out of the room</string>
     <string name="voice_member_count_action_kick">Kick Out</string>
     <string name="voice_room_welcome">Welcome to Agora Voice Chat Room! Pornography, gambling, or violence is strictly prohibited in the room.</string>
+    <string name="voice_ear_settings">IER Settings</string>
     <!-- gift -->
     <string name="voice_gift_default_name_1">Sweetheart</string>
     <string name="voice_gift_default_name_2">Flower</string>
@@ -199,8 +200,8 @@
     <string name="voice_chatroom_medium">Medium</string>
     <string name="voice_chatroom_off">Off</string>
     <string name="voice_chatroom_on">On</string>
-    <string name="voice_chatroom_ains">With AINS</string>
-    <string name="voice_chatroom_none">Without AINS</string>
+    <string name="voice_chatroom_ains">AINS</string>
+    <string name="voice_chatroom_none">Off</string>
     <string name="voice_chatroom_agora_ains">Learn about AI Noise Suppression</string>
     <string name="voice_chatroom_ains_introduce">AINS: AI Noise Suppression</string>
     <string name="voice_chatroom_agora_ains_supports_sounds">Supported noise types by Agora AI Noise Suppression. Click to listen the samples:</string>
