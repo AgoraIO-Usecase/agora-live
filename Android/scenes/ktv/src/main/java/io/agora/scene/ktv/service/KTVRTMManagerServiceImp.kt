@@ -252,7 +252,7 @@ class KTVSyncManagerServiceImp constructor(
                             rsetfulDiffTs = System.currentTimeMillis() - serverTs
                             KTVLogger.d(TAG, "getRoomList ts:$serverTs")
                         }
-                        val newRoomList = roomList?.sortedBy { it.createTime } ?: emptyList()
+                        val newRoomList = roomList?.sortedBy { -it.createTime } ?: emptyList()
                         KTVLogger.d(TAG, "getRoomList success, roomCount:${newRoomList.size}")
                         runOnMainThread { completion.invoke(null, newRoomList) }
                     } else {
