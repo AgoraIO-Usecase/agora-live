@@ -28,7 +28,6 @@ import io.agora.scene.base.GlideApp
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.component.OnButtonClickListener
-import io.agora.scene.base.utils.LiveDataUtils
 import io.agora.scene.ktv.KTVLogger.d
 import io.agora.scene.ktv.KtvCenter
 import io.agora.scene.ktv.R
@@ -222,11 +221,6 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                     super.onChangeMusicClick()
                     showChangeMusicDialog()
                 }
-
-                override fun onVocalHighlightClick() {
-                    super.onVocalHighlightClick()
-                    //showVoiceHighlightDialog();
-                }
             }
         binding.lrcControlView.setOnLrcClickListener(lrcActionListenerImpl)
         binding.cbVideo.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
@@ -338,11 +332,6 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                 return@observe
             }
             onMusicChanged(model)
-            if (roomLivingViewModel.isRoomOwner) {
-                binding.lrcControlView.showHighLightButton(false)
-                binding.lrcControlView.setHighLightPersonHeadUrl("")
-            }
-            roomLivingViewModel.mMusicSetting?.mHighLighterUid = ""
         }
         roomLivingViewModel.scoringAlgoControlLiveData.observe(this) { model: ScoringAlgoControlModel? ->
             model ?: return@observe
@@ -396,38 +385,39 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         roomLivingViewModel.playerMusicOpenDurationLiveData.observe(this) { duration: Long ->
             binding.lrcControlView.lyricsView.setDuration(duration)
         }
-        roomLivingViewModel.playerMusicPlayCompleteLiveData.observe(this) { (isLocal, score1): ScoringAverageModel ->
-            if (isLocal) {
-                val sc = binding.lrcControlView.cumulativeScoreInPercentage
-                binding.tvResultScore.text = sc.toString()
-                if (sc >= 90) {
-                    binding.ivResultLevel.setImageResource(R.mipmap.ic_s)
-                } else if (sc >= 80) {
-                    binding.ivResultLevel.setImageResource(R.mipmap.ic_a)
-                } else if (sc >= 70) {
-                    binding.ivResultLevel.setImageResource(R.mipmap.ic_b)
-                } else {
-                    binding.ivResultLevel.setImageResource(R.mipmap.ic_c)
-                }
-                binding.groupResult.visibility = View.VISIBLE
-                if (binding.lrcControlView.role == LrcControlView.Role.Singer) {
-                    roomLivingViewModel.syncSingingAverageScore(sc.toDouble())
-                }
-            } else {
-                if (binding.lrcControlView.role != LrcControlView.Role.Listener) return@observe
-                binding.tvResultScore.text = score1.toString()
-                if (score1 >= 90) {
-                    binding.ivResultLevel.setImageResource(R.mipmap.ic_s)
-                } else if (score1 >= 80) {
-                    binding.ivResultLevel.setImageResource(R.mipmap.ic_a)
-                } else if (score1 >= 70) {
-                    binding.ivResultLevel.setImageResource(R.mipmap.ic_b)
-                } else {
-                    binding.ivResultLevel.setImageResource(R.mipmap.ic_c)
-                }
-                binding.groupResult.visibility = View.VISIBLE
-            }
-        }
+        // TODO: hide score
+//        roomLivingViewModel.playerMusicPlayCompleteLiveData.observe(this) { (isLocal, score1): ScoringAverageModel ->
+//            if (isLocal) {
+//                val sc = binding.lrcControlView.cumulativeScoreInPercentage
+//                binding.tvResultScore.text = sc.toString()
+//                if (sc >= 90) {
+//                    binding.ivResultLevel.setImageResource(R.mipmap.ic_s)
+//                } else if (sc >= 80) {
+//                    binding.ivResultLevel.setImageResource(R.mipmap.ic_a)
+//                } else if (sc >= 70) {
+//                    binding.ivResultLevel.setImageResource(R.mipmap.ic_b)
+//                } else {
+//                    binding.ivResultLevel.setImageResource(R.mipmap.ic_c)
+//                }
+//                binding.groupResult.visibility = View.VISIBLE
+//                if (binding.lrcControlView.role == LrcControlView.Role.Singer) {
+//                    roomLivingViewModel.syncSingingAverageScore(sc.toDouble())
+//                }
+//            } else {
+//                if (binding.lrcControlView.role != LrcControlView.Role.Listener) return@observe
+//                binding.tvResultScore.text = score1.toString()
+//                if (score1 >= 90) {
+//                    binding.ivResultLevel.setImageResource(R.mipmap.ic_s)
+//                } else if (score1 >= 80) {
+//                    binding.ivResultLevel.setImageResource(R.mipmap.ic_a)
+//                } else if (score1 >= 70) {
+//                    binding.ivResultLevel.setImageResource(R.mipmap.ic_b)
+//                } else {
+//                    binding.ivResultLevel.setImageResource(R.mipmap.ic_c)
+//                }
+//                binding.groupResult.visibility = View.VISIBLE
+//            }
+//        }
         roomLivingViewModel.networkStatusLiveData.observe(this) { netWorkStatus: NetWorkEvent ->
             setNetWorkStatus(netWorkStatus.txQuality, netWorkStatus.rxQuality)
         }
@@ -552,28 +542,6 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         mRoomSpeakerAdapter?.notifyDataSetChanged()
     }
 
-    private fun filterSongTypeMap(typeMap: LinkedHashMap<Int, String>): LinkedHashMap<Int, String> {
-        // 0 -> "项目热歌榜单"
-        // 1 -> "声网热歌榜"
-        // 2 -> "新歌榜" ("热门新歌")
-        // 3 -> "嗨唱推荐"
-        // 4 -> "抖音热歌"
-        // 5 -> "古风热歌"
-        // 6 -> "KTV必唱"
-        val ret = LinkedHashMap<Int, String>()
-        for (entry in typeMap.entries) {
-            val key = entry.key
-            var value = entry.value
-            if (key == 2) {
-                value = getString(R.string.ktv_song_rank_7)
-                ret[key] = value
-            } else if (key == 3 || key == 4 || key == 6) {
-                ret[key] = value
-            }
-        }
-        return ret
-    }
-
     private var showChooseSongDialogTag = false
     private fun showChooseSongDialog() {
         if (showChooseSongDialogTag) {
@@ -584,22 +552,13 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             mChooseSongDialog = SongDialog()
             mChooseSongDialog?.setChosenControllable(roomLivingViewModel.isRoomOwner)
             showLoadingView()
-            LiveDataUtils.observerThenRemove(this, roomLivingViewModel.getSongTypes()) { typeMap ->
-                val chooseSongListener =
-                    SongActionListenerImpl(this, roomLivingViewModel, filterSongTypeMap(typeMap), false)
-                mChooseSongDialog?.setChooseSongTabsTitle(
-                    chooseSongListener.getSongTypeTitles(this),
-                    chooseSongListener.getSongTypeList(),
-                    0
-                )
-                mChooseSongDialog?.setChooseSongListener(chooseSongListener)
-                hideLoadingView()
-                if (mChooseSongDialog?.isAdded == false) {
-                    roomLivingViewModel.getSongChosenList()
-                    mChooseSongDialog?.show(supportFragmentManager, "ChooseSongDialog")
-                }
-                binding.getRoot().post { showChooseSongDialogTag = false }
+            mChooseSongDialog?.setChooseSongListener(SongActionListenerImpl(this, roomLivingViewModel, false))
+            hideLoadingView()
+            if (mChooseSongDialog?.isAdded == false) {
+                roomLivingViewModel.getSongChosenList()
+                mChooseSongDialog?.show(supportFragmentManager, "ChooseSongDialog")
             }
+            binding.getRoot().post { showChooseSongDialogTag = false }
             return
         }
         if (mChooseSongDialog?.isAdded == false) {
@@ -738,6 +697,13 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
 
         val oldLocalCurrentSeat: RoomMicSeatInfo? get() = mDataList.firstOrNull { it.owner?.userId == KtvCenter.mUser.id.toString() }
 
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+        ): ViewHolder {
+            return  ViewHolder(KtvItemRoomSpeakerBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        }
+
         override fun onBindViewHolder(holder: BindingViewHolder<KtvItemRoomSpeakerBinding>, position: Int) {
             val seatInfo = getItem(position) ?: return
             val isIdleSeat = seatInfo.owner?.userId.isNullOrEmpty()
@@ -833,5 +799,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                 }
             }
         }
+
+        inner class ViewHolder constructor(val binding: KtvItemRoomSpeakerBinding) : BindingViewHolder<KtvItemRoomSpeakerBinding>(binding)
     }
 }

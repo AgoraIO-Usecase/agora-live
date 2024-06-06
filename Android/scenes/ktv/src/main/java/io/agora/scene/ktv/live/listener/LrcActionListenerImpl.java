@@ -73,8 +73,9 @@ public class LrcActionListenerImpl implements LrcControlView.OnKaraokeEventListe
 
     @Override
     public void onLineFinished(LyricsLineModel line, int score, int cumulativeScore, int index, int total) {
-        mLrcControlView.updateScore(score, cumulativeScore, /** Workaround(Hai_Guo)*/total * 100);
-        mViewModel.syncSingleLineScore(score, cumulativeScore, index, total * 100);
+        // TODO: hide score
+//        mLrcControlView.updateScore(score, cumulativeScore, /** Workaround(Hai_Guo)*/total * 100);
+//        mViewModel.syncSingleLineScore(score, cumulativeScore, index, total * 100);
     }
 
     @Override

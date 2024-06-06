@@ -27,7 +27,6 @@ import io.agora.scene.ktv.live.bean.MusicSettingBean
 import io.agora.scene.ktv.live.bean.ScoringDifficultyMode
 import io.agora.scene.ktv.live.bean.SoundCardSettingBean
 import io.agora.scene.ktv.service.ChosenSongInfo
-import io.agora.scene.widget.toast.CustomToast
 import io.agora.scene.base.utils.dp
 import io.agora.scene.widget.utils.doOnProgressChanged
 
@@ -74,44 +73,8 @@ class MusicSettingDialog constructor(
         }
     }
 
-    //防止多次回调
-    private var lastKeyBoard = false
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        dialog?.window?.let { window ->
-            // 获取根布局可见区域的高度
-            val initialWindowHeight = Rect().apply { window.decorView.getWindowVisibleDisplayFrame(this) }.height()
-            view.viewTreeObserver.addOnGlobalLayoutListener {
-                val tempWindow = dialog?.window ?: return@addOnGlobalLayoutListener
-                val currentWindowHeight =
-                    Rect().apply { tempWindow.decorView.getWindowVisibleDisplayFrame(this) }.height()
-                // 判断键盘高度来确定键盘的显示状态
-                if (currentWindowHeight < initialWindowHeight) {
-                    if (lastKeyBoard) return@addOnGlobalLayoutListener
-                    lastKeyBoard = true
-                    val length = mBinding.AIAECInput.text?.length ?: 0
-                    mBinding.AIAECInput.setSelection(length)
-
-                    // 软键盘可见
-                    Log.d("zhangw", "current: $currentWindowHeight, initial: $initialWindowHeight, show: true")
-                } else {
-                    if (!lastKeyBoard) return@addOnGlobalLayoutListener
-                    lastKeyBoard = false
-                    // 软键盘已收起
-                    Log.d("zhangw", "current: $currentWindowHeight, initial: $initialWindowHeight, show: false")
-                    mBinding.AIAECInput.clearFocus()
-                    val AIAECStrength = mBinding.AIAECInput.text.toString().toIntOrNull() ?: 0
-                    if (IntRange(0, 4).contains(AIAECStrength)) {
-                        mSetting.mAIAECStrength = AIAECStrength
-                    } else {
-                        mBinding.AIAECInput.setText(mSetting.mAIAECStrength.toString())
-                        CustomToast.show(R.string.ktv_AIAEC_input_hint)
-                    }
-                }
-            }
-        }
-
         mBinding.ivBackIcon.setOnClickListener { view -> (requireActivity() as RoomLivingActivity).closeMusicSettingsDialog() }
         // 耳返
         if (mSetting.mEarBackEnable) {
@@ -223,7 +186,7 @@ class MusicSettingDialog constructor(
         // 降低背景噪音
         when (mSetting.mAinsMode) {
             AINSMode.Medium -> mBinding.rgAINSMode.check(R.id.tvAINSMiddle)
-            AINSMode.High -> mBinding.rgAINSMode.check(R.id.tvAINSMiddle)
+            AINSMode.High -> mBinding.rgAINSMode.check(R.id.tvAINSHigh)
             else -> mBinding.rgAINSMode.check(R.id.tvAINSClose)
         }
         mBinding.rgAINSMode.setOnCheckedChangeListener { group, checkedId ->
@@ -256,19 +219,21 @@ class MusicSettingDialog constructor(
 
         // AIAEC 开关
         mBinding.cbAIAECSwitcher.setOnCheckedChangeListener { buttonView, isChecked ->
-            mBinding.groupAIAECStrength.isVisible = isChecked
+            mBinding.layoutAIACStrength.isVisible = isChecked
             mSetting.mAIAECEnable = isChecked
         }
         mBinding.cbAIAECSwitcher.isChecked = mSetting.mAIAECEnable
+        mBinding.layoutAIACStrength.isVisible = mSetting.mAIAECEnable
 
-        // AIAEC 强度输入 0～4
-        mBinding.AIAECInput.setOnTouchListener { v, event ->
-            mBinding.AIAECInput.requestFocus()
-            showKeyboard(mBinding.AIAECInput)
-            true
+        // AIAEC
+        mBinding.sbAIAEStrength.progress = mSetting.mAIAECStrength
+        mBinding.btAIAECDown.setOnClickListener { v -> tuningAIAECStrength(false) }
+        mBinding.btAIAECUp.setOnClickListener { v -> tuningAIAECStrength(true) }
+        mBinding.sbAIAEStrength.doOnProgressChanged { seekBar, progress, fromUser ->
+            if (fromUser) {
+                mSetting.mRemoteVolume = progress
+            }
         }
-        mBinding.groupAIAECStrength.isVisible = mSetting.mAIAECEnable
-        mBinding.AIAECInput.setText(mSetting.mAIAECStrength.toString())
     }
 
     private fun enableDisableView(viewGroup: ViewGroup, enable: Boolean) {
@@ -354,6 +319,20 @@ class MusicSettingDialog constructor(
         if (newRemoteVolume < 0) newRemoteVolume = 0
         this.mSetting.mRemoteVolume = newRemoteVolume
         mBinding.sbRemoteVol.progress = newRemoteVolume
+    }
+
+    // AIAEC 强度
+    private fun tuningAIAECStrength(strengthUp: Boolean) {
+        var newAIAECStrength: Int = this.mSetting.mAIAECStrength
+        if (strengthUp) {
+            newAIAECStrength += 1
+        } else {
+            newAIAECStrength -= 1
+        }
+        if (newAIAECStrength > 4) newAIAECStrength = 4
+        if (newAIAECStrength < 0) newAIAECStrength = 0
+        this.mSetting.mAIAECStrength = newAIAECStrength
+        mBinding.sbAIAEStrength.progress = newAIAECStrength
     }
 
     // 音效

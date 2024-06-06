@@ -110,6 +110,8 @@ data class ChooseSongInputModel constructor(
     val songNo: String,
     val singer: String,
     val imageUrl: String,
+    val musicUrl: String,
+    val lyricUrl: String
 )
 
 /**
@@ -131,6 +133,8 @@ data class ChosenSongInfo constructor(
     val songNo: String, // 歌词唯一标识
     val singer: String, // 演唱者
     val imageUrl: String,// 歌曲封面
+    val musicUrl: String,// 歌曲地址
+    val lyricUrl: String,// 歌词地址
 
     var owner: AUIUserThumbnailInfo? = null, // 点歌人
 

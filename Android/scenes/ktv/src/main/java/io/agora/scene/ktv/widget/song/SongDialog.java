@@ -12,10 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+
 import java.util.List;
 
 import io.agora.scene.base.component.BaseBottomSheetDialogFragment;
-import io.agora.scene.base.utils.ToastUtils;
 import io.agora.scene.ktv.R;
 import io.agora.scene.ktv.databinding.KtvDialogChooseSongBinding;
 import io.agora.scene.ktv.live.listener.SongActionListenerImpl;
@@ -43,8 +44,13 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
         mBinding.pager.getChildAt(0).setOverScrollMode(View.OVER_SCROLL_NEVER);
 
         songChooseFragment.setListener(new SongChooseFragment.Listener() {
+
             @Override
-            public void onSongItemChosen(@NonNull SongItem songItem) {
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+            }
+
+            @Override
+            public void onClickSongItem(@NonNull SongItem songItem) {
                 if (UiUtils.isFastClick(500)) {
                     return;
                 }
@@ -54,23 +60,9 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
             }
 
             @Override
-            public void onSongsSearching(String condition) {
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 if (chooseSongListener != null) {
-                    chooseSongListener.onChooseSongSearching(SongDialog.this, condition);
-                }
-            }
-
-            @Override
-            public void onSongsRefreshing(int tagIndex) {
-                if (chooseSongListener != null) {
-                    chooseSongListener.onChooseSongRefreshing(SongDialog.this, tagIndex);
-                }
-            }
-
-            @Override
-            public void onSongsLoadMore(int tagIndex) {
-                if (chooseSongListener != null) {
-                    chooseSongListener.onChooseSongLoadMore(SongDialog.this, tagIndex);
+                    chooseSongListener.onChooseSongRefreshing(SongDialog.this);
                 }
             }
         });
@@ -137,28 +129,8 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
      */
     public void setChooseSongListener(SongActionListenerImpl chooseSongListener) {
         this.chooseSongListener = chooseSongListener;
-        chooseSongListener.getSongTypeList();
     }
 
-    /**
-     * 点歌-获取当前选中tab位置
-     *
-     * @return the int
-     */
-    public int getChooseCurrentTabIndex(){
-        return songChooseFragment.getCurrentTabIndex();
-    }
-
-    /**
-     * 点歌-标题设置
-     *
-     * @param titles       the titles
-     * @param types        the types
-     * @param defaultIndex the default index
-     */
-    public void setChooseSongTabsTitle(List<String> titles, List<Integer> types, int defaultIndex) {
-        songChooseFragment.setSongTagsTitle(titles, types, defaultIndex);
-    }
 
     /**
      * 点歌-更新item选中状态
@@ -171,33 +143,12 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
     }
 
     /**
-     * 点歌-更新搜索列表
-     *
-     * @param list the list
-     */
-    public void setChooseSearchResult(List<SongItem> list) {
-        songChooseFragment.setSearchResult(list);
-    }
-
-    /**
      * 点歌-下拉刷新重置列表
      *
      * @param list  the list
-     * @param index the index
      */
-    public void setChooseRefreshingResult(List<SongItem> list,int index) {
-        songChooseFragment.setRefreshingResult(list, index);
-    }
-
-    /**
-     * 点歌-加载更多刷新列表
-     *
-     * @param list    the list
-     * @param hasMore the has more
-     * @param index   the index
-     */
-    public void setChooseLoadMoreResult(List<SongItem> list, boolean hasMore, int index) {
-        songChooseFragment.setLoadMoreResult(list, hasMore, index);
+    public void setChooseRefreshingResult(List<SongItem> list) {
+        songChooseFragment.setRefreshingResult(list);
     }
 
     /**

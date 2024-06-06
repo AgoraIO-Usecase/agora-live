@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -41,7 +40,6 @@ class MicSeatWaveView : ConstraintLayout {
      */
     fun startWave() {
         if (!animatorSet.isRunning) {
-            Log.d("micWaveLog", "volume start")
             animatorSet.start()
         }
     }
@@ -52,7 +50,6 @@ class MicSeatWaveView : ConstraintLayout {
      */
     fun endWave() {
         if (animatorSet.isRunning) {
-            Log.d("micWaveLog", "volume end")
             animatorSet.end()
         }
     }

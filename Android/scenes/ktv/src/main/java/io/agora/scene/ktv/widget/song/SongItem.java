@@ -7,7 +7,6 @@ public class SongItem {
     /**
      * The Song no.
      */
-// 歌曲信息
     public String songNo;// 歌曲的唯一标识
     /**
      * The Song name.
@@ -36,37 +35,33 @@ public class SongItem {
      */
     public boolean isChosen; // 是否已被点
 
-    /**
-     * Instantiates a new Song item.
-     *
-     * @param songNo    the song no
-     * @param songName  the song name
-     * @param imageUrl  the image url
-     * @param singer    the singer
-     * @param chooserId the chooser id
-     */
-    public SongItem(String songNo, String songName, String imageUrl, String singer, String chooserId) {
-        this(songNo, songName, imageUrl, singer, "", false, chooserId);
-    }
+    public String musicUrl; // 歌曲的url
+    public String lyricUrl; // 歌词的url
+
+    public Boolean loading = false; //
 
     /**
-     * Instantiates a new Song item.
-     *
-     * @param songNo    the song no
-     * @param songName  the song name
-     * @param imageUrl  the image url
-     * @param singer    the singer
-     * @param chooser   the chooser
-     * @param isChosen  the is chosen
-     * @param chooserId the chooser id
+     * @param songNo
+     * @param songName
+     * @param imageUrl
+     * @param singer
+     * @param musicUrl
+     * @param lyricUrl
+     * @param chooser
+     * @param isChosen
+     * @param chooserId
      */
     public SongItem(String songNo, String songName,
                     String imageUrl, String singer,
-                    String chooser, boolean isChosen, String chooserId) {
+                    String musicUrl, String lyricUrl,
+                    String chooser, boolean isChosen,
+                    String chooserId) {
         this.songNo = songNo;
         this.songName = songName;
         this.imageUrl = imageUrl;
         this.singer = singer;
+        this.musicUrl = musicUrl;
+        this.lyricUrl = lyricUrl;
         this.chooser = chooser;
         this.isChosen = isChosen;
         this.chooserId = chooserId;
@@ -92,8 +87,8 @@ public class SongItem {
      * @param clazz the clazz
      * @return the t
      */
-    public <T> T getTag(Class<T> clazz){
-        if(!clazz.isInstance(tag)){
+    public <T> T getTag(Class<T> clazz) {
+        if (!clazz.isInstance(tag)) {
             return null;
         }
         return (T) tag;

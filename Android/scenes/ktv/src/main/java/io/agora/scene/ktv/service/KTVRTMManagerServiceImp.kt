@@ -28,6 +28,8 @@ import io.agora.scene.base.ServerConfig
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.ktv.KTVLogger
 import io.agora.scene.ktv.KtvCenter
+import io.agora.scene.ktv.service.api.KTVHttpManager
+import io.agora.scene.ktv.service.api.KtvApiManager
 import kotlin.random.Random
 
 /**
@@ -41,7 +43,7 @@ class KTVSyncManagerServiceImp constructor(
     private val mContext: Context, private val mErrorHandler: ((Exception?) -> Unit)?
 ) : KTVServiceProtocol, ISceneResponse, IAUIUserService.AUIUserRespObserver {
     private val TAG = "KTV_Service_LOG"
-    private val kSceneId = "scene_ktv_5.0.0"
+    private val kSceneId = "scene_ktv_1.3.0"
     private val kCollectionSeatInfo = "seat_info" // map collection
     private val kCollectionChosenSong = "choose_song" // list collection
     private val kCollectionChorusInfo = "chorister_info" // list collection
@@ -143,6 +145,7 @@ class KTVSyncManagerServiceImp constructor(
     private val ROOM_AVAILABLE_DURATION: Long = 20 * 60 * 1000 // 20min
 
     init {
+        KTVHttpManager.setBaseURL(ServerConfig.toolBoxUrl)
         HttpManager.setBaseURL(ServerConfig.roomManagerUrl)
         AUILogger.initLogger(AUILogger.Config(mContext, "KTV"))
 
@@ -611,6 +614,8 @@ class KTVSyncManagerServiceImp constructor(
             songNo = inputModel.songNo,
             singer = inputModel.singer,
             imageUrl = inputModel.imageUrl,
+            musicUrl = inputModel.musicUrl,
+            lyricUrl = inputModel.lyricUrl,
             owner = mCurrentUser,
             status = PlayStatus.idle,
             createAt = getCurrentTs(mCurRoomNo)

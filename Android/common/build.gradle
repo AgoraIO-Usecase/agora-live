@@ -57,6 +57,7 @@ dependencies {
     api rootProject.ext.deps.okhttp_logger
     api rootProject.ext.deps.retrofit2
     api rootProject.ext.deps.retrofit2_adapter
+    api rootProject.ext.deps.retrofit2_cov
     api rootProject.ext.deps.gson
 
     implementation rootProject.ext.deps.logger

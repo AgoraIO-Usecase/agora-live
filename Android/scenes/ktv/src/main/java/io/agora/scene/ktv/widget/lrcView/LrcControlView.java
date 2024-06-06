@@ -206,10 +206,15 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
         mBinding.ilIDLE.getRoot().setVisibility(View.VISIBLE);
         mBinding.ilActive.getRoot().setVisibility(View.GONE);
 
+        // TODO: hide score
+        mBinding.ivCumulativeScoreGrade.setVisibility(View.GONE);
+        mBinding.tvCumulativeScore.setVisibility(View.GONE);
+        mBinding.gradeView.setVisibility(View.GONE);
+        mBinding.lineScore.setVisibility(View.GONE);
+        mBinding.comboView.getRoot().setVisibility(View.GONE);
+        mBinding.ilActive.scoringView.setVisibility(View.GONE);
+
         mKaraokeView = new KaraokeView(mBinding.ilActive.lyricsView, mBinding.ilActive.scoringView);
-
-        mBinding.ilActive.btnVocalHighlight.setVisibility(View.GONE);
-
         initListener();
     }
 
@@ -234,9 +239,6 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
         mBinding.ilActive.ivLeaveChorus.setOnClickListener(this);
         mBinding.ilActive.downloadLrcFailedBtn.setOnClickListener(this);
 
-        mBinding.ilActive.btnVocalHighlight.setOnClickListener(this);
-        mBinding.ilActive.btnVocalHighlight.bringToFront();
-
         mKaraokeView.setKaraokeEvent(new KaraokeEvent() {
             @Override
             public void onDragTo(KaraokeView view, long position) {
@@ -254,12 +256,13 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
 
             @Override
             public void onLineFinished(KaraokeView view, LyricsLineModel line, int score, int cumulativeScore, int index, int total) {
-                if (mRole == Role.Singer && mOnKaraokeActionListener != null) {
-                    mOnKaraokeActionListener.onLineFinished(line, score, cumulativeScore, index, total);
-                } else if (mRole == Role.CoSinger) {
-                    chorusScore += score;
-                    updateScore(score, chorusScore, /** Workaround(Hai_Guo)*/total * 100);
-                }
+                // TODO: hide score
+//                if (mRole == Role.Singer && mOnKaraokeActionListener != null) {
+//                    mOnKaraokeActionListener.onLineFinished(line, score, cumulativeScore, index, total);
+//                } else if (mRole == Role.CoSinger) {
+//                    chorusScore += score;
+//                    updateScore(score, chorusScore, /** Workaround(Hai_Guo)*/total * 100);
+//                }
             }
         });
     }
@@ -277,7 +280,8 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
      * On self joined chorus.
      */
     public void onSelfJoinedChorus() {
-        mBinding.tvCumulativeScore.setText(String.format(getResources().getString(R.string.ktv_score_formatter), "" + chorusScore));
+        // TODO: hide score
+//        mBinding.tvCumulativeScore.setText(String.format(getResources().getString(R.string.ktv_score_formatter), "" + chorusScore));
         this.mRole = Role.CoSinger;
         mBinding.ilActive.ivMusicStart.setVisibility(View.INVISIBLE);
         mBinding.ilActive.switchOriginal.setVisibility(View.VISIBLE);
@@ -307,7 +311,8 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
      * On self leaved chorus.
      */
     public void onSelfLeavedChorus() {
-        mBinding.tvCumulativeScore.setText(String.format(getResources().getString(R.string.ktv_score_formatter), "" + 0));
+        // TODO: hide score
+//        mBinding.tvCumulativeScore.setText(String.format(getResources().getString(R.string.ktv_score_formatter), "" + 0));
         this.mRole = Role.Listener;
         mBinding.ilActive.ivMusicStart.setVisibility(View.GONE);
         mBinding.ilActive.switchOriginal.setVisibility(View.INVISIBLE);
@@ -483,9 +488,10 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
 
         mBinding.tvMusicName.setText(mMusic.getSongName() + "-" + mMusic.getSinger());
 
-        mBinding.ivCumulativeScoreGrade.setVisibility(INVISIBLE);
-        mBinding.tvCumulativeScore.setText(String.format(getResources().getString(R.string.ktv_score_formatter), "0"));
-        mBinding.gradeView.setScore(0, 0, 0);
+        // TODO: hide score
+//        mBinding.ivCumulativeScoreGrade.setVisibility(INVISIBLE);
+//        mBinding.tvCumulativeScore.setText(String.format(getResources().getString(R.string.ktv_score_formatter), "0"));
+//        mBinding.gradeView.setScore(0, 0, 0);
     }
 
     /**
@@ -510,23 +516,24 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
      * @param perfectScore    the perfect score
      */
     public void updateScore(double score, double cumulativeScore, double perfectScore) {
-        mCumulativeScoreInPercentage = (int) ((cumulativeScore / perfectScore) * 100);
-
-        mBinding.gradeView.setScore((int) score, (int) cumulativeScore, (int) perfectScore);
-
-        mBinding.tvCumulativeScore.setText(String.format(getResources().getString(R.string.ktv_score_formatter), "" + (int) cumulativeScore));
-        int gradeDrawable = mBinding.gradeView.getCumulativeDrawable();
-        if (gradeDrawable == 0) {
-            mBinding.ivCumulativeScoreGrade.setVisibility(INVISIBLE);
-        } else {
-            mBinding.ivCumulativeScoreGrade.setImageResource(gradeDrawable);
-            mBinding.ivCumulativeScoreGrade.setVisibility(VISIBLE);
-        }
-
-        if (mComboControl == null) {
-            mComboControl = new ComboControl();
-        }
-        mComboControl.checkAndShowCombos(mBinding, (int) score, (int) cumulativeScore);
+        // TODO: hide score
+//        mCumulativeScoreInPercentage = (int) ((cumulativeScore / perfectScore) * 100);
+//
+//        mBinding.gradeView.setScore((int) score, (int) cumulativeScore, (int) perfectScore);
+//
+//        mBinding.tvCumulativeScore.setText(String.format(getResources().getString(R.string.ktv_score_formatter), "" + (int) cumulativeScore));
+//        int gradeDrawable = mBinding.gradeView.getCumulativeDrawable();
+//        if (gradeDrawable == 0) {
+//            mBinding.ivCumulativeScoreGrade.setVisibility(INVISIBLE);
+//        } else {
+//            mBinding.ivCumulativeScoreGrade.setImageResource(gradeDrawable);
+//            mBinding.ivCumulativeScoreGrade.setVisibility(VISIBLE);
+//        }
+//
+//        if (mComboControl == null) {
+//            mComboControl = new ComboControl();
+//        }
+//        mComboControl.checkAndShowCombos(mBinding, (int) score, (int) cumulativeScore);
     }
 
     private static class ComboControl {
@@ -540,10 +547,11 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
         }
 
         private void checkAndShowCombos(KtvLayoutLrcControlViewBinding binding, int score, int cumulativeScore) {
-            binding.comboView.getRoot().setVisibility(VISIBLE);
-
-            showComboAnimation(binding.comboView.getRoot(), score);
-            showScoreAnimation((View) binding.comboView.getRoot().getParent(), score);
+            // TODO: 2024/6/6 隐藏他
+//            binding.comboView.getRoot().setVisibility(VISIBLE);
+//
+//            showComboAnimation(binding.comboView.getRoot(), score);
+//            showScoreAnimation((View) binding.comboView.getRoot().getParent(), score);
         }
 
         private int mComboOfLastTime; // Only for showComboAnimation
@@ -770,10 +778,6 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
             } else {
                 downloadAndSetLrcData();
             }
-        } else if (v == mBinding.ilActive.btnVocalHighlight) {
-            if (mOnKaraokeActionListener != null) {
-                mOnKaraokeActionListener.onVocalHighlightClick();
-            }
         }
     }
 
@@ -877,33 +881,6 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
     }
 
     /**
-     * Sets high light person head url.
-     *
-     * @param url the url
-     */
-    public void setHighLightPersonHeadUrl(String url) {
-        GlideApp.with(mBinding.getRoot())
-                .load(url)
-                .error(R.mipmap.ktv_highlight_head_bg)
-                .apply(RequestOptions.circleCropTransform())
-                .into(mBinding.ilActive.ivVocalHighlight);
-    }
-
-    /**
-     * Show high light button.
-     *
-     * @param show the show
-     */
-    public void showHighLightButton(boolean show) {
-        if (show) {
-            mBinding.ilActive.btnVocalHighlight.setVisibility(View.VISIBLE);
-            mBinding.ilActive.btnVocalHighlight.bringToFront();
-        } else {
-            mBinding.ilActive.btnVocalHighlight.setVisibility(View.GONE);
-        }
-    }
-
-    /**
      * The interface On karaoke event listener.
      */
     public interface OnKaraokeEventListener {
@@ -990,13 +967,6 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
          * On re get lrc url.
          */
         default void onReGetLrcUrl() {
-        }
-
-        /**
-         * On vocal highlight click.
-         */
-        default void onVocalHighlightClick() {
-
         }
     }
 }
