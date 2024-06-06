@@ -337,6 +337,13 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
         }
 
         override fun onChosenSongListDidChanged(chosenSongList: List<ChosenSongInfo>) {
+            songPlayingLiveData.value?.let { currentSong ->
+                val firstSong = chosenSongList.firstOrNull()
+                if (currentSong.owner?.userId == KtvCenter.mUser.id.toString() && firstSong?.songNo != currentSong.songNo) {
+                    KTVLogger.d(TAG, "RoomLivingViewModel remove music: ${currentSong.songNo}")
+                    DownloadManager.instance.cancelDownload(currentSong.musicUrl)
+                }
+            }
             chosenSongListLiveData.value = chosenSongList
             onUpdateAllChooseSongs(chosenSongList)
         }
@@ -763,14 +770,14 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
             return
         }
         //ktvApiProtocol.switchSingerRole(KTVSingRole.Audience, "", null);
-        playerMusicStatusLiveData.postValue(PlayerMusicStatus.ON_CHANGING_START)
+        playerMusicStatusLiveData.value = PlayerMusicStatus.ON_CHANGING_START
         ktvServiceProtocol.removeSong(musicModel.songNo) { e: Exception? ->
             if (e == null) { // success do nothing for dealing in song subscriber
                 KTVLogger.d(TAG, "RoomLivingViewModel.changeMusic() success")
             } else { // failed
                 KTVLogger.e(TAG, "RoomLivingViewModel.changeMusic() failed: " + e.message)
             }
-            playerMusicStatusLiveData.postValue(PlayerMusicStatus.ON_CHANGING_END)
+            playerMusicStatusLiveData.value = PlayerMusicStatus.ON_CHANGING_END
             e?.message?.let { error ->
                 CustomToast.show(error, Toast.LENGTH_SHORT)
             }
@@ -1077,8 +1084,8 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                     )
 
                     MediaPlayerState.PLAYER_STATE_PLAYING -> {
-                        playerMusicStatusLiveData.postValue(PlayerMusicStatus.ON_PLAYING)
                         runOnMainThread {
+                            playerMusicStatusLiveData.value = PlayerMusicStatus.ON_PLAYING
                             mMusicSetting?.let { setting ->
                                 // 若身份是主唱和伴唱，在演唱时，人声音量、伴泰音量保持原先设置，远端音量自动切为30
                                 setting.mRemoteVolume = MusicSettingBean.DEFAULT_REMOTE_SINGER_VOL
@@ -1089,16 +1096,16 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                     }
 
                     MediaPlayerState.PLAYER_STATE_PAUSED -> {
-                        playerMusicStatusLiveData.postValue(PlayerMusicStatus.ON_PAUSE)
                         // 若身份是主唱和伴唱，演唱暂停/切歌，人声音量、伴奏音量保持原先设置，远端音量自动转为100
                         runOnMainThread {
+                            playerMusicStatusLiveData.value = PlayerMusicStatus.ON_PAUSE
                             mMusicSetting?.mRemoteVolume = MusicSettingBean.DEFAULT_REMOTE_VOL
                         }
                     }
 
                     MediaPlayerState.PLAYER_STATE_STOPPED -> {
-                        playerMusicStatusLiveData.postValue(PlayerMusicStatus.ON_STOP)
                         runOnMainThread {
+                            playerMusicStatusLiveData.value = PlayerMusicStatus.ON_STOP
                             mMusicSetting?.let { setting ->
                                 // 若身份是主唱和伴唱，演唱暂停/切歌，人声音量、伴奏音量保持原先设置，远端音量自动转为100
                                 setting.mRemoteVolume = MusicSettingBean.DEFAULT_REMOTE_VOL
@@ -1110,8 +1117,10 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                     }
 
                     MediaPlayerState.PLAYER_STATE_PLAYBACK_ALL_LOOPS_COMPLETED -> if (isLocal) {
-                        playerMusicPlayCompleteLiveData.postValue(ScoringAverageModel(true, 0))
-                        playerMusicStatusLiveData.postValue(PlayerMusicStatus.ON_LRC_RESET)
+                        runOnMainThread {
+                            playerMusicPlayCompleteLiveData.value = ScoringAverageModel(true, 0)
+                            playerMusicStatusLiveData.value = PlayerMusicStatus.ON_LRC_RESET
+                        }
                     }
 
                     else -> {}
@@ -1267,7 +1276,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
     fun musicStartPlay(music: ChosenSongInfo) {
         KTVLogger.d(TAG, "RoomLivingViewModel.musicStartPlay() called")
         if (music.owner?.userId.isNullOrEmpty()) return
-        playerMusicStatusLiveData.postValue(PlayerMusicStatus.ON_PREPARE)
+        playerMusicStatusLiveData.value = PlayerMusicStatus.ON_PREPARE
         val isOwnSong = music.owner?.userId == KtvCenter.mUser.id.toString()
         val mainSingerUid = music.owner?.userId?.toIntOrNull() ?: -1
         if (isOwnSong) {
@@ -1340,7 +1349,9 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
 
                 // 重置settings
                 retryTimes = 0
-                playerMusicStatusLiveData.postValue(PlayerMusicStatus.ON_PLAYING)
+                runOnMainThread {
+                    playerMusicStatusLiveData.value = PlayerMusicStatus.ON_PLAYING
+                }
             }
 
             override fun onMusicLoadFail(songCode: String, reason: SongLoadFailReason) {
@@ -1356,7 +1367,9 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                     if (retryTimes < 3) {
                         loadMusic(config, songInfo, isOwnSong)
                     } else {
-                        playerMusicStatusLiveData.postValue(PlayerMusicStatus.ON_PLAYING)
+                        runOnMainThread {
+                            playerMusicStatusLiveData.value = PlayerMusicStatus.ON_PLAYING
+                        }
                         CustomToast.show(R.string.ktv_try, Toast.LENGTH_LONG)
                     }
                 } else if (reason == SongLoadFailReason.CANCELED) { // 当前已被切歌
@@ -1510,7 +1523,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                             songLoadStateListener.onMusicLoadFail(songInfo.songNo, SongLoadFailReason.CANCELED)
                             return
                         }
-                        val musicUri = path + File.separator+songInfo.musicUrl.substringAfterLast("/")
+                        val musicUri = path + File.separator + songInfo.musicUrl.substringAfterLast("/")
                         if (config.mode == KTVLoadMusicMode.LOAD_MUSIC_AND_LRC) {
                             lrcControlView?.get()?.onDownloadLrcData(songInfo.lyricUrl)
                             songLoadStateListener.onMusicLoadProgress(

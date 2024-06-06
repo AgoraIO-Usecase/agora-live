@@ -1,7 +1,9 @@
 package io.agora.scene.base.utils
 
 import android.util.Log
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.BufferedOutputStream
@@ -25,6 +27,8 @@ class DownloadManager private constructor() {
         val instance: DownloadManager by lazy { DownloadManager() }
     }
 
+    private val downCalls = mutableMapOf<String,Call>()
+
     suspend fun download(url: String, destinationPath: String, callback: FileDownloadCallback) {
         withContext(Dispatchers.IO) {
             val file = File(destinationPath, url.substringAfterLast("/"))
@@ -40,7 +44,9 @@ class DownloadManager private constructor() {
             val request = Request.Builder().url(url).header("Range", rangeHeaderValue).build()
 
             try {
-                val response = okHttpClient.newCall(request).execute()
+                val call = okHttpClient.newCall(request)
+                downCalls[url] = call
+                val response = call.execute()
                 response.body?.let { responseBody ->
                     val total = responseBody.contentLength()
                     val fileTotal = total + downloadedBytes
@@ -79,6 +85,7 @@ class DownloadManager private constructor() {
                                 Log.d(TAG, "${file.name} download completed")
                                 withContext(Dispatchers.Main) {
                                     callback.onSuccess(file)
+                                    downCalls.remove(url)
                                 }
                             }
                         } catch (e: Exception) {
@@ -130,6 +137,14 @@ class DownloadManager private constructor() {
             }
         }
         zIn.close()
+    }
+
+    fun cancelDownload(url: String) {
+        // TODO: 取消失败 
+        downCalls.remove(url)?.let {
+            it.cancel()
+            Log.d(TAG,"cancelDownload $url")
+        }
     }
 
     interface FileDownloadCallback {
