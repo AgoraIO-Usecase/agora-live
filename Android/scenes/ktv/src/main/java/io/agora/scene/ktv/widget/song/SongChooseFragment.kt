@@ -52,6 +52,7 @@ class SongChooseFragment : BaseViewBindingFragment<KtvFragmentSongListBinding?>(
             val item: SongItem = mChooseAdapter.getItem(i)?:continue
             if (item.songNo == songItem.songNo) {
                 item.isChosen = isChosen
+                item.loading = songItem.loading
                 mChooseAdapter.notifyItemChanged(i)
                 break
             }

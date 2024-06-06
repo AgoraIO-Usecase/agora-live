@@ -277,13 +277,14 @@ class KTVSyncManagerServiceImp constructor(
         val roomId = (Random(System.currentTimeMillis()).nextInt(100000) + 1000000).toString()
         initRtmSync {
             if (it != null) {
-                completion.invoke(Exception("${it.message}(${it.code})"), null)
+                completion.invoke(Exception("${it.message}"), null)
                 return@initRtmSync
             }
             KtvCenter.generateRtcToken { rtcToken, exception ->
                 // 创建房间提前获取 rtcToken
                 val token = rtcToken ?: run {
                     KTVLogger.e(TAG, "createRoom, with renewRtcToken failed: $exception")
+                    completion.invoke(exception, null)
                     return@generateRtcToken
                 }
                 if (exception != null) {
@@ -352,13 +353,14 @@ class KTVSyncManagerServiceImp constructor(
         }
         initRtmSync {
             if (it != null) {
-                completion.invoke(Exception("${it.message}(${it.code})"))
+                completion.invoke(Exception("${it.message}"))
                 return@initRtmSync
             }
             KtvCenter.generateRtcToken(callback = { rtcToken, exception ->
                 // 进入房间提前获取 rtcToken
                 val token = rtcToken ?: run {
                     KTVLogger.e(TAG, "joinRoom, with renewRtcToken failed: $exception")
+                    completion.invoke(exception)
                     return@generateRtcToken
                 }
                 val scene = mSyncManager.createScene(roomId)
@@ -400,13 +402,22 @@ class KTVSyncManagerServiceImp constructor(
         if (AUIRoomContext.shared().isRoomOwner(mCurRoomNo)) {
             mMainHandler.removeCallbacks(timerRoomCountDownTask)
         }
-        mRoomService.leaveRoom(KtvCenter.mAppId, kSceneId, mCurRoomNo)
+
+        initRtmSync {
+            if (it != null) {
+                completion.invoke(Exception("${it.message}"))
+                return@initRtmSync
+            } else {
+                completion.invoke(null)
+                mRoomService.leaveRoom(KtvCenter.mAppId, kSceneId, mCurRoomNo)
+            }
+        }
+
         mUserList.clear()
         mSeatMap.clear()
         mSongChosenList.clear()
         mChoristerList.clear()
         mCurRoomNo = ""
-        completion.invoke(null)
     }
 
     /**

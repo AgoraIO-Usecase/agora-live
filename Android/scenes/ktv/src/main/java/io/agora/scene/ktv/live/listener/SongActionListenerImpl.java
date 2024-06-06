@@ -27,9 +27,9 @@ public class SongActionListenerImpl implements OnSongActionListener {
     /**
      * Instantiates a new Song action listener.
      *
-     * @param activity    the activity
-     * @param viewModel   the view model
-     * @param isChorus    the is chorus
+     * @param activity  the activity
+     * @param viewModel the view model
+     * @param isChorus  the is chorus
      */
     public SongActionListenerImpl(
             LifecycleOwner activity,
@@ -56,6 +56,9 @@ public class SongActionListenerImpl implements OnSongActionListener {
         LiveDataUtils.observerThenRemove(mLifecycleOwner, mViewModel.chooseSong(songItem, isChorus), success -> {
             if (success && dialog.isVisible()) {
                 dialog.setChooseSongItemStatus(songItem, true);
+            } else if (!success) { // 点歌失败
+                songItem.loading = false;
+                dialog.setChooseSongItemStatus(songItem, false);
             }
         });
     }
@@ -71,7 +74,7 @@ public class SongActionListenerImpl implements OnSongActionListener {
     public void onChosenSongTopClicked(@NonNull SongDialog dialog, @NonNull SongItem song) {
         // 置顶
         ChosenSongInfo songModel = song.getTag(ChosenSongInfo.class);
-        mViewModel.topUpSong(songModel);
+        mViewModel.pinSong(songModel);
     }
 
     /**
@@ -85,8 +88,8 @@ public class SongActionListenerImpl implements OnSongActionListener {
         if (data != null) {
             for (ChosenSongInfo song : data) {
                 String userName = "";
-                String chooserUserId = "" ;
-                if (song.getOwner()!=null){
+                String chooserUserId = "";
+                if (song.getOwner() != null) {
                     userName = song.getOwner().userName;
                     chooserUserId = song.getOwner().userId;
                 }
