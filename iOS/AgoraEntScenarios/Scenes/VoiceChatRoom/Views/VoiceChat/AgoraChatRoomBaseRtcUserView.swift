@@ -405,7 +405,6 @@ extension AgoraChatRoomBaseRtcUserView {
             iconView.image = UIImage(named: mic.member?.portrait ?? "")
         }
         nameBtn.setImage(UIImage.voice_image(mic.mic_index == 0 ? "Landlord" : ""), for: .normal)
-        let text = "voice_mic_num".voice_localized
-        nameBtn.setTitle(mic.member?.name ?? "\(mic.mic_index)\(text)", for: .normal)
+        nameBtn.setTitle(mic.member?.name ?? "\(mic.mic_index)", for: .normal)
     }
 }

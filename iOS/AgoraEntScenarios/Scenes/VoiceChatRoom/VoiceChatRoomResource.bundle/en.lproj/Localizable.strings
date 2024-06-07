@@ -124,7 +124,6 @@
 "voice_other_sound" = "Other Optimal Profiles";
 "voice_otherSound" = "Switching to another optimal profile requires exiting the current room.";
 "voice_prompt" = "Prompt";
-"voice_mic_num" = "seat";
 "voice_add_bot" = "Add bots for the optimal profile?";
 "voice_exit_room" = "Leave and Create a New Voice Chat Room?";
 "voice_AINS_AI_noise_suppression" = "AINS: AI Noise Suppression";
