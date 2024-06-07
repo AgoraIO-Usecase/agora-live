@@ -72,6 +72,7 @@
 "voice_post_failed" = "Post Failed";
 "voice_lau" = "EN";
 "voice_bot_settings" = "Bot Settings";
+"voice_host_only_operation" = "Host only operation";
 "voice_you_were_removed_from_stage"="You have been removed from co-host.";
 "voice_set_room_name" = "Set Room Name";
 "voice_gaming_buddy"="Gaming Companion";
@@ -139,7 +140,7 @@
 "voice_current_customer_usage" = "Current Customers:";
 "voice_end_live" = "End Live";
 "voice_please_set_a_name" = "Please Set a Room Name";
-"voice_visit_more" = "For more optimal profiles, please visit";
+"voice_visit_more" = "For more optimal profiles, please visit ";
 "voice_no_room_name"="Room Name Cannot Be Empty";
 "voice_apply_success" = "Application Requested!";
 "voice_apply_failed" = "Application Failed!";

@@ -156,7 +156,9 @@ extension VMAudioSettingView: UITableViewDelegate, UITableViewDataSource {
             let width = textAutoWidth(height: 300, font: UIFont.systemFont(ofSize: 13), text: "voice_bot_settings".voice_localized)
             let headerView: UIView = .init(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 32))
             headerView.backgroundColor = UIColor(red: 247 / 255.0, green: 248 / 255.0, blue: 251 / 255.0, alpha: 1)
-            let titleLabel: UILabel = .init(frame: CGRect(x: 20, y: 2, width: width, height: 30))
+            
+            let edge = 20.0
+            let titleLabel: UILabel = .init(frame: CGRect(x: edge, y: 2, width: width, height: 30))
             titleLabel.font = UIFont.systemFont(ofSize: 13)
             titleLabel.textColor = UIColor(red: 108 / 255.0, green: 113 / 255.0, blue: 146 / 255.0, alpha: 1)
             titleLabel.text = "voice_bot_settings".voice_localized
@@ -165,13 +167,22 @@ extension VMAudioSettingView: UITableViewDelegate, UITableViewDataSource {
             let imgView: UIImageView = .init(frame: CGRect(x: width + 30, y: 6, width: 30, height: 20))
             imgView.image = UIImage.sceneImage(name: "new", bundleName: "VoiceChatRoomResource")
             headerView.addSubview(imgView)
-
+            
+            let tipsLabel = UILabel(frame: CGRect(x: imgView.right, y: titleLabel.top, width: headerView.width - imgView.right - edge, height: titleLabel.height))
+            tipsLabel.textAlignment = .right
+            tipsLabel.font = UIFont.systemFont(ofSize: 11)
+            tipsLabel.textColor = titleLabel.textColor.withAlphaComponent(0.8)
+            tipsLabel.text = "voice_host_only_operation".voice_localized
+            headerView.addSubview(tipsLabel)
+            
             return headerView
         } else if section == 2 {
             let width = textAutoWidth(height: 300, font: UIFont.systemFont(ofSize: 13), text: "voice_room_audio_settings".voice_localized)
             let headerView: UIView = .init(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 32))
             headerView.backgroundColor = UIColor(red: 247 / 255.0, green: 248 / 255.0, blue: 251 / 255.0, alpha: 1)
-            let titleLabel: UILabel = .init(frame: CGRect(x: 20, y: 2, width: width, height: 30))
+            
+            let edge = 20.0
+            let titleLabel: UILabel = .init(frame: CGRect(x: edge, y: 2, width: width, height: 30))
             titleLabel.font = UIFont.systemFont(ofSize: 13)
             titleLabel.textColor = UIColor(red: 108 / 255.0, green: 113 / 255.0, blue: 146 / 255.0, alpha: 1)
             titleLabel.text = "voice_room_audio_settings".voice_localized
@@ -180,6 +191,13 @@ extension VMAudioSettingView: UITableViewDelegate, UITableViewDataSource {
             let imgView: UIImageView = .init(frame: CGRect(x: width + 30, y: 6, width: 30, height: 20))
             imgView.image = UIImage.sceneImage(name: "new", bundleName: "VoiceChatRoomResource")
             headerView.addSubview(imgView)
+            
+            let tipsLabel = UILabel(frame: CGRect(x: imgView.right, y: titleLabel.top, width: headerView.width - imgView.right - edge, height: titleLabel.height))
+            tipsLabel.textAlignment = .right
+            tipsLabel.font = UIFont.systemFont(ofSize: 11)
+            tipsLabel.textColor = titleLabel.textColor.withAlphaComponent(0.8)
+            tipsLabel.text = "voice_host_only_operation".voice_localized
+            headerView.addSubview(tipsLabel)
 
             return headerView
         } else {
