@@ -231,8 +231,10 @@
 "voice_radish_note"="Cute Gril";
 "voice_uncle_sound"="Mature Male";
 "voice_moma"="Mature Female";
+"voice_mature_youthful_male"="Mature Youthful Male";
+"voice_mature_youthful_female"="Mature Youthful Female";
 "voice_royal_mother_tone"="Elegant Mature Female";
-"voice_musical_magnetic"="Musical, Magnetic";
+"voice_pleasing_magnetic"="Pleasing Magnetic";
 "voice_soft_magnetic"="Soft, Magnetic";
 "voice_liud_full"="Loud, Full";
 "voice_clamps_girl"="Pinched, Loli";
