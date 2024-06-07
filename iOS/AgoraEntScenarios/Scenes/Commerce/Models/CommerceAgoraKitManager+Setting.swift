@@ -56,6 +56,13 @@ extension CommerceAgoraKitManager {
         _presetValuesWith(encodeSize: ._360x640, fps: .fps15, bitRate: 0, h265On: true)
     }
     
+    func resetBroadcasterProfile() {
+        self.netCondition = .good
+        self.performanceMode = .fluent
+        self.deviceLevel = .medium
+        setupBroadcasterProfile()
+    }
+    
     func setupBroadcasterProfile() {
         setSuperResolutionOn(false)
         setPVCon(false)
