@@ -14,6 +14,7 @@ import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.rtmsyncmanager.model.AUIUserInfo
 import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
 import io.agora.rtmsyncmanager.service.IAUIUserService
+import io.agora.rtmsyncmanager.service.arbiter.AUIArbiterCallback
 import io.agora.rtmsyncmanager.service.collection.AUIAttributesModel
 import io.agora.rtmsyncmanager.service.collection.AUICollectionException
 import io.agora.rtmsyncmanager.service.collection.AUIListCollection
@@ -147,7 +148,26 @@ class KTVSyncManagerServiceImp constructor(
     init {
         KTVHttpManager.setBaseURL(ServerConfig.toolBoxUrl)
         HttpManager.setBaseURL(ServerConfig.roomManagerUrl)
-        AUILogger.initLogger(AUILogger.Config(mContext, "KTV"))
+        val rtmSyncTag = "KTV_RTM_LOG"
+        AUILogger.initLogger(AUILogger.Config(mContext, "KTV",
+            logCallback = object : AUILogger.AUILogCallback {
+            override fun onLogDebug(tag: String, message: String) {
+                KTVLogger.d(rtmSyncTag, "$tag $message")
+            }
+
+            override fun onLogInfo(tag: String, message: String) {
+                KTVLogger.d(rtmSyncTag, "$tag $message")
+            }
+
+            override fun onLogWarning(tag: String, message: String) {
+                KTVLogger.w(rtmSyncTag, "$tag $message")
+            }
+
+            override fun onLogError(tag: String, message: String) {
+                KTVLogger.e(rtmSyncTag, "$tag $message")
+            }
+
+        }))
 
         val commonConfig = AUICommonConfig().apply {
             context = mContext
@@ -1046,6 +1066,26 @@ class KTVSyncManagerServiceImp constructor(
         innerSubscribeSeat(roomId)
         innerSubscribeSong(roomId)
         innerSubscribeChorus(roomId)
+        innerSubscribeEvent(roomId)
+    }
+
+    private fun innerSubscribeEvent(roomId: String) {
+        AUIRoomContext.shared().getArbiter(roomId)?.subscribeEvent(object : AUIArbiterCallback {
+            override fun onArbiterDidChange(channelName: String, arbiterId: String) {
+                val userIds = mUserList.map { it.userId }
+                //如果仲裁者变成自己，检查麦位用户是否在线，防止麦上用户退出时前一个仲裁者掉线了导致麦位没有清理
+                if (arbiterId == mCurrentUser.userId) {
+                    mSeatMap.values.forEach {
+                        if (!userIds.contains(it.owner?.userId)) {
+                            kickSeat(seatIndex = it.seatIndex) {}
+                        }
+                    }
+                }
+            }
+
+            override fun onError(channelName: String, error: AUIRtmException) {
+            }
+        })
     }
 
     // 订阅麦位 mapCollection
