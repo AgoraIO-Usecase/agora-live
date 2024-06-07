@@ -257,13 +257,14 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 // 自己上麦
                 mRtcEngine?.let {
                     mainChannelMediaOption.publishCameraTrack = false
-                    mainChannelMediaOption.publishMicrophoneTrack = !originSeat.isAudioMuted
+                    mainChannelMediaOption.publishMicrophoneTrack = true
                     mainChannelMediaOption.enableAudioRecordingOrPlayout = true
                     mainChannelMediaOption.autoSubscribeVideo = true
                     mainChannelMediaOption.autoSubscribeAudio = true
                     mainChannelMediaOption.clientRoleType = Constants.CLIENT_ROLE_BROADCASTER
                     it.updateChannelMediaOptions(mainChannelMediaOption)
                 }
+                ktvApiProtocol.muteMic(originSeat.isAudioMuted)
             }
         }
 
