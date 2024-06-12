@@ -55,8 +55,8 @@ class KTVSyncManagerServiceImp constructor(
         if (roomId.isEmpty()) {
             return null
         }
-        val scene = mSyncManager.createScene(roomId)
-        return scene.getCollection(kCollectionSeatInfo) { a, b, c -> AUIMapCollection(a, b, c) }
+        val scene = mSyncManager.getScene(roomId)
+        return scene?.getCollection(kCollectionSeatInfo) { a, b, c -> AUIMapCollection(a, b, c) }
     }
 
     // 已选歌单 listCollection
@@ -64,8 +64,8 @@ class KTVSyncManagerServiceImp constructor(
         if (roomId.isEmpty()) {
             return null
         }
-        val scene = mSyncManager.createScene(roomId)
-        return scene.getCollection(kCollectionChosenSong) { a, b, c -> AUIListCollection(a, b, c) }
+        val scene = mSyncManager.getScene(roomId)
+        return scene?.getCollection(kCollectionChosenSong) { a, b, c -> AUIListCollection(a, b, c) }
     }
 
     // 合唱 listCollection
@@ -73,8 +73,8 @@ class KTVSyncManagerServiceImp constructor(
         if (roomId.isEmpty()) {
             return null
         }
-        val scene = mSyncManager.createScene(roomId)
-        return scene.getCollection(kCollectionChorusInfo) { a, b, c -> AUIListCollection(a, b, c) }
+        val scene = mSyncManager.getScene(roomId)
+        return scene?.getCollection(kCollectionChorusInfo) { a, b, c -> AUIListCollection(a, b, c) }
     }
 
     private val mMainHandler by lazy { Handler(Looper.getMainLooper()) }
@@ -150,25 +150,27 @@ class KTVSyncManagerServiceImp constructor(
         KTVHttpManager.setBaseURL(ServerConfig.toolBoxUrl)
         HttpManager.setBaseURL(ServerConfig.roomManagerUrl)
         val rtmSyncTag = "KTV_RTM_LOG"
-        AUILogger.initLogger(AUILogger.Config(mContext, "KTV",
-            logCallback = object : AUILogger.AUILogCallback {
-            override fun onLogDebug(tag: String, message: String) {
-                KTVLogger.d(rtmSyncTag, "$tag $message")
-            }
+        AUILogger.initLogger(
+            AUILogger.Config(mContext, "KTV",
+                logCallback = object : AUILogger.AUILogCallback {
+                    override fun onLogDebug(tag: String, message: String) {
+                        KTVLogger.d(rtmSyncTag, "$tag $message")
+                    }
 
-            override fun onLogInfo(tag: String, message: String) {
-                KTVLogger.d(rtmSyncTag, "$tag $message")
-            }
+                    override fun onLogInfo(tag: String, message: String) {
+                        KTVLogger.d(rtmSyncTag, "$tag $message")
+                    }
 
-            override fun onLogWarning(tag: String, message: String) {
-                KTVLogger.w(rtmSyncTag, "$tag $message")
-            }
+                    override fun onLogWarning(tag: String, message: String) {
+                        KTVLogger.w(rtmSyncTag, "$tag $message")
+                    }
 
-            override fun onLogError(tag: String, message: String) {
-                KTVLogger.e(rtmSyncTag, "$tag $message")
-            }
+                    override fun onLogError(tag: String, message: String) {
+                        KTVLogger.e(rtmSyncTag, "$tag $message")
+                    }
 
-        }))
+                })
+        )
 
         val commonConfig = AUICommonConfig().apply {
             context = mContext
@@ -416,9 +418,10 @@ class KTVSyncManagerServiceImp constructor(
      */
     override fun leaveRoom(completion: (error: Exception?) -> Unit) {
 
-        val scene = mSyncManager.createScene(mCurRoomNo)
-        scene.unbindRespDelegate(this)
-        scene.userService.unRegisterRespObserver(this)
+        mSyncManager.getScene(mCurRoomNo)?.let { scene ->
+            scene.unbindRespDelegate(this)
+            scene.userService.unRegisterRespObserver(this)
+        }
 
         if (AUIRoomContext.shared().isRoomOwner(mCurRoomNo)) {
             mMainHandler.removeCallbacks(timerRoomCountDownTask)
@@ -839,8 +842,8 @@ class KTVSyncManagerServiceImp constructor(
      */
     override fun getCurrentDuration(channelName: String): Long {
         if (channelName.isEmpty()) return 0
-        val scene = mSyncManager.createScene(channelName)
-        return scene.getRoomDuration()
+        val scene = mSyncManager.getScene(channelName)
+        return scene?.getRoomDuration() ?: 0L
     }
 
     /**
@@ -851,8 +854,8 @@ class KTVSyncManagerServiceImp constructor(
      */
     override fun getCurrentTs(channelName: String): Long {
         if (channelName.isEmpty()) return 0
-        val scene = mSyncManager.createScene(channelName)
-        return scene.getCurrentTs()
+        val scene = mSyncManager.getScene(channelName)
+        return scene?.getCurrentTs() ?: 0L
     }
 
     /**

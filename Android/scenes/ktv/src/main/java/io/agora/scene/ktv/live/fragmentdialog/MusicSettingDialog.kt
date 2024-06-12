@@ -137,27 +137,28 @@ class MusicSettingDialog constructor(
         // 音效
         setupVoiceEffectAdapter()
 
+        // TODO: hide score
         // 打分难度设置
-        when (mSetting.mScoringDifficultyMode) {
-            ScoringDifficultyMode.Low -> mBinding.rgVoiceScoringDifficulty.check(R.id.tvScoringDifficultyLow)
-            ScoringDifficultyMode.High -> mBinding.rgVoiceScoringDifficulty.check(R.id.tvScoringDifficultyHigh)
-            else -> mBinding.rgVoiceScoringDifficulty.check(R.id.tvScoringDifficultyRecommend)
-        }
-        mBinding.rgVoiceScoringDifficulty.setOnCheckedChangeListener { group, checkedId ->
-            when (checkedId) {
-                R.id.tvScoringDifficultyLow -> mSetting.mScoringDifficultyMode = ScoringDifficultyMode.Low
-                R.id.tvScoringDifficultyHigh -> mSetting.mScoringDifficultyMode = ScoringDifficultyMode.High
-                else -> mSetting.mScoringDifficultyMode = ScoringDifficultyMode.Recommend
-            }
-        }
-
-        if (currentSong == null) {
-            enableDisableView(mBinding.rgVoiceScoringDifficulty, true)
-            mBinding.layoutVoiceScoringDifficulty.alpha = 1.0f
-        } else {
-            enableDisableView(mBinding.rgVoiceScoringDifficulty, false)
-            mBinding.layoutVoiceScoringDifficulty.alpha = 0.3f
-        }
+//        when (mSetting.mScoringDifficultyMode) {
+//            ScoringDifficultyMode.Low -> mBinding.rgVoiceScoringDifficulty.check(R.id.tvScoringDifficultyLow)
+//            ScoringDifficultyMode.High -> mBinding.rgVoiceScoringDifficulty.check(R.id.tvScoringDifficultyHigh)
+//            else -> mBinding.rgVoiceScoringDifficulty.check(R.id.tvScoringDifficultyRecommend)
+//        }
+//        mBinding.rgVoiceScoringDifficulty.setOnCheckedChangeListener { group, checkedId ->
+//            when (checkedId) {
+//                R.id.tvScoringDifficultyLow -> mSetting.mScoringDifficultyMode = ScoringDifficultyMode.Low
+//                R.id.tvScoringDifficultyHigh -> mSetting.mScoringDifficultyMode = ScoringDifficultyMode.High
+//                else -> mSetting.mScoringDifficultyMode = ScoringDifficultyMode.Recommend
+//            }
+//        }
+//
+//        if (currentSong == null) {
+//            enableDisableView(mBinding.rgVoiceScoringDifficulty, true)
+//            mBinding.layoutVoiceScoringDifficulty.alpha = 1.0f
+//        } else {
+//            enableDisableView(mBinding.rgVoiceScoringDifficulty, false)
+//            mBinding.layoutVoiceScoringDifficulty.alpha = 0.3f
+//        }
 
         // 专业模式
         mBinding.cbStartProfessionalMode.setOnCheckedChangeListener { buttonView, isChecked ->
