@@ -25,8 +25,8 @@ class CommerceUserJoinView: UIView {
         return label
     }()
     
-    private let semaphore = DispatchSemaphore(value: 1)
-    private let queue = DispatchQueue.global(qos: .background)
+    private var queue: [String] = []
+    private var isShowing: Bool = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,15 +38,19 @@ class CommerceUserJoinView: UIView {
     }
     
     func joinHandler(nickName: String) {
-        queue.async { [weak self] in
-            self?.semaphore.wait()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self?.showAnimation(nickName: nickName)
-            }
-        }
+        queue.append(nickName)
+        showNextAnimation()
+    }
+    
+    private func showNextAnimation() {
+        if isShowing { return }
+        guard let nickName = queue.first else { return }
+        queue.removeFirst()
+        showAnimation(nickName: nickName)
     }
     
     private func showAnimation(nickName: String) {
+        self.isShowing = true
         nickNameLabel.text = nickName
         UIView.animate(withDuration: 0.25, delay: 0, options: [.curveEaseOut], animations: {
             self.frame.origin.x = 16
@@ -54,7 +58,8 @@ class CommerceUserJoinView: UIView {
         UIView.animate(withDuration: 0.25, delay: 2.0, options: [.curveEaseOut], animations: {
             self.frame.origin.x = -(self.frame.width + 16)
         }, completion: { [weak self] _ in
-            self?.semaphore.signal()
+            self?.isShowing = false
+            self?.showNextAnimation()
         })
     }
     

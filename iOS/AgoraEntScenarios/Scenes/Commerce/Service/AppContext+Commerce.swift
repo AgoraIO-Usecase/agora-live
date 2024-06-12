@@ -14,6 +14,7 @@ private let kCommerceRoomListKey = "kCommerceRoomListKey"
 private let kCommerceUserListKey = "kCommerceUserListKey"
 private let kRtcTokenMapKey = "kRtcTokenMapKey"
 private let kRtcToken = "kRtcToken"
+private let kRtmToken = "kRtmToken"
 private let kDebugModeKey = "kDebugModeKey"
 
 extension AppContext {
@@ -27,7 +28,7 @@ extension AppContext {
         }
         let commerceServiceImp = _commerceServiceImpMap[roomId]
         guard let commerceServiceImp = commerceServiceImp else {
-            let imp = roomId.count == 6 ? CommerceSyncManagerServiceImp() : CommerceRobotSyncManagerServiceImp()
+            let imp = CommerceSyncManagerServiceImp()
             _commerceServiceImpMap[roomId] = imp
             return imp
         }
@@ -59,21 +60,21 @@ extension AppContext {
         }
     }
     
-    public var commerceUserList: [CommerceUser]? {
-        set {
-            extDic[kCommerceUserListKey] = newValue
-        }
-        get {
-            return extDic[kCommerceUserListKey] as? [CommerceUser]
-        }
-    }
-    
     public var commerceRtcToken: String? {
         set {
             self.extDic[kRtcToken] = newValue
         }
         get {
             return self.extDic[kRtcToken] as? String
+        }
+    }
+    
+    public var commerceRtmToken: String? {
+        set {
+            self.extDic[kRtmToken] = newValue
+        }
+        get {
+            return self.extDic[kRtmToken] as? String
         }
     }
 }

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_marginHorizontal="80dp"
-    android:background="@drawable/show_toast_bg"
+    android:background="@drawable/commerce_toast_bg"
     android:gravity="center"
     android:minWidth="100dp"
     android:orientation="vertical"
@@ -22,7 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"
-        tools:src="@mipmap/show_toast_ic_tip"
+        tools:src="@drawable/commerce_toast_ic_tip"
         tools:visibility="visible" />
 
     <TextView

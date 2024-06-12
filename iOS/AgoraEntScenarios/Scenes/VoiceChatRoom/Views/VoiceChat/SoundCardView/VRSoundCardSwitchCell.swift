@@ -100,10 +100,13 @@ class VRSoundCardSwitchCell: UITableViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        titleLabel.frame = CGRect(x: 20, y: 5, width: 80, height: 18)
-        detailLabel.frame = CGRect(x: 20, y: 25, width: 180, height: 18)
-        numLable.frame = CGRect(x: self.bounds.size.width - 60, y: 16, width: 60, height: 20)
-        slider.frame = CGRect(x: self.bounds.size.width - 180, y: 11, width: 120, height: 30)
+        
+        let numWidth = 30.0
+        let sliderWidth = 70.0
+        titleLabel.frame = CGRect(x: 20, y: 5, width: width - 20 - numWidth - sliderWidth, height: 18)
+        detailLabel.frame = CGRect(x: 20, y: 25, width: width - 20 - numWidth - sliderWidth, height: 18)
+        numLable.frame = CGRect(x: self.bounds.size.width - numWidth, y: 16, width: numWidth, height: 20)
+        slider.frame = CGRect(x: self.bounds.size.width - sliderWidth - numWidth, y: 11, width: sliderWidth, height: 30)
     }
 
 }

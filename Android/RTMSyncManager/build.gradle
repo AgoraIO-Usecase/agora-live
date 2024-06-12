@@ -31,6 +31,7 @@ android {
 }
 
 dependencies {
+    implementation project(":common")
     implementation rootProject.ext.deps.gson
     implementation rootProject.ext.deps.annotation
     implementation rootProject.ext.deps.retrofit2

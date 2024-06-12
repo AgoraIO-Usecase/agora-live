@@ -6,17 +6,24 @@ import androidx.recyclerview.widget.RecyclerView
 import io.agora.rtc2.RtcEngineEx
 
 /**
- * 直播间列表滚动事件
- * @param mRtcEngine RtcEngineEx对象
- * @param localUid 观众uid
+ * On room list scroll event handler
+ *
+ * @property mRtcEngine
+ * @property localUid
+ * @constructor Create empty On room list scroll event handler
  */
 abstract class OnRoomListScrollEventHandler constructor(
     private val mRtcEngine: RtcEngineEx,
     private val localUid: Int
 ): RecyclerView.OnScrollListener() {
-    private val tag = "OnRoomListScrollEventHandler"
+    private val tag = "[VideoLoader]Scroll0"
     private val roomList = ArrayList<VideoLoader.RoomInfo>()
 
+    /**
+     * Update room list
+     *
+     * @param list
+     */
     fun updateRoomList(list: ArrayList<VideoLoader.RoomInfo>) {
         roomList.addAll(list)
         preloadChannels()
@@ -25,10 +32,10 @@ abstract class OnRoomListScrollEventHandler constructor(
     // RecyclerView.OnScrollListener
     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
         super.onScrollStateChanged(recyclerView, newState)
-        if (newState == RecyclerView.SCROLL_STATE_IDLE) { // 停止状态
+        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
             val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-            val firstVisibleItem = layoutManager.findFirstVisibleItemPosition() // 第一个可见 item
-            val lastVisibleItem = layoutManager.findLastVisibleItemPosition()  // 最后一个可见 item
+            val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
+            val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
             Log.d("RoomListActivity", "firstVisible $firstVisibleItem, lastVisible $lastVisibleItem")
             val firstPreloadPosition = if (firstVisibleItem - 7 < 0) 0 else firstVisibleItem - 7
             val lastPreloadPosition = if (firstPreloadPosition + 19 >= roomList.size)
@@ -38,10 +45,8 @@ abstract class OnRoomListScrollEventHandler constructor(
     }
 
     // ------------------------ inner ------------------------
-    // preload房间列表内前20个房间
     private fun preloadChannels() {
         if (roomList.isNotEmpty()) {
-            // sdk 最多 preload 20个频道，超过 20 个，sdk 内部维护最新的 20 个频道预加载
             roomList.take(20).forEach { room ->
                 val info = room.anchorList[0]
                 val ret = mRtcEngine.preloadChannel(info.token, info.channelId, localUid)
@@ -50,7 +55,6 @@ abstract class OnRoomListScrollEventHandler constructor(
         }
     }
 
-    // preload房间列表内指定位置区域的房间
     private fun preloadChannels(from: Int, to: Int) {
         if (roomList.isNotEmpty()) {
             val size = roomList.size

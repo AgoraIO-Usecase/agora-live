@@ -20,7 +20,6 @@ import io.agora.scene.eCommerce.service.ShowServiceProtocol
 import io.agora.scene.eCommerce.videoLoaderAPI.OnLiveRoomItemTouchEventHandler
 import io.agora.scene.eCommerce.videoLoaderAPI.OnRoomListScrollEventHandler
 import io.agora.scene.eCommerce.videoLoaderAPI.VideoLoader
-import io.agora.scene.eCommerce.widget.PresetAudienceDialog
 import io.agora.scene.widget.basic.BindingSingleAdapter
 import io.agora.scene.widget.basic.BindingViewHolder
 import io.agora.scene.widget.utils.StatusBarUtil
@@ -86,7 +85,7 @@ class RoomListActivity : AppCompatActivity() {
                             VideoLoader.AnchorInfo(
                                 room.roomId,
                                 room.ownerId.toInt(),
-                                RtcEngineInstance.generalToken()
+                                RtcEngineInstance.generalRtcToken()
                             )
                         )
                     )
@@ -98,7 +97,7 @@ class RoomListActivity : AppCompatActivity() {
         initVideoSettings()
 
         SceneAliveTime.fetchShowAliveTime ({ show, pk ->
-            ShowLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
+            //CommerceLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
             ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
         })
     }
@@ -111,11 +110,9 @@ class RoomListActivity : AppCompatActivity() {
         mBinding.titleView.setLeftClick {
             mService.destroy()
             RtcEngineInstance.destroy()
-            RtcEngineInstance.setupGeneralToken("")
+            RtcEngineInstance.setupGeneralRtcToken("")
+            RtcEngineInstance.setupGeneralRtmToken("")
             finish()
-        }
-        mBinding.titleView.setRightIconClick {
-            showAudienceSetting()
         }
         mRoomAdapter = object : BindingSingleAdapter<RoomDetailModel, CommerceRoomItemBinding>() {
             override fun onBindViewHolder(
@@ -133,8 +130,9 @@ class RoomListActivity : AppCompatActivity() {
         mBinding.smartRefreshLayout.setOnRefreshListener {
             mService.fetchRoomList(
                 success = {
+                    val filterRoom = it.filter { it.ownerId != UserManager.getInstance().user.id.toString() }
                     mRoomList.clear()
-                    mRoomList.addAll(it)
+                    mRoomList.addAll(filterRoom)
                     if (isFirstLoad) {
                         val roomList = arrayListOf<VideoLoader.RoomInfo>( )
                         it.forEach { room ->
@@ -145,7 +143,7 @@ class RoomListActivity : AppCompatActivity() {
                                         VideoLoader.AnchorInfo(
                                             room.roomId,
                                             room.ownerId.toInt(),
-                                            RtcEngineInstance.generalToken()
+                                            RtcEngineInstance.generalRtcToken()
                                         )
                                     )
                                 )
@@ -207,7 +205,7 @@ class RoomListActivity : AppCompatActivity() {
                     VideoLoader.AnchorInfo(
                         roomInfo.roomId,
                         roomInfo.ownerId.toInt(),
-                        RtcEngineInstance.generalToken()
+                        RtcEngineInstance.generalRtcToken()
                     )
                 )
             ),
@@ -224,7 +222,7 @@ class RoomListActivity : AppCompatActivity() {
                 } else {
                     when (event!!.action) {
                         MotionEvent.ACTION_DOWN -> {
-                            if (RtcEngineInstance.generalToken() == "") {
+                            if (RtcEngineInstance.generalRtcToken() == "") {
                                 fetchUniversalToken({
                                 }, {
                                     ToastUtils.showToast("Fetch Token Failed")
@@ -241,7 +239,7 @@ class RoomListActivity : AppCompatActivity() {
                             super.onTouch(v, event)
                         }
                         MotionEvent.ACTION_UP -> {
-                            if (RtcEngineInstance.generalToken() != "") {
+                            if (RtcEngineInstance.generalRtcToken() != "") {
                                 super.onTouch(v, event)
                                 goLiveDetailActivity(list, position, roomInfo)
                             }
@@ -286,14 +284,6 @@ class RoomListActivity : AppCompatActivity() {
     }
 
     /**
-     * Show audience setting
-     *
-     */
-    private fun showAudienceSetting() {
-        PresetAudienceDialog(this).show()
-    }
-
-    /**
      * On Back Pressed
      *
      */
@@ -301,7 +291,8 @@ class RoomListActivity : AppCompatActivity() {
         super.onBackPressed()
         mService.destroy()
         RtcEngineInstance.destroy()
-        RtcEngineInstance.setupGeneralToken("")
+        RtcEngineInstance.setupGeneralRtcToken("")
+        RtcEngineInstance.setupGeneralRtmToken("")
     }
 
     /**
@@ -316,16 +307,22 @@ class RoomListActivity : AppCompatActivity() {
         error: ((Exception?) -> Unit)? = null
     ) {
         val localUId = UserManager.getInstance().user.id
-        TokenGenerator.generateToken("", localUId.toString(),
+        TokenGenerator.generateTokens("", localUId.toString(),
             TokenGenerator.TokenGeneratorType.Token007,
-            TokenGenerator.AgoraTokenType.Rtc,
+            arrayOf(
+                TokenGenerator.AgoraTokenType.Rtc,
+                TokenGenerator.AgoraTokenType.Rtm
+            ),
             success = {
-                ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
-                RtcEngineInstance.setupGeneralToken(it)
+                //ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
+                val rtcToken = it[TokenGenerator.AgoraTokenType.Rtc] ?: return@generateTokens
+                val rtmToken = it[TokenGenerator.AgoraTokenType.Rtm] ?: return@generateTokens
+                RtcEngineInstance.setupGeneralRtcToken(rtcToken)
+                RtcEngineInstance.setupGeneralRtmToken(rtmToken)
                 success.invoke()
             },
             failure = {
-                ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
+                //ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
                 ToastUtils.showToast(it?.message ?: "generate token failure")
                 error?.invoke(it)
             })

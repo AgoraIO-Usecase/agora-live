@@ -20,12 +20,17 @@ class VRSoundCardEffectView: UIView {
                                 "voice_radish_note".voice_localized,
                                 "voice_uncle_sound".voice_localized,
                                 "voice_moma".voice_localized,
-                                "voice_royal_mother_tone".voice_localized]
-    let descArray: [String] = ["voice_musical_magnetic".voice_localized,
+                                "voice_mature_youthful_male".voice_localized,
+                                "voice_royal_mother_tone".voice_localized,
+                                "voice_adolescent_voice".voice_localized,
+                                "voice_mature_youthful_female".voice_localized]
+    let descArray: [String] = ["voice_pleasing_magnetic".voice_localized,
                                "voice_soft_magnetic".voice_localized,
                                "voice_liud_full".voice_localized,
                                "voice_clamps_girl".voice_localized,
                                "voice_high_reverb_ktv".voice_localized,
+                               "voice_high_reverb_ktv".voice_localized,
+                               "voice_bright_magnetic".voice_localized,
                                "voice_bright_magnetic".voice_localized,
                                "voice_low_warm".voice_localized,
                                "voice_mellow_full".voice_localized]

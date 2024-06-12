@@ -16,20 +16,20 @@
         android:scaleType="centerCrop"
         app:layout_constraintDimensionRatio="160:234"
         android:src="@mipmap/icon_room_cover1"
-        app:shapeAppearance="@style/show_roundStyle_6" />
+        app:shapeAppearance="@style/commerce_roundStyle_6" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvLiving"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:background="@drawable/show_room_item_text_bg"
-        android:drawableStart="@mipmap/show_list_living"
+        android:background="@drawable/commerce_room_item_text_bg"
+        android:drawableStart="@drawable/commerce_list_living"
         android:drawablePadding="3dp"
         android:gravity="center"
         android:paddingHorizontal="5dp"
         android:paddingVertical="3dp"
-        android:text="@string/show_living"
+        android:text="@string/commerce_living"
         android:textColor="@color/white"
         android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -49,14 +49,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tvUserCount"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="@string/show_room_id" />
+        tools:text="@string/commerce_room_id" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvUserCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
-        android:drawableStart="@mipmap/show_list_user_tag"
+        android:drawableStart="@drawable/commerce_list_user_tag"
         android:gravity="end"
         android:textColor="@color/white"
         android:textSize="10sp"
@@ -64,7 +64,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:drawablePadding="5dp"
         app:layout_constraintStart_toEndOf="@id/tvRoomId"
-        tools:text="@string/show_user_count" />
+        tools:text="@string/commerce_user_count" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvRoomName"

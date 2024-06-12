@@ -23,6 +23,7 @@ class CommerceCreateLiveVC: UIViewController {
         setUpUI()
         configNaviBar()
         
+        CommerceAgoraKitManager.shared.resetBroadcasterProfile()
         CommerceAgoraKitManager.shared.startPreview(canvasView: self.localView)
     }
     
@@ -98,17 +99,28 @@ extension CommerceCreateLiveVC: CommerceCreateLiveViewDelegate {
             return
         }
         
-        guard  let roomName = createView.roomName, roomName.count <= 16 else {
+        guard let roomName = createView.roomName, roomName.count <= 16 else {
             ToastView.show(text: "create_room_name_too_long".commerce_localized)
+            return
+        }
+        
+        if AppContext.shared.commerceRtcToken == nil {
+            CommerceAgoraKitManager.shared.preGenerateToken {
+            }
+            
+            ToastView.show(text: "show_token_is_empty".commerce_localized)
             return
         }
         
         let roomId = createView.roomNo
         SVProgressHUD.show()
         self.view.isUserInteractionEnabled = false
+        let date = Date()
         AppContext.commerceServiceImp(createView.roomNo)?.createRoom(roomName: roomName,
-                                                                roomId: roomId,
-                                                                thumbnailId: createView.roomBg) { [weak self] err, detailModel in
+                                                                     roomId: roomId,
+                                                                     thumbnailId: createView.roomBg) { [weak self] err, detailModel in
+            commercePrintLog("[Timing][\(roomId)] total createRoom cost: \(Int(-date.timeIntervalSinceNow * 1000)) ms")
+
             SVProgressHUD.dismiss()
             self?.view.isUserInteractionEnabled = true
             if err != nil {

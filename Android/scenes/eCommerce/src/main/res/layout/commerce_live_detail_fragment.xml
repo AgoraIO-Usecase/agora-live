@@ -12,6 +12,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- 在布局文件中定义TextView -->
+    <TextView
+        android:id="@+id/userView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:alpha="0"
+        android:background="@drawable/commerce_bg_user_join"
+        android:text="@string/commerce_user_joined"
+        android:textColor="@color/white"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="10dp"
+        android:translationX="0dp"
+        android:textSize="14sp"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="3dp"
+        app:layout_constraintBottom_toTopOf="@id/messageLayout"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <include
         android:id="@+id/messageLayout"
         layout="@layout/commerce_live_detail_message"

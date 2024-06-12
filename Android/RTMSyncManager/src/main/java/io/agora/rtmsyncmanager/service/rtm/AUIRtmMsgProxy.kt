@@ -12,6 +12,7 @@ import io.agora.rtm.RtmEventListener
 import io.agora.rtm.StorageEvent
 import io.agora.rtm.TopicEvent
 import io.agora.rtmsyncmanager.utils.AUILogger
+import java.sql.Timestamp
 
 interface AUIRtmErrorRespObserver {
 
