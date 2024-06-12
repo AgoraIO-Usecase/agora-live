@@ -20,17 +20,21 @@ import java.io.IOException
 
 internal object KTVHttpManager {
 
-    fun <T>errorFromResponse(response: Response<T>): AUIException {
+    fun <T> errorFromResponse(response: Response<T>): AUIException {
         val errorMsg = response.errorBody()?.string()
-        var code = -1
-        var msg = "error"
+        var code = response.code()
+        var msg = errorMsg
         if (errorMsg != null) {
-            val obj = JSONObject(errorMsg)
-            if (obj.has("code")){
-                code = obj.getInt("code")
-            }
-            if (obj.has("message")){
-                msg = obj.getString("message")
+            try {
+                val obj = JSONObject(errorMsg)
+                if (obj.has("code")) {
+                    code = obj.getInt("code")
+                }
+                if (obj.has("message")) {
+                    msg = obj.getString("message")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
         return AUIException(code, msg)

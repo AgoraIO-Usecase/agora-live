@@ -191,6 +191,7 @@ class KTVSyncManagerServiceImp constructor(
     }
 
     private fun startTimer() {
+        mMainHandler.removeCallbacks(timerRoomCountDownTask)
         mMainHandler.postDelayed(timerRoomCountDownTask, 1000)
     }
 
