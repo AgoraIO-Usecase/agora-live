@@ -18,13 +18,9 @@ import io.agora.rtc2.RtcConnection.CONNECTION_STATE_TYPE
 import io.agora.rtc2.RtcEngine
 import io.agora.rtc2.RtcEngineConfig
 import io.agora.rtc2.RtcEngineEx
-import io.agora.rtc2.video.ContentInspectConfig
-import io.agora.rtc2.video.ContentInspectConfig.ContentInspectModule
 import io.agora.rtc2.video.VideoCanvas
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
-import io.agora.scene.base.AudioModeration
-import io.agora.scene.base.AudioModeration.moderationAudio
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.utils.DownloadManager
 import io.agora.scene.ktv.KTVLogger
@@ -534,7 +530,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
         KTVLogger.d(TAG, "RoomLivingViewModel.getSongList() called")
         val liveData = MutableLiveData<List<ChosenSongInfo>>()
         ktvApiManager.getSongList { error, musicList ->
-            KTVLogger.d(TAG, "RoomLivingViewModel.getSongList() return")
+            KTVLogger.d(TAG, "RoomLivingViewModel.getSongList() return error:$error")
             val songs: MutableList<ChosenSongInfo> = ArrayList()
             if (error != null) {
                 CustomToast.show(R.string.ktv_get_songs_failed, error.message ?: "")
@@ -963,13 +959,6 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 }
             }
 
-            override fun onContentInspectResult(result: Int) {
-                super.onContentInspectResult(result)
-                if (result > 1) {
-                    CustomToast.show(R.string.ktv_content, Toast.LENGTH_SHORT)
-                }
-            }
-
             override fun onStreamMessage(uid: Int, streamId: Int, data: ByteArray) {
                 val jsonMsg: JSONObject
                 try {
@@ -1139,26 +1128,6 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 KTVLogger.e(TAG, "joinRTC() called error: $ret")
             }
         }
-        // ------------------ 开启鉴黄服务 ------------------
-        val contentInspectConfig = ContentInspectConfig()
-        try {
-            val jsonObject = JSONObject()
-            jsonObject.put("sceneName", "ktv")
-            jsonObject.put("id", KtvCenter.mUser.id.toString())
-            jsonObject.put("userNo", KtvCenter.mUser.userNo)
-            contentInspectConfig.extraInfo = jsonObject.toString()
-            val module = ContentInspectModule()
-            module.interval = 30
-            module.type = ContentInspectConfig.CONTENT_INSPECT_TYPE_MODERATION
-            contentInspectConfig.modules = arrayOf(module)
-            contentInspectConfig.moduleCount = 1
-            mRtcEngine?.enableContentInspect(true, contentInspectConfig)
-        } catch (e: JSONException) {
-            KTVLogger.e(TAG, e.toString())
-        }
-
-        // ------------------ 开启语音鉴定服务 ------------------
-        moderationAudio(mRoomInfo.roomId, KtvCenter.mUser.id, AudioModeration.AgoraChannelType.rtc, "ktv")
 
         // 外部使用的StreamId
         if (streamId == 0) {
