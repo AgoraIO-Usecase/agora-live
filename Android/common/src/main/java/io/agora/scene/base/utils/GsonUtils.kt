@@ -69,6 +69,7 @@ open class GsonUtils {
          * @param obj
          * @return
          */
+        @JvmStatic
         fun covertToString(obj: Any): String {
             return gson.toJson(obj)
         }
@@ -80,6 +81,7 @@ open class GsonUtils {
          * @param typeOfSrc
          * @return
          */
+        @JvmStatic
         fun covertToString(obj: Any, typeOfSrc: Type): JsonElement {
             return gson.toJsonTree(obj, typeOfSrc)
         }
@@ -90,6 +92,7 @@ open class GsonUtils {
          * @param obj
          * @return
          */
+        @JvmStatic
         fun covertToMap(obj: Any): Map<String, String>{
             return gson.fromJson(gson.toJson(obj), object: TypeToken<HashMap<String, String>>(){}.type)
         }

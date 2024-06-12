@@ -27,7 +27,7 @@ public final class ToastUtils {
      * @param resStringId the res string id
      */
     public static void showToast(int resStringId) {
-        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), resStringId, Toast.LENGTH_SHORT).show());
+        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), resStringId, Toast.LENGTH_LONG).show());
     }
 
     /**
@@ -36,7 +36,7 @@ public final class ToastUtils {
      * @param str the str
      */
     public static void showToast(String str) {
-        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), str, Toast.LENGTH_SHORT).show());
+        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), str, Toast.LENGTH_LONG).show());
     }
 
     /**
@@ -44,8 +44,8 @@ public final class ToastUtils {
      *
      * @param resStringId the res string id
      */
-    public static void showToastLong(int resStringId) {
-        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), resStringId, Toast.LENGTH_LONG).show());
+    public static void showToastShort(int resStringId) {
+        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), resStringId, Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -53,8 +53,8 @@ public final class ToastUtils {
      *
      * @param str the str
      */
-    public static void showToastLong(String str) {
-        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), str, Toast.LENGTH_LONG).show());
+    public static void showToastShort(String str) {
+        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), str, Toast.LENGTH_SHORT).show());
     }
 
     /**

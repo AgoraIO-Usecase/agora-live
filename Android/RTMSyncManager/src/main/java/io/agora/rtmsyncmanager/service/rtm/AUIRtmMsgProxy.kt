@@ -11,20 +11,29 @@ import io.agora.rtm.RtmConstants
 import io.agora.rtm.RtmEventListener
 import io.agora.rtm.StorageEvent
 import io.agora.rtm.TopicEvent
+import io.agora.rtmsyncmanager.utils.AUILogger
 
 interface AUIRtmErrorRespObserver {
 
-    /** token过期
+    /*
+     * token即将过期
      */
     fun onTokenPrivilegeWillExpire(channelName: String?)
 
-    /** 网络状态变化
+    /*
+     * 网络状态变化
      */
     fun onConnectionStateChanged(channelName: String?, state: Int, reason: Int) {}
 
-    /** 收到的KV为空
+    /*
+     * 收到的KV为空
      */
     fun onMsgReceiveEmpty(channelName: String) {}
+
+    /*
+     * 系统时间戳更新
+     */
+    fun onTimeStampsDidUpdate(timestamp: Long) {}
 }
 
 interface AUIRtmAttributeRespObserver {
@@ -35,16 +44,21 @@ interface AUIRtmMessageRespObserver {
     fun onMessageReceive(channelName: String, publisherId: String, message: String)
 }
 
+enum class AUIRtmUserLeaveReason(val value: Int) {
+    NORMAL(0),
+    TIMEOUT(1)
+}
+
 interface AUIRtmUserRespObserver {
     fun onUserSnapshotRecv(channelName: String, userId: String, userList: List<Map<String, Any>>)
     fun onUserDidJoined(channelName: String, userId: String, userInfo: Map<String, Any>)
-    fun onUserDidLeaved(channelName: String, userId: String, userInfo: Map<String, Any>)
+    fun onUserDidLeaved(channelName: String, userId: String, userInfo: Map<String, Any>, reason: AUIRtmUserLeaveReason)
     fun onUserDidUpdated(channelName: String, userId: String, userInfo: Map<String, Any>)
 }
 
 interface AUIRtmLockRespObserver {
     fun onReceiveLock(channelName: String, lockName: String, lockOwner: String)
-    fun onReleaseLock(channelName: String, lockName: String, lockOwner: String)
+    fun onReleaseLock(channelName: String, lockName: String, lockOwner: String, isExpire: Boolean)
 }
 
 class AUIRtmMsgProxy : RtmEventListener {
@@ -62,12 +76,7 @@ class AUIRtmMsgProxy : RtmEventListener {
 
     fun cleanCache(channelName: String) {
         msgCacheAttr.remove(channelName)
-        Log.d(tag, "cleanCache channelName$channelName, msgCacheAttr=$msgCacheAttr")
-    }
-
-    fun keys(channelName: String): List<String>? {
-        val cache = msgCacheAttr[channelName]
-        return cache?.map { it.key }
+        AUILogger.logger().d(tag, "cleanCache channelName$channelName, msgCacheAttr=$msgCacheAttr")
     }
 
     fun unRegisterAllObservers() {
@@ -84,7 +93,7 @@ class AUIRtmMsgProxy : RtmEventListener {
         observer: AUIRtmAttributeRespObserver
     ) {
         val key = "${channelName}__${itemKey}"
-        Log.d(tag, "registerAttributeRespObserver: $key")
+        AUILogger.logger().d(tag, "registerAttributeRespObserver: $key")
         val observers = attributeRespObservers[key] ?: ArrayList()
         observers.add(observer)
         attributeRespObservers[key] = observers
@@ -96,7 +105,7 @@ class AUIRtmMsgProxy : RtmEventListener {
         observer: AUIRtmAttributeRespObserver
     ) {
         val key = "${channelName}__${itemKey}"
-        Log.d(tag, "unRegisterAttributeRespObserver: $key")
+        AUILogger.logger().d(tag, "unRegisterAttributeRespObserver: $key")
         val observers = attributeRespObservers[key] ?: return
         observers.remove(observer)
     }
@@ -153,9 +162,10 @@ class AUIRtmMsgProxy : RtmEventListener {
     }
 
     override fun onStorageEvent(event: StorageEvent?) {
-        Log.d("rtm_event", "onStorageEvent update: $event")
+        //AUILogger.logger().d("rtm_event", "onStorageEvent update: $event")
         originEventListeners?.onStorageEvent(event)
         event ?: return
+        processTimeStampsDidUpdate(event.timestamp)
         val channelName = event.target
         processMetaData(channelName, event.data)
     }
@@ -163,7 +173,7 @@ class AUIRtmMsgProxy : RtmEventListener {
     fun processMetaData(channelName: String, metadata: Metadata?) {
         metadata ?: return
         val items = metadata.items
-        if (metadata.items.isEmpty()) {
+        if (items.isEmpty()) {
             if (isMetaEmpty) {
                 return
             }
@@ -176,7 +186,9 @@ class AUIRtmMsgProxy : RtmEventListener {
         isMetaEmpty = false
 
         val cache = msgCacheAttr[channelName] ?: mutableMapOf()
-        metadata.items.forEach { item ->
+        val existKeys = mutableListOf<String>()
+        items.forEach { item ->
+            existKeys.add(item.key)
             if (cache[item.key] == item.value) {
                 return@forEach
             }
@@ -187,8 +199,26 @@ class AUIRtmMsgProxy : RtmEventListener {
                 handler.onAttributeChanged(channelName, item.key, item.value)
             }
         }
+
+        val cacheKeys = cache.keys
+        cacheKeys.forEach { key ->
+            if (existKeys.contains(key)) return@forEach
+            //远端已经不存在对应的key了，需要通知所有的delegate
+            cache.remove(key)
+            val delegateKey = "${channelName}__${key}"
+            attributeRespObservers[delegateKey]?.forEach { handler ->
+                handler.onAttributeChanged(channelName, key, emptyMap<String, String>())
+            }
+        }
+
         msgCacheAttr[channelName] = cache
         return
+    }
+
+    private fun processTimeStampsDidUpdate(timeStamp: Long) {
+        errorRespObservers.forEach { handler ->
+            handler.onTimeStampsDidUpdate(timeStamp)
+        }
     }
 
     override fun onPresenceEvent(event: PresenceEvent?) {
@@ -198,6 +228,7 @@ class AUIRtmMsgProxy : RtmEventListener {
             "onPresenceEvent Type: ${event?.eventType} Publisher: ${event?.publisherId}"
         )
         event ?: return
+        processTimeStampsDidUpdate(event.timestamp)
         val map = mutableMapOf<String, String>()
         event.stateItems.forEach { item ->
             map[item.key] = item.value
@@ -209,10 +240,14 @@ class AUIRtmMsgProxy : RtmEventListener {
                     handler.onUserDidJoined(event.channelName, event.publisherId ?: "", map)
                 }
 
-            RtmConstants.RtmPresenceEventType.REMOTE_LEAVE,
+            RtmConstants.RtmPresenceEventType.REMOTE_LEAVE ->
+                userRespObservers.forEach { handler ->
+                    handler.onUserDidLeaved(event.channelName, event.publisherId ?: "", map, AUIRtmUserLeaveReason.NORMAL)
+                }
+
             RtmConstants.RtmPresenceEventType.REMOTE_TIMEOUT ->
                 userRespObservers.forEach { handler ->
-                    handler.onUserDidLeaved(event.channelName, event.publisherId ?: "", map)
+                    handler.onUserDidLeaved(event.channelName, event.publisherId ?: "", map, AUIRtmUserLeaveReason.TIMEOUT)
                 }
 
             RtmConstants.RtmPresenceEventType.REMOTE_STATE_CHANGED ->
@@ -259,6 +294,7 @@ class AUIRtmMsgProxy : RtmEventListener {
         originEventListeners?.onMessageEvent(event)
         event ?: return
         Log.d("rtm_event", "onMessageEvent event: $event")
+        processTimeStampsDidUpdate(event.timestamp)
         val message = event.message?.data?.let {
             if (it is ByteArray) {
                 String(it)
@@ -279,9 +315,10 @@ class AUIRtmMsgProxy : RtmEventListener {
     }
 
     override fun onLockEvent(event: LockEvent?) {
-        Log.d("rtm_lock_event", "onLockEvent event: $event")
+        AUILogger.logger().d("rtm_lock_event", "onLockEvent event: $event")
         originEventListeners?.onLockEvent(event)
         event ?: return
+        processTimeStampsDidUpdate(event.timestamp)
         val addLockDetails = mutableListOf<LockDetail>()
         val removeLockDetails = mutableListOf<LockDetail>()
         when (event.eventType) {
@@ -314,7 +351,7 @@ class AUIRtmMsgProxy : RtmEventListener {
         }
         removeLockDetails.forEach { lockDetail ->
             lockRespObservers.forEach { observer ->
-                observer.onReleaseLock(event.channelName, lockDetail.lockName, lockDetail.lockOwner)
+                observer.onReleaseLock(event.channelName, lockDetail.lockName, lockDetail.lockOwner, event.eventType == RtmConstants.RtmLockEventType.EXPIRED)
             }
         }
     }
@@ -325,7 +362,7 @@ class AUIRtmMsgProxy : RtmEventListener {
         reason: RtmConstants.RtmConnectionChangeReason?
     ) {
         super.onConnectionStateChanged(channelName, state, reason)
-        Log.d("rtm_event", "rtm -- connect state change: $state, reason: $reason")
+        AUILogger.logger().d(tag, "rtm -- connect state change: $state, reason: $reason")
 
         errorRespObservers.forEach {
             it.onConnectionStateChanged(
