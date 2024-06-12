@@ -72,6 +72,7 @@
 "voice_post_failed" = "Post Failed";
 "voice_lau" = "EN";
 "voice_bot_settings" = "Bot Settings";
+"voice_host_only_operation" = "Host only operation";
 "voice_you_were_removed_from_stage"="You have been removed from co-host.";
 "voice_set_room_name" = "Set Room Name";
 "voice_gaming_buddy"="Gaming Companion";
@@ -124,7 +125,6 @@
 "voice_other_sound" = "Other Optimal Profiles";
 "voice_otherSound" = "Switching to another optimal profile requires exiting the current room.";
 "voice_prompt" = "Prompt";
-"voice_mic_num" = "seat";
 "voice_add_bot" = "Add bots for the optimal profile?";
 "voice_exit_room" = "Leave and Create a New Voice Chat Room?";
 "voice_AINS_AI_noise_suppression" = "AINS: AI Noise Suppression";
@@ -140,7 +140,7 @@
 "voice_current_customer_usage" = "Current Customers:";
 "voice_end_live" = "End Live";
 "voice_please_set_a_name" = "Please Set a Room Name";
-"voice_visit_more" = "For more optimal profiles, please visit";
+"voice_visit_more" = "For more optimal profiles, please visit ";
 "voice_no_room_name"="Room Name Cannot Be Empty";
 "voice_apply_success" = "Application Requested!";
 "voice_apply_failed" = "Application Failed!";
@@ -231,8 +231,10 @@
 "voice_radish_note"="Cute Gril";
 "voice_uncle_sound"="Mature Male";
 "voice_moma"="Mature Female";
+"voice_mature_youthful_male"="Mature Youthful Male";
+"voice_mature_youthful_female"="Mature Youthful Female";
 "voice_royal_mother_tone"="Elegant Mature Female";
-"voice_musical_magnetic"="Musical, Magnetic";
+"voice_pleasing_magnetic"="Pleasing Magnetic";
 "voice_soft_magnetic"="Soft, Magnetic";
 "voice_liud_full"="Loud, Full";
 "voice_clamps_girl"="Pinched, Loli";

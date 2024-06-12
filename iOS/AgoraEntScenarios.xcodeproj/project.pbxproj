@@ -300,6 +300,7 @@
 		DDA19A0D28FFE579009D3E61 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA1994F28FFE579009D3E61 /* NetworkManager.swift */; };
 		DDA19A0F28FFE579009D3E61 /* VLUserCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = DDA1995928FFE579009D3E61 /* VLUserCenter.m */; };
 		DDA19A1028FFE579009D3E61 /* VLGlobalHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DDA1995B28FFE579009D3E61 /* VLGlobalHelper.m */; };
+		DDACED592C10480700A02735 /* CommerceRoomOwnerExpiredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDACED582C10480700A02735 /* CommerceRoomOwnerExpiredView.swift */; };
 		DDDDDB9E28FFD78C005F4E8B /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDDDA2D28FFD78B005F4E8B /* KeyCenter.swift */; };
 		DDDDDC3628FFD78C005F4E8B /* UIImage+Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDDDB3328FFD78B005F4E8B /* UIImage+Scene.swift */; };
 		DDDDDC3728FFD78C005F4E8B /* AppContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDDDB3428FFD78B005F4E8B /* AppContext.swift */; };
@@ -890,6 +891,7 @@
 		DDA1995928FFE579009D3E61 /* VLUserCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLUserCenter.m; sourceTree = "<group>"; };
 		DDA1995B28FFE579009D3E61 /* VLGlobalHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLGlobalHelper.m; sourceTree = "<group>"; };
 		DDA1995C28FFE579009D3E61 /* VLGlobalHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLGlobalHelper.h; sourceTree = "<group>"; };
+		DDACED582C10480700A02735 /* CommerceRoomOwnerExpiredView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceRoomOwnerExpiredView.swift; sourceTree = "<group>"; };
 		DDDDDA2928FFD5DD005F4E8B /* AgoraEntScenarios-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AgoraEntScenarios-Bridging-Header.h"; sourceTree = "<group>"; };
 		DDDDDA2D28FFD78B005F4E8B /* KeyCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
 		DDDDDB3328FFD78B005F4E8B /* UIImage+Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Scene.swift"; sourceTree = "<group>"; };
@@ -1359,6 +1361,7 @@
 		A84C2CCD2B4FB01700D6EFCF /* Alert */ = {
 			isa = PBXGroup;
 			children = (
+				DDACED582C10480700A02735 /* CommerceRoomOwnerExpiredView.swift */,
 				A84C2CCE2B4FB01700D6EFCF /* CommerceReceiveFinishView.swift */,
 			);
 			path = Alert;
@@ -3395,6 +3398,7 @@
 				A8F904952B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift in Sources */,
 				A84C2D552B4FB01700D6EFCF /* CommerceDebugSetting1TFCell.swift in Sources */,
 				A84C2D392B4FB01700D6EFCF /* CommerceSelectQualityCell.swift in Sources */,
+				DDACED592C10480700A02735 /* CommerceRoomOwnerExpiredView.swift in Sources */,
 				DDA199FA28FFE579009D3E61 /* UIColor+JKWeb.m in Sources */,
 				E732CD272B47EC6D004D6FB9 /* VoiceCreateRoomView.swift in Sources */,
 				DDA19A0528FFE579009D3E61 /* NSObject+JKAppInfo.m in Sources */,
