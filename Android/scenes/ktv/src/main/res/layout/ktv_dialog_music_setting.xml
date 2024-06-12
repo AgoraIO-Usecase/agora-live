@@ -282,77 +282,77 @@
                 tools:itemCount="9"
                 tools:listitem="@layout/ktv_item_effectvoice" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layoutVoiceScoringDifficulty"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="12dp"
-                android:paddingVertical="15dp"
-                app:layout_constraintTop_toBottomOf="@id/rvVoiceEffectList">
+<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                android:id="@+id/layoutVoiceScoringDifficulty"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginHorizontal="20dp"-->
+<!--                android:layout_marginTop="12dp"-->
+<!--                android:paddingVertical="15dp"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/rvVoiceEffectList">-->
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ktv_voice_scoring_difficulty"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+<!--                <androidx.appcompat.widget.AppCompatTextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/ktv_voice_scoring_difficulty"-->
+<!--                    android:textColor="@color/white"-->
+<!--                    android:textSize="15sp"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
 
-                <RadioGroup
-                    android:id="@+id/rgVoiceScoringDifficulty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/ktv_ear_back_mode_radius"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:padding="3dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+<!--                <RadioGroup-->
+<!--                    android:id="@+id/rgVoiceScoringDifficulty"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:background="@drawable/ktv_ear_back_mode_radius"-->
+<!--                    android:gravity="center"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:padding="3dp"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent">-->
 
-                    <RadioButton
-                        android:id="@+id/tvScoringDifficultyLow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/ktv_ear_back_mode_selector"
-                        android:button="@null"
-                        android:checked="false"
-                        android:gravity="center"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
-                        android:text="@string/ktv_voice_scoring_difficulty_low"
-                        android:textColor="@drawable/ktv_ear_back_mode_status" />
+<!--                    <RadioButton-->
+<!--                        android:id="@+id/tvScoringDifficultyLow"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:background="@drawable/ktv_ear_back_mode_selector"-->
+<!--                        android:button="@null"-->
+<!--                        android:checked="false"-->
+<!--                        android:gravity="center"-->
+<!--                        android:paddingHorizontal="8dp"-->
+<!--                        android:paddingVertical="4dp"-->
+<!--                        android:text="@string/ktv_voice_scoring_difficulty_low"-->
+<!--                        android:textColor="@drawable/ktv_ear_back_mode_status" />-->
 
-                    <RadioButton
-                        android:id="@+id/tvScoringDifficultyRecommend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/ktv_ear_back_mode_selector"
-                        android:button="@null"
-                        android:checked="true"
-                        android:gravity="center"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
-                        android:text="@string/ktv_voice_scoring_difficulty_recommend"
-                        android:textColor="@drawable/ktv_ear_back_mode_status" />
+<!--                    <RadioButton-->
+<!--                        android:id="@+id/tvScoringDifficultyRecommend"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:background="@drawable/ktv_ear_back_mode_selector"-->
+<!--                        android:button="@null"-->
+<!--                        android:checked="true"-->
+<!--                        android:gravity="center"-->
+<!--                        android:paddingHorizontal="8dp"-->
+<!--                        android:paddingVertical="4dp"-->
+<!--                        android:text="@string/ktv_voice_scoring_difficulty_recommend"-->
+<!--                        android:textColor="@drawable/ktv_ear_back_mode_status" />-->
 
-                    <RadioButton
-                        android:id="@+id/tvScoringDifficultyHigh"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/ktv_ear_back_mode_selector"
-                        android:button="@null"
-                        android:checked="false"
-                        android:gravity="center"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp"
-                        android:text="@string/ktv_voice_scoring_difficulty_high"
-                        android:textColor="@drawable/ktv_ear_back_mode_status" />
-                </RadioGroup>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+<!--                    <RadioButton-->
+<!--                        android:id="@+id/tvScoringDifficultyHigh"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:background="@drawable/ktv_ear_back_mode_selector"-->
+<!--                        android:button="@null"-->
+<!--                        android:checked="false"-->
+<!--                        android:gravity="center"-->
+<!--                        android:paddingHorizontal="8dp"-->
+<!--                        android:paddingVertical="4dp"-->
+<!--                        android:text="@string/ktv_voice_scoring_difficulty_high"-->
+<!--                        android:textColor="@drawable/ktv_ear_back_mode_status" />-->
+<!--                </RadioGroup>-->
+<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutProfessional"
@@ -360,7 +360,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
                 android:paddingVertical="12dp"
-                app:layout_constraintTop_toBottomOf="@id/layoutVoiceScoringDifficulty">
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toBottomOf="@id/rvVoiceEffectList">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvProfessional"

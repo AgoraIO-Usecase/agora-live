@@ -78,6 +78,7 @@ internal object KTVHttpManager {
                     return null
                 }
             })
+            .registerTypeAdapter(KtvSongApiModel::class.java, KtvSongApiModelSerializer())
             .enableComplexMapKeySerialization()
             .create()
 
