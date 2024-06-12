@@ -280,7 +280,7 @@ extension VRSoundCardSettingView: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let block = clicKBlock else {return}
+        guard let block = clicKBlock, soundOpen else {return}
         if indexPath.row == 1 {
             //Pop up sound effect selection
             block(2)

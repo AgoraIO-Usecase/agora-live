@@ -70,6 +70,8 @@ class CommerceLiveViewController: UIViewController {
     
     private var interruptInteractionReason: String?
     
+    private var ownerExpiredView: CommerceRoomOwnerExpiredView?
+    
     //TODO: remove
     private lazy var settingMenuVC: CommerceToolMenuViewController = {
         let settingMenuVC = CommerceToolMenuViewController()
@@ -463,7 +465,22 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
         }
     }
     
-    func onRoomExpired() {
+    
+    private func _broadcasterRoomExpired(){
+        if ownerExpiredView != nil {return}
+        ownerExpiredView = CommerceRoomOwnerExpiredView()
+        ownerExpiredView?.headImg = VLUserCenter.user.headUrl
+        ownerExpiredView?.clickBackButtonAction = {[weak self] in
+            self?.leaveRoom()
+            self?.dismiss(animated: true)
+        }
+        self.view.addSubview(ownerExpiredView!)
+        ownerExpiredView?.snp.makeConstraints { make in
+            make.left.right.top.bottom.equalToSuperview()
+        }
+    }
+    
+    private func _audienceRoomOwnerExpired(){
         AppContext.expireCommerceImp(roomId)
         serviceImp?.leaveRoom(completion: { _ in })
         finishView?.removeFromSuperview()
@@ -474,6 +491,14 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
         self.view.addSubview(finishView!)
         finishView?.snp.makeConstraints { make in
             make.left.right.top.bottom.equalToSuperview()
+        }
+    }
+    
+    func onRoomExpired() {
+        if role == .broadcaster {
+            _broadcasterRoomExpired()
+        }else{
+            _audienceRoomOwnerExpired()
         }
     }
     
