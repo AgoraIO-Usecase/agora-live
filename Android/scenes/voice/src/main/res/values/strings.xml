@@ -12,7 +12,7 @@
     <string name="voice_room_sound_selection">Optimal Profile</string>
     <string name="voice_room_current_customer_usage">Customers:</string>
     <string name="voice_create_room">Create Room</string>
-    <string name="voice_create_room_button">+ Create Room</string>
+    <string name="voice_create_room_button">CREATE</string>
     <string name="voice_room_title">Room Name</string>
     <string name="voice_random">Random</string>
     <string name="voice_room_name_hint">Enter a room name to attract more audience</string>

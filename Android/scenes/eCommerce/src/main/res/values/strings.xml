@@ -91,7 +91,7 @@
     <string name="commerce_shop_auction_you_leading">You</string>
     <string name="commerce_shop_auction_bid">Bid: $%s</string>
     <string name="commerce_shop_auction_price">$%s</string>
-    <string name="commerce_shop_auction_won">Won</string>
+    <string name="commerce_shop_auction_won">won</string>
     <string name="commerce_shop_item_qty">Qty: %s</string>
     <string name="commerce_shop_item_sold_out">Sold Out</string>
     <string name="commerce_shop_alert_bought">Bought!</string>
