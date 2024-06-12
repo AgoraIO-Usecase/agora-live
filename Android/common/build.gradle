@@ -7,7 +7,7 @@ plugins {
 if (project.property("AGORA_APP_ID").toString().isEmpty()) {
     println("Please config AGORA_APP_ID in gradle.properties")
 }
-def localsdkPath = "rtm"
+//def localsdkPath = "rtm"
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -43,11 +43,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    sourceSets {
-        main {
-            jniLibs.srcDirs += "${localsdkPath}"
-        }
-    }
+//    sourceSets {
+//        main {
+//            jniLibs.srcDirs += "${localsdkPath}"
+//        }
+//    }
 }
 
 dependencies {
@@ -80,5 +80,5 @@ dependencies {
     api rootProject.ext.deps.ok2curl
 
     api rootProject.ext.deps.rtc
-    api fileTree(dir: "${localsdkPath}", include: ['*.jar'])
+    //api fileTree(dir: "${localsdkPath}", include: ['*.jar'])
 }
