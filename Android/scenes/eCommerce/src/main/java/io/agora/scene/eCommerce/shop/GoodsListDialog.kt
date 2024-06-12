@@ -34,7 +34,7 @@ class GoodsListDialog constructor(
 
     private val dataSource = arrayListOf<GoodsModel>()
 
-    private lateinit var mAdapter: ShopAdapter
+    private var mAdapter: ShopAdapter? = null
 
     init {
         setContentView(binding.root)
@@ -76,7 +76,7 @@ class GoodsListDialog constructor(
                 item.quantity = model.quantity
             }
         }
-        mAdapter.resetAll(dataSource)
+        mAdapter?.resetAll(dataSource)
     }
 
     private fun setupView() {
@@ -86,7 +86,7 @@ class GoodsListDialog constructor(
         isRoomOwner = roomInfo.ownerId.toLong() == UserManager.getInstance().user.id
         mAdapter = ShopAdapter(isRoomOwner)
         binding.recyclerView.adapter = mAdapter
-        mAdapter.onClickBuy = { goodsId, btn, pb, tv ->
+        mAdapter?.onClickBuy = { goodsId, btn, pb, tv ->
             mService.shopBuyItem(roomId, goodsId) { e ->
                 runOnMainThread {
                     if (e != null) {
@@ -105,7 +105,7 @@ class GoodsListDialog constructor(
                 }
             }
         }
-        mAdapter.onUserChangedQty = { goodsId, qty, btn, pb, tv ->
+        mAdapter?.onUserChangedQty = { goodsId, qty, btn, pb, tv ->
             mService.shopUpdateItem(roomId, goodsId, qty) { e ->
                 runOnMainThread {
                     if (e != null) {
