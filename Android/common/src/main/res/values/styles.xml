@@ -5,18 +5,18 @@
         <item name="cornerSize">50%</item>
     </style>
 
-    <declare-styleable name="ui_widget_encryption_input_style">
-        <attr name="ui_widget_strokeWidth" format="dimension" />
-        <attr name="ui_widget_checkedColor" format="color" />
-        <attr name="ui_widget_defaultColor" format="color" />
-        <attr name="ui_widget_textLength" format="integer" />
-        <attr name="ui_widget_backColor" format="color" />
-        <attr name="ui_widget_textColor" format="color" />
-        <attr name="ui_widget_circle" format="dimension" />
-        <attr name="ui_widget_round" format="dimension" />
-        <attr name="ui_widget_textSize" format="dimension" />
-        <attr name="ui_widget_isPwd" format="boolean" />
-        <attr name="ui_widget_waitInputColor" format="color" />
-        <attr name="ui_widget_isWaitInput" format="boolean" />
+    <declare-styleable name="encryption_input_style">
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="checkedColor" format="color" />
+        <attr name="defaultColor" format="color" />
+        <attr name="textLength" format="integer" />
+        <attr name="backColor" format="color" />
+        <attr name="textColor" format="color" />
+        <attr name="circle" format="dimension" />
+        <attr name="round" format="dimension" />
+        <attr name="textSize" format="dimension" />
+        <attr name="isPwd" format="boolean" />
+        <attr name="waitInputColor" format="color" />
+        <attr name="isWaitInput" format="boolean" />
     </declare-styleable>
 </resources>

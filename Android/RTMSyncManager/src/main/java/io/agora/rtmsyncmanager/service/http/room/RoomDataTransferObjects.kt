@@ -1,6 +1,6 @@
 package io.agora.rtmsyncmanager.service.http.room
 
-import io.agora.auikit.service.http.PayloadResp
+import io.agora.rtmsyncmanager.service.http.PayloadResp
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 
 data class CreateRoomReq(
@@ -59,11 +59,9 @@ data class RoomListResp(
             list.add(AUIRoomInfo().apply {
                 roomId = it.roomId
                 roomName = it.payload?.roomName ?: ""
-                memberCount = it.payload?.memberCount ?: 0
-                owner = it.payload?.owner
-                thumbnail = it.payload?.thumbnail ?: ""
-                createTime = it.createTime
+                roomOwner = it.payload?.roomOwner
                 customPayload = it.payload?.customPayload
+                createTime = it.createTime
             })
         }
         return list

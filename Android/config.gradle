@@ -40,10 +40,10 @@ ext {
             gson              : 'com.google.code.gson:gson:2.9.0',
             autosize          : 'com.github.JessYanCoding:AndroidAutoSize:v1.2.1',
 
-            rtc               : 'io.agora.rtc:agora-special-full:4.1.1.23',
+            rtc               : 'io.agora.rtc:full-sdk:4.3.1',
             rtm               : 'io.agora:agora-rtm:2.2.0',
             syncManager       : 'com.github.AgoraIO-Community:SyncManager-Android:2.2.11.1',
-            lyricsView        : 'com.github.AgoraIO-Community:LyricsView:1.1.1-beta.8',
+            lyricsView        : 'com.github.AgoraIO-Community:LyricsView:1.1.4',
 
             // android native libraries
             core_ktx           : "androidx.core:core-ktx:1.7.0",
@@ -54,6 +54,11 @@ ext {
             svga_player        : 'com.github.yyued:SVGAPlayer-Android:2.6.1',
             agora_chat         : 'io.agora.rtc:chat-sdk:1.1.0',
             ok2curl            : 'com.github.mrmike:ok2curl:0.8.0',
+
+//            audiokit           : 'com.huawei.multimedia:audiokit:1.0.1',
+
+            protobuf_java      : 'com.google.protobuf:protobuf-java:3.19.3',
+            protobuf_java_util : 'com.google.protobuf:protobuf-java-util:3.19.3'
     ]
     android = [
             compileSdkVersion: 31,
