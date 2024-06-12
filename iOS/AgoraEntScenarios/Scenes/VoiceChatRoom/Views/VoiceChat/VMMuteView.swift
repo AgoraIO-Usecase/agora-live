@@ -50,7 +50,11 @@ class VMMuteView: UIView {
             sepView.isHidden = isOwner
             roleBtn.isHidden = !isOwner
             muteBtn.frame = isOwner ? CGRect(x: 0, y: 170, width: bounds.size.width, height: 40) : CGRect(x: bounds.size.width / 2.0, y: 170, width: bounds.size.width / 2.0, height: 40)
-            iconView.sd_setImage(with: URL(string: iconStr), placeholderImage:UIImage.sceneImage(name: "", bundleName: "VoiceChatRoomResource"))
+            if iconStr.hasPrefix("http") {
+                iconView.sd_setImage(with: URL(string: iconStr), placeholderImage: UIImage.sceneImage(name: "", bundleName: "VoiceChatRoomResource"))
+            } else {
+                iconView.image = UIImage(named: iconStr)
+            }
             if m_type == 0 {
                 iconView.isHidden = false
                 nameLabel.text = username

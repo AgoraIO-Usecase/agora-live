@@ -27,8 +27,9 @@ class CommerceLiveViewController: UIViewController {
                 liveView.room = room
                 liveView.canvasView.canvasType = .none
                 if let oldRoom = oldValue {
-                    _leavRoom(oldRoom)
+                    _leaveRoom(oldRoom)
                 }
+                
                 if let room = room {
                     serviceImp = AppContext.commerceServiceImp(room.roomId)
 //                    _joinRoom(room)
@@ -49,6 +50,7 @@ class CommerceLiveViewController: UIViewController {
         }
     }
     private var currentChannelId: String?
+    private var currentLikeCount: Int?
     
     private var roomId: String {
         get {
@@ -67,6 +69,8 @@ class CommerceLiveViewController: UIViewController {
     private var joinRetry = 0
     
     private var interruptInteractionReason: String?
+    
+    private var ownerExpiredView: CommerceRoomOwnerExpiredView?
     
     //TODO: remove
     private lazy var settingMenuVC: CommerceToolMenuViewController = {
@@ -107,17 +111,46 @@ class CommerceLiveViewController: UIViewController {
     private lazy var auctionView: CommerceAuctionShoppingView = {
         let view = CommerceAuctionShoppingView(isBroadcastor: role == .broadcaster)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.startBidGoodsClosure = { [weak self] model in
-            guard let self = self, let model = model else { return }
-            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
+        view.startBidGoodsClosure = { [weak self, weak view] in
+            guard let self = self else { return }
+            view?.toggleLoadingIndicator(true)
+            self.addBidGoodsInfo(status: .started) { error in
+                view?.toggleLoadingIndicator(false)
+                if let error = error {
+                    ToastView.show(text: "\("show_auction_fail_toast".commerce_localized) Error:\(error.code)")
+                    return
+                }
+            }
         }
-        view.endBidGoodsClosure = { [weak self] model in
+        view.endBidGoodsClosure = { [weak self, weak view] model in
             guard let self = self, let model = model else { return }
-            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
+            self.serviceImp?.endBidGoodsInfo(roomId: self.roomId, goods: model) { error in
+                //TODO: retry
+                guard let _ = error else { return }
+                //retry every 5s
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    view?.checkRetryCompletion()
+                }
+            }
         }
-        view.bidInAuctionGoodsClosure = { [weak self] model in
+        view.bidInAuctionGoodsClosure = { [weak self, weak view] model in
             guard let self = self, let model = model else { return }
-            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: { _ in })
+            view?.toggleLoadingIndicator(true)
+            self.serviceImp?.updateBidGoodsInfo(roomId: self.roomId, goods: model, completion: {[weak self] error in
+                view?.toggleLoadingIndicator(false)
+                if let error = error {
+                    if let _ = CommerceServiceError(rawValue: error.code) {
+                        ToastView.show(text: error.localizedDescription)
+                        return
+                    }
+                    ToastView.show(text: "\("show_bid_fail_toast".commerce_localized) Error:\(error.code)")
+                    return
+                }
+            })
+        }
+        
+        view.getCurrentTsClosure = {[weak self] in
+            return self?.serviceImp?.getCurrentTs(roomId: self?.roomId ?? "") ?? 0
         }
         return view
     }()
@@ -160,6 +193,15 @@ class CommerceLiveViewController: UIViewController {
         AppContext.unloadCommerceServiceImp(roomId)
         commerceLogger.info("deinit-- CommerceLiveViewController \(roomId)")
 //        musicManager?.destory()
+    }
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        commerceLogger.info("init-- CommerceLiveViewController")
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -208,17 +250,21 @@ class CommerceLiveViewController: UIViewController {
     }
     
     func leaveRoom(){
-        CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
-        CommerceAgoraKitManager.shared.cleanCapture()
-        CommerceAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
+        guard let room = room else { return }
+        _leaveRoom(room)
         
-        serviceImp?.leaveRoom {_ in
-        }
-        serviceImp?.unsubscribeEvent(delegate: self)
+//        CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
+//        CommerceAgoraKitManager.shared.cleanCapture()
+//        CommerceAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
+//        
+//        serviceImp?.leaveRoom {_ in
+//        }
+//        serviceImp?.unsubscribeEvent(delegate: self)
     }
     
     private func joinChannel(needUpdateCavans: Bool = true) {
-        guard let channelId = room?.roomId, let ownerId = room?.ownerId,  let uid: UInt = UInt(ownerId) else {
+        guard let channelId = room?.roomId, let ownerId = room?.ownerId, let uid: UInt = UInt(ownerId) else {
+            commerceLogger.warning("joinChannel[\(room?.roomId ?? "")] break ownerId: \(room?.ownerId ?? "")")
             return
         }
         currentChannelId = channelId
@@ -232,11 +278,12 @@ class CommerceLiveViewController: UIViewController {
                 CommerceAgoraKitManager.shared.setupLocalVideo(uid: uid, canvasView: self.liveView.canvasView.localView)
             }
         }
+        commerceLogger.info("joinChannelEx[\(channelId)] ownerId: \(ownerId) role: \(role.rawValue)")
         CommerceAgoraKitManager.shared.joinChannelEx(currentChannelId: channelId,
-                                                 targetChannelId: channelId,
-                                                 ownerId: uid,
-                                                 options: self.channelOptions,
-                                                 role: role) {
+                                                     targetChannelId: channelId,
+                                                     ownerId: uid,
+                                                     options: self.channelOptions,
+                                                     role: role) {
         }
         
         liveView.canvasView.setLocalUserInfo(name: room?.ownerName ?? "", img: room?.ownerAvatar ?? "")
@@ -263,7 +310,7 @@ class CommerceLiveViewController: UIViewController {
                                  completion: { _ in })
     }
     
-    private func addBidGoodsInfo() {
+    private func addBidGoodsInfo(status: CommerceAuctionStatus, completion: ((NSError?) -> ())?) {
         guard role == .broadcaster else { return }
         let auctionModel = CommerceGoodsAuctionModel()
         let goodsModel = CommerceGoodsModel()
@@ -272,12 +319,14 @@ class CommerceLiveViewController: UIViewController {
         goodsModel.price = 1
         goodsModel.quantity = 1
         auctionModel.goods = goodsModel
-        auctionModel.status = .idle
-        auctionModel.timestamp = Date().millionsecondSince1970()
+        auctionModel.status = status
+        auctionModel.startTimestamp = serviceImp?.getCurrentTs(roomId: roomId) ?? 0
+        auctionModel.endTimestamp = 30 * 1000 + auctionModel.startTimestamp
         auctionModel.bidUser = nil
         auctionModel.bid = 1
         serviceImp?.addBidGoodsInfo(roomId: roomId, goods: auctionModel, completion: { error in
             commerceLogger.info("error: \(error?.localizedDescription ?? "")")
+            completion?(error)
         })
     }
     
@@ -290,13 +339,28 @@ class CommerceLiveViewController: UIViewController {
     
     private func subscribeBidGoodsInfo() {
         serviceImp?.subscribeBidGoodsInfo(roomId: roomId, completion: { [weak self] error, auctionModel in
+            guard let self = self else {return}
             if error != nil {
                 commerceLogger.info("error: \(error?.localizedDescription ?? "")")
                 return
             }
             guard let model = auctionModel else { return }
-            self?.auctionView.setGoodsData(model: model, isBroadcaster: self?.role == .broadcaster)
-            if model.status == .completion && model.bidUser?.id != "" {
+            let origGoodStatus = self.auctionView.currentGoodStatus()
+            let isBroadcaster = self.role == .broadcaster
+            self.auctionView.setGoodsData(model: model, isBroadcaster: isBroadcaster)
+            var origGoodStatusValid = false
+            if isBroadcaster {
+                //主播completion无条件显示
+                origGoodStatusValid = true
+            } else if origGoodStatus != nil, origGoodStatus != .completion {
+                //防止重新进入时再弹出(第一次为nil，第二次为completion)
+                origGoodStatusValid = true
+            }
+            //之前是start、现在是completion，才会显示完成弹窗
+            if model.status == .completion,
+               origGoodStatusValid,
+               model.bid > 1,
+               model.bidUser?.id != "" {
                 let resultView = CommerceAuctionResultView()
                 resultView.setBidGoods(model: model)
                 AlertManager.show(view: resultView)
@@ -318,22 +382,28 @@ extension CommerceLiveViewController {
                     commerceLogger.info("joinRoom[\(room.roomId)] error: \(error?.code ?? 0)")
                     if err.code == -1 {
                         self.onRoomExpired()
+                    } else {
+                        ToastView.show(text: "\("show_join_fail_toast".commerce_localized): \(err.code)")
+                        self.leaveRoom()
+                        self.dismiss(animated: true)
                     }
-                } else {
-                    self._subscribeServiceEvent()
                 }
             }
-        } else {
-            _subscribeServiceEvent()
         }
+        _subscribeServiceEvent()
     }
     
-    func _leavRoom(_ room: CommerceRoomListModel){
+    func _leaveRoom(_ room: CommerceRoomListModel){
         CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: room.roomId)
+        CommerceAgoraKitManager.shared.cleanCapture()
+        CommerceAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
         serviceImp?.unsubscribeEvent(delegate: self)
         serviceImp?.leaveRoom { error in
         }
         AppContext.unloadCommerceServiceImp(room.roomId)
+        
+        self.liveView.clearChatModel()
+        self.currentLikeCount = nil
     }
     
     
@@ -344,7 +414,7 @@ extension CommerceLiveViewController {
             _joinRoom(room!)
         } else if playState == .prejoined {
 //            serviceImp?.deinitRoom(roomId: roomId) { error in }
-            _leavRoom(room!)
+            _leaveRoom(room!)
         } else {
         }
         updateRemoteCavans()
@@ -370,14 +440,20 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
         serviceImp?.subscribeEvent(delegate: self)
         subscribeBidGoodsInfo()
         serviceImp?.subscribeUpvoteEvent(roomId: roomId, completion: { [weak self] userId, count in
-            guard userId != VLUserCenter.user.id else { return }
-            self?.liveView.showHeartAnimation()
+            guard let self = self else {return}
+            defer {
+                self.currentLikeCount = count
+            }
+            guard let currentLikeCount = self.currentLikeCount,
+                  currentLikeCount != count else {
+                return
+            }
+            self.liveView.showHeartAnimation()
         })
         if role == .broadcaster {
-            addBidGoodsInfo()
+            addBidGoodsInfo(status: .idle) { error in
+            }
             addGoodsList()
-        } else {
-            getBidGoodsInfo()
         }
     }
         
@@ -389,7 +465,22 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
         }
     }
     
-    func onRoomExpired() {
+    
+    private func _broadcasterRoomExpired(){
+        if ownerExpiredView != nil {return}
+        ownerExpiredView = CommerceRoomOwnerExpiredView()
+        ownerExpiredView?.headImg = VLUserCenter.user.headUrl
+        ownerExpiredView?.clickBackButtonAction = {[weak self] in
+            self?.leaveRoom()
+            self?.dismiss(animated: true)
+        }
+        self.view.addSubview(ownerExpiredView!)
+        ownerExpiredView?.snp.makeConstraints { make in
+            make.left.right.top.bottom.equalToSuperview()
+        }
+    }
+    
+    private func _audienceRoomOwnerExpired(){
         AppContext.expireCommerceImp(roomId)
         serviceImp?.leaveRoom(completion: { _ in })
         finishView?.removeFromSuperview()
@@ -400,6 +491,14 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
         self.view.addSubview(finishView!)
         finishView?.snp.makeConstraints { make in
             make.left.right.top.bottom.equalToSuperview()
+        }
+    }
+    
+    func onRoomExpired() {
+        if role == .broadcaster {
+            _broadcasterRoomExpired()
+        }else{
+            _audienceRoomOwnerExpired()
         }
     }
     
@@ -419,7 +518,7 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     }
     
     func onMessageDidAdded(message: CommerceMessage) {
-        if let text = message.message {
+        if let _ = message.message {
             self.liveView.addChatModel(message)
         }
     }
@@ -527,7 +626,11 @@ extension CommerceLiveViewController: AgoraRtcEngineDelegate {
         commerceLogger.warning("tokenPrivilegeWillExpire: \(roomId)",
                            context: kCommerceLogBaseContext)
         if let channelId = currentChannelId {
-            CommerceAgoraKitManager.shared.renewToken(channelId: channelId)
+            CommerceAgoraKitManager.shared.preGenerateToken {
+                guard let rtmToken = AppContext.shared.commerceRtmToken, let rtcToken = AppContext.shared.commerceRtcToken else {return}
+                CommerceAgoraKitManager.shared.renewToken(channelId: channelId, rtcToken: rtcToken)
+                RTMSyncUtil.renew(rtmToken: rtmToken)
+            }
         }
     }
 }
@@ -557,7 +660,7 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
             guard let self = self else { return }
             AppContext.shared.addDislikeRoom(at: self.room?.roomId)
             if let room = self.room {
-                self._leavRoom(room)
+                self._leaveRoom(room)
             }
             self.updateLoadingType(playState: .idle)
             self.onClickDislikeClosure?()
@@ -567,7 +670,7 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
             guard let self = self else { return }
             AppContext.shared.addDislikeUser(at: self.room?.ownerId)
             if let room = self.room {
-                self._leavRoom(room)
+                self._leaveRoom(room)
             }
             self.updateLoadingType(playState: .idle)
             self.onClickDisUserClosure?()
@@ -593,6 +696,10 @@ extension CommerceLiveViewController: CommerceRoomLiveViewDelegate {
     
     func onClickUpvoteButton(count: Int) {
         serviceImp?.upvote(roomId: roomId, count: count, completion: nil)
+    }
+    
+    func getDuration() -> UInt64 {
+        return serviceImp?.getRoomDuration(roomId: room?.roomId ?? "") ?? 0
     }
 }
 

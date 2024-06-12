@@ -19,7 +19,7 @@ abstract class BaseFixedHeightSheetDialog<B : ViewBinding?> : BaseSheetDialog<B>
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setDimAmount(0f) //设置布局
+        dialog?.window?.setDimAmount(0f)
 //        val h = (heightRadio * resources.displayMetrics.heightPixels).toInt()
 //        val viewRoot: FrameLayout? = dialog?.findViewById(com.google.android.material.R.id.design_bottom_sheet)
 //        viewRoot?.apply {

@@ -64,6 +64,13 @@ extension ShowAgoraKitManager {
         _presetValuesWith(encodeSize: ._360x640, fps: .fps15, bitRate: 0, h265On: true)
     }
     
+    func resetBroadcasterProfile() {
+        self.netCondition = .good
+        self.performanceMode = .fluent
+        self.deviceLevel = .medium
+        setupBroadcasterProfile()
+    }
+    
     func setupBroadcasterProfile() {
         setSuperResolutionOn(false)
         setPVCon(false)
@@ -159,6 +166,7 @@ extension ShowAgoraKitManager {
             engine?.setParameters("{\"rtc.video.low_stream_enable_hw_encoder\": false}")
         } else {
             engine?.setParameters("{\"rtc.video.high_low_video_ratio_enabled\": false}")
+            engine?.setParameters("{\"rtc.video.low_stream_enable_hw_encoder\": true}")
         }
         engine?.setDualStreamModeEx(.enableSimulcastStream, streamConfig: simulcastConfig, connection: connection)
     }

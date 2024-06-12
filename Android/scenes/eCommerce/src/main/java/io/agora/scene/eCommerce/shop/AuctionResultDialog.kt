@@ -50,6 +50,9 @@ class AuctionResultDialog constructor(
     private fun finish() {
         countDownTimer?.cancel()
         countDownTimer = null
-        dismiss()
+
+        if (isShowing) {
+            dismiss()
+        }
     }
 }
