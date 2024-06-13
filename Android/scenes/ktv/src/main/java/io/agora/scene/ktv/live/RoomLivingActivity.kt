@@ -28,7 +28,7 @@ import io.agora.scene.base.GlideApp
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.component.OnButtonClickListener
-import io.agora.scene.ktv.KTVLogger.d
+import io.agora.scene.ktv.KTVLogger
 import io.agora.scene.ktv.KtvCenter
 import io.agora.scene.ktv.R
 import io.agora.scene.ktv.databinding.KtvActivityRoomLivingBinding
@@ -39,7 +39,6 @@ import io.agora.scene.ktv.live.bean.LineScore
 import io.agora.scene.ktv.live.bean.NetWorkEvent
 import io.agora.scene.ktv.live.bean.PlayerMusicStatus
 import io.agora.scene.ktv.live.bean.ScoringAlgoControlModel
-import io.agora.scene.ktv.live.bean.ScoringAverageModel
 import io.agora.scene.ktv.live.bean.VolumeModel
 import io.agora.scene.ktv.live.fragmentdialog.MusicSettingDialog
 import io.agora.scene.ktv.live.fragmentdialog.UserLeaveSeatMenuDialog
@@ -67,6 +66,7 @@ import io.agora.scene.widget.utils.UiUtils
 class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>() {
 
     companion object {
+        private const val TAG = "RoomLivingActivity"
         private const val EXTRA_ROOM_INFO = "roomInfo"
 
         /**
@@ -169,7 +169,10 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             )
             dialog.show(supportFragmentManager, "debugSettings")
         }
-        binding.ivMore.setOnClickListener { v: View? -> TopFunctionDialog(this).show() }
+        binding.ivMore.setOnClickListener { v: View? ->
+            KTVLogger.d(TAG, "showTopFunctionDialog called")
+            TopFunctionDialog(this).show()
+        }
     }
 
     override fun onAttachedToWindow() {
@@ -451,7 +454,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
 
     override fun onResume() {
         super.onResume()
-        d("ktv", "onResume() $isBlackDarkStatus")
+        KTVLogger.d(TAG, "onResume() $isBlackDarkStatus")
         setDarkStatusIcon(isBlackDarkStatus)
     }
 
@@ -459,6 +462,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
      * 下麦提示
      */
     private fun showUserLeaveSeatMenuDialog(setInfo: RoomMicSeatInfo, kickSeat: Boolean) {
+        KTVLogger.d(TAG, "showUserLeaveSeatMenuDialog called,kickSeat:$kickSeat")
         if (mUserLeaveSeatMenuDialog == null) {
             mUserLeaveSeatMenuDialog = UserLeaveSeatMenuDialog(this)
         }
@@ -482,6 +486,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
     }
 
     private fun showTimeUpExitDialog() {
+        KTVLogger.d(TAG, "showTimeUpExitDialog called")
         if (timeUpExitDialog == null) {
             timeUpExitDialog = KtvCommonDialog(this).apply {
                 if (roomLivingViewModel.isRoomOwner) {
@@ -503,6 +508,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
     }
 
     private fun showExitDialog() {
+        KTVLogger.d(TAG, "showExitDialog called")
         if (exitDialog == null) {
             exitDialog = CommonDialog(this).apply {
                 if (roomLivingViewModel.isRoomOwner) {
@@ -602,6 +608,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             CustomToast.show(R.string.ktv_too_fast, Toast.LENGTH_SHORT)
             return
         }
+        KTVLogger.d(TAG, "showChangeMusicDialog called")
         if (changeMusicDialog == null) {
             changeMusicDialog = CommonDialog(this).apply {
                 setDialogTitle(getString(R.string.ktv_room_change_music_title))
@@ -665,6 +672,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
 
 
     private fun showCreatorExitDialog() {
+        KTVLogger.d(TAG, "showCreatorExitDialog called")
         if (creatorExitDialog == null) {
             creatorExitDialog = KtvCommonDialog(this).apply {
                 setDescText(getString(R.string.room_has_close))
@@ -702,7 +710,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             parent: ViewGroup,
             viewType: Int
         ): ViewHolder {
-            return  ViewHolder(KtvItemRoomSpeakerBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            return ViewHolder(KtvItemRoomSpeakerBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
 
         override fun onBindViewHolder(holder: BindingViewHolder<KtvItemRoomSpeakerBinding>, position: Int) {
@@ -801,6 +809,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
             }
         }
 
-        inner class ViewHolder constructor(val binding: KtvItemRoomSpeakerBinding) : BindingViewHolder<KtvItemRoomSpeakerBinding>(binding)
+        inner class ViewHolder constructor(val binding: KtvItemRoomSpeakerBinding) :
+            BindingViewHolder<KtvItemRoomSpeakerBinding>(binding)
     }
 }
