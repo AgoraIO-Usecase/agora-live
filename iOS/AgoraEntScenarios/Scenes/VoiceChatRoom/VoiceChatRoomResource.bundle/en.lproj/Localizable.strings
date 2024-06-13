@@ -167,7 +167,7 @@
 "voice_im_key_empty_error" = "Illegal parameter, please check the 'IMAppKey' in KeyCenter.swift";
 "voice_AIAEC" = "AI Echo Cancellation";
 "voice_AGC" = "Automatic Gain Control for Voice";
-"voice_SoundCard" = "Virtual Sound Card";
+"voice_SoundCard" = "Voice AI Tuner";
 "voice_agora_blue_and_red_bot" = "Agora Blue & Agora Red";
 "voice_room_audio_settings" = "Room Settings";
 "voice_turn_on_AIAEC" = "Enable AI Echo Cancellation";
@@ -216,7 +216,7 @@
 "voice_gain_multiple_sound_signal"="Adjust the gain multiplier of sound signal";
 "voice_sexy_oba"="Sexy Oppa";
 "voice_pleasing_magnetism"="Pleasing | Magnetic";
-"voice_start_virtual_sound_card"="Enable Virtual Sound Card";
+"voice_start_virtual_sound_card"="Enable Voice AI Tuner";
 "voice_preset_sound"="Preset Effect";
 "voice_background_music" = "Background Music";
 "In-Ear Monitor" = "In-Ear Monitor";
