@@ -1,6 +1,5 @@
 package io.agora.scene.ktv.live.bean
 
-import android.util.Log
 import io.agora.scene.ktv.live.fragmentdialog.AgoraPresetSound
 
 /**
@@ -67,7 +66,6 @@ class SoundCardSettingBean constructor(private var parameterCallback: ((preset: 
             effect = presetSound.effect
             setSoundCardParameters()
             callback.invoke()
-            Log.d(tag, "enable $isEnable")
         }
     }
 
@@ -86,7 +84,6 @@ class SoundCardSettingBean constructor(private var parameterCallback: ((preset: 
         effect = presetSound.effect
         setSoundCardParameters()
         callback.invoke()
-        Log.d(tag, "setPresetSound $presetSound")
     }
 
     /**
@@ -97,7 +94,6 @@ class SoundCardSettingBean constructor(private var parameterCallback: ((preset: 
     fun setGainValue(gainValue: Float) {
         this.gainValue = gainValue
         setSoundCardParameters()
-        Log.d(tag, "setGainValue $gainValue")
     }
 
     /**
@@ -108,7 +104,6 @@ class SoundCardSettingBean constructor(private var parameterCallback: ((preset: 
     fun setPresetValue(presetValue: Int) {
         this.presetValue = presetValue
         setSoundCardParameters()
-        Log.d(tag, "setPresetValue $presetValue")
     }
 
     private fun setSoundCardParameters() {

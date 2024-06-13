@@ -18,7 +18,7 @@ class SongChooseFragment : BaseViewBindingFragment<KtvFragmentSongListBinding?>(
 
     private val mChooseAdapter: SongChooseViewAdapter = object : SongChooseViewAdapter() {
         public override fun onSongChosen(song: SongItem, position: Int) {
-           listener?.onClickSongItem(song)
+            listener?.onClickSongItem(song)
         }
     }
 
@@ -32,7 +32,7 @@ class SongChooseFragment : BaseViewBindingFragment<KtvFragmentSongListBinding?>(
             smartRefreshLayout.setOnRefreshListener { refreshLayout: RefreshLayout? ->
                 listener?.onRefresh(smartRefreshLayout)
             }
-            smartRefreshLayout.autoRefresh()
+            smartRefreshLayout.autoRefresh(0, 50, 1.0f, false)
             // 歌单一次性加载，没有更多数据
             smartRefreshLayout.setEnableLoadMore(false)
         }
@@ -49,7 +49,7 @@ class SongChooseFragment : BaseViewBindingFragment<KtvFragmentSongListBinding?>(
     fun setSongItemStatus(songItem: SongItem, isChosen: Boolean) {
         val itemCount: Int = mChooseAdapter.itemCount
         for (i in 0 until itemCount) {
-            val item: SongItem = mChooseAdapter.getItem(i)?:continue
+            val item: SongItem = mChooseAdapter.getItem(i) ?: continue
             if (item.songNo == songItem.songNo) {
                 item.isChosen = isChosen
                 item.loading = false
@@ -70,21 +70,21 @@ class SongChooseFragment : BaseViewBindingFragment<KtvFragmentSongListBinding?>(
          *
          * @param refreshLayout the refresh layout
          */
-        fun onRefresh(refreshLayout: RefreshLayout){}
+        fun onRefresh(refreshLayout: RefreshLayout) {}
 
         /**
          * On load more.
          *
          * @param refreshLayout the refresh layout
          */
-        fun onLoadMore(refreshLayout: RefreshLayout){}
+        fun onLoadMore(refreshLayout: RefreshLayout) {}
 
         /**
          * On click song item.
          *
          * @param songItem the song item
          */
-        fun onClickSongItem(songItem: SongItem){}
+        fun onClickSongItem(songItem: SongItem) {}
     }
 
 }

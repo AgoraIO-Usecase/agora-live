@@ -60,6 +60,7 @@
         android:paddingTop="4dp"
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
+        android:layout_marginTop="40dp"
         app:currentLineHighlightedTextColor="@color/pink_b4"
         app:currentLineTextColor="@color/white"
         app:currentLineTextSize="20sp"
