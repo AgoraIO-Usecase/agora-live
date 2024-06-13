@@ -88,7 +88,7 @@ class CommerceAuctionResultView: UIView {
     }
     
     func setBidGoods(model: CommerceGoodsAuctionModel) {
-        avatarImageView.sd_setImage(with: URL(string: model.bidUser?.headUrl ?? ""),
+        avatarImageView.sd_setImage(with: URL(string: model.goods?.imageName ?? ""),
                                     placeholderImage: UIImage.commerce_sceneImage(name: model.goods?.imageName ?? ""))
         titleLabel.text = model.bidUser?.name
         shoppingNameLabel.text = model.goods?.title
