@@ -5,7 +5,6 @@ import androidx.lifecycle.LifecycleOwner
 import io.agora.rtc2.ChannelMediaOptions
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcEngineEx
-import io.agora.rtc2.internal.Logging
 import io.agora.scene.eCommerce.videoLoaderAPI.report.APIReporter
 import io.agora.scene.eCommerce.videoLoaderAPI.report.APIType
 
@@ -68,13 +67,11 @@ interface VideoLoader {
         }
 
         fun videoLoaderApiLog(tag: String, msg: String) {
-            Logging.i(msg)
-            //reporter?.writeLog("[$tag] $msg", Constants.LOG_LEVEL_INFO)
+            reporter?.writeLog("[$tag] $msg", Constants.LOG_LEVEL_INFO)
         }
 
         fun videoLoaderApiLogWarning(tag: String, msg: String) {
-            Logging.w(msg)
-            //reporter?.writeLog("[$tag] $msg", Constants.LOG_LEVEL_WARNING)
+            reporter?.writeLog("[$tag] $msg", Constants.LOG_LEVEL_WARNING)
         }
 
         fun release() {
