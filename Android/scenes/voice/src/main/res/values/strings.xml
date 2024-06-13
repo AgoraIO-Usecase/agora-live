@@ -12,7 +12,7 @@
     <string name="voice_room_sound_selection">Optimal Profile</string>
     <string name="voice_room_current_customer_usage">Customers:</string>
     <string name="voice_create_room">Create Room</string>
-    <string name="voice_create_room_button">+ Create Room</string>
+    <string name="voice_create_room_button">CREATE</string>
     <string name="voice_room_title">Room Name</string>
     <string name="voice_random">Random</string>
     <string name="voice_room_name_hint">Enter a room name to attract more audience</string>
@@ -37,7 +37,7 @@
     <string name="voice_room_tab_layout_count">(%1$s)</string>
     <string name="voice_room_online_count">%d Online</string>
     <string name="voice_room_click_count">%d Watching</string>
-    <string name="voice_room_mic_number">seat %d</string>
+    <string name="voice_room_mic_number">%d</string>
     <string name="voice_room_profile_update_name_fail">Failed to update</string>
     <string name="voice_room_profile_update_name_suc">Successfully updated</string>
     <string name="voice_empty_invite_hands">No audience yet</string>
@@ -47,6 +47,7 @@
     <string name="voice_room_kick_member">Kicked out of the room</string>
     <string name="voice_member_count_action_kick">Kick Out</string>
     <string name="voice_room_welcome">Welcome to Agora Voice Chat Room! Pornography, gambling, or violence is strictly prohibited in the room.</string>
+    <string name="voice_ear_settings">IER Settings</string>
     <!-- gift -->
     <string name="voice_gift_default_name_1">Sweetheart</string>
     <string name="voice_gift_default_name_2">Flower</string>
@@ -157,7 +158,7 @@
     <string name="voice_chatroom_aiaec">AI Echo Cancellation</string>
     <string name="voice_chatroom_aiagc">Automatic Gain Control for Voice</string>
     <string name="voice_chatroom_ear_back">In-Ear Monitor</string>
-    <string name="voice_chatroom_sound_card">Virtual Sound Card</string>
+    <string name="voice_chatroom_sound_card">Voice AI Tuner</string>
     <string name="voice_chatroom_bgm">Background Music</string>
     <string name="voice_chatroom_aiaec_audition">AI Echo Cancellation Audition</string>
     <string name="voice_chatroom_aiagc_audition">Automatic Gain Control Audition</string>
@@ -190,7 +191,7 @@
     <string name="voice_chatroom_gaming_buddy_introduce">It focuses on solving various problems in the gaming companion host scenario, including the reverb treatment of human voices and game sounds, voice timbre and vocal line beautification, etc. It enhances the attractiveness of the gaming companion host\'s voice while ensuring the sense of the game sound.</string>
     <string name="voice_chatroom_professional_broadcaster">Professional Podcast</string>
     <string name="voice_chatroom_professional_broadcaster_introduce">It focuses on solving problems such as poor sound quality of mono broadcasters and compatibility with mainstream external sound cards. By utilizing stereo sound capture and high-quality technology, it significantly improves the sound quality of hosts using sound cards, enhancing the attractiveness of the live room. It is now compatible with mainstream sound cards on the market.</string>
-    <string name="voice_chatroom_sound_selection_more">For more optimal profiles, please visit http://www.agora.io</string>
+    <string name="voice_chatroom_sound_selection_more">For more optimal profiles, please visit https://www.agora.io</string>
     <string name="voice_chatroom_ains_settings">AI Noise Suppression Settings</string>
     <string name="voice_chatroom_your_ains">Yourself</string>
     <string name="voice_chatroom_agora_blue_bot_ains">Agora Blue</string>
@@ -199,8 +200,8 @@
     <string name="voice_chatroom_medium">Medium</string>
     <string name="voice_chatroom_off">Off</string>
     <string name="voice_chatroom_on">On</string>
-    <string name="voice_chatroom_ains">With AINS</string>
-    <string name="voice_chatroom_none">Without AINS</string>
+    <string name="voice_chatroom_ains">AINS</string>
+    <string name="voice_chatroom_none">Off</string>
     <string name="voice_chatroom_agora_ains">Learn about AI Noise Suppression</string>
     <string name="voice_chatroom_ains_introduce">AINS: AI Noise Suppression</string>
     <string name="voice_chatroom_agora_ains_supports_sounds">Supported noise types by Agora AI Noise Suppression. Click to listen the samples:</string>
@@ -254,16 +255,16 @@
     <string name="voice_room_name_rule">Room name does not conform to rules</string>
     <string name="voice_room_robot_left">Close Robot</string>
     <string name="voice_room_robot_right">Audio Settings</string>
-    <string name="voice_virtual_sound_card">Virtual Sound Card</string>
+    <string name="voice_virtual_sound_card">Voice AI Tuner</string>
     <string name="voice_input_device">Type of Microphone</string>
     <string name="voice_external_mircrophone">default External Microphone</string>
-    <string name="voice_sound_card_switch">Enable Virtual Sound Card</string>
+    <string name="voice_sound_card_switch">Enable Voice AI Tuner</string>
     <string name="voice_sound_preset_type">Preset Effect</string>
     <string name="voice_gain_adjust">Gain Control</string>
     <string name="voice_gain_adjust_tips">Adjust the gain multiplier of the sound signal</string>
     <string name="voice_sound_mic_phone_type">Type of Microphone</string>
     <string name="voice_sound_mic_phone_type_tips">Select preset parameters for the microphone</string>
-    <string name="voice_sound_card_error">Cannot use the virtual sound card currently, please connect the preferred input device!</string>
+    <string name="voice_sound_card_error">Cannot use the voice ai tuner currently, please connect the preferred input device!</string>
     <string name="voice_sound_card_supports">Currently supports the following devices:\n \n1.Wired Headphones \n2.Wired Microphone</string>
     <string name="voice_preset_sound">Preset Effects</string>
     <string name="voice_preset_sound_qingshu1">Mature Youthful Male</string>
