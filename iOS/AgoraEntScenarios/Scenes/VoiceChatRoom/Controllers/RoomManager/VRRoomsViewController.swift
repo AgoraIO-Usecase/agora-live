@@ -198,7 +198,8 @@ extension VRRoomsViewController {
             let alert = VoiceRoomPasswordAlert(frame: CGRect(x: 37.5, y: 168, width: ScreenWidth - 75, height: (ScreenWidth - 63 - 3 * 16) / 4.0 + 177)).cornerRadius(16).backgroundColor(.white)
             let vc = VoiceRoomAlertViewController(compent: component(), custom: alert)
             presentViewController(vc)
-            alert.actionEvents = {
+            alert.actionEvents = {[weak self] in
+                guard let self = self else {return}
                 if $0 == 31 {
                     if room.roomPassword == alert.code {
                         if self.loginError == nil {
@@ -222,7 +223,8 @@ extension VRRoomsViewController {
             if self.loginError == nil {
                 self.loginIMThenPush(room: room)
             } else {
-                self.fetchIMConfig { success in
+                self.fetchIMConfig {[weak self] success in
+                    guard let self = self else {return}
                     if success {
                         self.loginIMThenPush(room: room)
                     }
@@ -241,9 +243,10 @@ extension VRRoomsViewController {
     private func loginIMThenPush(room: VRRoomEntity) {
         voiceLogger.info("loginIMThenPush[\(room.room_id ?? "")]", context: "VRRoomsViewController")
         SVProgressHUD.show(withStatus: "voice_loading".voice_localized)
-        NetworkManager.shared.generateToken(channelName: room.channel_id ?? "", uid: VLUserCenter.user.id, tokenType: .token007, type: .rtc) { token in
+        NetworkManager.shared.generateToken(channelName: room.channel_id ?? "", uid: VLUserCenter.user.id, tokenType: .token007, type: .rtc) {[weak self] token in
             VLUserCenter.user.agoraRTCToken = token ?? ""
             ChatRoomServiceImp.getSharedInstance().joinRoom(room.room_id ?? "") { error, room_entity in
+                guard let self = self else {return}
                 SVProgressHUD.dismiss()
                 self.normal.roomList.isUserInteractionEnabled = true
                 if VLUserCenter.user.chat_uid.isEmpty || VLUserCenter.user.im_token.isEmpty || self.initialError != nil {
