@@ -861,7 +861,7 @@ class LiveDetailFragment : Fragment() {
                 error = { e ->
                     runOnUiThread {
                         CommerceLogger.d(TAG, "join room error!:${e.message}")
-                        ToastUtils.showToastLong("You are disconnected. Error:${e.message}")
+                        ToastUtils.showToast("You are disconnected. Error:${e.message}")
                         destroy(false)
                         activity?.finish()
                     }
@@ -977,7 +977,7 @@ class LiveDetailFragment : Fragment() {
                     }
                 }
 
-                if (state == Constants.REMOTE_VIDEO_STATE_PLAYING
+                if (state == Constants.REMOTE_VIDEO_STATE_DECODING
                     && (reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_UNMUTED || reason == Constants.REMOTE_VIDEO_STATE_REASON_LOCAL_UNMUTED)
                 ) {
                     val durationFromSubscribe = SystemClock.elapsedRealtime() - subscribeMediaTime
