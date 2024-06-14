@@ -51,7 +51,6 @@ class SoundCardFragment constructor(private val soundCardSetting: SoundCardSetti
                 vPramsMark.visibility = View.VISIBLE
                 clSoundCardParams.alpha = 0.4f
             }
-            groupSoundCardAbnormal.isVisible = false
             mcbSoundCardSwitch.isChecked = soundCardSetting.isEnable()
 
             ivBackIcon.setOnClickListener {

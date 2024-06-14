@@ -9,7 +9,6 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
-import io.agora.rtc2.internal.CommonUtility.getSystemService
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.eCommerce.R
 import io.agora.scene.eCommerce.databinding.CommerceShopGoodsItemLayoutBinding
@@ -90,7 +89,7 @@ class GoodsListDialog constructor(
             mService.shopBuyItem(roomId, goodsId) { e ->
                 runOnMainThread {
                     if (e != null) {
-                        showOperationInfo(context.getString(R.string.commerce_shop_buy_failed, e.code))
+                        showOperationInfo(context.getString(R.string.commerce_shop_buy_failed, e.code.toString()))
                     } else {
                         showOperationInfo(context.getString(R.string.commerce_shop_alert_bought))
                     }
@@ -109,7 +108,7 @@ class GoodsListDialog constructor(
             mService.shopUpdateItem(roomId, goodsId, qty) { e ->
                 runOnMainThread {
                     if (e != null) {
-                        showOperationInfo(context.getString(R.string.commerce_adjust_quantity_failed, e.code))
+                        showOperationInfo(context.getString(R.string.commerce_adjust_quantity_failed, e.code.toString()))
                     } else {
                         showOperationInfo(context.getString(R.string.commerce_shop_update_success))
                     }
@@ -190,7 +189,7 @@ class GoodsListDialog constructor(
                     }
                     holder.binding.etQty.setOnEditorActionListener { _, actionId, _ ->
                         if (actionId == EditorInfo.IME_ACTION_DONE) {
-                            val inputMethodManager = getSystemService(context, Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                            val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             inputMethodManager.hideSoftInputFromWindow(holder.binding.etQty.windowToken, 0)
                             holder.binding.etQty.clearFocus()
                             return@setOnEditorActionListener true
