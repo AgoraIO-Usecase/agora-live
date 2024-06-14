@@ -256,7 +256,13 @@ extension VRSoundCardSettingView: UITableViewDataSource, UITableViewDelegate {
             rightLabel?.text = getEffectDesc(with: self.effectType)
             let size = text.size(font: font, drawRange: cell.size)
             let horizontalEdge: CGFloat = 30
-            rightLabel?.frame = CGRect(x: horizontalEdge + size.width, y: 0, width: cell.contentView.width - size.width - horizontalEdge * 2, height: cell.contentView.height)
+            rightLabel?.snp.updateConstraints({ make in
+                make.left.equalTo(horizontalEdge + size.width)
+                make.height.equalTo(cell.contentView.snp.height)
+                make.right.equalTo(cell.contentView).offset(-horizontalEdge)
+                make.top.equalTo(cell.contentView)
+            })
+//            rightLabel?.frame = CGRect(x: horizontalEdge + size.width, y: 0, width: cell.contentView.width - size.width - horizontalEdge * 2, height: cell.contentView.height)
             cell.selectionStyle = .none
             return cell
         }else if indexPath.row == 2 {
