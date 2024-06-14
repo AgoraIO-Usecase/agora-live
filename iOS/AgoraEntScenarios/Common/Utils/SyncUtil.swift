@@ -125,7 +125,7 @@ class SyncUtilsWrapper {
                 return
             }
             currentState = state
-            print("subscribeConnectState: \(state)")
+//            print("subscribeConnectState: \(state)")
             let inited = syncUtilsInited
             defer {
                 subscribeConnectStateMap.forEach { (key: String, value: (SocketConnectState, Bool) -> Void) in

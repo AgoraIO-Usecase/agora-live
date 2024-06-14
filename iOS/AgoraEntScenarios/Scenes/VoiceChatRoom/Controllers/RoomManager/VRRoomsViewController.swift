@@ -43,10 +43,14 @@ let page_size = 15
     
     @objc convenience init(user: VLLoginModel) {
         self.init()
+        voiceLogger.info("VRRoomsViewController init \(self)", context: "VRRoomsViewController")
         AppContext.shared.sceneImageBundleName = "VoiceChatRoomResource"
         currentUser = user
         if VoiceRoomIMManager.shared == nil {
+            voiceLogger.info("VoiceRoomIMManager.shared create", context: "VRRoomsViewController")
             VoiceRoomIMManager.shared = VoiceRoomIMManager()
+        } else {
+            voiceLogger.info("VoiceRoomIMManager.shared create skip", context: "VRRoomsViewController")
         }
         self.initialError = VoiceRoomIMManager.shared?.configIM(appkey: KeyCenter.IMAppKey ?? "")
         mapUser(user: user)
@@ -96,6 +100,8 @@ let page_size = 15
     }
     
     func destory() {
+        voiceLogger.info("VoiceRoomIMManager.shared clean", context: "VRRoomsViewController")
+        VoiceRoomIMManager.shared?.logoutIM()
         VoiceRoomIMManager.shared = nil
         ChatRoomServiceImp._sharedInstance = nil
         VoiceRoomUserInfo.shared.user = nil
@@ -104,8 +110,7 @@ let page_size = 15
     }
     
     deinit {
-        VoiceRoomIMManager.shared?.logoutIM()
-        VoiceRoomIMManager.shared = nil
+        voiceLogger.info("VRRoomsViewController deinit \(self)", context: "VRRoomsViewController")
     }
 }
 
@@ -187,6 +192,7 @@ extension VRRoomsViewController {
 
 
     private func entryRoom(room: VRRoomEntity) {
+        voiceLogger.info("entryRoom[\(room.room_id ?? "")]", context: "VRRoomsViewController")
         if room.is_private {
             self.normal.roomList.isUserInteractionEnabled = true
             let alert = VoiceRoomPasswordAlert(frame: CGRect(x: 37.5, y: 168, width: ScreenWidth - 75, height: (ScreenWidth - 63 - 3 * 16) / 4.0 + 177)).cornerRadius(16).backgroundColor(.white)
@@ -233,6 +239,7 @@ extension VRRoomsViewController {
     }
 
     private func loginIMThenPush(room: VRRoomEntity) {
+        voiceLogger.info("loginIMThenPush[\(room.room_id ?? "")]", context: "VRRoomsViewController")
         SVProgressHUD.show(withStatus: "voice_loading".voice_localized)
         NetworkManager.shared.generateToken(channelName: room.channel_id ?? "", uid: VLUserCenter.user.id, tokenType: .token007, type: .rtc) { token in
             VLUserCenter.user.agoraRTCToken = token ?? ""
