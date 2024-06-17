@@ -32,11 +32,12 @@ def all_pods
   # FU
   pod 'fuLib', :path => 'fu.podspec'
   
-  pod 'AgoraSyncManager-overseas', '~> 3.0.5'
+  pod 'AgoraSyncManager-overseas', '~> 3.0.8'
+  pod 'RTMSyncManager', :path => 'AgoraEntScenarios/Common/API/RTMSyncManager'
 
 #  pod 'sdk', :path => 'sdk.podspec'
 #  pod 'AgoraRtcEngine_iOS', '~> 4.2.2'
-  pod 'AgoraRtcEngine_Special_iOS', '4.1.1.16'
+  pod 'AgoraRtcEngine_Special_iOS', '4.1.1.23'
 
   pod 'VideoLoaderAPI', :path => 'AgoraEntScenarios/Common/API/VideoLoaderAPI'
 
@@ -50,9 +51,10 @@ def all_pods
 #  pod 'AgoraLyricsScore', '1.1.1-beta-3'
 ##  pod 'AgoraLyricsScore', :git => 'https://github.com/AgoraIO-Community/LrcView-iOS.git', :commit => 'cc0951f11f5fa6113ec2b9df2a509efa881d5bd7'
 ##  pod 'AgoraLyricsScore', :path => '../../AgoraLyricsScore/AgoraLyricsScore.podspec'
-#  pod 'AgoraRtm_iOS', '1.5.1'
+  pod 'AgoraRtm', :path => 'AgoraRtm.podspec'
 #  pod 'Zip'
-  pod 'MJRefresh'
+  pod 'MJRefresh', '3.7.9'
+#  pod 'RealReachability', '1.4.1'
   
   
   # Swift Code Formatter
@@ -88,7 +90,7 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
       shell_script_path = "Pods/Target Support Files/#{target.name}/#{target.name}-frameworks.sh"
       if File::exist?(shell_script_path)
         shell_script_input_lines = File.readlines(shell_script_path)

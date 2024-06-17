@@ -6,6 +6,7 @@ import android.os.Looper
 import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
+import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.show.R
 import io.agora.scene.show.ShowLogger
 import io.agora.scene.show.utils.ShowConstants
@@ -40,7 +41,7 @@ class ShowSyncManagerServiceImpl constructor(
     /**
      * K scene id
      */
-    private val kSceneId = "scene_show_1.0.0"
+    private val kSceneId = "scene_show_0.2.0"
 
     /**
      * K collection id user
@@ -80,7 +81,7 @@ class ShowSyncManagerServiceImpl constructor(
     /**
      * K robot video room ids
      */
-    private val kRobotVideoRoomIds = arrayListOf(2023001, 2023002, 2023003)
+    private val kRobotVideoRoomIds = arrayListOf(2024001, 2024002, 2024003)
 
     /**
      * K robot video stream urls
@@ -225,7 +226,7 @@ class ShowSyncManagerServiceImpl constructor(
                         var roomList = result!!.map {
                             it.toObject(ShowRoomDetailModel::class.java)
                         }
-                        roomList = removeExpiredRooms(roomList)
+                        //roomList = removeExpiredRooms(roomList)
 
                         roomMap.clear()
                         roomList.forEach { roomMap[it.roomId] = it.copy() }
@@ -292,65 +293,11 @@ class ShowSyncManagerServiceImpl constructor(
                 ShowRoomStatus.activity.value,
                 ShowInteractionStatus.idle.value,
                 TimeUtils.currentTimeMillis().toDouble(),
-                TimeUtils.currentTimeMillis().toDouble()
+                TimeUtils.currentTimeMillis().toDouble(),
+                0
             )
             roomMap[roomInfo.roomId] = roomInfo
             retRoomList.add(roomInfo)
-        }
-        return retRoomList
-    }
-
-    /**
-     * Remove expired rooms
-     *
-     * @param roomList
-     * @return
-     */
-    private fun removeExpiredRooms(
-        roomList: List<ShowRoomDetailModel>
-    ): List<ShowRoomDetailModel> {
-        val retRoomList = mutableListOf<ShowRoomDetailModel>()
-        retRoomList.addAll(roomList)
-
-        val expireRoomList = roomList.filter {
-            (TimeUtils.currentTimeMillis() - it.createdAt.toLong() > ROOM_AVAILABLE_DURATION) && !it.isRobotRoom()
-        }
-        if (expireRoomList.isNotEmpty()) {
-            val expireLetchCount = CountDownLatch(expireRoomList.size)
-            runOnMainThread {
-                expireRoomList.forEach {
-
-                    Sync.Instance()
-                        .joinScene(it.roomId, object : JoinSceneCallback {
-                            override fun onSuccess(sceneReference: SceneReference?) {
-                                runOnMainThread {
-                                    sceneReference?.delete(object : Sync.Callback {
-                                        override fun onSuccess() {
-                                            retRoomList.remove(it)
-                                            expireLetchCount.countDown()
-                                        }
-
-                                        override fun onFail(exception: SyncManagerException?) {
-                                            errorHandler.invoke(exception!!)
-                                            expireLetchCount.countDown()
-                                        }
-                                    }) ?: expireLetchCount.countDown()
-                                }
-                            }
-
-                            override fun onFail(exception: SyncManagerException?) {
-                                errorHandler.invoke(exception!!)
-                                expireLetchCount.countDown()
-                            }
-                        })
-                }
-            }
-
-            try {
-                expireLetchCount.await()
-            } catch (e: Exception) {
-                ShowLogger.e(TAG, e)
-            }
         }
         return retRoomList
     }
@@ -384,21 +331,27 @@ class ShowSyncManagerServiceImpl constructor(
         roomId: String,
         roomName: String,
         thumbnailId: String,
+        isPureMode: Boolean,
         success: (ShowRoomDetailModel) -> Unit,
         error: ((Exception) -> Unit)?
     ) {
         initSync {
-            createRoomInner(
-                roomId,
-                roomName,
-                0,
-                thumbnailId,
-                UserManager.getInstance().user.id.toString(),
-                UserManager.getInstance().user.headUrl,
-                UserManager.getInstance().user.name,
-                success,
-                error
-            )
+            if (it == null) {
+                createRoomInner(
+                    roomId,
+                    roomName,
+                    0,
+                    thumbnailId,
+                    UserManager.getInstance().user.id.toString(),
+                    UserManager.getInstance().user.headUrl,
+                    UserManager.getInstance().user.name,
+                    isPureMode,
+                    success,
+                    error
+                )
+            } else {
+                error?.invoke(it)
+            }
         }
     }
 
@@ -424,6 +377,7 @@ class ShowSyncManagerServiceImpl constructor(
         ownerUid: String,
         ownerAvatar: String,
         ownerName: String,
+        isPureMode: Boolean,
         success: (ShowRoomDetailModel) -> Unit,
         error: ((Exception) -> Unit)?
     ) {
@@ -438,7 +392,8 @@ class ShowSyncManagerServiceImpl constructor(
             ShowRoomStatus.activity.value,
             ShowInteractionStatus.idle.value,
             TimeUtils.currentTimeMillis().toDouble(),
-            TimeUtils.currentTimeMillis().toDouble()
+            TimeUtils.currentTimeMillis().toDouble(),
+            if (isPureMode) 1 else 0
         )
 
         val scene = Scene().apply {
@@ -525,6 +480,7 @@ class ShowSyncManagerServiceImpl constructor(
                                 roomInfo.ownerId,
                                 roomInfo.ownerAvatar,
                                 roomInfo.ownerName,
+                                isPureMode = roomInfo.isPureMode == 1,
                                 success = {
                                     runOnMainThread {
                                         roomInfoControllers.remove(roomInfoController)
@@ -569,6 +525,8 @@ class ShowSyncManagerServiceImpl constructor(
         val roomDetail = roomMap[roomId] ?: return
         val sceneReference = roomInfoController.sceneReference ?: return
 
+        isInteractionCreated = false
+
         sendChatMessage(roomId, context.getString(R.string.show_live_chat_leaving))
 
         val targetApply =
@@ -607,7 +565,7 @@ class ShowSyncManagerServiceImpl constructor(
         if (roomDetail.isRobotRoom()) {
             // nothing
         } else if (roomDetail.ownerId == UserManager.getInstance().user.id.toString()
-            || TimeUtils.currentTimeMillis() - roomDetail.createdAt.toLong() >= ROOM_AVAILABLE_DURATION
+            || TimeUtils.currentTimeMillis() - roomDetail.createdAt.toLong() >= ShowServiceProtocol.ROOM_AVAILABLE_DURATION
         ) {
             ShowLogger.d(TAG, "leaveRoom delete room")
             sceneReference.delete(object : Sync.Callback {
@@ -1139,7 +1097,10 @@ class ShowSyncManagerServiceImpl constructor(
                     it.toObject(ShowRoomDetailModel::class.java)
                 }
                 val list =
-                    roomList.filter { it.ownerId != UserManager.getInstance().user.id.toString() }
+                    roomList.filter {
+                        it.ownerId != UserManager.getInstance().user.id.toString() &&
+                                it.ownerId != kRobotUid.toString()
+                    }
                 runOnMainThread { success.invoke(list.sortedBy { it.createdAt }) }
             }
 
@@ -1208,7 +1169,7 @@ class ShowSyncManagerServiceImpl constructor(
             error?.invoke(RuntimeException("InteractionInfoList is not empty, stop interacting first!"))
         }
         innerGetPKInvitationList(roomId, room, {
-            val invitation = it.filter { filterRoom -> filterRoom.roomId == room.roomId }.getOrNull(0)
+            val invitation = it.filter { filterRoom ->  (filterRoom.roomId == room.roomId && filterRoom.fromRoomId == roomId)}.getOrNull(0)
             if (invitation == null) {
                 val pkInvitation = ShowPKInvitation(
                     room.ownerId,
@@ -1229,7 +1190,7 @@ class ShowSyncManagerServiceImpl constructor(
                     error = {}
                 )
             }
-        }, null)
+        }, error)
     }
 
     /**
@@ -1382,16 +1343,25 @@ class ShowSyncManagerServiceImpl constructor(
             return
         }
 
-        innerGetAllInteractionList(roomId, {
-            roomInfoController.objIdOfInteractionInfo.forEach {
-                innerRemoveInteraction(
-                    roomId,
-                    it,
-                    success,
-                    error
-                )
-            }
-        }, null)
+        roomInfoController.objIdOfInteractionInfo.forEach {
+            innerRemoveInteraction(
+                roomId,
+                it,
+                success,
+                error
+            )
+        }
+
+//        innerGetAllInteractionList(roomId, {
+//            roomInfoController.objIdOfInteractionInfo.forEach {
+//                innerRemoveInteraction(
+//                    roomId,
+//                    it,
+//                    success,
+//                    error
+//                )
+//            }
+//        }, null)
 
         val apply = roomInfoController.micSeatApplyList.filter { it.userId == interaction.userId }
             .getOrNull(0)
@@ -1568,9 +1538,9 @@ class ShowSyncManagerServiceImpl constructor(
      * @param complete
      * @receiver
      */
-    private fun initSync(complete: () -> Unit) {
+    private fun initSync(complete: (exception: Exception?) -> Unit) {
         if (syncInitialized) {
-            complete.invoke()
+            complete.invoke(null)
             return
         }
         syncInitialized = true
@@ -1578,17 +1548,32 @@ class ShowSyncManagerServiceImpl constructor(
             RethinkConfig(BuildConfig.AGORA_APP_ID, kSceneId),
             object : Sync.Callback {
                 override fun onSuccess() {
-                    runOnMainThread { complete.invoke() }
+                    runOnMainThread { complete.invoke(null) }
                 }
 
                 override fun onFail(exception: SyncManagerException?) {
                     syncInitialized = false
                     errorHandler.invoke(exception!!)
+                    runOnMainThread { complete.invoke(exception) }
                 }
             }
         )
+        Sync.Instance().subscribeLog(object: Sync.LogCallback {
+            override fun onLogInfo(message: String) {
+                ShowLogger.d("service", message)
+            }
+
+            override fun onLogWarning(message: String) {
+                //ShowLogger.w("service", message)
+            }
+
+            override fun onLogError(message: String) {
+                ShowLogger.e("service", null, message)
+            }
+        })
         Sync.Instance().subscribeConnectState {
             ShowLogger.d(TAG, "subscribeConnectState state=$it")
+            ToastUtils.showToast("websocket connect state: $it")
             if (it == Sync.ConnectionState.open) {
                 runOnMainThread {
                     roomInfoControllers.forEach { roomInfoController ->
@@ -1646,6 +1631,7 @@ class ShowSyncManagerServiceImpl constructor(
             interactStatus,
             roomInfo.createdAt,
             roomInfo.updatedAt,
+            roomInfo.isPureMode
         )
         sceneReference.update(nRoomInfo.toMap(), object : Sync.DataItemCallback {
             override fun onSuccess(result: IObject?) {
@@ -1691,6 +1677,7 @@ class ShowSyncManagerServiceImpl constructor(
             roomInfo.interactStatus,
             roomInfo.createdAt,
             roomInfo.updatedAt,
+            roomInfo.isPureMode
         )
         sceneReference.update(nRoomInfo.toMap(), object : Sync.DataItemCallback {
             override fun onSuccess(result: IObject?) {
@@ -1905,8 +1892,10 @@ class ShowSyncManagerServiceImpl constructor(
                     roomInfoController.objIdOfSeatInvitation.add(item.id)
                 } else {
                     val indexOf = roomInfoController.micSeatInvitationList.indexOf(list[0])
-                    roomInfoController.micSeatInvitationList[indexOf] = user
-                    roomInfoController.objIdOfSeatInvitation[indexOf] = item.id
+                    if (indexOf >= 0) {
+                        roomInfoController.micSeatInvitationList[indexOf] = user
+                        roomInfoController.objIdOfSeatInvitation[indexOf] = item.id
+                    }
                 }
                 runOnMainThread {
                     roomInfoController.userChangeSubscriber?.invoke(
@@ -1979,6 +1968,7 @@ class ShowSyncManagerServiceImpl constructor(
                 val roomInfo = roomMap.remove(item.id)
                 ShowLogger.d(TAG, "SubscribeRoomChange Delete roomNo=${item.id}")
                 if (roomInfoController.roomId.isNotEmpty() && roomInfoController.roomId == item.id) {
+                    ShowLogger.d(TAG, "SubscribeRoomChange Delete roomNo=${item.id} ------")
                     runOnMainThread {
                         roomInfoController.roomChangeSubscriber?.invoke(
                             ShowServiceProtocol.ShowSubscribeStatus.deleted,
@@ -2197,7 +2187,7 @@ class ShowSyncManagerServiceImpl constructor(
      * @param error
      * @receiver
      */
-    private fun innerGetPKInvitationList(
+    fun innerGetPKInvitationList(
         localRoomId: String,
         room: ShowRoomDetailModel?,
         success: (List<ShowPKInvitation>) -> Unit,
@@ -2371,8 +2361,10 @@ class ShowSyncManagerServiceImpl constructor(
                     roomInfoController.objIdOfPKInvitation.add(item.id)
                 } else {
                     val indexOf = roomInfoController.pKInvitationList.indexOf(list[0])
-                    roomInfoController.pKInvitationList[indexOf] = info
-                    roomInfoController.objIdOfPKInvitation[indexOf] = item.id
+                    if (indexOf >= 0) {
+                        roomInfoController.pKInvitationList[indexOf] = info
+                        roomInfoController.objIdOfPKInvitation[indexOf] = item.id
+                    }
                 }
 
                 if (roomInfoController.interactionInfoList.isNotEmpty()) {
@@ -2381,6 +2373,7 @@ class ShowSyncManagerServiceImpl constructor(
                             .getOrNull(0)
                     if (oldInteraction != null) {
                         val indexOf = roomInfoController.interactionInfoList.indexOf(oldInteraction)
+                        if (indexOf < 0) return
                         val objId = roomInfoController.objIdOfInteractionInfo[indexOf]
 
                         val interaction = ShowInteractionInfo(
@@ -2413,6 +2406,7 @@ class ShowSyncManagerServiceImpl constructor(
             override fun onDeleted(item: IObject?) {
                 val objId = item!!.id
                 val index = roomInfoController.objIdOfPKInvitation.indexOf(objId)
+                if (index < 0) return
                 roomInfoController.objIdOfPKInvitation.removeAt(index)
                 val invitation = roomInfoController.pKInvitationList.removeAt(index)
 
@@ -2455,10 +2449,10 @@ class ShowSyncManagerServiceImpl constructor(
                 val acceptItem =
                     roomInfoController.pKCompetitorInvitationList.filter { it.status == ShowRoomRequestStatus.accepted.value }
                         .getOrNull(0)
-                if (acceptItem != null && acceptItem.userId != info.userId && info.status == ShowRoomRequestStatus.accepted.value) {
-                    innerRemovePKInvitation(roomInfoController.sceneReference, item.id, null, null)
-                    return
-                }
+//                if (acceptItem != null && acceptItem.userId != info.userId && info.status == ShowRoomRequestStatus.accepted.value) {
+//                    innerRemovePKInvitation(roomInfoController.sceneReference, item.id, null, null)
+//                    return
+//                }
 
                 val list =
                     roomInfoController.pKCompetitorInvitationList.filter { it.userId == info.userId }
@@ -2467,8 +2461,10 @@ class ShowSyncManagerServiceImpl constructor(
                     roomInfoController.objIdOfPKCompetitorInvitation.add(item.id)
                 } else {
                     val indexOf = roomInfoController.pKCompetitorInvitationList.indexOf(list[0])
-                    roomInfoController.pKCompetitorInvitationList[indexOf] = info
-                    roomInfoController.objIdOfPKCompetitorInvitation[indexOf] = item.id
+                    if (indexOf >= 0) {
+                        roomInfoController.pKCompetitorInvitationList[indexOf] = info
+                        roomInfoController.objIdOfPKCompetitorInvitation[indexOf] = item.id
+                    }
                 }
 
                 if (roomInfoController.interactionInfoList.isEmpty() && info.status == ShowRoomRequestStatus.accepted.value && !isInteractionCreated) {
@@ -2489,6 +2485,7 @@ class ShowSyncManagerServiceImpl constructor(
                             .getOrNull(0)
                     if (oldInteraction != null) {
                         val indexOf = roomInfoController.interactionInfoList.indexOf(oldInteraction)
+                        if (indexOf < 0) return
                         val objId = roomInfoController.objIdOfInteractionInfo[indexOf]
 
                         val interaction = ShowInteractionInfo(
@@ -2521,6 +2518,7 @@ class ShowSyncManagerServiceImpl constructor(
             override fun onDeleted(item: IObject?) {
                 val objId = item!!.id
                 val index = roomInfoController.objIdOfPKCompetitorInvitation.indexOf(objId)
+                if (index < 0) return
                 val invitation = roomInfoController.pKCompetitorInvitationList[index]
 
                 val sceneReference = roomInfoController.pkSceneReference ?: return
@@ -2690,6 +2688,7 @@ class ShowSyncManagerServiceImpl constructor(
             override fun onUpdated(item: IObject?) {
                 ShowLogger.d(TAG, "innerSubscribeInteractionChanged onUpdated")
                 val info = item?.toObject(ShowInteractionInfo::class.java) ?: return
+                ShowLogger.d(TAG, "innerSubscribeInteractionChanged onUpdated, info:$info")
 
                 val interactionInfo = roomInfoController.interactionInfoList.getOrNull(0)
                 if (interactionInfo != null && interactionInfo.userId != info.userId) {
@@ -2714,8 +2713,10 @@ class ShowSyncManagerServiceImpl constructor(
                     roomInfoController.objIdOfInteractionInfo.add(item.id)
                 } else {
                     val indexOf = roomInfoController.interactionInfoList.indexOf(list[0])
-                    roomInfoController.interactionInfoList[indexOf] = info
-                    roomInfoController.objIdOfInteractionInfo[indexOf] = item.id
+                    if (indexOf >= 0) {
+                        roomInfoController.interactionInfoList[indexOf] = info
+                        roomInfoController.objIdOfInteractionInfo[indexOf] = item.id
+                    }
                 }
                 innerUpdateRoomInteractStatus(roomId, info.interactStatus, {}, {})
 

@@ -14,7 +14,7 @@ enum ShowAgoraSRType: String, CaseIterable {
     case x1_5 = "x1.5"
     case x2 = "x2"
     
-    var typeValue: SRType {
+    var typeValue: ShowSRType {
         switch self {
         case .x1:
             return .x1
@@ -226,6 +226,7 @@ enum ShowSettingKey: String, CaseIterable {
                     AgoraVideoFrameRate.fps10.stringValue(),
                     AgoraVideoFrameRate.fps15.stringValue(),
                     AgoraVideoFrameRate.fps24.stringValue(),
+                    AgoraVideoFrameRate.fps30.stringValue(),
             ]
         case .audioBitRate:
             return ["2","3","5"]

@@ -64,7 +64,7 @@ typedef NS_ENUM(NSUInteger, AVAuthorizationRequestType){
 - (void)mineViewDidCick:(VLMineViewClickType)type {
     switch (type) {
         case VLMineViewClickTypeUserProtocol:
-            [self pushWebView:kURLPathH5UserAgreement];
+            [self pushWebView:kURLPathH5TermsOfService];
             break;
         case VLMineViewClickTypeAboutUS:
             [self about];
@@ -117,7 +117,7 @@ typedef NS_ENUM(NSUInteger, AVAuthorizationRequestType){
         }
         textField.delegate = self;
         [textField becomeFirstResponder];
-        TF = textField; //赋值
+        TF = textField; // Assignment
     })
     .LeeAddAction(^(LEEAction *action) {
         action.type = LEEActionTypeCancel;

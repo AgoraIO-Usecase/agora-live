@@ -102,6 +102,7 @@ class NetworkManager:NSObject {
                         uid: String,
                         tokenGeneratorType: TokenGeneratorType,
                         tokenTypes: [AgoraTokenType],
+                        expire: UInt = 1500,
                         success: @escaping ([Int: String]) -> Void)
     {
         let group = DispatchGroup()
@@ -112,7 +113,8 @@ class NetworkManager:NSObject {
             generateToken(channelName: channelName,
                           uid: uid,
                           tokenType: tokenGeneratorType,
-                          type: type) { token in
+                          type: type,
+                          expire: expire) { token in
                 if let token = token, token.count > 0 {
                     tokenMap[type.rawValue] = token
                 }
@@ -285,7 +287,7 @@ class NetworkManager:NSObject {
                                      "src": "iOS",
                                      "traceId": NSString.withUUID().md5() ?? ""]
                       
-        NetworkManager.shared.postRequest(urlString: "\(baseServerUrl)cloud-player/start",
+        NetworkManager.shared.postRequest(urlString: "\(baseServerUrl)rte-cloud-player/start",
                                           params: params,
                                           success: { response in
             let code = response["code"] as? Int

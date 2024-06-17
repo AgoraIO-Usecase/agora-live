@@ -133,7 +133,7 @@ class VLLoginViewController: VRBaseViewController {
     }
     @objc
     private func onClickPolicyButton(sender: UIButton) {
-        pushToWebView(url: kURLPathH5Privacy)
+        pushToWebView(url: kURLPathH5TermsOfService)
     }
     @objc
     private func onClickLoginButton(sender: UIButton) {

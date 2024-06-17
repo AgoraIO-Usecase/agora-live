@@ -2,7 +2,7 @@
 //  Throttle.swift
 //  AgoraScene_iOS
 //
-//  Created by 朱继超 on 2022/10/10.
+// Created by Zhu Jichao on October 10, 2022
 //
 
 import Combine

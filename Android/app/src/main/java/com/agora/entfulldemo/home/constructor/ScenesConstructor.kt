@@ -25,6 +25,22 @@ object ScenesConstructor {
                 R.mipmap.bg_btn_home2,
                 R.mipmap.bg_btn_home_live,
                 true
+            ),
+            ScenesModel(
+                AgoraScenes.ECommerce,
+                "io.agora.scene.eCommerce.RoomListActivity",
+                context.getString(R.string.app_e_commerce),
+                R.mipmap.bg_btn_home_e_commerce,
+                0,
+                true
+            ),
+            ScenesModel(
+                AgoraScenes.ChatRoom,
+                "io.agora.scene.voice.ui.activity.VoiceRoomListActivity",
+                context.getString(R.string.app_chat_room),
+                R.mipmap.bg_btn_home3,
+                R.mipmap.bg_btn_home_chat,
+                true
             )
         )
     }

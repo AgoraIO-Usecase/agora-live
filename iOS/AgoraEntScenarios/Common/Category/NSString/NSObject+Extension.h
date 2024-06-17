@@ -3,7 +3,7 @@
 //  dajiaochong
 //
 //  Created by  qizuwang on 15/8/14.
-//  Copyright (c) 2015年 王春景. All rights reserved.
+// Copyright (c) 2015 Wang Chunjing All rights reserved
 //
 
 #import <Foundation/Foundation.h>

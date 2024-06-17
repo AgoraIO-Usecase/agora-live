@@ -56,6 +56,7 @@ import io.agora.rtc2.video.IVideoFrameObserver
 import io.agora.rtc2.video.VideoCanvas
 import java.io.File
 import java.nio.ByteBuffer
+import java.util.Collections
 import java.util.concurrent.Callable
 
 /**
@@ -80,9 +81,9 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
     private val reportCategory = "beauty_android_$VERSION"
 
     /**
-     * Beauty mode
+     * Beauty Mode
      */
-    private var beautyMode = 0
+    private var beautyMode = 0 // 0: 自动根据buffer类型切换，1：固定使用OES纹理，2：固定使用i420，3: 单纹理异步模式(自创)
 
     /**
      * Texture buffer helper
@@ -215,6 +216,11 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
     private var localVideoRenderMode = Constants.RENDER_MODE_HIDDEN
 
     /**
+     * Pending ProcessRunList
+     */
+    private val pendingProcessRunList = Collections.synchronizedList(mutableListOf<()->Unit>())
+
+    /**
      * Initialize
      *
      * @param config
@@ -232,7 +238,6 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
         statsHelper = StatsHelper(config.statsDuration){
             this.config?.eventCallback?.onBeautyStats(it)
         }
-        LogUtils.setLogFilePath(config.context.getExternalFilesDir("")?.absolutePath ?: "")
         LogUtils.i(TAG, "initialize >> config = $config")
         LogUtils.i(TAG, "initialize >> beauty api version=$VERSION, beauty sdk version=${FURenderKit.getInstance().getVersion()}")
 
@@ -324,9 +329,6 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
             LogUtils.e(TAG, "onFrame >> The capture mode is not Custom!")
             return ErrorCode.ERROR_PROCESS_NOT_CUSTOM.value
         }
-        if (!enable) {
-            return ErrorCode.ERROR_PROCESS_DISABLE.value
-        }
         if (processBeauty(videoFrame)) {
             return ErrorCode.ERROR_OK.value
         }
@@ -348,10 +350,24 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
         return ErrorCode.ERROR_OK.value
     }
 
-    /**
-     * Is front camera
-     *
-     */
+    override fun runOnProcessThread(run: () -> Unit) {
+        if (config == null) {
+            LogUtils.e(TAG, "runOnProcessThread >> The beauty api has not been initialized!")
+            return
+        }
+        if (isReleased) {
+            LogUtils.e(TAG, "runOnProcessThread >> The beauty api has been released!")
+            return
+        }
+        if (textureBufferHelper?.handler?.looper?.thread == Thread.currentThread()) {
+            run.invoke()
+        } else if (textureBufferHelper != null) {
+            textureBufferHelper?.handler?.post(run)
+        } else {
+            pendingProcessRunList.add(run)
+        }
+    }
+
     override fun isFrontCamera() = isFrontCamera
 
     /**
@@ -386,7 +402,7 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
         LogUtils.i(TAG, "setBeautyPreset >> preset = $preset")
         config?.rtcEngine?.sendCustomReportMessage(reportId, reportCategory, "enable", "preset=$preset", 0)
 
-        val recommendFaceBeauty =
+        val recommendFaceBeauty = conf.fuRenderKit.faceBeauty ?:
             FaceBeauty(FUBundleData("graphics" + File.separator + "face_beautification.bundle"))
         if (preset == BeautyPreset.DEFAULT) {
             recommendFaceBeauty.filterName = FaceBeautyFilterEnum.FENNEN_1
@@ -429,7 +445,8 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
      * @return
      */
     override fun release(): Int {
-        val fuRenderer = config?.fuRenderKit
+        val conf = config
+        val fuRenderer = conf?.fuRenderKit
         if(fuRenderer == null){
             LogUtils.e(TAG, "release >> The beauty api has not been initialized!")
             return ErrorCode.ERROR_HAS_NOT_INITIALIZED.value
@@ -439,11 +456,15 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
             return ErrorCode.ERROR_HAS_RELEASED.value
         }
         LogUtils.i(TAG, "release")
-        config?.rtcEngine?.sendCustomReportMessage(reportId, reportCategory, "release", "", 0)
+        if (conf.captureMode == CaptureMode.Agora) {
+            conf.rtcEngine.registerVideoFrameObserver(null)
+        }
+        conf.rtcEngine.sendCustomReportMessage(reportId, reportCategory, "release", "", 0)
 
         isReleased = true
         textureBufferHelper?.let {
             textureBufferHelper = null
+            it.handler.removeCallbacksAndMessages(null)
             it.invoke {
                 fuRenderer.release()
                 mTextureProcessHelper?.release()
@@ -459,6 +480,7 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
         }
         statsHelper?.reset()
         statsHelper = null
+        pendingProcessRunList.clear()
         return ErrorCode.ERROR_OK.value
     }
 
@@ -547,6 +569,15 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
                 "FURender",
                 EglBaseProvider.instance().rootEglBase.eglBaseContext
             )
+            textureBufferHelper?.invoke {
+                synchronized(pendingProcessRunList){
+                    val iterator = pendingProcessRunList.iterator()
+                    while (iterator.hasNext()){
+                        iterator.next().invoke()
+                        iterator.remove()
+                    }
+                }
+            }
             LogUtils.i(TAG, "processBeauty >> create texture buffer, beautyMode=$beautyMode")
         }
         if (wrapTextureBufferHelper == null) {
@@ -668,9 +699,10 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
                 if (isReleased) {
                     return@setFilter -1
                 }
-                return@setFilter textureBufferHelper?.invoke {
+                val ret = textureBufferHelper?.invoke {
                     return@invoke fuRenderKit.renderWithInput(input).texture?.texId ?: -1
-                } ?: -1
+                }
+                return@setFilter ret ?: -1
             }
         }
 
@@ -717,6 +749,7 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
         val height = buffer.height
         val isFront = videoFrame.sourceType == SourceType.kFrontCamera
         val mirror = (isFrontCamera && !captureMirror) || (!isFrontCamera && captureMirror)
+        val rotation = videoFrame.rotation
 
         return texBufferHelper.invoke(Callable {
             if(isReleased){
@@ -731,13 +764,71 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
             input.renderConfig.let {
                 if (isFront) {
                     it.cameraFacing = CameraFacingEnum.CAMERA_FRONT
-                    it.inputBufferMatrix = if(mirror) FUTransformMatrixEnum.CCROT90 else FUTransformMatrixEnum.CCROT90_FLIPHORIZONTAL
-                    it.inputTextureMatrix = if(mirror) FUTransformMatrixEnum.CCROT90 else FUTransformMatrixEnum.CCROT90_FLIPHORIZONTAL
+                    it.inputBufferMatrix = if(mirror) {
+                        when (rotation) {
+                            0 ->  FUTransformMatrixEnum.CCROT0
+                            180 -> FUTransformMatrixEnum.CCROT180
+                            else -> FUTransformMatrixEnum.CCROT90
+                        }
+                    } else {
+                        when (rotation) {
+                            0 -> FUTransformMatrixEnum.CCROT0_FLIPHORIZONTAL
+                            180 -> FUTransformMatrixEnum.CCROT0_FLIPVERTICAL
+                            else -> FUTransformMatrixEnum.CCROT90_FLIPHORIZONTAL
+                        }
+                    }
+                    it.inputTextureMatrix = if(mirror) {
+                        when (rotation) {
+                            0 -> FUTransformMatrixEnum.CCROT0
+                            180 -> FUTransformMatrixEnum.CCROT180
+                            else -> FUTransformMatrixEnum.CCROT90
+                        }
+                    } else {
+                        when (rotation) {
+                            0 -> FUTransformMatrixEnum.CCROT0_FLIPHORIZONTAL
+                            180 -> FUTransformMatrixEnum.CCROT0_FLIPVERTICAL
+                            else -> FUTransformMatrixEnum.CCROT90_FLIPHORIZONTAL
+                        }
+                    }
+                    it.deviceOrientation = when(rotation){
+                        0 -> 270
+                        180 -> 90
+                        else -> 0
+                    }
                     it.outputMatrix = FUTransformMatrixEnum.CCROT0
                 } else {
                     it.cameraFacing = CameraFacingEnum.CAMERA_BACK
-                    it.inputBufferMatrix = if(mirror) FUTransformMatrixEnum.CCROT90_FLIPVERTICAL else FUTransformMatrixEnum.CCROT270
-                    it.inputTextureMatrix = if(mirror) FUTransformMatrixEnum.CCROT90_FLIPVERTICAL else FUTransformMatrixEnum.CCROT270
+                    it.inputBufferMatrix = if(mirror) {
+                        when (rotation) {
+                            0 ->  FUTransformMatrixEnum.CCROT0_FLIPHORIZONTAL
+                            180 -> FUTransformMatrixEnum.CCROT0_FLIPVERTICAL
+                            else -> FUTransformMatrixEnum.CCROT90_FLIPVERTICAL
+                        }
+                    } else {
+                        when (rotation) {
+                            0 -> FUTransformMatrixEnum.CCROT0
+                            180 -> FUTransformMatrixEnum.CCROT180
+                            else -> FUTransformMatrixEnum.CCROT270
+                        }
+                    }
+                    it.inputTextureMatrix = if(mirror) {
+                        when (rotation) {
+                            0 -> FUTransformMatrixEnum.CCROT0_FLIPHORIZONTAL
+                            180 -> FUTransformMatrixEnum.CCROT0_FLIPVERTICAL
+                            else -> FUTransformMatrixEnum.CCROT90_FLIPVERTICAL
+                        }
+                    } else {
+                        when (rotation) {
+                            0 -> FUTransformMatrixEnum.CCROT0
+                            180 -> FUTransformMatrixEnum.CCROT180
+                            else -> FUTransformMatrixEnum.CCROT270
+                        }
+                    }
+                    it.deviceOrientation = when(rotation){
+                        0 -> 270
+                        180 -> 90
+                        else -> 0
+                    }
                     it.outputMatrix = FUTransformMatrixEnum.CCROT0
                 }
             }

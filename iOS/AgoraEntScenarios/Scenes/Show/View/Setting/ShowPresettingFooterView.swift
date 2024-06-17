@@ -22,7 +22,7 @@ class ShowPresettingFooterView: UITableViewHeaderFooterView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        bgImgView.setRoundingCorners([.bottomLeft,.bottomRight], radius: 16)
+        bgImgView.show_setRoundingCorners([.bottomLeft,.bottomRight], radius: 16)
     }
     
     required init?(coder: NSCoder) {

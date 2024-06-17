@@ -126,37 +126,37 @@ class PresetAudienceDialog constructor(context: Context, showCloseBtn: Boolean =
             // 低端机：画质增强
             VideoSetting.AudiencePlaySetting.ENHANCE_LOW -> {
                 VideoSetting.setCurrAudienceEnhanceSwitch(false)
-                VideoSetting.updateAudioSetting(SR = VideoSetting.SuperResolution.SR_NONE)
+                VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_NONE)
                 VideoSetting.updateBroadcastSetting(deviceLevel = VideoSetting.DeviceLevel.Low, isByAudience = true)
             }
             // 中端机：画质增强
             VideoSetting.AudiencePlaySetting.ENHANCE_MEDIUM -> {
                 VideoSetting.setCurrAudienceEnhanceSwitch(true)
-                VideoSetting.updateAudioSetting(SR = VideoSetting.SuperResolution.SR_SUPER)
+                VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_SUPER)
                 VideoSetting.updateBroadcastSetting(deviceLevel = VideoSetting.DeviceLevel.Medium, isByAudience = true)
             }
             // 高端机：画质增强
             VideoSetting.AudiencePlaySetting.ENHANCE_HIGH -> {
                 VideoSetting.setCurrAudienceEnhanceSwitch(true)
-                VideoSetting.updateAudioSetting(SR = VideoSetting.SuperResolution.SR_SUPER)
+                VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_SUPER)
                 VideoSetting.updateBroadcastSetting(deviceLevel = VideoSetting.DeviceLevel.High, isByAudience = true)
             }
             // 低端机：基础
             VideoSetting.AudiencePlaySetting.BASE_LOW -> {
                 VideoSetting.setCurrAudienceEnhanceSwitch(false)
-                VideoSetting.updateAudioSetting(SR = VideoSetting.SuperResolution.SR_NONE)
+                VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_NONE)
                 VideoSetting.updateBroadcastSetting(deviceLevel = VideoSetting.DeviceLevel.Low, isByAudience = true)
             }
             // 中端机：基础
             VideoSetting.AudiencePlaySetting.BASE_MEDIUM -> {
                 VideoSetting.setCurrAudienceEnhanceSwitch(false)
-                VideoSetting.updateAudioSetting(SR = VideoSetting.SuperResolution.SR_NONE)
+                VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_NONE)
                 VideoSetting.updateBroadcastSetting(deviceLevel = VideoSetting.DeviceLevel.Medium, isByAudience = true)
             }
             // 高端机：基础
             VideoSetting.AudiencePlaySetting.BASE_HIGH -> {
                 VideoSetting.setCurrAudienceEnhanceSwitch(false)
-                VideoSetting.updateAudioSetting(SR = VideoSetting.SuperResolution.SR_NONE)
+                VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_NONE)
                 VideoSetting.updateBroadcastSetting(deviceLevel = VideoSetting.DeviceLevel.High, isByAudience = true)
             }
         }

@@ -1,6 +1,6 @@
 //
 //  AUiMoreDialog.swift
-//  Agora Live
+//  AgoraEntScenarios
 //
 //  Created by wushengtao on 2023/4/18.
 //
@@ -11,6 +11,7 @@ import Agora_Scene_Utils
 @objc public class ShowLiveMoreDialog: UIView {
     var onClickDislikeClosure: (() -> Void)?
     var onClickDisUserClosure:(() -> Void)?
+    
     private lazy var contentView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(hex: "#000000", alpha: 0.85)
@@ -43,14 +44,10 @@ import Agora_Scene_Utils
     }()
     private lazy var dislikeButton: AGEButton = {
         let button = AGEButton()
-        if #available(iOS 13.0, *) {
-            button.setImage(UIImage.sceneImage(name: "report_user_icon")?.withTintColor(.white, renderingMode: .alwaysOriginal),
-                            for: .normal,
-                            postion: .top,
-                            spacing: 4)
-        } else {
-            // Fallback on earlier versions
-        }
+        button.setImage(UIImage.sceneImage(name: "report_user_icon")?.withTintColor(.white, renderingMode: .alwaysOriginal),
+                        for: .normal,
+                        postion: .top,
+                        spacing: 4)
         button.setTitle("report_user".show_localized, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         button.setTitleColor(.gray, for: .normal)
@@ -103,10 +100,11 @@ import Agora_Scene_Utils
     @objc private func onClickReportContentButton(_ sender: UIButton) {
         hidden()
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
-            ToastView.show(text: "You have blocked this content.".show_localized)
+            ToastView.show(text: "You have blocked this content.")
         }
         onClickDislikeClosure?()
     }
+    
     @objc
     private func onClickReportUserButton(sender: UIButton) {
         hidden()

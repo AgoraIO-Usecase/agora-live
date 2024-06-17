@@ -4,11 +4,6 @@ import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.utils.ToastUtils
 
 /**
- * Room Available Duration
- */
-const val ROOM_AVAILABLE_DURATION: Long = 60 * 20 * 1000// 20min
-
-/**
  * Show service protocol
  *
  * @constructor Create empty Show service protocol
@@ -37,6 +32,16 @@ interface ShowServiceProtocol {
     }
 
     companion object {
+        /**
+         * Room Available Duration
+         */
+        var ROOM_AVAILABLE_DURATION: Long = 1200 * 1000
+
+        /**
+         * PK Available Duration
+         */
+        var PK_AVAILABLE_DURATION: Long = 120 * 1000
+
         private val instance by lazy {
             ShowSyncManagerServiceImpl(AgoraApplication.the()){
                 if (it.message != "action error") {
@@ -85,6 +90,7 @@ interface ShowServiceProtocol {
         roomId: String,
         roomName: String,
         thumbnailId: String,
+        isPureMode: Boolean,
         success: (ShowRoomDetailModel) -> Unit,
         error: ((Exception) -> Unit)? = null
     )

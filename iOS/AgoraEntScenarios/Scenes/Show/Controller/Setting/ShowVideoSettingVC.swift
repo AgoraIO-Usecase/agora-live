@@ -18,6 +18,8 @@ class ShowVideoSettingVC: UIViewController {
 
     private let transDelegate = ShowPresentTransitioningDelegate()
     
+    var isPureMode = false
+    
     var dataArray = [ShowSettingKey]()
     
     var musicManager: ShowMusicPresenter!
@@ -107,7 +109,7 @@ extension ShowVideoSettingVC: UITableViewDelegate, UITableViewDataSource {
             cell.setTitle(data.title,enable:enable, isOn: data.boolValue) {[weak self] isOn in
                 self?.onValueChanged(isOn, forSettingKey: data)
             } detailButtonAction: {[weak self] in
-                self?.showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
+                self?.show_showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
             }
             return cell
         }else if data.type == .segment {
@@ -136,7 +138,7 @@ extension ShowVideoSettingVC: UITableViewDelegate, UITableViewDataSource {
                     vc.showBgView()
                 })
             } detailButtonAction: {[weak self] in
-                self?.showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
+                self?.show_showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
             }
             return cell
         } else {
@@ -145,7 +147,7 @@ extension ShowVideoSettingVC: UITableViewDelegate, UITableViewDataSource {
                 cell.setTitle(data.title, value: data.floatValue, minValue: 200, maxValue: 4000)
                 cell.delegate = self
                 cell.clickDetailButonAction = { [weak self] in
-                    self?.showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
+                    self?.show_showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
                 }
                 return cell
             } else if data == .musicVolume {
@@ -171,19 +173,19 @@ extension ShowVideoSettingVC: UITableViewDelegate, UITableViewDataSource {
                         ShowAgoraKitManager.shared.updateSettingForkey(.PVC, currentChannelId: self?.currentChannelId)
                     })
                 } detailButtonAction: {[weak self] in
-                    self?.showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
+                    self?.show_showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
                 }
                 return cell
             } else if data == .SR {
                 let cell = tableView.dequeueReusableCell(withIdentifier: kSwitchCell, for: indexPath) as! ShowSettingSwitchCell
                 let value = ShowAgoraKitManager.shared.rtcParam.sr
-                cell.setTitle(data.title, enable:true, isOn: value) {[weak self] isOn in
+                cell.setTitle(data.title, enable:!isPureMode, isOn: value) {[weak self] isOn in
                     self?.barrierValueChange(complete: {
                         ShowAgoraKitManager.shared.rtcParam.sr = isOn
                         ShowAgoraKitManager.shared.updateSettingForkey(.SR, currentChannelId: self?.currentChannelId)
                     })
                 } detailButtonAction: {[weak self] in
-                    self?.showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
+                    self?.show_showAlert(title: data.title, message: data.tips, confirmTitle: "OK", cancelTitle: nil)
                 }
                 return cell
             }

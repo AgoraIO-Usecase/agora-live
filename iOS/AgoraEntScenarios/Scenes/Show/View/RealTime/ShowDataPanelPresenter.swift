@@ -138,8 +138,10 @@ class ShowDataPanelPresenter {
         let startup = audience ? "\(callTs) ms" : "--"
         let startupStr = "show_statistic_startup_time".show_localized + ": " + startup
         // h265 switch
-        let h265 = send ? onStr : "--"
+        let isH265On = localVideoStats.codecType == .H265
+        let h265 = send ? (isH265On ? onStr : offStr) : "--"
         let h265Str = "H265" + ": " + h265
+        
         // super resolution switch
         let sr = audience ? (params.sr ? onStr : offStr) : "--"
         let srStr = "show_statistic_SR_switch".show_localized + ": " + sr
@@ -158,8 +160,9 @@ class ShowDataPanelPresenter {
         //svc switch
         let svc = send ? (params.svc ? onStr : offStr) : "--"
         let svcStr = "show_statistic_svc_switch".show_localized + ": " + svc
+        let localUid = "Local UID: \(VLUserCenter.user.id)"
         let left = [title, startupStr, h265Str, srStr,  microStreamStr].joined(separator: "\n") + "\n"
-        let right = ["  ", levelStr,  pvcStr, svcStr].joined(separator: "\n") + "\n"
+        let right = ["  ", levelStr,  pvcStr, svcStr, localUid].joined(separator: "\n") + "\n"
         return ShowPanelData(left: left, right: right)
     }
 }

@@ -29,7 +29,7 @@ class ShowNetStateSelectViewController: UIViewController {
     
     private var netConditions: [ShowAgoraKitManager.NetCondition] = [.good, .bad]
     
-    private var performances: [ShowAgoraKitManager.PerformanceMode] = [.fluent, .smooth]
+    private var performances: [ShowAgoraKitManager.PerformanceMode] = [.fluent, .smooth, .pure]
     
     private var aDeviceLevel: ShowAgoraKitManager.DeviceLevel = .high
     
@@ -123,11 +123,15 @@ extension ShowNetStateSelectViewController: UITableViewDelegate, UITableViewData
             switch a {
             case .smooth:
                 cell.setTitle("show_presetting_performances_smooth".show_localized,
-                              desc: "show_presetting_performances_smooth".show_localized)
+                              desc: "")
             case .fluent:
                 cell.setTitle("show_presetting_performances_fluent".show_localized,
-                              desc: "show_presetting_performances_fluent".show_localized)
+                              desc: "")
+            case .pure:
+                cell.setTitle("show_presetting_performances_pure".show_localized,
+                              desc: "")
             }
+            
             cell.aSelected = (aPerformance == a)
         } else {
             let a = netConditions[indexPath.row]

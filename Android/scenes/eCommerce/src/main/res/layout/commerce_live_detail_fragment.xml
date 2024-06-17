@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <include
+        android:id="@+id/videoLinkingLayout"
+        layout="@layout/commerce_live_detail_video_link"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 在布局文件中定义TextView -->
+    <TextView
+        android:id="@+id/userView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:alpha="0"
+        android:background="@drawable/commerce_bg_user_join"
+        android:text="@string/commerce_user_joined"
+        android:textColor="@color/white"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="10dp"
+        android:translationX="0dp"
+        android:textSize="14sp"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="3dp"
+        app:layout_constraintBottom_toTopOf="@id/messageLayout"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/messageLayout"
+        layout="@layout/commerce_live_detail_message"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomLayout" />
+
+    <include
+        android:id="@+id/topLayout"
+        layout="@layout/commerce_live_detail_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        tools:layout_editor_absoluteX="13dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <FrameLayout
+        android:id="@+id/flAuction"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/commerce_auction_bg_user"
+        app:layout_constraintBottom_toBottomOf="parent">
+    </FrameLayout>
+
+    <include
+        android:id="@+id/bottomLayout"
+        layout="@layout/commerce_live_detail_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/flAuction" />
+
+    <io.agora.scene.eCommerce.widget.like.LikeLayout
+        android:id="@+id/vLike"
+        android:layout_width="70dp"
+        android:layout_height="220dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomLayout"
+        android:layerType="software"
+        tools:visibility="visible"
+        />
+
+    <include
+        android:id="@+id/livingEndLayout"
+        layout="@layout/commerce_live_detail_living_end"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

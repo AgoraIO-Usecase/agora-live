@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import VideoLoaderAPI
 
 @objc enum ShowRoomStatus: Int {
     case activity = 0
@@ -51,7 +51,30 @@ class ShowBaseInfo: NSObject {
 
 /// Room list information
 @objcMembers
-class ShowRoomListModel: ShowBaseInfo {
+class ShowRoomListModel: ShowBaseInfo, IVideoLoaderRoomInfo {
+    func channelName() -> String {
+        return roomId
+    }
+    
+    func userId() -> String {
+        return ownerId
+    }
+    
+    var anchorInfoList: [AnchorInfo] {
+        get {
+            let anchorInfo = AnchorInfo()
+            anchorInfo.channelName = roomId
+            if !ownerId.isEmpty {
+                anchorInfo.uid = UInt(ownerId)!
+            }
+            anchorInfo.token = AppContext.shared.rtcToken ?? ""
+            
+            return [anchorInfo] + interactionAnchorInfoList
+        }
+    }
+    
+    var interactionAnchorInfoList: [AnchorInfo] = []
+    
     var roomId: String = ""
     var roomName: String?
     var roomUserCount: Int = 1
@@ -63,6 +86,7 @@ class ShowRoomListModel: ShowBaseInfo {
     var interactStatus: ShowInteractionStatus = .idle
     var createdAt: Int64 = 0
     var updatedAt: Int64 = 0
+    var isPureMode: Int64 = 0
 }
 
 //PK Invite objects
@@ -91,6 +115,10 @@ class ShowMessage: ShowBaseInfo {
 }
 
 class ShowMicSeatApply: ShowUser {
+//    var userId: String?
+//    var avatar: String?
+//    var userName: String?
+//    var status: ShowRoomRequestStatus = .idle
     var createdAt: Int64 = 0
     
     #if DEBUG
@@ -149,11 +177,9 @@ class ShowInteractionInfo: ShowBaseInfo {
     var ownerMuteAudio: Bool = false
     var createdAt: Int64 = 0                            
     
-    #if DEBUG
     override var description: String {
-        return "userId: \(userId) roomId: \(roomId) status: \(interactStatus) objectId: \(objectId ?? "")"
+        return "userId: \(userId) userName: \(userName ?? "") roomId: \(roomId) status: \(interactStatus.rawValue) objectId: \(objectId ?? "")"
     }
-    #endif
     
     override func isEqual(_ object: Any?) -> Bool {
         guard let info = object as? ShowInteractionInfo,
