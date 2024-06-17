@@ -27,7 +27,7 @@ class KeyCenter: NSObject {
      then the APP Certificate can be found in the project detail page.
      PS: If the project does not have certificates enabled, leave this field blank.
      */
-    static let Certificate: String? = nil
+    static let Certificate: String? = <#YOUR CERTIFICATE#>
     
     /**
      Token.
