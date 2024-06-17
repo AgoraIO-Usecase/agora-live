@@ -246,7 +246,6 @@ class ChatroomCacheManager {
 
     @SuppressLint("ApplySharedPref")
     fun putString(key: String?, value: String?) {
-        //存入数据
         mEditor?.putString(key, value)
         mEditor?.commit()
     }
@@ -298,7 +297,6 @@ class ChatroomCacheManager {
     }
 
     private fun obj2Base64(obj: Any?): String? {
-        //判断对象是否为空
         if (obj == null) {
             return null
         }
@@ -309,8 +307,6 @@ class ChatroomCacheManager {
             baos = ByteArrayOutputStream()
             oos = ObjectOutputStream(baos)
             oos.writeObject(obj)
-            // 将对象放到OutputStream中
-            // 将对象转换成byte数组，并将其进行base64编码
             objectStr = String(Base64.encode(baos.toByteArray(), Base64.DEFAULT))
         } catch (e: Exception) {
             e.printStackTrace()
@@ -334,7 +330,6 @@ class ChatroomCacheManager {
     }
 
     private fun <T> base64ToObj(base64: String): T? {
-        // 将base64格式字符串还原成byte数组
         if (TextUtils.isEmpty(base64)) {
             return null
         }
