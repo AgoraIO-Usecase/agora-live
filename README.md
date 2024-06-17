@@ -5,12 +5,14 @@
 
 * Scenes
 	
-	|Scenes    | Platfrom | Location
-	| --------- | -------- | ----------- | -------------------------------------------------------- | --------------- | ------------------ |
-	| LiveStreaming | iOS | [AgoraEntScenarios/Scenes/Show](iOS/AgoraEntScenarios/Scenes/Show/README.md)
-	| VoiceChatRoom | iOS | [AgoraEntScenarios/Scenes/VoiceChatRoom](iOS/AgoraEntScenarios/Scenes/VoiceChatRoom/README.md)
-	| E-Commerce | iOS | [AgoraEntScenarios/Scenes/VoiceChatRoom](iOS/AgoraEntScenarios/Scenes/Commerce/README.md)
-	| LiveStreaming | Android | [Android/scenes/show](Android/scenes/show/README.md)
+| Scenes | Platform | Location |
+| --------------- | -------- | ---------------------------------------------------------------------------------------- |
+| LiveStreaming   | iOS      | [AgoraEntScenarios/Scenes/Show](iOS/AgoraEntScenarios/Scenes/Show/README.md)             |
+| VoiceChatRoom   | iOS      | [AgoraEntScenarios/Scenes/VoiceChatRoom](iOS/AgoraEntScenarios/Scenes/VoiceChatRoom/README.md) |
+| E-Commerce      | iOS      | [AgoraEntScenarios/Scenes/Commerce](iOS/AgoraEntScenarios/Scenes/Commerce/README.md)     |
+| LiveStreaming   | Android  | [Android/scenes/show](Android/scenes/show/README.md)                               |
+| VoiceChatRoom   | Android  | [Android/scenes/voice](Android/scenes/voice/README.md)                               |
+| E-Commerce      | Android  | [Android/scenes/eCommerce](Android/scenes/eCommerce/README.md)                               |
 
 
 Demo screenshots:

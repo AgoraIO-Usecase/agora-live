@@ -232,23 +232,37 @@ extension VRSoundCardSettingView: UITableViewDataSource, UITableViewDelegate {
         } else if indexPath.row == 1 {
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "effect", for: indexPath)
             
-            var rightLabel = UILabel()
-            if let view = self.viewWithTag(indexPath.row + 200) as? UILabel {
-                rightLabel = view
+            var rightLabel:UILabel? = nil
+            if let label = self.viewWithTag(indexPath.row + 200) as? UILabel {
+                rightLabel = label
             } else {
-                rightLabel.tag = indexPath.row + 200
-                rightLabel.font = UIFont.systemFont(ofSize: 12)
-                rightLabel.textColor = .gray
-                rightLabel.translatesAutoresizingMaskIntoConstraints = false
-                cell.contentView.addSubview(rightLabel)
-                rightLabel.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -20).isActive = true
-                rightLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor).isActive = true
+                let label = UILabel()
+                label.numberOfLines = 0
+                label.textAlignment = .right
+                label.tag = indexPath.row + 200
+                label.font = UIFont.systemFont(ofSize: 12)
+                label.textColor = .gray
+                label.translatesAutoresizingMaskIntoConstraints = false
+                cell.contentView.addSubview(label)
+                rightLabel = label
             }
             
-            cell.textLabel?.font = UIFont.systemFont(ofSize: 13)
+            let font = UIFont.systemFont(ofSize: 13)
+            let text = "voice_preset_sound".voice_localized
+            
+            cell.textLabel?.font = font
             cell.accessoryType = .disclosureIndicator
-            cell.textLabel?.text = "voice_preset_sound".voice_localized
-            rightLabel.text = getEffectDesc(with: self.effectType)
+            cell.textLabel?.text = text
+            rightLabel?.text = getEffectDesc(with: self.effectType)
+            let size = text.size(font: font, drawRange: cell.size)
+            let horizontalEdge: CGFloat = 30
+            rightLabel?.snp.updateConstraints({ make in
+                make.left.equalTo(horizontalEdge + size.width)
+                make.height.equalTo(cell.contentView.snp.height)
+                make.right.equalTo(cell.contentView).offset(-horizontalEdge)
+                make.top.equalTo(cell.contentView)
+            })
+//            rightLabel?.frame = CGRect(x: horizontalEdge + size.width, y: 0, width: cell.contentView.width - size.width - horizontalEdge * 2, height: cell.contentView.height)
             cell.selectionStyle = .none
             return cell
         }else if indexPath.row == 2 {
