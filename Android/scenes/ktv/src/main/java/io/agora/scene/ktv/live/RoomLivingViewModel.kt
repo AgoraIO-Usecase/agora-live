@@ -427,7 +427,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
      *
      * @param mute
      */
-    fun updateSeatVideoMuteStatus(mute: Boolean) {
+    fun updateSeatVideoMuteStatus(mute: Boolean, completion: (error: Exception?) -> Unit) {
         KTVLogger.d(TAG, "RoomLivingViewModel.updateSeatVideoMuteStatus() called mute：$mute")
         ktvServiceProtocol.updateSeatVideoMuteStatus(mute) { error ->
             if (error != null) { // failure
@@ -435,6 +435,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                     CustomToast.show(it, Toast.LENGTH_SHORT)
                 }
             }
+            completion.invoke(error)
         }
     }
 
@@ -468,7 +469,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
      *
      * @param mute
      */
-    fun updateSeatAudioMuteStatus(mute: Boolean) {
+    fun updateSeatAudioMuteStatus(mute: Boolean, completion: (error: Exception?) -> Unit) {
         KTVLogger.d(TAG, "RoomLivingViewModel.updateSeatAudioMuteStatus() called mute：$mute")
         ktvServiceProtocol.updateSeatAudioMuteStatus(mute) { error ->
             if (error != null) { // failure
@@ -476,6 +477,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                     CustomToast.show(it, Toast.LENGTH_SHORT)
                 }
             }
+            completion.invoke(error)
         }
     }
 
