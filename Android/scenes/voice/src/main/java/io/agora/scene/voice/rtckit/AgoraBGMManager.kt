@@ -43,7 +43,7 @@ class AgoraBGMManager(
 
     private var mListeners: ArrayList<AgoraBGMStateListener>? = null
 
-    private var remoteVolume: Int = 40 // 远端音频
+    private var remoteVolume: Int = 40
     private var mpkPlayerVolume: Int = 50
     private var mpkPublishVolume: Int = 50
 

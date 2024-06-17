@@ -5,7 +5,8 @@ import io.agora.scene.base.manager.UserManager
 import io.agora.voice.common.constant.ConfigConstants
 
 /**
- *创建房间数据
+ * This data class represents the initial properties of a room in the VR application.
+ * These properties include the room name, whether the room is private, the room password, the sound effect, and the room type.
  */
 data class VoiceCreateRoomModel constructor(
     val roomName: String,
@@ -16,29 +17,31 @@ data class VoiceCreateRoomModel constructor(
 ) : BaseRoomBean
 
 /**
- * 用户数据
- * @see io.agora.scene.base.api.model.User
+ * This data class represents a user in the VR application.
+ * It includes the user's ID, chat UID, nickname, portrait, RTC UID, mic index, and mic status.
  */
 data class VoiceMemberModel constructor(
-
-    // 这里用的是user.userNo
     @SerializedName("uid") var userId: String? = null,
-    // 这里用的是user.id
     @SerializedName("chat_uid") var chatUid: String? = null,
     @SerializedName("name") var nickName: String? = null,
     @SerializedName("portrait") var portrait: String? = null,
-    // 这里用的是user.id
     @SerializedName("rtc_uid") var rtcUid: Int = 0,
     @SerializedName("mic_index") var micIndex: Int = -1,
-    @SerializedName("micStatus") var micStatus: Int = 1, // 角色麦位状态(0 关 1 开)
+    @SerializedName("micStatus") var micStatus: Int = 1, // Mic status (0 off, 1 on)
 ) : BaseRoomBean {
+    /**
+     * This method returns the full URL of the user's avatar.
+     *
+     * @return The full URL of the user's avatar.
+     */
     fun getAvatarUrl(): String {
         return UserManager.getInstance().getUserAvatarFullUrl(portrait)
     }
 }
 
 /**
- * 贡献榜
+ * This data class represents a user on the contribution leaderboard in the VR application.
+ * It includes the user's chat UID, name, portrait, and contribution amount.
  */
 data class VoiceRankUserModel constructor(
     @SerializedName("chat_uid") var chatUid: String? = null,
@@ -46,13 +49,19 @@ data class VoiceRankUserModel constructor(
     var portrait: String? = "",
     var amount: Int = 0
 ) : BaseRoomBean {
+    /**
+     * This method returns the full URL of the user's avatar.
+     *
+     * @return The full URL of the user's avatar.
+     */
     fun getAvatarUrl(): String {
         return UserManager.getInstance().getUserAvatarFullUrl(portrait)
     }
 }
 
 /**
- * 房间数据
+ * This data class represents a room in the VR application.
+ * It includes the room owner, room ID, whether the room is private, member count, click count, room type, room name, sound effect, channel ID, chatroom ID, creation time, room password, ranking list, member list, gift amount, whether the robot is used, robot volume, and announcement.
  */
 data class VoiceRoomModel constructor(
     var owner: VoiceMemberModel? = null,
@@ -75,6 +84,10 @@ data class VoiceRoomModel constructor(
     @Transient var announcement: String = "",
 ) : BaseRoomBean
 
+/**
+ * This data class represents a background music model in the VR application.
+ * It includes the song name, singer name, and a boolean indicating whether it is the original version.
+ */
 data class VoiceBgmModel constructor(
     var songName: String = "",
     var singerName: String = "",
@@ -82,18 +95,20 @@ data class VoiceBgmModel constructor(
 ) : BaseRoomBean
 
 /**
- * 麦位数据
+ * This data class represents a microphone information model in the VR application.
+ * It includes the microphone index, member, microphone status, owner tag, and audio volume type.
  */
 data class VoiceMicInfoModel constructor(
     @SerializedName("mic_index") var micIndex: Int = -1,
     var member: VoiceMemberModel? = null,
-    @SerializedName("status") var micStatus: Int = -1, // 座位状态
+    @SerializedName("status") var micStatus: Int = -1, // Microphone status
     @Transient var ownerTag: Boolean = false,
     @Transient var audioVolumeType: Int = ConfigConstants.VolumeType.Volume_None,
 ) : BaseRoomBean
 
 /**
- * 申请数据
+ * This data class represents a room application model in the VR application.
+ * It includes the index, member, and creation time.
  */
 data class VoiceRoomApply constructor(
     var index: Int? = -1,
@@ -103,7 +118,8 @@ data class VoiceRoomApply constructor(
 ) :BaseRoomBean
 
 /**
- * 房间详情
+ * This data class represents a room information model in the VR application.
+ * It includes the room information, microphone information, and background music information.
  */
 data class VoiceRoomInfo constructor(
     var roomInfo: VoiceRoomModel? = null,
@@ -112,7 +128,8 @@ data class VoiceRoomInfo constructor(
 ) : BaseRoomBean
 
 /**
- * 礼物
+ * This data class represents a gift model in the VR application.
+ * It includes the gift ID, gift count, gift name, gift price, user name, portrait, and a boolean indicating whether it is checked.
  */
 data class VoiceGiftModel constructor(
     var gift_id: String? = "",

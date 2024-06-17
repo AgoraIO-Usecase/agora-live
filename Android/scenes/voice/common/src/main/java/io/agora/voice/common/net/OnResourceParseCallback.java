@@ -3,46 +3,57 @@ package io.agora.voice.common.net;
 import androidx.annotation.Nullable;
 
 /**
- * Uses to parse Resource<T>
- * hideErrorMsg is false by default
- * @param <T>
+ * This abstract class is used to parse Resource<T> objects in the VR application.
+ * It provides methods for handling success, error, loading, and hiding loading states.
+ * It also provides a field for controlling whether error messages should be hidden.
+ *
+ * @param <T> The type of the data that is being parsed.
  */
 public abstract class OnResourceParseCallback<T> {
+
+    /**
+     * A boolean value that determines whether error messages should be hidden.
+     */
     public boolean hideErrorMsg;
 
+    /**
+     * Default constructor for the OnResourceParseCallback class.
+     */
     public OnResourceParseCallback() {}
 
     /**
-     * Whether to display error messages
+     * Constructor for the OnResourceParseCallback class that allows setting whether error messages should be hidden.
      *
-     * @param hideErrorMsg the hide error msg
+     * @param hideErrorMsg A boolean value that determines whether error messages should be hidden.
      */
     public OnResourceParseCallback(boolean hideErrorMsg) {
         this.hideErrorMsg = hideErrorMsg;
     }
 
     /**
-     * success
+     * This method is invoked when the parsing operation is successful.
      *
-     * @param data the data
+     * @param data The parsed data.
      */
     public abstract void onSuccess(@Nullable T data);
 
     /**
-     * fail
+     * This method is invoked when the parsing operation fails.
      *
-     * @param code    the code
-     * @param message the message
+     * @param code The error code of the failure.
+     * @param message The error message of the failure.
      */
     public void onError(int code, String message){}
 
     /**
-     * in progress
+     * This method is invoked when the parsing operation is in progress.
+     *
+     * @param data The data that is currently being parsed.
      */
     public void onLoading(@Nullable T data){}
 
     /**
-     * hide loading
+     * This method is invoked to hide the loading state.
      */
     public void onHideLoading(){}
 }

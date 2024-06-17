@@ -29,6 +29,7 @@ public class VRRoomCreateView: UIImageView {
         createRoom.setBackgroundImage(UIImage.voice_image("create_room"), for: .normal)
         createRoom.setImage(UIImage.voice_image("create_room_add"), for: .normal)
         createRoom.setTitle("voice_create_room".voice_localized, for: .normal)
+        createRoom.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         createRoom.spacingBetweenImageAndTitle = 7
         createRoom.accessibilityIdentifier = "voice_chat_create_room_button_title"
         createRoom.translatesAutoresizingMaskIntoConstraints = false
