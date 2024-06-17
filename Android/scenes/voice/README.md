@@ -9,7 +9,7 @@
 
 ## Prerequisites
 
-- Android Studio 3.5 or higher.72d8d5c7b38445e5bb26f1f270ee464972d8d5c7b38445e5bb26f1f270ee4649
+- Android Studio 3.5 or higher.
 - Android SDK API Level 21 or higher.
 - A mobile device that runs Android 5.0 or higher.
 
