@@ -2,9 +2,11 @@ package io.agora.scene.voice.rtckit
 
 import android.content.Context
 import android.util.Log
-import io.agora.mediaplayer.Constants.MediaPlayerError
+import io.agora.mediaplayer.Constants.MediaPlayerReason
 import io.agora.mediaplayer.Constants.MediaPlayerState
 import io.agora.mediaplayer.IMediaPlayer
+import io.agora.mediaplayer.data.CacheStatistics
+import io.agora.mediaplayer.data.PlayerPlaybackStats
 import io.agora.rtc2.*
 import io.agora.scene.base.AudioModeration
 import io.agora.scene.base.TokenGenerator
@@ -379,7 +381,7 @@ class AgoraRtcEngineController {
     private var mediaPlayer:IMediaPlayer?=null
 
     private val firstMediaPlayerObserver = object : MediaPlayerObserver() {
-        override fun onPlayerStateChanged(state: MediaPlayerState?, error: MediaPlayerError?) {
+        override fun onPlayerStateChanged(state: MediaPlayerState?, error: MediaPlayerReason?) {
             "firstMediaPlayerObserver onPlayerStateChanged state:$state error:$error".logD(TAG)
 
             when (state) {
@@ -404,6 +406,13 @@ class AgoraRtcEngineController {
         }
 
         override fun onPositionChanged(position_ms: Long, timestamp_ms: Long) {
+        }
+
+        override fun onPlayerCacheStats(stats: CacheStatistics?) {
+
+        }
+
+        override fun onPlayerPlaybackStats(stats: PlayerPlaybackStats?) {
         }
     }
 

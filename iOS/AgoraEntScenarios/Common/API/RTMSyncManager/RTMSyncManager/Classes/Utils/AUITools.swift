@@ -9,11 +9,10 @@ import Foundation
 
 let logTag = "SyncManager"
 let formatter = DateFormatter()
-func aui_info(_ message: String, levelTag: String? = nil, tag: String? = nil) {
-    let visibleTag = "\(tag == nil ? "" : "[\(tag!)]")\(levelTag == nil ? "" : "[\(levelTag!)]")[\(logTag)]"
+
+func aui_info(_ message: String, tag: String = logTag) {
     if let closure = AUIRoomContext.shared.displayLogClosure {
-        closure("\(visibleTag) \(message)")
-        return
+        closure("[\(tag)] \(message)")
     }
     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
     let timeString = formatter.string(from: Date())

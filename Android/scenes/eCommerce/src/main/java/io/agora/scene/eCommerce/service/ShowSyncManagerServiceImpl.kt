@@ -15,6 +15,7 @@ import io.agora.rtmsyncmanager.service.collection.AUIMapCollection
 import io.agora.rtmsyncmanager.service.http.HttpManager
 import io.agora.rtmsyncmanager.service.room.AUIRoomManager
 import io.agora.rtmsyncmanager.service.rtm.AUIRtmMessageRespObserver
+import io.agora.rtmsyncmanager.service.rtm.AUIRtmUserLeaveReason
 import io.agora.rtmsyncmanager.utils.AUILogger
 import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.scene.base.BuildConfig
@@ -509,7 +510,7 @@ class ShowSyncManagerServiceImpl constructor(
                 runOnMainThread { controller.userJoinSubscriber?.invoke(userInfo.userId, userInfo.userName, userInfo.userAvatar) }
             }
         }
-        override fun onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
+        override fun onRoomUserLeave(roomId: String, userInfo: AUIUserInfo, reason: AUIRtmUserLeaveReason) {
             CommerceLogger.d(TAG, "onRoomUserLeave, roomId: $roomId, userInfo: $userInfo")
             val controller = roomInfoControllers.firstOrNull { it.roomId == roomId } ?: return
             controller.userList.removeAll { it.userId == userInfo.userId }

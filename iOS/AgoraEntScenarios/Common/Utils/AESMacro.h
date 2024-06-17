@@ -41,8 +41,6 @@
 #define KTVLogWarn(format, ...)  ([KTVLog warningWithText:[NSString stringWithFormat:(format), ##__VA_ARGS__] tag: @"KTV"])
 #define KTVLogDebug(format, ...)  ([KTVLog debugWithText:[NSString stringWithFormat:(format), ##__VA_ARGS__] tag: @"KTV"])
 
-
-
 #define UIColorMakeWithHex(s) [UIColor colorWithHexString:s]
 
 #endif /* KTVMacro_h */

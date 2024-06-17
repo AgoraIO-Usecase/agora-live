@@ -41,6 +41,14 @@ object ScenesConstructor {
                 R.mipmap.bg_btn_home3,
                 R.mipmap.bg_btn_home_chat,
                 true
+            ),
+            ScenesModel(
+                AgoraScenes.KTV,
+                "io.agora.scene.ktv.create.RoomListActivity",
+                context.getString(R.string.app_ktv),
+                R.mipmap.bg_btn_home1,
+                R.mipmap.bg_btn_home_ktv,
+                true
             )
         )
     }

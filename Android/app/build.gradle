@@ -16,6 +16,7 @@ android {
 
     packagingOptions {
         pickFirst 'lib/*/libc++_shared.so'
+        pickFirst 'lib/*/libaosl.so'
     }
 
     lint {
@@ -93,6 +94,11 @@ dependencies {
     def chatRoomModule = ':scenes:voice'
     if (findProject(chatRoomModule) != null) {
         runtimeOnly project(chatRoomModule)
+    }
+
+    def ktvModule = ':scenes:ktv'
+    if (findProject(ktvModule) != null) {
+        runtimeOnly project(ktvModule)
     }
 
     //glide 图片加载

@@ -28,7 +28,7 @@ public class BaseRecyclerViewAdapter<B extends ViewBinding, T, H extends BaseRec
     /**
      * The Data list.
      */
-    private List<T> dataList;
+    public List<T> dataList;
     /**
      * The M on item click listener.
      */
