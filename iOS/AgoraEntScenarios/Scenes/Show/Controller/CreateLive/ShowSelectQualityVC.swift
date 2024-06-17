@@ -10,7 +10,7 @@ import UIKit
 private let cellHeight: CGFloat = 48
 private let lineSpacing: CGFloat = 15
 
-struct Resolution {
+struct Show_Resolution {
     let width: CGFloat
     let height: CGFloat
     let valueStr: String
@@ -19,17 +19,17 @@ struct Resolution {
 
 class ShowSelectQualityVC: UIViewController {
     
-    var selectedItem: ((_ item: Resolution, _ index: Int)->())?
+    var selectedItem: ((_ item: Show_Resolution, _ index: Int)->())?
     var dismissed: (()->())?
     var defalutSelectIndex =  0
     
     private let dataArray  = [
-        Resolution(width: 1080, height: 1920, valueStr: "1080P", name: "Ultra clear"),
-        Resolution(width: 720, height: 1280, valueStr: "720P", name: "Ultra"),
-        Resolution(width: 540, height: 960, valueStr: "540P", name: "HD"),
-        Resolution(width: 480, height: 854, valueStr: "480P", name: "Standard"),
-        Resolution(width: 360, height: 640, valueStr: "360P", name: "smooth"),
-        Resolution(width: 270, height: 480, valueStr: "270P", name: "Low"),
+        Show_Resolution(width: 1080, height: 1920, valueStr: "1080P", name: "Ultra clear"),
+        Show_Resolution(width: 720, height: 1280, valueStr: "720P", name: "Ultra"),
+        Show_Resolution(width: 540, height: 960, valueStr: "540P", name: "HD"),
+        Show_Resolution(width: 480, height: 854, valueStr: "480P", name: "Standard"),
+        Show_Resolution(width: 360, height: 640, valueStr: "360P", name: "smooth"),
+        Show_Resolution(width: 270, height: 480, valueStr: "270P", name: "Low"),
     ]
     
     private lazy var bgView: UIView = {
@@ -120,7 +120,7 @@ extension ShowSelectQualityVC {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        bgView.setRoundingCorners([.topLeft, .topRight], radius: 20)
+        bgView.show_setRoundingCorners([.topLeft, .topRight], radius: 20)
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {

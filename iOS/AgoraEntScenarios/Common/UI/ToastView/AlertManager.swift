@@ -169,23 +169,26 @@ class AlertManager: NSObject {
         }
     }
 
-    private static var originFrame: CGRect = .zero
     @objc private static func keyboardWillShow(notification: Notification) {
-        let keyboardHeight = (notification.userInfo?["UIKeyboardBoundsUserInfoKey"] as? CGRect)?.height
-        let y = cl_screenHeight - (keyboardHeight ?? 304) - containerView!.frame.height
-        if originFrame.origin.y != y {
-            originFrame = containerView!.frame
+        let keyboardHeight = (notification.userInfo?["UIKeyboardBoundsUserInfoKey"] as? CGRect)?.height ?? 304
+        var y = cl_screenHeight - keyboardHeight - containerView!.frame.height
+        if currentPosition == .top {
+            y = y <= 0 ? 0 : y
+            
+        } else if currentPosition == .center {
+            y = y <= 0 ? y * 0.5 : y
         }
         UIView.animate(withDuration: 0.25) {
             containerView?.frame.origin.y = y
         }
     }
     @objc private static func keyboardWillHide(notification: Notification) {
+        let y = cl_screenHeight - containerView!.frame.height
         UIView.animate(withDuration: 0.25) {
-            containerView?.frame = originFrame
+            containerView?.frame.origin.y = y
         } completion: { _ in
             if currentPosition == .bottom {
-                hiddenView()
+//                hiddenView()
             }
         }
     }

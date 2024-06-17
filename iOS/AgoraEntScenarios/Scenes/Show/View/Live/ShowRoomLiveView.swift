@@ -10,7 +10,6 @@ import UIKit
 private let kTableViewBottomOffset: CGFloat = Screen.safeAreaBottomHeight() + 109
 private let kChatInputViewHeight: CGFloat = 56
 
-
 protocol ShowRoomLiveViewDelegate: ShowRoomBottomBarDelegate, ShowCanvasViewDelegate {
     func onClickSendMsgButton(text: String)
     func onClickCloseButton()
@@ -46,6 +45,12 @@ class ShowRoomLiveView: UIView {
         let view = ShowCanvasView()
         return view
     }()
+    
+    var showThumnbnailCanvasView = false {
+        didSet{
+            canvasView.thumnbnailCanvasView.isHidden = !showThumnbnailCanvasView
+        }
+    }
     
     private var chatArray = [ShowChatModel]()
     
@@ -166,7 +171,7 @@ class ShowRoomLiveView: UIView {
         
         addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            let bottomOffset = Screen.safeAreaBottomHeight() + 109
+//            let bottomOffset = Screen.safeAreaBottomHeight() + 109
             make.left.equalTo(15)
             make.bottom.equalTo(-kTableViewBottomOffset)
             make.right.equalTo(-70)

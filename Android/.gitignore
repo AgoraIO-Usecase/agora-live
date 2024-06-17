@@ -1,8 +1,8 @@
+.DS_Store
 .gradle
 .idea
 *.iml
 /build
 common/base/sdk-*/
 /app/release/
-/rtmSyncManager
 local.properties

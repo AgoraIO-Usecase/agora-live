@@ -55,7 +55,7 @@ public class HomeIndexFragment extends BaseViewBindingFragment<AppFragmentHomeIn
             BaseRecyclerViewAdapter<AppItemHomeIndexBinding, ScenesModel, HomeIndexHolder> homeIndexAdapter = new BaseRecyclerViewAdapter<>(scenesModels, new OnItemClickListener<ScenesModel>() {
                 @Override
                 public void onItemClick(@NonNull ScenesModel scenesModel, View view, int position, long viewType) {
-                    if (UiUtils.isFastClick(2000)) {
+                    if (UiUtils.isFastClick(1000)) {
                         return;
                     }
                     if (scenesModel.getActive()) {

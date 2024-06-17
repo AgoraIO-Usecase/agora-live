@@ -10,6 +10,7 @@ import AgoraRtcKit
 
 class ShowAdvancedSettingVC: UIViewController, UIGestureRecognizerDelegate {
     
+    var isPureMode = false
     var mode: ShowMode?
     var isBroadcaster = true
     var currentChannelId: String?
@@ -92,35 +93,47 @@ class ShowAdvancedSettingVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     private func createSettingVCForIndex(_ index: Int) -> ShowVideoSettingVC? {
-        let insideSettings: [ShowSettingKey] = [
-            .H265,
-            .colorEnhance,
-            .lowlightEnhance,
-            .videoDenoiser,
-            .PVC,
-            .videoEncodeSize,
-            .FPS,
-            .videoBitRate
-        ]
-        let broadcasterVideoSettings: [ShowSettingKey] = insideSettings
-        let audienceVideoSettings: [ShowSettingKey] = [
-            .SR
-        ]
-        
-        let audioSettings: [ShowSettingKey]  = [
-            .earmonitoring,
-            .recordingSignalVolume,
-            .musicVolume,
-        ]
-        let settings = isBroadcaster ? [broadcasterVideoSettings, audioSettings] : [audienceVideoSettings]
-        if settings.count <= index {
+        var setting = [ShowSettingKey]()
+        if (index == 0) { // video settings
+            if (isBroadcaster && isPureMode) {
+                setting = [
+                    .videoEncodeSize,
+                    .FPS,
+                    .videoBitRate
+                ]
+            } else if (isBroadcaster && !isPureMode) {
+                setting = [
+                    .H265,
+                    .colorEnhance,
+                    .lowlightEnhance,
+                    .videoDenoiser,
+                    .PVC,
+                    .videoEncodeSize,
+                    .FPS,
+                    .videoBitRate
+                ]
+            } else { // audience setting
+                setting = [
+                    .SR
+                ]
+            }
+        } else if (index == 1) { // audio settings
+            if (isBroadcaster) {
+                setting = [
+                    .earmonitoring,
+                    .recordingSignalVolume,
+                    .musicVolume,
+                ]
+            }
+        }
+        if (setting.isEmpty) {
             return nil
         }
-        
         let vc = ShowVideoSettingVC()
+        vc.isPureMode = isPureMode
         vc.musicManager = musicManager
         vc.currentChannelId = currentChannelId
-        vc.dataArray = settings[index]
+        vc.dataArray = setting
         return vc
     }
 }

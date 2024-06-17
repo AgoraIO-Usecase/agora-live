@@ -106,6 +106,18 @@
                 @"titleStr":NSLocalizedString(@"app_show_live", nil),
                 @"subTitleStr":@""
             },
+            @{
+                @"bgImgStr":@"home_commerce_bg",
+                @"iconImgStr":@"home_commerce_icon",
+                @"titleStr":NSLocalizedString(@"app_e_commerce", nil),
+                @"subTitleStr":@""
+            },
+            @{
+                @"bgImgStr":@"home_talk_bg",
+                @"iconImgStr":@"home_talk_icon",
+                @"titleStr":NSLocalizedString(@"app_voice_chat", nil),
+                @"subTitleStr":@""
+            }
         ];
     }
     return _itemsArray;

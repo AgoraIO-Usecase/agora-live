@@ -52,6 +52,6 @@ class ShowMusicTableHeaderView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        setRoundingCorners([.topLeft, .topRight], radius: 20)
+        show_setRoundingCorners([.topLeft, .topRight], radius: 20)
     }
 }

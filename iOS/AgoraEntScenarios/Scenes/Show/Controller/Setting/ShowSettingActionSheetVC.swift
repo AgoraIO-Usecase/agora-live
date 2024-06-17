@@ -85,7 +85,7 @@ class ShowSettingActionSheetVC: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        tableView.setRoundingCorners([.topLeft, .topRight], radius: 20)
+        tableView.show_setRoundingCorners([.topLeft, .topRight], radius: 20)
     }
     
     @objc private func didClickCancelButton(){

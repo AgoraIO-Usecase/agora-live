@@ -124,7 +124,7 @@ class ShowBeautySettingVC: UIViewController {
             beautyFaceVC?.selectedItemClosure = { [weak self] value, isHiddenValue, isShowSegSwitch in
                 guard let self = self else { return }
                 self.slider.isHidden = isShowSegSwitch ? !ShowAgoraKitManager.isOpenGreen : isHiddenValue
-                self.compareButton.isHidden = isShowSegSwitch ? true : isHiddenValue
+                self.compareButton.isHidden = isShowSegSwitch //? true : isHiddenValue
                 self.segSwitch.isHidden = !isShowSegSwitch
                 self.segSwitch.isOn = isShowSegSwitch == false ? ShowAgoraKitManager.isOpenGreen : self.segSwitch.isOn
                 self.segLabel.isHidden = !isShowSegSwitch
@@ -201,7 +201,7 @@ class ShowBeautySettingVC: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        bgView.setRoundingCorners([.topLeft, .topRight], radius: 20)
+        bgView.show_setRoundingCorners([.topLeft, .topRight], radius: 20)
     }
 
     @objc
@@ -225,7 +225,10 @@ class ShowBeautySettingVC: UIViewController {
         }
         if sender.isOn == true {
             sender.isOn = false
-            showAlert(title: "Tips", message: "In order to ensure the best effect of the virtual background, please make sure that the actual environment has set up a green screen, otherwise the virtual background will not work", confirmTitle: "Confirm open", cancelTitle: "Not open") {
+            show_showAlert(title: "Tips",
+                           message: "In order to ensure the best effect of the virtual background, please make sure that the actual environment has set up a green screen, otherwise the virtual background will not work",
+                           confirmTitle: "Confirm open",
+                           cancelTitle: "Not open") {
                 realChange(isOn: true)
                 sender.isOn = true
             }

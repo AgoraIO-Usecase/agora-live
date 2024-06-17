@@ -3,14 +3,21 @@
 ## Overview
 **AgoraLive** is an entertainment open source project containing multi scenario. The project includes the following scenario solutions:
 
-* LiveStreaming
-    * [Android](Android/scenes/show)
-    * [iOS](iOS/AgoraEntScenarios/Scenes/Show)
+* Scenes
+	
+| Scenes | Platform | Location |
+| --------------- | -------- | ---------------------------------------------------------------------------------------- |
+| LiveStreaming   | iOS      | [AgoraEntScenarios/Scenes/Show](iOS/AgoraEntScenarios/Scenes/Show/README.md)             |
+| VoiceChatRoom   | iOS      | [AgoraEntScenarios/Scenes/VoiceChatRoom](iOS/AgoraEntScenarios/Scenes/VoiceChatRoom/README.md) |
+| E-Commerce      | iOS      | [AgoraEntScenarios/Scenes/Commerce](iOS/AgoraEntScenarios/Scenes/Commerce/README.md)     |
+| LiveStreaming   | Android  | [Android/scenes/show](Android/scenes/show/README.md)                               |
+| VoiceChatRoom   | Android  | [Android/scenes/voice](Android/scenes/voice/README.md)                               |
+| E-Commerce      | Android  | [Android/scenes/eCommerce](Android/scenes/eCommerce/README.md)                               |
 
 
 Demo screenshots:
 <figure class="third">
-  <img src="https://download.agora.io/demo/release/AgoraLiveShot01.png" width="300" height="640" />
+  <img src="./README_Resources/AgoraLive_Home.png" width="300" height="640" />
   <img src="https://download.agora.io/demo/release/AgoraLiveShot02.png" width="300" height="640" />
 </figure>
 

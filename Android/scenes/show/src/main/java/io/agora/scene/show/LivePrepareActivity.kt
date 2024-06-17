@@ -88,6 +88,10 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
         return ShowLivePrepareActivityBinding.inflate(inflater)
     }
 
+    override fun onBackPressed() {
+
+    }
+
     /**
      * Init view
      *
@@ -114,6 +118,7 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
             return@setOnEditorActionListener false
         }
         binding.ivClose.setOnClickListener {
+            RtcEngineInstance.releaseBeautyProcessor()
             finish()
         }
 
@@ -130,9 +135,6 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
         binding.tvBeauty.setOnClickListener {
             showBeautyDialog()
         }
-        binding.tvHD.setOnClickListener {
-            showPictureQualityDialog()
-        }
         binding.tvSetting.setOnClickListener {
             if (AgoraApplication.the().isDebugModeOpen) {
                 showDebugModeDialog()
@@ -140,8 +142,8 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                 showPresetDialog()
             }
         }
+        mBeautyProcessor.initialize(mRtcEngine)
         if (mRtcEngine.queryDeviceScore() < 75) {
-            // 低端机默认关闭美颜
             mBeautyProcessor.setBeautyEnable(false)
         } else {
             mBeautyProcessor.setBeautyEnable(true)
@@ -152,9 +154,7 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
 
         toggleVideoRun = Runnable {
             mBeautyProcessor.reset()
-            initRtcEngine()
-            //getDeviceScoreAndUpdateVideoProfile()
-            showPresetDialog()
+            onPresetNetworkModeSelected()
         }
         requestCameraPermission(true)
     }
@@ -219,45 +219,6 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
     }
 
     /**
-     * Init rtc engine
-     *
-     */
-    private fun initRtcEngine() {
-        val cacheQualityResolution = PictureQualityDialog.getCacheQualityResolution()
-        mRtcEngine.setCameraCapturerConfiguration(
-            CameraCapturerConfiguration(
-                CameraCapturerConfiguration.CaptureFormat(
-                    cacheQualityResolution.width,
-                    cacheQualityResolution.height,
-                    15
-                )
-            )
-        )
-//        mRtcEngine.startPreview()
-    }
-
-    /**
-     * Show picture quality dialog
-     *
-     */
-    private fun showPictureQualityDialog() {
-        PictureQualityDialog(this).apply {
-            setOnQualitySelectListener { _, _, size ->
-                mRtcEngine.setCameraCapturerConfiguration(
-                    CameraCapturerConfiguration(
-                        CameraCapturerConfiguration.CaptureFormat(
-                            size.width,
-                            size.height,
-                            15
-                        )
-                    )
-                )
-            }
-            show()
-        }
-    }
-
-    /**
      * Show beauty dialog
      *
      */
@@ -299,7 +260,7 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
         binding.btnStartLive.isEnabled = false
 
         mayFetchUniversalToken {
-            mService.createRoom(mRoomId, roomName, mThumbnailId, {
+            mService.createRoom(mRoomId, roomName, mThumbnailId, VideoSetting.isPureMode, {
                 runOnUiThread {
                     isFinishToLiveDetail = true
                     LiveDetailActivity.launch(this@LivePrepareActivity, it)
@@ -369,6 +330,21 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
         "2" -> R.mipmap.show_room_cover_2
         "3" -> R.mipmap.show_room_cover_3
         else -> R.mipmap.show_room_cover_0
+    }
+
+    private fun onPresetNetworkModeSelected() {
+        val broadcastStrategy = VideoSetting.BroadcastStrategy.Smooth
+        val network = VideoSetting.NetworkLevel.Good
+
+        val deviceLevel = if (mRtcEngine.queryDeviceScore() >= 90) {
+            VideoSetting.DeviceLevel.High
+        } else if (mRtcEngine.queryDeviceScore() >= 75) {
+            VideoSetting.DeviceLevel.Medium
+        } else {
+            VideoSetting.DeviceLevel.Low
+        }
+
+        VideoSetting.updateBroadcastSetting(deviceLevel, network, broadcastStrategy, isJoinedRoom = false, isByAudience = false, RtcConnection(mRoomId, UserManager.getInstance().user.id.toInt()))
     }
 
 }

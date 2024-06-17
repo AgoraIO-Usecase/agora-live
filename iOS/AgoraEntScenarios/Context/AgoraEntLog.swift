@@ -10,9 +10,9 @@ import SwiftyBeaver
 
 @objc class AgoraEntLogConfig: NSObject {
     var sceneName: String = ""
-    var logFileMaxSize: Int = (2 * 1024 * 1024)
+    var logFileMaxSize: Int = (1 * 1024 * 1024)
     
-    init(sceneName: String, logFileMaxSize: Int = 2 * 1024 * 1024) {
+    init(sceneName: String, logFileMaxSize: Int = 1 * 1024 * 1024) {
         super.init()
         self.sceneName = sceneName
         self.logFileMaxSize = logFileMaxSize
@@ -27,15 +27,14 @@ import SwiftyBeaver
         let console = ConsoleDestination()
          // log to Xcode Console
         let file = FileDestination()  // log to default swiftybeaver.log file
-        let dateString = NSDate().string(withFormat: "yyyy-MM-dd", timeZone: nil, locale: nil) ?? ""
         let logDir = logsDir()
-        file.logFileURL = URL(fileURLWithPath: "\(logDir)/agora_ent_\(config.sceneName)_ios_\(dateString)_log.txt")
+        file.logFileURL = URL(fileURLWithPath: "\(logDir)/agora_ent_\(config.sceneName).log")
         
         // use custom format and set console output to short time, log level & message
-        console.format = "$Dyyyy-MM-DD HH:mm:ss.SSS[Agora][$L][\(config.sceneName)][$X]$d $M"
+        console.format = "[$DMM/dd/yy HH:mm:ss.SSS$d][Agora][$L][\(config.sceneName)][$X]: $M"
         file.format = console.format
         file.logFileMaxSize = config.logFileMaxSize
-        file.logFileAmount = 4
+        file.logFileAmount = 2
         // or use this for JSON output: console.format = "$J"
 
         // add the destinations to SwiftyBeaver
@@ -55,7 +54,7 @@ import SwiftyBeaver
     
     @objc static func logsDir() ->String {
         let dir = cacheDir()
-        let logDir = "\(dir)/agora_ent_logs"
+        let logDir = "\(dir)/agora_ent_log"
         try? FileManager.default.createDirectory(at: URL(fileURLWithPath: logDir), withIntermediateDirectories: true)
         
         return logDir

@@ -14,5 +14,5 @@ Pods
 **/libs/*
 **/buglyqq-upload-symbol/**
 **/build.sh
-**/Rtm2
-
+AgoraRtm
+**/authpack.h

@@ -2,7 +2,7 @@
 //  AboutAgoraEntertainmentViewController.swift
 //  AgoraEntScenarios
 //
-//  Created by 朱继超 on 2023/2/8.
+// Created by Zhu Jichao on February 8, 2023
 //
 
 import UIKit
@@ -19,7 +19,7 @@ import AgoraRtcKit
     
     let tableHeader = AboutAgoraHeader(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 220),
                                        name: NSLocalizedString("app_about_name", comment: ""),
-                                       versionText: NSLocalizedString("app_about_version", comment: "")+": "+"20240205-"+UIDevice.current.appVersion+"-\(AgoraRtcEngineKit.getSdkVersion())")
+                                       versionText: NSLocalizedString("app_about_version", comment: "")+": "+"20240614-"+UIDevice.current.appVersion+"-\(AgoraRtcEngineKit.getSdkVersion())")
     
     lazy var infoList: UITableView = {
         UITableView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: ScreenHeight-ZNavgationHeight), style: .plain)

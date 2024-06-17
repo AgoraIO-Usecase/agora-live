@@ -94,7 +94,7 @@ class AboutUsActivity : BaseViewBindingActivity<AppActivityAboutUsBinding>() {
         if (BuildConfig.VERSION_NAME.isNotEmpty()) {
             adapter.appInfo = AppInfo(
                 this.getString(R.string.app_about_name),
-                "Version: 20230926-" + BuildConfig.VERSION_NAME + "-" + RtcEngine.getSdkVersion(),
+                "Version: 20240614-" + BuildConfig.VERSION_NAME + "-" + RtcEngine.getSdkVersion(),
                 servicePhone,
                 webSite
             )
