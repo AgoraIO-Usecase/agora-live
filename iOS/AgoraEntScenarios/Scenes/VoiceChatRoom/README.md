@@ -15,7 +15,7 @@
 
 ---
 
-1. Follow [The Account Document](https://docs.agora.io/en/video-calling/reference/manage-agora-account) to get the **App ID**.
+1. Follow [The Account Document](https://docs.agora.io/en/video-calling/reference/manage-agora-account) to get the **App ID** and **App Certificate**.
 
 2. Follow [Enable and configure Chat](https://docs.agora.io/en/agora-chat/get-started/enable?platform=ios) to enable Chat in Agora Console and get the  **IM APP KEY**, **IM Client Id** and **IM Client Secret**.
 
