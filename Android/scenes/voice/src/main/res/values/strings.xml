@@ -36,7 +36,7 @@
     <string name="voice_room_list_count">%d</string>
     <string name="voice_room_tab_layout_count">(%1$s)</string>
     <string name="voice_room_online_count">%d Online</string>
-    <string name="voice_room_click_count">%d Watching</string>
+    <string name="voice_room_click_count">%d Watched</string>
     <string name="voice_room_mic_number">%d</string>
     <string name="voice_room_profile_update_name_fail">Failed to update</string>
     <string name="voice_room_profile_update_name_suc">Successfully updated</string>
