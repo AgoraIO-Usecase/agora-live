@@ -42,7 +42,6 @@ public final class InternalToast {
     }
 
     private InternalToast() {
-        //避免初始化
         throw new UnsupportedOperationException("u can't instantiate me...");
     }
 

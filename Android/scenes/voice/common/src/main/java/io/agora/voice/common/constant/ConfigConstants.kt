@@ -1,19 +1,37 @@
 package io.agora.voice.common.constant
 
 /**
- * @author create by zhangwei03
+ * This object holds all the constant values used across the application.
+ * It includes constants for enabling and disabling alpha, default volume, room types, sound selections, AINS modes, bot speakers, volume types, AINS sound types, and mic constants.
  */
 object ConfigConstants {
 
+    /**
+     * Alpha value when enabled.
+     */
     const val ENABLE_ALPHA = 1.0f
+
+    /**
+     * Alpha value when disabled.
+     */
     const val DISABLE_ALPHA = 0.2f
 
+    /**
+     * Default volume for the bot.
+     */
     const val RotDefaultVolume = 50
+
+    /**
+     * Constants for different types of rooms.
+     */
     object RoomType {
         const val Common_Chatroom = 0
         const val Spatial_Chatroom = 1
     }
 
+    /**
+     * Constants for different sound selections.
+     */
     object SoundSelection {
         const val Social_Chat = 1
         const val Karaoke = 2
@@ -21,6 +39,9 @@ object ConfigConstants {
         const val Professional_Broadcaster = 4
     }
 
+    /**
+     * Text representations of different sound selections.
+     */
     object SoundSelectionText {
         const val Social_Chat = "Social Chat"
         const val Karaoke = "Karaoke"
@@ -28,6 +49,9 @@ object ConfigConstants {
         const val Professional_Broadcaster = "Professional podcaster"
     }
 
+    /**
+     * Constants for different AINS modes.
+     */
     object AINSMode {
         const val AINS_High = 0
         const val AINS_Medium = 1
@@ -35,6 +59,9 @@ object ConfigConstants {
         const val AINS_Unknown = -1
     }
 
+    /**
+     * Constants for different bot speakers.
+     */
     object BotSpeaker {
         const val None = -1
         const val BotBlue = 0
@@ -42,6 +69,9 @@ object ConfigConstants {
         const val BotBoth = 2
     }
 
+    /**
+     * Constants for different volume types.
+     */
     object VolumeType {
         const val Volume_None = 0
         const val Volume_Low = 1
@@ -50,6 +80,9 @@ object ConfigConstants {
         const val Volume_Max = 4
     }
 
+    /**
+     * Constants for different AINS sound types.
+     */
     object AINSSoundType {
         const val AINS_TVSound = 1
         const val AINS_KitchenSound = 2
@@ -67,6 +100,9 @@ object ConfigConstants {
         const val AINS_MicrophoneScreenTap = 14
     }
 
+    /**
+     * Constants for different mic keys and their corresponding indices.
+     */
     object MicConstant {
         const val KeyMic0 = "mic_0"
         const val KeyMic1 = "mic_1"
@@ -86,6 +122,9 @@ object ConfigConstants {
         const val KeyIndex6 = 6
         const val KeyIndex7 = 7
 
+        /**
+         * A map of mic keys to their corresponding indices.
+         */
         val micMap: MutableMap<String, Int> by lazy {
             mutableMapOf(
                 KeyMic0 to KeyIndex0,
