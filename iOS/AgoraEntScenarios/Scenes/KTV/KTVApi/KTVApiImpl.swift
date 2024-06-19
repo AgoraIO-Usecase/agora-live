@@ -440,7 +440,7 @@ extension KTVApiImpl {
         #if DEBUG
             print(message)
         #else
-            apiConfig?.engine?.writeLog(.info, content: "ktv_info:\(message)")
+//            apiConfig?.engine?.writeLog(.info, content: "ktv_info:\(message)")
         #endif
     }
     
@@ -448,7 +448,7 @@ extension KTVApiImpl {
         #if DEBUG
             print(message)
         #else
-            apiConfig?.engine?.writeLog(.error, content: "ktv_err:\(message)")
+//            apiConfig?.engine?.writeLog(.error, content: "ktv_err:\(message)")
         #endif
     }
 }
@@ -1295,7 +1295,7 @@ extension KTVApiImpl {
         if code != 0 {
             agoraPrint("sendStreamMessage fail: \(String(describing: code))")
         }
-        print("totalSize:\(totalSize)")
+//        print("totalSize:\(totalSize)")
     }
 
     private func syncPlayState(_ state: AgoraMediaPlayerState) {

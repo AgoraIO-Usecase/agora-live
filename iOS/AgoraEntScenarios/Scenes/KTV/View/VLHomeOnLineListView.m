@@ -52,8 +52,10 @@
 }
 
 -(void)loadData {
-    [self.listCollectionView.refreshControl beginRefreshing];
-    [self getRoomListIfRefresh:YES];
+    MJRefreshHeader* header = self.listCollectionView.mj_header;
+    // 模拟下拉刷新的操作
+    [self.listCollectionView setContentOffset:CGPointMake(0, -header.frame.size.height) animated:YES];
+    [header beginRefreshing];
 }
 
 - (void)getRoomListIfRefresh:(BOOL)ifRefresh {

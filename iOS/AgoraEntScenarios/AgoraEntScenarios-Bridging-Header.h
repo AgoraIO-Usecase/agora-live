@@ -8,7 +8,6 @@
 #import "VLLoginModel.h"
 #import "VLHomeItemView.h"
 #import "VLHomeItemModel.h"
-#import "VLLoginModel.h"
 #import "BaseViewController.h"
 //#import "AEACategoryView.h"
 //#import "AEAListContainerView.h"
@@ -22,4 +21,4 @@
 #import "FUBeautyRender.h"
 #import "VLCommonWebViewController.h"
 #import "VLURLPathConfig.h"
-#import "VLLoginModel.h"
+

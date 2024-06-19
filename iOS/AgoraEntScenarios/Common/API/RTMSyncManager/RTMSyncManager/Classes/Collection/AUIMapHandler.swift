@@ -101,15 +101,15 @@ func getItemIndexes(array: [[String: Any]], filter: [[String: Any]]?) -> [Int]? 
     
     var indexes: [Int] = []
     for (i, value) in array.enumerated() {
+        //对于filter来说，只要满足任何的filterItem就可以，对于filterItem来说，需要所有条件都满足
         for filterItem in filter {
-            var match = false
+            var matchCount = 0
             for (k, v) in filterItem {
                 if isMatchFilter(key: k, itemValue: value, filterValue: v) {
-                    match = true
-                    break
+                    matchCount += 1
                 }
             }
-            if match {
+            if matchCount == filterItem.keys.count {
                 indexes.append(i)
                 break
             }
