@@ -35,7 +35,6 @@ object DeviceTools {
     fun Int.number2K(): String {
         if (this < 1000) return this.toString()
         val format = DecimalFormat("0.#")
-        //未保留小数的舍弃规则，RoundingMode.FLOOR表示直接舍弃。
         format.roundingMode = RoundingMode.FLOOR
         return "${format.format(this / 1000f)}k"
     }

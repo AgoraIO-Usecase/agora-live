@@ -22,8 +22,8 @@ class CommerceCreateLiveVC: UIViewController {
         super.viewDidLoad()
         setUpUI()
         configNaviBar()
-        
-        CommerceAgoraKitManager.shared.setupBroadcasterProfile()
+
+        CommerceAgoraKitManager.shared.resetBroadcasterProfile()
         CommerceAgoraKitManager.shared.startPreview(canvasView: self.localView)
     }
     

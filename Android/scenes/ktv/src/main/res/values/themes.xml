@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ktv_cornerNormalStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/ktv_space_normal</item>
+    </style>
+</resources>

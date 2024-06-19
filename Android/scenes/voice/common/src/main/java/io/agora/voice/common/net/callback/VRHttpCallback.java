@@ -1,19 +1,22 @@
 package io.agora.voice.common.net.callback;
 
+/**
+ * This interface represents a callback for HTTP requests in the VR application.
+ * It provides two methods: onSuccess and onError, which are invoked when the HTTP request completes successfully or fails, respectively.
+ */
 public interface VRHttpCallback {
  /**
-  * success call back
+  * This method is invoked when the HTTP request completes successfully.
   *
-  * @param result
+  * @param result The result of the HTTP request as a String.
   */
  default void onSuccess(String result){}
 
  /**
-  * failed call back
+  * This method is invoked when the HTTP request fails.
   *
-  * @param code
-  * @param msg
+  * @param code The error code of the failure.
+  * @param msg The error message of the failure.
   */
  default void onError(int code,String msg){}
-
 }

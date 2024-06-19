@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingVertical="20dp"
-        android:text="@string/show_bottom_list_cancel"
+        android:text="@string/commerce_bottom_list_cancel"
         android:textColor="#303553"
         app:layout_constraintBottom_toBottomOf="parent" />
 

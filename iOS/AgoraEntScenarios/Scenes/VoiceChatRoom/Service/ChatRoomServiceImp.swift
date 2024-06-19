@@ -45,7 +45,7 @@ public class ChatRoomServiceImp: NSObject {
         
         let currentTs = Int64(Date().timeIntervalSince1970 * 1000)
         let expiredDuration = (AppContext.shared.sceneConfig?.chat ?? 20 * 60) * 1000
-        agoraPrint("checkRoomExpire: \(currentTs - Int64(created_at)) / \(expiredDuration)")
+//        agoraPrint("checkRoomExpire: \(currentTs - Int64(created_at)) / \(expiredDuration)")
         guard currentTs - Int64(created_at) > expiredDuration else { return }
         
         self.roomServiceDelegate?.onRoomExpired()
@@ -761,6 +761,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
     ///- completion: Complete callback (error message, room list)
     func fetchRoomList(page: Int,
                      completion: @escaping (Error?, [VRRoomEntity]?) -> Void) {
+        agoraPrint("fetchRoomList start")
         initScene { [weak self] in
             if self?.connectState != .open {
                 DispatchQueue.main.async {
@@ -769,7 +770,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
                 return
             }
             SyncUtil.fetchAll { [weak self] results in
-                agoraPrint("result == \(results.compactMap { $0.toJson() })")
+                agoraPrint("fetchRoomList result == \(results.compactMap { $0.toJson() })")
                 
                 let dataArray = results.map({ info in
                     return model(from: info.toJson()?.z.jsonToDictionary() ?? [:], VRRoomEntity.self)
@@ -802,7 +803,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
     ///- room: Room object information
     ///- completion: Complete callback (error message)
     func createRoom(room: VRRoomEntity, completion: @escaping (SyncError?, VRRoomEntity?) -> Void) {
-        
+        agoraPrint("createRoom  roomId: \(room.room_id ?? "") roomName: \(room.name ?? "")")
         let owner: VRUser = VRUser()
         owner.rtc_uid = VLUserCenter.user.id
         owner.name = VLUserCenter.user.name
@@ -852,7 +853,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
     }
     
     func joinRoom(_ roomId: String, completion: @escaping (Error?, VRRoomEntity?) -> Void) {
-        
+        agoraPrint("joinRoom  roomId: \(roomId)")
         /**
          Get the corresponding room information first
          1. Obtain user information
@@ -914,6 +915,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
     
     //Todo Remove Owner
     func leaveRoom(_ roomId: String, completion: @escaping (Error?, Bool) -> Void) {
+        agoraPrint("leaveRoom  roomId: \(roomId)")
         self.roomId = nil
         /**
          Get the corresponding room information first

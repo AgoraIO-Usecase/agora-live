@@ -16,7 +16,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/show_setting_advance_quality_enhance" />
+        tools:text="@string/commerce_setting_advance_quality_enhance" />
 
     <TextView
         android:id="@+id/tvValue"

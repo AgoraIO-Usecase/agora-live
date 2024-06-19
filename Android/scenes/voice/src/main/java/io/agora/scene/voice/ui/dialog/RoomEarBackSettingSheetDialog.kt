@@ -102,6 +102,10 @@ class RoomEarBackSettingSheetDialog: BaseSheetDialog<VoiceDialogChatroomEarbackS
         }
         binding?.vPingMark?.setOnClickListener {
         }
+        binding?.btnClose?.bringToFront()
+        binding?.btnClose?.setOnClickListener {
+            dismiss()
+        }
     }
     private fun showDialogWithMode(mode: AgoraEarBackMode) {
         if (mSetBack) {

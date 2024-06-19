@@ -28,7 +28,7 @@
         android:id="@+id/vBgHead"
         android:layout_width="match_parent"
         android:layout_height="58dp"
-        android:background="@drawable/show_bottom_light_dialog_bg_top"
+        android:background="@drawable/commerce_bottom_light_dialog_bg_top"
         app:layout_constraintTop_toTopOf="@id/bottomLayout" />
 
     <FrameLayout

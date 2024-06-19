@@ -13,11 +13,21 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+/**
+ * This class provides configuration for the VR HTTP client.
+ * It includes methods for processing URLs, getting timeouts, and handling SSL.
+ */
 public class VRHttpClientConfig {
     private static final String TAG = VRHttpClientConfig.class.getSimpleName();
     public static String EM_TIME_OUT_KEY = "em_timeout";
-    public static int EM_DEFAULT_TIMEOUT = 60*1000;
+    public static int EM_DEFAULT_TIMEOUT = 60 * 1000;
 
+    /**
+     * This method processes a URL by replacing certain characters with their URL-encoded equivalents.
+     *
+     * @param remoteUrl The URL to process.
+     * @return The processed URL.
+     */
     public static String processUrl(String remoteUrl){
         if (remoteUrl.contains("+")) {
             remoteUrl = remoteUrl.replaceAll("\\+", "%2B");
@@ -30,6 +40,13 @@ public class VRHttpClientConfig {
         return remoteUrl;
     }
 
+    /**
+     * This method retrieves the timeout from the headers, if it exists.
+     * If the timeout does not exist in the headers, it returns the default timeout.
+     *
+     * @param headers The headers to retrieve the timeout from.
+     * @return The timeout.
+     */
     public static int getTimeout(Map<String,String> headers){
         int timeout = VRHttpClientConfig.EM_DEFAULT_TIMEOUT;
 
@@ -41,6 +58,9 @@ public class VRHttpClientConfig {
         return timeout;
     }
 
+    /**
+     * This TrustManager does not perform any checks, resulting in all certificates being trusted.
+     */
     private static TrustManager trustManager = new X509TrustManager() {
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
@@ -58,6 +78,13 @@ public class VRHttpClientConfig {
         }
     };
 
+    /**
+     * This method checks and processes SSL for a given URL and connection.
+     * It sets up an SSL context with the trust manager defined in this class and applies it to the connection.
+     *
+     * @param url The URL to check and process SSL for.
+     * @param conn The connection to apply the SSL context to.
+     */
     static void checkAndProcessSSL(String url, HttpURLConnection conn) {
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -69,8 +96,4 @@ public class VRHttpClientConfig {
         }
 
     }
-
-
-
-
 }

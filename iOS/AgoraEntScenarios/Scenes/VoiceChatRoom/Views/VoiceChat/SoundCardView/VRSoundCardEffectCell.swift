@@ -62,8 +62,8 @@ class VRSoundCardEffectCell: UITableViewCell {
         imgView.frame = CGRect(x: 20, y: 10, width: 40, height: 40)
         imgView.layer.cornerRadius = 20
         imgView.layer.masksToBounds = true
-        titleLabel.frame = CGRect(x: 90, y: 10, width: 80, height: 20)
-        detailLabel.frame = CGRect(x: 90, y: 35, width: 200, height: 20)
+        titleLabel.frame = CGRect(x: 90, y: 10, width: self.width - 90 - 62, height: 20)
+        detailLabel.frame = CGRect(x: 90, y: 35, width: self.width - 90 - 62, height: 20)
         checkImgView.frame = CGRect(x:self.bounds.width - 62, y: 19, width: 22, height: 22)
     }
 
