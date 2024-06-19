@@ -9,6 +9,10 @@ import Foundation
 
 public typealias AUICollectionGetClosure = (NSError?, Any?)-> Void
 
+
+//(publisher uid, valueCmd, new value of item) -> value[new value of edit item]
+public typealias AUICollectionValueWillChangeClosure = (String, String?, [String: Any]) -> [String: Any]?
+
 //(publisher uid, valueCmd, new value)
 public typealias AUICollectionAddClosure = (String, String?, [String: Any]) -> NSError?
 
@@ -29,11 +33,11 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
 
 @objc public class AUIAttributesModel: NSObject {
     private var attributes: Any?
-    required init(list: [[String: Any]]) {
+    public required init(list: [[String: Any]]) {
         self.attributes = list
         super.init()
     }
-    required init(map: [String: Any]) {
+    public required init(map: [String: Any]) {
         self.attributes = map
         super.init()
     }
@@ -50,6 +54,10 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
 @objc public protocol IAUICollection: NSObjectProtocol {
     
     init(channelName: String, observeKey: String, rtmManager: AUIRtmManager) 
+    
+    /// 对应的节点对象将要被更新，询问是否需要本地增删(例如更新一个节点，需要再次更新最新时间)
+    /// - Parameter callback: <#callback description#>
+    @objc optional func subsceibeValueWillChange(callback: AUICollectionValueWillChangeClosure?)
     
     /// 订阅即将添加新的节点的事件
     /// - Parameter callback: <#callback description#>
@@ -83,6 +91,9 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
     /// - Parameter callback: <#callback description#>
     func getMetaData(callback: AUICollectionGetClosure?)
     
+    /// 获取本地metadata，仲裁者为本地缓存数据（可能比远端数据更新），观众则为真实远端数据
+    /// - Parameter attributes: <#attributes description#>
+    func getLocalMetaData() -> AUIAttributesModel?
 }
 
 

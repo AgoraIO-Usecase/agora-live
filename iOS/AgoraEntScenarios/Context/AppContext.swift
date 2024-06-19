@@ -19,6 +19,9 @@ import Foundation
     private var dislikeUserCache: [String :String] = [:]
     @objc var sceneConfig: VLSceneConfigsModel?
     
+    @objc var agoraRTCToken: String = ""
+    @objc var agoraRTMToken: String = ""
+    
     @objc var isAgreeLicense: Bool = false {
         didSet {
             guard isAgreeLicense else {
@@ -55,13 +58,6 @@ import Foundation
         return KeyCenter.HostUrl
     }
     
-    @objc func appRTCToken() -> String {
-        return VLUserCenter.user.agoraRTCToken
-    }
-    
-    @objc func appRTMToken() -> String {
-        return VLUserCenter.user.agoraRTMToken
-    }
     
     func addDislikeRoom(at roomId: String?) {
         guard let roomId = roomId else { return }

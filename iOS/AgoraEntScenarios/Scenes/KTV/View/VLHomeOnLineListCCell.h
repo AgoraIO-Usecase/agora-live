@@ -5,11 +5,11 @@
 
 #import <UIKit/UIKit.h>
 
-@class VLRoomListModel;
+@class AUIRoomInfo;
 @interface VLHomeOnLineListCCell : UICollectionViewCell
-@property (nonatomic, strong) VLRoomListModel *listModel;
+@property (nonatomic, strong) AUIRoomInfo *listModel;
 @property (nonatomic, strong) UIImageView *bgImgView;
-@property (nonatomic, copy) void (^joinBtnClickBlock)(VLRoomListModel *model);
+@property (nonatomic, copy) void (^joinBtnClickBlock)(AUIRoomInfo *model);
 @end
 
 

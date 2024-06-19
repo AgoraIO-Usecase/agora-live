@@ -20,8 +20,6 @@ public class AUIRoomContext: NSObject {
     }
     public var displayLogClosure: ((String) -> Void)?
     
-    public var displayLogClosure: ((String) -> Void)?
-    
 //    public var rtmToken: String = ""
     public var roomOwnerMap: [String: String] = [:]
     public var roomArbiterMap: [String: AUIArbiter] = [:]

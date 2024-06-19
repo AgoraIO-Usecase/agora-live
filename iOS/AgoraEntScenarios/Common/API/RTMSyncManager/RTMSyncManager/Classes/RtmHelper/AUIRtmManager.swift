@@ -101,10 +101,10 @@ open class AUIRtmManager: NSObject {
         isLogin = false
     }
     
-    public func renew(token: String, completion:(@escaping (AgoraRtmErrorInfo?)->Void)) {
+    public func renew(token: String, completion: ((NSError?)->())?) {
         aui_info("renew: \(token)", tag: "AUIRtmManager")
-        rtmClient.renewToken(token) { resp, err in
-            completion(err)
+        rtmClient.renewToken(token) { _, err in
+            completion?(err)
         }
     }
 }
@@ -250,7 +250,7 @@ extension AUIRtmManager {
         let options = AgoraRtmSubscribeOptions()
         options.features = [.metadata, .presence, .lock, .message]
         let date = Date()
-        rtmClient.subscribe(channelName: channelName, option: options) {[weak self] resp, error in
+        rtmClient.subscribe(channelName: channelName, option: options) { resp, error in
             aui_benchmark("rtm subscribe '\(channelName)' with message type", cost: -date.timeIntervalSinceNow)
             aui_info("subscribe '\(channelName)' finished: \(error?.errorCode.rawValue ?? 0)", tag: "AUIRtmManager")
             completion(error?.toNSError())

@@ -71,7 +71,7 @@
     [self.bgImgView addSubview:self.roomOwnerLabel];
 }
 
-- (void)setListModel:(VLRoomListModel *)listModel {
+- (void)setListModel:(AUIRoomInfo *)listModel {
     _listModel = listModel;
     self.iconImgView.image = [UIImage imageNamed:listModel.creatorAvatar];
 
@@ -82,7 +82,7 @@
     }
     self.titleLabel.text = listModel.name;
     self.roomOwnerLabel.text = listModel.creatorName;
-    self.countLabel.text = [NSString stringWithFormat:@"%@%@",listModel.roomPeopleNum, KTVLocalizedString(@"ktv_people")];
+    self.countLabel.text = [NSString stringWithFormat:@"%ld%@",listModel.roomPeopleNum, KTVLocalizedString(@"ktv_people")];
 }
 
 @end
