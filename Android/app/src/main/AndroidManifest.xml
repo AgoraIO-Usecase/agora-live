@@ -26,6 +26,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/app_Theme.AgoraKTV"
+        android:extractNativeLibs="true"
         tools:replace="android:allowBackup"
         android:requestLegacyExternalStorage="true">
 
@@ -44,9 +45,9 @@
             android:name="com.agora.entfulldemo.home.MainActivity"
             android:configChanges="orientation|keyboardHidden|navigation|screenSize"
             android:screenOrientation="portrait" />
-        <activity
-            android:name="com.agora.entfulldemo.login.ui.PhoneLoginRegisterActivity"
-            android:screenOrientation="portrait" />
+<!--        <activity-->
+<!--            android:name="com.agora.entfulldemo.login.ui.PhoneLoginRegisterActivity"-->
+<!--            android:screenOrientation="portrait" />-->
         <activity
             android:name="com.agora.entfulldemo.webview.WebViewActivity"
             android:screenOrientation="portrait" />

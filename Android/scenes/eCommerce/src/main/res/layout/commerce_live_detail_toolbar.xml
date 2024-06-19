@@ -21,7 +21,7 @@
             android:textSize="12sp"
             android:text="@string/commerce_live_bottom_chat"
             android:gravity="center"
-            android:background="@drawable/show_live_detail_bottom_chat_bg"/>
+            android:background="@drawable/commerce_live_detail_bottom_chat_bg"/>
     </FrameLayout>
 
 
@@ -45,7 +45,7 @@
                 android:padding="8dp"
                 android:layout_marginStart="5dp"
                 android:scaleType="fitXY"
-                android:background="@drawable/show_live_detail_bottom_btn_bg" />
+                android:background="@drawable/commerce_live_detail_bottom_btn_bg" />
 
             <ImageView
                 android:id="@+id/ivSetting"
@@ -57,7 +57,7 @@
                 android:layout_marginStart="5dp"
                 android:scaleType="fitXY"
                 android:layout_marginEnd="15dp"
-                android:background="@drawable/show_live_detail_bottom_btn_bg" />
+                android:background="@drawable/commerce_live_detail_bottom_btn_bg" />
 
 
         </LinearLayout>

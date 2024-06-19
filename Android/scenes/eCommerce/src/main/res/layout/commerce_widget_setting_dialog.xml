@@ -10,6 +10,6 @@
     android:paddingBottom="20dp"
     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
     app:spanCount="4"
-    tools:background="@drawable/show_bottom_dark_dialog_bg"
+    tools:background="@drawable/commerce_bottom_dark_dialog_bg"
     tools:listitem="@layout/commerce_widget_setting_dialog_item"
     tools:paddingTop="20dp" />

@@ -14,7 +14,9 @@ import io.agora.scene.widget.utils.StatusBarUtil
 /**
  * top function dialog.
  */
-class TopFunctionDialog constructor(context: Context) : BaseDialog<DialogTopFunctionBinding>(context) {
+class TopFunctionDialog constructor(context: Context, val showReportUser: Boolean = false) :
+    BaseDialog<DialogTopFunctionBinding>
+        (context) {
     override fun getViewBinding(inflater: LayoutInflater): DialogTopFunctionBinding {
         return DialogTopFunctionBinding.inflate(inflater)
     }
@@ -55,13 +57,14 @@ class TopFunctionDialog constructor(context: Context) : BaseDialog<DialogTopFunc
     }
 
     override fun initView() {
-        binding.reportContent.setOnClickListener {
+        binding.layoutReportUser.visibility = if (showReportUser) View.VISIBLE else View.GONE
+        binding.layoutReportContent.setOnClickListener {
             ToastUtils.showToast(context.getString(R.string.common_report_content_tips))
             reportContentCallback?.invoke()
             dismiss()
         }
 
-        binding.reportUser.setOnClickListener {
+        binding.layoutReportUser.setOnClickListener {
             ToastUtils.showToast(context.getString(R.string.common_report_user_tips))
             reportUserCallback?.invoke()
             dismiss()

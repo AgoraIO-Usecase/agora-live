@@ -7,6 +7,18 @@
     tools:theme="@style/Theme.AppCompat"
     android:background="@drawable/voice_bg_rect_top_radius20_white">
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/btnClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="9dp"
+        android:src="@mipmap/back_empty_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -81,7 +93,7 @@
         android:layout_marginTop="16dp"
         android:paddingLeft="@dimen/voice_sp_20"
         android:gravity="center_vertical"
-        android:text="耳返设置"
+        android:text="@string/voice_ear_settings"
         android:background="@color/voice_color_f7f8fb"
         android:textColor="@color/voice_dark_grey_color_6c7192"
         app:layout_constraintTop_toBottomOf="@+id/tvTips"

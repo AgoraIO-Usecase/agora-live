@@ -5,6 +5,8 @@ import android.os.Looper
 import android.util.Log
 import io.agora.mediaplayer.Constants
 import io.agora.mediaplayer.IMediaPlayerObserver
+import io.agora.mediaplayer.data.CacheStatistics
+import io.agora.mediaplayer.data.PlayerPlaybackStats
 import io.agora.mediaplayer.data.PlayerUpdatedInfo
 import io.agora.mediaplayer.data.SrcInfo
 import io.agora.musiccontentcenter.*
@@ -41,7 +43,7 @@ class AgoraBGMManager(
 
     private var mListeners: ArrayList<AgoraBGMStateListener>? = null
 
-    private var remoteVolume: Int = 40 // 远端音频
+    private var remoteVolume: Int = 40
     private var mpkPlayerVolume: Int = 50
     private var mpkPublishVolume: Int = 50
 
@@ -240,7 +242,7 @@ class AgoraBGMManager(
 
     override fun onPlayerStateChanged(
         state: Constants.MediaPlayerState?,
-        error: Constants.MediaPlayerError?
+        error: Constants.MediaPlayerReason?
     ) {
         val mediaPlayerState = state ?: return
         val mediaPlayerError = error ?: return
@@ -284,7 +286,6 @@ class AgoraBGMManager(
     }
 
     override fun onMetaData(type: Constants.MediaPlayerMetadataType?, data: ByteArray?) {
-        TODO("Not yet implemented")
     }
 
     override fun onPlayBufferUpdated(playCachedBuffer: Long) {
@@ -292,19 +293,22 @@ class AgoraBGMManager(
     }
 
     override fun onPreloadEvent(src: String?, event: Constants.MediaPlayerPreloadEvent?) {
-        TODO("Not yet implemented")
     }
 
     override fun onAgoraCDNTokenWillExpire() {
-        TODO("Not yet implemented")
     }
 
     override fun onPlayerSrcInfoChanged(from: SrcInfo?, to: SrcInfo?) {
-        TODO("Not yet implemented")
     }
 
     override fun onPlayerInfoUpdated(info: PlayerUpdatedInfo?) {
 
+    }
+
+    override fun onPlayerCacheStats(stats: CacheStatistics?) {
+    }
+
+    override fun onPlayerPlaybackStats(stats: PlayerPlaybackStats?) {
     }
 
     override fun onAudioVolumeIndication(volume: Int) {
