@@ -96,7 +96,7 @@ class LiveLinkAudienceFragment : BaseFragment() {
      */
     fun setOnSeatStatus(userName: String, status: Int?) {
         if (mBinding == null) return
-        if (status == ShowInteractionStatus.onSeat.value) {
+        if (status == ShowInteractionStatus.linking) {
             if (userName == UserManager.getInstance().user.name) {
                 binding.iBtnCancelApply.isVisible = false
                 binding.iBtnStopLink.isVisible = true
@@ -138,7 +138,7 @@ class LiveLinkAudienceFragment : BaseFragment() {
             }
         }
 
-        if (interactionInfo != null && interactionInfo.interactStatus == ShowInteractionStatus.onSeat.value &&
+        if (interactionInfo != null && interactionInfo.interactStatus == ShowInteractionStatus.linking &&
             interactionInfo.userId == UserManager.getInstance().user.id.toString()
         ) {
             binding.iBtnCancelApply.isVisible = false

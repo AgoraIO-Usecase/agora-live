@@ -1,7 +1,6 @@
 package io.agora.scene.show.widget.pk
 
 import android.view.View
-import androidx.core.view.isVisible
 import io.agora.scene.base.GlideApp
 import io.agora.scene.show.R
 import io.agora.scene.show.databinding.ShowLivePkRequestMessageBinding
@@ -36,7 +35,7 @@ class LivePKViewAdapter: BindingSingleAdapter<LiveRoomConfig, ShowLivePkRequestM
             .transform(CenterCropRoundCornerTransform(999))
             .into(binding.coverBoardcasterIcon)
         when (roomItem.getInteractStatus()) {
-            ShowInteractionStatus.idle.value -> {
+            ShowInteractionStatus.idle -> {
                 if (roomItem.isWaitingForPK()) {
                     binding.btnItemRequest.isEnabled = false
                     binding.btnItemRequest.setText(R.string.show_application_waitting)
@@ -49,12 +48,12 @@ class LivePKViewAdapter: BindingSingleAdapter<LiveRoomConfig, ShowLivePkRequestM
                     }
                 }
             }
-            ShowInteractionStatus.pking.value -> {
+            ShowInteractionStatus.pking -> {
                 binding.btnItemRequest.isEnabled = false
                 binding.btnItemRequest.setText(R.string.show_interacting)
                 binding.btnItemRequest.setOnClickListener(null)
             }
-            ShowInteractionStatus.onSeat.value -> {
+            ShowInteractionStatus.linking -> {
                 binding.btnItemRequest.isEnabled = false
                 binding.btnItemRequest.setText(R.string.show_interacting)
                 binding.btnItemRequest.setOnClickListener(null)

@@ -13,9 +13,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.agora.scene.show.databinding.ShowLivePkDialogBinding
 import io.agora.scene.show.service.ShowInteractionInfo
-import io.agora.scene.show.service.ShowPKInvitation
-import io.agora.scene.show.service.ShowRoomDetailModel
-import io.agora.scene.show.service.ShowRoomRequestStatus
 
 /**
  * Live p k dialog
@@ -135,17 +132,8 @@ class LivePKDialog : BottomSheetDialogFragment() {
      * @param roomList
      * @param invitationList
      */
-    fun setOnlineBroadcasterList(interactionInfo: ShowInteractionInfo?, roomList : List<ShowRoomDetailModel>, invitationList : List<ShowPKInvitation>) {
-        val list = ArrayList<LiveRoomConfig>()
-        roomList.forEach { roomItem ->
-            val invitation = invitationList.filter { it.userId == roomItem.ownerId && it.roomId == roomItem.roomId }.getOrNull(0)
-            if (invitation != null && invitation.status == ShowRoomRequestStatus.waitting.value) {
-                list.add(LiveRoomConfig(roomItem, true))
-            } else {
-                list.add(LiveRoomConfig(roomItem, false))
-            }
-        }
-        pkFragment.setOnlineBroadcasterList(interactionInfo, list)
+    fun setOnlineBroadcasterList(interactionInfo: ShowInteractionInfo?, roomList : List<LiveRoomConfig>) {
+        pkFragment.setOnlineBroadcasterList(interactionInfo, roomList)
     }
 
     /**

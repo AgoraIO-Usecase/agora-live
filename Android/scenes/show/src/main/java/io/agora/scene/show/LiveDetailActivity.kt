@@ -44,6 +44,7 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
         private const val EXTRA_ROOM_DETAIL_INFO_LIST_SELECTED_INDEX =
             "roomDetailInfoListSelectedIndex"
         private const val EXTRA_ROOM_DETAIL_INFO_LIST_SCROLLABLE = "roomDetailInfoListScrollable"
+        private const val EXTRA_ROOM_DETAIL_INFO_CREATE_ROOM = "roomDetailInfoCreateRoom"
 
 
         /**
@@ -53,7 +54,7 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
          * @param roomDetail
          */
         fun launch(context: Context, roomDetail: ShowRoomDetailModel) {
-            launch(context, arrayListOf(roomDetail), 0, false)
+            launch(context, arrayListOf(roomDetail), 0, false, true)
         }
 
         /**
@@ -68,12 +69,14 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
             context: Context,
             roomDetail: ArrayList<ShowRoomDetailModel>,
             selectedIndex: Int,
-            scrollable: Boolean
+            scrollable: Boolean,
+            createRoom: Boolean = false
         ) {
             context.startActivity(Intent(context, LiveDetailActivity::class.java).apply {
                 putExtra(EXTRA_ROOM_DETAIL_INFO_LIST, roomDetail)
                 putExtra(EXTRA_ROOM_DETAIL_INFO_LIST_SELECTED_INDEX, selectedIndex)
                 putExtra(EXTRA_ROOM_DETAIL_INFO_LIST_SCROLLABLE, scrollable)
+                putExtra(EXTRA_ROOM_DETAIL_INFO_CREATE_ROOM, createRoom)
             })
         }
     }
@@ -303,7 +306,9 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
                 }
                 return LiveDetailFragment.newInstance(
                     roomInfo,
-                    onPageScrollEventHandler as OnPageScrollEventHandler, position
+                    onPageScrollEventHandler as OnPageScrollEventHandler,
+                    position,
+                    intent.getBooleanExtra(EXTRA_ROOM_DETAIL_INFO_CREATE_ROOM, false)
                 ).apply {
                     Log.d(tag, "position：$position, room:${roomInfo.roomId}")
                     vpFragments.put(position, this)

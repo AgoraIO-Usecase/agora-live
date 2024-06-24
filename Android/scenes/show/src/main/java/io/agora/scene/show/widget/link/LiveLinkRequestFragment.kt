@@ -11,7 +11,6 @@ import io.agora.scene.show.databinding.ShowLiveLinkRequestMessageListBinding
 import io.agora.scene.show.service.ShowInteractionInfo
 import io.agora.scene.show.service.ShowInteractionStatus
 import io.agora.scene.show.service.ShowMicSeatApply
-import io.agora.scene.show.service.ShowRoomRequestStatus
 
 /**
  * Live link request fragment
@@ -106,7 +105,7 @@ class LiveLinkRequestFragment : BaseFragment() {
         if (status == null) {
             binding.iBtnStopLink.isVisible = false
             binding.textLinking.isVisible = false
-        } else if (status == ShowInteractionStatus.onSeat.value) {
+        } else if (status == ShowInteractionStatus.linking) {
             binding.textLinking.isVisible = true
             binding.iBtnStopLink.isVisible = true
             binding.textLinking.text = getString(R.string.show_link_to, userName)
@@ -135,35 +134,6 @@ class LiveLinkRequestFragment : BaseFragment() {
         }
         linkRequestViewAdapter.resetAll(list)
         binding.smartRefreshLayout.finishRefresh()
-    }
-
-    /**
-     * Set seat apply item status
-     *
-     * @param seatApply
-     */
-    fun setSeatApplyItemStatus(seatApply: ShowMicSeatApply) {
-        if (seatApply.status != ShowRoomRequestStatus.accepted.value) {
-            return
-        }
-        val itemCount: Int = linkRequestViewAdapter.itemCount
-        for (i in 0 until itemCount) {
-            linkRequestViewAdapter.getItem(i)?.let {
-                if (it.userId == seatApply.userId) {
-                    linkRequestViewAdapter.replace(
-                        i, ShowMicSeatApply(
-                            it.userId,
-                            it.avatar,
-                            it.userName,
-                            seatApply.status,
-                            it.createAt
-                        )
-                    )
-                    linkRequestViewAdapter.notifyItemChanged(i)
-                    return
-                }
-            }
-        }
     }
 
     /**
@@ -209,7 +179,7 @@ class LiveLinkRequestFragment : BaseFragment() {
      * @param status
      */
     private fun updateUI(userName: String, status: Int?) {
-        if (status == ShowInteractionStatus.onSeat.value) {
+        if (status == ShowInteractionStatus.linking) {
             binding.textLinking.isVisible = true
             binding.iBtnStopLink.isVisible = true
             binding.textLinking.text = getString(R.string.show_link_to, userName)

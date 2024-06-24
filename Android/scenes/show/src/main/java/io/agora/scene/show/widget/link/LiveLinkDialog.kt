@@ -18,7 +18,6 @@ import io.agora.scene.show.R
 import io.agora.scene.show.databinding.ShowLiveLinkDialogBinding
 import io.agora.scene.show.service.ShowInteractionInfo
 import io.agora.scene.show.service.ShowMicSeatApply
-import io.agora.scene.show.service.ShowRoomRequestStatus
 import io.agora.scene.show.service.ShowUser
 
 /**
@@ -255,8 +254,7 @@ class LiveLinkDialog : BottomSheetDialogFragment() {
         if (isRoomOwner) {
             linkFragment.setSeatApplyList(interactionInfo, list)
         } else {
-            val waitList = list.filter { it.status == ShowRoomRequestStatus.waitting.value }
-            audienceFragment.setSeatApplyList(interactionInfo, waitList)
+            audienceFragment.setSeatApplyList(interactionInfo, list)
         }
     }
 
@@ -268,14 +266,6 @@ class LiveLinkDialog : BottomSheetDialogFragment() {
         audienceFragment.setOnApplySuccess()
     }
 
-    /**
-     * Set seat apply item status
-     *
-     * @param applyItem
-     */
-    fun setSeatApplyItemStatus(applyItem: ShowMicSeatApply) {
-        linkFragment.setSeatApplyItemStatus(applyItem)
-    }
 
     /**
      * Set seat invitation list

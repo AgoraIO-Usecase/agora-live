@@ -1,4 +1,4 @@
-package io.agora.scene.show.service
+package io.agora.scene.show.service.cloudplayer
 
 import android.os.CountDownTimer
 import android.util.Base64
@@ -19,30 +19,14 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import java.util.UUID
 
-/**
- * Cloud player service
- *
- * @constructor Create empty Cloud player service
+/*
+ * 推流机器人接口
+ * TODO：您需要联系声网技术支持为您的 appid 开通 rte-cloud-player 权限才能成功启动机器人推流
  */
 class CloudPlayerService {
-    /**
-     * Scope
-     */
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
-
-    /**
-     * Tag
-     */
     private val tag = "CloudPlayerService"
-
-    /**
-     * Base url
-     */
     private val baseUrl = "${BuildConfig.TOOLBOX_SERVER_HOST}/v1/"
-
-    /**
-     * Ok http client
-     */
     private val okHttpClient by lazy {
         val builder = OkHttpClient.Builder()
         if (BuildConfig.DEBUG) {
@@ -56,24 +40,8 @@ class CloudPlayerService {
         builder.build()
     }
 
-    /**
-     * Heart beat timer map
-     */
     private val heartBeatTimerMap = mutableMapOf<String, CountDownTimer>()
 
-    /**
-     * Start cloud player
-     *
-     * @param channelName
-     * @param uid
-     * @param robotUid
-     * @param streamUrl
-     * @param streamRegion
-     * @param success
-     * @param failure
-     * @receiver
-     * @receiver
-     */
     fun startCloudPlayer(
         channelName: String,
         uid: String,
@@ -97,13 +65,6 @@ class CloudPlayerService {
         }
     }
 
-    /**
-     * Start heart beat
-     *
-     * @param channelName
-     * @param uid
-     * @param failure
-     */
     fun startHeartBeat(
         channelName: String,
         uid: String,
@@ -121,24 +82,12 @@ class CloudPlayerService {
         }.start()
     }
 
-    /**
-     * Stop heart beat
-     *
-     * @param channelName
-     */
     fun stopHeartBeat(channelName: String) {
         val countDownTimer = heartBeatTimerMap.remove(channelName) ?: return
         countDownTimer.cancel()
         Log.d(tag, "cloud player stop heartbeat $channelName")
     }
 
-    /**
-     * Req heat beat async
-     *
-     * @param channelName
-     * @param uid
-     * @param failure
-     */
     private fun reqHeatBeatAsync(
         channelName: String,
         uid: String,
@@ -158,16 +107,6 @@ class CloudPlayerService {
     }
 
 
-    /**
-     * Req start cloud player
-     *
-     * @param channelName
-     * @param uid
-     * @param robotUid
-     * @param streamUrl
-     * @param streamRegion
-     * @param traceId
-     */
     private fun reqStartCloudPlayer(
         channelName: String,
         uid: String,
@@ -180,6 +119,7 @@ class CloudPlayerService {
             baseUrl + "rte-cloud-player/start",
             JSONObject()
                 .put("appId", BuildConfig.AGORA_APP_ID)
+                .put("appCert", BuildConfig.AGORA_APP_CERTIFICATE)
                 .put(
                     "basicAuth",
                     Base64.encodeToString(
@@ -199,13 +139,6 @@ class CloudPlayerService {
         )
     }
 
-    /**
-     * Req heat beat
-     *
-     * @param channelName
-     * @param uid
-     * @param traceId
-     */
     private fun reqHeatBeat(
         channelName: String,
         uid: String,
@@ -224,12 +157,6 @@ class CloudPlayerService {
         )
     }
 
-    /**
-     * Post
-     *
-     * @param url
-     * @param body
-     */
     private fun post(url: String, body: RequestBody) {
         val request = Request.Builder()
             .url(url)

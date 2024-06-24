@@ -109,7 +109,8 @@ class LiveLinkInvitationFragment : BaseFragment() {
                         it.userId,
                         it.avatar,
                         it.userName,
-                        user.status
+                        it.muteAudio,
+                        status = user.status
                     ))
                     linkInvitationViewAdapter.notifyItemChanged(i)
                     return
