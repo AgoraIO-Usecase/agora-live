@@ -1152,6 +1152,11 @@ object VideoSetting {
         val videoEncoderConfiguration = RtcEngineInstance.videoEncoderConfiguration
         codecType?.let {
             videoEncoderConfiguration.codecType = it
+            if (rtcConnection != null) {
+                rtcEngine.setVideoEncoderConfigurationEx(videoEncoderConfiguration, rtcConnection)
+            } else {
+                rtcEngine.setVideoEncoderConfiguration(videoEncoderConfiguration)
+            }
         }
         colorEnhance?.let {
             rtcEngine.setColorEnhanceOptions(it, ColorEnhanceOptions())
