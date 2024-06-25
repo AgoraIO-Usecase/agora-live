@@ -119,6 +119,7 @@
     <string name="show_statistic_down_loss_package">Downlink Packet Loss: %s ％</string>
     <string name="show_statistic_else">Others</string>
     <string name="show_statistic_quick_start_time">First Frame: %s ms</string>
+    <string name="show_statistic_encoder">Encoder: %s</string>
     <string name="show_device_grade">Device Level: %s</string>
     <string name="show_statistic_sr">Super Clarity: %s</string>
     <string name="show_statistic_pvc">PVC: %s</string>
