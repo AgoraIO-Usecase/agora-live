@@ -208,6 +208,7 @@
     <string name="show_setting_advance_music_volume">Music Volume</string>
     <string name="show_bottom_list_cancel">Cancel</string>
     <string name="show_setting_advance_framerate">Frame Rate</string>
+    <string name="show_setting_advance_encoder">Encoder</string>
     <string name="show_setting_advance_encode_framerate">Encode FPS</string>
     <string name="show_setting_advance_encode_framerate_tip">To ensure the best video quality, frame rates of 15fps and below will be effective by default for mid-to-low-end devices. Frame rates exceeding 15fps will not be effective.</string>
     <string name="show_setting_preset_show_title">Live Streaming Mode</string>
