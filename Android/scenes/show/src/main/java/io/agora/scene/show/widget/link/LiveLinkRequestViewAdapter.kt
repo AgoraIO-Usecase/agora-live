@@ -46,7 +46,7 @@ class LiveLinkRequestViewAdapter: BindingSingleAdapter<ShowMicSeatApply, ShowLiv
             binding.btnItemAgreeRequest.isEnabled = true
             binding.btnItemAgreeRequest.setText(R.string.show_agree_onseat)
             binding.btnItemAgreeRequest.setOnClickListener {
-                onClickListener.onClick(seatApply, position)
+                onClickListener.onClick(it, seatApply, position)
             }
         } else {
             if (seatApply.userId == UserManager.getInstance().user.id.toString()) {
@@ -75,7 +75,7 @@ class LiveLinkRequestViewAdapter: BindingSingleAdapter<ShowMicSeatApply, ShowLiv
          * @param seatApply
          * @param position
          */
-        fun onClick(seatApply: ShowMicSeatApply, position: Int)
+        fun onClick(view: View, seatApply: ShowMicSeatApply, position: Int)
     }
 
     /**

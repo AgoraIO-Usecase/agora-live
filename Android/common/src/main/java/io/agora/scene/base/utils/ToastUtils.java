@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
-import io.agora.scene.base.component.AgoraApplication;
+import io.agora.scene.widget.toast.CustomToast;
 
 /**
  * The type Toast utils.
@@ -21,13 +21,14 @@ public final class ToastUtils {
      */
     private static Handler mainHandler;
 
+
     /**
      * Show toast.
      *
      * @param resStringId the res string id
      */
     public static void showToast(int resStringId) {
-        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), resStringId, Toast.LENGTH_LONG).show());
+        runOnMainThread(() -> CustomToast.show(resStringId, Toast.LENGTH_LONG));
     }
 
     /**
@@ -36,7 +37,7 @@ public final class ToastUtils {
      * @param str the str
      */
     public static void showToast(String str) {
-        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), str, Toast.LENGTH_LONG).show());
+        runOnMainThread(() -> CustomToast.show(str, Toast.LENGTH_LONG));
     }
 
     /**
@@ -45,7 +46,7 @@ public final class ToastUtils {
      * @param resStringId the res string id
      */
     public static void showToastShort(int resStringId) {
-        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), resStringId, Toast.LENGTH_SHORT).show());
+        runOnMainThread(() -> CustomToast.show(resStringId, Toast.LENGTH_SHORT));
     }
 
     /**
@@ -54,7 +55,7 @@ public final class ToastUtils {
      * @param str the str
      */
     public static void showToastShort(String str) {
-        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), str, Toast.LENGTH_SHORT).show());
+        runOnMainThread(() -> CustomToast.show(str, Toast.LENGTH_SHORT));
     }
 
     /**
@@ -72,4 +73,5 @@ public final class ToastUtils {
             mainHandler.post(runnable);
         }
     }
+
 }

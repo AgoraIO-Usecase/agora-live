@@ -44,7 +44,7 @@ class LivePKViewAdapter: BindingSingleAdapter<LiveRoomConfig, ShowLivePkRequestM
                     binding.btnItemRequest.isEnabled = true
                     binding.btnItemRequest.setText(R.string.show_application)
                     binding.btnItemRequest.setOnClickListener {
-                        onClickListener.onClick(roomItem, position)
+                        onClickListener.onClick(it, roomItem, position)
                     }
                 }
             }
@@ -78,7 +78,7 @@ class LivePKViewAdapter: BindingSingleAdapter<LiveRoomConfig, ShowLivePkRequestM
          * @param roomItem
          * @param position
          */
-        fun onClick(roomItem: LiveRoomConfig, position: Int)
+        fun onClick(view: View, roomItem: LiveRoomConfig, position: Int)
     }
 
     /**

@@ -45,8 +45,8 @@ class LivePKRequestMessageFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         linkPKViewAdapter.setClickListener(object : LivePKViewAdapter.OnClickListener {
-            override fun onClick(roomItem: LiveRoomConfig, position: Int) {
-                mListener.onAcceptMicSeatItemChosen(roomItem)
+            override fun onClick(view: View, roomItem: LiveRoomConfig, position: Int) {
+                mListener.onAcceptMicSeatItemChosen(roomItem, view)
             }
         })
     }
@@ -77,7 +77,7 @@ class LivePKRequestMessageFragment : BaseFragment() {
             mListener.onRequestRefreshing()
         }
         binding.iBtnStopPK.setOnClickListener {
-            mListener.onStopPKingChosen()
+            mListener.onStopPKingChosen(it)
         }
         binding.smartRefreshLayout.autoRefresh()
     }
@@ -137,7 +137,7 @@ class LivePKRequestMessageFragment : BaseFragment() {
          *
          * @param roomItem
          */
-        fun onAcceptMicSeatItemChosen(roomItem: LiveRoomConfig)
+        fun onAcceptMicSeatItemChosen(roomItem: LiveRoomConfig, view: View)
 
         /**
          * On request refreshing
@@ -149,7 +149,7 @@ class LivePKRequestMessageFragment : BaseFragment() {
          * On stop p king chosen
          *
          */
-        fun onStopPKingChosen()
+        fun onStopPKingChosen(view: View)
     }
 
     /**

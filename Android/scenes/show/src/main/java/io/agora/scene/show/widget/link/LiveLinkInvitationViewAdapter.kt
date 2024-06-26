@@ -45,7 +45,7 @@ class LiveLinkInvitationViewAdapter: BindingSingleAdapter<ShowUser, ShowLiveLink
                 binding.btnItemInvite.isEnabled = true
                 binding.btnItemInvite.setText(R.string.show_application)
                 binding.btnItemInvite.setOnClickListener {
-                    onClickListener.onClick(userItem, position)
+                    onClickListener.onClick(it, userItem, position)
                 }
             }
         }
@@ -68,7 +68,7 @@ class LiveLinkInvitationViewAdapter: BindingSingleAdapter<ShowUser, ShowLiveLink
          * @param userItem
          * @param position
          */
-        fun onClick(userItem: ShowUser, position: Int)
+        fun onClick(view: View, userItem: ShowUser, position: Int)
     }
 
     /**

@@ -42,9 +42,9 @@ class LiveLinkInvitationFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         linkInvitationViewAdapter.setClickListener(object : LiveLinkInvitationViewAdapter.OnClickListener {
-            override fun onClick(userItem: ShowUser, position: Int) {
+            override fun onClick(view: View, userItem: ShowUser, position: Int) {
                 // 主播发起邀请
-                mListener?.onInviteMicSeatItemChosen(userItem)
+                mListener?.onInviteMicSeatItemChosen(view, userItem)
             }
         })
     }
@@ -139,7 +139,7 @@ class LiveLinkInvitationFragment : BaseFragment() {
          *
          * @param userItem
          */
-        fun onInviteMicSeatItemChosen(userItem: ShowUser)
+        fun onInviteMicSeatItemChosen(view: View, userItem: ShowUser)
 
         /**
          * On request refreshing
@@ -151,6 +151,6 @@ class LiveLinkInvitationFragment : BaseFragment() {
          * On stop linking chosen
          *
          */
-        fun onStopLinkingChosen()
+        fun onStopLinkingChosen(view: View)
     }
 }

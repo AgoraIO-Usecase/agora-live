@@ -81,16 +81,16 @@ class LivePKDialog : BottomSheetDialogFragment() {
         binding.pager.getChildAt(0).overScrollMode = View.OVER_SCROLL_NEVER
 
         pkFragment.setListener(object : LivePKRequestMessageFragment.Listener {
-            override fun onAcceptMicSeatItemChosen(roomItem: LiveRoomConfig) {
-                pkDialogListener.onInviteButtonChosen(this@LivePKDialog, roomItem)
+            override fun onAcceptMicSeatItemChosen(roomItem: LiveRoomConfig, view: View) {
+                pkDialogListener.onInviteButtonChosen(this@LivePKDialog, roomItem, view)
             }
 
             override fun onRequestRefreshing() {
                 pkDialogListener.onRequestMessageRefreshing(this@LivePKDialog)
             }
 
-            override fun onStopPKingChosen() {
-                pkDialogListener.onStopPKingChosen(this@LivePKDialog)
+            override fun onStopPKingChosen(view: View) {
+                pkDialogListener.onStopPKingChosen(this@LivePKDialog, view)
             }
         })
 

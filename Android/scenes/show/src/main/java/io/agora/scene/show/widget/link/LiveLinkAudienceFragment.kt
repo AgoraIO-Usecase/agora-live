@@ -74,13 +74,11 @@ class LiveLinkAudienceFragment : BaseFragment() {
         binding.linkRequestList.adapter = linkRequestViewAdapter
         binding.iBtnStopLink.setOnClickListener {
             // 观众停止连麦
-            mListener?.onStopLinkingChosen()
+            mListener?.onStopLinkingChosen(it)
         }
         binding.iBtnCancelApply.setOnClickListener {
             // 观众撤回申请
-            mListener?.onStopApplyingChosen()
-            binding.iBtnStopLink.isVisible = false
-            binding.iBtnCancelApply.isVisible = false
+            mListener?.onStopApplyingChosen(it)
         }
         binding.smartRefreshLayout.setOnRefreshListener {
             mListener?.onRequestRefreshing()
@@ -174,12 +172,12 @@ class LiveLinkAudienceFragment : BaseFragment() {
          * On stop linking chosen
          *
          */
-        fun onStopLinkingChosen()
+        fun onStopLinkingChosen(view: View)
 
         /**
          * On stop applying chosen
          *
          */
-        fun onStopApplyingChosen()
+        fun onStopApplyingChosen(view: View)
     }
 }

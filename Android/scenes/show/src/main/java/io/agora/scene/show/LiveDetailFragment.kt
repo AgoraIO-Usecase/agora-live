@@ -267,6 +267,10 @@ class LiveDetailFragment : Fragment() {
 
     private var mPKEventHandler: IRtcEngineEventHandler? = null
 
+    private var mMicInvitationDialog: AlertDialog?= null
+
+    private var mPKInvitationDialog: AlertDialog?= null
+
     /**
      * On create view
      *
@@ -624,19 +628,29 @@ class LiveDetailFragment : Fragment() {
         bottomLayout.ivMusic.setOnClickListener {
             showMusicEffectDialog()
         }
-        bottomLayout.ivLinking.setOnClickListener {
+        bottomLayout.ivLinking.setOnClickListener {view ->
             if (mRoomInfo.isRobotRoom()) {
                 ToastUtils.showToast(context?.getString(R.string.show_tip1))
                 return@setOnClickListener
             }
             bottomLayout.vLinkingDot.isVisible = false
             if (!isRoomOwner) {
-                if (!(interactionInfo != null && interactionInfo!!.userId == UserManager.getInstance().user.id.toString())) {
+                if (interactionInfo == null
+                    || interactionInfo?.interactStatus == ShowInteractionStatus.idle
+                    || interactionInfo?.userId != UserManager.getInstance().user.id.toString()
+                ) {
                     prepareLinkingMode()
-                    mService.createMicSeatApply(mRoomInfo.roomId, {
-                        // success
-                        mLinkDialog.setOnApplySuccess()
-                    })
+                    mService.createMicSeatApply(mRoomInfo.roomId,
+                        success = {
+                            // success
+                            mLinkDialog.setOnApplySuccess()
+
+                        },
+                        error = {
+                            ToastUtils.showToast(getString(
+                                R.string.show_error_apply_mic_seat, it.message
+                            ))
+                        })
                 }
             }
             showLinkingDialog()
@@ -1005,7 +1019,9 @@ class LiveDetailFragment : Fragment() {
                 }
 
                 override fun onFinish() {
-                    mService.stopInteraction(mRoomInfo.roomId)
+                    mService.stopInteraction(mRoomInfo.roomId, error = {
+                        ToastUtils.showToast("stop interaction error: ${it.message}")
+                    })
                 }
             }.start()
         } else {
@@ -1058,9 +1074,13 @@ class LiveDetailFragment : Fragment() {
                         if (activity is LiveDetailActivity){
                             (activity as LiveDetailActivity).toggleSelfAudio(activated, callback = {
                                 if (!isRoomOwner) {
-                                    mService.muteAudio(mRoomInfo.roomId, !activated)
+                                    mService.muteAudio(mRoomInfo.roomId, !activated, error = {
+                                        ToastUtils.showToast("muteAudio error: ${it.message}")
+                                    })
                                 } else {
-                                    mService.muteAudio(mRoomInfo.roomId, !activated)
+                                    mService.muteAudio(mRoomInfo.roomId, !activated, error = {
+                                        ToastUtils.showToast("muteAudio error: ${it.message}")
+                                    })
                                     enableLocalAudio(activated)
                                     if (isPKing()) {
                                         mBinding.videoPKLayout.userNameA.isActivated = activated
@@ -1217,7 +1237,9 @@ class LiveDetailFragment : Fragment() {
                     LiveLinkAudienceSettingsDialog.ITEM_ID_MIC -> {
                         if (activity is LiveDetailActivity){
                             (activity as LiveDetailActivity).toggleSelfAudio(activated, callback = {
-                                mService.muteAudio(mRoomInfo.roomId, !activated)
+                                mService.muteAudio(mRoomInfo.roomId, !activated, error = {
+                                    ToastUtils.showToast("muteAudio error: ${it.message}")
+                                })
                             })
                         }
                     }
@@ -1255,14 +1277,26 @@ class LiveDetailFragment : Fragment() {
 
             override fun onAcceptMicSeatApplyChosen(
                 dialog: LiveLinkDialog,
-                seatApply: ShowMicSeatApply
+                seatApply: ShowMicSeatApply,
+                view: View
             ) {
                 if (interactionInfo != null) {
                     ToastUtils.showToast(R.string.show_cannot_accept)
                     return
                 }
                 linkStartTime = TimeUtils.currentTimeMillis()
-                mService.acceptMicSeatApply(mRoomInfo.roomId, seatApply.userId)
+                view.isEnabled = false
+                mService.acceptMicSeatApply(
+                    mRoomInfo.roomId,
+                    seatApply.userId,
+                    success = {
+                        view.isEnabled = true
+                        ToastUtils.showToast("accept apply successfully!")
+                    },
+                    error = {
+                        view.isEnabled = true
+                        ToastUtils.showToast(getString(R.string.show_error_accept_mic_seat, it.message))
+                    })
             }
 
             override fun onOnlineAudienceRefreshing(dialog: LiveLinkDialog) {
@@ -1273,25 +1307,48 @@ class LiveDetailFragment : Fragment() {
                 })
             }
 
-            override fun onOnlineAudienceInvitation(dialog: LiveLinkDialog, userItem: ShowUser) {
+            override fun onOnlineAudienceInvitation(dialog: LiveLinkDialog, userItem: ShowUser, view: View) {
                 if (interactionInfo != null) {
                     ToastUtils.showToast(R.string.show_cannot_invite)
                     return
                 }
-                mService.createMicSeatInvitation(mRoomInfo.roomId, userItem.userId)
-            }
-
-            override fun onStopLinkingChosen(dialog: LiveLinkDialog) {
-                if (interactionInfo != null) {
-                    mService.stopInteraction(mRoomInfo.roomId, success = {
-                        // success
+                view.isEnabled = false
+                mService.createMicSeatInvitation(
+                    mRoomInfo.roomId,
+                    userItem.userId,
+                    success = {
+                        view.isEnabled = true
+                        ToastUtils.showToast("invite successfully!")
+                    },
+                    error = {
+                        view.isEnabled = true
+                        ToastUtils.showToast(getString(R.string.show_error_invite_mic_seat, it.message))
                     })
-                }
             }
 
-            override fun onStopApplyingChosen(dialog: LiveLinkDialog) {
+            override fun onStopLinkingChosen(dialog: LiveLinkDialog, view: View) {
+                view.isEnabled = false
+                mService.stopInteraction(mRoomInfo.roomId, success = {
+                    // success
+                    view.isEnabled = true
+                }, error = {
+                    view.isEnabled = true
+                    ToastUtils.showToast("stop interaction error: ${it.message}")
+                })
+            }
+
+            override fun onStopApplyingChosen(dialog: LiveLinkDialog, view: View) {
                 updateIdleMode()
-                mService.cancelMicSeatApply(mRoomInfo.roomId){}
+                view.isEnabled = false
+                mService.cancelMicSeatApply(mRoomInfo.roomId,
+                    success = {
+                        view.isEnabled = true
+                        ToastUtils.showToast("cancel apply successfully!")
+                    },
+                    error = {
+                        view.isEnabled = true
+                        ToastUtils.showToast(getString(R.string.show_error_cancel_mic_seat, it.message))
+                    })
             }
         })
 
@@ -1307,49 +1364,59 @@ class LiveDetailFragment : Fragment() {
      *
      */
     private fun showInvitationDialog(invitation: ShowMicSeatInvitation) {
+        if (mMicInvitationDialog?.isShowing == true) {
+            return
+        }
         prepareLinkingMode()
-        val dialog = AlertDialog.Builder(requireContext(), R.style.show_alert_dialog).apply {
+        mMicInvitationDialog = AlertDialog.Builder(requireContext(), R.style.show_alert_dialog).apply {
+            setCancelable(false)
             setTitle(getString(R.string.show_ask_for_link, mRoomInfo.ownerName))
-            setPositiveButton(R.string.accept) { dialog, _ ->
-                if (mLinkInvitationCountDownLatch != null) {
-                    mLinkInvitationCountDownLatch!!.cancel()
-                    mLinkInvitationCountDownLatch = null
-                }
-                mService.acceptMicSeatInvitation(
-                    mRoomInfo.roomId,
-                    invitation.id,
-                    success = {
-                        ToastUtils.showToast("accept invitation successfully!")
-                    },
-                    error = { error ->
-                        ToastUtils.showToast(error.message)
-                    }
-                )
-                dialog.dismiss()
-            }
-            setNegativeButton(R.string.decline) { dialog, _ ->
+            setPositiveButton(R.string.accept, null)
+            setNegativeButton(R.string.decline) { dialog, which ->
                 updateIdleMode()
+                val button = (dialog as? AlertDialog)?.getButton(which)
+                button?.isEnabled = false
                 mService.rejectMicSeatInvitation(
                     mRoomInfo.roomId,
                     invitation.id,
                     success = {
+                        button?.isEnabled = true
+                        dismissMicInvitaionDialog()
                         ToastUtils.showToast("reject invitation successfully!")
                     },
                     error = { error ->
-                        ToastUtils.showToast(error.message)
+                        button?.isEnabled = true
+                        ToastUtils.showToast(getString(R.string.show_error_reject_mic_seat, error.message))
                     }
                 )
-                dialog.dismiss()
             }
         }.create()
-        dialog.show()
+        mMicInvitationDialog?.setOnShowListener {
+            mMicInvitationDialog?.getButton(DialogInterface.BUTTON_POSITIVE)?.setOnClickListener {btn ->
+                btn.isEnabled = false
+                mService.acceptMicSeatInvitation(
+                    mRoomInfo.roomId,
+                    invitation.id,
+                    success = {
+                        btn.isEnabled = true
+                        ToastUtils.showToast("accept invitation successfully!")
+                        dismissMicInvitaionDialog()
+                    },
+                    error = { error ->
+                        btn.isEnabled = true
+                        ToastUtils.showToast(getString(R.string.show_error_accept_mic_seat_invite, error.message))
+                    }
+                )
+            }
+        }
+        mMicInvitationDialog?.show()
         if (mLinkInvitationCountDownLatch != null) {
             mLinkInvitationCountDownLatch!!.cancel()
             mLinkInvitationCountDownLatch = null
         }
         mLinkInvitationCountDownLatch = object : CountDownTimer(15 * 1000 - 1, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).text =
+                mMicInvitationDialog?.getButton(DialogInterface.BUTTON_NEGATIVE)?.text =
                     "${getString(R.string.decline)}(" + millisUntilFinished / 1000 + "s)"
             }
 
@@ -1358,12 +1425,18 @@ class LiveDetailFragment : Fragment() {
                     mRoomInfo.roomId,
                     invitation.id,
                     error = { error ->
-                        ToastUtils.showToast(error.message)
+                        ToastUtils.showToast(getString(R.string.show_error_reject_mic_seat, error.message))
                     }
                 )
-                dialog.dismiss()
+                dismissMicInvitaionDialog()
             }
         }.start()
+    }
+
+    private fun dismissMicInvitaionDialog() {
+        mMicInvitationDialog?.dismiss()
+        mLinkInvitationCountDownLatch?.cancel()
+        mLinkInvitationCountDownLatch = null
     }
 
     /**
@@ -1399,7 +1472,7 @@ class LiveDetailFragment : Fragment() {
                     })
             }
 
-            override fun onInviteButtonChosen(dialog: LivePKDialog, roomItem: LiveRoomConfig) {
+            override fun onInviteButtonChosen(dialog: LivePKDialog, roomItem: LiveRoomConfig, view: View) {
                 if (roomItem.isRobotRoom()) {
                     ToastUtils.showToast(context?.getString(R.string.show_tip1))
                     return
@@ -1407,12 +1480,31 @@ class LiveDetailFragment : Fragment() {
                 if (isRoomOwner) {
                     val roomDetail = roomItem.convertToShowRoomDetailModel()
                     preparePKingMode(roomDetail.roomId)
-                    mService.createPKInvitation(mRoomInfo.roomId, roomDetail.roomId)
+                    view.isEnabled = false
+                    mService.createPKInvitation(
+                        mRoomInfo.roomId,
+                        roomDetail.roomId,
+                        success = {
+                            view.isEnabled = true
+                            ToastUtils.showToast("invite successfully!")
+                        },
+                        error = {
+                            view.isEnabled = true
+                            ToastUtils.showToast(getString(R.string.show_error_invite_pk, it.message))
+                        })
                 }
             }
 
-            override fun onStopPKingChosen(dialog: LivePKDialog) {
-                mService.stopInteraction(mRoomInfo.roomId)
+            override fun onStopPKingChosen(dialog: LivePKDialog, view: View) {
+                view.isEnabled = false
+                mService.stopInteraction(mRoomInfo.roomId,
+                    success = {
+                        view.isEnabled = true
+                    },
+                    error = {
+                        view.isEnabled = true
+                        ToastUtils.showToast("stop Interaction error: ${it.message}")
+                    })
             }
         })
         if (!mPKDialog.isVisible) {
@@ -1433,41 +1525,73 @@ class LiveDetailFragment : Fragment() {
      * @param name
      */
     private fun showPKInvitationDialog(name: String, invitation: ShowPKInvitation) {
-        val dialog = AlertDialog.Builder(requireContext(), R.style.show_alert_dialog).apply {
+        if(mPKInvitationDialog?.isShowing == true){
+            return
+        }
+        mPKInvitationDialog = AlertDialog.Builder(requireContext(), R.style.show_alert_dialog).apply {
             setCancelable(false)
             setTitle(getString(R.string.show_ask_for_pk, name))
-            setPositiveButton(R.string.accept) { dialog, _ ->
-                if (mPKInvitationCountDownLatch != null) {
-                    mPKInvitationCountDownLatch!!.cancel()
-                    mPKInvitationCountDownLatch = null
-                }
-                pkStartTime = TimeUtils.currentTimeMillis()
-                mService.acceptPKInvitation(mRoomInfo.roomId, invitation.id){}
-                dialog.dismiss()
-            }
-            setNegativeButton(R.string.decline) { dialog, _ ->
+            setPositiveButton(R.string.accept, null)
+            setNegativeButton(R.string.decline) { dialog, which ->
                 updateIdleMode()
-                mService.rejectPKInvitation(mRoomInfo.roomId, invitation.id) { }
-                dialog.dismiss()
+                val button = (dialog as? AlertDialog)?.getButton(which)
+                button?.isEnabled = false
+                mService.rejectPKInvitation(
+                    mRoomInfo.roomId,
+                    invitation.id,
+                    success = {
+                        button?.isEnabled = true
+                        dismissPKInvitationDialog()
+                    },
+                    error = {
+                        button?.isEnabled = true
+                        ToastUtils.showToast("reject message failed!")
+                    }
+                )
+                isPKCompetition = false
             }
         }.create()
-        dialog.show()
+        mPKInvitationDialog?.setOnShowListener {
+            mPKInvitationDialog?.getButton(DialogInterface.BUTTON_POSITIVE)?.let { btn ->
+                btn.setOnClickListener {
+                    pkStartTime = TimeUtils.currentTimeMillis()
+                    btn.isEnabled = false
+                    mService.acceptPKInvitation(mRoomInfo.roomId, invitation.id, {
+                        btn.isEnabled = true
+                        ToastUtils.showToast("accept message successfully!")
+                        dismissPKInvitationDialog()
+                    }) {
+                        btn.isEnabled = true
+                        ToastUtils.showToast(context?.getString(R.string.show_error_accept_pk, it.message))
+                    }
+                }
+            }
+        }
+        mPKInvitationDialog?.show()
         if (mPKInvitationCountDownLatch != null) {
             mPKInvitationCountDownLatch!!.cancel()
             mPKInvitationCountDownLatch = null
         }
         mPKInvitationCountDownLatch = object : CountDownTimer(15 * 1000 - 1, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).text =
+                mPKInvitationDialog?.getButton(DialogInterface.BUTTON_NEGATIVE)?.text =
                     "${getString(R.string.decline)}(${millisUntilFinished / 1000}s)"
             }
 
             override fun onFinish() {
                 updateIdleMode()
-                mService.rejectPKInvitation(mRoomInfo.roomId, invitation.id) { }
-                dialog.dismiss()
+                mService.rejectPKInvitation(mRoomInfo.roomId, invitation.id, error = {
+                    ToastUtils.showToast(getString(R.string.show_error_reject_pk, it.message))
+                })
+                dismissPKInvitationDialog()
             }
         }.start()
+    }
+
+    private fun dismissPKInvitationDialog() {
+        mPKInvitationDialog?.dismiss()
+        mPKInvitationCountDownLatch?.cancel()
+        mPKInvitationCountDownLatch = null
     }
 
     /**
@@ -1493,7 +1617,9 @@ class LiveDetailFragment : Fragment() {
                     LivePKSettingsDialog.ITEM_ID_MIC -> {
                         if (activity is LiveDetailActivity){
                             (activity as LiveDetailActivity).toggleSelfAudio(activated, callback = {
-                                mService.muteAudio(mRoomInfo.roomId, !activated)
+                                mService.muteAudio(mRoomInfo.roomId, !activated, error = {
+                                    ToastUtils.showToast("muteAudio error: ${it.message}")
+                                })
                                 mRtcEngine.muteLocalAudioStreamEx(!activated, RtcConnection(interactionInfo!!.roomId, UserManager.getInstance().user.id.toInt()))
                             })
                         }
@@ -1503,6 +1629,8 @@ class LiveDetailFragment : Fragment() {
                             mService.stopInteraction(mRoomInfo.roomId, success = {
                                 // success
                                 dismiss()
+                            }, error = {
+                                ToastUtils.showToast("stop interaction error: ${it.message}")
                             })
                         }
                     }
@@ -1533,7 +1661,7 @@ class LiveDetailFragment : Fragment() {
                     runOnUiThread {
                         destroy(false)
                         // 进房Error
-                        showLivingEndLayout() // 进房Error
+                        showLivingEndLayout(true) // 进房Error
                         ShowLogger.d("showLivingEndLayout", "create room error!:${it.message}")
                     }
                 })
@@ -1546,7 +1674,7 @@ class LiveDetailFragment : Fragment() {
                     runOnUiThread {
                         destroy(false)
                         // 进房Error
-                        showLivingEndLayout() // 进房Error
+                        showLivingEndLayout(true) // 进房Error
                         ShowLogger.d("showLivingEndLayout", "join room error!:${it.message}")
                     }
                 })
@@ -1609,6 +1737,9 @@ class LiveDetailFragment : Fragment() {
                 updateLinkingMode()
                 updatePKingMode()
                 refreshPKTimeCount()
+
+                dismissMicInvitaionDialog()
+                dismissPKInvitationDialog()
 
             } else {
                 ShowLogger.d("interaction","old interaction: $interactionInfo, new interaction: $info")
@@ -1710,11 +1841,14 @@ class LiveDetailFragment : Fragment() {
      * Show living end layout
      *
      */
-    private fun showLivingEndLayout() {
+    private fun showLivingEndLayout(fromError: Boolean = false) {
         if (isRoomOwner) {
             val context = activity ?: return
             AlertDialog.Builder(context, R.style.show_alert_dialog)
                 .setView(ShowLivingEndDialogBinding.inflate(LayoutInflater.from(requireContext())).apply {
+                    if (fromError) {
+                        tvTitle.setText(R.string.show_living_end_title_error)
+                    }
                     Glide.with(this@LiveDetailFragment)
                         .load(mRoomInfo.getOwnerAvatarFullUrl())
                         .into(ivAvatar)
@@ -1726,6 +1860,9 @@ class LiveDetailFragment : Fragment() {
                 }
                 .show()
         } else {
+            if (fromError) {
+                mBinding.livingEndLayout.tvLivingEnd.setText(R.string.show_live_detail_living_end_error)
+            }
             mBinding.livingEndLayout.root.isVisible = true
         }
     }
@@ -1747,7 +1884,9 @@ class LiveDetailFragment : Fragment() {
             override fun onUserOffline(uid: Int, reason: Int) {
                 super.onUserOffline(uid, reason)
                 if (interactionInfo != null && interactionInfo!!.userId == uid.toString()) {
-                    mService.stopInteraction(mRoomInfo.roomId)
+                    mService.stopInteraction(mRoomInfo.roomId, error = {
+                        ToastUtils.showToast("stop interaction error: ${it.message}")
+                    })
                 }
             }
 
