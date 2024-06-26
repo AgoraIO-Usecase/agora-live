@@ -30,7 +30,7 @@ internal abstract class SongChooseViewAdapter : BindingSingleAdapter<SongItem?, 
             .into(binding.coverItemSongList)
         if (data.isChosen) {
             binding.btnItemSongList.isEnabled = false
-            binding.btnItemSongList.setText(R.string.ktv_room_chosen_song_list)
+            binding.btnItemSongList.setText(R.string.ktv_room_chosen_song)
             binding.btnItemSongList.setOnClickListener(null)
         } else {
             if (data.loading) {
