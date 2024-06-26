@@ -44,38 +44,17 @@ import javax.microedition.khronos.egl.EGLContext;
 
 import io.agora.beautyapi.faceunity.utils.LogUtils;
 
-/**
- * The type Gl utils.
- */
-public final class GLUtils {
-
-    /**
-     * The constant TAG.
-     */
+public class GLUtils {
     private static final String TAG = "GLUtils";
-    /**
-     * The constant IDENTITY_MATRIX.
-     */
     public static final float[] IDENTITY_MATRIX = new float[16];
 
     static {
         Matrix.setIdentityM(IDENTITY_MATRIX, 0);
     }
 
-    /**
-     * Instantiates a new Gl utils.
-     */
     private GLUtils() {
     }
 
-    /**
-     * Gets texture 2 d image.
-     *
-     * @param textureID the texture id
-     * @param width     the width
-     * @param height    the height
-     * @return the texture 2 d image
-     */
     public static Bitmap getTexture2DImage(int textureID, int width, int height) {
         try {
             int[] oldFboId = new int[1];
@@ -117,14 +96,6 @@ public final class GLUtils {
         return null;
     }
 
-    /**
-     * Gets texture oes image.
-     *
-     * @param textureID the texture id
-     * @param width     the width
-     * @param height    the height
-     * @return the texture oes image
-     */
     public static Bitmap getTextureOESImage(int textureID, int width, int height) {
         try {
             int[] oldFboId = new int[1];
@@ -166,14 +137,6 @@ public final class GLUtils {
         return null;
     }
 
-    /**
-     * Nv 21 to bitmap bitmap.
-     *
-     * @param nv21   the nv 21
-     * @param width  the width
-     * @param height the height
-     * @return the bitmap
-     */
     public static Bitmap nv21ToBitmap(byte[] nv21, int width, int height) {
         Bitmap bitmap = null;
         try {
@@ -188,13 +151,6 @@ public final class GLUtils {
         return bitmap;
     }
 
-    /**
-     * Read bitmap bitmap.
-     *
-     * @param width  the width
-     * @param height the height
-     * @return the bitmap
-     */
     private static Bitmap readBitmap(int width, int height) {
         ByteBuffer rgbaBuf = ByteBuffer.allocateDirect(width * height * 4);
         rgbaBuf.position(0);
@@ -205,39 +161,31 @@ public final class GLUtils {
         return bitmap;
     }
 
-    /**
-     * Create transform matrix float [ ].
-     *
-     * @param rotation the rotation
-     * @param flipH    the flip h
-     * @param flipV    the flip v
-     * @return the float [ ]
-     */
     public static float[] createTransformMatrix(int rotation, boolean flipH, boolean flipV) {
         float[] renderMVPMatrix = new float[16];
         float[] tmp = new float[16];
         Matrix.setIdentityM(tmp, 0);
 
-        boolean iflipH = flipH;
-        boolean iflipV = flipV;
+        boolean _flipH = flipH;
+        boolean _flipV = flipV;
         if (rotation % 180 != 0) {
-            iflipH = flipV;
-            iflipV = flipH;
+            _flipH = flipV;
+            _flipV = flipH;
         }
 
-        if (iflipH) {
+        if (_flipH) {
             Matrix.rotateM(tmp, 0, tmp, 0, 180, 0, 1f, 0);
         }
-        if (iflipV) {
+        if (_flipV) {
             Matrix.rotateM(tmp, 0, tmp, 0, 180, 1f, 0f, 0);
         }
 
-        float irotation = rotation;
-        if (irotation != 0) {
-            if (iflipH != iflipV) {
-                irotation *= -1;
+        float _rotation = rotation;
+        if (_rotation != 0) {
+            if (_flipH != _flipV) {
+                _rotation *= -1;
             }
-            Matrix.rotateM(tmp, 0, tmp, 0, irotation, 0, 0, 1);
+            Matrix.rotateM(tmp, 0, tmp, 0, _rotation, 0, 0, 1);
         }
 
         Matrix.setIdentityM(renderMVPMatrix, 0);
@@ -245,24 +193,14 @@ public final class GLUtils {
         return renderMVPMatrix;
     }
 
-    /**
-     * Gets curr gl context.
-     *
-     * @return the curr gl context
-     */
     public static EGLContext getCurrGLContext() {
-        EGL10 egl = (EGL10) javax.microedition.khronos.egl.EGLContext.getEGL();
+        EGL10 egl = (EGL10) EGLContext.getEGL();
         if (egl != null && !Objects.equals(egl.eglGetCurrentContext(), EGL10.EGL_NO_CONTEXT)) {
             return egl.eglGetCurrentContext();
         }
         return null;
     }
 
-    /**
-     * Check gl error.
-     *
-     * @param op the op
-     */
     public static void checkGlError(String op) {
         int error = GLES20.glGetError();
         if (error != GLES20.GL_NO_ERROR) {
@@ -272,13 +210,6 @@ public final class GLUtils {
         }
     }
 
-    /**
-     * Create program int.
-     *
-     * @param vertexSource   the vertex source
-     * @param fragmentSource the fragment source
-     * @return the int
-     */
     public static int createProgram(String vertexSource, String fragmentSource) {
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexSource);
         if (vertexShader == 0) {
@@ -309,13 +240,6 @@ public final class GLUtils {
         return program;
     }
 
-    /**
-     * Load shader int.
-     *
-     * @param shaderType the shader type
-     * @param source     the source
-     * @return the int
-     */
     public static int loadShader(int shaderType, String source) {
         int shader = GLES20.glCreateShader(shaderType);
         checkGlError("glCreateShader type=" + shaderType);
@@ -332,17 +256,6 @@ public final class GLUtils {
         return shader;
     }
 
-    /**
-     * Create texture int.
-     *
-     * @param textureTarget the texture target
-     * @param bitmap        the bitmap
-     * @param minFilter     the min filter
-     * @param magFilter     the mag filter
-     * @param wrapS         the wrap s
-     * @param wrapT         the wrap t
-     * @return the int
-     */
     public static int createTexture(int textureTarget, Bitmap bitmap, int minFilter,
                                     int magFilter, int wrapS, int wrapT) {
         int[] textureHandle = new int[1];
