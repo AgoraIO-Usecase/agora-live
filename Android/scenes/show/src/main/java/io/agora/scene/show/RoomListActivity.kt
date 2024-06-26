@@ -50,7 +50,7 @@ class RoomListActivity : AppCompatActivity() {
     /**
      * M service
      */
-    private val mService by lazy { ShowServiceProtocol.getImplInstance() }
+    private val mService by lazy { ShowServiceProtocol.get() }
 
     /**
      * M rtc engine
@@ -111,7 +111,7 @@ class RoomListActivity : AppCompatActivity() {
 
         SceneAliveTime.fetchShowAliveTime ({ show, pk ->
             ShowLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
-            ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
+            // ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
             ShowServiceProtocol.PK_AVAILABLE_DURATION = pk * 1000L
         })
     }
@@ -122,7 +122,7 @@ class RoomListActivity : AppCompatActivity() {
     private fun initView() {
         onRoomListScrollEventHandler = object: OnRoomListScrollEventHandler(mRtcEngine, UserManager.getInstance().user.id.toInt()) {}
         mBinding.titleView.setLeftClick {
-            mService.destroy()
+            ShowServiceProtocol.destroy()
             RtcEngineInstance.destroy()
             RtcEngineInstance.setupGeneralToken("")
             finish()
@@ -205,7 +205,7 @@ class RoomListActivity : AppCompatActivity() {
         binding.tvRoomName.text = roomInfo.roomName
         binding.tvRoomId.text = getString(R.string.show_room_id, roomInfo.roomId)
         binding.ivCover.setImageResource(roomInfo.getThumbnailIcon())
-        binding.tvPureMode.isVisible = roomInfo.isPureMode == 1
+        binding.tvPureMode.isVisible = roomInfo.isPureMode
 
         val onTouchEventHandler = object : OnLiveRoomItemTouchEventHandler(
             mRtcEngine,
@@ -303,7 +303,7 @@ class RoomListActivity : AppCompatActivity() {
      *
      */
     override fun onBackPressed() {
-        mService.destroy()
+        ShowServiceProtocol.destroy()
         RtcEngineInstance.destroy()
         RtcEngineInstance.setupGeneralToken("")
         finish()
