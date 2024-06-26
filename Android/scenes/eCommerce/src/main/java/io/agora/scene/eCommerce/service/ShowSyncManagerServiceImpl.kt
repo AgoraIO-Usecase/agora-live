@@ -48,7 +48,7 @@ class ShowSyncManagerServiceImpl constructor(
     /**
      * K scene id
      */
-    private val kSceneId = "scene_ecommerce_0_2_0"
+    private val kSceneId = "scene_ecommerce_1_3_0"
     private val kCollectionIdLike = "commerce_like_collection"
     private val kCollectionIdMessage = "commerce_message_collection"
     private val kCollectionIdBid = "commerce_goods_bid_collection"
