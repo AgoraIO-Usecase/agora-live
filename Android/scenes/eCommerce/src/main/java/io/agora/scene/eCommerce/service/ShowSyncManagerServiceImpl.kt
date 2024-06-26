@@ -101,14 +101,7 @@ class ShowSyncManagerServiceImpl constructor(
         val roomExpirationPolicy = RoomExpirationPolicy()
         roomExpirationPolicy.expirationTime = ShowServiceProtocol.ROOM_AVAILABLE_DURATION
         roomService = RoomService(roomExpirationPolicy, roomManager, syncManager)
-        rtmLogin {
-            if (it) {
-                roomNeedDestroy.forEach { roomId ->
-                    deleteRoom(roomId) {}
-                }
-                roomNeedDestroy.clear()
-            }
-        }
+        rtmLogin {}
     }
 
     /**
@@ -166,8 +159,6 @@ class ShowSyncManagerServiceImpl constructor(
      */
     private val roomInfoControllers = Collections.synchronizedList(mutableListOf<RoomInfoController>())
 
-    private var roomNeedDestroy = mutableListOf<String>()
-
     /**
      * Destroy
      *
@@ -204,28 +195,22 @@ class ShowSyncManagerServiceImpl constructor(
         success: (List<RoomDetailModel>) -> Unit,
         error: ((Exception) -> Unit)?
     ) {
-        roomService.getRoomList(BuildConfig.AGORA_APP_ID, kSceneId, System.currentTimeMillis(), 20) { e, ts, list ->
-            if (e != null) {
-                roomList = mutableListOf()
-                runOnMainThread { success.invoke(roomList) }
-            }
-            if (list != null) {
-                roomList = toDetailList(list)
-                roomList = removeReportRooms(roomList)
-                roomList.forEach {
-                    if (it.ownerId == UserManager.getInstance().user.id.toString()) {
-                        if (isRtmLogin) {
-                            syncManager.createScene(it.roomId).delete()
-                            roomManager.destroyRoom(BuildConfig.AGORA_APP_ID, kSceneId, it.roomId) {}
-                        } else {
-                            roomNeedDestroy.add(it.roomId)
-                        }
-
-                        //roomList.remove(it)
-                    }
-                }
-                runOnMainThread { success.invoke(roomList) }
-            }
+        rtmLogin {
+           if (it) {
+               roomService.getRoomList(BuildConfig.AGORA_APP_ID, kSceneId, System.currentTimeMillis(), 20, { room ->
+                   room.roomOwner?.userId == UserManager.getInstance().user.id.toString()
+               }) { e, ts, list ->
+                   if (e != null) {
+                       roomList = mutableListOf()
+                       runOnMainThread { success.invoke(roomList) }
+                   }
+                   if (list != null) {
+                       roomList = toDetailList(list)
+                       roomList = removeReportRooms(roomList)
+                       runOnMainThread { success.invoke(roomList) }
+                   }
+               }
+           }
         }
     }
 

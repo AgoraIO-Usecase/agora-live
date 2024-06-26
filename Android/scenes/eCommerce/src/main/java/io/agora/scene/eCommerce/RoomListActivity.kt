@@ -75,24 +75,6 @@ class RoomListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         StatusBarUtil.hideStatusBar(window, true)
         setContentView(mBinding.root)
-        fetchUniversalToken ({
-            val roomList = arrayListOf<VideoLoader.RoomInfo>( )
-            mRoomList.forEach { room ->
-                roomList.add(
-                    VideoLoader.RoomInfo(
-                        room.roomId,
-                        arrayListOf(
-                            VideoLoader.AnchorInfo(
-                                room.roomId,
-                                room.ownerId.toInt(),
-                                RtcEngineInstance.generalRtcToken()
-                            )
-                        )
-                    )
-                )
-            }
-            onRoomListScrollEventHandler?.updateRoomList(roomList)
-        })
         initView()
         initVideoSettings()
 
@@ -128,36 +110,40 @@ class RoomListActivity : AppCompatActivity() {
         mBinding.smartRefreshLayout.setEnableLoadMore(false)
         mBinding.smartRefreshLayout.setEnableRefresh(true)
         mBinding.smartRefreshLayout.setOnRefreshListener {
-            mService.fetchRoomList(
-                success = {
-                    val filterRoom = it.filter { it.ownerId != UserManager.getInstance().user.id.toString() }
-                    mRoomList.clear()
-                    mRoomList.addAll(filterRoom)
-                    if (isFirstLoad) {
-                        val roomList = arrayListOf<VideoLoader.RoomInfo>( )
-                        it.forEach { room ->
-                            roomList.add(
-                                VideoLoader.RoomInfo(
-                                    room.roomId,
-                                    arrayListOf(
-                                        VideoLoader.AnchorInfo(
-                                            room.roomId,
-                                            room.ownerId.toInt(),
-                                            RtcEngineInstance.generalRtcToken()
+            fetchUniversalToken ({
+                mService.fetchRoomList(
+                    success = {
+                        val filterRoom = it.filter { it.ownerId != UserManager.getInstance().user.id.toString() }
+                        mRoomList.clear()
+                        mRoomList.addAll(filterRoom)
+                        if (isFirstLoad) {
+                            val roomList = arrayListOf<VideoLoader.RoomInfo>( )
+                            it.forEach { room ->
+                                roomList.add(
+                                    VideoLoader.RoomInfo(
+                                        room.roomId,
+                                        arrayListOf(
+                                            VideoLoader.AnchorInfo(
+                                                room.roomId,
+                                                room.ownerId.toInt(),
+                                                RtcEngineInstance.generalRtcToken()
+                                            )
                                         )
                                     )
                                 )
-                            )
+                            }
+                            onRoomListScrollEventHandler?.updateRoomList(roomList)
+                            isFirstLoad = false
                         }
-                        onRoomListScrollEventHandler?.updateRoomList(roomList)
-                        isFirstLoad = false
+                        updateList(it)
+                    },
+                    error = {
+                        updateList(emptyList())
                     }
-                    updateList(it)
-                },
-                error = {
-                    updateList(emptyList())
-                }
-            )
+                )
+            }) {
+                updateList(emptyList())
+            }
         }
         mBinding.smartRefreshLayout.autoRefresh()
         mBinding.btnCreateRoom.setOnClickListener { goLivePrepareActivity() }
@@ -306,6 +292,10 @@ class RoomListActivity : AppCompatActivity() {
         success: () -> Unit,
         error: ((Exception?) -> Unit)? = null
     ) {
+        if (RtcEngineInstance.generalRtcToken() != "") {
+            success.invoke()
+            return
+        }
         val localUId = UserManager.getInstance().user.id
         TokenGenerator.generateTokens("", localUId.toString(),
             TokenGenerator.TokenGeneratorType.Token007,
@@ -335,11 +325,11 @@ class RoomListActivity : AppCompatActivity() {
     private fun initVideoSettings() {
         val deviceScore = RtcEngineInstance.rtcEngine.queryDeviceScore()
         val deviceLevel = if (deviceScore >= 90) {
-            VideoSetting.updateAudioSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
+            VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
             VideoSetting.setCurrAudienceEnhanceSwitch(true)
             VideoSetting.DeviceLevel.High
         } else if (deviceScore >= 75) {
-            VideoSetting.updateAudioSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
+            VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
             VideoSetting.setCurrAudienceEnhanceSwitch(true)
             VideoSetting.DeviceLevel.Medium
         } else {
