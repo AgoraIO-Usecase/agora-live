@@ -52,12 +52,12 @@ const val kRoomSceneId = "overseas_show_1.3.0"
 const val kRoomPresenceChannelName = "overseas_show_1_3_0_9999999999"
 const val kRobotUid = 2000000001
 val kRobotThumbnailIds = listOf("0", "1", "2")
-val kRobotAvatars = listOf("https://download.shengwang.cn/demo/release/bot1.png")
-val kRobotVideoRoomIds = arrayListOf(2023004, 2023005, 2023006)
+val kRobotAvatars = listOf("https://download.agora.io/demo/release/bot1.png")
+val kRobotVideoRoomIds = arrayListOf(2024001, 2024002, 2024003)
 val kRobotVideoStreamUrls = arrayListOf(
-    "https://download.shengwang.cn/demo/test/agora_test_video_10.mp4",
-    "https://download.shengwang.cn/demo/test/agora_test_video_11.mp4",
-    "https://download.shengwang.cn/demo/test/agora_test_video_12.mp4"
+    "https://download.agora.io/demo/release/agora_show_video_1.mp4",
+    "https://download.agora.io/demo/release/agora_show_video_2.mp4",
+    "https://download.agora.io/demo/release/agora_show_video_3.mp4"
 )
 
 class ShowServiceImpl(context: Context) : ShowServiceProtocol {
