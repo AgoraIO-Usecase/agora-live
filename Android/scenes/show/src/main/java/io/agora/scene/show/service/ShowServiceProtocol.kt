@@ -13,7 +13,7 @@ interface ShowServiceProtocol {
 
     companion object {
         // 房间存活时间，单位ms
-        var ROOM_AVAILABLE_DURATION: Long = 1200 * 1000
+        var ROOM_AVAILABLE_DURATION: Long = 10 * 60 * 1000
         // PK单局时间，单位ms
         var PK_AVAILABLE_DURATION: Long = 120 * 1000
 

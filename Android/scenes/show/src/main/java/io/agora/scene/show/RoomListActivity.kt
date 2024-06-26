@@ -111,7 +111,7 @@ class RoomListActivity : AppCompatActivity() {
 
         SceneAliveTime.fetchShowAliveTime ({ show, pk ->
             ShowLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
-            ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
+            // ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
             ShowServiceProtocol.PK_AVAILABLE_DURATION = pk * 1000L
         })
     }
