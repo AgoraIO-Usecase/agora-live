@@ -2209,6 +2209,8 @@ class LiveDetailFragment : Fragment() {
             mRtcEngine.leaveChannelEx(RtcConnection(prepareRkRoomId, UserManager.getInstance().user.id.toInt()))
         }
         prepareRkRoomId = ""
+        mBinding.videoLinkingAudienceLayout.videoContainer.setOnClickListener(null)
+        mBinding.videoPKLayout.iBroadcasterBView.setOnClickListener(null)
 
         if (isRoomOwner) {
             enableLocalAudio(true)
