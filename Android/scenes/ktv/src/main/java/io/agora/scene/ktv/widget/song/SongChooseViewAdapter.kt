@@ -30,15 +30,15 @@ internal abstract class SongChooseViewAdapter : BindingSingleAdapter<SongItem?, 
             .into(binding.coverItemSongList)
         if (data.isChosen) {
             binding.btnItemSongList.isEnabled = false
-            binding.btnItemSongList.setText(R.string.ktv_room_chosen_song)
+            binding.btnItemSongList.setText(R.string.ktv_room_song_selected)
             binding.btnItemSongList.setOnClickListener(null)
         } else {
             if (data.loading) {
                 binding.btnItemSongList.isEnabled = false
-                binding.btnItemSongList.setText(R.string.ktv_room_choose_song_loading)
+                binding.btnItemSongList.setText(R.string.ktv_room_song_loading)
             } else {
                 binding.btnItemSongList.isEnabled = true
-                binding.btnItemSongList.setText(R.string.ktv_room_choose_song)
+                binding.btnItemSongList.setText(R.string.ktv_room_song_selected)
             }
             binding.btnItemSongList.setOnClickListener { v: View? ->
                 data.loading = true

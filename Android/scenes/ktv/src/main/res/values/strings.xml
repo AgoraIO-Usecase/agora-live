@@ -22,10 +22,11 @@
     <string name="ktv_room_seat_off">Leave Seat</string>
     <string name="ktv_room_player_pause">Pause</string>
     <string name="ktv_room_player_play">Play</string>
-    <string name="ktv_room_choose_song">Choose</string>
-    <string name="ktv_room_chosen_song">Chosen</string>
-    <string name="ktv_room_choose_song_loading">Loading</string>
-    <string name="ktv_room_chosen_song_list">Song List</string>
+    <string name="ktv_room_choose_songs">Songs</string>
+    <string name="ktv_room_chosen_songs">Selected</string>
+    <string name="ktv_room_song_loading">Loading</string>
+    <string name="ktv_room_song_select">Select</string>
+    <string name="ktv_room_song_selected">Selected</string>
     <string name="ktv_room_sing2">Singing</string>
     <string name="ktv_room_no_sing">No one is singing now\nClick "Choose Song" to show your talent</string>
     <string name="ktv_dialog_migu_tip" />
