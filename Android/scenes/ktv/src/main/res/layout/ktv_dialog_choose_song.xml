@@ -21,10 +21,10 @@
         <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/rBtnChooseSong"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:button="@null"
             android:gravity="center"
-            android:text="@string/ktv_room_choose_song"
+            android:text="@string/ktv_room_choose_songs"
             android:textColor="@color/grey_to_white"
             android:textSize="16sp" />
 
@@ -35,7 +35,7 @@
             android:layout_marginStart="28dp"
             android:button="@null"
             android:gravity="center"
-            android:text="@string/ktv_room_chosen_song_list"
+            android:text="@string/ktv_room_chosen_songs"
             android:textColor="@color/grey_to_white"
             android:textSize="16sp" />
     </RadioGroup>
