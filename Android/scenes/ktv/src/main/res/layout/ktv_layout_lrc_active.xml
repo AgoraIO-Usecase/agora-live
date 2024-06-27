@@ -279,7 +279,8 @@
         app:iconPadding="0dp"
         app:iconTintMode="multiply"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textAllCaps="false"/>
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/rlMusicControlMenu"

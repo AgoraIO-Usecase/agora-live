@@ -37,7 +37,6 @@ class AUIRtmManager constructor(
 
     init {
         rtmClient.addEventListener(proxy)
-
         //publish message/set metadata timeout seconds = 3s
         rtmClient.setParameters("{\"rtm.msg.tx_timeout\": 3000}")
         rtmClient.setParameters("{\"rtm.metadata.api_timeout\": 3000}")
