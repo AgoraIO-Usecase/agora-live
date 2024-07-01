@@ -417,8 +417,12 @@ public typealias JoinExChannelCallBack = ((Bool, KTVJoinChorusFailReason?)-> Voi
     func getMusicPlayer() -> AgoraRtcMediaPlayerProtocol?
     
     /// 获取MCC实例
-    /// - Returns: <#description#>
+    /// - Returns: description
     func getMusicContentCenter() -> AgoraMusicContentCenter?
+    
+    
+    /// 拉取歌曲列表
+    func fetchSongList(complete: ((_ list: NSArray) -> Void)?)
     
     // 开启专业主播模式
     func enableProfessionalStreamerMode(_ enable: Bool)
