@@ -34,6 +34,7 @@ fileprivate enum KTVSongMode: Int {
    // private var musicPlayer: AgoraRtcMediaPlayerProtocol? //mcc
     private var mediaPlayer: AgoraRtcMediaPlayerProtocol? //local
     private var mcc: AgoraMusicContentCenter?
+    public var songLoader: KTVSoundLoader?
 
     private var loadSongMap = Dictionary<String, KTVLoadSongState>()
     private var lyricUrlMap = Dictionary<String, String>()
@@ -118,29 +119,11 @@ fileprivate enum KTVSongMode: Int {
         
         setParams()
         
-        if config.musicType == .mcc {
-            // ------------------ 初始化内容中心 ------------------
-            let contentCenterConfiguration = AgoraMusicContentCenterConfig()
-            contentCenterConfiguration.appId = config.appId
-            contentCenterConfiguration.mccUid = config.localUid
-            contentCenterConfiguration.token = config.rtmToken
-            contentCenterConfiguration.rtcEngine = config.engine
-            contentCenterConfiguration.maxCacheSize = UInt(config.maxCacheSize)
-            if let domain = config.mccDomain {
-                contentCenterConfiguration.mccDomain = domain
-            }
-            mcc = AgoraMusicContentCenter.sharedContentCenter(config: contentCenterConfiguration)
-            mcc?.register(self)
-            // ------------------ 初始化音乐播放器实例 ------------------
-            mediaPlayer = mcc?.createMusicPlayer(delegate: self)
-            mediaPlayer?.adjustPlayoutVolume(50)
-            mediaPlayer?.adjustPublishSignalVolume(50)
-        } else {
-            mediaPlayer = apiConfig?.engine?.createMediaPlayer(with: self)
-            // 音量最佳实践调整
-            mediaPlayer?.adjustPlayoutVolume(50)
-            mediaPlayer?.adjustPublishSignalVolume(50)
-        }
+        songLoader = KTVSoundLoader()
+        mediaPlayer = apiConfig?.engine?.createMediaPlayer(with: self)
+        // 音量最佳实践调整
+        mediaPlayer?.adjustPlayoutVolume(50)
+        mediaPlayer?.adjustPublishSignalVolume(50)
         apiConfig?.engine?.addDelegate(apiDelegateHandler)
         mediaPlayer?.setPlayerOption("play_pos_change_callback", value: 100)
         initTimer()
@@ -193,6 +176,12 @@ extension KTVApiImpl {
     
     func getMusicContentCenter() -> AgoraMusicContentCenter? {
         return mcc
+    }
+    
+    func fetchSongList(complete: ((_ list: NSArray) -> Void)?) {
+        songLoader?.fetchSongList(complete: { list in
+            complete?(list as NSArray)
+        })
     }
     
     func setLrcView(view: KTVLrcViewDelegate) {
@@ -737,90 +726,21 @@ extension KTVApiImpl {
         if (config.mode == .loadNone) {
             return
         }
-        
-        if mode == .loadLrcOnly {
-            loadLyric(with: songCode) { [weak self] url in
-                guard let self = self else { return }
-                agoraPrint("loadLrcOnly: songCode:\(self.songCode) ulr:\(String(describing: url))")
-//                if self.songCode != songCode {
-//                    onMusicLoadStateListener.onMusicLoadFail(songCode: songCode, reason: .cancled)
-//                    return
-//                }
-                if let urlPath = url, !urlPath.isEmpty {
-                    self.lyricUrlMap[String(self.songCode)] = urlPath
-                    self.setLyric(with: urlPath) { lyricUrl in
-                        onMusicLoadStateListener.onMusicLoadSuccess(songCode: self.songCode, lyricUrl: urlPath)
-                    }
-                } else {
-                    onMusicLoadStateListener.onMusicLoadFail(songCode: self.songCode, reason: .noLyricUrl)
+        switch mode {
+        case .loadLrcOnly, .loadMusicAndLrc:
+            if let urlPath = songLoader?.getLyricURL(songCode: songCode), !urlPath.isEmpty {
+                self.lyricUrlMap[String(self.songCode)] = urlPath
+                self.setLyric(with: urlPath) { lyricUrl in
+                    onMusicLoadStateListener.onMusicLoadSuccess(songCode: self.songCode, lyricUrl: urlPath)
                 }
-                
-//                if (config.autoPlay) {
-//                    // 主唱自动播放歌曲
-//                    if self.singerRole != .leadSinger {
-//                        self.switchSingerRole(newRole: .soloSinger) { _, _ in
-//                        }
-//                    }
-//                    self.startSing(songCode: self.songCode, startPos: 0)
-//                }
+            } else {
+                onMusicLoadStateListener.onMusicLoadFail(songCode: self.songCode, reason: .noLyricUrl)
             }
-        } else {
-            loadMusicListeners.setObject(onMusicLoadStateListener, forKey: "\(self.songCode)" as NSString)
-         //   onMusicLoadStateListener.onMusicLoadProgress(songCode: self.songCode, percent: 0, status: .preloading, msg: "", lyricUrl: "")
-            // TODO: 只有未缓存时才显示进度条
-            if mcc?.isPreloaded(songCode: songCode) != 0 {
-                onMusicLoadStateListener.onMusicLoadProgress(songCode: self.songCode, percent: 0, status: .preloading, msg: "", lyricUrl: "")
-            }
-            preloadMusic(with: songCode) { [weak self] status, songCode in
-                guard let self = self else { return }
-                if self.songCode != songCode {
-                    onMusicLoadStateListener.onMusicLoadFail(songCode: songCode, reason: .cancled)
-                    return
-                }
-                if status == .OK {
-                    if mode == .loadMusicAndLrc {
-                        // 需要加载歌词
-                        self.loadLyric(with: songCode) { url in
-                            if self.songCode != songCode {
-                                onMusicLoadStateListener.onMusicLoadFail(songCode: songCode, reason: .cancled)
-                                return
-                            }
-                            if let urlPath = url, !urlPath.isEmpty {
-                                self.lyricUrlMap[String(songCode)] = urlPath
-                                self.setLyric(with: urlPath) { lyricUrl in
-                                    onMusicLoadStateListener.onMusicLoadSuccess(songCode: songCode, lyricUrl: urlPath)
-                                    self.agoraPrint("loadMusicAndLrc: songCode:\(songCode) status:\(status.rawValue) ulr:\(String(describing: url))")
-                                }
-                            } else {
-                                onMusicLoadStateListener.onMusicLoadFail(songCode: songCode, reason: .noLyricUrl)
-                                self.agoraPrint("loadMusicAndLrc: songCode:\(songCode) status:\(status.rawValue) ulr:\(String(describing: url))")
-                            }
-//                            if config.autoPlay {
-//                                // 主唱自动播放歌曲
-//                                if self.singerRole != .leadSinger {
-//                                    self.switchSingerRole(newRole: .soloSinger) { _, _ in
-//                                    }
-//                                }
-//                                self.startSing(songCode: self.songCode, startPos: 0)
-//                            }
-                        }
-                    } else if mode == .loadMusicOnly {
-                        agoraPrint("loadMusicOnly: songCode:\(songCode) load success")
-//                        if config.autoPlay {
-//                            // 主唱自动播放歌曲
-//                            if self.singerRole != .leadSinger {
-//                                self.switchSingerRole(newRole: .soloSinger) { _, _ in
-//                                }
-//                            }
-//                            self.startSing(songCode: self.songCode, startPos: 0)
-//                        }
-                        onMusicLoadStateListener.onMusicLoadSuccess(songCode: songCode, lyricUrl: "")
-                    }
-                } else {
-                    agoraPrintError("load music failed songCode:\(songCode)")
-                    onMusicLoadStateListener.onMusicLoadFail(songCode: songCode, reason: .musicPreloadFail)
-                }
-            }
+            break
+        case .loadMusicOnly:
+            onMusicLoadStateListener.onMusicLoadSuccess(songCode: songCode, lyricUrl: "")
+            break
+        default: break
         }
     }
     
@@ -853,20 +773,17 @@ extension KTVApiImpl {
     }
 
     func startSing(songCode: Int, startPos: Int) {
-        sendCustomMessage(with: "startSing", label: "songCode:\(songCode), startPos: \(startPos)")
+        guard let url = songLoader?.getMusicURL(songCode: songCode) else { return  }
+        sendCustomMessage(with: "startSing", label: "url:\(url), startPos: \(startPos)")
         let role = singerRole
         agoraPrint("startSing role: \(role.rawValue)")
-        if self.songCode != songCode {
+        if self.songUrl != songUrl {
             agoraPrintError("startSing failed: canceled")
             return
         }
-        
-        if self.singerRole == .leadSinger || self.singerRole == .soloSinger {
-            mediaPlayer?.setPlayerOption("enable_multi_audio_track", value: 1)
-        }
         apiConfig?.engine?.adjustPlaybackSignalVolume(Int(remoteVolume))
-        let ret = (mediaPlayer as? AgoraMusicPlayerProtocol)?.openMedia(songCode: songCode, startPos: startPos)
-        agoraPrintError("startSing->openMedia(\(songCode) fail: \(ret ?? -1)")
+        let ret = mediaPlayer?.open(url, startPos: startPos)
+        agoraPrintError("startSing->openMedia(\(url) fail: \(ret ?? -1)")
     }
     
     func startSing(url: String, startPos: Int) {
