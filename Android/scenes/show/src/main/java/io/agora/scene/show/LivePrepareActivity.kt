@@ -18,7 +18,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcConnection
-import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.component.BaseViewBindingActivity
@@ -27,9 +26,9 @@ import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.show.databinding.ShowLivePrepareActivityBinding
 import io.agora.scene.show.debugSettings.DebugSettingDialog
+import io.agora.scene.show.service.ShowRoomDetailModel
 import io.agora.scene.show.service.ShowServiceProtocol
 import io.agora.scene.show.widget.BeautyDialog
-import io.agora.scene.show.widget.PictureQualityDialog
 import io.agora.scene.show.widget.PresetDialog
 import io.agora.scene.widget.dialog.PermissionLeakDialog
 import io.agora.scene.widget.utils.StatusBarUtil
@@ -46,7 +45,7 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
     /**
      * M service
      */
-    private val mService by lazy { ShowServiceProtocol.getImplInstance() }
+    private val mService by lazy { ShowServiceProtocol.get() }
 
     /**
      * M input method manager
@@ -260,18 +259,20 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
         binding.btnStartLive.isEnabled = false
 
         mayFetchUniversalToken {
-            mService.createRoom(mRoomId, roomName, mThumbnailId, VideoSetting.isPureMode, {
-                runOnUiThread {
-                    isFinishToLiveDetail = true
-                    LiveDetailActivity.launch(this@LivePrepareActivity, it)
-                    finish()
-                }
-            }, {
-                runOnUiThread {
-                    ToastUtils.showToast(it.message)
-                    binding.btnStartLive.isEnabled = true
-                }
-            })
+            isFinishToLiveDetail = true
+            LiveDetailActivity.launch(this@LivePrepareActivity, ShowRoomDetailModel(
+                mRoomId,
+                roomName,
+                0,
+                UserManager.getInstance().user.id.toString(),
+                mThumbnailId,
+                UserManager.getInstance().user.headUrl,
+                UserManager.getInstance().user.name,
+                VideoSetting.isPureMode,
+                TimeUtils.currentTimeMillis().toDouble(),
+                TimeUtils.currentTimeMillis().toDouble(),
+            ))
+            finish()
         }
     }
 

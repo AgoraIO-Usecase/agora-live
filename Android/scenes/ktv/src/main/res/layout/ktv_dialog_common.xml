@@ -58,7 +58,8 @@
         android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btnRight"
-        app:layout_constraintTop_toBottomOf="@id/tvDesc" />
+        app:layout_constraintTop_toBottomOf="@id/tvDesc"
+        android:textAllCaps="false"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnRight"
@@ -74,5 +75,6 @@
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btnLeft"
-        app:layout_constraintTop_toBottomOf="@id/tvDesc" />
+        app:layout_constraintTop_toBottomOf="@id/tvDesc"
+        android:textAllCaps="false"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
