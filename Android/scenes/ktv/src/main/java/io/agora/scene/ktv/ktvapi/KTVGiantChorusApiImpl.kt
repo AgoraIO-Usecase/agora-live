@@ -18,7 +18,7 @@ import org.json.JSONObject
 import java.util.concurrent.*
 
 class KTVGiantChorusApiImpl(
-    val giantChorusApiConfig: KTVGiantChorusApiConfig
+   val giantChorusApiConfig: KTVGiantChorusApiConfig
 ) : KTVApi, IMusicContentCenterEventHandler, IMediaPlayerObserver, IRtcEngineEventHandler() {
 
     companion object {
@@ -195,13 +195,13 @@ class KTVGiantChorusApiImpl(
     // 日志输出
     private fun ktvApiLog(msg: String) {
         if (isRelease) return
-        apiReporter.writeLog("[${tag}] $msg", LOG_LEVEL_INFO)
+        apiReporter.writeLog("[$tag] $msg", LOG_LEVEL_INFO)
     }
 
     // 日志输出
     private fun ktvApiLogError(msg: String) {
         if (isRelease) return
-        apiReporter.writeLog("[${tag}] $msg", LOG_LEVEL_ERROR)
+        apiReporter.writeLog("[$tag] $msg", LOG_LEVEL_ERROR)
     }
 
     override fun renewInnerDataStreamId() {
@@ -349,14 +349,11 @@ class KTVGiantChorusApiImpl(
         apiReporter.reportFuncEvent("enableMulitpathing", mapOf("enable" to enable), mapOf())
         this.enableMultipathing = enable
 
-        // TODO 4.3.1 not ready
-//        if (singerRole == KTVSingRole.LeadSinger || singerRole == KTVSingRole.CoSinger) {
-//            subChorusConnection?.let {
-//                mRtcEngine.updateChannelMediaOptionsEx(ChannelMediaOptions().apply {
-//                    parameters = "{\"rtc.enableMultipath\": $enable, \"rtc.path_scheduling_strategy\": 0, \"rtc.remote_path_scheduling_strategy\": 0}"
-//                }, subChorusConnection)
-//            }
-//        }
+        if (singerRole == KTVSingRole.LeadSinger || singerRole == KTVSingRole.CoSinger) {
+            subChorusConnection?.let {
+                mRtcEngine.setParametersEx("{\"rtc.enableMultipath\": $enable, \"rtc.path_scheduling_strategy\": 0, \"rtc.remote_path_scheduling_strategy\": 0}", it)
+            }
+        }
     }
 
     override fun renewToken(rtmToken: String, chorusChannelRtcToken: String) {
@@ -423,6 +420,7 @@ class KTVGiantChorusApiImpl(
                     dealWithAudioMetadata(uid, data)
                 }
             })
+            mRtcEngine.setParametersEx("{\"rtc.use_audio4\": true}", RtcConnection(giantChorusApiConfig.audienceChannelName, giantChorusApiConfig.localUid))
 
             singerRole = newRole
             ktvApiEventHandlerList.forEach { it.onSingerRoleChanged(oldRole, newRole) }
@@ -448,6 +446,7 @@ class KTVGiantChorusApiImpl(
                     dealWithAudioMetadata(uid, data)
                 }
             })
+            mRtcEngine.setParametersEx("{\"rtc.use_audio4\": true}", RtcConnection(giantChorusApiConfig.audienceChannelName, giantChorusApiConfig.localUid))
 
             singerRole = newRole
             ktvApiEventHandlerList.forEach { it.onSingerRoleChanged(oldRole, newRole) }
@@ -769,14 +768,7 @@ class KTVGiantChorusApiImpl(
         singChannelMediaOptions.autoSubscribeAudio = true
         singChannelMediaOptions.publishMicrophoneTrack = true
         singChannelMediaOptions.clientRoleType = CLIENT_ROLE_BROADCASTER
-        //singChannelMediaOptions.parameters = "{\"che.audio.max_mixed_participants\": 8}" // TODO 4.3.1 not ready
-        if (newRole == KTVSingRole.LeadSinger) {
-            // 主唱不参加TopN
-            singChannelMediaOptions.isAudioFilterable = false
-            mRtcEngine.setParameters("{\"che.audio.filter_streams\":${KTVApi.routeSelectionConfig.streamNum}}")
-        } else {
-            mRtcEngine.setParameters("{\"che.audio.filter_streams\":${KTVApi.routeSelectionConfig.streamNum - 1}}")
-        }
+        singChannelMediaOptions.isAudioFilterable = newRole != KTVSingRole.LeadSinger // 主唱不参加TopN
 
         // 加入演唱频道
         mRtcEngine.joinChannelEx(giantChorusApiConfig.chorusChannelToken, singChannelRtcConnection, singChannelMediaOptions, object :
@@ -884,16 +876,19 @@ class KTVGiantChorusApiImpl(
                 }
             }
         })
-        mRtcEngine.setParameters("{\"rtc.use_audio4\": true}")
+
+        mRtcEngine.setParametersEx("{\"che.audio.max_mixed_participants\": 8}", singChannelRtcConnection)
+        mRtcEngine.setParametersEx("{\"rtc.use_audio4\": true}", singChannelRtcConnection)
+
         // 选路策略处理
         if (KTVApi.routeSelectionConfig.type == GiantChorusRouteSelectionType.TOP_N || KTVApi.routeSelectionConfig.type == GiantChorusRouteSelectionType.BY_DELAY_AND_TOP_N) {
             if (newRole == KTVSingRole.LeadSinger) {
-                mRtcEngine.setParameters("{\"che.audio.filter_streams\":${KTVApi.routeSelectionConfig.streamNum}}")
+                mRtcEngine.setParametersEx("{\"che.audio.filter_streams\":${KTVApi.routeSelectionConfig.streamNum}}", singChannelRtcConnection)
             } else {
-                mRtcEngine.setParameters("{\"che.audio.filter_streams\":${KTVApi.routeSelectionConfig.streamNum - 1}}")
+                mRtcEngine.setParametersEx("{\"che.audio.filter_streams\":${KTVApi.routeSelectionConfig.streamNum - 1}}", singChannelRtcConnection)
             }
         } else {
-            mRtcEngine.setParameters("{\"che.audio.filter_streams\": 0}")
+            mRtcEngine.setParametersEx("{\"che.audio.filter_streams\": 0}", singChannelRtcConnection)
         }
         mRtcEngine.enableAudioVolumeIndicationEx(50, 10, true, singChannelRtcConnection)
 
@@ -934,6 +929,7 @@ class KTVGiantChorusApiImpl(
                             ktvApiLog("onMPKLeaveChannel")
                         }
                     })
+                mRtcEngine.setParametersEx("{\"rtc.use_audio4\": true}", mpkConnection)
             }
             KTVSingRole.CoSinger -> {
                 // 防止主唱和合唱听见mpk流的声音

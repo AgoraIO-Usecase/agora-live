@@ -348,15 +348,11 @@ class KTVApiImpl(
         apiReporter.reportFuncEvent("enableMulitpathing", mapOf("enable" to enable), mapOf())
         this.enableMultipathing = enable
 
-        // TODO 4.3.1 not ready
-//        if (singerRole == KTVSingRole.LeadSinger || singerRole == KTVSingRole.CoSinger) {
-//            subChorusConnection?.let {
-//                mRtcEngine.updateChannelMediaOptionsEx(ChannelMediaOptions().apply {
-//                    parameters =
-//                        "{\"rtc.enableMultipath\": $enable, \"rtc.path_scheduling_strategy\": 0, \"rtc.remote_path_scheduling_strategy\": 0}"
-//                }, subChorusConnection)
-//            }
-//        }
+        if (singerRole == KTVSingRole.LeadSinger || singerRole == KTVSingRole.CoSinger) {
+            subChorusConnection?.let {
+                mRtcEngine.setParametersEx("{\"rtc.enableMultipath\": $enable, \"rtc.path_scheduling_strategy\": 0, \"rtc.remote_path_scheduling_strategy\": 0}", it)
+            }
+        }
     }
 
     override fun switchAudioTrack(mode: AudioTrackMode) {
@@ -811,12 +807,6 @@ class KTVApiImpl(
         if (ktvApiConfig.type != KTVType.SingRelay) {
             if (this.singerRole == KTVSingRole.SoloSinger || this.singerRole == KTVSingRole.LeadSinger) {
                 mRtcEngine.adjustRecordingSignalVolume(if (isOnMicOpen) 100 else 0)
-
-                val channelMediaOption = ChannelMediaOptions()
-                channelMediaOption.publishMicrophoneTrack = isOnMicOpen
-                channelMediaOption.clientRoleType = CLIENT_ROLE_BROADCASTER
-                mRtcEngine.updateChannelMediaOptions(channelMediaOption)
-                mRtcEngine.muteLocalAudioStream(!isOnMicOpen)
             } else {
                 val channelMediaOption = ChannelMediaOptions()
                 channelMediaOption.publishMicrophoneTrack = isOnMicOpen
@@ -1017,11 +1007,6 @@ class KTVApiImpl(
         channelMediaOption.enableAudioRecordingOrPlayout =
             newRole != KTVSingRole.LeadSinger
         channelMediaOption.clientRoleType = CLIENT_ROLE_BROADCASTER
-        // TODO 4.3.1 not ready
-//        if (enableMultipathing) {
-//            channelMediaOption.parameters =
-//                "{\"rtc.path_scheduling_strategy\":0, \"rtc.enableMultipath\": true, \"rtc.remote_path_scheduling_strategy\": 0}"
-//        }
 
         val rtcConnection = RtcConnection()
         rtcConnection.channelId = ktvApiConfig.chorusChannelName
@@ -1034,7 +1019,6 @@ class KTVApiImpl(
             channelMediaOption,
             null
         )
-        mRtcEngine.setParameters("{\"rtc.use_audio4\": true}")
         val handler = object : IRtcEngineEventHandler() {
             override fun onJoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
                 ktvApiLog("onJoinChannel2Success: channel:$channel, uid:$uid")
@@ -1082,6 +1066,7 @@ class KTVApiImpl(
         }
         handlerEx = handler
         mRtcEngine.addHandlerEx(handler, rtcConnection)
+        mRtcEngine.setParametersEx("{\"rtc.path_scheduling_strategy\":0, \"rtc.enableMultipath\": true, \"rtc.remote_path_scheduling_strategy\": 0}", rtcConnection)
 
         if (ret != 0) {
             ktvApiLogError("joinChorus2ndChannel failed: $ret")

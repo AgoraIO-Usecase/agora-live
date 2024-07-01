@@ -47,6 +47,8 @@
             android:layout_height="wrap_content"
             android:text="@string/ktv_earback_switch"
             android:textColor="@color/white"
+            android:textSize="13sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -124,6 +126,8 @@
         android:paddingHorizontal="20dp"
         android:text="@string/ktv_earback_setting"
         android:textColor="@color/white"
+        android:textSize="13sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layoutEarBackTips" />
@@ -144,16 +148,19 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvVolumeTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/ktv_earback_volume"
+            android:textSize="13sp"
+            android:textStyle="bold"
             android:textColor="@color/white" />
 
         <ImageButton
             android:id="@+id/btEarBackDown"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="5dp"
             android:background="@null"
             android:contentDescription="@string/ktv_tone_down"
             android:padding="6dp"
@@ -175,7 +182,6 @@
             android:id="@+id/btEarBackUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
             android:background="@null"
             android:contentDescription="@string/ktv_tone_up"
             android:padding="6dp"
@@ -284,6 +290,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ktv_earback_delay"
+                android:textStyle="bold"
                 android:textColor="@color/white_60_percent"
                 android:textSize="13sp" />
 
@@ -293,7 +300,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/ktv_earback_delay_test"
                 android:textColor="@color/white_60_percent"
-                android:textSize="11sp" />
+                android:textSize="12sp" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvPing"
@@ -303,6 +310,7 @@
                 android:layout_marginTop="20dp"
                 android:gravity="center"
                 android:text="105ms"
+                android:textSize="13sp"
                 android:textColor="#6d7291" />
 
             <ProgressBar

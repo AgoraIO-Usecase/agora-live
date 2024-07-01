@@ -8,6 +8,7 @@ import io.agora.rtc2.video.ColorEnhanceOptions
 import io.agora.rtc2.video.LowLightEnhanceOptions
 import io.agora.rtc2.video.VideoDenoiserOptions
 import io.agora.rtc2.video.VideoEncoderConfiguration
+import io.agora.rtc2.video.VideoEncoderConfiguration.VIDEO_CODEC_TYPE
 import io.agora.scene.base.Constant
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.utils.GsonUtils
@@ -116,8 +117,17 @@ object VideoSetting {
         FrameRate.FPS_7,
         FrameRate.FPS_10,
         FrameRate.FPS_15,
-        FrameRate.FPS_24
+        FrameRate.FPS_24,
+        FrameRate.FPS_30
     )
+
+    val EncoderList = listOf(
+        VIDEO_CODEC_TYPE.VIDEO_CODEC_H264,
+        VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
+        VIDEO_CODEC_TYPE.VIDEO_CODEC_AV1,
+    )
+
+    fun VIDEO_CODEC_TYPE.toIndex() = EncoderList.indexOf(this)
 
     /**
      * Device level
@@ -249,11 +259,11 @@ object VideoSetting {
          * @constructor Create empty Video
          */
         data class Video constructor(
-            val H265: Boolean,
+            val codecType: VIDEO_CODEC_TYPE,
             val colorEnhance: Boolean,
             val lowLightEnhance: Boolean,
             val videoDenoiser: Boolean,
-            val PVC: Boolean,
+            var PVC: Boolean,
             val captureResolution: Resolution,
             val encodeResolution: Resolution,
             val frameRate: FrameRate,
@@ -308,11 +318,11 @@ object VideoSetting {
          */
         val LowDevice1v1 = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
-                PVC = false,
+                PVC = true,
                 captureResolution = Resolution.V_720P,
                 encodeResolution = Resolution.V_720P,
                 frameRate = FrameRate.FPS_15,
@@ -329,7 +339,7 @@ object VideoSetting {
          */
         val MediumDevice1v1 = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
@@ -350,7 +360,7 @@ object VideoSetting {
          */
         val HighDevice1v1 = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
@@ -371,7 +381,7 @@ object VideoSetting {
          */
         val Audience1v1 = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
@@ -392,7 +402,7 @@ object VideoSetting {
          */
         val LowDevicePK = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
@@ -413,7 +423,7 @@ object VideoSetting {
          */
         val MediumDevicePK = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
@@ -434,7 +444,7 @@ object VideoSetting {
          */
         val HighDevicePK = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
@@ -727,10 +737,10 @@ object VideoSetting {
     fun updateAudienceSetting() {
         if (currAudienceDeviceLevel != DeviceLevel.Low) {
             setCurrAudienceEnhanceSwitch(true)
-            updateAudioSetting(SR = SuperResolution.SR_AUTO)
+            updateSRSetting(SR = SuperResolution.SR_AUTO)
         } else {
             setCurrAudienceEnhanceSwitch(false)
-            updateAudioSetting(SR = SuperResolution.SR_NONE)
+            updateSRSetting(SR = SuperResolution.SR_NONE)
         }
     }
 
@@ -739,7 +749,7 @@ object VideoSetting {
      *
      * @param SR
      */
-    fun updateAudioSetting(SR: SuperResolution? = null) {
+    fun updateSRSetting(SR: SuperResolution? = null) {
         setCurrAudienceSetting(
             AudienceSetting(AudienceSetting.Video(SR ?: currAudienceSetting.video.SR))
         )
@@ -764,7 +774,7 @@ object VideoSetting {
         isByAudience: Boolean = false,
         rtcConnection: RtcConnection? = null
     ) {
-        //CommerceLogger.d("VideoSettings", "updateBroadcastSetting, deviceLevel:$deviceLevel networkLevel:$networkLevel broadcastStrategy:$broadcastStrategy")
+        CommerceLogger.d("VideoSettings", "updateBroadcastSetting, deviceLevel:$deviceLevel networkLevel:$networkLevel broadcastStrategy:$broadcastStrategy")
         var liveMode = LiveMode.OneVOne
         if (isByAudience) {
             setCurrAudienceDeviceLevel(deviceLevel)
@@ -792,6 +802,8 @@ object VideoSetting {
                     DeviceLevel.Medium -> RecommendBroadcastSetting.MediumDevicePK
                     DeviceLevel.High -> RecommendBroadcastSetting.HighDevicePK
                 }
+            }.apply {
+                video.PVC = broadcastStrategy != BroadcastStrategy.Clear
             },
             if (broadcastStrategy == BroadcastStrategy.Smooth) when (liveMode) {
                 LiveMode.OneVOne -> when (deviceLevel) {
@@ -875,7 +887,7 @@ object VideoSetting {
         updateRTCBroadcastSetting(
             rtcConnection,
             isJoinedRoom,
-            currBroadcastSetting.video.H265,
+            currBroadcastSetting.video.codecType,
             currBroadcastSetting.video.colorEnhance,
             currBroadcastSetting.video.lowLightEnhance,
             currBroadcastSetting.video.videoDenoiser,
@@ -931,7 +943,7 @@ object VideoSetting {
         rtcConnection: RtcConnection? = null,
         isJoinedRoom: Boolean = true,
 
-        h265: Boolean? = null,
+        codecType: VIDEO_CODEC_TYPE? = null,
         colorEnhance: Boolean? = null,
         lowLightEnhance: Boolean? = null,
         videoDenoiser: Boolean? = null,
@@ -951,7 +963,7 @@ object VideoSetting {
         setCurrBroadcastSetting(
             BroadcastSetting(
                 BroadcastSetting.Video(
-                    h265 ?: currBroadcastSetting.video.H265,
+                    codecType ?: currBroadcastSetting.video.codecType,
                     colorEnhance ?: currBroadcastSetting.video.colorEnhance,
                     lowLightEnhance ?: currBroadcastSetting.video.lowLightEnhance,
                     videoDenoiser ?: currBroadcastSetting.video.videoDenoiser,
@@ -984,7 +996,7 @@ object VideoSetting {
         updateRTCBroadcastSetting(
             rtcConnection,
             isJoinedRoom,
-            h265,
+            codecType,
             colorEnhance,
             lowLightEnhance,
             videoDenoiser,
@@ -1079,7 +1091,7 @@ object VideoSetting {
         rtcConnection: RtcConnection? = null,
         isJoinedRoom: Boolean,
 
-        h265: Boolean? = null,
+        codecType: VIDEO_CODEC_TYPE? = null,
         colorEnhance: Boolean? = null,
         lowLightEnhance: Boolean? = null,
         videoDenoiser: Boolean? = null,
@@ -1097,10 +1109,12 @@ object VideoSetting {
         //CommerceLogger.d("VideoSettings", "updateRTCBroadcastSetting, frameRate:$frameRate")
         val rtcEngine = RtcEngineInstance.rtcEngine
         val videoEncoderConfiguration = RtcEngineInstance.videoEncoderConfiguration
-        h265?.let {
-            if (!isJoinedRoom) {
-                rtcEngine.setParameters("{\"engine.video.enable_hw_encoder\":${it}}")
-                rtcEngine.setParameters("{\"che.video.videoCodecIndex\":${if(it) 2 else 1}}")
+        codecType?.let {
+            videoEncoderConfiguration.codecType = it
+            if (rtcConnection != null) {
+                rtcEngine.setVideoEncoderConfigurationEx(videoEncoderConfiguration, rtcConnection)
+            } else {
+                rtcEngine.setVideoEncoderConfiguration(videoEncoderConfiguration)
             }
         }
         colorEnhance?.let {
@@ -1124,17 +1138,15 @@ object VideoSetting {
                 val fps: Int = frameRate?.fps.let { getCurrBroadcastSetting().video.frameRate.fps }
                 rtcEngine.setCameraCapturerConfiguration(
                     CameraCapturerConfiguration(
-                    CameraCapturerConfiguration.CaptureFormat(it.width, it.height, fps)
-                ).apply {
-                    followEncodeDimensionRatio = true
-                })
+                        CameraCapturerConfiguration.CaptureFormat(it.width, it.height, fps)
+                    ).apply {
+                        followEncodeDimensionRatio = true
+                    })
             }
         }
         encoderResolution?.let {
             videoEncoderConfiguration.dimensions =
                 VideoEncoderConfiguration.VideoDimensions(it.width, it.height)
-//            videoEncoderConfiguration.mirrorMode =
-//                if (RtcEngineInstance.isFrontCamera) VideoEncoderConfiguration.MIRROR_MODE_TYPE.MIRROR_MODE_ENABLED else VideoEncoderConfiguration.MIRROR_MODE_TYPE.MIRROR_MODE_DISABLED
             if (rtcConnection != null) {
                 rtcEngine.setVideoEncoderConfigurationEx(videoEncoderConfiguration, rtcConnection)
             } else {
@@ -1171,6 +1183,7 @@ object VideoSetting {
         }
         audioMixingVolume?.let {
             if (rtcConnection != null) {
+                //videoSwitcher.adjustAudioMixingVolume(rtcConnection, it)
             } else {
                 rtcEngine.adjustAudioMixingVolume(it)
             }

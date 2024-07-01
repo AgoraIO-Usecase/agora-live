@@ -32,6 +32,7 @@ import io.agora.rtc2.IRtcEngineEventHandler
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoCanvas
+import io.agora.rtc2.video.VideoEncoderConfiguration
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.base.utils.ToastUtils
@@ -575,7 +576,7 @@ class LiveDetailFragment : Fragment() {
      *
      */
     private fun changeStatisticVisible() {
-        val visible = !mBinding.topLayout.tlStatistic.isVisible
+        val visible = !mBinding.topLayout.flStatistic.isVisible
         changeStatisticVisible(visible)
     }
 
@@ -586,13 +587,36 @@ class LiveDetailFragment : Fragment() {
      */
     private fun changeStatisticVisible(visible: Boolean) {
         val topBinding = mBinding.topLayout
-        topBinding.tlStatistic.isVisible = visible
-        topBinding.ivStatisticClose.isVisible = visible
+        topBinding.flStatistic.isVisible = visible
+        topBinding.tlStatisticSender.isVisible = isRoomOwner
+        topBinding.tlStatisticReceiver.isVisible = !isRoomOwner
+        topBinding.tlStatisticOther.isVisible = false
+        topBinding.ivStatisticVector.isActivated = false
         refreshStatisticInfo(0, 0)
         topBinding.ivStatisticClose.setOnClickListener {
-            topBinding.tlStatistic.isVisible = false
-            topBinding.ivStatisticClose.isVisible = false
+            topBinding.flStatistic.isVisible = false
         }
+        topBinding.ivStatisticVector.setOnClickListener {
+            topBinding.ivStatisticVector.isActivated = !topBinding.ivStatisticVector.isActivated
+            updateStatisticView()
+        }
+    }
+
+    private fun updateStatisticView() {
+        val topBinding = mBinding.topLayout
+        val expand = topBinding.ivStatisticVector.isActivated
+
+        val showSender = isRoomOwner
+        topBinding.tlStatisticSender.isVisible = showSender
+
+        val showReceiver = !isRoomOwner
+        if (showSender) {
+            topBinding.tlStatisticReceiver.isVisible = expand && showReceiver
+        } else {
+            topBinding.tlStatisticReceiver.isVisible = showReceiver
+        }
+
+        topBinding.tlStatisticOther.isVisible = expand
     }
 
     /**
@@ -619,49 +643,82 @@ class LiveDetailFragment : Fragment() {
         upLinkBps: Int? = null, downLinkBps: Int? = null,
         encodeVideoSize: Size? = null, receiveVideoSize: Size? = null,
         encodeFps: Int? = null, receiveFPS: Int? = null,
+        encodeType: Int? = null,
         downDelay: Int? = null,
         upLossPackage: Int? = null, downLossPackage: Int? = null,
         upBitrate: Int? = null, downBitrate: Int? = null,
     ) {
         activity ?: return
         val topBinding = mBinding.topLayout
-        val statisticBinding = topBinding.tlStatistic
-        val visible = statisticBinding.isVisible
+        val visible = topBinding.flStatistic.isVisible
         if (!visible) {
             return
         }
+
+        // sender
         encodeVideoSize?.let { topBinding.tvEncodeResolution.text = getString(R.string.commerce_statistic_encode_resolution, "${it.height}x${it.width}") }
         if (topBinding.tvEncodeResolution.text.isEmpty()) topBinding.tvEncodeResolution.text = getString(R.string.commerce_statistic_encode_resolution, "--")
-        receiveVideoSize?.let { topBinding.tvReceiveResolution.text = getString(R.string.commerce_statistic_receive_resolution, "${it.height}x${it.width}") }
-        if (topBinding.tvReceiveResolution.text.isEmpty()) topBinding.tvReceiveResolution.text = getString(R.string.commerce_statistic_receive_resolution, "--")
         encodeFps?.let { topBinding.tvStatisticEncodeFPS.text = getString(R.string.commerce_statistic_encode_fps, it.toString()) }
         if (topBinding.tvStatisticEncodeFPS.text.isEmpty()) topBinding.tvStatisticEncodeFPS.text = getString(R.string.commerce_statistic_encode_fps, "--")
+        upBitrate?.let { topBinding.tvStatisticUpBitrate.text = getString(R.string.commerce_statistic_up_bitrate, it.toString()) }
+        if (topBinding.tvStatisticUpBitrate.text.isEmpty()) topBinding.tvStatisticUpBitrate.text = getString(R.string.commerce_statistic_up_bitrate, "--")
+        upLossPackage?.let { topBinding.tvStatisticUpLossPackage.text = getString(R.string.commerce_statistic_up_loss_package, it.toString()) }
+        if (topBinding.tvStatisticUpLossPackage.text.isEmpty()) topBinding.tvStatisticUpLossPackage.text = getString(R.string.commerce_statistic_up_loss_package, "--")
+        topBinding.tvStatisticUpNet.isVisible = !isAudioOnlyMode
+        upLinkBps?.let { topBinding.tvStatisticUpNet.text = getString(R.string.commerce_statistic_up_net_speech, (it / 8192).toString()) }
+        if (topBinding.tvStatisticUpNet.text.isEmpty()) topBinding.tvStatisticUpNet.text = getString(R.string.commerce_statistic_up_net_speech, "--")
+
+        // receiver
+        receiveVideoSize?.let { topBinding.tvReceiveResolution.text = getString(R.string.commerce_statistic_receive_resolution, "${it.height}x${it.width}") }
+        if (topBinding.tvReceiveResolution.text.isEmpty()) topBinding.tvReceiveResolution.text = getString(R.string.commerce_statistic_receive_resolution, "--")
         receiveFPS?.let { topBinding.tvStatisticReceiveFPS.text = getString(R.string.commerce_statistic_receive_fps, it.toString()) }
         if (topBinding.tvStatisticReceiveFPS.text.isEmpty()) topBinding.tvStatisticReceiveFPS.text = getString(R.string.commerce_statistic_receive_fps, "--")
         downDelay?.let { topBinding.tvStatisticDownDelay.text = getString(R.string.commerce_statistic_delay, it.toString()) }
         if (topBinding.tvStatisticDownDelay.text.isEmpty()) topBinding.tvStatisticDownDelay.text = getString(R.string.commerce_statistic_delay, "--")
-        upLossPackage?.let { topBinding.tvStatisticUpLossPackage.text = getString(R.string.commerce_statistic_up_loss_package, it.toString()) }
-        if (topBinding.tvStatisticUpLossPackage.text.isEmpty()) topBinding.tvStatisticUpLossPackage.text = getString(R.string.commerce_statistic_up_loss_package, "--")
         downLossPackage?.let { topBinding.tvStatisticDownLossPackage.text = getString(R.string.commerce_statistic_down_loss_package, it.toString()) }
         if (topBinding.tvStatisticDownLossPackage.text.isEmpty()) topBinding.tvStatisticDownLossPackage.text = getString(R.string.commerce_statistic_down_loss_package, "--")
-        upBitrate?.let { topBinding.tvStatisticUpBitrate.text = getString(R.string.commerce_statistic_up_bitrate, it.toString()) }
-        if (topBinding.tvStatisticUpBitrate.text.isEmpty()) topBinding.tvStatisticUpBitrate.text = getString(R.string.commerce_statistic_up_bitrate, "--")
         downBitrate?.let { topBinding.tvStatisticDownBitrate.text = getString(R.string.commerce_statistic_down_bitrate, it.toString()) }
         if (topBinding.tvStatisticDownBitrate.text.isEmpty()) topBinding.tvStatisticDownBitrate.text = getString(R.string.commerce_statistic_down_bitrate, "--")
-        topBinding.tvStatisticUpNet.isVisible = !isAudioOnlyMode
-        upLinkBps?.let { topBinding.tvStatisticUpNet.text = getString(R.string.commerce_statistic_up_net_speech, (it / 8192).toString()) }
-        if (topBinding.tvStatisticUpNet.text.isEmpty()) topBinding.tvStatisticUpNet.text = getString(R.string.commerce_statistic_up_net_speech, "--")
+
         topBinding.tvStatisticDownNet.isVisible = !isAudioOnlyMode
         downLinkBps?.let { topBinding.tvStatisticDownNet.text = getString(R.string.commerce_statistic_down_net_speech, (it / 8192).toString()) }
         if (topBinding.tvStatisticDownNet.text.isEmpty()) topBinding.tvStatisticDownNet.text = getString(R.string.commerce_statistic_down_net_speech, "--")
-        topBinding.tvQuickStartTime.isVisible = true
-        if (isRoomOwner) {
-            topBinding.tvQuickStartTime.text = getString(R.string.commerce_statistic_quick_start_time, "--")
-        } else {
-            topBinding.tvQuickStartTime.text = getString(R.string.commerce_statistic_quick_start_time, quickStartTime.toString())
+
+        // other
+        topBinding.tvLocalUid.text =
+            getString(R.string.commerce_local_uid, UserManager.getInstance().user.id.toString())
+
+        topBinding.tvEncoder.isVisible = isRoomOwner
+        encodeType?.let {
+            topBinding.tvEncoder.text =
+                getString(
+                    R.string.commerce_statistic_encoder, when (it) {
+                        VideoEncoderConfiguration.VIDEO_CODEC_TYPE.VIDEO_CODEC_H264.value -> "H264"
+                        VideoEncoderConfiguration.VIDEO_CODEC_TYPE.VIDEO_CODEC_H265.value -> "H265"
+                        VideoEncoderConfiguration.VIDEO_CODEC_TYPE.VIDEO_CODEC_AV1.value -> "AV1"
+                        else -> "--"
+                    }
+                )
         }
-        topBinding.tvStatisticDeviceGrade.isVisible = true
+        if (topBinding.tvEncoder.text.isEmpty()) topBinding.tvEncoder.text = getString(R.string.commerce_statistic_encoder, "--")
+
+
+
+        topBinding.trSVCPVC.isVisible = isRoomOwner
+        topBinding.tvStatisticSVC.text = getString(R.string.commerce_statistic_svc,
+            if (VideoSetting.getCurrLowStreamSetting()?.SVC == true)
+                getString(R.string.commerce_setting_opened)
+            else getString(R.string.commerce_setting_closed)
+        )
+        topBinding.tvStatisticPVC.text = getString(R.string.commerce_statistic_pvc,
+            if (VideoSetting.getCurrBroadcastSetting().video.PVC)
+                getString(R.string.commerce_setting_opened)
+            else
+                getString(R.string.commerce_setting_closed)
+        )
+
         val score = mRtcEngine.queryDeviceScore()
+        topBinding.tvStatisticDeviceGrade.isVisible = true
         if (score >= 90) {
             topBinding.tvStatisticDeviceGrade.text = getString(R.string.commerce_device_grade, getString(R.string.commerce_setting_preset_device_high)) + "（$score）"
         } else if (score >= 75) {
@@ -669,54 +726,25 @@ class LiveDetailFragment : Fragment() {
         } else {
             topBinding.tvStatisticDeviceGrade.text = getString(R.string.commerce_device_grade, getString(R.string.commerce_setting_preset_device_low)) + "（$score）"
         }
-        topBinding.tvStatisticH265.isVisible = true
-        if (isRoomOwner) {
-            topBinding.tvStatisticH265.text = getString(R.string.commerce_statistic_h265, getString(R.string.commerce_setting_opened))
-        } else {
-            topBinding.tvStatisticH265.text = getString(R.string.commerce_statistic_h265, "--")
-        }
-        topBinding.tvStatisticSR.isVisible = true
+
+
+        topBinding.trStatisticSR.isVisible = !isRoomOwner
         if (isRoomOwner) {
             topBinding.tvStatisticSR.text = getString(R.string.commerce_statistic_sr, "--")
         } else {
             topBinding.tvStatisticSR.text = getString(R.string.commerce_statistic_sr, if (VideoSetting.getCurrAudienceEnhanceSwitch()) getString(R.string.commerce_setting_opened) else getString(R.string.commerce_setting_closed))
         }
-        topBinding.tvStatisticPVC.isVisible = true
-        if (isRoomOwner) {
-            topBinding.tvStatisticPVC.text = getString(R.string.commerce_statistic_pvc,
-                if (VideoSetting.getCurrBroadcastSetting().video.PVC)
-                    getString(R.string.commerce_setting_opened)
-                else
+
+
+        topBinding.trStatisticLowStream.isVisible = isRoomOwner
+        topBinding.tvStatisticLowStream.text =
+            getString(R.string.commerce_statistic_low_stream,
+                if (VideoSetting.getCurrLowStreamSetting() == null)
                     getString(R.string.commerce_setting_closed)
-            )
-        } else {
-            topBinding.tvStatisticPVC.text = getString(R.string.commerce_statistic_pvc, "--")
-        }
-
-        topBinding.tvStatisticLowStream.isVisible = true
-        if (isRoomOwner) {
-            topBinding.tvStatisticLowStream.text =
-                getString(R.string.commerce_statistic_low_stream,
-                    if (VideoSetting.getCurrLowStreamSetting() == null)
-                        getString(R.string.commerce_setting_closed)
-                    else
-                        getString(R.string.commerce_setting_opened)
-                )
-        } else {
-            topBinding.tvStatisticLowStream.text = getString(R.string.commerce_statistic_low_stream, "--")
-        }
-
-        topBinding.tvStatisticSVC.isVisible = true
-        if (isRoomOwner) {
-            topBinding.tvStatisticSVC.text = getString(R.string.commerce_statistic_svc,
-                if (VideoSetting.getCurrLowStreamSetting()?.SVC == true)
+                else
                     getString(R.string.commerce_setting_opened)
-                else getString(R.string.commerce_setting_closed)
             )
-        } else {
-            topBinding.tvStatisticSVC.text = getString(R.string.commerce_statistic_svc, "--")
-        }
-        topBinding.tvLocalUid.text = getString(R.string.commerce_local_uid, UserManager.getInstance().user.id.toString())
+
     }
 
     /**
@@ -995,7 +1023,8 @@ class LiveDetailFragment : Fragment() {
                         upBitrate = stats.sentBitrate,
                         encodeFps = stats.encoderOutputFrameRate,
                         upLossPackage = stats.txPacketLossRate,
-                        encodeVideoSize = Size(stats.encodedFrameWidth, stats.encodedFrameHeight)
+                        encodeVideoSize = Size(stats.encodedFrameWidth, stats.encodedFrameHeight),
+                        encodeType = stats.codecType
                     )
                 }
             }
