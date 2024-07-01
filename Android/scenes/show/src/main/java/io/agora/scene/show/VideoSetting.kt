@@ -1,6 +1,5 @@
 package io.agora.scene.show
 
-import android.util.Log
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.SimulcastStreamConfig
@@ -9,6 +8,7 @@ import io.agora.rtc2.video.ColorEnhanceOptions
 import io.agora.rtc2.video.LowLightEnhanceOptions
 import io.agora.rtc2.video.VideoDenoiserOptions
 import io.agora.rtc2.video.VideoEncoderConfiguration
+import io.agora.rtc2.video.VideoEncoderConfiguration.VIDEO_CODEC_TYPE
 import io.agora.scene.base.Constant
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.utils.GsonUtils
@@ -120,6 +120,14 @@ object VideoSetting {
         FrameRate.FPS_24,
         FrameRate.FPS_30
     )
+
+    val EncoderList = listOf(
+        VIDEO_CODEC_TYPE.VIDEO_CODEC_H264,
+        VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
+        VIDEO_CODEC_TYPE.VIDEO_CODEC_AV1,
+    )
+
+    fun VIDEO_CODEC_TYPE.toIndex() = EncoderList.indexOf(this)
 
     /**
      * Device level
@@ -252,11 +260,11 @@ object VideoSetting {
          * @constructor Create empty Video
          */
         data class Video constructor(
-            val H265: Boolean,
+            val codecType: VIDEO_CODEC_TYPE,
             val colorEnhance: Boolean,
             val lowLightEnhance: Boolean,
             val videoDenoiser: Boolean,
-            val PVC: Boolean,
+            var PVC: Boolean,
             val captureResolution: Resolution,
             val encodeResolution: Resolution,
             val frameRate: FrameRate,
@@ -311,11 +319,11 @@ object VideoSetting {
          */
         val LowDevice1v1 = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
-                PVC = false,
+                PVC = true,
                 captureResolution = Resolution.V_720P,
                 encodeResolution = Resolution.V_720P,
                 frameRate = FrameRate.FPS_15,
@@ -332,7 +340,7 @@ object VideoSetting {
          */
         val MediumDevice1v1 = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
@@ -353,7 +361,7 @@ object VideoSetting {
          */
         val HighDevice1v1 = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
@@ -374,7 +382,7 @@ object VideoSetting {
          */
         val Audience1v1 = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
@@ -395,7 +403,7 @@ object VideoSetting {
          */
         val LowDevicePK = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
@@ -416,7 +424,7 @@ object VideoSetting {
          */
         val MediumDevicePK = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
@@ -437,7 +445,7 @@ object VideoSetting {
          */
         val HighDevicePK = BroadcastSetting(
             BroadcastSetting.Video(
-                H265 = true,
+                codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
                 colorEnhance = false,
                 lowLightEnhance = false,
                 videoDenoiser = false,
@@ -819,6 +827,8 @@ object VideoSetting {
                     DeviceLevel.Medium -> RecommendBroadcastSetting.MediumDevicePK
                     DeviceLevel.High -> RecommendBroadcastSetting.HighDevicePK
                 }
+            }.apply {
+                video.PVC = broadcastStrategy != BroadcastStrategy.Clear
             },
             if (broadcastStrategy == BroadcastStrategy.Smooth) when (liveMode) {
                 LiveMode.OneVOne -> when (deviceLevel) {
@@ -910,7 +920,7 @@ object VideoSetting {
         updateRTCBroadcastSetting(
             rtcConnection,
             isJoinedRoom,
-            currBroadcastSetting.video.H265,
+            currBroadcastSetting.video.codecType,
             currBroadcastSetting.video.colorEnhance,
             currBroadcastSetting.video.lowLightEnhance,
             currBroadcastSetting.video.videoDenoiser,
@@ -966,7 +976,7 @@ object VideoSetting {
         rtcConnection: RtcConnection? = null,
         isJoinedRoom: Boolean = true,
 
-        h265: Boolean? = null,
+        codecType: VIDEO_CODEC_TYPE? = null,
         colorEnhance: Boolean? = null,
         lowLightEnhance: Boolean? = null,
         videoDenoiser: Boolean? = null,
@@ -986,7 +996,7 @@ object VideoSetting {
         setCurrBroadcastSetting(
             BroadcastSetting(
                 BroadcastSetting.Video(
-                    h265 ?: currBroadcastSetting.video.H265,
+                    codecType ?: currBroadcastSetting.video.codecType,
                     colorEnhance ?: currBroadcastSetting.video.colorEnhance,
                     lowLightEnhance ?: currBroadcastSetting.video.lowLightEnhance,
                     videoDenoiser ?: currBroadcastSetting.video.videoDenoiser,
@@ -1019,7 +1029,7 @@ object VideoSetting {
         updateRTCBroadcastSetting(
             rtcConnection,
             isJoinedRoom,
-            h265,
+            codecType,
             colorEnhance,
             lowLightEnhance,
             videoDenoiser,
@@ -1122,7 +1132,7 @@ object VideoSetting {
         rtcConnection: RtcConnection? = null,
         isJoinedRoom: Boolean,
 
-        h265: Boolean? = null,
+        codecType: VIDEO_CODEC_TYPE? = null,
         colorEnhance: Boolean? = null,
         lowLightEnhance: Boolean? = null,
         videoDenoiser: Boolean? = null,
@@ -1140,14 +1150,13 @@ object VideoSetting {
         ShowLogger.d("VideoSettings", "updateRTCBroadcastSetting, frameRate:$frameRate")
         val rtcEngine = RtcEngineInstance.rtcEngine
         val videoEncoderConfiguration = RtcEngineInstance.videoEncoderConfiguration
-        h265?.let {
-            if (isPureMode) {
-                rtcEngine.setParameters("{\"engine.video.enable_hw_encoder\":${it}}")
-                rtcEngine.setParameters("{\"che.video.videoCodecIndex\": 1}")
-            } else if (!isJoinedRoom) {
-                rtcEngine.setParameters("{\"engine.video.enable_hw_encoder\":${it}}")
-                rtcEngine.setParameters("{\"che.video.videoCodecIndex\":${if(it) 2 else 1}}")
-            } else { }
+        codecType?.let {
+            videoEncoderConfiguration.codecType = it
+            if (rtcConnection != null) {
+                rtcEngine.setVideoEncoderConfigurationEx(videoEncoderConfiguration, rtcConnection)
+            } else {
+                rtcEngine.setVideoEncoderConfiguration(videoEncoderConfiguration)
+            }
         }
         colorEnhance?.let {
             rtcEngine.setColorEnhanceOptions(it, ColorEnhanceOptions())
@@ -1163,9 +1172,7 @@ object VideoSetting {
             }
         }
         PVC?.let {
-            if (!isPureMode) {
-                rtcEngine.setParameters("{\"rtc.video.enable_pvc\":${it}}")
-            }
+            rtcEngine.setParameters("{\"rtc.video.enable_pvc\":${it}}")
         }
         if (!AgoraApplication.the().isDebugModeOpen) {
             captureResolution?.let {
