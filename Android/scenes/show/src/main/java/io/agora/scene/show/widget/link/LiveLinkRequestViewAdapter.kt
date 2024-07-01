@@ -7,7 +7,6 @@ import io.agora.scene.base.manager.UserManager
 import io.agora.scene.show.R
 import io.agora.scene.show.databinding.ShowLiveLinkRequestMessageBinding
 import io.agora.scene.show.service.ShowMicSeatApply
-import io.agora.scene.show.service.ShowRoomRequestStatus
 import io.agora.scene.widget.basic.BindingSingleAdapter
 import io.agora.scene.widget.basic.BindingViewHolder
 import io.agora.scene.widget.utils.CenterCropRoundCornerTransform
@@ -44,16 +43,10 @@ class LiveLinkRequestViewAdapter: BindingSingleAdapter<ShowMicSeatApply, ShowLiv
             .into(binding.coverUserIcon);
         if (isRoomOwner) {
             binding.userNum.isVisible = false
-            if (seatApply.status == ShowRoomRequestStatus.accepted.value) {
-                binding.btnItemAgreeRequest.isEnabled = false
-                binding.btnItemAgreeRequest.setText(R.string.show_is_onseat)
-                binding.btnItemAgreeRequest.setOnClickListener(null)
-            } else {
-                binding.btnItemAgreeRequest.isEnabled = true
-                binding.btnItemAgreeRequest.setText(R.string.show_agree_onseat)
-                binding.btnItemAgreeRequest.setOnClickListener {
-                    onClickListener.onClick(seatApply, position)
-                }
+            binding.btnItemAgreeRequest.isEnabled = true
+            binding.btnItemAgreeRequest.setText(R.string.show_agree_onseat)
+            binding.btnItemAgreeRequest.setOnClickListener {
+                onClickListener.onClick(it, seatApply, position)
             }
         } else {
             if (seatApply.userId == UserManager.getInstance().user.id.toString()) {
@@ -82,7 +75,7 @@ class LiveLinkRequestViewAdapter: BindingSingleAdapter<ShowMicSeatApply, ShowLiv
          * @param seatApply
          * @param position
          */
-        fun onClick(seatApply: ShowMicSeatApply, position: Int)
+        fun onClick(view: View, seatApply: ShowMicSeatApply, position: Int)
     }
 
     /**

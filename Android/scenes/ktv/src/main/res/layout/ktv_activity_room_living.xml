@@ -206,6 +206,8 @@
         android:text="@string/ktv_room_before_speaker"
         android:textColor="@color/def_text_grey_979"
         android:textSize="15sp"
+        android:gravity="center"
+        android:layout_marginHorizontal="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

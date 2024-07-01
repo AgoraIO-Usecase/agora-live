@@ -10,7 +10,7 @@ import io.agora.scene.show.service.ShowRoomDetailModel
  * @param room
  * @param waitingForPK
  */
-class LiveRoomConfig constructor(room: ShowRoomDetailModel, waitingForPK: Boolean) {
+class LiveRoomConfig constructor(room: ShowRoomDetailModel, interactStatus: Int, waitingForPK: Boolean) {
     /**
      * Room id
      */
@@ -47,11 +47,6 @@ class LiveRoomConfig constructor(room: ShowRoomDetailModel, waitingForPK: Boolea
     private val ownerName: String
 
     /**
-     * Room status
-     */
-    private val roomStatus: Int
-
-    /**
      * Interact status
      */
     private val interactStatus: Int
@@ -69,7 +64,7 @@ class LiveRoomConfig constructor(room: ShowRoomDetailModel, waitingForPK: Boolea
     /**
      * Is Pure Mode
      */
-    private val isPureMode: Int
+    private val isPureMode: Boolean
 
     /**
      * Waiting for p k
@@ -82,16 +77,15 @@ class LiveRoomConfig constructor(room: ShowRoomDetailModel, waitingForPK: Boolea
         roomId = room.roomId
         roomName = room.roomName
         roomUserCount = room.roomUserCount
-        thumbnailId = room.thumbnailId
         ownerId = room.ownerId
         ownerAvatar = room.ownerAvatar
         ownerName = room.ownerName
-        roomStatus = room.roomStatus
-        interactStatus = room.interactStatus
+        this.interactStatus = interactStatus
         createdAt = room.createdAt
         updatedAt = room.updatedAt
         isPureMode = room.isPureMode
         this.waitingForPK = waitingForPK
+        thumbnailId = room.thumbnailId
     }
 
     /**
@@ -104,15 +98,13 @@ class LiveRoomConfig constructor(room: ShowRoomDetailModel, waitingForPK: Boolea
             roomId,
             roomName,
             roomUserCount,
-            thumbnailId,
             ownerId,
+            thumbnailId,
             ownerAvatar,
             ownerName,
-            roomStatus,
-            interactStatus,
+            isPureMode,
             createdAt,
-            updatedAt,
-            isPureMode
+            updatedAt
         )
     }
 
@@ -159,7 +151,7 @@ class LiveRoomConfig constructor(room: ShowRoomDetailModel, waitingForPK: Boolea
     fun isRobotRoom() = roomId.length > robotMaxCount
 
     fun isPureMode() : Boolean {
-        return isPureMode == 1
+        return isPureMode
     }
 
     fun getRoomId() = roomId

@@ -119,6 +119,7 @@
     <string name="show_statistic_down_loss_package">Downlink Packet Loss: %s ％</string>
     <string name="show_statistic_else">Others</string>
     <string name="show_statistic_quick_start_time">First Frame: %s ms</string>
+    <string name="show_statistic_encoder">Encoder: %s</string>
     <string name="show_device_grade">Device Level: %s</string>
     <string name="show_statistic_sr">Super Clarity: %s</string>
     <string name="show_statistic_pvc">PVC: %s</string>
@@ -208,6 +209,7 @@
     <string name="show_setting_advance_music_volume">Music Volume</string>
     <string name="show_bottom_list_cancel">Cancel</string>
     <string name="show_setting_advance_framerate">Frame Rate</string>
+    <string name="show_setting_advance_encoder">Encoder</string>
     <string name="show_setting_advance_encode_framerate">Encode FPS</string>
     <string name="show_setting_advance_encode_framerate_tip">To ensure the best video quality, frame rates of 15fps and below will be effective by default for mid-to-low-end devices. Frame rates exceeding 15fps will not be effective.</string>
     <string name="show_setting_preset_show_title">Live Streaming Mode</string>
@@ -226,6 +228,7 @@
     <string name="show_setting_preset_done">The settings have been updated to the \"Live Streaming\" optimal configuration.</string>
     <string name="show_setting_audience">Audience Settings</string>
     <string name="show_living_end_title">Live Ended</string>
+    <string name="show_living_end_title_error">Network issue. Please re-create a room.</string>
     <string name="show_living_end_back_room_list">Return to the room list</string>
     <string name="show_live_chat_coming">joined</string>
     <string name="show_live_chat_leaving">left</string>
@@ -262,6 +265,7 @@
     <string name="show_beauty_item_virtual_bg_mitao">Peach</string>
     <string name="show_beauty_green_screen_tip">To ensure the best virtual background effect, please make sure you have set up a green screen in your actual environment. Otherwise, the virtual background will not take effect.</string>
     <string name="show_live_detail_living_end">The live stream has ended.</string>
+    <string name="show_live_detail_living_end_error">Network issue. Please re-enter the room.</string>
     <string name="show_live_detail_try_to_move">Swipe to switch and try another host.</string>
     <string name="show_broadcast_header">Suggestions: </string>
     <string name="show_broadcast_tips">Please ensure that the network connection in the broadcasting environment is stable, and the upload bandwidth is equal to or greater than 3 Mbps.</string>
@@ -281,6 +285,15 @@
     <string name="show_video_device_middle">Mid-range Device</string>
     <string name="show_video_device_low">Low-end Device</string>
     <string name="show_broadcaster_bad_exit">Detected an abnormal exit from the last live broadcast, please create a new live room to start broadcasting again.</string>
+    <string name="show_error_apply_mic_seat">Network issue. Failed to apply for co-hosting. Error: %s</string>
+    <string name="show_error_accept_mic_seat">Network issue. Failed to grant co-hosting. Error: %s</string>
+    <string name="show_error_reject_mic_seat">Network issue. Failed to reject co-hosting. Error: %s</string>
+    <string name="show_error_invite_mic_seat">Network issue. Failed to invite for co-hosting. Error: %s</string>
+    <string name="show_error_accept_mic_seat_invite">Network issue. Failed to accept co-hosting. Error: %s</string>
+    <string name="show_error_invite_pk">Network issue. Failed to invite for PK. Error: %s</string>
+    <string name="show_error_accept_pk">Network issue. Failed to accept PK. Error: %s</string>
+    <string name="show_error_reject_pk">Network issue. Failed to reject PK. Error: %s</string>
+    <string name="show_error_cancel_mic_seat">Network issue. Failed to cancel apply. Error: %s</string>
 
     <string-array name="show_encoder">
         <item>Hardware Encoder</item>

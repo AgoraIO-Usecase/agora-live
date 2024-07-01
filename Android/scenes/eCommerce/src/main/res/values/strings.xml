@@ -47,6 +47,7 @@
     <string name="commerce_music_effect_mixing_concert">Concert</string>
     <string name="commerce_live_prepare_title">E-Commerce</string>
     <string name="commerce_live_prepare_rotate">Flip</string>
+    <string name="commerce_setting_advance_encoder">Encoder</string>
     <string name="commerce_live_prepare_hd">Video Quality</string>
     <string name="commerce_live_prepare_tip"> NOTE: For demo purposes only. Please limit live streams to 20 minutes or less.</string>
     <string name="commerce_live_prepare_start_live">Go Live</string>
@@ -58,6 +59,7 @@
     <string name="commerce_statistic_down_bitrate">Receive Bitrate: %s kbps</string>
     <string name="commerce_statistic_fps">FPS: %s fps</string>
     <string name="commerce_statistic_delay">Latency: %s ms</string>
+    <string name="commerce_statistic_encoder">Encoder: %s</string>
     <string name="commerce_statistic_loss_package">Packet Loss: %s ％</string>
     <string name="commerce_statistic_up_net_speech">Uplink Speed: %s KB/s</string>
     <string name="commerce_statistic_down_net_speech">Downlink Speed: %s KB/s</string>

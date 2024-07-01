@@ -21,7 +21,7 @@
         android:id="@+id/mtBottomSheetTitle"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:text="@string/ktv_sound_preset_type"
         android:textStyle="bold"
         android:textColor="@color/def_text_color_040"
@@ -36,12 +36,11 @@
         android:layout_marginTop="10dp"
         android:layout_marginStart="5dp"
         android:gravity="center"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textColor="@color/def_text_grey_6c7"
         android:text="@string/cancel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSoundType"

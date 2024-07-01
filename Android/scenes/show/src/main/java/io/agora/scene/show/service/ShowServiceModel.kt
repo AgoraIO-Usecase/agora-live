@@ -2,171 +2,56 @@ package io.agora.scene.show.service
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.annotation.IntDef
 import io.agora.scene.base.manager.UserManager
+import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.show.R
+import java.util.UUID
 
-/**
- * Show room status
- *
- * @property value
- * @constructor Create empty Show room status
+/*
+ * service 模块
+ * 简介：这个模块的作用是负责前端业务模块和业务服务器的交互(包括房间列表+房间内的业务数据同步等)
+ * 实现原理：该场景的业务服务器是包装了一个 rethinkDB 的后端服务，用于数据存储，可以认为它是一个 app 端上可以自由写入的 DB，房间列表数据、房间内的业务数据等在 app 上构造数据结构并存储在这个 DB 里
+ * 当 DB 内的数据发生增删改时，会通知各端，以此达到业务数据同步的效果
+ * TODO 注意⚠️：该场景的后端服务仅做场景演示使用，无法商用，如果需要上线，您必须自己部署后端服务或者云存储服务器（例如leancloud、环信等）并且重新实现这个模块！！！！！！！！！！！
  */
-enum class ShowRoomStatus(val value: Int) {
-    /**
-     * Activity
-     *
-     * @constructor Create empty Activity
-     */
-    activity(0),
 
-    /**
-     * End
-     *
-     * @constructor Create empty End
-     */
-    end(1)
+@IntDef(ShowInteractionStatus.idle, ShowInteractionStatus.linking, ShowInteractionStatus.pking)
+@Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.SOURCE)
+annotation class ShowInteractionStatus {
+    companion object {
+        const val idle = 0 // 空闲
+        const val linking = 1 // 连麦中
+        const val pking = 2 // pk中
+    }
 }
 
-/**
- * Show room request status
- *
- * @property value
- * @constructor Create empty Show room request status
- */
-enum class ShowRoomRequestStatus(val value: Int){
-    /**
-     * Idle
-     *
-     * @constructor Create empty Idle
-     */
-    idle(0),
-
-    /**
-     * Waitting
-     *
-     * @constructor Create empty Waitting
-     */
-    waitting(1),
-
-    /**
-     * Accepted
-     *
-     * @constructor Create empty Accepted
-     */
-    accepted(2),
-
-    /**
-     * Rejected
-     *
-     * @constructor Create empty Rejected
-     */
-    rejected(3),
-
-    /**
-     * Ended
-     *
-     * @constructor Create empty Ended
-     */
-    ended(4)
-}
-
-/**
- * Show interaction status
- *
- * @property value
- * @constructor Create empty Show interaction status
- */
-enum class ShowInteractionStatus(val value: Int) {
-    /**
-     * Idle
-     *
-     * @constructor Create empty Idle
-     */
-    idle(0),
-
-    /**
-     * On seat
-     *
-     * @constructor Create empty On seat
-     */
-    onSeat(1),
-
-    /**
-     * Pking
-     *
-     * @constructor Create empty Pking
-     */
-    pking(2)
-}
-
-/**
- * Show room detail model
- *
- * @property roomId
- * @property roomName
- * @property roomUserCount
- * @property thumbnailId
- * @property ownerId
- * @property ownerAvatar
- * @property ownerName
- * @property roomStatus
- * @property interactStatus
- * @property createdAt
- * @property updatedAt
- * @property isPureMode
- * @constructor Create empty Show room detail model
- */
+// 房间详情信息
 data class ShowRoomDetailModel constructor(
     val roomId: String,
     val roomName: String,
     val roomUserCount: Int,
-    val thumbnailId: String, // 0, 1, 2, 3
     val ownerId: String,
-    val ownerAvatar: String,// http url
+    val thumbnailId: String,
+    val ownerAvatar: String,
     val ownerName: String,
-    val roomStatus: Int = ShowRoomStatus.activity.value,
-    val interactStatus: Int = ShowInteractionStatus.idle.value,
-    val createdAt: Double,
-    val updatedAt: Double,
-    val isPureMode: Int
+    val isPureMode: Boolean = false,
+    val createdAt: Double = 0.0,
+    val updatedAt: Double = 0.0
 ) : Parcelable {
-
     constructor(parcel: Parcel) : this(
-        parcel.readString()!!,
-        parcel.readString()?:"",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.readInt(),
-        parcel.readString()?:"",
-        parcel.readString()!!,
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readInt(),
-        parcel.readInt(),
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readInt() > 0,
         parcel.readDouble(),
-        parcel.readDouble(),
-        parcel.readInt()
+        parcel.readDouble()
     )
-
-    /**
-     * To map
-     *
-     * @return
-     */
-    fun toMap(): HashMap<String, Any>{
-        return hashMapOf(
-            Pair("roomId", roomId),
-            Pair("roomName", roomName),
-            Pair("roomUserCount", roomUserCount),
-            Pair("thumbnailId", thumbnailId),
-            Pair("ownerId", ownerId),
-            Pair("ownerAvatar", ownerAvatar),
-            Pair("ownerName", ownerName),
-            Pair("roomStatus", roomStatus),
-            Pair("interactStatus", interactStatus),
-            Pair("createdAt", createdAt),
-            Pair("updatedAt", updatedAt),
-            Pair("isPureMode", isPureMode)
-        )
-    }
 
     /**
      * Get thumbnail icon
@@ -189,48 +74,23 @@ data class ShowRoomDetailModel constructor(
         return UserManager.getInstance().getUserAvatarFullUrl(ownerAvatar)
     }
 
-
-    /**
-     * Is robot room
-     *
-     */
-    fun isRobotRoom() = roomId.length > 6
-
-    /**
-     * Write to parcel
-     *
-     * @param parcel
-     * @param flags
-     */
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(roomId)
         parcel.writeString(roomName)
         parcel.writeInt(roomUserCount)
-        parcel.writeString(thumbnailId)
         parcel.writeString(ownerId)
+        parcel.writeString(thumbnailId)
         parcel.writeString(ownerAvatar)
         parcel.writeString(ownerName)
-        parcel.writeInt(roomStatus)
-        parcel.writeInt(interactStatus)
+        parcel.writeInt(if (isPureMode) 1 else 0)
         parcel.writeDouble(createdAt)
         parcel.writeDouble(updatedAt)
-        parcel.writeInt(isPureMode)
     }
 
-    /**
-     * Describe contents
-     *
-     * @return
-     */
     override fun describeContents(): Int {
         return 0
     }
 
-    /**
-     * Creator
-     *
-     * @constructor Create empty Creator
-     */
     companion object CREATOR : Parcelable.Creator<ShowRoomDetailModel> {
         override fun createFromParcel(parcel: Parcel): ShowRoomDetailModel {
             return ShowRoomDetailModel(parcel)
@@ -240,24 +100,19 @@ data class ShowRoomDetailModel constructor(
             return arrayOfNulls(size)
         }
     }
-
-
 }
 
-/**
- * Show user
- *
- * @property userId
- * @property avatar
- * @property userName
- * @property status
- * @constructor Create empty Show user
- */
+fun String.isRobotRoom() = length > 6
+fun ShowRoomDetailModel.isRobotRoom() = roomId.isRobotRoom()
+
+//用户信息
 data class ShowUser constructor(
     val userId: String,
     val avatar: String,
     val userName: String,
-    val status: Int = ShowRoomRequestStatus.idle.value
+    val muteAudio: Boolean,
+    @ShowInteractionStatus val status: Int = ShowInteractionStatus.idle,
+    val isWaiting: Boolean = false
 ){
     /**
      * Get avatar full url
@@ -269,39 +124,28 @@ data class ShowUser constructor(
     }
 }
 
-/**
- * Show message
- *
- * @property userId
- * @property userName
- * @property message
- * @property createAt
- * @constructor Create empty Show message
- */
+data class ShowPKUser constructor(
+    val userId: String,
+    val userName: String,
+    val roomId: String,
+    val avatar: String,
+    @ShowInteractionStatus val status: Int = ShowInteractionStatus.idle,
+    val isWaiting: Boolean = false
+)
+
+// 聊天消息
 data class ShowMessage constructor(
     val userId: String,
     val userName: String,
     val message: String,
-    val createAt: Double
 )
 
-/**
- * Show mic seat apply
- *
- * @property userId
- * @property avatar
- * @property userName
- * @property status
- * @property createAt
- * @constructor Create empty Show mic seat apply
- */
+// 连麦申请
 data class ShowMicSeatApply constructor(
     val userId: String,
     val avatar: String,
-    val userName: String,
-    val status: Int,
-    val createAt: Double
-){
+    val userName: String
+) {
     /**
      * Get avatar full url
      *
@@ -312,78 +156,50 @@ data class ShowMicSeatApply constructor(
     }
 }
 
-/**
- * Show mic seat invitation
- *
- * @property userId
- * @property avatar
- * @property userName
- * @property status
- * @constructor Create empty Show mic seat invitation
- */
+@IntDef(ShowInvitationType.invitation, ShowInvitationType.accept, ShowInvitationType.reject, ShowInvitationType.end)
+@Target(AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.SOURCE)
+annotation class ShowInvitationType {
+    companion object {
+        const val invitation = 0
+        const val accept = 1
+        const val reject = 2
+        const val end = 3
+    }
+}
+
+// 连麦邀请
 data class ShowMicSeatInvitation constructor(
+    val id: String = UUID.randomUUID().toString(),
     val userId: String,
-    val avatar: String,
     val userName: String,
-    val status: Int,
-){
-    /**
-     * Get avatar full url
-     *
-     * @return
-     */
-    fun getAvatarFullUrl(): String {
-        return UserManager.getInstance().getUserAvatarFullUrl(avatar)
-    }
-}
+    @ShowInvitationType val type: Int = ShowInvitationType.invitation,
+)
 
-/**
- * Show p k invitation
- *
- * @property userId
- * @property userName
- * @property roomId
- * @property fromUserId
- * @property fromName
- * @property fromRoomId
- * @property status
- * @property userMuteAudio
- * @property fromUserMuteAudio
- * @property createAt
- * @constructor Create empty Show p k invitation
- */
+// PK邀请
 data class ShowPKInvitation constructor(
+    val id: String = UUID.randomUUID().toString(),
     val userId: String,
     var userName: String,
     val roomId: String,
     val fromUserId: String,
-    val fromName: String,
+    val fromUserName: String,
     val fromRoomId: String,
-    val status: Int,
-    var userMuteAudio: Boolean = false,
-    var fromUserMuteAudio: Boolean = false,
-    val createAt: Double
+    @ShowInvitationType val type: Int = ShowInvitationType.invitation,
 )
 
-/**
- * Show interaction info
- *
- * @property userId
- * @property userName
- * @property roomId
- * @property interactStatus
- * @property muteAudio
- * @property ownerMuteAudio
- * @property createdAt
- * @constructor Create empty Show interaction info
- */
+//连麦/Pk模型
 data class ShowInteractionInfo constructor(
-    val userId: String,
-    val userName: String,
-    val roomId: String,
-    val interactStatus: Int,
-    val muteAudio: Boolean = false,
-    val ownerMuteAudio: Boolean = false,
-    val createdAt: Double
+    val userId: String, // 互动者ID
+    val userName: String, // 互动者用户名
+    val roomId: String, // 互动房间ID
+    @ShowInteractionStatus val interactStatus: Int, // 互动状态
+    val createdAt: Double = TimeUtils.currentTimeMillis().toDouble()// 开始时间
 )
 
+
+enum class ShowSubscribeStatus {
+    added,
+    deleted,
+    updated
+}

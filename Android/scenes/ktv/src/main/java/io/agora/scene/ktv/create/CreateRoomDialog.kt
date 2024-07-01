@@ -2,13 +2,11 @@ package io.agora.scene.ktv.create
 
 import android.app.Dialog
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.*
-import android.text.style.ForegroundColorSpan
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.ViewModelProvider
@@ -42,16 +40,8 @@ class CreateRoomDialog constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        roomCreateViewModel = ViewModelProvider(this)[io.agora.scene.ktv.create.RoomCreateViewModel::class.java]
-        // 用户提示颜色
-        val spannableString = SpannableString(getString(R.string.ktv_create_room_tips))
-        spannableString.setSpan(
-            ForegroundColorSpan(Color.parseColor("#FA396A")),
-            77,
-            118,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        mBinding.tvNotice.text = spannableString
+        roomCreateViewModel = ViewModelProvider(this)[RoomCreateViewModel::class.java]
+        mBinding.tvNotice.text = getString(R.string.ktv_create_room_tips)
         // 随机名称
         randomName()
         mBinding.btnRandom.setOnClickListener {
