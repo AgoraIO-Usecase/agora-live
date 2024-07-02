@@ -52,10 +52,10 @@
     self.view.userInteractionEnabled = NO;
     VLKTVViewController *ktvVC = [[VLKTVViewController alloc]init];
     [[AppContext ktvServiceImp] createRoomWithInputModel:intputModel
-                                              completion:^(NSError * error, AUIRoomInfo * outputModel) {
+                                              completion:^(NSError* error, SyncRoomInfo* outputModel) {
         weakSelf.view.userInteractionEnabled = YES;
         if (error != nil) {
-            [VLToast toast:error.description];
+            [VLToast toast:error.localizedDescription];
             return;
         }
         

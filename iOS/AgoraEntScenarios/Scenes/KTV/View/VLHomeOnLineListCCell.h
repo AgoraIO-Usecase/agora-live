@@ -5,11 +5,11 @@
 
 #import <UIKit/UIKit.h>
 
-@class AUIRoomInfo;
+@class SyncRoomInfo;
 @interface VLHomeOnLineListCCell : UICollectionViewCell
-@property (nonatomic, strong) AUIRoomInfo *listModel;
+@property (nonatomic, strong) SyncRoomInfo *listModel;
 @property (nonatomic, strong) UIImageView *bgImgView;
-@property (nonatomic, copy) void (^joinBtnClickBlock)(AUIRoomInfo *model);
+@property (nonatomic, copy) void (^joinBtnClickBlock)(SyncRoomInfo *model);
 @end
 
 

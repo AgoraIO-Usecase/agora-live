@@ -5,7 +5,7 @@
 //  Created by wushengtao on 2022/11/10.
 //
 
-#import <LSTPopView/LSTPopView.h>
+#import "LSTPopView.h"
 #import "VLPopMoreSelView.h"
 #import "VLPopSelBgView.h"
 #import "VLDropOnLineView.h"
@@ -14,9 +14,6 @@
 #import "VLPopSongList.h"
 #import "VLEffectView.h"
 #import "VLKTVSettingView.h"
-#import "VLVoiceShowView.h"
-#import "VLVoicePerShowView.h"
-#import "VLVoiceShowView.h"
 #import "VLVoicePerShowView.h"
 #import "VLEarSettingView.h"
 #import "VLDebugView.h"
@@ -69,17 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
                                     setting:(VLKTVSettingModel*)settingModel
                                settingView:(VLKTVSettingView*)settingView
                                withDelegate:(id<VLKTVSettingViewDelegate>)delegate;
-
-//弹出人声突出
-+ (LSTPopView*)popVoiceShowViewWithParentView:(UIView*)parentView
-                                         showView:(VLVoiceShowView*)showView
-                                   imgSource:(NSArray *)imgSource
-                                    nameSource:(NSArray *)nameSource
-                                  selectUserNo:(NSString *)selectUserNo
-                                  userNoArray:(NSArray *)userNoArray
-                                 UIUpdateAble:(BOOL)UIUpdateAble
-                                      withDelegate:(id<VLVoiceShowViewDelegate>)delegate;
-
 
 + (LSTPopView*)popVoicePerViewWithParentView:(UIView*)parentView
                               isProfessional: (BOOL) isProfessional

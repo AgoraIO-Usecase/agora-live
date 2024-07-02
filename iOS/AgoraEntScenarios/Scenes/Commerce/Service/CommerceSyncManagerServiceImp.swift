@@ -760,7 +760,7 @@ extension CommerceSyncManagerServiceImp: AUIUserRespDelegate {
         _sendJoinOrLeaveText(user: userInfo, isJoin: true)
     }
     
-    func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
+    func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo, reason: AUIRtmUserLeaveReason) {
         agoraPrint("userLeave == \(roomId)  object == \(userInfo)")
         _userLeave(userId: userInfo.userId)
         _sendJoinOrLeaveText(user: userInfo, isJoin: false)
