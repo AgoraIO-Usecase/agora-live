@@ -32,9 +32,9 @@ NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
     id<KTVServiceProtocol> ktvServiceImp = [[AppContext shared].extDic valueForKey:kServiceImpKey];
     if (ktvServiceImp == nil) {
         ktvServiceImp = [[KTVSyncManagerServiceImp alloc] initWithAppId:KeyCenter.AppId
-                                                                host:KeyCenter.RTMHostUrl
-                                                      appCertificate:KeyCenter.Certificate
-                                                                user:VLUserCenter.user];
+                                                                   host:KeyCenter.RTMHostUrl
+                                                         appCertificate:KeyCenter.Certificate
+                                                                   user:VLUserCenter.user];
       //  ktvServiceImp = [KTVSyncManagerServiceImp new];
         [[AppContext shared].extDic setValue:ktvServiceImp forKey:kServiceImpKey];
     }
@@ -73,7 +73,6 @@ NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
     }
     return [ktvServiceImp choristerList];
 }
-
 
 + (BOOL)isKtvRoomOwnerWithSeat:(VLRoomSeatModel*)seat {
     KTVSyncManagerServiceImp* ktvServiceImp = (KTVSyncManagerServiceImp*)[self ktvServiceImp];
@@ -121,10 +120,16 @@ NSString* kAgoraKTVAPIKey = @"kAgoraKTVAPIKey";
     return NO;
 }
 
-+ (BOOL)isKtvSongOwnerWithSeat:(VLRoomSeatModel*)seat {
++ (BOOL)isKtvPlayingSongOwnerWithSeat:(VLRoomSeatModel*)seat {
     VLRoomSelSongModel* song = [[self ktvSongList] firstObject];
     BOOL isSongOwner = [song.owner.userId isEqualToString:NullToString(seat.owner.userId)];
     BOOL isPlaying = [song status] == VLSongPlayStatusPlaying;
     return isSongOwner && isPlaying;
+}
+
++ (BOOL)isKtvSongOwnerWithUserId:(NSString*)userId {
+    VLRoomSelSongModel* song = [[self ktvSongList] firstObject];
+    BOOL isSongOwner = [song.owner.userId isEqualToString:userId];
+    return isSongOwner;
 }
 @end

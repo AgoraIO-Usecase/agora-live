@@ -38,7 +38,7 @@ def all_pods
   pod "ScoreEffectUI", '1.0.2'
   pod 'AgoraLyricsScore', '1.1.6'
   
-  pod 'LSTPopView', '0.3.10'
+#  pod 'LSTPopView', '0.3.10'
 
   pod 'VideoLoaderAPI', :path => 'AgoraEntScenarios/Common/API/VideoLoaderAPI'
 
