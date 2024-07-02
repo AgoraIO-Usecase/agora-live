@@ -12,7 +12,7 @@
 #import "AESMacro.h"
 #import "VLMacroDefine.h"
 @import MJRefresh;
-@import YYCategories;
+
 @interface VLHomeOnLineListView ()<UICollectionViewDataSource,UICollectionViewDelegate>
 
 @property(nonatomic, weak) id <VLHomeOnLineListViewDelegate>delegate;

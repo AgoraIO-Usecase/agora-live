@@ -15,7 +15,6 @@ import Foundation
     /// - Returns: 返回的map对象[key: value]，key: collection id，value：初始化结构，为map则是map collection，为array则是list collection
     @objc optional func onWillInitSceneMetadata(channelName: String) -> [String: Any]?
     
-    
     /// token即将过期
     /// - Parameter channelName: <#channelName description#>
     @objc optional func onTokenPrivilegeWillExpire(channelName: String?)
@@ -28,10 +27,10 @@ import Foundation
     /// - Parameter channelName: 房间id
     @objc optional func onSceneDestroy(channelName: String)
     
-    /// Description 房间用户被踢出房间
+    /// Description 房间异常，需要退出
     ///
     /// - Parameters:
     ///   - channelName: 房间id
-    ///   - userId: 用户id
-    @objc optional func onSceneUserBeKicked(channelName: String, userId: String)
+    ///   - reason: 异常原因
+    @objc optional func onSceneFailed(channelName: String, reason: String)
 }
