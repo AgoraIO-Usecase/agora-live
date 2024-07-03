@@ -93,7 +93,7 @@
     }
 }
 
-- (void)setListModel:(AUIRoomInfo *)listModel {
+- (void)setListModel:(SyncRoomInfo *)listModel {
     _listModel = listModel;
     self.titleLabel.text = listModel.name;
     NSString *roomCountPre = KTVLocalizedString(@"ktv_room_count");
