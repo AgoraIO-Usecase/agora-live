@@ -10,6 +10,7 @@
 #import "VLURLPathConfig.h"
 #import "AppContext+KTV.h"
 #import "AESMacro.h"
+#import "VLToast.h"
 
 @interface VLSongList ()<UITableViewDataSource,UITableViewDelegate>
 
@@ -101,7 +102,8 @@
 
 - (void)deleteSongEvent:(VLRoomSelSongModel *)model {
     [[AppContext ktvServiceImp] removeSongWithSongCode:model.songNo completion:^(NSError * error) {
-        //
+        if(error == nil) {return;}
+        [VLToast toast:[error localizedDescription]];
     }];
 }
 

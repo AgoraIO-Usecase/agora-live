@@ -71,7 +71,7 @@
     [self.bgImgView addSubview:self.roomOwnerLabel];
 }
 
-- (void)setListModel:(AUIRoomInfo *)listModel {
+- (void)setListModel:(SyncRoomInfo *)listModel {
     _listModel = listModel;
     self.iconImgView.image = [UIImage imageNamed:listModel.creatorAvatar];
 

@@ -28,12 +28,6 @@ PODS:
   - JXCategoryView (1.6.1)
   - KakaJSON (1.1.2)
   - LEEAlert (1.6.4)
-  - LSTPopView (0.3.10):
-    - LSTPopView/Code (= 0.3.10)
-    - LSTTimer
-  - LSTPopView/Code (0.3.10):
-    - LSTTimer
-  - LSTTimer (0.2.10)
   - Masonry (1.1.0)
   - MJRefresh (3.7.9)
   - Protobuf (3.22.1)
@@ -81,7 +75,6 @@ DEPENDENCIES:
   - JXCategoryView (= 1.6.1)
   - KakaJSON
   - LEEAlert (= 1.6.4)
-  - LSTPopView (= 0.3.10)
   - Masonry (= 1.1.0)
   - MJRefresh (= 3.7.9)
   - Protobuf (= 3.22.1)
@@ -114,8 +107,6 @@ SPEC REPOS:
     - JXCategoryView
     - KakaJSON
     - LEEAlert
-    - LSTPopView
-    - LSTTimer
     - Masonry
     - MJRefresh
     - Protobuf
@@ -153,8 +144,6 @@ SPEC CHECKSUMS:
   JXCategoryView: 7b1ee69ede4843c581688afe84d0f047723262f2
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
   LEEAlert: a604ad481e3e9b021421a271f78594926dd034bb
-  LSTPopView: 9379f00f6ce7d1fc620b50ab00ed3ef97b2d4d52
-  LSTTimer: caf8f02ff366ca175cf4c1778d26c166183c1b6f
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
   Protobuf: d7f7c8329edf5eb8af65547a8ba3e9c1cee927d5
@@ -175,6 +164,6 @@ SPEC CHECKSUMS:
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: 0bc3af4daae4aec5122a0ecb2ff02c6e72f6dbc0
+PODFILE CHECKSUM: 12ccddb2fb19cf706cd488d51f26737a75b205ec
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.12.1
