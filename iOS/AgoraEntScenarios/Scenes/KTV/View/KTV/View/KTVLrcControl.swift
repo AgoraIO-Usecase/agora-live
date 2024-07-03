@@ -92,9 +92,9 @@ private func agoraPrint(_ message: String) {
             var pos = preludeEndPosition - 2000
             if self.progress >= duration - 500 {
                 pos = duration - 500
-                self.skipCallBack?(pos, true)
+                self.skipCallBack?(Int(pos), true)
             } else {
-                self.skipCallBack?(pos, false)
+                self.skipCallBack?(Int(pos), false)
             }
             self.hasShowOnce = true
             self.skipBtn.isHidden = true

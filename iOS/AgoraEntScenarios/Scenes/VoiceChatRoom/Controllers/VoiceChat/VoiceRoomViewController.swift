@@ -766,7 +766,7 @@ extension VoiceRoomViewController {
 }
 
 extension VoiceRoomViewController: VMMusicPlayerDelegate {
-    func didMPKChangedTo(state: AgoraMediaPlayerState, error: AgoraMediaPlayerError) {
+    func didMPKChangedTo(state: AgoraMediaPlayerState, reason: AgoraMediaPlayerReason) {
         if !rtckit.backgroundMusics.isEmpty  {
             if state == .playBackAllLoopsCompleted {
                 let music = roomInfo?.room?.backgroundMusic
