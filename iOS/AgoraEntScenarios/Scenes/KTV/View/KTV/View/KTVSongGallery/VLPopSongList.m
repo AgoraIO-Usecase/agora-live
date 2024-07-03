@@ -92,6 +92,10 @@
     self.choosedCountLabel.text = [NSString stringWithFormat:@"%d",(int)selSongsArray.count];
 }
 
+- (void)refreshSounds {
+    [self.selsectSongView loadDatasWithIfRefresh:false];
+}
+
 - (VLHotSpotBtn *)dianGeBtn {
     if (!_dianGeBtn) {
         _dianGeBtn = [[VLHotSpotBtn alloc]initWithFrame:CGRectMake(30, 20, 34, 22)];
