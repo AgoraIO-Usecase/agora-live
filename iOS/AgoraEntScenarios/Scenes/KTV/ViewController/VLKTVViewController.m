@@ -376,6 +376,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
                                      withDelegate:self];
     
     self.chooseSongView = (VLPopSongList*)popChooseSongView.currCustomView;
+    [self.chooseSongView refreshSounds];
 }
 
 //专业主播

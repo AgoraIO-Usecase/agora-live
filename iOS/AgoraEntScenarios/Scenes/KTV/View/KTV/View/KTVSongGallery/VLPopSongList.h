@@ -22,6 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
                      ifChorus:(BOOL)ifChorus;
 
 - (void)setSelSongsArray:(NSArray *)selSongsArray isOwner:(BOOL)isOwner;
+
+- (void)refreshSounds;
+
 @end
 
 NS_ASSUME_NONNULL_END

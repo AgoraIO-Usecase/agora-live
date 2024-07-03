@@ -62,11 +62,6 @@ UITableViewDelegate
     self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         [weakSelf loadDatasWithIfRefresh:YES];
     }];
-    
-    self.tableView.mj_footer = [MJRefreshAutoStateFooter footerWithRefreshingBlock:^{
-        [weakSelf loadDatasWithIfRefresh:NO];
-    }];
-
 }
 
 -(void)loadData {
@@ -95,11 +90,6 @@ UITableViewDelegate
     [self.songsMuArray removeAllObjects];
     self.songsMuArray = modelsArray.mutableCopy;
     [self updateData];
-    if (modelsArray.count < 20) {
-        [self.tableView.mj_footer endRefreshingWithNoMoreData];
-    }else{
-        [self.tableView.mj_footer endRefreshing];
-    }
 }
 
 
