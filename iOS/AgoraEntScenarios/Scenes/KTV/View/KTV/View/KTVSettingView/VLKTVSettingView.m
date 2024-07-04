@@ -98,7 +98,7 @@ UICollectionViewDataSource
     self.delaySwitcherView.on = self.setting.isDelay;
     self.perBroSwitcherView.on = self.setting.isPerBro;
     self.aiAecSwitcherView.on = self.setting.enableAec;
-    self.aiAecSwitcherView.aecValue = self.setting.aecLevel;
+    self.aiAecSwitcherView.value = self.setting.aecLevel;
     self.netSwitcherView.on = self.setting.enableMultipath;
 }
 
@@ -130,13 +130,13 @@ UICollectionViewDataSource
 
 -(void)setAEC:(BOOL)enable level:(NSInteger)level{
     self.aiAecSwitcherView.on = enable;
-    self.aiAecSwitcherView.aecValue = level;
+    self.aiAecSwitcherView.value = level;
 }
 
 - (void)initSubViews {
     self.scrollView = [[UIScrollView alloc]init];
     self.scrollView.scrollEnabled = true;
-    self.scrollView.contentSize = CGSizeMake(0, 720);
+    self.scrollView.contentSize = CGSizeMake(0, 740);
     [self addSubview:self.scrollView];
     [self.scrollView addSubview:self.titleLabel];
     [self.scrollView addSubview:self.soundSwitcher];

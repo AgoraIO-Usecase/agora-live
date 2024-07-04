@@ -59,7 +59,6 @@ private class VLSongListNetworkModel: VLCommonNetworkModel {
     public override init() {
         super.init()
         host = KeyCenter.baseServerUrl ?? ""
-        host = "https://service-staging.agora.io/toolbox/v1"
         interfaceName = "/ktv/songs"
         method = .get
     }

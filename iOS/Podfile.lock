@@ -17,7 +17,7 @@ PODS:
   - Agora-Scene-Utils (1.1.0)
   - Agora_Chat_iOS (1.0.8)
   - AgoraComponetLog (0.0.2)
-  - AgoraLyricsScore (1.1.6):
+  - AgoraLyricsScore (2.1.0-alpha-2):
     - AgoraComponetLog
     - Zip
   - AgoraRtcEngine_iOS (4.3.1):
@@ -101,7 +101,7 @@ DEPENDENCIES:
   - AFNetworking (= 4.0.1)
   - Agora-Scene-Utils (= 1.1.0)
   - Agora_Chat_iOS (= 1.0.8)
-  - AgoraLyricsScore (= 1.1.6)
+  - AgoraLyricsScore (from `https://github.com/AgoraIO-Community/LrcView-iOS.git`, branch `feature/dev_2.1.0`)
   - AgoraRtcEngine_iOS (= 4.3.1)
   - AgoraRtm (from `AgoraRtm.podspec`)
   - AgoraSyncManager-overseas (~> 3.0.8)
@@ -133,7 +133,6 @@ SPEC REPOS:
     - Agora-Scene-Utils
     - Agora_Chat_iOS
     - AgoraComponetLog
-    - AgoraLyricsScore
     - AgoraRtcEngine_iOS
     - AgoraSyncManager-overseas
     - HWWeakTimer
@@ -159,6 +158,9 @@ SPEC REPOS:
     - ZSwiftBaseLib
 
 EXTERNAL SOURCES:
+  AgoraLyricsScore:
+    :branch: feature/dev_2.1.0
+    :git: https://github.com/AgoraIO-Community/LrcView-iOS.git
   AgoraRtm:
     :path: AgoraRtm.podspec
   RTMSyncManager:
@@ -166,12 +168,17 @@ EXTERNAL SOURCES:
   VideoLoaderAPI:
     :path: AgoraEntScenarios/Common/API/VideoLoaderAPI
 
+CHECKOUT OPTIONS:
+  AgoraLyricsScore:
+    :commit: a5d5f285a4586558320c05df9136bf579f7580de
+    :git: https://github.com/AgoraIO-Community/LrcView-iOS.git
+
 SPEC CHECKSUMS:
   AFNetworking: 3bd23d814e976cd148d7d44c3ab78017b744cd58
   Agora-Scene-Utils: 3f9b1c422cfdda4a7051cf4cffdd0cfef80c9c89
   Agora_Chat_iOS: fcd8afa4f1cff55da59535a6ed573594ace3c169
   AgoraComponetLog: b359777d2ff8e9ee0237cbd0c42ceb422fd514f1
-  AgoraLyricsScore: 7576387b199cdc3b2752a113688abd0a807a2ca3
+  AgoraLyricsScore: 47fa1cc855810ddc3013ee4ec6ce8c926ca9b22c
   AgoraRtcEngine_iOS: f64be00fdda786bb7edd84ab461c31b7b4c93534
   AgoraRtm: 874bbc0db49e4581832ce4fb8c47023bbd32ef10
   AgoraSyncManager-overseas: 4dddc7d8cd336e257adaac5e278e6cbcfaf1e954
@@ -199,6 +206,6 @@ SPEC CHECKSUMS:
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: 1288b4d3081926de9412e372b6d7ced241eff8be
+PODFILE CHECKSUM: 6d245937108b4774c32cc7e3d6de91ed3d71c433
 
 COCOAPODS: 1.12.1
