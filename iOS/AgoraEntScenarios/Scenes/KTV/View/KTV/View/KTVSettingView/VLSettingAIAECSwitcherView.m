@@ -10,20 +10,24 @@
 
 @interface VLSettingAIAECSwitcherView()<UITextFieldDelegate>
 
-@property (nonatomic, strong) UISwitch *switcher;
-@property (nonatomic, strong) UILabel *nameLabel;
-@property (nonatomic, strong) UILabel *subLabel;
-@property (nonatomic, strong) UILabel *placeLabel;
-@property (nonatomic, strong) UITextField *tf;
-@property (nonatomic, assign) NSInteger level;
-@property (nonatomic, strong) UIView *lineView;
+@property (nonatomic, strong) UISlider *sliderView;
+@property (nonatomic, assign) CGFloat max;
+@property (nonatomic, assign) CGFloat min;
+@property (nonatomic, assign) NSInteger minValue;
+@property (nonatomic, assign) NSInteger maxValue;
+@property (nonatomic, assign) NSInteger currentValue;
+@property (nonatomic, strong) UIButton *addButton;
+@property (nonatomic, strong) UIButton *reduceButton;
+@property (nonatomic, strong) UILabel *minLabel;
+@property (nonatomic, strong) UILabel *maxLabel;
 @end
 
 @implementation VLSettingAIAECSwitcherView
 
-
-- (instancetype)init {
+- (instancetype)initWithMax:(CGFloat)max min:(CGFloat)min {
     if (self = [super init]) {
+        self.max = max;
+        self.min = min;
         [self initSubViews];
         [self addSubViewConstraints];
     }
@@ -31,163 +35,147 @@
 }
 
 - (void)initSubViews {
-    [self addSubview:self.switcher];
-    [self addSubview:self.nameLabel];
-    [self addSubview:self.subLabel];
-    self.subLabel.hidden = true;
-    self.aecValue = 0;
-    self.tf = [UITextField new];
-    self.tf.keyboardType = UIKeyboardTypeNumberPad;
-    self.tf.layer.cornerRadius = 5;
-    self.tf.layer.masksToBounds = true;
-    self.tf.textColor = [UIColor whiteColor];
-    self.tf.delegate = self;
-    self.tf.textAlignment = UITextAlignmentCenter;
-    self.tf.backgroundColor = [UIColor colorWithRed:216/255.0 green:216/255.0 blue:216/255.0 alpha:0.08];
-    self.tf.hidden = true;
-    
-    self.lineView = [UIView new];
-    self.lineView.backgroundColor = [UIColor separatorColor];
-    [self addSubview:self.lineView];
-    
-    [self addSubview:self.tf];
-    [self addSubview:self.placeLabel];
-    self.placeLabel.hidden = true;
+    [self addSubview:self.sliderView];
+    [self addSubview:self.reduceButton];
+    [self addSubview:self.addButton];
 }
 
 - (void)addSubViewConstraints {
-    [self.switcher mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(self).offset(10);
-        make.right.mas_equalTo(-10);
+    CGFloat padding = 8;
+    [self.reduceButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(90);
+        make.width.mas_equalTo(@(26));
+        make.centerY.mas_equalTo(self);
     }];
-    
-    [self.nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.mas_equalTo(self.switcher);
-        make.left.mas_equalTo(20);
+    [self.addButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(self).offset(-padding);
+        make.width.mas_equalTo(@(26));
+        make.centerY.mas_equalTo(self);
     }];
-    
-    [self.tf mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(self).offset(-10);
-        make.right.mas_equalTo(self).offset(-10);
-        make.width.mas_equalTo(@(50));
-        make.height.mas_equalTo(@(28));
+    [self.minLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.reduceButton.mas_right);
+        make.centerY.equalTo(self);
+        make.width.mas_equalTo(30);
     }];
-    
-    [self.subLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.mas_equalTo(self.tf);
-        make.left.mas_equalTo(20);
+    [self.maxLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.addButton.mas_left);
+        make.centerY.equalTo(self);
+        make.width.mas_equalTo(30);
     }];
-    
-    [self.placeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.mas_equalTo(self.tf);
-        make.right.mas_equalTo(self.tf.mas_left).offset(-10);
+    [self.sliderView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.maxLabel.mas_left);
+        make.centerY.mas_equalTo(self);
+        make.left.mas_equalTo(self.minLabel.mas_right);
+        make.height.mas_equalTo(15);
     }];
+}
+
+- (void)setValue:(float)value {
+    _value = value;
+    _currentValue = (int)(_value * 100);
+    self.sliderView.value = value;
+}
+
+- (void)setMax:(CGFloat)max {
+    _max = max;
+    _maxLabel.text = [NSString stringWithFormat:@"%.0f", max];
+}
+
+- (void)setMin:(CGFloat)min {
+    _min = min;
+    _minLabel.text = [NSString stringWithFormat:@"%.0f", min];
+}
+
+//处理
+- (void)sliderValurChanged:(UISlider*)slider {
+    [self sliderClick:slider];
+}
+
+- (void)sliderClick:(UISlider *)slider {
+    if ([self.delegate respondsToSelector:@selector(sliderView:valueChanged:)]) {
+        self.currentValue = (int)(slider.value * 100);
+//        [self.delegate sliderView:self valueChanged:(int)(slider.value * 100)];
+    }
+}
+
+- (void)buttonClcik:(UIButton *)sender {
+    if (sender == self.addButton) {
+        if (self.currentValue == 100) return;
+        self.currentValue++;
+    } else {
+        if (self.currentValue == 0) return;
+        self.currentValue--;
+    }
+    self.sliderView.value = (CGFloat)self.currentValue / 100.0;
+    if ([self.delegate respondsToSelector:@selector(sliderView:valueChanged:)]) {
+//        [self.delegate sliderView:self valueChanged:self.currentValue];
+    }
+}
+
+- (void)onClickAdd:(UIButton *)sender {
     
-    [self.lineView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(1);
-        make.left.mas_equalTo(self).offset(20);
-        make.right.mas_equalTo(self).offset(-10);
-        make.top.mas_equalTo(self).offset(54);
-    }];
+}
+
+- (void)onClickReduce:(UIButton *)sender {
     
 }
 
-- (void)setOn:(BOOL)on {
-    _on = on;
-    self.switcher.on = on;
-    [self updateUIWith:on];
-}
-
--(void)setAecValue:(NSInteger)aecValue {
-    _aecValue = aecValue;
-    self.tf.text = [NSString stringWithFormat:@"%ld", aecValue];
-}
-
--(void)updateUIWith:(BOOL)on{
-    [self.lineView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(self).offset(on ? 90 : 54);
-    }];
-    self.subLabel.hidden = !on;
-    self.placeLabel.hidden = !on;
-    self.tf.hidden = !on;
-}
-
-- (void)setSubText:(NSString *)subText {
-    _subText = subText;
-    self.subLabel.text = _subText;
-}
-
-- (void)valueChanged:(UISwitch *)switcher {
-    _on = switcher.on;
-    [self updateUIWith:_on];
-    if ([self.delegate respondsToSelector:@selector(aecSwitcherView:on:)]) {
-        [self.delegate aecSwitcherView:self on:switcher.on];
-    }
-}
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    NSInteger level = [string integerValue];
-    self.tf.text = @"0";
-    [self endEditing:true];
-    if (string.length == 0) {
-        return true;
-    }
+- (void)updateValue:(NSInteger)value {
     
-    if (level < 0 || level > 4) {
-        self.tf.text = [NSString stringWithFormat:@"%li", (long)_aecValue];
-        [VLToast toast:KTVLocalizedString(@"ktv_aiaec_rule")];
-        self.level = _aecValue;
-        return true;
-    }
     
-    self.level = level;
-    self.tf.text = string;
-    
-    if ([self.delegate respondsToSelector:@selector(aecSwitcherView:level:)]) {
-        [self.delegate aecSwitcherView:self level:self.level];
-    }
-    
-    return true;
-}
-
-- (UISwitch *)switcher {
-    if (!_switcher) {
-        _switcher = [[UISwitch alloc] init];
-        _switcher.onTintColor = UIColorMakeWithHex(@"#009FFF");
-        [_switcher addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
-    }
-    return _switcher;
-}
-
-- (UILabel *)nameLabel {
-    if (!_nameLabel) {
-        _nameLabel = [[UILabel alloc] init];
-        _nameLabel.font = [UIFont systemFontOfSize:15];
-        _nameLabel.text = KTVLocalizedString(@"ktv_aiaec_switch");
-        _nameLabel.textColor = [UIColor whiteColor];
-    }
-    return _nameLabel;
 }
 
 
-- (UILabel *)subLabel {
-    if (!_subLabel) {
-        _subLabel = [[UILabel alloc] init];
-        _subLabel.font = [UIFont systemFontOfSize:13];
-        _subLabel.text = KTVLocalizedString(@"ktv_aiaec_level");
-        _subLabel.textColor = UIColorMakeWithHex(@"#6C7192");
+#pragma mark - Lazy
+
+- (UISlider *)sliderView {
+    if (!_sliderView) {
+        _sliderView = [[UISlider alloc]init];
+        [_sliderView setThumbImage:[UIImage ktv_sceneImageWithName:@"icon_ktv_slider" ] forState:UIControlStateNormal];
+        [_sliderView setThumbImage:[UIImage ktv_sceneImageWithName:@"icon_ktv_slider" ] forState:UIControlStateHighlighted];
+        _sliderView.maximumValue = self.max;
+        _sliderView.minimumValue = self.min;
+        [_sliderView addTarget:self action:@selector(sliderValurChanged:) forControlEvents:UIControlEventTouchUpInside];
     }
-    return _subLabel;
+    return _sliderView;
 }
 
-- (UILabel *)placeLabel {
-    if (!_placeLabel) {
-        _placeLabel = [[UILabel alloc] init];
-        _placeLabel.font = [UIFont systemFontOfSize:13];
-        _placeLabel.text = KTVLocalizedString(@"ktv_aiaec_rule");
-        _placeLabel.textColor = UIColorMakeWithHex(@"#6C7192");
+- (UIButton *)addButton {
+    if (!_addButton) {
+        _addButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_addButton setImage:[UIImage ktv_sceneImageWithName:@"icon_ktv_add" ] forState:UIControlStateNormal];
+        [_addButton addTarget:self action:@selector(onClickAdd:) forControlEvents:UIControlEventTouchUpInside];
     }
-    return _placeLabel;
+    return _addButton;
+}
+
+- (UIButton *)reduceButton {
+    if (!_reduceButton) {
+        _reduceButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_reduceButton setImage:[UIImage ktv_sceneImageWithName:@"icon_ktv_reduce" ] forState:UIControlStateNormal];
+        [_reduceButton addTarget:self action:@selector(onClickReduce:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _reduceButton;
+}
+
+- (UILabel *)minLabel {
+    if (!_minLabel) {
+        _minLabel = [[UILabel alloc] init];
+        _minLabel.font = [UIFont systemFontOfSize:11];
+        _minLabel.textColor = [UIColor colorWithHexString:@"#BABCCD"];
+        _minLabel.textAlignment = NSTextAlignmentCenter;
+    }
+    return _minLabel;
+}
+
+- (UILabel *)maxLabel {
+    if (!_maxLabel) {
+        _maxLabel = [[UILabel alloc] init];
+        _maxLabel.font = [UIFont systemFontOfSize:11];
+        _maxLabel.textColor = [UIColor colorWithHexString:@"#BABCCD"];
+        _maxLabel.textAlignment = NSTextAlignmentCenter;
+    }
+    return _maxLabel;
 }
 
 @end
