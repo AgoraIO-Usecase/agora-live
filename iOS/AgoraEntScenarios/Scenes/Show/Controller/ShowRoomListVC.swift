@@ -146,7 +146,7 @@ class ShowRoomListVC: UIViewController {
     }
     
     private func fetchRoomList() {
-        AppContext.showServiceImp("")?.getRoomList(page: 1) { [weak self] error, roomList in
+        AppContext.showServiceImp()?.getRoomList(page: 1) { [weak self] error, roomList in
             self?.refreshControl.endRefreshing()
             guard let self = self else {return}
             if let error = error {
@@ -187,11 +187,11 @@ extension ShowRoomListVC: UICollectionViewDataSource, UICollectionViewDelegateFl
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: ShowRoomListCell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(ShowRoomListCell.self), for: indexPath) as! ShowRoomListCell
         let room = roomList[indexPath.item]
-        cell.setBgImge((room.thumbnailId?.isEmpty ?? true) ? "0" : room.thumbnailId ?? "0",
+        cell.setBgImge("\(indexPath.item % 4)",
                        name: room.roomName,
                        id: room.roomId,
                        count: room.roomUserCount,
-                       pureMode: (room.isPureMode != 0))
+                       pureMode: false)
         cell.ag_addPreloadTap(roomInfo: room, localUid: delegateHandler.localUid) {[weak self] state in
             if AppContext.shared.rtcToken?.count ?? 0 == 0 {
                 if state == .began {

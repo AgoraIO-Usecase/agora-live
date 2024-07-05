@@ -129,8 +129,8 @@ class ShowRoomInfoView: UIView {
         } else {
             headImgView.image = UIImage(named: avatar ?? "")
         }
-        nameLabel.text = name
-        idLabel.text = id
+        nameLabel.text = name ?? ""
+        idLabel.text = "ID:\(id ?? "")"
         if let startTime = time {
             self.startTime = startTime
             updateTime()
