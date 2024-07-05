@@ -229,11 +229,19 @@ class ShowAgoraKitManager: NSObject {
     
     //MARK: public method
     func addRtcDelegate(delegate: AgoraRtcEngineDelegate, roomId: String) {
-        VideoLoaderApiImpl.shared.addRTCListener(anchorId: roomId, listener: delegate)
+        ShowLogger.info("addRtcDelegate[\(roomId)]")
+        let localUid = Int(VLUserCenter.user.id)!
+        let connection = AgoraRtcConnection(channelId: roomId, localUid: localUid)
+        engine?.addDelegateEx(delegate, connection: connection)
+//        VideoLoaderApiImpl.shared.addRTCListener(anchorId: roomId, listener: delegate)
     }
     
     func removeRtcDelegate(delegate: AgoraRtcEngineDelegate, roomId: String) {
-        VideoLoaderApiImpl.shared.removeRTCListener(anchorId: roomId, listener: delegate)
+        ShowLogger.info("removeRtcDelegate[\(roomId)]")
+        let localUid = Int(VLUserCenter.user.id)!
+        let connection = AgoraRtcConnection(channelId: roomId, localUid: localUid)
+        engine?.removeDelegateEx(delegate, connection: connection)
+//        VideoLoaderApiImpl.shared.removeRTCListener(anchorId: roomId, listener: delegate)
     }
     
     func renewToken(channelId: String) {

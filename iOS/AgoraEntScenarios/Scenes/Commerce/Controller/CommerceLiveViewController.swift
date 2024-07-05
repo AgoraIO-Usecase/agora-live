@@ -713,8 +713,8 @@ extension CommerceLiveViewController {
             DispatchQueue.main.async {
                 let receive = true
                 let send = true
-                let data = self.panelPresenter.generatePanelData(send: send, receive: receive, audience: (self.role == .audience))
-                self.realTimeView.update(left: data.left, right: data.right)
+                let datas = self.panelPresenter.generatePanelData(send: send, receive: receive, audience: (self.role == .audience))
+                self.realTimeView.update(datas: datas.map({ ($0.left, $0.right) }))
             }
         }
     }

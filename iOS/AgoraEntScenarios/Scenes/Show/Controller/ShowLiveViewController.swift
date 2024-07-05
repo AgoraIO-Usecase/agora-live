@@ -1037,8 +1037,17 @@ extension ShowLiveViewController {
                self.isSendJointBroadcasting == false {
                 send = false
             }
-            let data = self.panelPresenter.generatePanelData(send: send, receive: receive, audience: (self.role == .audience))
-            self.realTimeView.update(left: data.left, right: data.right)
+            var isInteractionUser = false
+            if let currentInteraction = self.currentInteraction {
+                if currentInteraction.userId == UserInfo.userId || self.room?.ownerId == UserInfo.userId {
+                    isInteractionUser = true
+                }
+            }
+            let datas = self.panelPresenter.generatePanelData(send: send,
+                                                              receive: receive,
+                                                              audience: (self.role == .audience),
+                                                              isInteractionUser:isInteractionUser)
+            self.realTimeView.update(datas: datas.map({ ($0.left, $0.right) }))
         }
     }
 }
