@@ -164,7 +164,6 @@ extension KTVLrcControl: KTVLrcViewDelegate {
 //            guard let self = self, let url = url else {return}
 //            self.resetLrcData(with: url)
 //        }
-        self.lrcDownload.cleanAll()
         let _ = self.lrcDownload.download(urlString: url)
     }
     

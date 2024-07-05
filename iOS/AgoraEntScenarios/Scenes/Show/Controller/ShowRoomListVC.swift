@@ -7,6 +7,7 @@
 
 import UIKit
 import VideoLoaderAPI
+import MJRefresh
 
 class ShowRoomListVC: UIViewController {
     let backgroundView = UIImageView()
@@ -22,12 +23,6 @@ class ShowRoomListVC: UIViewController {
         let itemWidth = (Screen.width - 15 - 20 * 2) * 0.5
         layout.itemSize = CGSize(width: itemWidth, height: 234.0 / 160.0 * itemWidth)
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
-    }()
-        
-    private lazy var refreshControl: UIRefreshControl = {
-        let ctrl = UIRefreshControl()
-        ctrl.addTarget(self, action: #selector(refreshControlValueChanged), for: .valueChanged)
-        return ctrl
     }()
     
     private let emptyView = ShowEmptyView()
@@ -85,9 +80,7 @@ class ShowRoomListVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         guard roomList.isEmpty else { return }
-        refreshControl.beginRefreshing()
-        collectionView.setContentOffset(CGPoint(x: 0, y: -refreshControl.frame.size.height), animated: true)
-        fetchRoomList()
+        self.collectionView.mj_header?.beginRefreshing()
     }
     
     @objc private func didClickCreateButton(){
@@ -96,10 +89,6 @@ class ShowRoomListVC: UIViewController {
         preNC.navigationBar.setBackgroundImage(UIImage(), for: .default)
         preNC.modalPresentationStyle = .fullScreen
         present(preNC, animated: true)
-    }
-    
-    @objc private func refreshControlValueChanged() {
-        self.fetchRoomList()
     }
     
     private func checkDevice() {
@@ -126,16 +115,12 @@ class ShowRoomListVC: UIViewController {
             vc.onClickDislikeClosure = { [weak self] in
                 guard let self = self else { return }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.15, execute: DispatchWorkItem(block: {
-                    self.refreshControl.beginRefreshing()
-                    self.collectionView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.size.height), animated: true)
                     self.fetchRoomList()
                 }))
             }
             vc.onClickDisUserClosure = { [weak self] in
                 guard let self = self else { return }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.15, execute: DispatchWorkItem(block: {
-                    self.refreshControl.beginRefreshing()
-                    self.collectionView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.size.height), animated: true)
                     self.fetchRoomList()
                 }))
             }
@@ -147,8 +132,8 @@ class ShowRoomListVC: UIViewController {
     
     private func fetchRoomList() {
         AppContext.showServiceImp("")?.getRoomList(page: 1) { [weak self] error, roomList in
-            self?.refreshControl.endRefreshing()
-            guard let self = self else {return}
+            guard let self = self else { return }
+            self.collectionView.mj_header?.endRefreshing()
             if let error = error {
                 showLogger.error(error.localizedDescription)
                 return
@@ -223,8 +208,10 @@ extension ShowRoomListVC {
         collectionView.register(ShowRoomListCell.self, forCellWithReuseIdentifier: NSStringFromClass(ShowRoomListCell.self))
         collectionView.delegate = delegateHandler
         collectionView.dataSource = self
-        collectionView.refreshControl = self.refreshControl
         view.addSubview(collectionView)
+        collectionView.mj_header = MJRefreshNormalHeader.init {
+            self.fetchRoomList()
+        }
         
         emptyView.isHidden = true
         collectionView.addSubview(emptyView)

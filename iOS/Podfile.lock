@@ -170,7 +170,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AgoraLyricsScore:
-    :commit: a5d5f285a4586558320c05df9136bf579f7580de
+    :commit: 5f5da38e7cf20c905955cf030c254bf86340ee37
     :git: https://github.com/AgoraIO-Community/LrcView-iOS.git
 
 SPEC CHECKSUMS:
