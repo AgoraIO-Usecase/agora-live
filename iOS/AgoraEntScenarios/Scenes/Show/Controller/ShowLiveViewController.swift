@@ -723,7 +723,6 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
             liveView.canvasView.canvasType = .joint_broadcasting
             liveView.canvasView.setRemoteUserInfo(name: interaction.userName ?? "")
             if role == .audience {
-                ShowAgoraKitManager.shared.setPVCon(true)
                 ShowAgoraKitManager.shared.setSuperResolutionOn(false)
             }
             let toRole: AgoraClientRole = (role == .broadcaster || interaction.userId == VLUserCenter.user.id) ? .broadcaster : .audience
@@ -771,7 +770,6 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
             liveView.bottomBar.linkButton.isSelected = false
             currentInteraction?.ownerMuteAudio = false
             if role == .audience {
-                ShowAgoraKitManager.shared.setPVCon(false)
                 ShowAgoraKitManager.shared.setSuperResolutionOn(true)
             } else {
                 ShowAgoraKitManager.shared.updateVideoProfileForMode(.single)

@@ -275,7 +275,7 @@ enum CommerceDebugSettingKey: String, CaseIterable {
         case .encode:
             return "Hard/soft"
         case .codeCType:
-            return "encoder"
+            return "Encoder"
         case .mirror:
             return "Mirror image"
         case .renderMode:

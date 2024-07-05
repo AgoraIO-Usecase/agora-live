@@ -97,7 +97,6 @@ UICollectionViewDataSource
     self.ansSegmentView.selectIndex = self.setting.ans;
     self.delaySwitcherView.on = self.setting.isDelay;
     self.perBroSwitcherView.on = self.setting.isPerBro;
-    self.aiAecSwitcherView.on = self.setting.enableAec;
     self.aiAecSwitcherView.value = self.setting.aecLevel;
     self.netSwitcherView.on = self.setting.enableMultipath;
 }
@@ -128,15 +127,14 @@ UICollectionViewDataSource
     self.lrcSegmentView.alpha = status ? 0.6 : 1;
 }
 
--(void)setAEC:(BOOL)enable level:(NSInteger)level{
-    self.aiAecSwitcherView.on = enable;
+-(void)setAEClevel:(NSInteger)level{
     self.aiAecSwitcherView.value = level;
 }
 
 - (void)initSubViews {
     self.scrollView = [[UIScrollView alloc]init];
     self.scrollView.scrollEnabled = true;
-    self.scrollView.contentSize = CGSizeMake(0, 740);
+    self.scrollView.contentSize = CGSizeMake(0, 720);
     [self addSubview:self.scrollView];
     [self.scrollView addSubview:self.titleLabel];
     [self.scrollView addSubview:self.soundSwitcher];
@@ -230,7 +228,7 @@ UICollectionViewDataSource
     [self.aiAecSwitcherView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.mas_equalTo(self);
         make.top.mas_equalTo(self.ansSegmentView.mas_bottom).offset(0);
-        make.height.mas_equalTo(90);
+        make.height.mas_equalTo(50);
     }];
 }
 
@@ -505,7 +503,7 @@ UICollectionViewDataSource
 
 -(VLSettingAIAECSwitcherView *)aiAecSwitcherView {
     if(!_aiAecSwitcherView){
-        _aiAecSwitcherView = [VLSettingAIAECSwitcherView new];
+        _aiAecSwitcherView = [[VLSettingAIAECSwitcherView alloc] initWithMax:4 min:0 title:@"AIAEC"];
         _aiAecSwitcherView.delegate = self;
     }
     return _aiAecSwitcherView;
