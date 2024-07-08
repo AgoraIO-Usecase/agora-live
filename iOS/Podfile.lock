@@ -24,6 +24,9 @@ PODS:
   - AgoraRtm (2.2.0)
   - AgoraSyncManager-overseas (3.0.8):
     - SocketRocket
+  - fuLib (1.0):
+    - FURenderKit (= 8.6.0)
+  - FURenderKit (8.6.0)
   - HWWeakTimer (1.0)
   - JXCategoryView (1.6.1)
   - KakaJSON (1.1.2)
@@ -71,6 +74,7 @@ DEPENDENCIES:
   - AgoraRtcEngine_Special_iOS (= 4.3.1.133)
   - AgoraRtm (from `AgoraRtm.podspec`)
   - AgoraSyncManager-overseas (~> 3.0.8)
+  - fuLib (from `fu.podspec`)
   - HWWeakTimer (= 1.0)
   - JXCategoryView (= 1.6.1)
   - KakaJSON
@@ -101,6 +105,7 @@ SPEC REPOS:
     - AgoraComponetLog
     - AgoraRtcEngine_Special_iOS
     - AgoraSyncManager-overseas
+    - FURenderKit
     - HWWeakTimer
     - JXCategoryView
     - KakaJSON
@@ -129,6 +134,8 @@ EXTERNAL SOURCES:
     :git: https://github.com/AgoraIO-Community/LrcView-iOS.git
   AgoraRtm:
     :path: AgoraRtm.podspec
+  fuLib:
+    :path: fu.podspec
   RTMSyncManager:
     :path: AgoraEntScenarios/Common/API/RTMSyncManager
   VideoLoaderAPI:
@@ -148,6 +155,8 @@ SPEC CHECKSUMS:
   AgoraRtcEngine_Special_iOS: 18b7ea37f4d10c19c13573bd06206d9af3ec1097
   AgoraRtm: 874bbc0db49e4581832ce4fb8c47023bbd32ef10
   AgoraSyncManager-overseas: 4dddc7d8cd336e257adaac5e278e6cbcfaf1e954
+  fuLib: a59e706f8b8a3826dcbe93d427fba2bcafc643aa
+  FURenderKit: bcff9889dbbafcd12839d57ee85d03b466e1a6fb
   HWWeakTimer: 79488095ef2dd8937f94b676d12bd5fa954486e6
   JXCategoryView: 7b1ee69ede4843c581688afe84d0f047723262f2
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
@@ -172,6 +181,6 @@ SPEC CHECKSUMS:
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: e8484b74408caab3997e1936ffd889a6ff8b951c
+PODFILE CHECKSUM: e4cdc5c3f290d9eccabe8826fc3d415edf1b3e87
 
 COCOAPODS: 1.15.2

@@ -149,9 +149,17 @@ class ShowDataPanelPresenter {
         let startup = audience ? "\(callTs) ms" : "--"
         let startupStr = "show_statistic_startup_time".show_localized + ": " + startup
         // h265 switch
-        let isH265On = localVideoStats.codecType == .H265
-        let encoder = send ? (isH265On ? "H265" : "H264") : "--"
-        let encoderStr = "Encoder: \(encoder)"
+        var encoderStr = "Encoder: --"
+        if send {
+            switch localVideoStats.codecType {
+            case .H265:
+                encoderStr = "Encoder: H265"
+            case .AV1:
+                encoderStr = "Encoder: AV1"
+            default:
+                encoderStr = "Encoder: H264"
+            }
+        }
         
         // super resolution switch
         let sr = audience ? (params.sr ? onStr : offStr) : "--"
