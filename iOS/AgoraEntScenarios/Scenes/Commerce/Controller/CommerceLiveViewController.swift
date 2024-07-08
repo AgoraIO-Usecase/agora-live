@@ -182,6 +182,9 @@ class CommerceLiveViewController: UIViewController {
             let options = self.channelOptions
             options.publishCameraTrack = !muteLocalVideo
             CommerceAgoraKitManager.shared.updateChannelEx(channelId: self.room?.roomId ?? "", options: options)
+            if room?.ownerId == VLUserCenter.user.id {
+                self.liveView.showThumnbnailCanvasView = muteLocalVideo
+            }
         }
     }
     
@@ -601,18 +604,12 @@ extension CommerceLiveViewController: AgoraRtcEngineDelegate {
                    state: AgoraVideoRemoteState,
                    reason: AgoraVideoRemoteReason,
                    elapsed: Int) {
-        DispatchQueue.main.async {
-            let channelId = self.room?.roomId ?? ""
-            commerceLogger.info("didLiveRtcRemoteVideoStateChanged channelId: \(channelId) uid: \(uid) state: \(state.rawValue) reason: \(reason.rawValue)",
-                            context: kCommerceLogBaseContext)
-            if state == .decoding /*2*/,
-               ( reason == .remoteUnmuted /*6*/ || reason == .localUnmuted /*4*/ || reason == .localMuted /*3*/ )   {
-                commerceLogger.info("show first frame (\(channelId))", context: kCommerceLogBaseContext)
-                // TODO: FAPNGEG
-//                if let ts = ShowAgoraKitManager.shared.callTimestampEnd() {
-//                    self.panelPresenter.updateTimestamp(ts)
-//                    self.throttleRefreshRealTimeInfo()
-//                }
+        assert(Thread.isMainThread)
+        if uid == roomOwnerId {
+            if reason == .remoteMuted{
+                liveView.showThumnbnailCanvasView = true
+            }else if reason == .remoteUnmuted {
+                liveView.showThumnbnailCanvasView = false
             }
         }
     }
