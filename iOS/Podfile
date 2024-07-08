@@ -25,7 +25,7 @@ def all_pods
 #  # Sense
 #  pod 'SenseLib', :path => 'sense.podspec'
   # FU
-#  pod 'fuLib', :path => 'fu.podspec'
+  pod 'fuLib', :path => 'fu.podspec'
   
   pod 'AgoraSyncManager-overseas', '~> 3.0.8'
   pod 'RTMSyncManager', :path => 'AgoraEntScenarios/Common/API/RTMSyncManager'
