@@ -31,12 +31,12 @@ def all_pods
   pod 'RTMSyncManager', :path => 'AgoraEntScenarios/Common/API/RTMSyncManager'
 
 #  pod 'sdk', :path => 'sdk.podspec'
-#  pod 'AgoraRtcEngine_iOS', '~> 4.2.2'
-  pod 'AgoraRtcEngine_Special_iOS', '4.1.1.26'
+#  pod 'AgoraRtcEngine_iOS', '4.3.1'
+  pod 'AgoraRtcEngine_Special_iOS', '4.3.1.133'
   
   #歌词组件
   pod "ScoreEffectUI", '1.0.2'
-  pod 'AgoraLyricsScore', '1.1.6'
+  pod 'AgoraLyricsScore', :git => 'https://github.com/AgoraIO-Community/LrcView-iOS.git', :branch => 'feature/dev_2.1.0'
   
 #  pod 'LSTPopView', '0.3.10'
 
@@ -48,7 +48,7 @@ def all_pods
   pod 'Agora-Scene-Utils', '1.1.0'
   
 #  pod 'AgoraRtm', :path => 'AgoraRtm.podspec'
-  pod 'AgoraRtm', '2.2.0'
+  pod 'AgoraRtm', :path => 'AgoraRtm.podspec'
   pod 'MJRefresh', '3.7.9'
   
   # Swift Code Formatter
