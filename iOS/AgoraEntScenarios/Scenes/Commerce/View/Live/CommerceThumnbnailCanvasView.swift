@@ -1,5 +1,5 @@
 //
-//  ShowThumnbnailCanvasView.swift
+//  CommerceThumnbnailCanvasView.swift
 //  AgoraEntScenarios
 //
 //  Created by zhaoyongqiang on 2023/10/26.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ShowThumnbnailCanvasView: UIView {
+class CommerceThumnbnailCanvasView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         

@@ -49,6 +49,12 @@ class CommerceRoomLiveView: UIView {
         return view
     }()
     
+    var showThumnbnailCanvasView = false {
+        didSet{
+            canvasView.thumnbnailCanvasView.isHidden = !showThumnbnailCanvasView
+        }
+    }
+    
     private var chatArray = [CommerceMessage]()
     
     private lazy var roomInfoView: CommerceRoomInfoView = {
