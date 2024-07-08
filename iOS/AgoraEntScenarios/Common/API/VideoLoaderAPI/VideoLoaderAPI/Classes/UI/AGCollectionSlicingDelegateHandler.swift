@@ -5,7 +5,7 @@
 //  Created by wushengtao on 2023/8/30.
 //
 
-import Foundation
+import UIKit
 
 //触发时机
 @objc public enum AGVideoSlicingType: Int {
@@ -183,7 +183,6 @@ extension AGCollectionSlicingDelegateHandler {
             let renderView = self.onRequireRenderVideo?(anchorInfo, container, cell, indexPath)
             container.uid = anchorInfo.uid
             container.container = renderView
-            container.mirrorMode = .disabled
             if state == .idle {
                 container.setupMode = .remove
             }
