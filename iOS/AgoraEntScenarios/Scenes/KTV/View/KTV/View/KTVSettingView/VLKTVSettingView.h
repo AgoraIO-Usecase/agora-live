@@ -42,7 +42,7 @@ typedef enum : NSUInteger {
 -(void)setSelectEffect:(NSInteger)index;
 -(void)setUseSoundCard:(BOOL)useSoundCard;
 -(void)setChorusStatus:(BOOL)status;
--(void)setAEC:(BOOL)enable level:(NSInteger)level;
+-(void)setAEClevel:(NSInteger)level;
 @end
 
 @interface VLKTVSettingModel : NSObject

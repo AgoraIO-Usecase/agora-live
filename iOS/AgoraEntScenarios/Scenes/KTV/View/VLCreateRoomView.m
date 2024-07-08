@@ -66,11 +66,8 @@
     
     UILabel *contentLabel = [[UILabel alloc]initWithFrame:CGRectMake(30, 5, self.warningView.width - 38, textHeight)];
     contentLabel.numberOfLines = 0;
-    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:text];
-    [attributedText addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithRed:48/255.0 green:53/255.0 blue:83/255.0 alpha:1] range:NSMakeRange(0, 77)];
-    [attributedText addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithRed:250/255.0 green:57/255.0 blue:106/255.0 alpha:1] range:NSMakeRange(77, 41)];
     contentLabel.font = UIFontMake(12);
-    contentLabel.attributedText = attributedText;
+    contentLabel.text = text;
     [self.warningView addSubview:contentLabel];
     
     UILabel *roomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, self.warningView.bottom+VLREALVALUE_WIDTH(20), 70, 20)];
