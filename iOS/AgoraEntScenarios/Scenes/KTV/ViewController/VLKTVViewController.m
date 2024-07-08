@@ -432,7 +432,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     } else {
         [self.settingView setIspause:self.isPause];
     }
-    [self.settingView setAEC:self.aecState level:self.aecLevel];
+    [self.settingView setAEClevel:self.aecLevel];
     [self.settingView setChorusStatus: flag];
 }
 
