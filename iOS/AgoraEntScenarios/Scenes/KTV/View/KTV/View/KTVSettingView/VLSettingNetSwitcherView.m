@@ -42,13 +42,13 @@
     }];
     
     [self.nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.mas_equalTo(-10);
+        make.right.equalTo(self.switcher.mas_left);
         make.left.mas_equalTo(20);
         make.top.mas_equalTo(8);
     }];
     
     [self.subLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.mas_equalTo(-10);
+        make.right.equalTo(self.switcher.mas_left).offset(-10);
         make.left.mas_equalTo(20);
         make.top.mas_equalTo(self.nameLabel.mas_bottom);
     }];
@@ -101,6 +101,7 @@
     if (!_subLabel) {
         _subLabel = [[UILabel alloc] init];
         _subLabel.font = [UIFont systemFontOfSize:13];
+        _subLabel.numberOfLines = 0;
         _subLabel.text = KTVLocalizedString(@"ktv_bad_wifi");
         _subLabel.textColor = UIColorMakeWithHex(@"#6C7192");
     }

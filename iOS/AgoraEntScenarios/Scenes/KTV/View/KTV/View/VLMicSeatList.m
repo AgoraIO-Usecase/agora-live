@@ -88,7 +88,7 @@
     if (seatModel.owner.userName.length > 0) {
         cell.nickNameLabel.text = seatModel.owner.userName;
     }else{
-        cell.nickNameLabel.text = [NSString stringWithFormat:@"%d%@", (int)indexPath.row + 1, KTVLocalizedString(@"ktv_mic_index")];
+        cell.nickNameLabel.text = [NSString stringWithFormat:@"%@%d", KTVLocalizedString(@"ktv_mic_index"), (int)indexPath.row + 1];
     }
     
     if ([AppContext isKtvRoomOwnerWithSeat:seatModel]) {
