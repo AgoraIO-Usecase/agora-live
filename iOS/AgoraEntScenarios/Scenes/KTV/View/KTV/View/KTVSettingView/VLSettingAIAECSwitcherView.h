@@ -20,9 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id <VLSettingAIAECSwitcherViewDelegate> delegate;
 
-- (instancetype)initWithMax:(NSInteger)max min:(NSInteger)min title:(NSString *)title;
+- (instancetype)initWithMax:(NSInteger)max min:(NSInteger)min;
 
-@property (nonatomic, assign) NSInteger value;
+- (void)setOn:(BOOL)on value:(NSInteger)value;
 
 @end
 

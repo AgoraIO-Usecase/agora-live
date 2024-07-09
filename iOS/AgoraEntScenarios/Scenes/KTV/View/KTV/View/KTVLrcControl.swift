@@ -81,7 +81,7 @@ private func agoraPrint(_ message: String) {
     private func setupSkipBtn() {
         let frame = CGRect(x: (lrcView?.bounds.size.width ?? 0) / 2.0 - 60,
                            y: (lrcView?.bounds.size.height ?? 0) - 20,
-                           width: 120,
+                           width: 140,
                            height: 34)
         skipBtn = KTVSkipView(frame: frame) { [weak self] type in
             guard let self = self,

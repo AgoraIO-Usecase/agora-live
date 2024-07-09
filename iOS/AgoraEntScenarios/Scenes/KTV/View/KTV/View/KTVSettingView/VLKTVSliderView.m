@@ -45,8 +45,14 @@
 
 - (void)addSubViewConstraints {
     CGFloat padding = 8;
+    self.titleLabel.numberOfLines = 0;
+    [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(20);
+        make.centerY.mas_equalTo(self);
+        make.width.equalTo(@120);
+    }];
     [self.reduceButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(90);
+        make.left.equalTo(self.titleLabel.mas_right).offset(10);
         make.width.mas_equalTo(@(26));
         make.centerY.mas_equalTo(self);
     }];

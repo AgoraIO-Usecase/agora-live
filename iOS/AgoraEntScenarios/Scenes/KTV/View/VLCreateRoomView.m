@@ -70,7 +70,7 @@
     contentLabel.text = text;
     [self.warningView addSubview:contentLabel];
     
-    UILabel *roomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, self.warningView.bottom+VLREALVALUE_WIDTH(20), 70, 20)];
+    UILabel *roomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, self.warningView.bottom+VLREALVALUE_WIDTH(20), 100, 20)];
     roomTitleLabel.font = UIFontMake(14);
     roomTitleLabel.textColor = UIColorMakeWithHex(@"#000000");
     roomTitleLabel.text = KTVLocalizedString(@"ktv_room_title");
@@ -141,7 +141,11 @@
     self.codeView = pwdView;
 
     UIButton *createBtn = [[UIButton alloc] init];
-    [createBtn setBackgroundImage:[UIImage ktv_sceneImageWithName:@"createRoomBtn" ] forState:UIControlStateNormal];
+    [createBtn setTitle:KTVLocalizedString(@"ktv_create") forState:UIControlStateNormal];
+    [createBtn setBackgroundColor:[UIColor colorWithHexString:@"345DFF"]];
+    [createBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    createBtn.layer.cornerRadius = 10;
+    createBtn.layer.masksToBounds = true;
     createBtn.accessibilityIdentifier = @"ktv_create_room_button_id";
     createBtn.titleLabel.font = UIFontBoldMake(16.0);
     createBtn.adjustsImageWhenHighlighted = NO;
