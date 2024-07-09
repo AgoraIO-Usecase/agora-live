@@ -180,11 +180,11 @@
     self.BotView.backgroundColor = [UIColor clearColor];
     [self addSubview:self.BotView];
 
-    self.pauseBtn.frame = CGRectMake(20, 0, 34, 54);
+    self.pauseBtn.frame = CGRectMake(20, 0, 44, 54);
     [self updateBtnLayout:self.pauseBtn];
     [self.BotView addSubview:self.pauseBtn];
 
-    self.nextButton.frame = CGRectMake(_pauseBtn.right+10, 0, 34, 54);
+    self.nextButton.frame = CGRectMake(_pauseBtn.right+10, 0, 44, 54);
     [self updateBtnLayout:self.nextButton];
     [self.BotView addSubview:self.nextButton];
     
@@ -234,15 +234,15 @@
 
 -(void)updateBtnLayout:(UIButton*)button {
     CGFloat spacing = -5;
-      CGSize imageSize = button.imageView.frame.size;
-       CGSize titleSize = button.titleLabel.frame.size;
-        CGSize textSize = [button.titleLabel.text sizeWithFont:button.titleLabel.font];
-      CGSize frameSize = CGSizeMake(ceilf(textSize.width), ceilf(textSize.height));
-      if (titleSize.width + 0.5 < frameSize.width) {
-          titleSize.width = frameSize.width;
-        }
-
-      CGFloat totalHeight = imageSize.height + titleSize.height;
+    CGSize imageSize = button.imageView.frame.size;
+    CGSize titleSize = button.titleLabel.frame.size;
+    CGSize textSize = [button.titleLabel.text sizeWithAttributes:@{NSFontAttributeName: button.titleLabel.font}];
+    CGSize frameSize = CGSizeMake(ceilf(textSize.width), ceilf(textSize.height));
+    if (titleSize.width + 0.5 < frameSize.width) {
+        titleSize.width = frameSize.width;
+    }
+    
+    CGFloat totalHeight = imageSize.height + titleSize.height;
     button.imageEdgeInsets = UIEdgeInsetsMake(- (totalHeight - imageSize.height + spacing), 0.0, 15.0, - titleSize.width);
     button.titleEdgeInsets = UIEdgeInsetsMake(0, - imageSize.width, - (totalHeight - titleSize.height + spacing), 0);
 }
@@ -511,9 +511,9 @@
     }
     
     if((self.pauseBtn.isHidden == NO || self.leaveChorusBtn.hidden == NO) && self.nextButton.isHidden == NO){
-        self.nextButton.frame = CGRectMake(_pauseBtn.right+10, _pauseBtn.top, 34, 54);
+        self.nextButton.frame = CGRectMake(_pauseBtn.right+10, _pauseBtn.top, 44, 54);
     } else {
-        self.nextButton.frame = CGRectMake(20, 0, 34, 54);
+        self.nextButton.frame = CGRectMake(20, 0, 44, 54);
     }
 }
 
