@@ -118,13 +118,16 @@
     [self.enBtn addTarget:self action:@selector(enChange:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.enBtn];
     
-    self.setLabel = [[UILabel alloc]initWithFrame:CGRectMake(SCREEN_WIDTH - 170, inputBgView.bottom+VLREALVALUE_WIDTH(25.5), 150, 17)];
+    self.setLabel = [[UILabel alloc]initWithFrame:CGRectMake(SCREEN_WIDTH - 170, inputBgView.bottom+VLREALVALUE_WIDTH(25.5), 170, 17)];
     self.setLabel.font = UIFontMake(12);
     self.setLabel.textColor = UIColorMakeWithHex(@"#FA396A");
     self.setLabel.text = KTVLocalizedString(@"ktv_please_input_4_pwd");
-    self.setLabel.textAlignment = NSTextAlignmentRight;
     [self.setLabel setHidden:true];
     [self addSubview:self.setLabel];
+    [self.setLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(inputBgView.mas_bottom).offset(VLREALVALUE_WIDTH(25.5));
+        make.right.mas_equalTo(-20);
+    }];
     
     self.screatView = [[UIView alloc]initWithFrame:CGRectMake(20, self.setLabel.bottom+VLREALVALUE_WIDTH(8), SCREEN_WIDTH-40, 48)];
     self.screatView.hidden = YES;

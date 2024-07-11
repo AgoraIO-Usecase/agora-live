@@ -39,6 +39,7 @@ class SoundCardMicCell: UITableViewCell {
         detailLabel.text = Bundle.localizedString("ktv_choose_sc_params", bundleName: "KtvResource")
         detailLabel.font = UIFont.systemFont(ofSize: 12)
         detailLabel.textColor = .lightGray
+        detailLabel.numberOfLines = 0
         self.contentView.addSubview(detailLabel)
         
         numLable = UILabel()
@@ -75,8 +76,8 @@ class SoundCardMicCell: UITableViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        titleLabel.frame = CGRect(x: 20, y: 5, width: 80, height: 18)
-        detailLabel.frame = CGRect(x: 20, y: 25, width: 200, height: 18)
+        titleLabel.frame = CGRect(x: 20, y: 5, width: 200, height: 18)
+        detailLabel.frame = CGRect(x: 20, y: 25, width: 180, height: 36)
         numLable.frame = CGRect(x: self.bounds.size.width - 60, y: 16, width: 60, height: 20)
         slider.frame = CGRect(x: self.bounds.size.width - 180, y: 11, width: 120, height: 30)
     }
