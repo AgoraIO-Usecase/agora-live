@@ -68,7 +68,7 @@ PODS:
   - RTMSyncManager (0.1.0):
     - AgoraRtm (~> 2.2.0)
     - YYModel
-  - ScoreEffectUI (1.0.2)
+  - ScoreEffectUI (1.0.3)
   - SDWebImage (4.4.8):
     - SDWebImage/Core (= 4.4.8)
   - SDWebImage/Core (4.4.8)
@@ -86,7 +86,7 @@ PODS:
   - SVGAPlayer/ProtoFiles (2.5.7):
     - Protobuf (~> 3.4)
   - SVProgressHUD (2.2.5)
-  - SwiftProtobuf (1.26.0)
+  - SwiftProtobuf (1.27.0)
   - SwiftyBeaver (1.9.5)
   - VideoLoaderAPI (0.1.3):
     - AgoraRtcEngine_iOS
@@ -113,7 +113,7 @@ DEPENDENCIES:
   - MJRefresh (= 3.7.9)
   - Protobuf (= 3.22.1)
   - RTMSyncManager (from `AgoraEntScenarios/Common/API/RTMSyncManager`)
-  - ScoreEffectUI (= 1.0.2)
+  - ScoreEffectUI (= 1.0.3)
   - SDWebImage (= 4.4.8)
   - SDWebImageAPNGCoder
   - SnapKit
@@ -190,7 +190,7 @@ SPEC CHECKSUMS:
   MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
   Protobuf: d7f7c8329edf5eb8af65547a8ba3e9c1cee927d5
   RTMSyncManager: 110b208a8bf57881decaef0e76891bdf5345ba21
-  ScoreEffectUI: bf1195b4d41a73d43c236450b5d7f958989844aa
+  ScoreEffectUI: 2eef7a81906aae23ff96e3d7e07701a65f367b9f
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   SDWebImageAPNGCoder: 3e4c684c8223eef2f45a50bdd0beaab345e4eb24
   SnapKit: d612e99e678a2d3b95bf60b0705ed0a35c03484a
@@ -198,7 +198,7 @@ SPEC CHECKSUMS:
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   SVGAPlayer: 318b85a78b61292d6ae9dfcd651f3f0d1cdadd86
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
-  SwiftProtobuf: 5e8349171e7c2f88f5b9e683cb3cb79d1dc780b3
+  SwiftProtobuf: 07b360b482e7015be5add8475cbe314853516814
   SwiftyBeaver: 84069991dd5dca07d7069100985badaca7f0ce82
   VideoLoaderAPI: b4326ab6200906ce6008c72661bb4b2eeed06868
   YYCategories: 6bcd4314c6661a561410dce4a793379ebd306abd
@@ -206,6 +206,6 @@ SPEC CHECKSUMS:
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: 6d245937108b4774c32cc7e3d6de91ed3d71c433
+PODFILE CHECKSUM: 39bd4ca33aeb0bd3f53821b9c2ed4ec9bddda0fd
 
 COCOAPODS: 1.12.1
