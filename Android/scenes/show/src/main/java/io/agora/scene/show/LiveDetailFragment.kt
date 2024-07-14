@@ -357,6 +357,7 @@ class LiveDetailFragment : Fragment() {
      */
     fun onPageLoaded() {
         updatePKingMode()
+        refreshPKTimeCount()
     }
 
     /**
@@ -1009,19 +1010,21 @@ class LiveDetailFragment : Fragment() {
                 mPKCountDownLatch!!.cancel()
                 mPKCountDownLatch = null
             }
-            mPKCountDownLatch = object : CountDownTimer(ShowServiceProtocol.PK_AVAILABLE_DURATION - 1, 1000) {
+            mPKCountDownLatch = object : CountDownTimer((ShowServiceProtocol.PK_AVAILABLE_DURATION - (TimeUtils.currentTimeMillis() - interactionInfo!!.createdAt)).toLong(), 1000) {
                 override fun onTick(millisUntilFinished: Long) {
                     val min: Long = (millisUntilFinished / 1000) / 60
-                    val sec: Long = (millisUntilFinished / 1000) % 60
+                    val sec: Long = (millisUntilFinished / 1000) % 60 + 1
                     activity ?: return
                     mBinding.videoPKLayout.iPKTimeText.text =
                         getString(R.string.show_count_time_for_pk, min.toString(), sec.toString())
                 }
 
                 override fun onFinish() {
-                    mService.stopInteraction(mRoomInfo.roomId, error = {
-                        ToastUtils.showToast("stop interaction error: ${it.message}")
-                    })
+                    if (isRoomOwner) {
+                        mService.stopInteraction(mRoomInfo.roomId, error = {
+                            ToastUtils.showToast("stop interaction error: ${it.message}")
+                        })
+                    }
                 }
             }.start()
         } else {
@@ -1790,6 +1793,7 @@ class LiveDetailFragment : Fragment() {
                     updateLinkingMode()
                 } else if (interactionInfo.interactStatus == ShowInteractionStatus.pking) {
                     updatePKingMode()
+                    refreshPKTimeCount()
                 }
             } else {
                 refreshViewDetailLayout(ShowInteractionStatus.idle)
@@ -1881,15 +1885,6 @@ class LiveDetailFragment : Fragment() {
      */
     private fun initRtcEngine() {
         val eventListener = object : IRtcEngineEventHandler() {
-            override fun onUserOffline(uid: Int, reason: Int) {
-                super.onUserOffline(uid, reason)
-                if (interactionInfo != null && interactionInfo!!.userId == uid.toString()) {
-                    mService.stopInteraction(mRoomInfo.roomId, error = {
-                        ToastUtils.showToast("stop interaction error: ${it.message}")
-                    })
-                }
-            }
-
             override fun onLocalVideoStateChanged(
                 source: Constants.VideoSourceType?,
                 state: Int,
