@@ -81,4 +81,5 @@ dependencies {
 
     api rootProject.ext.deps.rtc
     //api fileTree(dir: "${localsdkPath}", include: ['*.jar'])
+    api rootProject.ext.deps.lifecycle_extensions
 }
