@@ -1858,6 +1858,7 @@ class LiveDetailFragment : Fragment() {
      */
     private fun initRtcEngine() {
         val eventListener = object : IRtcEngineEventHandler() {
+
             override fun onUserJoined(uid: Int, elapsed: Int) {
                 super.onUserJoined(uid, elapsed)
                 if (uid != mAudioMxingChannel?.localUid) {
