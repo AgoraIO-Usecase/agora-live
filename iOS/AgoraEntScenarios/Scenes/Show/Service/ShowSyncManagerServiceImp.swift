@@ -7,6 +7,7 @@
 
 import Foundation
 import RTMSyncManager
+import AgoraRtmKit
 
 private let kSceneId = "overseas_show_1.3.0"
 private let kRoomPresenceChannelName = "overseas_show_1_3_0_9999999999"
@@ -29,7 +30,12 @@ public class ShowSyncManagerServiceImp: NSObject {
         config.appId = appId
         config.owner = user
         config.host = host
-        let manager = AUISyncManager(rtmClient: nil, commonConfig: config)
+        
+        let logConfig = AgoraRtmLogConfig()
+        logConfig.filePath = AgoraEntLog.rtmSdkLogPath()
+        logConfig.fileSizeInKB = 1024
+        logConfig.level = .info
+        let manager = AUISyncManager(rtmClient: nil, commonConfig: config, logConfig: logConfig)
         
         return manager
     }()
@@ -88,15 +94,11 @@ extension ShowSyncManagerServiceImp {
         AppContext.shared.agoraRTMToken = ""
         
         let date = Date()
-        NetworkManager.shared.generateTokens(channelName: "",
-                                             uid: "\(user.userId)",
-                                             tokenGeneratorType: .token007,
-                                             tokenTypes: [.rtc, .rtm],
-                                             expire: 24 * 60 * 60) {  tokenMap in
-            guard let rtcToken = tokenMap[NetworkManager.AgoraTokenType.rtc.rawValue],
-                  rtcToken.count > 0,
-                  let rtmToken = tokenMap[NetworkManager.AgoraTokenType.rtm.rawValue],
-                  rtmToken.count > 0 else {
+        NetworkManager.shared.generateToken(channelName: "",
+                                            uid: "\(user.userId)",
+                                            tokenTypes: [.rtc, .rtm],
+                                            expire: 24 * 60 * 60) {  token in
+            guard let rtcToken = token, let rtmToken = token else {
                 completion(NSError(domain: "generate token fail", code: -1))
                 return
             }
