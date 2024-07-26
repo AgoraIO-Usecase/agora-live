@@ -74,6 +74,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.lang.ref.WeakReference
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * The type Room living view model.
@@ -336,8 +337,10 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
             songPlayingLiveData.value?.let { currentSong ->
                 val firstSong = chosenSongList.firstOrNull()
                 if (currentSong.owner?.userId == KtvCenter.mUser.id.toString() && firstSong?.songNo != currentSong.songNo) {
-                    KTVLogger.d(TAG, "RoomLivingViewModel remove music: ${currentSong.songNo}")
-                    DownloadManager.instance.cancelDownload(currentSong.musicUrl)
+                    if (loadingMusic.get()) {
+                        KTVLogger.d(TAG, "RoomLivingViewModel remove music: ${currentSong.songNo}")
+                        DownloadManager.instance.cancelDownload(currentSong.musicUrl)
+                    }
                 }
             }
             chosenSongListLiveData.value = chosenSongList
@@ -639,6 +642,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
      * @param songCode
      */
     private fun innerJoinChorus(songInfo: ChosenSongInfo) {
+        loadingMusic.set(true)
         val config = KTVLoadMusicConfiguration(
             songInfo.songNo,
             songPlayingLiveData.getValue()?.owner?.userId?.toIntOrNull() ?: -1,
@@ -657,6 +661,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
             }
 
             override fun onMusicLoadSuccess(songCode: String, musicUri: String, lyricUrl: String) {
+                loadingMusic.set(false)
                 KTVLogger.d(TAG, "joinChorus onMusicLoadSuccess,songCode:$songCode,lyricUrl:$lyricUrl")
                 ktvApiProtocol.loadMusic(musicUri, config)
                 KTVLogger.e(TAG, "switchSingerRole() called KTVSingRole.CoSinger")
@@ -693,6 +698,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
             }
 
             override fun onMusicLoadFail(songCode: String, reason: SongLoadFailReason) {
+                loadingMusic.set(false)
                 KTVLogger.e(TAG, "joinChorus onMusicLoadFail,songCode:$songCode,reason:$reason")
                 joinchorusStatusLiveData.postValue(JoinChorusStatus.ON_JOIN_FAILED)
             }
@@ -1255,7 +1261,10 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
         }
     }
 
+    private var loadingMusic: AtomicBoolean = AtomicBoolean(false)
+
     private fun loadMusic(config: KTVLoadMusicConfiguration, songInfo: ChosenSongInfo, isOwnSong: Boolean) {
+        loadingMusic.set(true)
         innerLoadMusic(config, songInfo, object : SongLoadStateListener {
             override fun onMusicLoadProgress(
                 songCode: String,
@@ -1268,6 +1277,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
             }
 
             override fun onMusicLoadSuccess(songCode: String, musicUri: String, lyricUrl: String) {
+                loadingMusic.set(false)
                 KTVLogger.d(TAG, "onMusicLoadSuccess, songCode: $songCode lyricUrl: $lyricUrl")
                 // 当前已被切歌
                 if (songPlayingLiveData.getValue() == null) {
@@ -1293,6 +1303,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
             }
 
             override fun onMusicLoadFail(songCode: String, reason: SongLoadFailReason) {
+                loadingMusic.set(false)
                 KTVLogger.e(TAG, "onMusicLoadFail，songCode:$songCode, reason:$reason")
                 // 当前已被切歌
                 if (songPlayingLiveData.getValue() == null) {

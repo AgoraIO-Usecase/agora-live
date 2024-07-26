@@ -841,12 +841,9 @@ class ShowServiceImpl(context: Context) : ShowServiceProtocol {
     }
 
     private fun appendRobotRooms(roomList: List<ShowRoomDetailModel>): List<ShowRoomDetailModel> {
-        val retRoomList = mutableListOf<ShowRoomDetailModel>()
-        retRoomList.addAll(roomList)
-
         val robotRoomIds = ArrayList(kRobotVideoRoomIds)
         val kRobotRoomStartId = kRobotVideoRoomIds[0]
-        retRoomList.forEach { roomDetail ->
+        roomList.forEach { roomDetail ->
             val differValue = roomDetail.roomId.toInt() - kRobotRoomStartId
             if (differValue >= 0) {
                 robotRoomIds.firstOrNull { robotRoomId -> robotRoomId == roomDetail.roomId.toInt() }
@@ -854,8 +851,8 @@ class ShowServiceImpl(context: Context) : ShowServiceProtocol {
                         robotRoomIds.remove(id)
                     }
             }
-
         }
+        val retRoomList = mutableListOf<ShowRoomDetailModel>()
         for (i in 0 until robotRoomIds.size) {
             val robotRoomId = robotRoomIds[i]
             val robotId = robotRoomId % 10
@@ -873,6 +870,7 @@ class ShowServiceImpl(context: Context) : ShowServiceProtocol {
             )
             retRoomList.add(roomInfo)
         }
+        retRoomList.addAll(roomList)
         return retRoomList
     }
 
@@ -921,7 +919,6 @@ private fun ShowRoomDetailModel.toAUIRoomInfo(): AUIRoomInfo {
     owner.userAvatar = ownerAvatar
     roomInfo.roomOwner = owner
     roomInfo.customPayload["roomUserCount"] = roomUserCount
-    roomInfo.customPayload["thumbnailId"] = thumbnailId
     roomInfo.createTime = createdAt.toLong()
     return roomInfo
 }
@@ -935,7 +932,8 @@ private fun InteractionInfo.toShowInteraction(): ShowInteractionInfo {
             InteractionType.LINKING -> ShowInteractionStatus.linking
             InteractionType.PK -> ShowInteractionStatus.pking
             else -> ShowInteractionStatus.idle
-        }
+        },
+        createdAt
     )
 }
 

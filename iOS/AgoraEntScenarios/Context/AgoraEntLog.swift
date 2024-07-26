@@ -94,6 +94,14 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
         return logDir
     }
     
+    @objc public static func sdkLogPath() -> String {
+        return AgoraEntLog.cacheDir() + "/agorasdk.log"
+    }
+    
+    @objc public static func rtmSdkLogPath() -> String {
+        return AgoraEntLog.cacheDir() + "/agorartmsdk.log"
+    }
+    
     @objc public static func allLogsUrls() -> [URL] {
         let dir = cacheDir()
         var urls = [URL(fileURLWithPath: logsDir())]

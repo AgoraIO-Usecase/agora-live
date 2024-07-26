@@ -21,6 +21,12 @@ class ShowReceiveFinishView: UIView {
             headLabel.text = headName
         }
     }
+    
+    var title: String? {
+        didSet {
+            titleLabel.text = title ?? "show_alert_live_finish_title".show_localized
+        }
+    }
 
     var headImg: String? {
         didSet {
@@ -34,12 +40,14 @@ class ShowReceiveFinishView: UIView {
     
     weak var delegate: ShowReceiveFinishViewDelegate?
     
+    // 背景图
     private lazy var bgView: UIView = {
         let view = UIView()
         view.backgroundColor = .show_end_bg
         return view
     }()
     
+    // 主播头像
     private lazy var headImgView: UIImageView =  {
         let imgeView =  UIImageView()
         imgeView.layer.cornerRadius = HeadImgViewHeight * 0.5
@@ -47,7 +55,8 @@ class ShowReceiveFinishView: UIView {
         imgeView.layer.masksToBounds = true
         return imgeView
     }()
-
+    
+    // 主播名字
     private lazy var headLabel: UILabel = {
         let label = UILabel()
         label.textColor = .show_Ellipse2
@@ -55,6 +64,7 @@ class ShowReceiveFinishView: UIView {
         return label
     }()
     
+    // 标题
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .show_slider_tint
@@ -63,6 +73,7 @@ class ShowReceiveFinishView: UIView {
         return label
     }()
     
+    // 子标题
     lazy var subTitleLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(hex: "C6C4DD")
@@ -71,6 +82,7 @@ class ShowReceiveFinishView: UIView {
         return label
     }()
     
+    // 返回房间列表
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage.show_sceneImage(name: "show_live_close"), for: .normal)

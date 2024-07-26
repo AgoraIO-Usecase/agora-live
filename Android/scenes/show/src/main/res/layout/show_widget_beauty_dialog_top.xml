@@ -67,6 +67,8 @@
         android:background="@drawable/show_beauty_btn_bg"
         android:padding="6dp"
         android:src="@mipmap/show_beauty_ic_compare"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+        android:tint="@color/show_beauty_btn_tint"
+        />
 
 </LinearLayout>

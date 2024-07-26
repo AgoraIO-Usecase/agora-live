@@ -40,6 +40,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:singleLine="true"
+        android:drawableEnd="@drawable/show_mic_bg"
         tools:text="1212344556"
         android:textColor="@color/white"/>
 

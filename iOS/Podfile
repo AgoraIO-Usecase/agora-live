@@ -25,14 +25,14 @@ def all_pods
 #  # Sense
 #  pod 'SenseLib', :path => 'sense.podspec'
   # FU
-#  pod 'fuLib', :path => 'fu.podspec'
+  pod 'fuLib', :path => 'fu.podspec'
   
   pod 'AgoraSyncManager-overseas', '~> 3.0.8'
   pod 'RTMSyncManager', :path => 'AgoraEntScenarios/Common/API/RTMSyncManager'
 
 #  pod 'sdk', :path => 'sdk.podspec'
-  pod 'AgoraRtcEngine_iOS', '4.3.1'
-#  pod 'AgoraRtcEngine_Special_iOS', '4.1.1.23'
+#  pod 'AgoraRtcEngine_iOS', '4.3.1'
+  pod 'AgoraRtcEngine_Special_iOS', '4.3.2.2'
   
   #歌词组件
   pod "ScoreEffectUI", '1.0.3'
