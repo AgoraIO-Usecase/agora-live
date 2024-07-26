@@ -2389,6 +2389,9 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         [AgoraEntAuthorizedManager checkAudioAuthorizedWithParent:self completion:nil];
     }
 }
+
+- (void)onUserSeatUpdateWithSeat:(VLRoomSeatModel *)seat {
+}
   
 - (void)onSeatAudioMuteWithSeatIndex:(NSInteger)seatIndex isMute:(BOOL)isMute {
     KTVLogInfo(@"onSeatAudioMuteWithSeatIndex: seatIndex:%ld isMute: %d", seatIndex, isMute);
