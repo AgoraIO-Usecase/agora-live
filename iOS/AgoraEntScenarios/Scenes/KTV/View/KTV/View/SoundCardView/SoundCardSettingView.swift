@@ -139,11 +139,11 @@ import Foundation
     override func layoutSubviews() {
         super.layoutSubviews()
         headIconView.frame = CGRect(x: (self.bounds.width - 38)/2.0, y: 8, width: 38, height: 4)
-        headTitleLabel.frame = CGRect(x: (self.bounds.width - 80)/2.0, y: 30, width: 80, height: 22)
+        headTitleLabel.frame = CGRect(x: 0, y: 30, width: self.bounds.width, height: 22)
         tableView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10, width: self.bounds.width, height: self.bounds.height - headTitleLabel.frame.maxY - 10)
         
-        coverView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10 + 104, width: self.bounds.width, height: 156)
-//        
+        coverView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10 + 140, width: self.bounds.width, height: 140)
+//
 //        noSoundCardView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10, width: self.bounds.width, height: 200)
 //        warNingLabel.frame = CGRect(x: 20, y: 10, width: self.bounds.width, height: 20)
 //        tipsView.frame = CGRect(x: 20, y: 40, width: self.bounds.width - 40, height: 100)
@@ -193,7 +193,7 @@ extension SoundCardSettingView: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 52
+        return 70
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

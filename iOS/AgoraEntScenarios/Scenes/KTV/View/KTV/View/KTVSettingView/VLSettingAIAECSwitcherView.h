@@ -16,15 +16,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface VLSettingAIAECSwitcherView : VLKTVItemBaseView
-
-@property (nonatomic, copy) NSString *subText;
+@interface VLSettingAIAECSwitcherView : UIView
 
 @property (nonatomic, weak) id <VLSettingAIAECSwitcherViewDelegate> delegate;
 
-@property (nonatomic, assign) BOOL on;
+- (instancetype)initWithMax:(NSInteger)max min:(NSInteger)min;
 
-@property (nonatomic, assign) NSInteger aecValue;
+- (void)setOn:(BOOL)on value:(NSInteger)value;
 
 @end
 

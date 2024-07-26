@@ -57,8 +57,9 @@ enum ShowAgoraEncode: String, CaseIterable {
 }
 
 enum ShowAgoraCodeCType: String, CaseIterable {
-    case h265 = "h265"
-    case h264 = "h264"
+    case h265 = "H265"
+    case h264 = "H264"
+    case av1 = "AV1"
     
     var typeValue: Int {
         switch self {
@@ -66,6 +67,8 @@ enum ShowAgoraCodeCType: String, CaseIterable {
             return 3
         case .h264:
             return 2
+        case .av1:
+            return 1
         }
     }
 }
@@ -95,6 +98,21 @@ extension AgoraVideoFrameRate {
     }
 }
 
+extension AgoraVideoCodecType {
+    
+    func name() -> String {
+        switch self {
+        case .H264:
+            return "H264"
+        case .H265:
+            return "H265"
+        case .AV1:
+            return "AV1"
+        default: return ""
+        }
+    }
+}
+
 enum ShowSettingKey: String, CaseIterable {
     
     enum KeyType {
@@ -115,6 +133,7 @@ enum ShowSettingKey: String, CaseIterable {
     case videoEncodeSize
     case FPS
     case H265
+    case CodecType
     case videoBitRate
     case earmonitoring
     case recordingSignalVolume
@@ -145,6 +164,8 @@ enum ShowSettingKey: String, CaseIterable {
             return "show_advance_setting_bitRate_title".show_localized
         case .H265:
             return "show_advance_setting_H265_title".show_localized
+        case .CodecType:
+            return "show_advance_setting_codec_title".show_localized
         case .earmonitoring:
             return "show_advance_setting_earmonitoring_title".show_localized
         case .recordingSignalVolume:
@@ -178,6 +199,8 @@ enum ShowSettingKey: String, CaseIterable {
             return .label
         case .H265:
             return .aSwitch
+        case .CodecType:
+            return .label
         case .videoBitRate:
             return .custom
         case .earmonitoring:
@@ -230,6 +253,12 @@ enum ShowSettingKey: String, CaseIterable {
             ]
         case .audioBitRate:
             return ["2","3","5"]
+        case .CodecType:
+            return [
+                AgoraVideoCodecType.H264.name(),
+                AgoraVideoCodecType.H265.name(),
+                AgoraVideoCodecType.AV1.name(),
+            ]
         default:
             return []
         }

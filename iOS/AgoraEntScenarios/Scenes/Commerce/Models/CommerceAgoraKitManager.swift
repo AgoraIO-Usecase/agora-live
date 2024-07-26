@@ -508,7 +508,7 @@ extension CommerceAgoraKitManager: IVideoLoaderApiListener {
 // MARK: - AgoraRtcMediaPlayerDelegate
 extension CommerceAgoraKitManager: AgoraRtcMediaPlayerDelegate {
     
-    func AgoraRtcMediaPlayer(_ playerKit: AgoraRtcMediaPlayerProtocol, didChangedTo state: AgoraMediaPlayerState, error: AgoraMediaPlayerError) {
+    func AgoraRtcMediaPlayer(_ playerKit: AgoraRtcMediaPlayerProtocol, didChangedTo state: AgoraMediaPlayerState, reason: AgoraMediaPlayerReason) {
         if state == .openCompleted {
             playerKit.play()
         }

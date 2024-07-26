@@ -342,7 +342,7 @@ enum ShowDebugSettingKey: String, CaseIterable {
         case .encode:
             return "硬编/软编"
         case .codeCType:
-            return "编码器"
+            return "Encoder"
         case .mirror:
             return "镜像"
         case .renderMode:

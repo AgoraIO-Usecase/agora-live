@@ -8,6 +8,8 @@
 #import "AgoraEntScenarios-Swift.h"
 #import "AESMacro.h"
 #import "VLMacroDefine.h"
+#import <Masonry/Masonry.h>
+
 @interface VLHomeOnLineListCCell()
 
 @property (nonatomic, strong) UIImageView *iconImgView;
@@ -24,6 +26,7 @@
     
     if (self = [super initWithFrame:frame]) {
         [self setupView];
+        [self createConstrains];
     }
     return self;
 }
@@ -71,6 +74,17 @@
     [self.bgImgView addSubview:self.roomOwnerLabel];
 }
 
+- (void)createConstrains {
+    [self.countLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(-10);
+        make.centerY.equalTo(self.roomOwnerLabel);
+    }];
+    [self.onListIconView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.countLabel.mas_left);
+        make.centerY.equalTo(self.countLabel);
+    }];
+}
+
 - (void)setListModel:(SyncRoomInfo *)listModel {
     _listModel = listModel;
     self.iconImgView.image = [UIImage imageNamed:listModel.creatorAvatar];
@@ -82,7 +96,7 @@
     }
     self.titleLabel.text = listModel.name;
     self.roomOwnerLabel.text = listModel.creatorName;
-    self.countLabel.text = [NSString stringWithFormat:@"%ld%@",listModel.roomPeopleNum, KTVLocalizedString(@"ktv_people")];
+    self.countLabel.text = [NSString stringWithFormat:@"%ld",listModel.roomPeopleNum];
 }
 
 @end

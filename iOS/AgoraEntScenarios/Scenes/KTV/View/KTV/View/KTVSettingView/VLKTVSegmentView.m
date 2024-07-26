@@ -48,8 +48,8 @@
     }];
     
     [self.subLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.mas_equalTo(@160);
         make.centerY.mas_equalTo(self);
-        make.height.mas_equalTo(@(40));
         make.left.mas_equalTo(self.mas_left).offset(20);
     }];
     
@@ -104,7 +104,7 @@
         case SegmentViewTypeAns:
             segmentedData = @[KTVLocalizedString(@"ktv_close_aec"), KTVLocalizedString(@"ktv_aec_mid"), KTVLocalizedString(@"ktv_aec_high")];
             [self.segmentControl mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.width.mas_equalTo(@(120));
+                make.width.mas_equalTo(@(180));
             }];
             break;
         default:
