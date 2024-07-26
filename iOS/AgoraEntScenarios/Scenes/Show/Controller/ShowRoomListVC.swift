@@ -151,8 +151,7 @@ class ShowRoomListVC: UIViewController {
         NetworkManager.shared.generateToken(
             channelName: "",
             uid: "\(UserInfo.userId)",
-            tokenType: .token007,
-            type: .rtc,
+            tokenTypes: [.rtc],
             expire: 24 * 60 * 60
         ) {[weak self] token in
             guard let self = self, let rtcToken = token, rtcToken.count > 0 else {

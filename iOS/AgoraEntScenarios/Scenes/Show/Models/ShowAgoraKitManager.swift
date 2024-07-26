@@ -249,8 +249,7 @@ class ShowAgoraKitManager: NSObject {
                         context: kShowLogBaseContext)
         NetworkManager.shared.generateToken(channelName: "",
                                             uid: UserInfo.userId,
-                                            tokenType: .token007,
-                                            type: .rtc) {[weak self] token in
+                                            tokenTypes: [.rtc]) {[weak self] token in
             guard let token = token else {
                 showLogger.error("renewToken fail: token is empty")
                 return
