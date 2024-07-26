@@ -136,6 +136,12 @@
     self.joinChorusBtn.backgroundColor = UIColorMakeWithRGBA(0, 0, 0, 0.5);
     self.joinChorusBtn.alpha = 0.6;
     [self.contentView addSubview:self.joinChorusBtn];
+    [self.joinChorusBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.nickNameLabel.mas_bottom).offset(2);
+        make.centerX.mas_equalTo(0);
+        make.height.mas_equalTo(12);
+        make.width.mas_equalTo(45);
+    }];
 }
 
 
