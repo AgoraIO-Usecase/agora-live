@@ -110,11 +110,15 @@
         _sliderView.hidden = false;
         _addButton.hidden = false;
         _reduceButton.hidden = false;
+        _maxLabel.hidden = false;
+        _minLabel.hidden = false;
     } else {
         _sliderLabel.hidden = true;
         _sliderView.hidden = true;
         _addButton.hidden = true;
         _reduceButton.hidden = true;
+        _maxLabel.hidden = true;
+        _minLabel.hidden = true;
     }
 }
 

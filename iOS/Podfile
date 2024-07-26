@@ -35,7 +35,7 @@ def all_pods
   pod 'AgoraRtcEngine_Special_iOS', '4.3.2.2'
   
   #歌词组件
-  pod "ScoreEffectUI", '1.0.2'
+  pod "ScoreEffectUI", '1.0.3'
   pod 'AgoraLyricsScore', :git => 'https://github.com/AgoraIO-Community/LrcView-iOS.git', :branch => 'feature/dev_2.1.0'
   
 #  pod 'LSTPopView', '0.3.10'

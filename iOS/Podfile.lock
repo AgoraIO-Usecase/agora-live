@@ -37,7 +37,7 @@ PODS:
   - RTMSyncManager (0.1.0):
     - AgoraRtm (~> 2.2.0)
     - YYModel
-  - ScoreEffectUI (1.0.2)
+  - ScoreEffectUI (1.0.3)
   - SDWebImage (4.4.8):
     - SDWebImage/Core (= 4.4.8)
   - SDWebImage/Core (4.4.8)
@@ -83,7 +83,7 @@ DEPENDENCIES:
   - MJRefresh (= 3.7.9)
   - Protobuf (= 3.22.1)
   - RTMSyncManager (from `AgoraEntScenarios/Common/API/RTMSyncManager`)
-  - ScoreEffectUI (= 1.0.2)
+  - ScoreEffectUI (= 1.0.3)
   - SDWebImage (= 4.4.8)
   - SDWebImageAPNGCoder
   - SnapKit
@@ -165,7 +165,7 @@ SPEC CHECKSUMS:
   MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
   Protobuf: d7f7c8329edf5eb8af65547a8ba3e9c1cee927d5
   RTMSyncManager: 110b208a8bf57881decaef0e76891bdf5345ba21
-  ScoreEffectUI: bf1195b4d41a73d43c236450b5d7f958989844aa
+  ScoreEffectUI: 2eef7a81906aae23ff96e3d7e07701a65f367b9f
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   SDWebImageAPNGCoder: 3e4c684c8223eef2f45a50bdd0beaab345e4eb24
   SnapKit: d612e99e678a2d3b95bf60b0705ed0a35c03484a
@@ -181,6 +181,6 @@ SPEC CHECKSUMS:
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: 006afd9c3f1424ce11b4cc2b61ebfcc3c9b09e73
+PODFILE CHECKSUM: b7cc14baeb0d0b8a250afa420564705175bc9527
 
 COCOAPODS: 1.15.2

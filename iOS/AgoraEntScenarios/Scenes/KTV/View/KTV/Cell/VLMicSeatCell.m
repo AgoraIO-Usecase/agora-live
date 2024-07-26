@@ -7,6 +7,7 @@
 #import "VLMacroDefine.h"
 #import "AgoraEntScenarios-Swift.h"
 #import "AESMacro.h"
+#import "Masonry/Masonry.h"
 @import YYCategories;
 
 @interface VLMicSeatCell()
@@ -102,7 +103,6 @@
     self.singingBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.singingBtn setImage:[UIImage ktv_sceneImageWithName:@"ktv_seatsinging_icon" ] forState:UIControlStateNormal];
     [self.singingBtn setTitle:KTVLocalizedString(@"ktv_zc") forState:UIControlStateNormal];
-    self.singingBtn.frame = CGRectMake((self.width-36)*0.5, self.nickNameLabel.bottom+2, 36, 12);
     self.singingBtn.layer.cornerRadius = 6;
     self.singingBtn.layer.masksToBounds = YES;
 //    self.singingBtn.imagePosition = QMUIButtonImagePositionLeft;
@@ -114,7 +114,12 @@
     self.singingBtn.backgroundColor = UIColorMakeWithRGBA(0, 0, 0, 0.5);
     self.singingBtn.alpha = 0.6;
     [self.contentView addSubview:self.singingBtn];
-
+    [self.singingBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.nickNameLabel.mas_bottom).offset(2);
+        make.centerX.mas_equalTo(0);
+        make.height.mas_equalTo(12);
+        make.width.mas_equalTo(65);
+    }];
     
     self.joinChorusBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.joinChorusBtn setImage:[UIImage ktv_sceneImageWithName:@"ic_hc"] forState:UIControlStateNormal];

@@ -148,10 +148,6 @@
 
     self.musicTitleLabel.frame = CGRectMake(currentPlayImgView.right+2, currentPlayImgView.centerY-9, 120, 18);
     [self.contentView addSubview:self.musicTitleLabel];
-    
-    self.gradeView = [[GradeView alloc]init];
-    self.gradeView.frame = CGRectMake(15, 15, self.width - 30, 30);
-    [self.contentView addSubview:self.gradeView];
 
     CGFloat lY = CGRectGetMaxX(currentPlayImgView.frame);
     CGFloat lH = self.height - 54 - lY;
@@ -159,6 +155,7 @@
     _karaokeView = [[KaraokeView alloc] initWithFrame:CGRectMake(0, lY, self.width, lH) loggers:@[[FileLogger new]]];
     _karaokeView.scoringView.viewHeight = 60;
     _karaokeView.scoringView.topSpaces = 5;
+    _karaokeView.scoringEnabled = false;
    // _karaokeView.lyricsView.textSelectedColor = [UIColor colorWithHexString:@"#33FFFFFF"];
     _karaokeView.lyricsView.inactiveLineTextColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.5];
     _karaokeView.lyricsView.inactiveLineFontSize = [UIFont systemFontOfSize:13];
