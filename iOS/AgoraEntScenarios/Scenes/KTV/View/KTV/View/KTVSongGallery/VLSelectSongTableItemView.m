@@ -62,6 +62,7 @@ UITableViewDelegate
     self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         [weakSelf loadDatasWithIfRefresh:YES];
     }];
+    [self.tableView.mj_header beginRefreshing];
 }
 
 -(void)loadData {
