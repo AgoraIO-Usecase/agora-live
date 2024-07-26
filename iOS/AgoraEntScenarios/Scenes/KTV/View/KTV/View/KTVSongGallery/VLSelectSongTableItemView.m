@@ -13,6 +13,7 @@
 #import "AppContext+KTV.h"
 #import "AESMacro.h"
 #import "NSString+Helper.h"
+#import "YYModel/YYModel.h"
 @import MJRefresh;
 
 @interface VLSelectSongTableItemView ()<
@@ -21,10 +22,8 @@ UITableViewDelegate
 >
 @property (nonatomic, strong) UITableView    *tableView;
 @property (nonatomic, strong) NSMutableArray *songsMuArray;
-@property (nonatomic, assign) NSInteger page;
 
 @property (nonatomic, copy) NSString *roomNo;
-@property (nonatomic, assign) NSInteger pageType;
 
 @end
 
@@ -44,7 +43,6 @@ UITableViewDelegate
                     withRooNo:(NSString *)roomNo {
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = UIColorMakeWithHex(@"#152164");
-        self.page = 1;
         self.roomNo = roomNo;
         [self setupView];
     }
@@ -62,18 +60,13 @@ UITableViewDelegate
     
     VL(weakSelf);
     self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-        [weakSelf loadDatasWithIndex:self.pageType ifRefresh:YES];
+        [weakSelf loadDatasWithIfRefresh:YES];
     }];
-    
-    self.tableView.mj_footer = [MJRefreshAutoStateFooter footerWithRefreshingBlock:^{
-        [weakSelf loadDatasWithIndex:self.pageType ifRefresh:NO];
-    }];
-
 }
 
 -(void)loadData {
     [self.tableView.refreshControl beginRefreshing];
-    [self loadDatasWithIndex:self.pageType ifRefresh:YES];
+    [self loadDatasWithIfRefresh:YES];
 }
 
 - (void)calcSelectedStatus {
@@ -93,29 +86,10 @@ UITableViewDelegate
     if (songList.count == 0) {
         return;
     }
-    BOOL ifRefresh = self.page == 1 ? YES : NO;
-    self.page += 1;
     NSArray *modelsArray = songList;
-    if (ifRefresh) {
-        [self.songsMuArray removeAllObjects];
-        self.songsMuArray = modelsArray.mutableCopy;
-    }else{
-        for (VLSongItmModel *model in modelsArray) {
-            [self.songsMuArray addObject:model];
-        }
-    }
-    
-
-//    [self calcSelectedStatus];
-//
-//    [self.tableView reloadData];
-
+    [self.songsMuArray removeAllObjects];
+    self.songsMuArray = modelsArray.mutableCopy;
     [self updateData];
-    if (modelsArray.count < 20) {
-        [self.tableView.mj_footer endRefreshingWithNoMoreData];
-    }else{
-        [self.tableView.mj_footer endRefreshing];
-    }
 }
 
 
@@ -124,45 +98,22 @@ UITableViewDelegate
     return self;
 }
 
-- (void)loadDatasWithIndex:(NSInteger)pageType
-                 ifRefresh:(BOOL)ifRefresh {
-    self.pageType = pageType;
-    self.page = ifRefresh ? 1 : self.page;
-    
-    [[AppContext ktvServiceImp] getChoosedSongsListWithCompletion:^(NSError * error, NSArray<VLRoomSelSongModel *> * songArray) {
-        if (error != nil) {
-            return;
-        }
-        
-        self.selSongsArray = songArray;
-       
-        NSArray* chartIds = @[@(3), @(4), @(2), @(6)];
-        NSInteger chartId = [[chartIds objectAtIndex:MIN(pageType - 1, chartIds.count - 1)] intValue];
-        NSDictionary *dict = @{
-            @"pitchType":@(1),
-            @"needLyric": @(YES),
-        };
-        NSString *extra = [NSString convertToJsonData:dict];
-        
-        [[AppContext shared].ktvAPI searchMusicWithMusicChartId:chartId
-                                                           page:self.page
-                                                       pageSize:20
-                                                     jsonOption:extra
-                                                     completion:^(NSString * requestId, AgoraMusicContentCenterStatusCode reason, AgoraMusicCollection * result) {
-            NSMutableArray* songArray = [NSMutableArray array];
-            [result.musicList enumerateObjectsUsingBlock:^(AgoraMusic * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                VLSongItmModel* model = [VLSongItmModel new];
-                model.songNo = [NSString stringWithFormat:@"%ld", obj.songCode];
-                model.songName = obj.name;
-                model.singer = obj.singer;
-                model.imageUrl = obj.poster;
-                [songArray addObject:model];
-            }];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self appendDatasWithSongList:songArray];
-            });
+- (void)loadDatasWithIfRefresh:(BOOL)ifRefresh {
+    [[AppContext shared].ktvAPI fetchSongListWithComplete:^(NSArray * _Nonnull songs) {
+        NSMutableArray *temp = [NSMutableArray array];
+        [songs enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            KTVSongModel *model = obj;
+            VLSongItmModel *newModel = [[VLSongItmModel alloc] init];
+            newModel.singer = model.singer;
+            newModel.songName = model.name;
+            newModel.singer = model.singer;
+            newModel.songNo = model.songCode;
+            newModel.lyric = model.lyric;
+            [temp addObject:newModel];
         }];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self appendDatasWithSongList:temp];
+        });
     }];
 }
 
@@ -205,7 +156,7 @@ UITableViewDelegate
                                               completion:^(NSError * error) {
         if (error != nil) {
             [self dianGeFailedWithModel:model];
-            [VLToast toast: error.localizedDescription];
+            [VLToast toast:KTVLocalizedString(@"ktv_choose_fail") duration:2];
             return;
         }
         //点歌完成发送通知

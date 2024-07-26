@@ -102,6 +102,7 @@
 		A8F904932B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F9048E2B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift */; };
 		A8F904952B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F904942B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift */; };
 		AB4746E72A5E82AB00E68FBA /* ShowRobotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB4746E62A5E82AB00E68FBA /* ShowRobotService.swift */; };
+		AB60EBCF2C35230E00AB6DF1 /* KTVSoundLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB60EBCE2C35230E00AB6DF1 /* KTVSoundLoader.swift */; };
 		ABA095902A8373F400A54FCC /* ShowSettingBitrateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABA0958F2A8373F300A54FCC /* ShowSettingBitrateCell.swift */; };
 		ABE4B37A2A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE4B3792A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift */; };
 		BF370B5409C9BBA693EEFB80 /* Pods_AgoraEntScenarios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */; };
@@ -317,7 +318,6 @@
 		DDCBEAE12C33BD4D00A64FCC /* VLMicSeatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = DDCBEA4C2C33BD4D00A64FCC /* VLMicSeatCell.m */; };
 		DDCBEAE22C33BD4D00A64FCC /* EffectCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = DDCBEA4E2C33BD4D00A64FCC /* EffectCollectionViewCell.m */; };
 		DDCBEAE32C33BD4D00A64FCC /* VLPopSongList.m in Sources */ = {isa = PBXBuildFile; fileRef = DDCBEA502C33BD4D00A64FCC /* VLPopSongList.m */; };
-		DDCBEAE42C33BD4D00A64FCC /* VLSelectedSongList.m in Sources */ = {isa = PBXBuildFile; fileRef = DDCBEA512C33BD4D00A64FCC /* VLSelectedSongList.m */; };
 		DDCBEAE52C33BD4D00A64FCC /* VLSongList.m in Sources */ = {isa = PBXBuildFile; fileRef = DDCBEA522C33BD4D00A64FCC /* VLSongList.m */; };
 		DDCBEAE62C33BD4D00A64FCC /* VLSelectSongTableItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = DDCBEA532C33BD4D00A64FCC /* VLSelectSongTableItemView.m */; };
 		DDCBEAE72C33BD4D00A64FCC /* VLSearchSongResultView.m in Sources */ = {isa = PBXBuildFile; fileRef = DDCBEA542C33BD4D00A64FCC /* VLSearchSongResultView.m */; };
@@ -715,6 +715,7 @@
 		A8F9048E2B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowDebug1TFModel.swift; sourceTree = "<group>"; };
 		A8F904942B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowThumnbnailCanvasView.swift; sourceTree = "<group>"; };
 		AB4746E62A5E82AB00E68FBA /* ShowRobotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowRobotService.swift; sourceTree = "<group>"; };
+		AB60EBCE2C35230E00AB6DF1 /* KTVSoundLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KTVSoundLoader.swift; sourceTree = "<group>"; };
 		ABA0958F2A8373F300A54FCC /* ShowSettingBitrateCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowSettingBitrateCell.swift; sourceTree = "<group>"; };
 		ABE4B3792A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowNetStateSelectViewController.swift; sourceTree = "<group>"; };
 		DD1603432963CAFD00182A04 /* AgoraEntLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraEntLog.swift; sourceTree = "<group>"; };
@@ -1005,13 +1006,11 @@
 		DDCBEA4C2C33BD4D00A64FCC /* VLMicSeatCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLMicSeatCell.m; sourceTree = "<group>"; };
 		DDCBEA4E2C33BD4D00A64FCC /* EffectCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EffectCollectionViewCell.m; sourceTree = "<group>"; };
 		DDCBEA502C33BD4D00A64FCC /* VLPopSongList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLPopSongList.m; sourceTree = "<group>"; };
-		DDCBEA512C33BD4D00A64FCC /* VLSelectedSongList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLSelectedSongList.m; sourceTree = "<group>"; };
 		DDCBEA522C33BD4D00A64FCC /* VLSongList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLSongList.m; sourceTree = "<group>"; };
 		DDCBEA532C33BD4D00A64FCC /* VLSelectSongTableItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLSelectSongTableItemView.m; sourceTree = "<group>"; };
 		DDCBEA542C33BD4D00A64FCC /* VLSearchSongResultView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLSearchSongResultView.m; sourceTree = "<group>"; };
 		DDCBEA552C33BD4D00A64FCC /* VLSearchEmptyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLSearchEmptyView.m; sourceTree = "<group>"; };
 		DDCBEA562C33BD4D00A64FCC /* VLPopSongList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLPopSongList.h; sourceTree = "<group>"; };
-		DDCBEA572C33BD4D00A64FCC /* VLSelectedSongList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLSelectedSongList.h; sourceTree = "<group>"; };
 		DDCBEA582C33BD4D00A64FCC /* VLSongList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLSongList.h; sourceTree = "<group>"; };
 		DDCBEA592C33BD4D00A64FCC /* VLSearchEmptyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLSearchEmptyView.h; sourceTree = "<group>"; };
 		DDCBEA5A2C33BD4D00A64FCC /* VLSearchSongResultView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLSearchSongResultView.h; sourceTree = "<group>"; };
@@ -2878,13 +2877,11 @@
 			isa = PBXGroup;
 			children = (
 				DDCBEA502C33BD4D00A64FCC /* VLPopSongList.m */,
-				DDCBEA512C33BD4D00A64FCC /* VLSelectedSongList.m */,
 				DDCBEA522C33BD4D00A64FCC /* VLSongList.m */,
 				DDCBEA532C33BD4D00A64FCC /* VLSelectSongTableItemView.m */,
 				DDCBEA542C33BD4D00A64FCC /* VLSearchSongResultView.m */,
 				DDCBEA552C33BD4D00A64FCC /* VLSearchEmptyView.m */,
 				DDCBEA562C33BD4D00A64FCC /* VLPopSongList.h */,
-				DDCBEA572C33BD4D00A64FCC /* VLSelectedSongList.h */,
 				DDCBEA582C33BD4D00A64FCC /* VLSongList.h */,
 				DDCBEA592C33BD4D00A64FCC /* VLSearchEmptyView.h */,
 				DDCBEA5A2C33BD4D00A64FCC /* VLSearchSongResultView.h */,
@@ -2974,6 +2971,7 @@
 		DDCBEAB92C33BD4D00A64FCC /* Service */ = {
 			isa = PBXGroup;
 			children = (
+				AB60EBCE2C35230E00AB6DF1 /* KTVSoundLoader.swift */,
 				DDCBEABA2C33BD4D00A64FCC /* KTVSyncManagerServiceImp.swift */,
 				DDCBEABB2C33BD4D00A64FCC /* AppContext+KTV.m */,
 				DDCBEABC2C33BD4D00A64FCC /* KTVServiceModel.swift */,
@@ -3687,6 +3685,7 @@
 				E3735C9A2A5E7E75004737EF /* ByteBeautyManager.swift in Sources */,
 				E732CD6B2B47F336004D6FB9 /* ActionSheetManager.swift in Sources */,
 				E732CD092B47EC6D004D6FB9 /* VoiceRoomViewController+IM.swift in Sources */,
+				AB60EBCF2C35230E00AB6DF1 /* KTVSoundLoader.swift in Sources */,
 				DDA199DD28FFE579009D3E61 /* ToastView.swift in Sources */,
 				E732CCEF2B47EC6D004D6FB9 /* Xcode14.m in Sources */,
 				A84C2D082B4FB01700D6EFCF /* UIViewController+Commerce.swift in Sources */,
@@ -3878,7 +3877,6 @@
 				DD3610B629B70CDC00CE7984 /* ShowDebugSetting1TFCell.swift in Sources */,
 				DDDDDC3628FFD78C005F4E8B /* UIImage+Scene.swift in Sources */,
 				DDA19A0328FFE579009D3E61 /* NSArray+JKSafeAccess.m in Sources */,
-				DDCBEAE42C33BD4D00A64FCC /* VLSelectedSongList.m in Sources */,
 				E732CCF22B47EC6D004D6FB9 /* UIImageBundleExtension.swift in Sources */,
 				053998C5290A83E0005143C7 /* HomeMenuCell.swift in Sources */,
 				A84C2D3B2B4FB01700D6EFCF /* CommerceRealTimeDataView.swift in Sources */,
@@ -4461,9 +4459,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -4508,8 +4508,6 @@
 					"\"AgoraClearVisionExtension\"",
 					"-framework",
 					"\"AgoraContentInspectExtension\"",
-					"-framework",
-					"\"AgoraDav1d\"",
 					"-framework",
 					"\"AgoraFaceDetectionExtension\"",
 					"-framework",
@@ -4643,6 +4641,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -4659,9 +4658,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -4706,8 +4707,6 @@
 					"\"AgoraClearVisionExtension\"",
 					"-framework",
 					"\"AgoraContentInspectExtension\"",
-					"-framework",
-					"\"AgoraDav1d\"",
 					"-framework",
 					"\"AgoraFaceDetectionExtension\"",
 					"-framework",
@@ -4841,6 +4840,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

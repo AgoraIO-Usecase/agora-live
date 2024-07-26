@@ -376,6 +376,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
                                      withDelegate:self];
     
     self.chooseSongView = (VLPopSongList*)popChooseSongView.currCustomView;
+    [self.chooseSongView refreshSounds];
 }
 
 //专业主播
@@ -431,7 +432,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     } else {
         [self.settingView setIspause:self.isPause];
     }
-    [self.settingView setAEC:self.aecState level:self.aecLevel];
+    [self.settingView setAEClevel:self.aecLevel];
     [self.settingView setChorusStatus: flag];
 }
 
@@ -630,7 +631,6 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         NSInteger total = [dict[@"total"] integerValue];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.MVView.lineScoreView showScoreViewWithScore:score];
-            [self.MVView.gradeView setScoreWithCumulativeScore:cumulativeScore totalScore:total];
             [self.MVView.incentiveView showWithScore:score];
         });
         KTVLogInfo(@"index: %li, score: %li, cumulativeScore: %li, total: %li", index, score, cumulativeScore, total);
@@ -1207,7 +1207,6 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 
 - (void)didLrcViewDragedToPos:(NSInteger)pos score:(NSInteger)score totalScore:(NSInteger)totalScore{
     [self.ktvApi.getMusicPlayer seekToPosition:pos];
-    [self.MVView.gradeView setScoreWithCumulativeScore:score totalScore:totalScore];
 }
 
 - (void)didLrcViewScorllFinishedWith:(NSInteger)score totalScore:(NSInteger)totalScore lineScore:(NSInteger)lineScore lineIndex:(NSInteger)lineIndex{
@@ -1217,7 +1216,6 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     
     NSInteger realScore = self.singRole == KTVSingRoleCoSinger ? self.coSingerDegree + lineScore : score;
     [self.MVView.lineScoreView showScoreViewWithScore:lineScore];
-    [self.MVView.gradeView setScoreWithCumulativeScore:realScore totalScore:totalScore];
     [self.MVView.incentiveView showWithScore:lineScore];
     //将主唱的分数同步给观众
     if(self.singRole == KTVSingRoleSoloSinger || self.singRole == KTVSingRoleLeadSinger){
@@ -1261,7 +1259,6 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     }];
     [self stopPlaySong];
     self.isNowMicMuted = true;
-    [self.MVView.gradeView reset];
     [self.MVView.incentiveView reset];
     [self.MVView setOriginBtnState: VLKTVMVViewActionTypeSingAcc];
     [[AppContext ktvServiceImp] updateSeatAudioMuteStatusWithMuted:YES
@@ -2188,7 +2185,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 }
 
 #pragma mark KTVApiEventHandlerDelegate
-- (void)onMusicPlayerStateChangedWithState:(AgoraMediaPlayerState)state error:(AgoraMediaPlayerError)error isLocal:(BOOL)isLocal {
+- (void)onMusicPlayerStateChangedWithState:(AgoraMediaPlayerState)state reason:(AgoraMediaPlayerReason)reason isLocal:(BOOL)isLocal {
     dispatch_async(dispatch_get_main_queue(), ^{
         if(state == AgoraMediaPlayerStatePlaying) {
             //显示跳过前奏
@@ -2245,7 +2242,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 
 - (void)onMusicLoadProgressWithSongCode:(NSInteger)songCode
                                 percent:(NSInteger)percent
-                                 status:(AgoraMusicContentCenterPreloadStatus)status
+                                 status:(AgoraMusicContentCenterPreloadState)status
                                     msg:(NSString *)msg
                                lyricUrl:(NSString *)lyricUrl {
     dispatch_async_on_main_queue(^{
@@ -2255,7 +2252,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             return;
         }
 //        KTVLogInfo(@"onMusicLoadProgressWithSongCode songCode %@/%ld percent: %ld", model.songNo, songCode, percent);
-        if(status == AgoraMusicContentCenterPreloadStatusError){
+        if(status == AgoraMusicContentCenterPreloadStateError){
             [VLToast toast:KTVLocalizedString(@"ktv_load_failed_and_change")];
             if(self.loadMusicCallBack) {
                 self.loadMusicCallBack(NO, songCode);
@@ -2264,7 +2261,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             return;
         }
         
-        if (status == AgoraMusicContentCenterPreloadStatusOK){
+        if (status == AgoraMusicContentCenterPreloadStateOK){
         }
         
         VLRoomSelSongModel *topSong = self.selSongsArray.firstObject;
@@ -2312,7 +2309,6 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             self.loadMusicCallBack(YES, songCode);
             self.loadMusicCallBack = nil;
             //清空分数
-            [self.MVView.gradeView reset];
             [self.MVView.incentiveView reset];
         }
         

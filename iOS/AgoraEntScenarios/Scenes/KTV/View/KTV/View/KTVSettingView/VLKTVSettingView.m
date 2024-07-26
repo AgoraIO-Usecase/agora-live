@@ -42,7 +42,6 @@ UICollectionViewDataSource
 @property (nonatomic, strong) VLKTVSliderView *remoteSlider;
 @property (nonatomic, strong) VLKTVKindsView *kindsView;
 @property (nonatomic, strong) VLKTVRemoteVolumeView* remoteVolumeView;
-@property (nonatomic, strong) VLKTVSegmentView *lrcSegmentView;
 @property (nonatomic, strong) VLKTVSegmentView *vqsSegmentView;
 @property (nonatomic, strong) VLKTVSegmentView *ansSegmentView;
 @property (nonatomic, strong) VLSettingNetSwitcherView *netSwitcherView;
@@ -92,13 +91,11 @@ UICollectionViewDataSource
     self.soundSlider.value = self.setting.soundValue / 100.0;
     self.accSlider.value = self.setting.accValue / 100.0;
     self.remoteSlider.value = self.setting.remoteVolume / 100.0;
-    self.lrcSegmentView.selectIndex = self.setting.lrcLevel;
     self.vqsSegmentView.selectIndex = self.setting.vqs;
     self.ansSegmentView.selectIndex = self.setting.ans;
     self.delaySwitcherView.on = self.setting.isDelay;
     self.perBroSwitcherView.on = self.setting.isPerBro;
-    self.aiAecSwitcherView.on = self.setting.enableAec;
-    self.aiAecSwitcherView.aecValue = self.setting.aecLevel;
+    [self.aiAecSwitcherView setOn:self.setting.enableAec value:self.setting.aecLevel];
     self.netSwitcherView.on = self.setting.enableMultipath;
 }
 
@@ -124,13 +121,10 @@ UICollectionViewDataSource
     self.accSlider.alpha = status ? 1 : 0.6;
     self.remoteSlider.userInteractionEnabled = status;
     self.remoteSlider.alpha = status ? 1 : 0.6;
-    self.lrcSegmentView.userInteractionEnabled = !status;
-    self.lrcSegmentView.alpha = status ? 0.6 : 1;
 }
 
--(void)setAEC:(BOOL)enable level:(NSInteger)level{
-    self.aiAecSwitcherView.on = enable;
-    self.aiAecSwitcherView.aecValue = level;
+-(void)setAEClevel:(NSInteger)level{
+    [self.aiAecSwitcherView setOn:self.setting.enableAec value:level];
 }
 
 - (void)initSubViews {
@@ -145,7 +139,6 @@ UICollectionViewDataSource
     [self.scrollView addSubview:self.accSlider];
     [self.scrollView addSubview:self.remoteSlider];
     [self.scrollView addSubview:self.collectionView];
-    [self.scrollView addSubview:self.lrcSegmentView];
     [self.scrollView addSubview:self.perBroSwitcherView];
     [self.scrollView addSubview:self.vqsSegmentView];
     [self.scrollView addSubview:self.ansSegmentView];
@@ -196,16 +189,9 @@ UICollectionViewDataSource
         make.top.mas_equalTo(self.remoteSlider.mas_bottom).offset(10);
         make.height.mas_equalTo(78);
     }];
-    
-    [self.lrcSegmentView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.mas_equalTo(self);
-        make.top.mas_equalTo(self.collectionView.mas_bottom).offset(0);
-        make.height.mas_equalTo(50);
-    }];
-    
     [self.perBroSwitcherView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.mas_equalTo(self);
-        make.top.mas_equalTo(self.lrcSegmentView.mas_bottom).offset(0);
+        make.top.mas_equalTo(self.collectionView.mas_bottom).offset(0);
         make.height.mas_equalTo(50);
     }];
     
@@ -230,7 +216,7 @@ UICollectionViewDataSource
     [self.aiAecSwitcherView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.mas_equalTo(self);
         make.top.mas_equalTo(self.ansSegmentView.mas_bottom).offset(0);
-        make.height.mas_equalTo(90);
+        make.height.mas_equalTo(50);
     }];
 }
 
@@ -461,17 +447,6 @@ UICollectionViewDataSource
     return _collectionView;
 }
 
-- (VLKTVSegmentView *)lrcSegmentView {
-    if (!_lrcSegmentView) {
-        _lrcSegmentView = [[VLKTVSegmentView alloc] init];
-        _lrcSegmentView.tag = 800;
-        _lrcSegmentView.delegate = self;
-        _lrcSegmentView.type = SegmentViewTypeScore;
-        _lrcSegmentView.subText = KTVLocalizedString(@"ktv_lrc_level");
-    }
-    return _lrcSegmentView;
-}
-
 - (VLKTVSegmentView *)vqsSegmentView {
     if (!_vqsSegmentView) {
         _vqsSegmentView = [[VLKTVSegmentView alloc] init];
@@ -489,7 +464,7 @@ UICollectionViewDataSource
         _ansSegmentView.tag = 802;
         _ansSegmentView.delegate = self;
         _ansSegmentView.type = SegmentViewTypeAns;
-        [_ansSegmentView setSubText:KTVLocalizedString(@"ktv_per_ans") attrText:nil];
+        [_ansSegmentView setSubText:KTVLocalizedString(@"ktv_per_ans") attrText:@""];
     }
     return _ansSegmentView;
 }
@@ -505,7 +480,7 @@ UICollectionViewDataSource
 
 -(VLSettingAIAECSwitcherView *)aiAecSwitcherView {
     if(!_aiAecSwitcherView){
-        _aiAecSwitcherView = [VLSettingAIAECSwitcherView new];
+        _aiAecSwitcherView = [[VLSettingAIAECSwitcherView alloc] initWithMax:4 min:0];
         _aiAecSwitcherView.delegate = self;
     }
     return _aiAecSwitcherView;

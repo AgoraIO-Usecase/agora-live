@@ -66,14 +66,11 @@
     
     UILabel *contentLabel = [[UILabel alloc]initWithFrame:CGRectMake(30, 5, self.warningView.width - 38, textHeight)];
     contentLabel.numberOfLines = 0;
-    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:text];
-    [attributedText addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithRed:48/255.0 green:53/255.0 blue:83/255.0 alpha:1] range:NSMakeRange(0, 77)];
-    [attributedText addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithRed:250/255.0 green:57/255.0 blue:106/255.0 alpha:1] range:NSMakeRange(77, 41)];
     contentLabel.font = UIFontMake(12);
-    contentLabel.attributedText = attributedText;
+    contentLabel.text = text;
     [self.warningView addSubview:contentLabel];
     
-    UILabel *roomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, self.warningView.bottom+VLREALVALUE_WIDTH(20), 70, 20)];
+    UILabel *roomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, self.warningView.bottom+VLREALVALUE_WIDTH(20), 100, 20)];
     roomTitleLabel.font = UIFontMake(14);
     roomTitleLabel.textColor = UIColorMakeWithHex(@"#000000");
     roomTitleLabel.text = KTVLocalizedString(@"ktv_room_title");
@@ -121,13 +118,16 @@
     [self.enBtn addTarget:self action:@selector(enChange:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.enBtn];
     
-    self.setLabel = [[UILabel alloc]initWithFrame:CGRectMake(SCREEN_WIDTH - 170, inputBgView.bottom+VLREALVALUE_WIDTH(25.5), 150, 17)];
+    self.setLabel = [[UILabel alloc]initWithFrame:CGRectMake(SCREEN_WIDTH - 170, inputBgView.bottom+VLREALVALUE_WIDTH(25.5), 170, 17)];
     self.setLabel.font = UIFontMake(12);
     self.setLabel.textColor = UIColorMakeWithHex(@"#FA396A");
     self.setLabel.text = KTVLocalizedString(@"ktv_please_input_4_pwd");
-    self.setLabel.textAlignment = NSTextAlignmentRight;
     [self.setLabel setHidden:true];
     [self addSubview:self.setLabel];
+    [self.setLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(inputBgView.mas_bottom).offset(VLREALVALUE_WIDTH(25.5));
+        make.right.mas_equalTo(-20);
+    }];
     
     self.screatView = [[UIView alloc]initWithFrame:CGRectMake(20, self.setLabel.bottom+VLREALVALUE_WIDTH(8), SCREEN_WIDTH-40, 48)];
     self.screatView.hidden = YES;
@@ -144,7 +144,11 @@
     self.codeView = pwdView;
 
     UIButton *createBtn = [[UIButton alloc] init];
-    [createBtn setBackgroundImage:[UIImage ktv_sceneImageWithName:@"createRoomBtn" ] forState:UIControlStateNormal];
+    [createBtn setTitle:KTVLocalizedString(@"ktv_create") forState:UIControlStateNormal];
+    [createBtn setBackgroundColor:[UIColor colorWithHexString:@"345DFF"]];
+    [createBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    createBtn.layer.cornerRadius = 10;
+    createBtn.layer.masksToBounds = true;
     createBtn.accessibilityIdentifier = @"ktv_create_room_button_id";
     createBtn.titleLabel.font = UIFontBoldMake(16.0);
     createBtn.adjustsImageWhenHighlighted = NO;

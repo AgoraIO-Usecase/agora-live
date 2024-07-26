@@ -28,8 +28,7 @@
 }
 
 - (void)setupView {
-    
-    UIView *backView = [[UIView alloc]initWithFrame:CGRectMake(20, 10, 191, 34)];
+    UIView *backView = [[UIView alloc]initWithFrame:CGRectMake(20, 10, 250, 34)];
     backView.backgroundColor = [UIColor colorWithRed:8/255.0 green:6/255.0 blue:47/255.0 alpha:0.3];
     backView.layer.cornerRadius = 17;
     backView.layer.masksToBounds = true;
@@ -57,19 +56,19 @@
     [[moreButton.centerYAnchor constraintEqualToAnchor:closeBtn.centerYAnchor]setActive:YES];
     [[moreButton.widthAnchor constraintEqualToConstant:24]setActive:YES];
     
-    self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(54+10, 10, 100, 18)];
+    self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(54+10, 10, 160, 18)];
     self.titleLabel.font = [UIFont systemFontOfSize:14];
     self.titleLabel.textColor = [UIColor whiteColor];
     [self addSubview:self.titleLabel];
 
-    self.countLabel = [[UILabel alloc]initWithFrame:CGRectMake(54 + 5, 30, 50, 12)];
+    self.countLabel = [[UILabel alloc]initWithFrame:CGRectMake(54 + 10, 30, 60, 12)];
     self.countLabel.font = [UIFont systemFontOfSize:12];
-    self.countLabel.textAlignment = NSTextAlignmentRight;
+    self.countLabel.textAlignment = NSTextAlignmentLeft;
     self.countLabel.textColor = [UIColor whiteColor];
     [self addSubview:self.countLabel];
     
     self.networkStatusBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.networkStatusBtn.frame = CGRectMake(110 + 5, 30, 70, 12);
+    self.networkStatusBtn.frame = CGRectMake(115, 30, 140, 12);
     [self.networkStatusBtn setTitle:KTVLocalizedString(@"ktv_net_status_good") forState:UIControlStateNormal];
     [self.networkStatusBtn setImage:[UIImage ktv_sceneImageWithName:@"ktv_network_wellIcon" ] forState:UIControlStateNormal];
     self.networkStatusBtn.spacingBetweenImageAndTitle = 0;
@@ -77,7 +76,6 @@
     [self.networkStatusBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.networkStatusBtn.titleLabel.font = [UIFont systemFontOfSize:12];
     [self addSubview:self.networkStatusBtn];
-    
 }
 
 #pragma mark --Event
@@ -99,10 +97,10 @@
     NSString *roomCountPre = KTVLocalizedString(@"ktv_room_count");
     self.logoImgView.image = [UIImage imageNamed:listModel.creatorAvatar];
     if (listModel.roomPeopleNum) {
-        NSString *roomCountString = [NSString stringWithFormat:@"%ld%@  |", listModel.roomPeopleNum, roomCountPre];
+        NSString *roomCountString = [NSString stringWithFormat:@"%ld %@  |", listModel.roomPeopleNum, roomCountPre];
         self.countLabel.text = roomCountString;
     }else{
-        NSString *roomCountString = [NSString stringWithFormat:@"%i%@  |",1, roomCountPre];
+        NSString *roomCountString = [NSString stringWithFormat:@"%i %@  |",1, roomCountPre];
         self.countLabel.text = roomCountString;
     }
 }

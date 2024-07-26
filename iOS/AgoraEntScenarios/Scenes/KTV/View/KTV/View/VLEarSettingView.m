@@ -144,7 +144,6 @@
 -(void)addSubViewConstraints {
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.mas_equalTo(self);
-        make.width.mas_equalTo(50);
         make.height.mas_equalTo(20);
         make.top.mas_equalTo(30);
     }];
@@ -152,7 +151,6 @@
     [self.earLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(20);
         make.top.mas_equalTo(65);
-        make.width.mas_equalTo(100);
         make.height.mas_equalTo(21);
     }];
     
