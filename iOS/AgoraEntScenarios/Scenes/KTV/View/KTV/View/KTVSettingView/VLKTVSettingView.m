@@ -130,7 +130,7 @@ UICollectionViewDataSource
 - (void)initSubViews {
     self.scrollView = [[UIScrollView alloc]init];
     self.scrollView.scrollEnabled = true;
-    self.scrollView.contentSize = CGSizeMake(0, 720);
+    self.scrollView.contentSize = CGSizeMake(0, 760);
     [self addSubview:self.scrollView];
     [self.scrollView addSubview:self.titleLabel];
     [self.scrollView addSubview:self.soundSwitcher];
@@ -216,7 +216,7 @@ UICollectionViewDataSource
     [self.aiAecSwitcherView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.mas_equalTo(self);
         make.top.mas_equalTo(self.ansSegmentView.mas_bottom).offset(0);
-        make.height.mas_equalTo(50);
+        make.height.mas_equalTo(90);
     }];
 }
 

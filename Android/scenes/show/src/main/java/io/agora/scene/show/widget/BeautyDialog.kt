@@ -518,9 +518,12 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
             tab.text = context.getString(mGroupList[position].name)
         }.attach()
 
+        mTopBinding.ivCompare.isActivated = beautyProcessor?.isBeautyEnable() ?: false
         mTopBinding.ivCompare.setOnClickListener {
             beautyProcessor?.apply {
-                setBeautyEnable(!isBeautyEnable())
+                val beautyEnable = !isBeautyEnable()
+                mTopBinding.ivCompare.isActivated = beautyEnable
+                setBeautyEnable(beautyEnable)
             }
         }
     }
@@ -552,6 +555,7 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
      */
     fun setBeautyProcessor(processor: IBeautyProcessor) {
         this.beautyProcessor = processor
+        mTopBinding.ivCompare.isActivated = beautyProcessor?.isBeautyEnable() ?: false
     }
 
     /**
