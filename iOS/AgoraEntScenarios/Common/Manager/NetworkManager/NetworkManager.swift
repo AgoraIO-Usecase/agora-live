@@ -15,11 +15,6 @@ public let kAppVersion = "versionName"
 
 @objc
 class NetworkManager:NSObject {
-    @objc public enum TokenGeneratorType: Int {
-        case token006 = 0
-        case token007 = 1
-    }
-    
     @objc public enum AgoraTokenType: Int {
         case rtc = 1
         case rtm = 2
@@ -92,62 +87,34 @@ class NetworkManager:NSObject {
         return base64LoginString
     }
     
-    /// get tokens
-    /// - Parameters:
-    ///   - channelName: <#channelName description#>
-    ///   - uid: <#uid description#>
-    ///   - tokenGeneratorType: token types
-    ///   - tokenTypes: [token type :  token string]
-    func generateTokens(channelName: String,
-                        uid: String,
-                        tokenGeneratorType: TokenGeneratorType,
-                        tokenTypes: [AgoraTokenType],
-                        expire: UInt = 1500,
-                        success: @escaping ([Int: String]) -> Void)
-    {
-        let group = DispatchGroup()
-        var tokenMap: [Int: String] = [Int:String]()
-        
-        tokenTypes.forEach { type in
-            group.enter()
-            generateToken(channelName: channelName,
-                          uid: uid,
-                          tokenType: tokenGeneratorType,
-                          type: type,
-                          expire: expire) { token in
-                if let token = token, token.count > 0 {
-                    tokenMap[type.rawValue] = token
-                }
-                group.leave()
-            }
-        }
-
-        group.notify(queue: DispatchQueue.main) {
-            success(tokenMap)
-        }
-    }
-
-    @objc
     func generateToken(channelName: String,
                        uid: String,
-                       tokenType: TokenGeneratorType,
-                       type: AgoraTokenType,
-                       expire: UInt = 1500,
-                       success: @escaping (String?) -> Void)
-    {
+                       tokenTypes: [AgoraTokenType],
+                       expire: UInt = 24 * 60 * 60,
+                       success: @escaping (String?) -> Void) {
+        generateToken(channelName: channelName,
+                      uid: uid,
+                      types: tokenTypes.map({NSNumber(value: $0.rawValue)}),
+                      expire: expire, success: success)
+    }
+    
+    @objc
+    public func generateToken(channelName: String,
+                              uid: String,
+                              types: [NSNumber],
+                              expire: UInt = 24 * 60 * 60,
+                              success: @escaping (String?) -> Void) {
         let params = ["appCertificate": KeyCenter.Certificate ?? "",
                       "appId": KeyCenter.AppId,
                       "channelName": channelName,
                       "expire": expire,
                       "src": "iOS",
                       "ts": "".timeStamp,
-                      "type": type.rawValue,
+                      "types": types,
                       "uid": uid] as [String: Any]
 //        ToastView.showWait(text: "loading...", view: nil)
         let serverUrl = baseServerUrl.replacingOccurrences(of: "v1", with: "v2")
-        let url = tokenType == .token006 ?
-        "\(serverUrl)token006/generate"
-        : "\(serverUrl)token/generate"
+        let url = "\(serverUrl)token/generate"
         NetworkManager.shared.postRequest(urlString: url,
                                           params: params,
                                           success: { response in
@@ -160,43 +127,6 @@ class NetworkManager:NSObject {
             print(error)
             success(nil)
 //            ToastView.hidden()
-        })
-    }
-    
-    @objc
-    func generateToken(appId: String,
-                       appCertificate: String,
-                       channelName: String,
-                       uid: String,
-                       tokenType: TokenGeneratorType,
-                       type: AgoraTokenType,
-                       success: @escaping (String?) -> Void)
-    {
-        let params = ["appCertificate": appCertificate,
-                      "appId": appId,
-                      "channelName": channelName,
-                      "expire": 1500,
-                      "src": "iOS",
-                      "ts": 0,
-                      "type": type.rawValue,
-                      "uid": uid] as [String: Any]
-        //        ToastView.showWait(text: "loading...", view: nil)
-        let serverUrl = baseServerUrl.replacingOccurrences(of: "v1", with: "v2")
-        let url = tokenType == .token006 ?
-        "\(serverUrl)token006/generate"
-        : "\(serverUrl)token/generate"
-        NetworkManager.shared.postRequest(urlString: url,
-                                          params: params,
-                                          success: { response in
-            let data = response["data"] as? [String: String]
-            let token = data?["token"]
-            print(response)
-            success(token)
-            //            ToastView.hidden()
-        }, failure: { error in
-            print(error)
-            success(nil)
-            //            ToastView.hidden()
         })
     }
     

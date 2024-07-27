@@ -205,10 +205,10 @@
     [self.joinChorusBtn addTarget:self action:@selector(joinChorus:) forControlEvents:UIControlEventTouchUpInside];
     [self.BotView addSubview:_joinChorusBtn];
     
-    self.leaveChorusBtn = [[UIButton alloc]initWithFrame:CGRectMake(15, 0, 54, 54)];
+    self.leaveChorusBtn = [[UIButton alloc]initWithFrame:CGRectMake(15, 0, 60, 54)];
     [self.leaveChorusBtn setTitle:KTVLocalizedString(@"ktv_leave_chorus") forState:UIControlStateNormal];
     [self.leaveChorusBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [self.leaveChorusBtn setFont:UIFontMake(10.0)];
+    self.leaveChorusBtn.titleLabel.font = UIFontMake(10.0);
     [self.leaveChorusBtn setImage:[UIImage ktv_sceneImageWithName:@"Union" ] forState:UIControlStateNormal];
     [self.leaveChorusBtn addTarget:self action:@selector(leaveChorus) forControlEvents:UIControlEventTouchUpInside];
     [self updateBtnLayout:self.leaveChorusBtn];
@@ -368,7 +368,7 @@
          //   self.loadingView.hidden = NO;
             break;
         case VLKTVMVViewStateAudience:
-            self.joinChorusBtn.hidden = NO;
+            self.joinChorusBtn.hidden = [self.delegate hasAvailableMicSeat] ? NO : YES;
             self.joinChorusBtn.selected = NO;
             self.leaveChorusBtn.hidden = YES;
             self.pauseBtn.hidden = YES;
@@ -396,7 +396,7 @@
             self.musicTitleLabel.hidden = NO;
             break;
         case VLKTVMVViewStateOwnerAudience:
-            self.joinChorusBtn.hidden = NO;
+            self.joinChorusBtn.hidden = [self.delegate hasAvailableMicSeat] ? NO : YES;
             self.joinChorusBtn.selected = NO;
             self.leaveChorusBtn.hidden = YES;
             self.pauseBtn.hidden = YES;
@@ -490,7 +490,7 @@
             self.musicTitleLabel.hidden = NO;
             break;
         case VLKTVMVViewStateJoinChorus:
-            self.joinChorusBtn.hidden = NO;
+            self.joinChorusBtn.hidden = [self.delegate hasAvailableMicSeat] ? NO : YES;
             self.joinChorusBtn.selected = YES;
             self.leaveChorusBtn.hidden = YES;
             self.pauseBtn.hidden = YES;

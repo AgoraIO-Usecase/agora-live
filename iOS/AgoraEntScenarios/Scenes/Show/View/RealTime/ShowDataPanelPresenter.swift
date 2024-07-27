@@ -56,14 +56,25 @@ class ShowDataPanelPresenter {
         callTs = Int(ts)
     }
     
-    func generatePanelData(send: Bool, receive: Bool, audience: Bool) -> ShowPanelData {
+    func generatePanelData(send: Bool, 
+                           receive: Bool, 
+                           audience: Bool,
+                           isInteractionUser: Bool) -> [ShowPanelData] {
         let sendPanel = send ? sendData() : cleanSendData()
         let receivePanel = receive ? receiveData() : cleanReceiveData()
         let otherPanel = otherData(send: send, receive: receive, audience: audience)
-        return ShowPanelData(
-            left: [sendPanel.left, receivePanel.left, otherPanel.left].joined(separator: "\n"),
-            right: [sendPanel.right, receivePanel.right, otherPanel.right].joined(separator: "\n")
-        )
+        var datas: [ShowPanelData] = []
+        if isInteractionUser {
+            datas = [sendPanel, receivePanel, otherPanel]
+        } else {
+            if audience {
+                datas = [receivePanel, otherPanel]
+            } else {
+                datas = [sendPanel, otherPanel]
+            }
+        }
+        
+        return datas
     }
     
     private func cleanReceiveData() -> ShowPanelData {
@@ -76,8 +87,8 @@ class ShowDataPanelPresenter {
         let vSendLoss = "show_statistic_down_loss_package".show_localized+": -- %"
         let lastmile = "show_statistic_delay".show_localized+": -- ms"
         
-        let leftInfo = [sendTitle, videoSize,   videoSend,  downlink].joined(separator: "\n") + "\n"
-        let rightInfo = ["   ",     fps,        vSendLoss,  lastmile].joined(separator: "\n") + "\n"
+        let leftInfo = [sendTitle, videoSize, videoSend, downlink].joined(separator: "\n") + "\n"
+        let rightInfo = ["   ", fps, vSendLoss, lastmile].joined(separator: "\n") + "\n"
 
         return ShowPanelData(left: leftInfo, right: rightInfo)
     }
@@ -91,29 +102,29 @@ class ShowDataPanelPresenter {
         let fps = "show_advance_setting_FPS_title".show_localized+": -- fps"
         let vSendLoss = "show_statistic_up_loss_package".show_localized+": -- %"
         
-        let leftInfo =  [sendTitle, videoSize, videoSend,   uplink ].joined(separator: "\n") + "\n"
-        let rightInfo = ["  ",     fps,       vSendLoss,   " " ].joined(separator: "\n") + "\n"
+        let leftInfo =  [sendTitle, videoSize, videoSend, uplink].joined(separator: "\n") + "\n"
+        let rightInfo = ["  ", fps, vSendLoss].joined(separator: "\n") + "\n"
         return ShowPanelData(left: leftInfo, right: rightInfo)
     }
     
     private func sendData() -> ShowPanelData {
         let sendTitle = "show_statistic_send_title".show_localized
-        let videoSize = "show_statistic_encode_resolution".show_localized+": \(localVideoStats.encodedFrameHeight) x \(localVideoStats.encodedFrameWidth)"
+        let videoSize = "show_statistic_encode_resolution".show_localized+": \(localVideoStats.encodedFrameHeight)x\(localVideoStats.encodedFrameWidth)"
         let videoSend = "show_statistic_up_bitrate".show_localized+": \(localVideoStats.sentBitrate) kbps"
         let uplink = "show_statistic_up_net_speech".show_localized+": \(uplink) KB/s"
         
         let fps = "show_advance_setting_FPS_title".show_localized+": \(localVideoStats.sentFrameRate) fps"
         let vSendLoss = "show_statistic_up_loss_package".show_localized+": \(localVideoStats.txPacketLossRate) %"
                 
-        let leftInfo =  [sendTitle, videoSize, videoSend,   uplink ].joined(separator: "\n") + "\n"
-        let rightInfo = ["   ",     fps,       vSendLoss,   " " ].joined(separator: "\n") + "\n"
+        let leftInfo =  [sendTitle, videoSize, videoSend, uplink].joined(separator: "\n") + "\n"
+        let rightInfo = ["   ", fps, vSendLoss].joined(separator: "\n") + "\n"
 
         return ShowPanelData(left: leftInfo, right: rightInfo)
     }
     
     private func receiveData() -> ShowPanelData {
         let sendTitle = "show_statistic_receive_title".show_localized
-        let videoSize = "show_statistic_receive_resolution".show_localized+": \(remoteVideoStats.height) x \(remoteVideoStats.width)"
+        let videoSize = "show_statistic_receive_resolution".show_localized+": \(remoteVideoStats.height)x\(remoteVideoStats.width)"
         let videoSend = "show_statistic_bitrate".show_localized+": \(remoteVideoStats.receivedBitrate) kbps"
         let downlink = "show_statistic_down_net_speech".show_localized+": \(downlink) KB/s"
 
@@ -121,8 +132,8 @@ class ShowDataPanelPresenter {
         let vSendLoss = "show_statistic_down_loss_package".show_localized+": \(remoteVideoStats.packetLossRate) %"
         let lastmile = "show_statistic_delay".show_localized+": \(remoteVideoStats.delay) ms"
         
-        let leftInfo = [sendTitle, videoSize,   videoSend,  downlink].joined(separator: "\n") + "\n"
-        let rightInfo = ["  ",     fps,        vSendLoss,  lastmile].joined(separator: "\n") + "\n"
+        let leftInfo = [sendTitle, videoSize, videoSend, downlink].joined(separator: "\n") + "\n"
+        let rightInfo = ["  ", fps, vSendLoss, lastmile].joined(separator: "\n") + "\n"
 
         return ShowPanelData(left: leftInfo, right: rightInfo)
     }
@@ -138,9 +149,17 @@ class ShowDataPanelPresenter {
         let startup = audience ? "\(callTs) ms" : "--"
         let startupStr = "show_statistic_startup_time".show_localized + ": " + startup
         // h265 switch
-        let isH265On = localVideoStats.codecType == .H265
-        let h265 = send ? (isH265On ? onStr : offStr) : "--"
-        let h265Str = "H265" + ": " + h265
+        var encoderStr = "Encoder: --"
+        if send {
+            switch localVideoStats.codecType {
+            case .H265:
+                encoderStr = "Encoder: H265"
+            case .AV1:
+                encoderStr = "Encoder: AV1"
+            default:
+                encoderStr = "Encoder: H264"
+            }
+        }
         
         // super resolution switch
         let sr = audience ? (params.sr ? onStr : offStr) : "--"
@@ -161,8 +180,14 @@ class ShowDataPanelPresenter {
         let svc = send ? (params.svc ? onStr : offStr) : "--"
         let svcStr = "show_statistic_svc_switch".show_localized + ": " + svc
         let localUid = "Local UID: \(VLUserCenter.user.id)"
-        let left = [title, startupStr, h265Str, srStr,  microStreamStr].joined(separator: "\n") + "\n"
-        let right = ["  ", levelStr,  pvcStr, svcStr, localUid].joined(separator: "\n") + "\n"
-        return ShowPanelData(left: left, right: right)
+        if audience {
+            let left = [title, localUid, levelStr, srStr].joined(separator: "\n") + "\n"
+            let right = ""
+            return ShowPanelData(left: left, right: right)
+        } else {
+            let left = [title, localUid, svcStr, levelStr, microStreamStr].joined(separator: "\n") + "\n"
+            let right = ["  ", encoderStr, pvcStr].joined(separator: "\n") + "\n"
+            return ShowPanelData(left: left, right: right)
+        }
     }
 }

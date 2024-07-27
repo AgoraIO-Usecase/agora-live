@@ -830,13 +830,10 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
                     agoraPrint("\(msg == nil ? "开启鉴黄成功" : "开启鉴黄失败")")
                 }
                 
-                NetworkManager.shared.generateTokens(channelName: room.room_id ?? "",
-                                                     uid: "\(UserInfo.userId)",
-                                                     tokenGeneratorType: .token006,
-                                                     tokenTypes: [.rtc, .rtm]) { tokenMap in
-                    guard let rtcToken = tokenMap[NetworkManager.AgoraTokenType.rtc.rawValue],
-                          let rtmToken = tokenMap[NetworkManager.AgoraTokenType.rtm.rawValue]
-                    else {
+                NetworkManager.shared.generateToken(channelName: room.room_id ?? "",
+                                                    uid: "\(UserInfo.userId)",
+                                                    tokenTypes: [.rtc, .rtm]) { token in
+                    guard let rtcToken = token, let rtmToken = token else {
                         completion(nil, nil)
                         return
                     }
@@ -884,14 +881,10 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
                                            isOwner: VLUserCenter.user.id == room.owner?.uid,
                                            property: params) {[weak self] result in
 
-                            NetworkManager.shared.generateTokens(channelName: room.room_id ?? "",
-                                                                 uid: "\(UserInfo.userId)",
-                                                                 tokenGeneratorType: .token006,
-                                                                 tokenTypes: [.rtc, .rtm]) { tokenMap in
-                                
-                                guard let rtcToken = tokenMap[NetworkManager.AgoraTokenType.rtc.rawValue],
-                                      let rtmToken = tokenMap[NetworkManager.AgoraTokenType.rtm.rawValue]
-                                else {
+                            NetworkManager.shared.generateToken(channelName: room.room_id ?? "",
+                                                                uid: "\(UserInfo.userId)",
+                                                                tokenTypes: [.rtc, .rtm]) { token in
+                                guard let rtcToken = token, let rtmToken = token else {
                                     completion(nil, nil)
                                     return
                                 }
@@ -1013,7 +1006,9 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         
         impGroup.enter()
         tokenQueue.async {
-            NetworkManager.shared.generateToken(channelName: channelId, uid: VLUserCenter.user.id, tokenType: .token007, type: .rtc) { token in
+            NetworkManager.shared.generateToken(channelName: channelId, 
+                                                uid: VLUserCenter.user.id,
+                                                tokenTypes: [.rtc]) { token in
                 AppContext.shared.agoraRTCToken = token ?? ""
                 impGroup.leave()
             }

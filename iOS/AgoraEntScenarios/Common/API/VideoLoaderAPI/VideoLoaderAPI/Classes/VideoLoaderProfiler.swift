@@ -17,7 +17,7 @@ func apiPrint(_ message: String) {
 
 public func debugLoaderPrint(_ message: String) {
     if let engine = VideoLoaderApiImpl.shared.config?.rtcEngine {
-//        engine.writeLog(.info, content: "[VideoLoaderApi]\(message)")
+        engine.writeLog(.info, content: "[VideoLoaderApi]\(message)")
     }
     if let closure = VideoLoaderApiImpl.shared.printClosure {
         closure(message)
