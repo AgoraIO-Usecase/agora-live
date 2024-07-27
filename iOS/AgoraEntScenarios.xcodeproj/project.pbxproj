@@ -251,6 +251,7 @@
 		DD8417CA29090C520026B624 /* TemplateServiceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD84175F29090C520026B624 /* TemplateServiceModel.swift */; };
 		DD8417CB29090C520026B624 /* TemplateServiceImp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD84176029090C520026B624 /* TemplateServiceImp.swift */; };
 		DD8417CC29090C520026B624 /* TemplateServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD84176129090C520026B624 /* TemplateServiceProtocol.swift */; };
+		DD91E1F42C553C0C0028E966 /* AppStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD91E1F22C553C0C0028E966 /* AppStateManager.swift */; };
 		DDA199DD28FFE579009D3E61 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA198DF28FFE579009D3E61 /* ToastView.swift */; };
 		DDA199DE28FFE579009D3E61 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA198E028FFE579009D3E61 /* AlertManager.swift */; };
 		DDA199DF28FFE579009D3E61 /* VLHotSpotBtn.m in Sources */ = {isa = PBXBuildFile; fileRef = DDA198E228FFE579009D3E61 /* VLHotSpotBtn.m */; };
@@ -572,7 +573,6 @@
 		E732CD912B47F82C004D6FB9 /* AUiMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CD902B47F82C004D6FB9 /* AUiMoreDialog.swift */; };
 		E73F23292B6F64850000B523 /* RTMSyncUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F23282B6F64850000B523 /* RTMSyncUtil.swift */; };
 		E73F232D2B7219F40000B523 /* GradualTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F232C2B7219F40000B523 /* GradualTableView.swift */; };
-		E76F80142AF2417800CCB9D6 /* ShowLiveMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -866,6 +866,7 @@
 		DD84175F29090C520026B624 /* TemplateServiceModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TemplateServiceModel.swift; sourceTree = "<group>"; };
 		DD84176029090C520026B624 /* TemplateServiceImp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TemplateServiceImp.swift; sourceTree = "<group>"; };
 		DD84176129090C520026B624 /* TemplateServiceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TemplateServiceProtocol.swift; sourceTree = "<group>"; };
+		DD91E1F22C553C0C0028E966 /* AppStateManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStateManager.swift; sourceTree = "<group>"; };
 		DDA198DF28FFE579009D3E61 /* ToastView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		DDA198E028FFE579009D3E61 /* AlertManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
 		DDA198E228FFE579009D3E61 /* VLHotSpotBtn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLHotSpotBtn.m; sourceTree = "<group>"; };
@@ -1304,7 +1305,6 @@
 		E732CD902B47F82C004D6FB9 /* AUiMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AUiMoreDialog.swift; sourceTree = "<group>"; };
 		E73F23282B6F64850000B523 /* RTMSyncUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTMSyncUtil.swift; sourceTree = "<group>"; };
 		E73F232C2B7219F40000B523 /* GradualTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradualTableView.swift; sourceTree = "<group>"; };
-		E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowLiveMoreDialog.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -1941,7 +1941,6 @@
 				DD36103929B70CDC00CE7984 /* ShowChatInputView.swift */,
 				DD36103A29B70CDC00CE7984 /* ShowRoomChatCell.swift */,
 				DD36103B29B70CDC00CE7984 /* ShowRoomInfoView.swift */,
-				E76F80132AF2417800CCB9D6 /* ShowLiveMoreDialog.swift */,
 				A8F904942B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift */,
 			);
 			path = Live;
@@ -2275,6 +2274,14 @@
 				DD84176129090C520026B624 /* TemplateServiceProtocol.swift */,
 			);
 			path = Service;
+			sourceTree = "<group>";
+		};
+		DD91E1F32C553C0C0028E966 /* StateManager */ = {
+			isa = PBXGroup;
+			children = (
+				DD91E1F22C553C0C0028E966 /* AppStateManager.swift */,
+			);
+			path = StateManager;
 			sourceTree = "<group>";
 		};
 		DDA198DC28FFE579009D3E61 /* Common */ = {
@@ -2613,6 +2620,7 @@
 		DDA1994D28FFE579009D3E61 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
+				DD91E1F32C553C0C0028E966 /* StateManager */,
 				DD6199CA29E3D36D008F63E4 /* Authorized */,
 				DDA1994E28FFE579009D3E61 /* NetworkManager */,
 				DDA1995328FFE579009D3E61 /* VLDefine */,
@@ -3626,6 +3634,7 @@
 				DD3610BC29B70CDC00CE7984 /* ShowSettingActionSheetFooterView.swift in Sources */,
 				DDA199FD28FFE579009D3E61 /* UIView+VL.m in Sources */,
 				A84C2D562B4FB01700D6EFCF /* CommerceSettingSwitchCell.swift in Sources */,
+				DD91E1F42C553C0C0028E966 /* AppStateManager.swift in Sources */,
 				DD36105E29B70CDC00CE7984 /* ShowThrottle.swift in Sources */,
 				A8F904912B4BDE1700A4C5A7 /* ShowDebugSettingVC.swift in Sources */,
 				DDA199E928FFE579009D3E61 /* VLResponseDataModel.m in Sources */,
@@ -3774,7 +3783,6 @@
 				DDCBEB042C33BD4D00A64FCC /* SoundCardSwitchCell.swift in Sources */,
 				DDA199EC28FFE579009D3E61 /* VLAPIRequest.m in Sources */,
 				DDA19A0828FFE579009D3E61 /* GCDTimer.swift in Sources */,
-				E76F80142AF2417800CCB9D6 /* ShowLiveMoreDialog.swift in Sources */,
 				E732CD552B47EC6D004D6FB9 /* VMSwitchTableViewCell.swift in Sources */,
 				E3735CA22A5E7E75004737EF /* BeautyAPI.m in Sources */,
 				DDCBEAD42C33BD4D00A64FCC /* KTVHeadSetUtil.swift in Sources */,

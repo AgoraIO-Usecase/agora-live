@@ -17,7 +17,7 @@ class ShowCreateLiveVC: UIViewController {
     private lazy var beautyVC = ShowBeautySettingVC()
     
     deinit {
-        showLogger.info("deinit-- ShowCreateLiveVC")
+        ShowLogger.info("deinit-- ShowCreateLiveVC")
     }
     
     override func viewDidLoad() {
@@ -75,8 +75,8 @@ class ShowCreateLiveVC: UIViewController {
         
         ShowBeautyFaceVC.beautyData.forEach({
             BeautyManager.shareManager.setBeauty(path: $0.path,
-                                                     key: $0.key,
-                                                     value: $0.value)
+                                                 key: $0.key,
+                                                 value: $0.value)
         })
     }
     
@@ -106,7 +106,7 @@ extension ShowCreateLiveVC: ShowCreateLiveViewDelegate {
     }
     
     func onClickCameraBtnAction() {
-        ShowAgoraKitManager.shared.switchCamera()
+        ShowAgoraKitManager.shared.switchCamera(enableBeauty: true)
     }
     
     func onClickBeautyBtnAction() {
@@ -124,17 +124,20 @@ extension ShowCreateLiveVC: ShowCreateLiveViewDelegate {
             ToastView.show(text: "create_room_name_too_long".show_localized)
             return
         }
-        
+        ShowLogger.info("onClickStartBtnAction[\(createView.roomNo)]")
         let roomId = createView.roomNo
         SVProgressHUD.show()
+        self.view.isUserInteractionEnabled = false
         AppContext.showServiceImp()?.createRoom(roomId: createView.roomNo,
                                                 roomName: roomName) { [weak self] err, detailModel in
+            guard let wSelf = self else { return }
             SVProgressHUD.dismiss()
+            wSelf.view.isUserInteractionEnabled = true
             if let _ = err {
                 ToastView.show(text: "show_create_room_fail".show_localized)
                 return
             }
-            guard let wSelf = self, let detailModel = detailModel else { return }
+            guard let detailModel = detailModel else { return }
             let liveVC = ShowLivePagesViewController()
             liveVC.roomList = [detailModel]
             liveVC.focusIndex = liveVC.roomList?.firstIndex(where: { $0.roomId == roomId }) ?? 0

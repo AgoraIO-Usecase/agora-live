@@ -22,7 +22,7 @@ enum ShowApplyAndInviteType: String, CaseIterable {
 
 class ShowApplyAndInviteView: UIView {
     var applyStatusClosure: ((ShowInteractionStatus) -> Void)?
-    
+    var isCurrentInteracting: Bool = false
     private lazy var segmentView: ShowSegmentView = {
         let segmentView = ShowSegmentView(frame: CGRect(x: 10,
                                                         y: 23,
@@ -35,7 +35,7 @@ class ShowApplyAndInviteView: UIView {
         segmentView.style.indicatorColor = UIColor(hex: "#7A59FB")
         segmentView.style.indicatorWidth = 64
         segmentView.selectedTitleColor = .black
-        segmentView.titlePendingHorizontal = 35
+        segmentView.titlePendingHorizontal = 50
         segmentView.normalTitleColor = UIColor(hex: "#6D7291")
         segmentView.valueChange = { [weak self] index in
             self?.tableView.dataArray = []
@@ -70,7 +70,7 @@ class ShowApplyAndInviteView: UIView {
     }()
     private lazy var tipsLabel: AGELabel = {
         let label = AGELabel(colorStyle: .black, fontStyle: .middle)
-        label.text = "With anchor gdsklgjlgPK"
+        label.text = ""
         return label
     }()
     private lazy var endButton: AGEButton = {
@@ -98,14 +98,14 @@ class ShowApplyAndInviteView: UIView {
     private var tipsViewHeightCons: NSLayoutConstraint?
     private var roomId: String!
     private var type: ShowApplyAndInviteType = .apply
-    var seatMicModel: ShowInteractionInfo? {
+    var linkingInteractionInfo: ShowInteractionInfo? {
         didSet {
-            if seatMicModel == oldValue {
+            if linkingInteractionInfo == oldValue {
                 return
             }
-            self.tipsContainerView.isHidden = seatMicModel == nil
-            self.tipsLabel.text = String(format: "show_onseat_with_broadcastor".show_localized, seatMicModel?.userName ?? "")
-            self.updateLayout(isHidden: seatMicModel == nil)
+            self.tipsContainerView.isHidden = linkingInteractionInfo == nil
+            self.tipsLabel.text = String(format: "show_onseat_with_broadcastor".show_localized, linkingInteractionInfo?.userName ?? "")
+            self.updateLayout(isHidden: linkingInteractionInfo == nil)
             self.tableView.reloadData()
         }
     }
@@ -145,17 +145,18 @@ class ShowApplyAndInviteView: UIView {
         }
     }
     
-    private func getApplyPKInfo() {
-        AppContext.showServiceImp()?.getInterationInfo(roomId: roomId) {[weak self] err, info in
-            guard let self = self else {return}
-            if info?.type == .pk {
-                self.tipsContainerView.isHidden = false
-                self.tipsLabel.text = String(format: "show_pking_with_broadcastor".show_localized, info?.userName ?? "")
-            } else {
-                self.tipsContainerView.isHidden = true
-            }
-        }
-    }
+//    private func getApplyPKInfo() {
+//        AppContext.showServiceImp()?.getInterationInfo(roomId: roomId) {[weak self] err, info in
+//            guard let self = self else {return}
+//            if info?.type == .pk {
+//                self.tipsContainerView.isHidden = false
+//                self.tipsLabel.text = String(format: "show_pking_with_broadcastor".show_localized, info?.userName ?? "")
+//            } else {
+//                self.tipsContainerView.isHidden = true
+//            }
+//            self.reloadData()
+//        }
+//    }
     
     private func getApplyLinkInfo() {
         
@@ -219,7 +220,7 @@ class ShowApplyAndInviteView: UIView {
     @objc
     private func onTapEndButton(sender: AGEButton) {
         updateLayout(isHidden: true)
-        if let model = seatMicModel {
+        if let _ = linkingInteractionInfo {
             AppContext.showServiceImp()?.stopInteraction(roomId: roomId) { _ in }
         }
         applyStatusClosure?(.idle)
@@ -232,7 +233,9 @@ extension ShowApplyAndInviteView: AGETableViewDelegate {
         cell.roomId = roomId
         let model = self.tableView.dataArray?[indexPath.row]
         
-        cell.setupApplyAndInviteData(model: model, isLink: seatMicModel != nil)
+        cell.setupApplyAndInviteData(model: model,
+                                     linkingUid: linkingInteractionInfo?.userId,
+                                     isInteracting: isCurrentInteracting)
         return cell
     }
 }
