@@ -173,6 +173,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     // setup view
     [self setBackgroundImage:@"bg-main" bundleName:@"KtvResource"];
     
+    
 //    UIView *bgView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
 //    bgView.backgroundColor = UIColorMakeWithRGBA(0, 0, 0, 0.6);
 //    [self.view addSubview:bgView];
@@ -2098,8 +2099,10 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             [self.MVView setMvState:VLKTVMVViewStateNone];
             return;
         }
-        
-        [self loadAndPlaySong];
+        // 进入已在播放的房间可能还未请求歌曲，所以先拉下数据
+        [[AppContext shared].ktvAPI fetchSongListWithComplete:^(NSArray * _Nonnull songs) {
+            [self loadAndPlaySong];
+        }];
     }
 }
 
@@ -2385,6 +2388,9 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     if (!isMute) {
         [AgoraEntAuthorizedManager checkAudioAuthorizedWithParent:self completion:nil];
     }
+}
+
+- (void)onUserSeatUpdateWithSeat:(VLRoomSeatModel *)seat {
 }
   
 - (void)onSeatAudioMuteWithSeatIndex:(NSInteger)seatIndex isMute:(BOOL)isMute {
