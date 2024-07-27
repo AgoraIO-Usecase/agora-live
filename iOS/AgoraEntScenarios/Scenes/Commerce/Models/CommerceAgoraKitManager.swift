@@ -522,16 +522,12 @@ extension CommerceAgoraKitManager {
         AppContext.shared.commerceRtcToken = nil
         AppContext.shared.commerceRtmToken = nil
         let date = Date()
-        NetworkManager.shared.generateTokens(channelName: "",
-                                             uid: "\(UserInfo.userId)",
-                                             tokenGeneratorType: .token007,
-                                             tokenTypes: [.rtc, .rtm],
-                                             expire: 24 * 60 * 60) {  tokenMap in
-            guard let rtcToken = tokenMap[NetworkManager.AgoraTokenType.rtc.rawValue],
-                  rtcToken.count > 0,
-                  let rtmToken = tokenMap[NetworkManager.AgoraTokenType.rtm.rawValue],
-                  rtmToken.count > 0 else {
-                commerceLogger.error("preGenerateToken fail: \(tokenMap)")
+        NetworkManager.shared.generateToken(channelName: "",
+                                            uid: "\(UserInfo.userId)",
+                                            tokenTypes: [.rtc, .rtm],
+                                            expire: 24 * 60 * 60) {  token in
+            guard let rtcToken = token, let rtmToken = token else {
+                commerceLogger.error("preGenerateToken fail")
                 completion()
                 return
             }

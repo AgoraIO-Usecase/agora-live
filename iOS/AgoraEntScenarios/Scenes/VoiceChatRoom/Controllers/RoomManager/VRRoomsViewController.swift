@@ -243,7 +243,9 @@ extension VRRoomsViewController {
     private func loginIMThenPush(room: VRRoomEntity) {
         voiceLogger.info("loginIMThenPush[\(room.room_id ?? "")]", context: "VRRoomsViewController")
         SVProgressHUD.show(withStatus: "voice_loading".voice_localized)
-        NetworkManager.shared.generateToken(channelName: room.channel_id ?? "", uid: VLUserCenter.user.id, tokenType: .token007, type: .rtc) {[weak self] token in
+        NetworkManager.shared.generateToken(channelName: room.channel_id ?? "", 
+                                            uid: VLUserCenter.user.id,
+                                            tokenTypes: [.rtc]) {[weak self] token in
             AppContext.shared.agoraRTCToken = token ?? ""
             ChatRoomServiceImp.getSharedInstance().joinRoom(room.room_id ?? "") { error, room_entity in
                 guard let self = self else {return}

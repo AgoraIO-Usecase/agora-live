@@ -32,7 +32,12 @@ class RTMSyncUtil: NSObject {
         config.owner = owner
         config.appCert = KeyCenter.Certificate ?? ""
         config.host = KeyCenter.RTMHostUrl
-        syncManager = AUISyncManager(rtmClient: nil, commonConfig: config)
+        
+        let logConfig = AgoraRtmLogConfig()
+        logConfig.filePath = AgoraEntLog.rtmSdkLogPath()
+        logConfig.fileSizeInKB = 1024
+        logConfig.level = .info
+        syncManager = AUISyncManager(rtmClient: nil, commonConfig: config, logConfig: logConfig)
         isLogined = false
         
         //create roomService

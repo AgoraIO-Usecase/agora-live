@@ -131,7 +131,7 @@ class ShowRoomListVC: UIViewController {
     }
     
     private func fetchRoomList() {
-        AppContext.showServiceImp("")?.getRoomList(page: 1) { [weak self] error, roomList in
+        AppContext.showServiceImp()?.getRoomList(page: 1) { [weak self] error, roomList in
             guard let self = self else { return }
             self.collectionView.mj_header?.endRefreshing()
             if let error = error {
@@ -151,8 +151,7 @@ class ShowRoomListVC: UIViewController {
         NetworkManager.shared.generateToken(
             channelName: "",
             uid: "\(UserInfo.userId)",
-            tokenType: .token007,
-            type: .rtc,
+            tokenTypes: [.rtc],
             expire: 24 * 60 * 60
         ) {[weak self] token in
             guard let self = self, let rtcToken = token, rtcToken.count > 0 else {
@@ -172,11 +171,11 @@ extension ShowRoomListVC: UICollectionViewDataSource, UICollectionViewDelegateFl
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: ShowRoomListCell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(ShowRoomListCell.self), for: indexPath) as! ShowRoomListCell
         let room = roomList[indexPath.item]
-        cell.setBgImge((room.thumbnailId?.isEmpty ?? true) ? "0" : room.thumbnailId ?? "0",
+        cell.setBgImge("\(indexPath.item % 4)",
                        name: room.roomName,
                        id: room.roomId,
                        count: room.roomUserCount,
-                       pureMode: (room.isPureMode != 0))
+                       pureMode: false)
         cell.ag_addPreloadTap(roomInfo: room, localUid: delegateHandler.localUid) {[weak self] state in
             if AppContext.shared.rtcToken?.count ?? 0 == 0 {
                 if state == .began {
