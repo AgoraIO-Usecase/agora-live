@@ -727,7 +727,7 @@ extension KTVApiImpl {
             return
         }
         switch mode {
-        case .loadLrcOnly, .loadMusicAndLrc:
+        case .loadLrcOnly:
             if let urlPath = songLoader?.getLyricURL(songCode: songCode), !urlPath.isEmpty {
                 self.lyricUrlMap[String(self.songCode)] = urlPath
                 self.setLyric(with: urlPath) { lyricUrl in
@@ -736,10 +736,33 @@ extension KTVApiImpl {
             } else {
                 onMusicLoadStateListener.onMusicLoadFail(songCode: self.songCode, reason: .noLyricUrl)
             }
-            break
+        case .loadMusicAndLrc:
+            if let urlPath = songLoader?.getLyricURL(songCode: songCode), !urlPath.isEmpty {
+                self.lyricUrlMap[String(self.songCode)] = urlPath
+                self.setLyric(with: urlPath) { lyricUrl in
+                    self.songLoader?.preloadMusic(songCode: self.songCode, onProgress: { p in
+                        onMusicLoadStateListener.onMusicLoadProgress(songCode: self.songCode, percent: Int(p * 100), state: .preloading, msg: nil, lyricUrl: lyricUrl)
+                    }, onCompelete: { e in
+                        if (e != nil) {
+                            onMusicLoadStateListener.onMusicLoadFail(songCode: self.songCode, reason: .musicPreloadFail)
+                        } else {
+                            onMusicLoadStateListener.onMusicLoadSuccess(songCode: self.songCode, lyricUrl: lyricUrl ?? "")
+                        }
+                    })
+                }
+            } else {
+                onMusicLoadStateListener.onMusicLoadFail(songCode: self.songCode, reason: .noLyricUrl)
+            }
         case .loadMusicOnly:
-            onMusicLoadStateListener.onMusicLoadSuccess(songCode: songCode, lyricUrl: "")
-            break
+            songLoader?.preloadMusic(songCode: songCode, onProgress: { p in
+                onMusicLoadStateListener.onMusicLoadProgress(songCode: self.songCode, percent: Int(p * 100), state: .preloading, msg: nil, lyricUrl: "")
+            }, onCompelete: { e in
+                if (e != nil) {
+                    onMusicLoadStateListener.onMusicLoadFail(songCode: self.songCode, reason: .musicPreloadFail)
+                } else {
+                    onMusicLoadStateListener.onMusicLoadSuccess(songCode: self.songCode, lyricUrl: "")
+                }
+            })
         default: break
         }
     }
@@ -773,8 +796,8 @@ extension KTVApiImpl {
     }
 
     func startSing(songCode: Int, startPos: Int) {
-        guard let url = songLoader?.getMusicURL(songCode: songCode) else { return  }
-        sendCustomMessage(with: "startSing", label: "url:\(url), startPos: \(startPos)")
+        guard let filePath = songLoader?.getMusicPath(songCode: songCode) else { return  }
+        sendCustomMessage(with: "startSing", label: "url:\(filePath), startPos: \(startPos)")
         let role = singerRole
         agoraPrint("startSing role: \(role.rawValue)")
         if self.songUrl != songUrl {
@@ -782,8 +805,8 @@ extension KTVApiImpl {
             return
         }
         apiConfig?.engine?.adjustPlaybackSignalVolume(Int(remoteVolume))
-        let ret = mediaPlayer?.open(url, startPos: startPos)
-        agoraPrintError("startSing->openMedia(\(url) fail: \(ret ?? -1)")
+        let ret = mediaPlayer?.open(filePath, startPos: startPos)
+        agoraPrintError("startSing->openMedia(\(filePath) fail: \(ret ?? -1)")
     }
     
     func startSing(url: String, startPos: Int) {
