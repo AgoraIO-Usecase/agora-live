@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
          mkdir -p "$folder"
       fi
       curl -L -o RTMLibs/resource.zip https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/release/sdk/AgoraRtm2.2.0.zip
-      unzip RTMLibs/resource.zip -d RTMLibs
+      unzip -o RTMLibs/resource.zip -d RTMLibs
       rm RTMLibs/resource.zip
    CMD
 
