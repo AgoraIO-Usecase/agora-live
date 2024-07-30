@@ -21,7 +21,7 @@ PODS:
     - AgoraComponetLog
     - Zip
   - AgoraRtcEngine_Special_iOS (4.3.2.2)
-  - AgoraRtm (2.2.0)
+  - AgoraRtm (2.2.1)
   - AgoraSyncManager-overseas (3.0.8):
     - SocketRocket
   - fuLib (1.0):
@@ -154,7 +154,7 @@ SPEC CHECKSUMS:
   AgoraComponetLog: b359777d2ff8e9ee0237cbd0c42ceb422fd514f1
   AgoraLyricsScore: 47fa1cc855810ddc3013ee4ec6ce8c926ca9b22c
   AgoraRtcEngine_Special_iOS: 4f1a1d2f2e7b564735fd74ced733c76e33b5dc04
-  AgoraRtm: 0d883e9f2e67f1df9de42d693d8c37b4805609dc
+  AgoraRtm: 021fe357e5e6629a35dff013e84e2a06c84f5e0c
   AgoraSyncManager-overseas: 4dddc7d8cd336e257adaac5e278e6cbcfaf1e954
   fuLib: a59e706f8b8a3826dcbe93d427fba2bcafc643aa
   FURenderKit: bcff9889dbbafcd12839d57ee85d03b466e1a6fb
