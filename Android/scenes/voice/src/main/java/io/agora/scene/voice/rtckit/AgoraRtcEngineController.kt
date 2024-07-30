@@ -201,7 +201,6 @@ class AgoraRtcEngineController {
                     setAudioScenario(Constants.AUDIO_SCENARIO_GAME_STREAMING)
                     setParameters("{\"che.audio.custom_payload_type\":73}")
                     setParameters("{\"che.audio.custom_bitrate\":128000}")
-                    // setRecordingDeviceVolume(128)
                     setParameters("{\"che.audio.input_channels\":2}")
                 }
             }
