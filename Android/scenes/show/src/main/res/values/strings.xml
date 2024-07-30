@@ -295,6 +295,9 @@
     <string name="show_error_accept_pk">Network issue. Failed to accept PK. Error: %s</string>
     <string name="show_error_reject_pk">Network issue. Failed to reject PK. Error: %s</string>
     <string name="show_error_cancel_mic_seat">Network issue. Failed to cancel apply. Error: %s</string>
+    <string name="show_beauty_loading">%s resource downloading: %s</string>
+    <string name="show_beauty_loading_failed">Download failed. Please ensure your network is functioning properly, exit and re-enter the preview page, and then restart the download.</string>
+
 
     <string-array name="show_encoder">
         <item>Hardware Encoder</item>

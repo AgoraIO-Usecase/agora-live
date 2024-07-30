@@ -15,6 +15,7 @@ android {
 
         buildConfigField "String", "CLOUD_PLAYER_KEY", "\"${CLOUD_PLAYER_KEY}\""
         buildConfigField "String", "CLOUD_PLAYER_SECRET", "\"${CLOUD_PLAYER_SECRET}\""
+        buildConfigField "String", "BEAUTY_RESOURCE", "\"${BEAUTY_RESOURCE}\""
     }
 
     resourcePrefix "show"
@@ -56,6 +57,8 @@ dependencies {
 
     implementation rootProject.ext.deps.rtm
 
+    if (BEAUTY_RESOURCE = "") {
+        implementation 'com.faceunity:model:8.7.0'
+    }
     implementation 'com.faceunity:core:8.7.0'
-    implementation 'com.faceunity:model:8.7.0'
 }
