@@ -235,6 +235,10 @@ class ShowRoomLiveView: UIView {
         }
     }
     
+    func markExpired() {
+        roomInfoView.stopTimer()
+    }
+    
     @objc private func didTapedCoverView(){
         chatInputView.textField.resignFirstResponder()
     }
