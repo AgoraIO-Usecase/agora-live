@@ -69,6 +69,7 @@ class ShowAgoraKitManager: NSObject {
     
     func prepareEngine() {
         let engine = AgoraRtcEngineKit.sharedEngine(with: engineConfig(), delegate: nil)
+        engine.setAudioScenario(.gameStreaming)
         self.engine = engine
         
         let loader = VideoLoaderApiImpl.shared

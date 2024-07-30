@@ -65,8 +65,7 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
     }()
     
     private lazy var roomService: AUIRoomService = {
-        let poliocy = RoomExpirationPolicy()
-        poliocy.expirationTime = 20 * 60 * 1000
+        let poliocy = RoomExpirationPolicy.defaultPolicy()
         let service = AUIRoomService(expirationPolicy: poliocy, roomManager: roomManager, syncmanager: syncManager)
         
         return service
