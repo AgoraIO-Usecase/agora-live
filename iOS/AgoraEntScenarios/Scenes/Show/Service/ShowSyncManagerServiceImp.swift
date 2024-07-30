@@ -12,7 +12,6 @@ import AgoraRtmKit
 private let kSceneId = "overseas_show_1.3.0"
 private let kRoomPresenceChannelName = "overseas_show_1_3_0_9999999999"
 
-typealias showLogger = ShowLogger
 private func agoraPrint(_ message: String) {
     ShowLogger.info(message, context: "Service")
 }
@@ -96,8 +95,7 @@ extension ShowSyncManagerServiceImp {
         let date = Date()
         NetworkManager.shared.generateToken(channelName: "",
                                             uid: "\(user.userId)",
-                                            tokenTypes: [.rtc, .rtm],
-                                            expire: 24 * 60 * 60) {  token in
+                                            tokenTypes: [.rtc, .rtm]) {  token in
             guard let rtcToken = token, let rtmToken = token else {
                 completion(NSError(domain: "generate token fail", code: -1))
                 return
@@ -262,7 +260,7 @@ extension ShowSyncManagerServiceImp: ShowServiceProtocol {
             }
             return
         }
-        
+        agoraPrint("createRoom roomId: \(roomId) roomName: \(roomName)")
         let roomInfo = AUIRoomInfo()
         roomInfo.roomId = roomId
         roomInfo.roomName = roomName
@@ -289,6 +287,7 @@ extension ShowSyncManagerServiceImp: ShowServiceProtocol {
             }
             return
         }
+        agoraPrint("joinRoom roomId: \(room.roomId) roomName: \(room.roomName ?? "")")
         let roomInfo = AUIRoomInfo.convertFromShowRoomListModel(room)
         if ShowRobotService.shared.isRobotOwner(ownerId: room.ownerId) {
             let poliocy = RoomExpirationPolicy()

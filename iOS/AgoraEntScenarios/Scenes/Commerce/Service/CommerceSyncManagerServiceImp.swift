@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import RTMSyncManager
 
-let kEcommerceSceneId = "scene_ecommerce_0_2_0"
+let kEcommerceSceneId = "scene_ecommerce_1.3.0"
 
 private let SYNC_MANAGER_MESSAGE_COLLECTION = "commerce_message_collection"
 private let SYNC_MANAGER_SEAT_APPLY_COLLECTION = "commerce_seat_apply_collection"

@@ -70,7 +70,7 @@ DEPENDENCIES:
   - AFNetworking (= 4.0.1)
   - Agora-Scene-Utils (= 1.1.0)
   - Agora_Chat_iOS (= 1.0.8)
-  - AgoraLyricsScore (from `https://github.com/AgoraIO-Community/LrcView-iOS.git`, branch `feature/dev_2.1.0`)
+  - AgoraLyricsScore (from `https://github.com/AgoraIO-Community/LrcView-iOS.git`, commit `b06752185ed5264fd09a8117bd78fb11202749b5`, branch `feature/dev_2.1.0`)
   - AgoraRtcEngine_Special_iOS (= 4.3.2.2)
   - AgoraRtm (from `AgoraRtm.podspec`)
   - AgoraSyncManager-overseas (~> 3.0.8)
@@ -131,6 +131,7 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   AgoraLyricsScore:
     :branch: feature/dev_2.1.0
+    :commit: b06752185ed5264fd09a8117bd78fb11202749b5
     :git: https://github.com/AgoraIO-Community/LrcView-iOS.git
   AgoraRtm:
     :path: AgoraRtm.podspec
@@ -143,7 +144,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AgoraLyricsScore:
-    :commit: 5f5da38e7cf20c905955cf030c254bf86340ee37
+    :commit: b06752185ed5264fd09a8117bd78fb11202749b5
     :git: https://github.com/AgoraIO-Community/LrcView-iOS.git
 
 SPEC CHECKSUMS:
@@ -153,7 +154,7 @@ SPEC CHECKSUMS:
   AgoraComponetLog: b359777d2ff8e9ee0237cbd0c42ceb422fd514f1
   AgoraLyricsScore: 47fa1cc855810ddc3013ee4ec6ce8c926ca9b22c
   AgoraRtcEngine_Special_iOS: 4f1a1d2f2e7b564735fd74ced733c76e33b5dc04
-  AgoraRtm: 874bbc0db49e4581832ce4fb8c47023bbd32ef10
+  AgoraRtm: 0d883e9f2e67f1df9de42d693d8c37b4805609dc
   AgoraSyncManager-overseas: 4dddc7d8cd336e257adaac5e278e6cbcfaf1e954
   fuLib: a59e706f8b8a3826dcbe93d427fba2bcafc643aa
   FURenderKit: bcff9889dbbafcd12839d57ee85d03b466e1a6fb
@@ -181,6 +182,6 @@ SPEC CHECKSUMS:
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: b7cc14baeb0d0b8a250afa420564705175bc9527
+PODFILE CHECKSUM: 203bd81b9fa4c2b70bf7ec0147820974b1e30769
 
 COCOAPODS: 1.15.2

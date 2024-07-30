@@ -57,6 +57,15 @@ class ShowInviteCell: UITableViewCell {
         let button = UIButton()
         button.titleLabel?.font = .systemFont(ofSize: 14)
         button.addTargetFor(self, action: #selector(onTapStatusButton(sender:)), for: .touchUpInside)
+        let bgImage = UIImage.show_sceneImage(name: "show_invite_btn_bg")!
+        button.setBackgroundImage(bgImage, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.setTitle("show_is_onseat".show_localized, for: .disabled)
+        button.setTitleColor(.white, for: .disabled)
+        button.setBackgroundImage(bgImage.color(.gray.withAlphaComponent(0.8), 
+                                                width: bgImage.size.width,
+                                                height: bgImage.size.height,
+                                                cornerRadius: bgImage.size.height / 2), for: .disabled)
         return button
     }()
     fileprivate lazy var lineView: AGEView = {
@@ -110,6 +119,7 @@ class ShowInviteCell: UITableViewCell {
 
 //pk invite cell
 class ShowPKInviteViewCell: ShowInviteCell {
+    var isCurrentInteracting: Bool = false
     var pkUser: ShowPKUserInfo? {
         didSet {
             defer {
@@ -136,7 +146,7 @@ class ShowPKInviteViewCell: ShowInviteCell {
             statusButton.setTitle(pkStatus.title, for: .normal)
             statusButton.setTitleColor(pkStatus.titleColor, for: .normal)
             statusButton.setBackgroundImage(pkStatus.bgImage, for: .normal)
-            statusButton.isEnabled = pkStatus != .waitting
+//            statusButton.isEnabled = pkStatus != .waitting
         }
     }
     
@@ -154,6 +164,11 @@ class ShowPKInviteViewCell: ShowInviteCell {
         guard let roomId = roomId,
               let invitation = pkUser,
               invitation.status == .idle else {
+            return
+        }
+        
+        if isCurrentInteracting {
+            ToastView.show(text: "show_error_disable_pk".show_localized)
             return
         }
 
@@ -174,12 +189,15 @@ class ShowPKInviteViewCell: ShowInviteCell {
 
 //mic seat apply and invite cell
 class ShowSeatApplyAndInviteViewCell: ShowInviteCell {
+    private var isCurrentInteracting: Bool = false
     private var seatApplyModel: ShowMicSeatApply?
     private var seatInvitationModel: ShowUser?
 
-    func setupApplyAndInviteData(model: Any?, isLink: Bool) {
-        statusButton.isHidden = isLink
+    func setupApplyAndInviteData(model: Any?, linkingUid: String?, isInteracting: Bool) {
+        self.isCurrentInteracting = isInteracting
         if let model = model as? ShowMicSeatApply {
+            statusButton.isEnabled = linkingUid == model.userId ? false : true
+            //apply
             seatApplyModel = model
             nameLabel.text = model.userName
             statusButton.tag = 1
@@ -190,12 +208,11 @@ class ShowSeatApplyAndInviteViewCell: ShowInviteCell {
                 avatarImageView.image = UIImage(named: model.userAvatar)
             }
             
-            statusButton.isUserInteractionEnabled = true
             statusButton.setTitle("show_onseat_agree".show_localized, for: .normal)
-            statusButton.setBackgroundImage(UIImage.show_sceneImage(name: "show_invite_btn_bg"), for: .normal)
-            statusButton.setTitleColor(.white, for: .normal)
             
         } else if let model = model as? ShowUser {
+            statusButton.isEnabled = linkingUid == model.userId ? false : true
+            //invit
             seatInvitationModel = model
             nameLabel.text = model.userName
             statusButton.tag = 2
@@ -205,11 +222,7 @@ class ShowSeatApplyAndInviteViewCell: ShowInviteCell {
             } else {
                 avatarImageView.image = UIImage(named: model.userAvatar)
             }
-            
             statusButton.setTitle("show_application".show_localized, for: .normal)
-            statusButton.setBackgroundImage(UIImage.show_sceneImage(name: "show_invite_btn_bg"), for: .normal)
-            statusButton.setTitleColor(.white, for: .normal)
-            statusButton.isUserInteractionEnabled = true
         }
     }
     
@@ -246,6 +259,10 @@ class ShowSeatApplyAndInviteViewCell: ShowInviteCell {
         super.onTapStatusButton(sender: sender)
         guard let roomId = roomId else {return}
         if let model = seatApplyModel, sender.tag == 1 {
+            if isCurrentInteracting {
+                ToastView.show(text: "show_error_disable_invite_linking".show_localized)
+                return
+            }
             self.statusButton.isEnabled = false
             AppContext.showServiceImp()?.acceptMicSeatApply(roomId: roomId, userId: model.userId) {[weak self] err in
                 guard let self = self else { return }
@@ -256,6 +273,11 @@ class ShowSeatApplyAndInviteViewCell: ShowInviteCell {
                 }
             }
         } else if let model = seatInvitationModel {
+            if isCurrentInteracting {
+                ToastView.show(text: "show_error_disable_linking".show_localized)
+                return
+            }
+            
             self.statusButton.isEnabled = false
             AppContext.showServiceImp()?.createMicSeatInvitation(roomId: roomId, userId: model.userId) {[weak self] error in
                 guard let self = self else { return }

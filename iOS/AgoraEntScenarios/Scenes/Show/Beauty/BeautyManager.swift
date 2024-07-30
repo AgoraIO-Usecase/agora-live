@@ -28,9 +28,9 @@ class BeautyManager: NSObject {
     
         switch BeautyModel.beautyType {
         case .byte:
-            beautyAPI.beautyRender = ByteBeautyManager.shareManager.render
+            break//beautyAPI.beautyRender = ByteBeautyManager.shareManager.render
         case .sense:
-            beautyAPI.beautyRender = SenseBeautyManager.shareManager.render
+            break//beautyAPI.beautyRender = SenseBeautyManager.shareManager.render
         case .fu:
             beautyAPI.beautyRender = FUBeautyManager.shareManager.render
         }
@@ -48,9 +48,9 @@ class BeautyManager: NSObject {
         config.captureMode = .agora
         switch BeautyModel.beautyType {
         case .byte:
-            config.beautyRender = ByteBeautyManager.shareManager.render
+            break//config.beautyRender = ByteBeautyManager.shareManager.render
         case .sense:
-            config.beautyRender = SenseBeautyManager.shareManager.render
+            break//config.beautyRender = SenseBeautyManager.shareManager.render
         case .fu:
             config.beautyRender = FUBeautyManager.shareManager.render
         }
@@ -72,10 +72,10 @@ class BeautyManager: NSObject {
     func setBeauty(path: String?, key: String?, value: CGFloat) {
         switch BeautyModel.beautyType {
         case .byte:
-            ByteBeautyManager.shareManager.setBeauty(path: path, key: key, value: value)
+            break//ByteBeautyManager.shareManager.setBeauty(path: path, key: key, value: value)
             
         case .sense:
-            SenseBeautyManager.shareManager.setBeauty(path: path, key: key, value: value)
+            break//SenseBeautyManager.shareManager.setBeauty(path: path, key: key, value: value)
             
         case .fu:
             FUBeautyManager.shareManager.setBeauty(path: path, key: key, value: value)
@@ -85,10 +85,10 @@ class BeautyManager: NSObject {
     func setStyle(path: String?, key: String?, value: CGFloat, isCombined: Bool) {
         switch BeautyModel.beautyType {
         case .byte:
-            ByteBeautyManager.shareManager.setStyle(path: path, key: key, value: value)
+            break//ByteBeautyManager.shareManager.setStyle(path: path, key: key, value: value)
             
         case .sense:
-            SenseBeautyManager.shareManager.setStyle(path: path, key: key, value: value)
+            break//SenseBeautyManager.shareManager.setStyle(path: path, key: key, value: value)
             
         case .fu:
             FUBeautyManager.shareManager.setStyle(path: path, key: key, value: value, isCombined: isCombined)
@@ -103,10 +103,10 @@ class BeautyManager: NSObject {
         guard let path = path else { return }
         switch BeautyModel.beautyType {
         case .byte:
-            ByteBeautyManager.shareManager.setFilter(path: path, value: value)
+            break//ByteBeautyManager.shareManager.setFilter(path: path, value: value)
             
         case .sense:
-            SenseBeautyManager.shareManager.setFilter(path: path, value: value)
+            break//SenseBeautyManager.shareManager.setFilter(path: path, value: value)
             
         case .fu:
             FUBeautyManager.shareManager.setFilter(path: path, value: value)
@@ -117,10 +117,10 @@ class BeautyManager: NSObject {
     func setSticker(path: String?) {
         switch BeautyModel.beautyType {
         case .byte:
-            ByteBeautyManager.shareManager.setSticker(path: path)
+            break//ByteBeautyManager.shareManager.setSticker(path: path)
             
         case .sense:
-            SenseBeautyManager.shareManager.setSticker(path: path)
+            break//SenseBeautyManager.shareManager.setSticker(path: path)
             
         case .fu:
             FUBeautyManager.shareManager.setSticker(path: path)
@@ -130,10 +130,10 @@ class BeautyManager: NSObject {
     func reset(datas: [BeautyModel]) {
         switch BeautyModel.beautyType {
         case .byte:
-            ByteBeautyManager.shareManager.reset(datas: datas)
+            break//ByteBeautyManager.shareManager.reset(datas: datas)
             
         case .sense:
-            SenseBeautyManager.shareManager.reset(datas: datas)
+            break//SenseBeautyManager.shareManager.reset(datas: datas)
             
         case .fu:
             FUBeautyManager.shareManager.reset(datas: datas)
@@ -143,10 +143,10 @@ class BeautyManager: NSObject {
     func resetStyle(datas: [BeautyModel]) {
         switch BeautyModel.beautyType {
         case .byte:
-            ByteBeautyManager.shareManager.resetStyle(datas: datas)
+            break//ByteBeautyManager.shareManager.resetStyle(datas: datas)
             
         case .sense:
-            SenseBeautyManager.shareManager.resetStyle(datas: datas)
+            break//SenseBeautyManager.shareManager.resetStyle(datas: datas)
             
         case .fu:
             FUBeautyManager.shareManager.resetStyle(datas: datas)
@@ -156,10 +156,10 @@ class BeautyManager: NSObject {
     func resetFilter(datas: [BeautyModel]) {
         switch BeautyModel.beautyType {
         case .byte:
-            ByteBeautyManager.shareManager.resetFilter(datas: datas)
+            break//ByteBeautyManager.shareManager.resetFilter(datas: datas)
             
         case .sense:
-            SenseBeautyManager.shareManager.resetFilter(datas: datas)
+            break//SenseBeautyManager.shareManager.resetFilter(datas: datas)
             
         case .fu:
             FUBeautyManager.shareManager.resetFilter(datas: datas)
@@ -169,10 +169,10 @@ class BeautyManager: NSObject {
     func resetSticker(datas: [BeautyModel]) {
         switch BeautyModel.beautyType {
         case .byte:
-            ByteBeautyManager.shareManager.resetSticker(datas: datas)
+            break//ByteBeautyManager.shareManager.resetSticker(datas: datas)
             
         case .sense:
-            SenseBeautyManager.shareManager.resetSticker(datas: datas)
+            break//SenseBeautyManager.shareManager.resetSticker(datas: datas)
             
         case .fu:
             FUBeautyManager.shareManager.resetSticker(datas: datas)
@@ -182,10 +182,10 @@ class BeautyManager: NSObject {
     func destroy() {
         switch BeautyModel.beautyType {
         case .byte:
-            ByteBeautyManager.shareManager.destroy()
+            break//ByteBeautyManager.shareManager.destroy()
             
         case .sense:
-            SenseBeautyManager.shareManager.destroy()
+            break//SenseBeautyManager.shareManager.destroy()
             
         case .fu:
             FUBeautyManager.shareManager.destroy()
