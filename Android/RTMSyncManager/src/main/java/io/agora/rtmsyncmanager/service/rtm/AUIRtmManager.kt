@@ -3,7 +3,6 @@ package io.agora.rtmsyncmanager.service.rtm
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import io.agora.rtm.ErrorInfo
 import io.agora.rtm.JoinChannelOptions
 import io.agora.rtm.MetadataItem
@@ -37,10 +36,14 @@ class AUIRtmManager constructor(
 
     init {
         rtmClient.addEventListener(proxy)
+
         //publish message/set metadata timeout seconds = 3s
         rtmClient.setParameters("{\"rtm.msg.tx_timeout\": 3000}")
         rtmClient.setParameters("{\"rtm.metadata.api_timeout\": 3000}")
         rtmClient.setParameters("{\"rtm.metadata.api_max_retries\": 1}")
+
+        rtmClient.setParameters("{\"rtm.heartbeat_interval\": 1}")
+        rtmClient.setParameters("{\"rtm.lock_ttl_minimum_value\": 5}")
     }
 
     fun deInit() {
@@ -613,7 +616,7 @@ class AUIRtmManager constructor(
         channelName: String,
         channelType: RtmChannelType = RtmChannelType.MESSAGE,
         lockName: String = kRTM_Referee_LockName,
-        ttl: Long = 10,
+        ttl: Long = 5,
         completion: (AUIRtmException?) -> Unit
     ) {
         val lock = rtmClient.lock
@@ -760,8 +763,8 @@ class AUIRtmManager constructor(
 
     fun markReceiptFinished(uniqueId: String, error: AUIRtmException? ) {
         receiptTimeoutRun.remove(uniqueId)?.let {
-            it.closure.invoke(error)
             receiptHandler.removeCallbacks(it.runnable)
+            it.closure.invoke(error)
         }
     }
 
