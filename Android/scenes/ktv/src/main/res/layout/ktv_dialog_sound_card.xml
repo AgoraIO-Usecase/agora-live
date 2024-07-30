@@ -172,7 +172,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="5dp"
             android:contentDescription="@string/ktv_gain_adjust"
-            android:max="40"
+            android:max="400"
             android:minWidth="100dp"
             android:progressDrawable="@drawable/ktv_seekbar_progress"
             android:thumb="@drawable/ktv_seekbar_thumb20"
@@ -180,7 +180,7 @@
             app:layout_constraintEnd_toStartOf="@id/etGainAdjust"
             app:layout_constraintStart_toEndOf="@+id/mtGainAdjustTips"
             app:layout_constraintTop_toTopOf="@id/etGainAdjust"
-            tools:progress="10" />
+            tools:progress="100" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/mtGainAdjustTips"
