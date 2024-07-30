@@ -1,5 +1,6 @@
 package io.agora.scene.show
 
+import io.agora.rtc2.Constants
 import io.agora.rtc2.IRtcEngineEventHandler
 import io.agora.rtc2.RtcEngine
 import io.agora.rtc2.RtcEngineConfig
@@ -123,6 +124,7 @@ object RtcEngineInstance {
                 }
                 innerRtcEngine = (RtcEngine.create(config) as RtcEngineEx).apply {
                     enableVideo()
+                    setAudioScenario(Constants.AUDIO_SCENARIO_GAME_STREAMING)
                 }
                 //beautyProcessor.initialize(innerRtcEngine!!)
             }
