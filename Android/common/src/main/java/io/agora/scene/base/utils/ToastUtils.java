@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
+import io.agora.scene.base.component.AgoraApplication;
 import io.agora.scene.widget.toast.CustomToast;
 
 /**
@@ -56,6 +57,10 @@ public final class ToastUtils {
      */
     public static void showToastShort(String str) {
         runOnMainThread(() -> CustomToast.show(str, Toast.LENGTH_SHORT));
+    }
+
+    public static void showToastLong(int resStringId) {
+        runOnMainThread(() -> Toast.makeText(AgoraApplication.the(), resStringId, Toast.LENGTH_LONG).show());
     }
 
     /**
