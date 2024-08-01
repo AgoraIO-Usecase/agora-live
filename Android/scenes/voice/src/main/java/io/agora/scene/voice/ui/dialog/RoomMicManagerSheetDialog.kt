@@ -9,8 +9,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.divider.MaterialDividerItemDecoration
+import io.agora.scene.base.component.OnItemClickListener
 import io.agora.scene.voice.model.MicManagerBean
-import io.agora.voice.common.ui.adapter.listener.OnItemClickListener
 import io.agora.voice.common.ui.dialog.BaseSheetDialog
 import io.agora.voice.common.utils.DeviceTools.dp
 import io.agora.scene.voice.R
@@ -76,8 +76,7 @@ class RoomMicManagerSheetDialog constructor() : BaseSheetDialog<VoiceDialogMicMa
                 }
             }
         }
-        micManagerAdapter = RoomMicManagerAdapter(micManagerList, object :
-            OnItemClickListener<MicManagerBean> {
+        micManagerAdapter = RoomMicManagerAdapter(micManagerList, object : OnItemClickListener<MicManagerBean> {
             override fun onItemClick(
                 data: MicManagerBean,
                 view: View,
@@ -121,14 +120,17 @@ class RoomMicManagerSheetDialog constructor() : BaseSheetDialog<VoiceDialogMicMa
                         ivMicTag.isVisible = true
                         ivMicInnerIcon.setImageResource(R.drawable.voice_ic_mic_empty)
                     }
+
                     MicStatus.Lock -> {
                         ivMicTag.isVisible = false
                         ivMicInnerIcon.setImageResource(R.drawable.voice_ic_mic_close)
                     }
+
                     MicStatus.LockForceMute -> {
                         ivMicInnerIcon.setImageResource(R.drawable.voice_ic_mic_close)
                         ivMicTag.isVisible = true
                     }
+
                     else -> {
                         ivMicTag.isVisible = false
                         ivMicInnerIcon.setImageResource(R.drawable.voice_ic_mic_empty)

@@ -1,8 +1,8 @@
 package io.agora.scene.voice.ui.adapter.viewholder
 
 import android.view.View
+import io.agora.scene.base.component.BaseRecyclerViewAdapter
 import io.agora.scene.voice.databinding.VoiceItemRoomAudienceListBinding
-import io.agora.voice.common.ui.adapter.BaseRecyclerViewAdapter
 import io.agora.voice.common.utils.ResourcesTools
 import io.agora.scene.voice.R
 import io.agora.scene.voice.imkit.manager.ChatroomIMManager

@@ -288,4 +288,7 @@
     <string name="voice_preset_sound_shaoyu">Mature Youthful Female</string>
     <string name="voice_preset_sound_shaoyu_tips">Mellow | Full</string>
     <string name="voice_sound_preset_off">Off</string>
+
+    <string name="voice_create_room_failed">Failed to create room, error: %1s</string>
+    <string name="voice_join_room_failed">Failed to join room, error: %1s</string>
 </resources>

@@ -1,4 +1,4 @@
-package io.agora.voice.common.ui.adapter.listener;
+package io.agora.scene.base.component;
 
 import android.view.View;
 
