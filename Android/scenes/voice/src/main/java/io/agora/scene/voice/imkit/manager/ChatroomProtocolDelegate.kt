@@ -15,12 +15,13 @@ import io.agora.scene.voice.imkit.custorm.CustomMsgHelper
 import io.agora.scene.voice.imkit.custorm.CustomMsgType
 import io.agora.scene.voice.imkit.custorm.OnMsgCallBack
 import io.agora.scene.voice.model.*
-import io.agora.scene.voice.rtckit.AgoraBGMManager
-import io.agora.voice.common.constant.ConfigConstants
+import io.agora.scene.voice.service.VoiceServiceProtocol
 import io.agora.voice.common.utils.GsonTools
+import io.agora.voice.common.utils.LogTools
 import io.agora.voice.common.utils.LogTools.logD
 import io.agora.voice.common.utils.LogTools.logE
 import io.agora.voice.common.utils.ThreadManager
+import java.util.concurrent.CountDownLatch
 
 /**
  * Chatroom protocol delegate
@@ -43,39 +44,72 @@ class ChatroomProtocolDelegate constructor(
     /**
      * Init mic info
      *
-     * @param roomType
      * @param ownerBean
      * @param callBack
      */
-    fun initMicInfo(roomType: Int, ownerBean: VoiceMemberModel, callBack: CallBack) {
-        val attributeMap = mutableMapOf<String, String>()
-        this@ChatroomProtocolDelegate.ownerBean = ownerBean
-        if (roomType == ConfigConstants.RoomType.Common_Chatroom) {
-            attributeMap["use_robot"] = "0"
-            attributeMap["robot_volume"] = "50"
+    fun initMicInfo(ownerBean: VoiceMemberModel, callBack: CallBack) {
+        ThreadManager.getInstance().runOnIOThread {
+            val latch = CountDownLatch(2)
+            var callbackCode = VoiceServiceProtocol.ERR_FAILED
+            var callbackError: String = ""
+            // once only set 10-kv
+
+            val attributeMap = mutableMapOf<String, String>()
+            this@ChatroomProtocolDelegate.ownerBean = ownerBean
             attributeMap["mic_0"] = GsonTools.beanToString(VoiceMicInfoModel(0, ownerBean, MicStatus.Normal)).toString()
             for (i in 1..7) {
-                var key = "mic_$i"
+                val key = "mic_$i"
                 var status = MicStatus.Idle
                 if (i >= 6) status = MicStatus.BotInactive
-                var mBean = GsonTools.beanToString(VoiceMicInfoModel(i, null, status))
+                val mBean = GsonTools.beanToString(VoiceMicInfoModel(i, null, status))
                 if (mBean != null) {
                     attributeMap[key] = mBean
                 }
             }
-        } else if (roomType == ConfigConstants.RoomType.Spatial_Chatroom) {
+            roomManager.asyncSetChatroomAttributesForced(roomId, attributeMap, true) { code, result_map ->
+                if (code == 0 && result_map.isEmpty()) {
+                    callbackCode = VoiceServiceProtocol.ERR_OK
+                    ChatroomCacheManager.cacheManager.setMicInfo(attributeMap)
+                    LogTools.d(TAG, "initMicInfo update result onSuccess roomId:$roomId")
+                    latch.countDown()
+                } else {
+                    callbackCode = code
+                    callbackError = "initMicInfo onError roomId:$roomId, $code"
+                    LogTools.e(TAG, "initMicInfo update result onError roomId:$roomId, $code $result_map ")
+                    latch.countDown()
+                }
+            }
 
-        }
-        roomManager.asyncSetChatroomAttributesForced(
-            roomId, attributeMap, true
-        ) { code, result_map ->
-            if (code == 0 && result_map.isEmpty()) {
-                callBack.onSuccess()
-                ChatroomCacheManager.cacheManager.setMicInfo(attributeMap)
-                "initMicInfo update result onSuccess roomId:$roomId,".logD(TAG)
-            } else {
-                callBack.onError(code, result_map.toString())
-                "initMicInfo update result onError roomId:$roomId, $code $result_map ".logE(TAG)
+            val attributeMap2 = mutableMapOf<String, String>()
+            attributeMap2["use_robot"] = "0"
+            attributeMap2["robot_volume"] = "50"
+            attributeMap2["click_count"] = "3"
+
+            roomManager.asyncSetChatroomAttributesForced(roomId, attributeMap2, true) { code, result_map ->
+                if (code == 0 && result_map.isEmpty()) {
+                    callbackCode = VoiceServiceProtocol.ERR_OK
+                    LogTools.d(TAG, "initOtherAttributes onSuccess roomId:$roomId")
+                    latch.countDown()
+                } else {
+                    callbackCode = code
+                    callbackError = "initOtherAttributes onError roomId:$roomId, $code"
+                    LogTools.e(TAG, "initOtherAttributes onError roomId:$roomId, $code $result_map ")
+                    latch.countDown()
+                }
+            }
+            try {
+                latch.await()
+                ThreadManager.getInstance().runOnMainThread {
+                    if (callbackCode == VoiceServiceProtocol.ERR_OK) {
+                        callBack.onSuccess()
+                    } else {
+                        callBack.onError(callbackCode, callbackError)
+                    }
+                }
+            } catch (e: Exception) {
+                ThreadManager.getInstance().runOnMainThread {
+                    callBack.onError(callbackCode, e.message ?: "initAttributes Exception ${e.message}")
+                }
             }
         }
     }
@@ -86,9 +120,16 @@ class ChatroomProtocolDelegate constructor(
      * @param voiceRoomModel
      * @param callback
      */
-    fun fetchRoomDetail(voiceRoomModel: VoiceRoomModel, callback: ValueCallBack<VoiceRoomInfo>){
+    fun fetchRoomDetail(voiceRoomModel: VoiceRoomModel, callback: ValueCallBack<VoiceRoomInfo>) {
         val keyList: MutableList<String> =
-            mutableListOf("ranking_list", "member_list", "gift_amount", "robot_volume", "use_robot", "room_bgm")
+            mutableListOf(
+                "ranking_list",
+                "member_list",
+                "gift_amount",
+                "robot_volume",
+                "use_robot",
+                "click_count"
+            )
         for (i in 0..7) {
             keyList.add("mic_$i")
         }
@@ -99,6 +140,7 @@ class ChatroomProtocolDelegate constructor(
             override fun onSuccess(value: String?) {
                 voiceRoomModel.announcement = value ?: ""
             }
+
             override fun onError(error: Int, errorMsg: String?) {
             }
         })
@@ -107,13 +149,13 @@ class ChatroomProtocolDelegate constructor(
                 @RequiresApi(Build.VERSION_CODES.N)
                 override fun onSuccess(result: Map<String, String>) {
                     val micInfoList = mutableListOf<VoiceMicInfoModel>()
-                    val micMap = mutableMapOf<String,String>()
+                    val micMap = mutableMapOf<String, String>()
                     result.entries.forEach {
                         val key = it.key
                         val value = it.value
-                        if (key.startsWith("mic_")){
+                        if (key.startsWith("mic_")) {
                             micMap[key] = value
-                        }else if (key=="ranking_list"){
+                        } else if (key == "ranking_list") {
                             val rankList = GsonTools.toList(value, VoiceRankUserModel::class.java)
                             rankList?.let { rankUsers ->
                                 voiceRoomInfo.roomInfo?.rankingList = rankUsers
@@ -126,38 +168,41 @@ class ChatroomProtocolDelegate constructor(
                             memberList?.let { members ->
                                 "member_list($members) fetchRoomDetail onSuccess: ".logD(TAG)
                                 addMemberListBySelf(members, object : ValueCallBack<List<VoiceMemberModel>> {
-                                        override fun onSuccess(value: List<VoiceMemberModel>) {
-                                            voiceRoomInfo.roomInfo?.memberList = value
-                                            value.forEach { member ->
-                                                if (!member.chatUid.equals(ownerBean.chatUid)){
-                                                    ChatroomCacheManager.cacheManager.setMemberList(member)
-                                                }
+                                    override fun onSuccess(value: List<VoiceMemberModel>) {
+                                        voiceRoomInfo.roomInfo?.memberList = value
+                                        value.forEach { member ->
+                                            if (!member.chatUid.equals(ownerBean.chatUid)) {
+                                                ChatroomCacheManager.cacheManager.setMemberList(member)
                                             }
                                         }
+                                    }
 
                                     override fun onError(code: Int, error: String?) {
                                         voiceRoomInfo.roomInfo?.memberList = memberList
                                         memberList.forEach { member ->
-                                            if (!member.chatUid.equals(ownerBean.chatUid)){
+                                            if (!member.chatUid.equals(ownerBean.chatUid)) {
                                                 ChatroomCacheManager.cacheManager.setMemberList(member)
                                             }
                                         }
                                     }
                                 })
                             }
-                        }else if (key=="gift_amount"){
+                        } else if (key == "gift_amount") {
                             value.toIntOrNull()?.let {
                                 voiceRoomInfo.roomInfo?.giftAmount = it
                                 ChatroomCacheManager.cacheManager.setGiftAmountCache(it)
                             }
-                        }else if (key=="robot_volume"){
+                        } else if (key == "robot_volume") {
                             value.toIntOrNull()?.let {
                                 voiceRoomInfo.roomInfo?.robotVolume = it
                             }
-                        }else if (key=="use_robot"){
+                        } else if (key == "use_robot") {
                             voiceRoomInfo.roomInfo?.useRobot = value == "1"
-                        } else if (key == "room_bgm") {
-                            voiceRoomInfo.bgmInfo = GsonTools.toBean(value, VoiceBgmModel::class.java)
+                        } else if (key == "click_count") {
+                            value.toIntOrNull()?.let {
+                                voiceRoomInfo.roomInfo?.clickCount = it
+                                ChatroomCacheManager.cacheManager.clickCountCache = it
+                            }
                         }
                     }
                     ChatroomCacheManager.cacheManager.clearMicInfo()
@@ -174,7 +219,7 @@ class ChatroomProtocolDelegate constructor(
 
                 override fun onError(error: Int, desc: String?) {
                     "fetchRoomDetail onError roomId:$roomId, $error $desc".logE(TAG)
-                    callback.onError(error,desc)
+                    callback.onError(error, desc)
                 }
             })
     }
@@ -196,9 +241,9 @@ class ChatroomProtocolDelegate constructor(
                     ChatroomCacheManager.cacheManager.clearMicInfo()
                     ChatroomCacheManager.cacheManager.setMicInfo(value)
                     for (entry in value.entries) {
-                       GsonTools.toBean(entry.value, VoiceMicInfoModel::class.java)?.let {
-                           micInfoList.add(it)
-                       }
+                        GsonTools.toBean(entry.value, VoiceMicInfoModel::class.java)?.let {
+                            micInfoList.add(it)
+                        }
                     }
                     "getMicInfoFromServer onSuccess: $micInfoList".logD(TAG)
                     callback.onSuccess(micInfoList.sortedBy { it.micIndex })
@@ -206,7 +251,7 @@ class ChatroomProtocolDelegate constructor(
 
                 override fun onError(error: Int, desc: String?) {
                     "getMicInfoFromServer onError: $error $desc".logE(TAG)
-                    callback.onError(error,desc)
+                    callback.onError(error, desc)
                 }
             })
     }
@@ -221,9 +266,9 @@ class ChatroomProtocolDelegate constructor(
         var localMap = ChatroomCacheManager.cacheManager.getMicInfoMap()
         if (localMap != null) {
             for (entry in localMap.entries) {
-               GsonTools.toBean(entry.value, VoiceMicInfoModel::class.java)?.let {
-                   micInfoMap[entry.key] = it
-               }
+                GsonTools.toBean(entry.value, VoiceMicInfoModel::class.java)?.let {
+                    micInfoMap[entry.key] = it
+                }
             }
         }
         return micInfoMap
@@ -268,7 +313,7 @@ class ChatroomProtocolDelegate constructor(
      * @param callback
      */
     fun leaveMic(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
-        updateMicByResult(null,micIndex, MicClickAction.OffStage, true, callback)
+        updateMicByResult(null, micIndex, MicClickAction.OffStage, true, callback)
     }
 
     /**
@@ -287,12 +332,13 @@ class ChatroomProtocolDelegate constructor(
         if (toMicBean != null && fromBean != null && (toMicBean.micStatus == MicStatus.Idle || toMicBean.micStatus == MicStatus.Mute || toMicBean.micStatus == MicStatus.ForceMute)) {
             val fromMicStatus = fromBean.micStatus
             val toMicStatus = toMicBean.micStatus
-            fromBean.member?.micIndex  = toMicIndex
+            fromBean.member?.micIndex = toMicIndex
             fromBean.micIndex = toMicIndex
             when (toMicStatus) {
                 MicStatus.ForceMute -> {
                     fromBean.micStatus = MicStatus.ForceMute
                 }
+
                 else -> {
                     fromBean.micStatus = MicStatus.Normal
                 }
@@ -303,6 +349,7 @@ class ChatroomProtocolDelegate constructor(
                 MicStatus.ForceMute -> {
                     toMicBean.micStatus = MicStatus.ForceMute
                 }
+
                 else -> {
                     toMicBean.micStatus = MicStatus.Idle
                 }
@@ -340,7 +387,7 @@ class ChatroomProtocolDelegate constructor(
      * @param callback
      */
     fun muteLocal(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
-        updateMicByResult(null,micIndex, MicClickAction.Mute, true, callback)
+        updateMicByResult(null, micIndex, MicClickAction.Mute, true, callback)
     }
 
     /**
@@ -350,7 +397,7 @@ class ChatroomProtocolDelegate constructor(
      * @param callback
      */
     fun unMuteLocal(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
-        updateMicByResult(null,micIndex, MicClickAction.UnMute, true, callback)
+        updateMicByResult(null, micIndex, MicClickAction.UnMute, true, callback)
     }
 
     /**
@@ -360,7 +407,7 @@ class ChatroomProtocolDelegate constructor(
      * @param callback
      */
     fun forbidMic(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
-        updateMicByResult(null,micIndex, MicClickAction.ForbidMic, true, callback)
+        updateMicByResult(null, micIndex, MicClickAction.ForbidMic, true, callback)
     }
 
     /**
@@ -370,7 +417,7 @@ class ChatroomProtocolDelegate constructor(
      * @param callback
      */
     fun unForbidMic(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
-        updateMicByResult(null,micIndex, MicClickAction.UnForbidMic, true, callback)
+        updateMicByResult(null, micIndex, MicClickAction.UnForbidMic, true, callback)
     }
 
     /**
@@ -380,7 +427,7 @@ class ChatroomProtocolDelegate constructor(
      * @param callback
      */
     fun kickOff(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
-        updateMicByResult(null,micIndex, MicClickAction.KickOff, true, callback)
+        updateMicByResult(null, micIndex, MicClickAction.KickOff, true, callback)
     }
 
     /**
@@ -390,7 +437,7 @@ class ChatroomProtocolDelegate constructor(
      * @param callback
      */
     fun lockMic(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
-        updateMicByResult(null,micIndex, MicClickAction.Lock, true, callback)
+        updateMicByResult(null, micIndex, MicClickAction.Lock, true, callback)
     }
 
     /**
@@ -400,7 +447,7 @@ class ChatroomProtocolDelegate constructor(
      * @param callback
      */
     fun unLockMic(micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
-        updateMicByResult(null,micIndex, MicClickAction.UnLock, true, callback)
+        updateMicByResult(null, micIndex, MicClickAction.UnLock, true, callback)
     }
 
     /**
@@ -447,12 +494,13 @@ class ChatroomProtocolDelegate constructor(
      * @param micIndex
      * @param callback
      */
-    fun acceptMicSeatApply(chatUid:String,micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
+    fun acceptMicSeatApply(chatUid: String, micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         val memberBean = ChatroomCacheManager.cacheManager.getMember(chatUid)
         if (memberBean != null) {
             if (micIndex != -1) {
                 val micInfoModel = getMicInfo(micIndex)
-                memberBean.micIndex = if (micInfoModel?.micStatus == MicStatus.Idle || micInfoModel?.micStatus==MicStatus.ForceMute) micIndex else getFirstFreeMic()
+                memberBean.micIndex =
+                    if (micInfoModel?.micStatus == MicStatus.Idle || micInfoModel?.micStatus == MicStatus.ForceMute) micIndex else getFirstFreeMic()
             } else {
                 memberBean.micIndex = getFirstFreeMic()
             }
@@ -460,8 +508,10 @@ class ChatroomProtocolDelegate constructor(
         ThreadManager.getInstance().runOnIOThread {
             if (checkMemberIsOnMic(memberBean)) return@runOnIOThread
             memberBean?.let {
-                updateMicByResult(memberBean,
-                    it.micIndex, MicClickAction.Accept, true, callback)
+                updateMicByResult(
+                    memberBean,
+                    it.micIndex, MicClickAction.Accept, true, callback
+                )
             }
         }
     }
@@ -512,7 +562,7 @@ class ChatroomProtocolDelegate constructor(
      *
      * @return
      */
-    fun fetchRoomInviteMembers():MutableList<VoiceMemberModel> {
+    fun fetchRoomInviteMembers(): MutableList<VoiceMemberModel> {
         return ChatroomCacheManager.cacheManager.getInvitationList()
     }
 
@@ -521,7 +571,7 @@ class ChatroomProtocolDelegate constructor(
      *
      * @return
      */
-    fun fetchRoomMembers():MutableList<VoiceMemberModel> {
+    fun fetchRoomMembers(): MutableList<VoiceMemberModel> {
         return ChatroomCacheManager.cacheManager.getMemberList()
     }
 
@@ -560,12 +610,13 @@ class ChatroomProtocolDelegate constructor(
      * @param micIndex
      * @param callback
      */
-    fun acceptMicSeatInvitation(chatUid: String,micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
+    fun acceptMicSeatInvitation(chatUid: String, micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         val memberBean = ChatroomCacheManager.cacheManager.getMember(chatUid)
         if (memberBean != null) {
             if (micIndex != -1) {
                 val micInfoModel = getMicInfo(micIndex)
-                memberBean.micIndex = if (micInfoModel?.micStatus == MicStatus.Idle || micInfoModel?.micStatus==MicStatus.ForceMute) micIndex else getFirstFreeMic()
+                memberBean.micIndex =
+                    if (micInfoModel?.micStatus == MicStatus.Idle || micInfoModel?.micStatus == MicStatus.ForceMute) micIndex else getFirstFreeMic()
             } else {
                 memberBean.micIndex = getFirstFreeMic()
             }
@@ -573,8 +624,10 @@ class ChatroomProtocolDelegate constructor(
         ThreadManager.getInstance().runOnIOThread {
             if (checkMemberIsOnMic(memberBean)) return@runOnIOThread
             memberBean?.let {
-                updateMicByResult(memberBean,
-                    it.micIndex, MicClickAction.Accept, true, callback)
+                updateMicByResult(
+                    memberBean,
+                    it.micIndex, MicClickAction.Accept, true, callback
+                )
             }
         }
     }
@@ -676,8 +729,9 @@ class ChatroomProtocolDelegate constructor(
      * 5:Robot-exclusive active state
      * -2:Robot-exclusive closed state
      */
-    private fun updateMicByResult(member: VoiceMemberModel? = null,
-                                  micIndex: Int, @MicClickAction clickAction: Int, isForced: Boolean, callback: ValueCallBack<VoiceMicInfoModel>
+    private fun updateMicByResult(
+        member: VoiceMemberModel? = null,
+        micIndex: Int, @MicClickAction clickAction: Int, isForced: Boolean, callback: ValueCallBack<VoiceMicInfoModel>
     ) {
         val voiceMicInfo = getMicInfo(micIndex) ?: return
         updateMicStatusByAction(voiceMicInfo, clickAction, member)
@@ -725,7 +779,11 @@ class ChatroomProtocolDelegate constructor(
      * @param action
      * @param memberBean
      */
-    private fun updateMicStatusByAction(micInfo: VoiceMicInfoModel, @MicClickAction action: Int, memberBean: VoiceMemberModel? = null) {
+    private fun updateMicStatusByAction(
+        micInfo: VoiceMicInfoModel,
+        @MicClickAction action: Int,
+        memberBean: VoiceMemberModel? = null
+    ) {
         when (action) {
             MicClickAction.ForbidMic -> {
                 if (micInfo.micStatus == MicStatus.Lock) {
@@ -734,6 +792,7 @@ class ChatroomProtocolDelegate constructor(
                     micInfo.micStatus = MicStatus.ForceMute
                 }
             }
+
             MicClickAction.UnForbidMic -> {
                 if (micInfo.micStatus == MicStatus.LockForceMute) {
                     micInfo.micStatus = MicStatus.Lock
@@ -745,9 +804,11 @@ class ChatroomProtocolDelegate constructor(
                     }
                 }
             }
+
             MicClickAction.Mute -> {
                 micInfo.member?.micStatus = 0
             }
+
             MicClickAction.UnMute -> {
                 if (micInfo.member == null) {
                     micInfo.micStatus = MicStatus.Idle
@@ -756,6 +817,7 @@ class ChatroomProtocolDelegate constructor(
                     micInfo.member?.micStatus = 1
                 }
             }
+
             MicClickAction.Lock -> {
                 if (micInfo.micStatus == MicStatus.ForceMute) {
                     micInfo.micStatus = MicStatus.LockForceMute
@@ -764,6 +826,7 @@ class ChatroomProtocolDelegate constructor(
                 }
                 micInfo.member = null
             }
+
             MicClickAction.UnLock -> {
                 if (micInfo.micStatus == MicStatus.LockForceMute) {
                     micInfo.micStatus = MicStatus.ForceMute
@@ -775,6 +838,7 @@ class ChatroomProtocolDelegate constructor(
                     }
                 }
             }
+
             MicClickAction.KickOff -> {
                 if (micInfo.micStatus == MicStatus.ForceMute) {
                     micInfo.micStatus = MicStatus.ForceMute
@@ -783,6 +847,7 @@ class ChatroomProtocolDelegate constructor(
                 }
                 micInfo.member = null
             }
+
             MicClickAction.OffStage -> {
                 if (micInfo.micStatus == MicStatus.ForceMute) {
                     micInfo.micStatus = MicStatus.ForceMute
@@ -791,21 +856,23 @@ class ChatroomProtocolDelegate constructor(
                 }
                 micInfo.member = null
             }
+
             MicClickAction.Accept -> {
                 "MicClickAction.Accept: ${micInfo.micStatus}".logD(TAG)
-                if (micInfo.micStatus == -1){
+                if (micInfo.micStatus == -1) {
                     micInfo.micStatus = MicStatus.Normal
                 }
-                if (memberBean != null){
+                if (memberBean != null) {
                     micInfo.member = memberBean
                 }
             }
+
             MicClickAction.Invite -> {
                 "MicClickAction.Invite: ${micInfo.micStatus}".logD(TAG)
-                if (micInfo.micStatus == -1){
+                if (micInfo.micStatus == -1) {
                     micInfo.micStatus = MicStatus.Normal
                 }
-                if (memberBean != null){
+                if (memberBean != null) {
                     micInfo.member = memberBean
                 }
             }
@@ -819,11 +886,11 @@ class ChatroomProtocolDelegate constructor(
      * @param giftBean
      * @param callback
      */
-    fun updateRankList(chatUid:String, giftBean: VoiceGiftModel, callback: CallBack){
+    fun updateRankList(chatUid: String, giftBean: VoiceGiftModel, callback: CallBack) {
         val rankMap = ChatroomCacheManager.cacheManager.getRankMap()
         val rankingList = mutableListOf<VoiceRankUserModel>()
         var voiceRankModel = rankMap[chatUid]
-        if (voiceRankModel == null){
+        if (voiceRankModel == null) {
             voiceRankModel = VoiceRankUserModel()
         }
         var newAmount = 0
@@ -831,7 +898,7 @@ class ChatroomProtocolDelegate constructor(
         val portrait = giftBean.portrait
         val count = giftBean.gift_count?.toInt()
         val price = giftBean.gift_price?.toInt()
-        if (count != null && price !=null){
+        if (count != null && price != null) {
             newAmount = count * price
         }
         val oldAmount = voiceRankModel.amount
@@ -843,17 +910,17 @@ class ChatroomProtocolDelegate constructor(
         for (entry in rankMap.entries) {
             rankingList.add(entry.value)
         }
-        roomManager.asyncSetChatroomAttributeForced(roomId,"ranking_list", GsonTools.beanToString(rankingList),
-            false,object : CallBack{
-            override fun onSuccess() {
-                ChatroomCacheManager.cacheManager.setRankList(voiceRankModel)
-                callback.onSuccess()
-            }
+        roomManager.asyncSetChatroomAttributeForced(roomId, "ranking_list", GsonTools.beanToString(rankingList),
+            false, object : CallBack {
+                override fun onSuccess() {
+                    ChatroomCacheManager.cacheManager.setRankList(voiceRankModel)
+                    callback.onSuccess()
+                }
 
-            override fun onError(code: Int, error: String?) {
-                callback.onError(code,error)
-            }
-        })
+                override fun onError(code: Int, error: String?) {
+                    callback.onError(code, error)
+                }
+            })
     }
 
     /**
@@ -863,12 +930,12 @@ class ChatroomProtocolDelegate constructor(
      * @param newAmount
      * @param callback
      */
-    fun updateGiftAmount(chatUid: String,newAmount:Int,callback: CallBack){
-        if (TextUtils.equals(ownerBean.chatUid,chatUid)){
+    fun updateGiftAmount(chatUid: String, newAmount: Int, callback: CallBack) {
+        if (TextUtils.equals(ownerBean.chatUid, chatUid)) {
             var giftAmount = ChatroomCacheManager.cacheManager.getGiftAmountCache()
             giftAmount += newAmount
-            roomManager.asyncSetChatroomAttribute(roomId,"gift_amount",giftAmount.toString(),true,object :
-                CallBack{
+            roomManager.asyncSetChatroomAttribute(roomId, "gift_amount", giftAmount.toString(), true, object :
+                CallBack {
                 override fun onSuccess() {
                     "update giftAmount onSuccess: $giftAmount".logD(TAG)
                     ChatroomCacheManager.cacheManager.updateGiftAmountCache(newAmount)
@@ -877,7 +944,27 @@ class ChatroomProtocolDelegate constructor(
 
                 override fun onError(code: Int, error: String?) {
                     "update giftAmount onError: $code $error".logE(TAG)
-                    callback.onError(code,error)
+                    callback.onError(code, error)
+                }
+            })
+        }
+    }
+
+    fun increaseClickCount(chatUid: String, callback: CallBack?) {
+        if (TextUtils.equals(ownerBean.chatUid, chatUid)) {
+            var clickCount = ChatroomCacheManager.cacheManager.clickCountCache
+            clickCount += 1
+            roomManager.asyncSetChatroomAttribute(roomId, "click_count", "$clickCount", true, object :
+                CallBack {
+                override fun onSuccess() {
+                    LogTools.d(TAG, "update clickCount onSuccess: $clickCount")
+                    ChatroomCacheManager.cacheManager.clickCountCache = clickCount
+                    callback?.onSuccess()
+                }
+
+                override fun onError(code: Int, error: String?) {
+                    LogTools.e(TAG, "update clickCount onError: $code $error")
+                    callback?.onError(code, error)
                 }
             })
         }
@@ -888,15 +975,15 @@ class ChatroomProtocolDelegate constructor(
      *
      * @param callback
      */
-    fun fetchGiftContribute(callback: ValueCallBack<List<VoiceRankUserModel>>){
+    fun fetchGiftContribute(callback: ValueCallBack<List<VoiceRankUserModel>>) {
         val rankingList = ChatroomCacheManager.cacheManager.getRankList()
-        if (rankingList.isEmpty()){
+        if (rankingList.isEmpty()) {
             val keyList: MutableList<String> = java.util.ArrayList()
             keyList.add("ranking_list")
-            roomManager.asyncFetchChatroomAttributesFromServer(roomId,keyList,object :
-                ValueCallBack<MutableMap<String, String>>{
+            roomManager.asyncFetchChatroomAttributesFromServer(roomId, keyList, object :
+                ValueCallBack<MutableMap<String, String>> {
                 override fun onSuccess(value: MutableMap<String, String>) {
-                    ThreadManager.getInstance().runOnMainThread{
+                    ThreadManager.getInstance().runOnMainThread {
                         value["ranking_list"]?.let {
                             val rankList = GsonTools.toList(it, VoiceRankUserModel::class.java)
                             rankList?.forEach { bean ->
@@ -909,13 +996,13 @@ class ChatroomProtocolDelegate constructor(
                 }
 
                 override fun onError(code: Int, errorMsg: String?) {
-                    ThreadManager.getInstance().runOnMainThread{
-                        callback.onError(code,errorMsg)
+                    ThreadManager.getInstance().runOnMainThread {
+                        callback.onError(code, errorMsg)
                         "getRankList onError: $code $errorMsg".logE(TAG)
                     }
                 }
             })
-        }else{
+        } else {
             callback.onSuccess(rankingList)
         }
     }
@@ -925,11 +1012,11 @@ class ChatroomProtocolDelegate constructor(
      *
      * @param callback
      */
-    fun getMemberFromServer(callback: ValueCallBack<List<VoiceMemberModel>>){
+    fun getMemberFromServer(callback: ValueCallBack<List<VoiceMemberModel>>) {
         ChatroomCacheManager.cacheManager.getMemberList()
         val keyList: MutableList<String> = mutableListOf("member_list")
-        roomManager.asyncFetchChatroomAttributesFromServer(roomId,keyList,object :
-            ValueCallBack<MutableMap<String, String>>{
+        roomManager.asyncFetchChatroomAttributesFromServer(roomId, keyList, object :
+            ValueCallBack<MutableMap<String, String>> {
             override fun onSuccess(value: MutableMap<String, String>) {
                 GsonTools.toList(value["member_list"], VoiceMemberModel::class.java)?.let { memberList ->
                     callback.onSuccess(memberList)
@@ -937,7 +1024,7 @@ class ChatroomProtocolDelegate constructor(
             }
 
             override fun onError(code: Int, errorMsg: String?) {
-                callback.onError(code,errorMsg)
+                callback.onError(code, errorMsg)
             }
         })
     }
@@ -947,8 +1034,8 @@ class ChatroomProtocolDelegate constructor(
      *
      * @return
      */
-     fun getMySelfModel(): VoiceMemberModel {
-        var micIndex : Int = -1
+    fun getMySelfModel(): VoiceMemberModel {
+        var micIndex: Int = -1
         if (TextUtils.equals(ownerBean.chatUid, VoiceBuddyFactory.get().getVoiceBuddy().chatUserName())) {
             micIndex = 0
         }
@@ -958,8 +1045,9 @@ class ChatroomProtocolDelegate constructor(
             nickName = VoiceBuddyFactory.get().getVoiceBuddy().nickName(),
             portrait = VoiceBuddyFactory.get().getVoiceBuddy().headUrl(),
             rtcUid = VoiceBuddyFactory.get().getVoiceBuddy().rtcUid(),
-            micIndex = micIndex).also {
-                "getMySelfModel:$it".logD(TAG)
+            micIndex = micIndex
+        ).also {
+            "getMySelfModel:$it".logD(TAG)
         }
     }
 
@@ -969,22 +1057,22 @@ class ChatroomProtocolDelegate constructor(
      * @param memberList
      * @param callback
      */
-    fun addMemberListBySelf(memberList:List<VoiceMemberModel>, callback: ValueCallBack<List<VoiceMemberModel>>){
+    fun addMemberListBySelf(memberList: List<VoiceMemberModel>, callback: ValueCallBack<List<VoiceMemberModel>>) {
         val newMemberList = memberList.toMutableList()
         newMemberList.add(getMySelfModel())
         val member = GsonTools.beanToString(memberList)
         roomManager.asyncSetChatroomAttributeForced(roomId,
-            "member_list",member,false,object : CallBack{
-            override fun onSuccess() {
-                callback.onSuccess(newMemberList)
-                "addMemberListBySelf onSuccess: ".logD(TAG)
-            }
+            "member_list", member, false, object : CallBack {
+                override fun onSuccess() {
+                    callback.onSuccess(newMemberList)
+                    "addMemberListBySelf onSuccess: ".logD(TAG)
+                }
 
-            override fun onError(code: Int, error: String?) {
-                callback.onError(code,error)
-                "addMemberListBySelf onError: $code $error".logE(TAG)
-            }
-        })
+                override fun onError(code: Int, error: String?) {
+                    callback.onError(code, error)
+                    "addMemberListBySelf onError: $code $error".logE(TAG)
+                }
+            })
     }
 
     /**
@@ -993,18 +1081,18 @@ class ChatroomProtocolDelegate constructor(
      * @param memberList
      * @param callback
      */
-    fun updateRoomMember(memberList:List<VoiceMemberModel>,callback: CallBack){
+    fun updateRoomMember(memberList: List<VoiceMemberModel>, callback: CallBack) {
         if (TextUtils.equals(ownerBean.chatUid, VoiceBuddyFactory.get().getVoiceBuddy().chatUserName())) {
             val member = GsonTools.beanToString(memberList)
             roomManager.asyncSetChatroomAttributeForced(roomId,
-                "member_list",member,false,object : CallBack{
+                "member_list", member, false, object : CallBack {
                     override fun onSuccess() {
                         callback.onSuccess()
                         "updateRoomMember onSuccess: ".logD(TAG)
                     }
 
                     override fun onError(code: Int, error: String?) {
-                        callback.onError(code,error)
+                        callback.onError(code, error)
                         "updateRoomMember onError: $code $error".logE(TAG)
                     }
                 })
@@ -1054,9 +1142,9 @@ class ChatroomProtocolDelegate constructor(
         if (micInfo != null) {
             for (mutableEntry in micInfo) {
                 val bean = GsonTools.toBean(mutableEntry.value, VoiceMicInfoModel::class.java)
-                if (bean != null ) {
+                if (bean != null) {
                     "getFirstFreeMic: ${bean.micIndex}  ${bean.micStatus}".logE(TAG)
-                    if(bean.micStatus == -1 || bean.micStatus == 2){
+                    if (bean.micStatus == -1 || bean.micStatus == 2) {
                         indexList.add(bean.micIndex)
                     }
                 }
@@ -1074,7 +1162,7 @@ class ChatroomProtocolDelegate constructor(
      * Clear cache
      *
      */
-    fun clearCache(){
+    fun clearCache() {
         ChatroomCacheManager.cacheManager.clearAllCache()
     }
 
@@ -1083,7 +1171,7 @@ class ChatroomProtocolDelegate constructor(
      *
      * @param kvMap
      */
-    fun updateMicInfoCache(kvMap: Map<String,String>){
+    fun updateMicInfoCache(kvMap: Map<String, String>) {
         ChatroomCacheManager.cacheManager.setMicInfo(kvMap)
     }
 }

@@ -185,7 +185,6 @@ class RoomAudioSettingsSheetDialog : BaseSheetDialog<VoiceDialogAudioSettingBind
 
         fun onEarBackSetting()
         fun onVirtualSoundCardSetting()
-        fun onBGMSetting()
         fun onBotCheckedChanged(buttonView: CompoundButton, isChecked: Boolean)
 
         fun onBotVolumeChange(progress: Int)

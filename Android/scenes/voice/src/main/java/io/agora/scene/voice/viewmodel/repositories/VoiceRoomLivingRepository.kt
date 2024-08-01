@@ -1,7 +1,6 @@
 package io.agora.scene.voice.viewmodel.repositories
 
 import androidx.lifecycle.LiveData
-import io.agora.scene.voice.model.VoiceBgmModel
 import io.agora.scene.voice.model.VoiceMicInfoModel
 import io.agora.scene.voice.model.VoiceRoomInfo
 import io.agora.scene.voice.model.VoiceRoomModel
@@ -18,7 +17,9 @@ class VoiceRoomLivingRepository : BaseRepository() {
     /**
      * voice chat protocol
      */
-    private val voiceServiceProtocol = VoiceServiceProtocol.getImplInstance()
+    private val voiceServiceProtocol by lazy {
+        VoiceServiceProtocol.serviceProtocol
+    }
 
     fun fetchRoomDetail(voiceRoomModel: VoiceRoomModel): LiveData<Resource<VoiceRoomInfo>> {
         val resource = object : NetworkOnlyResource<VoiceRoomInfo>() {
@@ -56,21 +57,6 @@ class VoiceRoomLivingRepository : BaseRepository() {
                 voiceServiceProtocol.updateAnnouncement(content, completion = { error, result ->
                     if (error == VoiceServiceProtocol.ERR_OK) {
                         callBack.onSuccess(createLiveData(Pair(content, result)))
-                    } else {
-                        callBack.onError(error)
-                    }
-                })
-            }
-        }
-        return resource.asLiveData()
-    }
-
-    fun updateBGMInfo(info: VoiceBgmModel): LiveData<Resource<VoiceBgmModel>> {
-        val resource = object : NetworkOnlyResource<VoiceBgmModel>() {
-            override fun createCall(callBack: ResultCallBack<LiveData<VoiceBgmModel>>) {
-                voiceServiceProtocol.updateBGMInfo(info, completion = { error ->
-                    if (error == VoiceServiceProtocol.ERR_OK) {
-                        callBack.onSuccess(createLiveData(info))
                     } else {
                         callBack.onError(error)
                     }
@@ -290,16 +276,16 @@ class VoiceRoomLivingRepository : BaseRepository() {
         return resource.asLiveData()
     }
 
-    fun leaveSyncManagerRoom(roomId: String, isRoomOwnerLeave: Boolean): LiveData<Resource<Boolean>> {
+    fun leaveSyncManagerRoom(): LiveData<Resource<Boolean>> {
         val resource = object : NetworkOnlyResource<Boolean>() {
             override fun createCall(callBack: ResultCallBack<LiveData<Boolean>>) {
-                voiceServiceProtocol.leaveRoom(roomId, isRoomOwnerLeave, completion = { error, result ->
-                    if (error == VoiceServiceProtocol.ERR_OK) {
-                        callBack.onSuccess(createLiveData(result))
+                voiceServiceProtocol.leaveRoom { error ->
+                    if (error == null) {
+                        callBack.onSuccess(createLiveData(true))
                     } else {
-                        callBack.onError(error)
+                        callBack.onError(-1)
                     }
-                })
+                }
             }
         }
         return resource.asLiveData()
