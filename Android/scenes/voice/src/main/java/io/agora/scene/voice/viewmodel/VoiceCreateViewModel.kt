@@ -1,55 +1,134 @@
 package io.agora.scene.voice.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import io.agora.scene.voice.model.VoiceRoomModel
-import io.agora.scene.voice.viewmodel.repositories.VoiceCreateRepository
-import io.agora.voice.common.net.Resource
+import androidx.lifecycle.ViewModel
+import io.agora.CallBack
+import io.agora.chat.adapter.EMAError
+import io.agora.rtmsyncmanager.model.AUIRoomInfo
+import io.agora.scene.base.component.AgoraApplication
+import io.agora.scene.base.utils.ToastUtils
+import io.agora.scene.voice.R
+import io.agora.scene.voice.global.VoiceBuddyFactory
+import io.agora.scene.voice.imkit.manager.ChatroomIMManager
+import io.agora.scene.voice.model.VoiceCreateRoomModel
+import io.agora.scene.voice.netkit.VRCreateRoomResponse
+import io.agora.scene.voice.netkit.VoiceToolboxServerHttpManager
+import io.agora.scene.voice.service.VoiceServiceProtocol
+import io.agora.voice.common.net.callback.VRValueCallBack
 import io.agora.voice.common.viewmodel.SingleSourceLiveData
 
-class VoiceCreateViewModel constructor(application: Application) : AndroidViewModel(application) {
+class VoiceCreateViewModel : ViewModel() {
 
-    private val voiceRoomRepository by lazy { VoiceCreateRepository() }
-
-    private val _roomListObservable: SingleSourceLiveData<Resource<List<VoiceRoomModel>>> =
-        SingleSourceLiveData()
-
-    private val _checkPasswordObservable: SingleSourceLiveData<Resource<Boolean>> =
-        SingleSourceLiveData()
-
-    private val _createRoomObservable: SingleSourceLiveData<Resource<VoiceRoomModel>> =
-        SingleSourceLiveData()
-
-    private val _joinRoomObservable: SingleSourceLiveData<Resource<VoiceRoomModel>> =
-        SingleSourceLiveData()
-
-    fun roomListObservable(): LiveData<Resource<List<VoiceRoomModel>>> = _roomListObservable
-
-    fun checkPasswordObservable(): LiveData<Resource<Boolean>> = _checkPasswordObservable
-
-    fun createRoomObservable(): LiveData<Resource<VoiceRoomModel>> = _createRoomObservable
-
-    fun joinRoomObservable(): LiveData<Resource<VoiceRoomModel>> = _joinRoomObservable
-
-
-    fun getRoomList(page: Int) {
-        _roomListObservable.setSource(voiceRoomRepository.fetchRoomList(page))
+    /**
+     * voice chat protocol
+     */
+    private val voiceServiceProtocol by lazy {
+        VoiceServiceProtocol.serviceProtocol
     }
 
-    fun checkPassword(roomId: String, password: String, userInput: String) {
-        _checkPasswordObservable.setSource(voiceRoomRepository.checkPassword(roomId, password, userInput))
+    private val _loginImObservable: SingleSourceLiveData<Boolean> = SingleSourceLiveData()
+
+    private val _roomListObservable: SingleSourceLiveData<List<AUIRoomInfo>?> = SingleSourceLiveData()
+
+    private val _createRoomObservable: SingleSourceLiveData<AUIRoomInfo?> = SingleSourceLiveData()
+
+    private val _joinRoomObservable: SingleSourceLiveData<AUIRoomInfo?> = SingleSourceLiveData()
+
+    val loginImObservable: LiveData<Boolean> get() = _loginImObservable
+
+    val roomListObservable: LiveData<List<AUIRoomInfo>?> get() = _roomListObservable
+
+    val createRoomObservable: LiveData<AUIRoomInfo?> get() = _createRoomObservable
+
+    val joinRoomObservable: LiveData<AUIRoomInfo?> get() = _joinRoomObservable
+
+    fun checkLoginIm() {
+        VoiceToolboxServerHttpManager.createImRoom(
+            roomName = "",
+            roomOwner = "",
+            chatroomId = "",
+            type = 1,
+            callBack = object : VRValueCallBack<VRCreateRoomResponse> {
+                override fun onSuccess(response: VRCreateRoomResponse?) {
+                    response?.chatToken?.let {
+                        VoiceBuddyFactory.get().getVoiceBuddy().setupChatToken(it)
+                    }
+                    val chatUsername = VoiceBuddyFactory.get().getVoiceBuddy().chatUserName()
+                    val chatToken = VoiceBuddyFactory.get().getVoiceBuddy().chatToken()
+                    ChatroomIMManager.getInstance().login(chatUsername, chatToken, object : CallBack {
+                        override fun onSuccess() {
+                            _loginImObservable.postValue(true)
+                        }
+
+                        override fun onError(code: Int, desc: String) {
+                            if (code == EMAError.USER_ALREADY_LOGIN) {
+                                _loginImObservable.postValue(true)
+                            } else {
+                                _loginImObservable.postValue(false)
+                                ToastUtils.showToast(R.string.voice_room_login_exception)
+                            }
+                        }
+                    })
+                }
+
+                override fun onError(code: Int, message: String?) {
+                    _loginImObservable.postValue(false)
+                }
+
+            })
     }
 
+
+    fun getRoomList() {
+        voiceServiceProtocol.getRoomList(completion = { error, result ->
+            _roomListObservable.postValue(result)
+            error?.message?.let {
+                ToastUtils.showToast(it)
+            }
+        })
+    }
+
+    /**
+     * Create room
+     *
+     * @param roomName
+     * @param soundEffect
+     * @param password
+     */
     fun createRoom(roomName: String, soundEffect: Int = 0, password: String? = null) {
-        _createRoomObservable.setSource(voiceRoomRepository.createRoom(roomName, soundEffect, 0, password))
+        val voiceCreateRoomModel = VoiceCreateRoomModel(
+            roomName = roomName,
+            soundEffect = soundEffect,
+            password = password ?: "",
+        )
+        voiceServiceProtocol.createRoom(voiceCreateRoomModel, completion = { err, result ->
+            if (err == null && result != null) {
+                _createRoomObservable.postValue(result)
+            } else {
+                _createRoomObservable.postValue(null)
+                ToastUtils.showToast(
+                    AgoraApplication.the().getString(R.string.voice_create_room_failed, err?.message ?: "")
+                )
+            }
+        })
     }
 
-    fun createSpatialRoom(roomName: String, soundEffect: Int = 0, password: String? = null) {
-        _createRoomObservable.setSource(voiceRoomRepository.createRoom(roomName, soundEffect, 0, password))
-    }
-
-    fun joinRoom(roomId: String) {
-        _joinRoomObservable.setSource(voiceRoomRepository.joinRoom(roomId))
+    /**
+     * Join room
+     *
+     * @param roomId
+     * @param password
+     */
+    fun joinRoom(roomId: String, password: String? = null) {
+        voiceServiceProtocol.joinRoom(roomId, password, completion = { err, result ->
+            if (err == null && result != null) { // success
+                _joinRoomObservable.postValue(result)
+            } else {
+                _joinRoomObservable.postValue(null)
+                ToastUtils.showToast(
+                    AgoraApplication.the().getString(R.string.voice_join_room_failed, err?.message ?: "")
+                )
+            }
+        })
     }
 }

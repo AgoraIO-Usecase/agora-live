@@ -41,8 +41,6 @@ class AgoraRtcEngineController {
 
     private var mLocalUid = 0
 
-    private var mBgmManager: AgoraBGMManager? = null
-
     private var mEarBackManager: AgoraEarBackManager? = null
 
     private var mSoundCardManager: AgoraSoundCardManager? = null
@@ -82,18 +80,6 @@ class AgoraRtcEngineController {
                 joinCallback?.onError(Constants.ERR_FAILED, "get token error")
             }
         )
-    }
-
-    fun bgmManager(): AgoraBGMManager {
-        if (mBgmManager == null) {
-            mBgmManager = AgoraBGMManager(
-                rtcEngine!!,
-                VoiceBuddyFactory.get().getVoiceBuddy().rtcAppId(),
-                mLocalUid,
-                mRtmToken
-            )
-        }
-        return mBgmManager!!
     }
 
     fun earBackManager(): AgoraEarBackManager? {
@@ -357,9 +343,6 @@ class AgoraRtcEngineController {
     fun destroy() {
         VoiceBuddyFactory.get().rtcChannelTemp.reset()
 
-        mBgmManager?.release()
-        mBgmManager = null
-
         mEarBackManager = null
         mSoundCardManager = null
 
@@ -418,5 +401,9 @@ class AgoraRtcEngineController {
     private fun openMediaPlayer(url: String, soundSpeaker: Int = ConfigConstants.BotSpeaker.BotBlue) {
         mediaPlayer?.open(url, 0)
         this.soundSpeakerType = soundSpeaker
+    }
+
+    fun renewRtcToken(rtcToken: String){
+        rtcEngine?.renewToken(rtcToken)
     }
 }

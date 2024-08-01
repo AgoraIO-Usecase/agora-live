@@ -9,14 +9,21 @@ import io.agora.scene.voice.model.VoiceMemberModel
  *
  * @constructor Create empty Voice room subscribe delegate
  */
-interface VoiceRoomSubscribeDelegate {
+interface VoiceServiceListenerProtocol {
+
+    /**
+     * On chat token will expire
+     *
+     */
+    fun onChatTokenWillExpire(){}
+
     /**
      * On receive gift
      *
      * @param roomId
      * @param message
      */
-    fun onReceiveGift(roomId: String, message: ChatMessageData?){}
+    fun onReceiveGift(roomId: String, message: ChatMessageData?) {}
 
     /**
      * On receive text msg
@@ -24,14 +31,14 @@ interface VoiceRoomSubscribeDelegate {
      * @param roomId
      * @param message
      */
-    fun onReceiveTextMsg(roomId: String,message: ChatMessageData?){}
+    fun onReceiveTextMsg(roomId: String, message: ChatMessageData?) {}
 
     /**
      * On receive seat request
      *
      * @param message
      */
-    fun onReceiveSeatRequest( message: ChatMessageData) {}
+    fun onReceiveSeatRequest(message: ChatMessageData) {}
 
     /**
      * On receive seat request rejected
@@ -92,16 +99,35 @@ interface VoiceRoomSubscribeDelegate {
      *
      * @param roomId
      */
-    fun onRoomDestroyed(roomId: String){}
+    fun onRoomDestroyed(roomId: String) {}
 
     /**
-     * On seat updated
+     * On attribute map updated
      *
      * @param roomId
      * @param attributeMap
      * @param fromId
      */
-    fun onSeatUpdated(roomId: String, attributeMap: Map<String, String>, fromId: String) {}
+    fun onAttributeMapUpdated(roomId: String, attributeMap: Map<String, String>, fromId: String) {}
+
+    /**
+     * On sync room expire
+     *
+     */
+    fun onSyncRoomExpire() {}
+
+    /**
+     * On sync room destroy
+     *
+     */
+    fun onSyncRoomDestroy() {}
+
+    /**
+     * On sync user count update
+     *
+     * @param userCount
+     */
+    fun onSyncUserCountUpdate(userCount: Int) {}
 }
 
 /**
@@ -109,7 +135,7 @@ interface VoiceRoomSubscribeDelegate {
  *
  * @constructor Create empty Voice room service kicked reason
  */
-enum class VoiceRoomServiceKickedReason{
+enum class VoiceRoomServiceKickedReason {
     removed,
     destroyed,
     offLined,

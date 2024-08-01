@@ -33,10 +33,11 @@ public class BaseRecyclerViewAdapter<B extends ViewBinding, T, H extends BaseRec
      * The M on item click listener.
      */
     private final OnItemClickListener<T> mOnItemClickListener;
+    private OnItemChildClickListener<T> mOnItemChildClickListener;
     /**
      * The Selected index.
      */
-    private int selectedIndex = -1;
+    public int selectedIndex = -1;
 
     /**
      * The Binding class.
@@ -75,6 +76,18 @@ public class BaseRecyclerViewAdapter<B extends ViewBinding, T, H extends BaseRec
         }
 
         this.mOnItemClickListener = listener;
+    }
+
+    public BaseRecyclerViewAdapter(@Nullable List<T> dataList, @Nullable OnItemClickListener<T> listener, @Nullable OnItemChildClickListener<T> itemChildListener, Class<H> viewHolderClass) {
+        this.viewHolderClass = viewHolderClass;
+        if (dataList == null) {
+            this.dataList = new ArrayList<>();
+        } else {
+            this.dataList = new ArrayList<>(dataList);
+        }
+
+        this.mOnItemClickListener = listener;
+        this.mOnItemChildClickListener = itemChildListener;
     }
 
     /**
@@ -260,6 +273,12 @@ public class BaseRecyclerViewAdapter<B extends ViewBinding, T, H extends BaseRec
         }
     }
 
+    public void addItems(@NonNull List<T> dataList) {
+        int index = this.dataList.size();
+        this.dataList.addAll(dataList);
+        notifyItemRangeChanged(index, this.dataList.size() - index);
+    }
+
     /**
      * Update.
      *
@@ -273,6 +292,16 @@ public class BaseRecyclerViewAdapter<B extends ViewBinding, T, H extends BaseRec
 
         dataList.set(index, data);
         notifyItemChanged(index);
+    }
+
+    public void replaceItems(List<T> replaceList){
+        if (dataList == null) {
+            dataList = new ArrayList<>();
+        }else {
+            dataList.clear();
+        }
+        dataList.addAll(replaceList);
+        notifyDataSetChanged();
     }
 
     /**
@@ -341,10 +370,11 @@ public class BaseRecyclerViewAdapter<B extends ViewBinding, T, H extends BaseRec
          * The M listener.
          */
         OnHolderItemClickListener mListener;
+        OnHolderItemChildClickListener mChildListener;
         /**
          * The M binding.
          */
-        protected final B mBinding;
+        public final B mBinding;
 
         /**
          * Instantiates a new Base view holder.
@@ -369,6 +399,17 @@ public class BaseRecyclerViewAdapter<B extends ViewBinding, T, H extends BaseRec
         }
 
         /**
+         *
+         * @param extData
+         * @param view
+         */
+        public void onItemChildClick(Object extData, View view) {
+            if (mChildListener != null) {
+                mChildListener.onItemChildClick(view, extData, getAdapterPosition(), getItemViewType());
+            }
+        }
+
+        /**
          * The interface On holder item click listener.
          */
         interface OnHolderItemClickListener {
@@ -380,6 +421,20 @@ public class BaseRecyclerViewAdapter<B extends ViewBinding, T, H extends BaseRec
              * @param itemViewType the item view type
              */
             void onItemClick(View view, int position, int itemViewType);
+        }
+
+        /**
+         * The interface On holder item child click listener.
+         */
+        interface OnHolderItemChildClickListener {
+            /**
+             *
+             * @param view
+             * @param extData
+             * @param position
+             * @param itemViewType
+             */
+            void onItemChildClick(View view, Object extData, int position, int itemViewType);
         }
 
         /**
