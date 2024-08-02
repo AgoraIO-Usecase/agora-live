@@ -23,7 +23,7 @@ import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceAgoraRoomListLayoutBinding
 import io.agora.scene.voice.global.VoiceBuddyFactory
 import io.agora.scene.voice.imkit.manager.ChatroomConfigManager
-import io.agora.scene.voice.netkit.VoiceToolboxRequestApi
+import io.agora.scene.voice.imkit.manager.ChatroomIMManager
 import io.agora.scene.voice.service.VoiceServiceProtocol
 import io.agora.scene.voice.ui.dialog.CreateRoomDialog
 import io.agora.scene.voice.ui.fragment.VoiceRoomListFragment
@@ -34,10 +34,6 @@ class VoiceRoomListActivity : BaseBindingActivity<VoiceAgoraRoomListLayoutBindin
     private var title: TextView? = null
     private var index = 0
     private val titles = intArrayOf(R.string.voice_tab_layout_all)
-
-    init {
-        VoiceServiceProtocol.reset()
-    }
 
     override fun getViewBinding(inflater: LayoutInflater): VoiceAgoraRoomListLayoutBinding? {
         return VoiceAgoraRoomListLayoutBinding.inflate(inflater)
@@ -57,6 +53,8 @@ class VoiceRoomListActivity : BaseBindingActivity<VoiceAgoraRoomListLayoutBindin
     }
 
     override fun onDestroy() {
+        ChatroomIMManager.getInstance().logout(true)
+        VoiceServiceProtocol.destroy()
         super.onDestroy()
     }
 
