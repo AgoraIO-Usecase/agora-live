@@ -35,9 +35,6 @@ public class SongItem {
      */
     public boolean isChosen; // 是否已被点
 
-    public String musicUrl; // 歌曲的url
-    public String lyricUrl; // 歌词的url
-
     public Boolean loading = false; //
 
     /**
@@ -45,23 +42,18 @@ public class SongItem {
      * @param songName
      * @param imageUrl
      * @param singer
-     * @param musicUrl
-     * @param lyricUrl
      * @param chooser
      * @param isChosen
      * @param chooserId
      */
     public SongItem(String songNo, String songName,
                     String imageUrl, String singer,
-                    String musicUrl, String lyricUrl,
                     String chooser, boolean isChosen,
                     String chooserId) {
         this.songNo = songNo;
         this.songName = songName;
         this.imageUrl = imageUrl;
         this.singer = singer;
-        this.musicUrl = musicUrl;
-        this.lyricUrl = lyricUrl;
         this.chooser = chooser;
         this.isChosen = isChosen;
         this.chooserId = chooserId;
