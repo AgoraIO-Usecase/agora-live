@@ -20,18 +20,36 @@ protocol ShowCanvasViewDelegate: NSObjectProtocol {
     func getPKDuration() -> UInt64
 }
 
-class ShowCanvasView: UIView {
-    weak var delegate: ShowCanvasViewDelegate?
+class ShowUserCanvasView: UIView {
+    var showBlurView: Bool = false {
+        didSet {
+            if showBlurView {
+                addSubview(thumnbnailCanvasView)
+                thumnbnailCanvasView.isHidden = false
+            } else {
+                thumnbnailCanvasView.isHidden = true
+            }
+            thumnbnailCanvasView.frame = bounds
+        }
+    }
     
     lazy var thumnbnailCanvasView: ShowThumnbnailCanvasView = {
         let view = ShowThumnbnailCanvasView(frame: self.bounds)
-        view.isHidden = true
         return view
     }()
     
-    lazy var localView = UIView()
-    lazy var remoteView: UIView = {
-        let view = UIView()
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        thumnbnailCanvasView.frame = bounds
+    }
+}
+
+class ShowCanvasView: UIView {
+    weak var delegate: ShowCanvasViewDelegate?
+    
+    lazy var localView = ShowUserCanvasView()
+    lazy var remoteView: ShowUserCanvasView = {
+        let view = ShowUserCanvasView()
         view.isHidden = true
 //        view.addTarget(self, action: #selector(onTapRemoteButton), for: .touchUpInside)
         let tap = UITapGestureRecognizer(target: self, action: #selector(onTapRemoteButton))
@@ -248,10 +266,6 @@ class ShowCanvasView: UIView {
     
     private func setupUI() {
         addSubview(localView)
-        addSubview(thumnbnailCanvasView)
-        thumnbnailCanvasView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         
         addSubview(remoteView)
         addSubview(timerView)
