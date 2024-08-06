@@ -78,6 +78,7 @@ extension ShowAgoraKitManager {
     
     func setupBroadcasterProfile() {
         setSuperResolutionOn(false)
+        ShowSettingKey.H265.writeValue(true)
         updateVideoProfileForMode(.single)
     }
     
