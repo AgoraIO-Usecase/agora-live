@@ -108,7 +108,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     
     deinit {
         agoraPrint("deinit-- ShowSyncManagerServiceImp")
-        SyncUtilsWrapper.cleanScene(uniqueId: uniqueId)
     }
     
     // MARK: Private
@@ -131,7 +130,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     fileprivate func _checkRoomExpire() {
         guard let room = self.room else { return }
         
-        let expiredDuration = 20 * 60 * 1000
+        let expiredDuration = 10 * 60 * 1000
         guard RTMSyncUtil.getRoomDuration(roomId: room.roomId) > expiredDuration else { return }
         
         subscribeDelegate?.onRoomExpired()

@@ -12,6 +12,8 @@ import AgoraRtmKit
 private let kSceneId = "overseas_show_1.3.0"
 private let kRoomPresenceChannelName = "overseas_show_1_3_0_9999999999"
 
+private let expiredDuration: UInt64 = 10 * 60 * 1000
+
 private func agoraPrint(_ message: String) {
     ShowLogger.info(message, context: "Service")
 }
@@ -46,7 +48,9 @@ public class ShowSyncManagerServiceImp: NSObject {
     }()
     
     private lazy var roomService: AUIRoomService = {
-        let service = AUIRoomService(expirationPolicy: RoomExpirationPolicy.defaultPolicy(),
+        let policy = RoomExpirationPolicy()
+        policy.expirationTime = expiredDuration
+        let service = AUIRoomService(expirationPolicy: policy,
                                      roomManager: roomManager,
                                      syncmanager: syncManager)
         
@@ -200,7 +204,7 @@ extension ShowSyncManagerServiceImp {
                   let scene = self.syncManager.getScene(channelName: roomId) else { return }
             
             let duration = scene.getRoomDuration()
-            let expiredDuration = 10 * 60 * 1000
+            let expiredDuration = expiredDuration
             if duration >= expiredDuration {
                 self.stopCheckExpireTimer(roomId: roomId)
                 
