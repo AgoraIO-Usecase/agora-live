@@ -56,6 +56,7 @@ dependencies {
     api rootProject.ext.deps.multidex
     implementation rootProject.ext.deps.annotation
     implementation rootProject.ext.deps.material
+    implementation rootProject.ext.deps.recyclerview
 
     api rootProject.ext.deps.rxjava2
     api rootProject.ext.deps.rxandroid2

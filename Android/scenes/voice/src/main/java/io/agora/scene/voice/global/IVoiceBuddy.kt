@@ -9,9 +9,6 @@ interface IVoiceBuddy {
     /** app */
     fun application(): Application
 
-    /** api url */
-    fun toolboxServiceUrl(): String
-
     /** user avatar */
     fun headUrl(): String
 
@@ -33,6 +30,9 @@ interface IVoiceBuddy {
     /** rtc channel token */
     fun rtcToken(): String
 
+    /** Rtm token */
+    fun rtmToken(): String
+
     /** im app key */
     fun chatAppKey(): String
 
@@ -45,4 +45,6 @@ interface IVoiceBuddy {
     fun setupRtcToken(rtcToken: String)
 
     fun setupChatToken(chatToken: String)
+
+    fun setupRtmToken(rtmToken: String)
 }

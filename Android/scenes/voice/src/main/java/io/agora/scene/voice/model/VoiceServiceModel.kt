@@ -1,8 +1,18 @@
 package io.agora.scene.voice.model
 
 import com.google.gson.annotations.SerializedName
+import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.manager.UserManager
+import io.agora.scene.voice.global.VoiceBuddyFactory
 import io.agora.voice.common.constant.ConfigConstants
+
+object VoiceParameters {
+    const val ROOM_USER_COUNT = "member_count"
+    const val ROOM_SOUND_EFFECT = "sound_effect"
+    const val PASSWORD = "roomPassword"
+    const val IS_PRIVATE = "is_private"
+    const val CHATROOM_ID = "chatroom_id"
+}
 
 /**
  * This data class represents the initial properties of a room in the VR application.
@@ -10,10 +20,8 @@ import io.agora.voice.common.constant.ConfigConstants
  */
 data class VoiceCreateRoomModel constructor(
     val roomName: String,
-    val isPrivate: Boolean,
     val password: String,
     val soundEffect: Int = 0,
-    val roomType: Int = 0,
 ) : BaseRoomBean
 
 /**
@@ -59,6 +67,35 @@ data class VoiceRankUserModel constructor(
     }
 }
 
+fun AUIRoomInfo.memberCount(): Int {
+    return when (val userCount = customPayload[VoiceParameters.ROOM_USER_COUNT]) {
+        is Int -> userCount
+        is Long -> userCount.toInt()
+        else -> 0
+    }
+}
+
+fun AUIRoomInfo.soundEffect(): Int {
+    return when (val soundEffect = customPayload[VoiceParameters.ROOM_SOUND_EFFECT]) {
+        is Int -> soundEffect
+        is Long -> soundEffect.toInt()
+        else -> ConfigConstants.SoundSelection.Social_Chat
+    }
+}
+
+fun AUIRoomInfo.roomPassword(): String {
+    return customPayload[VoiceParameters.PASSWORD] as? String ?: ""
+}
+
+fun AUIRoomInfo.isPrivate(): Boolean {
+    return customPayload[VoiceParameters.IS_PRIVATE] as? Boolean ?: false
+}
+
+fun AUIRoomInfo.chatroomId(): String {
+    return customPayload[VoiceParameters.CHATROOM_ID] as? String ?: ""
+}
+
+
 /**
  * This data class represents a room in the VR application.
  * It includes the room owner, room ID, whether the room is private, member count, click count, room type, room name, sound effect, channel ID, chatroom ID, creation time, room password, ranking list, member list, gift amount, whether the robot is used, robot volume, and announcement.
@@ -69,10 +106,8 @@ data class VoiceRoomModel constructor(
     @SerializedName("is_private") var isPrivate: Boolean = false,
     @SerializedName("member_count") var memberCount: Int = 0,
     @SerializedName("click_count") var clickCount: Int = 0,
-    @SerializedName("type") var roomType: Int = 0,
-    @SerializedName("name") var roomName: String = "",
+    @SerializedName("room_name") var roomName: String = "",
     @SerializedName("sound_effect") var soundEffect: Int = 0,
-    @SerializedName("channel_id") var channelId: String = "",
     @SerializedName("chatroom_id") var chatroomId: String = "",
     @SerializedName("created_at") var createdAt: Long = 0,
     @SerializedName("roomPassword") var roomPassword: String = "",
@@ -82,17 +117,9 @@ data class VoiceRoomModel constructor(
     @Transient var useRobot: Boolean = false,
     @Transient var robotVolume: Int = 50,
     @Transient var announcement: String = "",
-) : BaseRoomBean
-
-/**
- * This data class represents a background music model in the VR application.
- * It includes the song name, singer name, and a boolean indicating whether it is the original version.
- */
-data class VoiceBgmModel constructor(
-    var songName: String = "",
-    var singerName: String = "",
-    var isOrigin: Boolean = false,
-) : BaseRoomBean
+) : BaseRoomBean {
+    val isOwner: Boolean get() = owner?.userId == VoiceBuddyFactory.get().getVoiceBuddy().userId()
+}
 
 /**
  * This data class represents a microphone information model in the VR application.
@@ -113,9 +140,9 @@ data class VoiceMicInfoModel constructor(
 data class VoiceRoomApply constructor(
     var index: Int? = -1,
     var member: VoiceMemberModel? = null,
-    var created_at:Long? = 0
+    var created_at: Long? = 0
 
-) :BaseRoomBean
+) : BaseRoomBean
 
 /**
  * This data class represents a room information model in the VR application.
@@ -124,7 +151,6 @@ data class VoiceRoomApply constructor(
 data class VoiceRoomInfo constructor(
     var roomInfo: VoiceRoomModel? = null,
     var micInfo: List<VoiceMicInfoModel>? = null,
-    var bgmInfo: VoiceBgmModel? = null
 ) : BaseRoomBean
 
 /**
@@ -133,7 +159,7 @@ data class VoiceRoomInfo constructor(
  */
 data class VoiceGiftModel constructor(
     var gift_id: String? = "",
-    var gift_count:String? = "",
+    var gift_count: String? = "",
     var gift_name: String? = "",
     var gift_price: String? = "",
     var userName: String? = "",

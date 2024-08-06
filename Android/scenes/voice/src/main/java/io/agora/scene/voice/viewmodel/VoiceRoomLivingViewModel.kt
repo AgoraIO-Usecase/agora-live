@@ -8,12 +8,15 @@ import io.agora.chat.ChatRoom
 import io.agora.scene.voice.global.VoiceBuddyFactory
 import io.agora.scene.voice.imkit.manager.ChatroomIMManager
 import io.agora.scene.voice.model.*
+import io.agora.scene.voice.netkit.VRCreateRoomResponse
+import io.agora.scene.voice.netkit.VoiceToolboxServerHttpManager
 import io.agora.voice.common.net.callback.VRValueCallBack
 import io.agora.voice.common.viewmodel.NetworkOnlyResource
 import io.agora.scene.voice.viewmodel.repositories.VoiceRoomLivingRepository
 import io.agora.scene.voice.rtckit.AgoraRtcEngineController
 import io.agora.voice.common.net.Resource
 import io.agora.voice.common.net.callback.ResultCallBack
+import io.agora.voice.common.utils.LogTools
 import io.agora.voice.common.utils.LogTools.logD
 import io.agora.voice.common.utils.LogTools.logE
 import io.agora.voice.common.utils.ThreadManager
@@ -32,8 +35,6 @@ class VoiceRoomLivingViewModel : ViewModel() {
     private val _joinObservable: SingleSourceLiveData<Resource<Boolean>> =
         SingleSourceLiveData()
     private val _roomNoticeObservable: SingleSourceLiveData<Resource<Pair<String,Boolean>>> =
-        SingleSourceLiveData()
-    private val _bgmInfoObservable: SingleSourceLiveData<Resource<VoiceBgmModel>> =
         SingleSourceLiveData()
     private val _openBotObservable: SingleSourceLiveData<Resource<Boolean>> =
         SingleSourceLiveData()
@@ -77,7 +78,6 @@ class VoiceRoomLivingViewModel : ViewModel() {
     fun joinObservable(): LiveData<Resource<Boolean>> = _joinObservable
 
     fun roomNoticeObservable(): LiveData<Resource<Pair<String,Boolean>>> = _roomNoticeObservable
-    fun bgmInfoObservable(): LiveData<Resource<VoiceBgmModel>> = _bgmInfoObservable
     fun openBotObservable(): LiveData<Resource<Boolean>> = _openBotObservable
 
     fun closeBotObservable(): LiveData<Resource<Boolean>> = _closeBotObservable
@@ -116,23 +116,23 @@ class VoiceRoomLivingViewModel : ViewModel() {
         _roomDetailsObservable.setSource(mRepository.fetchRoomDetail(voiceRoomModel))
     }
 
-    fun initSdkJoin(roomKitBean: RoomKitBean) {
+    fun initSdkJoin(voiceRoomModel: VoiceRoomModel) {
         joinRtcChannel.set(false)
         joinImRoom.set(false)
         AgoraRtcEngineController.get().joinChannel(
             VoiceBuddyFactory.get().getVoiceBuddy().application(),
-            roomKitBean.channelId,
+            voiceRoomModel.roomId,
             VoiceBuddyFactory.get().getVoiceBuddy().rtcUid(),
-            roomKitBean.soundEffect, roomKitBean.isOwner,
+            voiceRoomModel.soundEffect, voiceRoomModel.isOwner,
             object : VRValueCallBack<Boolean> {
                 override fun onSuccess(value: Boolean) {
-                    "rtc  joinChannel onSuccess channelId:${roomKitBean.channelId}".logD()
+                    "rtc  joinChannel onSuccess channelId:${voiceRoomModel.roomId}".logD()
                     joinRtcChannel.set(true)
                     checkJoinRoom()
                 }
 
                 override fun onError(error: Int, errorMsg: String) {
-                    "rtc  joinChannel onError channelId:${roomKitBean.channelId},error:$error  $errorMsg".logE()
+                    "rtc  joinChannel onError channelId:${voiceRoomModel.roomId},error:$error  $errorMsg".logE()
                     ThreadManager.getInstance().runOnMainThread {
                         _joinObservable.setSource(object : NetworkOnlyResource<Boolean>() {
                             override fun createCall(callBack: ResultCallBack<LiveData<Boolean>>) {
@@ -145,9 +145,9 @@ class VoiceRoomLivingViewModel : ViewModel() {
             }
         )
         ChatroomIMManager.getInstance()
-            .joinRoom(roomKitBean.chatroomId, object : ValueCallBack<ChatRoom?> {
+            .joinRoom(voiceRoomModel.chatroomId, object : ValueCallBack<ChatRoom?> {
                 override fun onSuccess(value: ChatRoom?) {
-                    "im joinChatRoom onSuccess roomId:${roomKitBean.chatroomId}".logD()
+                    "im joinChatRoom onSuccess roomId:${voiceRoomModel.chatroomId}".logD()
                     joinImRoom.set(true)
                     checkJoinRoom()
                 }
@@ -158,7 +158,7 @@ class VoiceRoomLivingViewModel : ViewModel() {
                             callBack.onError(error, errorMsg)
                         }
                     }.asLiveData())
-                    "im joinChatRoom onError roomId:${roomKitBean.chatroomId},$error  $errorMsg".logE()
+                    "im joinChatRoom onError roomId:${voiceRoomModel.chatroomId},$error  $errorMsg".logE()
                 }
             })
     }
@@ -189,10 +189,6 @@ class VoiceRoomLivingViewModel : ViewModel() {
 
     fun updateAnnouncement(notice: String) {
         _roomNoticeObservable.setSource(mRepository.updateAnnouncement(notice))
-    }
-
-    fun updateBGMInfo(info: VoiceBgmModel) {
-        _bgmInfoObservable.setSource(mRepository.updateBGMInfo(info))
     }
 
     fun muteLocal(micIndex: Int) {
@@ -247,11 +243,32 @@ class VoiceRoomLivingViewModel : ViewModel() {
         _changeMicObservable.setSource(mRepository.changeMic(oldIndex, newIndex))
     }
 
-    fun leaveSyncManagerRoom(roomId: String, isRoomOwnerLeave: Boolean) {
-        _leaveSyncRoomObservable.setSource(mRepository.leaveSyncManagerRoom(roomId, isRoomOwnerLeave))
+    fun leaveSyncManagerRoom() {
+        _leaveSyncRoomObservable.setSource(mRepository.leaveSyncManagerRoom())
     }
 
     fun updateRoomMember(){
         _updateRoomMemberObservable.setSource(mRepository.updateRoomMember())
+    }
+
+    fun renewChatToken() {
+        VoiceToolboxServerHttpManager.createImRoom(
+            roomName = "",
+            roomOwner = "",
+            chatroomId = "",
+            type = 1,
+            callBack = object : VRValueCallBack<VRCreateRoomResponse> {
+                override fun onSuccess(response: VRCreateRoomResponse?) {
+                    LogTools.d("renewChatToken", "renewChatToken getToken success:${response}")
+                    response?.chatToken?.let {
+                        VoiceBuddyFactory.get().getVoiceBuddy().setupChatToken(it)
+                        ChatroomIMManager.getInstance().renewToken(it)
+                    }
+                }
+
+                override fun onError(code: Int, message: String?) {
+                    LogTools.d("renewChatToken", "renewChatToken getToken error:$code + $message")
+                }
+            })
     }
 }

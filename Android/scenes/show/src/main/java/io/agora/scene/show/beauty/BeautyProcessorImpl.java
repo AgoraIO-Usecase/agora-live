@@ -57,7 +57,10 @@ import com.faceunity.core.model.prop.sticker.Sticker;
 import com.faceunity.core.utils.FULogger;
 import com.faceunity.wrapper.faceunity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 import io.agora.beautyapi.faceunity.CameraConfig;
@@ -67,6 +70,8 @@ import io.agora.beautyapi.faceunity.FaceUnityBeautyAPI;
 import io.agora.beautyapi.faceunity.FaceUnityBeautyAPIKt;
 import io.agora.beautyapi.faceunity.utils.FuDeviceUtils;
 import io.agora.rtc2.RtcEngine;
+import io.agora.scene.base.component.AgoraApplication;
+import io.agora.scene.show.BuildConfig;
 import io.agora.scene.show.ShowLogger;
 
 /**
@@ -94,7 +99,7 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
     /**
      * The M fu face beauty.
      */
-    private final FaceBeauty mFUFaceBeauty = new FaceBeauty(new FUBundleData("graphics" + File.separator + "face_beautification.bundle"));
+    private FaceBeauty mFUFaceBeauty = new FaceBeauty(new FUBundleData("graphics" + File.separator + "face_beautification.bundle"));
     /**
      * The Bundle ai face.
      */
@@ -113,6 +118,20 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
      */
     private int deviceLevel = FuDeviceUtils.DEVICEINFO_UNKNOWN;
 
+    private static byte[] readFromFileToByteArray(String filePath) {
+        File file = new File(filePath);
+        try (FileInputStream inputStream = new FileInputStream(file); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     /**
      * Initialize.
      *
@@ -122,14 +141,49 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
     public void initialize(@NonNull RtcEngine rtcEngine) {
         FURenderManager.setKitDebug(FULogger.LogLevel.DEBUG);
         FURenderManager.setCoreDebug(FULogger.LogLevel.ERROR);
-        FURenderManager.registerFURender(mContext, getAuth(), new OperateCallback() {
+
+
+        if (useLocalBeautyResource) {
+            mFUFaceBeauty = new FaceBeauty(new FUBundleData("graphics" + File.separator + "face_beautification.bundle"));
+        } else {
+            mFUFaceBeauty = new FaceBeauty(new FUBundleData(mContext.getExternalFilesDir(null).getAbsolutePath() + "/assets/beauty_faceunity/graphics" + File.separator + "face_beautification.bundle"));
+        }
+
+        byte[] auth;
+        if (useLocalBeautyResource) {
+            try {
+                auth = getAuth(); // 假设 getAuth() 是一个已定义的方法，返回 byte 数组
+            } catch (Exception e) {
+                ShowLogger.e(TAG, e, "Error getting auth"); // Log.w 需要三个参数：标签，消息，异常
+                return;
+            }
+        } else {
+            String filePath = mContext.getExternalFilesDir(null).getAbsolutePath() + "/assets/beauty_faceunity/license/fu.txt";
+            auth = readFromFileToByteArray(filePath);
+        }
+
+        FURenderManager.registerFURender(mContext, auth, new OperateCallback() {
             @Override
             public void onSuccess(int code, @NonNull String msg) {
                 ShowLogger.d("FURenderManager", "onSuccess >> code" + code + ", msg=" + msg);
                 if (code == FURenderConfig.OPERATE_SUCCESS_AUTH) {
                     faceunity.fuSetUseTexAsync(1);
-                    mFUAIKit.loadAIProcessor(BUNDLE_AI_FACE, FUAITypeEnum.FUAITYPE_FACEPROCESSOR);
-                    mFUAIKit.loadAIProcessor(BUNDLE_AI_HUMAN, FUAITypeEnum.FUAITYPE_HUMAN_PROCESSOR);
+                    if (useLocalBeautyResource) {
+                        mFUAIKit
+                                .loadAIProcessor(BUNDLE_AI_FACE, FUAITypeEnum.FUAITYPE_FACEPROCESSOR);
+                        mFUAIKit.loadAIProcessor(
+                                BUNDLE_AI_HUMAN,
+                                FUAITypeEnum.FUAITYPE_HUMAN_PROCESSOR
+                        );
+                    } else {
+                        mFUAIKit.loadAIProcessor(
+                                mContext.getExternalFilesDir("").getAbsolutePath() + "/assets/beauty_faceunity/" + BUNDLE_AI_FACE,
+                                FUAITypeEnum.FUAITYPE_FACEPROCESSOR);
+                        mFUAIKit.loadAIProcessor(
+                                mContext.getExternalFilesDir("").getAbsolutePath() + "/assets/beauty_faceunity/" + BUNDLE_AI_HUMAN,
+                                FUAITypeEnum.FUAITYPE_HUMAN_PROCESSOR
+                        );
+                    }
 
                     if (deviceLevel == FuDeviceUtils.DEVICEINFO_UNKNOWN) {
                         deviceLevel = FuDeviceUtils.judgeDeviceLevel(mContext);
@@ -162,7 +216,7 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
             }
         });
 
-        getSenseTimeBeautyAPI().initialize(new Config(
+        getBeautyAPI().initialize(new Config(
                 mContext,
                 rtcEngine,
                 mFURenderKit,
@@ -170,6 +224,7 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
                 CaptureMode.Agora,
                 1000,
                 false, new CameraConfig()));
+        restore();
     }
 
     /**
@@ -193,6 +248,8 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
      */
     private FaceUnityBeautyAPI innerFUBeautyApi;
 
+    private Boolean useLocalBeautyResource = true;
+
     /**
      * Gets sense time beauty api.
      *
@@ -200,7 +257,7 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
      */
     @NonNull
     @Override
-    public FaceUnityBeautyAPI getSenseTimeBeautyAPI() {
+    public FaceUnityBeautyAPI getBeautyAPI() {
         if (innerFUBeautyApi == null) {
             innerFUBeautyApi = FaceUnityBeautyAPIKt.createFaceUnityBeautyAPI();
         }
@@ -212,8 +269,9 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
      *
      * @param context the context
      */
-    public BeautyProcessorImpl(Context context) {
+    public BeautyProcessorImpl(Context context, Boolean useLocalBeautyResource) {
         mContext = context.getApplicationContext();
+        this.useLocalBeautyResource = useLocalBeautyResource;
         restore();
     }
 
@@ -225,7 +283,7 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
     @Override
     public void setBeautyEnable(boolean beautyEnable) {
         super.setBeautyEnable(beautyEnable);
-        getSenseTimeBeautyAPI().enable(beautyEnable);
+        getBeautyAPI().enable(beautyEnable);
     }
 
     /**
@@ -295,26 +353,50 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
         if (isReleased) {
             return;
         }
-        if (itemId == ITEM_ID_EFFECT_SEXY) {
-            SimpleMakeup makeup = new SimpleMakeup(new FUBundleData(
-                    "graphics" + File.separator + "face_makeup.bundle"
-            ));
-            makeup.setCombinedConfig(new FUBundleData(
-                    "beauty_faceunity/makeup/xinggan.bundle"
-            ));
-            makeup.setMakeupIntensity(intensity);
-            mFURenderKit.setMakeup(makeup);
-        } else if (itemId == ITEM_ID_EFFECT_TIANMEI) {
-            SimpleMakeup makeup = new SimpleMakeup(new FUBundleData(
-                    "graphics" + File.separator + "face_makeup.bundle"
-            ));
-            makeup.setCombinedConfig(new FUBundleData(
-                    "beauty_faceunity/makeup/tianmei.bundle"
-            ));
-            makeup.setMakeupIntensity(intensity);
-            mFURenderKit.setMakeup(makeup);
-        } else if (itemId == ITEM_ID_EFFECT_NONE) {
-            mFURenderKit.setMakeup(null);
+        if (useLocalBeautyResource) {
+            if (itemId == ITEM_ID_EFFECT_SEXY) {
+                SimpleMakeup makeup = new SimpleMakeup(new FUBundleData(
+                        "graphics" + File.separator + "face_makeup.bundle"
+                ));
+                makeup.setCombinedConfig(new FUBundleData(
+                        "beauty_faceunity/makeup/xinggan.bundle"
+                ));
+                makeup.setMakeupIntensity(intensity);
+                mFURenderKit.setMakeup(makeup);
+            } else if (itemId == ITEM_ID_EFFECT_TIANMEI) {
+                SimpleMakeup makeup = new SimpleMakeup(new FUBundleData(
+                        "graphics" + File.separator + "face_makeup.bundle"
+                ));
+                makeup.setCombinedConfig(new FUBundleData(
+                        "beauty_faceunity/makeup/tianmei.bundle"
+                ));
+                makeup.setMakeupIntensity(intensity);
+                mFURenderKit.setMakeup(makeup);
+            } else if (itemId == ITEM_ID_EFFECT_NONE) {
+                mFURenderKit.setMakeup(null);
+            }
+        } else {
+            if (itemId == ITEM_ID_EFFECT_SEXY) {
+                SimpleMakeup makeup = new SimpleMakeup(new FUBundleData(
+                        mContext.getExternalFilesDir(null).getAbsolutePath() + "/assets/beauty_faceunity/graphics" + File.separator + "face_makeup.bundle"
+                ));
+                makeup.setCombinedConfig(new FUBundleData(
+                        mContext.getExternalFilesDir(null).getAbsolutePath() + "/assets/beauty_faceunity/makeup" + File.separator + "xinggan.bundle"
+                ));
+                makeup.setMakeupIntensity(intensity);
+                mFURenderKit.setMakeup(makeup);
+            } else if (itemId == ITEM_ID_EFFECT_TIANMEI) {
+                SimpleMakeup makeup = new SimpleMakeup(new FUBundleData(
+                        mContext.getExternalFilesDir(null).getAbsolutePath() + "/assets/beauty_faceunity/graphics" + File.separator + "face_makeup.bundle"
+                ));
+                makeup.setCombinedConfig(new FUBundleData(
+                        mContext.getExternalFilesDir(null).getAbsolutePath() + "/assets/beauty_faceunity/makeup" + File.separator + "tianmei.bundle"
+                ));
+                makeup.setMakeupIntensity(intensity);
+                mFURenderKit.setMakeup(makeup);
+            } else if (itemId == ITEM_ID_EFFECT_NONE) {
+                mFURenderKit.setMakeup(null);
+            }
         }
     }
 
@@ -334,22 +416,47 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
             return;
         }
 
-        if (itemId == ITEM_ID_STICKER_NONE) {
-            if (oldProp != null) {
-                mFURenderKit.getPropContainer().removeProp(oldProp);
-                oldProp = null;
+        if (useLocalBeautyResource) {
+            if (itemId == ITEM_ID_STICKER_NONE) {
+                if (oldProp != null) {
+                    mFURenderKit.getPropContainer().removeProp(oldProp);
+                    oldProp = null;
+                }
+            } else if (itemId == ITEM_ID_STICKER_CAT) {
+                Sticker newProp = new Sticker(new FUBundleData("beauty_faceunity/sticker/cat_sparks.bundle"));
+                if (oldProp == null || !oldProp.getControlBundle().getPath().equals(newProp.getControlBundle().getPath())) {
+                    mFURenderKit.getPropContainer().replaceProp(oldProp, newProp);
+                    oldProp = newProp;
+                }
+            } else if (itemId == ITEM_ID_STICKER_ELK) {
+                Sticker newProp = new Sticker(new FUBundleData("beauty_faceunity/sticker/sdlu.bundle"));
+                if (oldProp == null || !oldProp.getControlBundle().getPath().equals(newProp.getControlBundle().getPath())) {
+                    mFURenderKit.getPropContainer().replaceProp(oldProp, newProp);
+                    oldProp = newProp;
+                }
             }
-        } else if (itemId == ITEM_ID_STICKER_CAT) {
-            Sticker newProp = new Sticker(new FUBundleData("beauty_faceunity/sticker/cat_sparks.bundle"));
-            if (oldProp == null || !oldProp.getControlBundle().getPath().equals(newProp.getControlBundle().getPath())) {
-                mFURenderKit.getPropContainer().replaceProp(oldProp, newProp);
-                oldProp = newProp;
-            }
-        } else if (itemId == ITEM_ID_STICKER_ELK) {
-            Sticker newProp = new Sticker(new FUBundleData("beauty_faceunity/sticker/sdlu.bundle"));
-            if (oldProp == null || !oldProp.getControlBundle().getPath().equals(newProp.getControlBundle().getPath())) {
-                mFURenderKit.getPropContainer().replaceProp(oldProp, newProp);
-                oldProp = newProp;
+        } else {
+            if (itemId == ITEM_ID_STICKER_NONE) {
+                if (oldProp != null) {
+                    mFURenderKit.getPropContainer().removeProp(oldProp);
+                    oldProp = null;
+                }
+            } else if (itemId == ITEM_ID_STICKER_CAT) {
+                Sticker newProp = new Sticker(new FUBundleData(
+                        mContext.getExternalFilesDir(null).getAbsolutePath() + "/assets/beauty_faceunity/sticker" + File.separator + "cat_sparks.bundle"
+                ));
+                if (oldProp == null || !oldProp.getControlBundle().getPath().equals(newProp.getControlBundle().getPath())) {
+                    mFURenderKit.getPropContainer().replaceProp(oldProp, newProp);
+                    oldProp = newProp;
+                }
+            } else if (itemId == ITEM_ID_STICKER_ELK) {
+                Sticker newProp = new Sticker(new FUBundleData(
+                        mContext.getExternalFilesDir(null).getAbsolutePath() + "/assets/beauty_faceunity/sticker" + File.separator + "sdlu.bundle"
+                ));
+                if (oldProp == null || !oldProp.getControlBundle().getPath().equals(newProp.getControlBundle().getPath())) {
+                    mFURenderKit.getPropContainer().replaceProp(oldProp, newProp);
+                    oldProp = newProp;
+                }
             }
         }
     }
@@ -365,23 +472,49 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
             return;
         }
 
-        if (itemId == ITEM_ID_AR_NONE) {
-            if (oldProp != null) {
-                mFURenderKit.getPropContainer().removeProp(oldProp);
-                oldProp = null;
+        if (useLocalBeautyResource) {
+            if (itemId == ITEM_ID_AR_NONE) {
+                if (oldProp != null) {
+                    mFURenderKit.getPropContainer().removeProp(oldProp);
+                    oldProp = null;
+                }
+            } else if (itemId == ITEM_ID_AR_KAOLA) {
+                Animoji newProp = new Animoji(new FUBundleData("beauty_faceunity/animoji/kaola_Animoji.bundle"));
+                if (oldProp == null || !oldProp.getControlBundle().getPath().equals(newProp.getControlBundle().getPath())) {
+                    mFURenderKit.getPropContainer().replaceProp(oldProp, newProp);
+                    oldProp = newProp;
+                }
+            } else if (itemId == ITEM_ID_AR_HASHIQI) {
+                Animoji newProp = new Animoji(new FUBundleData("beauty_faceunity/animoji/hashiqi_Animoji.bundle"));
+                if (oldProp == null || !oldProp.getControlBundle().getPath().equals(newProp.getControlBundle().getPath())) {
+                    mFURenderKit.getPropContainer().replaceProp(oldProp, newProp);
+                    oldProp = newProp;
+                }
             }
-        } else if (itemId == ITEM_ID_AR_KAOLA) {
-            Animoji newProp = new Animoji(new FUBundleData("beauty_faceunity/animoji/kaola_Animoji.bundle"));
-            if (oldProp == null || !oldProp.getControlBundle().getPath().equals(newProp.getControlBundle().getPath())) {
-                mFURenderKit.getPropContainer().replaceProp(oldProp, newProp);
-                oldProp = newProp;
-            }
-        } else if (itemId == ITEM_ID_AR_HASHIQI) {
-            Animoji newProp = new Animoji(new FUBundleData("beauty_faceunity/animoji/hashiqi_Animoji.bundle"));
-            if (oldProp == null || !oldProp.getControlBundle().getPath().equals(newProp.getControlBundle().getPath())) {
-                mFURenderKit.getPropContainer().replaceProp(oldProp, newProp);
-                oldProp = newProp;
+        } else {
+            if (itemId == ITEM_ID_AR_NONE) {
+                if (oldProp != null) {
+                    mFURenderKit.getPropContainer().removeProp(oldProp);
+                    oldProp = null;
+                }
+            } else if (itemId == ITEM_ID_AR_KAOLA) {
+                Animoji newProp = new Animoji(new FUBundleData(
+                        mContext.getExternalFilesDir(null).getAbsolutePath() + "/assets/beauty_faceunity/animoji" + File.separator + "kaola_Animoji.bundle"
+                ));
+                if (oldProp == null || !oldProp.getControlBundle().getPath().equals(newProp.getControlBundle().getPath())) {
+                    mFURenderKit.getPropContainer().replaceProp(oldProp, newProp);
+                    oldProp = newProp;
+                }
+            } else if (itemId == ITEM_ID_AR_HASHIQI) {
+                Animoji newProp = new Animoji(new FUBundleData(
+                        mContext.getExternalFilesDir(null).getAbsolutePath() + "/assets/beauty_faceunity/animoji" + File.separator + "hashiqi_Animoji.bundle"
+                ));
+                if (oldProp == null || !oldProp.getControlBundle().getPath().equals(newProp.getControlBundle().getPath())) {
+                    mFURenderKit.getPropContainer().replaceProp(oldProp, newProp);
+                    oldProp = newProp;
+                }
             }
         }
+
     }
 }
