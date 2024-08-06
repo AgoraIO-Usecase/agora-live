@@ -165,7 +165,7 @@ extension CommerceVideoSettingVC: UITableViewDelegate, UITableViewDataSource {
             } else if data == .PVC {
                 let cell = tableView.dequeueReusableCell(withIdentifier: kSwitchCell, for: indexPath) as! CommerceSettingSwitchCell
                 let value = CommerceAgoraKitManager.shared.rtcParam.pvc
-                cell.setTitle(data.title, enable:false, isOn: value) {[weak self] isOn in
+                cell.setTitle(data.title, enable: true, isOn: value) {[weak self] isOn in
                     self?.barrierValueChange(complete: {
                         CommerceAgoraKitManager.shared.rtcParam.pvc = isOn
                         CommerceAgoraKitManager.shared.updateSettingForkey(.PVC, currentChannelId: self?.currentChannelId)

@@ -131,6 +131,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 @property (nonatomic, strong) HeadSetManager *headeSet;
 @property (nonatomic, assign) NSInteger roomPeopleCount;
 @property (nonatomic, strong) VLKTVSettingModel *settingModel;
+@property (nonatomic, assign) BOOL lazyLoadAndPlaySong;
 @end
 
 @implementation VLKTVViewController
@@ -163,7 +164,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     self.selectedVoiceShowIndex = -1;
     self.selectUserNo = @"";
     self.soundOpen = false;
-    self.gainValue = @"1.0";
+    self.gainValue = @"100.0";
     self.effectType = 0;
     self.typeValue = 4;
     self.isDelay = true;
@@ -242,6 +243,10 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
             }
         }
     }];
+    
+    if(self.lazyLoadAndPlaySong) {
+        [self loadAndPlaySong];
+    }
 }
 
 -(void)showDebug {
@@ -416,6 +421,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     } else {
         [self.settingView setIspause:self.isPause];
     }
+    [self.settingView setSelectEffect:self.selectedEffectIndex];
     [self.settingView setAEClevel:self.aecLevel];
     [self.settingView setChorusStatus: flag];
 }
@@ -528,7 +534,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
         self.gainValue = @"100.0";
         self.effectType = 0;
         self.typeValue = 4;
-        [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":1.0,\"gender\":0,\"effect\":2}}"];
+        [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":100.0,\"gender\":0,\"effect\":2}}"];
     } else {
         [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":-1,\"gain\":-1.0,\"gender\":-1,\"effect\":-1}}"];
     }
@@ -540,22 +546,22 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     self.typeValue = 4;
     switch (value) {
         case 0:
-            [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":1.0,\"gender\":0,\"effect\":2}}"];
+            [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":100.0,\"gender\":0,\"effect\":2}}"];
             break;
         case 1:
-            [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":1.0,\"gender\":1,\"effect\":2}}"];
+            [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":100.0,\"gender\":1,\"effect\":2}}"];
             break;
         case 2:
-            [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":1.0,\"gender\":0,\"effect\":3}}"];
+            [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":100.0,\"gender\":0,\"effect\":3}}"];
             break;
         case 3:
-            [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":1.0,\"gender\":1,\"effect\":3}}"];
+            [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":100.0,\"gender\":1,\"effect\":3}}"];
             break;
         case 4:
-            [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":1.0,\"gender\":0,\"effect\":4}}"];
+            [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":100.0,\"gender\":0,\"effect\":4}}"];
             break;
         case 5:
-            [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":1.0,\"gender\":1,\"effect\":4}}"];
+            [self.RTCkit setParameters:@"{\"che.audio.virtual_soundcard\":{\"preset\":4,\"gain\":100.0,\"gender\":1,\"effect\":4}}"];
             break;
         default:
             break;
@@ -721,6 +727,11 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 }
 
 - (void)loadAndPlaySong{
+    if (self.ktvApi == NULL) {
+        self.lazyLoadAndPlaySong = YES;
+        return;
+    }
+        
     self.voiceShowHasSeted = false;
     self.selectedVoiceShowIndex = -1;
     self.selectUserNo = @"";
@@ -741,20 +752,25 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     //TODO: will remove ktv api adjust playout volume method
     [self setPlayoutVolume:50];
 
-    KTVSingRole role = [self getUserSingRole];
-    KTVLogInfo(@"loadAndPlaySong[%@][%@]: role: %ld", model.songNo, model.songName, role);
+    KTVSingRole role1 = [self getUserSingRole];
+    KTVLogInfo(@"loadAndPlaySong[%@][%@]: role: %ld", model.songNo, model.songName, role1);
     KTVSongConfiguration* songConfig = [[KTVSongConfiguration alloc] init];
   //  songConfig.autoPlay = (role == KTVSingRoleAudience || role == KTVSingRoleCoSinger) ? NO : YES ;
-    songConfig.mode = (role == KTVSingRoleAudience || role == KTVSingRoleCoSinger) ? KTVLoadMusicModeLoadLrcOnly : KTVLoadMusicModeLoadMusicAndLrc;
+    songConfig.mode = (role1 == KTVSingRoleAudience || role1 == KTVSingRoleCoSinger) ? KTVLoadMusicModeLoadLrcOnly : KTVLoadMusicModeLoadMusicAndLrc;
     songConfig.mainSingerUid = [model.owner.userId integerValue];
     songConfig.songIdentifier = model.songNo;
 
     VL(weakSelf);
     self.loadMusicCallBack = ^(BOOL isSuccess, NSInteger songCode) {
+        KTVSingRole role = [weakSelf getUserSingRole];
+        if(role != role1) {
+            KTVLogInfo(@"load music succuss, but role did change %ld -> %ld", role1, role);
+        }
         KTVLogInfo(@"load music[%ld] completion, isSuccess: %d, role: %ld", songCode, isSuccess, role);
         if (!isSuccess) {
             return;
         }
+        
         if(role == KTVSingRoleCoSinger){
             weakSelf.singRole = KTVSingRoleCoSinger;
         }
@@ -765,11 +781,11 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         
         if(self.singRole == role) {
             if(role == KTVSingRoleSoloSinger || role == KTVSingRoleLeadSinger){
-                [self.ktvApi startSingWithSongCode:songCode startPos:0];
-                self.aecLevel = 0;
-                self.aecState = false;
+                [weakSelf.ktvApi startSingWithSongCode:songCode startPos:0];
+                weakSelf.aecLevel = 0;
+                weakSelf.aecState = false;
             }
-            [self setMVViewStateWith:model];
+            [weakSelf setMVViewStateWith:model];
         } else {
             [weakSelf.ktvApi switchSingerRoleWithNewRole:role
                                        onSwitchRoleState:^( KTVSwitchRoleState state, KTVSwitchRoleFailReason reason) {
@@ -791,7 +807,6 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     
     [self.lrcControl resetShowOnce];
     [self.ktvApi loadMusicWithSongCode:[model.songNo integerValue] config:songConfig onMusicLoadStateListener:self];
-
 }
 
 - (void)enterSeatWithIndex:(NSNumber*)index completion:(void(^)(NSError*))completion {
@@ -1650,6 +1665,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
                          @(AgoraAudioEffectPresetStyleTransformationPopular),
                          @(AgoraAudioEffectPresetStyleTransformationRnb)];
     self.currentSelectEffect = [effects[effectIndex] integerValue];
+    KTVLogInfo(@"setAudioEffectPreset: %ld", effectIndex);
     [self.RTCkit setAudioEffectPreset: [effects[effectIndex] integerValue]];
 }
 

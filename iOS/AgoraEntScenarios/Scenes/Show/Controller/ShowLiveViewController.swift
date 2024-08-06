@@ -188,7 +188,8 @@ class ShowLiveViewController: UIViewController {
                 ShowLogger.info("currentInteraction: \(currentInteraction.description)")
             }
             if self.room?.userId() == self.currentUserId {
-                self.liveView.showThumnbnailCanvasView = false
+                self.liveView.blurHostCanvas = false
+                self.liveView.blurGusetCanvas = false
             }
             //update audio status
             if let interaction = currentInteraction {
@@ -496,6 +497,7 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
     }
     
     func onRoomExpired(channelName: String) {
+        liveView.markExpired()
         ShowAgoraKitManager.shared.leaveAllRoom()
         ShowAgoraKitManager.shared.leaveChannelEx(roomId: roomId, channelId: roomId)
         ShowAgoraKitManager.shared.prePublishOnseatVideo(isOn: false, channelId: roomId)
@@ -844,11 +846,16 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
                    reason: AgoraVideoRemoteReason, elapsed: Int) {
         if uid == roomOwnerId {
             if reason == .remoteMuted , currentInteraction?.type != .pk{
-                liveView.showThumnbnailCanvasView = true
+                liveView.blurHostCanvas = true
             }else if reason == .remoteUnmuted {
-                liveView.showThumnbnailCanvasView = false
+                liveView.blurHostCanvas = false
             }
         }
+    }
+    
+    public func rtcEngine(_ engine: AgoraRtcEngineKit, didVideoMuted muted: Bool, byUid uid: UInt) {
+        ShowLogger.info("didVideoMuted[\(uid)] \(muted)")
+        liveView.blurGusetCanvas = muted
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, remoteAudioStats stats: AgoraRtcRemoteAudioStats) {
@@ -1061,13 +1068,17 @@ extension ShowLiveViewController: ShowToolMenuViewControllerDelegate {
             self.muteLocalVideo = selected
             if selected {
                 ShowAgoraKitManager.shared.engine?.stopPreview()
-                if let ownerId = self.room?.userId(), ownerId == self.currentUserId, self.currentInteraction?.type != .pk {
-                    self.liveView.showThumnbnailCanvasView = true
+                if self.role == .broadcaster {
+                    self.liveView.blurHostCanvas = true
+                } else {
+                    self.liveView.blurGusetCanvas = true
                 }
             } else {
                 ShowAgoraKitManager.shared.engine?.startPreview()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                    self.liveView.showThumnbnailCanvasView = false
+                if self.role == .broadcaster {
+                    self.liveView.blurHostCanvas = false
+                } else {
+                    self.liveView.blurGusetCanvas = false
                 }
             }
         }

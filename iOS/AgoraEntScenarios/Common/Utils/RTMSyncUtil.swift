@@ -42,6 +42,7 @@ class RTMSyncUtil: NSObject {
         
         //create roomService
         let policy = RoomExpirationPolicy()
+        policy.expirationTime = 10 * 60 * 1000
         roomService = AUIRoomService(expirationPolicy: policy, roomManager: roomManager!, syncmanager: syncManager!)
         
         //print log

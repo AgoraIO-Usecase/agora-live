@@ -46,9 +46,15 @@ class ShowRoomLiveView: UIView {
         return view
     }()
     
-    var showThumnbnailCanvasView = false {
+    var blurHostCanvas = false {
         didSet{
-            canvasView.thumnbnailCanvasView.isHidden = !showThumnbnailCanvasView
+            canvasView.localView.showBlurView = blurHostCanvas
+        }
+    }
+    
+    var blurGusetCanvas = false {
+        didSet{
+            canvasView.remoteView.showBlurView = blurGusetCanvas
         }
     }
     
@@ -233,6 +239,10 @@ class ShowRoomLiveView: UIView {
             }
             self.coverView.removeFromSuperview()
         }
+    }
+    
+    func markExpired() {
+        roomInfoView.stopTimer()
     }
     
     @objc private func didTapedCoverView(){
