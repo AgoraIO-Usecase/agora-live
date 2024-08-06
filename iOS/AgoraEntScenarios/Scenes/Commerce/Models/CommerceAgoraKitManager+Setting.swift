@@ -189,11 +189,15 @@ extension CommerceAgoraKitManager {
         let net = netCondition
         let performance = performanceMode
         rtcParam.suggested = true
-        if (performance == .fluent) {
+        if ([.fluent, .smooth].contains(performance)) {
             CommerceSettingKey.PVC.writeValue(true)
+            rtcParam.pvc = true
         } else {
             CommerceSettingKey.PVC.writeValue(false)
+            rtcParam.pvc = false
         }
+        updateSettingForkey(.PVC)
+        rtcParam.suggested = true
         if (machine == .high && net == .good && performance == .smooth && showMode == .single) {
             // High-end machine, good network, clear, unicast
             _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0)

@@ -200,10 +200,12 @@ extension ShowAgoraKitManager {
         let net = netCondition
         let performance = performanceMode
         let h265On = (performance != .pure)
-        if ([.fluent, .pure].contains(performance)) {
-            CommerceSettingKey.PVC.writeValue(true)
+        if ([.fluent, .smooth].contains(performance)) {
+            ShowSettingKey.PVC.writeValue(true)
+            rtcParam.pvc = true
         } else {
-            CommerceSettingKey.PVC.writeValue(false)
+            ShowSettingKey.PVC.writeValue(false)
+            rtcParam.pvc = false
         }
         updateSettingForkey(.PVC)
         rtcParam.suggested = true
