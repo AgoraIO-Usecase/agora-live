@@ -61,7 +61,8 @@ object RtcEngineInstance {
             if (innerBeautyProcessor == null) {
                 innerBeautyProcessor =
                     BeautyProcessorImpl(
-                        AgoraApplication.the()
+                        AgoraApplication.the(),
+                        BuildConfig.BEAUTY_RESOURCE == ""
                     )
             }
             return innerBeautyProcessor!!

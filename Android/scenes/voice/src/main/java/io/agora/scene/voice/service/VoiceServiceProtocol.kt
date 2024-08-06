@@ -1,8 +1,10 @@
 package io.agora.scene.voice.service
 
+import io.agora.rtmsyncmanager.model.AUIRoomInfo
+import io.agora.rtmsyncmanager.utils.ObservableHelper
 import io.agora.scene.voice.global.VoiceBuddyFactory
 import io.agora.scene.voice.model.*
-import io.agora.voice.common.utils.LogTools.logE
+import io.agora.voice.common.utils.LogTools
 
 /**
  * This interface defines the protocol for voice chat room service.
@@ -19,20 +21,24 @@ interface VoiceServiceProtocol {
         const val ERR_ROOM_UNAVAILABLE = 4
         const val ERR_ROOM_NAME_INCORRECT = 5
         const val ERR_ROOM_LIST_EMPTY = 1003
-        private val instance by lazy {
-            // VoiceChatServiceImp()
-            VoiceSyncManagerServiceImp(VoiceBuddyFactory.get().getVoiceBuddy().application()) { error ->
-                "voice chat protocol error：${error?.message}".logE()
-            }
-        }
+        private var innerProtocol: VoiceServiceProtocol? = null
 
-        /**
-         * This method returns the instance of the implementation of the VoiceServiceProtocol.
-         *
-         * @return The instance of the implementation of the VoiceServiceProtocol.
-         */
         @JvmStatic
-        fun getImplInstance(): VoiceServiceProtocol = instance
+        val serviceProtocol: VoiceServiceProtocol
+            get() {
+                if (innerProtocol == null) {
+                    innerProtocol =   VoiceSyncManagerServiceImp(VoiceBuddyFactory.get().getVoiceBuddy().application()) { error ->
+                        LogTools.e("VoiceServiceProtocol", "voice chat protocol error：${error?.message}")
+                    }
+                }
+                return innerProtocol!!
+            }
+
+        @Synchronized
+        fun destroy() {
+            (innerProtocol as? VoiceSyncManagerServiceImp)?.destroy()
+            innerProtocol = null
+        }
     }
 
     /**
@@ -40,7 +46,7 @@ interface VoiceServiceProtocol {
      *
      * @param delegate The delegate to subscribe to events.
      */
-    fun subscribeEvent(delegate: VoiceRoomSubscribeDelegate)
+    fun subscribeListener(delegate: VoiceServiceListenerProtocol)
 
     /**
      * This method unsubscribes from events.
@@ -48,16 +54,27 @@ interface VoiceServiceProtocol {
     fun unsubscribeEvent()
 
     /**
-     * This method resets the service.
+     * Get current duration
+     *
+     * @param channelName
+     * @return
      */
-    fun reset()
+    fun getCurrentDuration(channelName: String): Long
+
+    /**
+     * Get current ts
+     *
+     * @param channelName
+     * @return
+     */
+    fun getCurrentTs(channelName: String): Long
 
     /**
      * This method gets the list of subscribed delegates.
      *
      * @return The list of subscribed delegates.
      */
-    fun getSubscribeDelegates():MutableList<VoiceRoomSubscribeDelegate>
+    fun getSubscribeListeners(): ObservableHelper<VoiceServiceListenerProtocol>
 
     /**
      * This method fetches the list of rooms.
@@ -65,9 +82,8 @@ interface VoiceServiceProtocol {
      * @param page The page number to fetch.
      * @param completion The completion handler to call when the fetch is complete.
      */
-    fun fetchRoomList(
-        page: Int = 0,
-        completion: (error: Int, result: List<VoiceRoomModel>) -> Unit
+    fun getRoomList(
+        completion: (error: Exception?, roomList: List<AUIRoomInfo>?) -> Unit
     )
 
     /**
@@ -76,24 +92,23 @@ interface VoiceServiceProtocol {
      * @param inputModel The model of the room to create.
      * @param completion The completion handler to call when the creation is complete.
      */
-    fun createRoom(inputModel: VoiceCreateRoomModel, completion: (error: Int, result: VoiceRoomModel) -> Unit)
+    fun createRoom(inputModel: VoiceCreateRoomModel,  completion: (error: Exception?, out: AUIRoomInfo?) -> Unit)
 
     /**
      * This method joins a room.
      *
      * @param roomId The ID of the room to join.
+     * @param password The password of the room to join.
      * @param completion The completion handler to call when the join is complete.
      */
-    fun joinRoom(roomId: String, completion: (error: Int, result: VoiceRoomModel?) -> Unit)
+    fun joinRoom(roomId: String, password: String?, completion: (error: Exception?, roomInfo: AUIRoomInfo?) -> Unit)
 
     /**
      * This method leaves a room.
      *
-     * @param roomId The ID of the room to leave.
-     * @param isRoomOwnerLeave A boolean indicating whether the room owner is leaving.
      * @param completion The completion handler to call when the leave is complete.
      */
-    fun leaveRoom(roomId: String, isRoomOwnerLeave: Boolean, completion: (error: Int, result: Boolean) -> Unit)
+    fun leaveRoom(completion: (error: Exception?) -> Unit)
 
     /**
      * This method fetches the details of a room.
@@ -130,7 +145,7 @@ interface VoiceServiceProtocol {
      * @param chatUidList The list of chat UIDs of the members to kick out.
      * @param completion The completion handler to call when the kick out is complete.
      */
-    fun kickMemberOutOfRoom(chatUidList: MutableList<String>,completion: (error: Int, result: Boolean) -> Unit)
+    fun kickMemberOutOfRoom(chatUidList: MutableList<String>, completion: (error: Int, result: Boolean) -> Unit)
 
     /**
      * This method updates the list of members in the room.
@@ -161,7 +176,11 @@ interface VoiceServiceProtocol {
      * @param chatUid The chat UID of the member to accept the apply for.
      * @param completion The completion handler to call when the accept is complete.
      */
-    fun acceptMicSeatApply(micIndex: Int?, chatUid: String, completion: (error: Int, result: VoiceMicInfoModel?) -> Unit)
+    fun acceptMicSeatApply(
+        micIndex: Int?,
+        chatUid: String,
+        completion: (error: Int, result: VoiceMicInfoModel?) -> Unit
+    )
 
     /**
      * This method cancels a mic seat apply.
@@ -282,14 +301,6 @@ interface VoiceServiceProtocol {
     fun updateAnnouncement(content: String, completion: (error: Int, result: Boolean) -> Unit)
 
     /**
-     * This method updates the background music information in the VR application.
-     *
-     * @param info The new background music information.
-     * @param completion The completion handler to call when the update is complete. It includes an error code.
-     */
-    fun updateBGMInfo(info: VoiceBgmModel, completion: (error: Int) -> Unit)
-
-    /**
      * This method enables or disables the robot in the VR application.
      *
      * @param enable A boolean indicating whether to enable the robot.
@@ -304,13 +315,4 @@ interface VoiceServiceProtocol {
      * @param completion The completion handler to call when the update is complete. It includes an error code and a boolean indicating whether the update was successful.
      */
     fun updateRobotVolume(value: Int, completion: (error: Int, result: Boolean) -> Unit)
-
-    /**
-     * This method subscribes to the room time up event in the VR application.
-     *
-     * @param onRoomTimeUp The handler to call when the room time up event occurs.
-     */
-    fun subscribeRoomTimeUp(
-        onRoomTimeUp: () -> Unit
-    )
 }

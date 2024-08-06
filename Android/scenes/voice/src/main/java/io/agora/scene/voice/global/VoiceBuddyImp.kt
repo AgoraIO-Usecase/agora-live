@@ -11,13 +11,10 @@ class VoiceBuddyImp : IVoiceBuddy {
 
     private var chatToken: String = ""
     private var rtcToken: String = ""
+    private var rtmToken: String = ""
 
     override fun application(): Application {
         return AgoraApplication.the()
-    }
-
-    override fun toolboxServiceUrl(): String {
-        return io.agora.scene.base.BuildConfig.TOOLBOX_SERVER_HOST
     }
 
     override fun headUrl(): String {
@@ -67,5 +64,13 @@ class VoiceBuddyImp : IVoiceBuddy {
 
     override fun setupChatToken(chatToken: String) {
         this.chatToken = chatToken
+    }
+
+    override fun rtmToken(): String {
+        return rtmToken
+    }
+
+    override fun setupRtmToken(rtmToken: String) {
+        this.rtmToken = rtmToken
     }
 }

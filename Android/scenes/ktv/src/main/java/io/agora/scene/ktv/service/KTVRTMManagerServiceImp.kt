@@ -1182,6 +1182,10 @@ class KTVSyncManagerServiceImp constructor(
 
             when (seatCmd) {
                 RoomSeatCmd.enterSeatCmd -> {
+                    val seatIndex = seatKey.toIntOrNull() ?: -1
+                    if (seatIndex < 0 || seatIndex > 7) {
+                        return@subscribeWillMerge AUICollectionException.ErrorCode.unknown.toException(msg = "not permitted")
+                    }
                     val willEnterSeatUserId = getUserId(newValue[seatKey])
                     if (oldValue.values.any { getUserId(it) == willEnterSeatUserId }) { // 用户已经在麦位
                         return@subscribeWillMerge AUICollectionException.ErrorCode.unknown.toException(msg = "user already enter seat")
@@ -1693,5 +1697,11 @@ class KTVSyncManagerServiceImp constructor(
         sortSongList.addAll(pinList)
         sortSongList.addAll(normalList)
         return sortSongList
+    }
+
+    fun destroy() {
+        KTVLogger.d(TAG, message = "destroy")
+        mSyncManager.logout()
+        mSyncManager.release()
     }
 }
