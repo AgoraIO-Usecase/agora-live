@@ -167,7 +167,7 @@ extension ShowVideoSettingVC: UITableViewDelegate, UITableViewDataSource {
             } else if data == .PVC {
                 let cell = tableView.dequeueReusableCell(withIdentifier: kSwitchCell, for: indexPath) as! ShowSettingSwitchCell
                 let value = ShowAgoraKitManager.shared.rtcParam.pvc
-                cell.setTitle(data.title, enable:true, isOn: value) {[weak self] isOn in
+                cell.setTitle(data.title, enable: true, isOn: value) {[weak self] isOn in
                     self?.barrierValueChange(complete: {
                         ShowAgoraKitManager.shared.rtcParam.pvc = isOn
                         ShowAgoraKitManager.shared.updateSettingForkey(.PVC, currentChannelId: self?.currentChannelId)
