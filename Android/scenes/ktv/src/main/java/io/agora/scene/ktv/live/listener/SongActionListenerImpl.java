@@ -98,8 +98,6 @@ public class SongActionListenerImpl implements OnSongActionListener {
                         song.getSongName(),
                         song.getImageUrl(),
                         song.getSinger(),
-                        song.getMusicUrl(),
-                        song.getLyricUrl(),
                         userName,
                         !TextUtils.isEmpty(userName),
                         chooserUserId
