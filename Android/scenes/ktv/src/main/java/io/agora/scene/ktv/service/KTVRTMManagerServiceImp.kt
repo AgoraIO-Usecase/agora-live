@@ -206,7 +206,6 @@ class KTVSyncManagerServiceImp constructor(
                 mMainHandler.postDelayed(this, 1000)
             }
         }
-
     }
 
     /**
@@ -650,8 +649,6 @@ class KTVSyncManagerServiceImp constructor(
             songNo = inputModel.songNo,
             singer = inputModel.singer,
             imageUrl = inputModel.imageUrl,
-            musicUrl = inputModel.musicUrl,
-            lyricUrl = inputModel.lyricUrl,
             owner = mCurrentUser,
             status = PlayStatus.idle,
             createAt = getCurrentTs(mCurRoomNo)
