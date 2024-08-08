@@ -1080,7 +1080,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 chorusChannelToken = KtvCenter.mRtcToken,
                 maxCacheSize = 10,
                 type = KTVType.Normal,
-                musicType = KTVMusicType.SONG_CODE
+                musicType = KTVMusicType.SONG_URL
             )
         )
         ktvApiProtocol.addEventHandler(object : IKTVApiEventHandler() {
@@ -1355,6 +1355,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 // 重置settings
                 retryTimes = 0
                 runOnMainThread {
+                    playerMusicStatusLiveData.value = PlayerMusicStatus.ON_PLAYING
                 }
             }
 
