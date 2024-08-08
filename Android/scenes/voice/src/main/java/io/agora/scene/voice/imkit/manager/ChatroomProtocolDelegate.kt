@@ -497,12 +497,16 @@ class ChatroomProtocolDelegate constructor(
     fun acceptMicSeatApply(chatUid: String, micIndex: Int, callback: ValueCallBack<VoiceMicInfoModel>) {
         val memberBean = ChatroomCacheManager.cacheManager.getMember(chatUid)
         if (memberBean != null) {
+            val index = getFirstFreeMic() ?: run {
+                // TODO: 本期暂无空闲麦位
+                return
+            }
             if (micIndex != -1) {
                 val micInfoModel = getMicInfo(micIndex)
                 memberBean.micIndex =
                     if (micInfoModel?.micStatus == MicStatus.Idle || micInfoModel?.micStatus == MicStatus.ForceMute) micIndex else getFirstFreeMic()
             } else {
-                memberBean.micIndex = getFirstFreeMic()
+                memberBean.micIndex = index
             }
         }
         ThreadManager.getInstance().runOnIOThread {
@@ -1136,7 +1140,7 @@ class ChatroomProtocolDelegate constructor(
     /**
      *  按麦位顺序查询空麦位
      */
-    private fun getFirstFreeMic(): Int {
+    private fun getFirstFreeMic(): Int? {
         val indexList: MutableList<Int> = mutableListOf<Int>()
         val micInfo = ChatroomCacheManager.cacheManager.getMicInfoMap()
         if (micInfo != null) {
@@ -1151,7 +1155,11 @@ class ChatroomProtocolDelegate constructor(
             }
         }
         indexList.sortBy { it }
-        return indexList[0]
+        return if (indexList.size > 0) {
+            indexList[0]
+        } else {
+            null
+        }
     }
 
     private fun getMicIndex(index: Int): String {
