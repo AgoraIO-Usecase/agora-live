@@ -50,6 +50,9 @@ class SoundCardSettingDialog: BaseSheetDialog<VoiceDialogSoundCardBinding>() {
             return
         }
         super.onViewCreated(view, savedInstanceState)
+        binding?.apply {
+            setOnApplyWindowInsets(root)
+        }
         setupView()
     }
 

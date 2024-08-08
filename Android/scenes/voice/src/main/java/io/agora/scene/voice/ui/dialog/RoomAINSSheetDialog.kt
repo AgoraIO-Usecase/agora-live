@@ -1,5 +1,6 @@
 package io.agora.scene.voice.ui.dialog
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.base.component.BaseRecyclerViewAdapter
 import io.agora.scene.base.component.OnItemChildClickListener
+import io.agora.scene.base.utils.ToastUtils
 import io.agora.voice.common.ui.dialog.BaseFixedHeightSheetDialog
 import io.agora.voice.common.utils.ToastTools
 import io.agora.voice.common.constant.ConfigConstants
@@ -59,7 +61,7 @@ class RoomAINSSheetDialog constructor() : BaseFixedHeightSheetDialog<VoiceDialog
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.attributes?.windowAnimations = R.style.voice_BottomSheetDialogAnimation
-        dialog?.setCanceledOnTouchOutside(false)
+
         anisModeList.addAll(RoomAINSConstructor.builderDefaultAINSList(view.context, anisMode))
         anisSoundsList.addAll(RoomAINSConstructor.builderDefaultSoundList(view.context))
         binding?.apply {

@@ -44,6 +44,9 @@ class SoundPresetTypeDialog: BaseSheetDialog<VoiceDialogSoundPresetTypeBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding?.apply {
+            setOnApplyWindowInsets(root)
+        }
         mManager = AgoraRtcEngineController.get().soundCardManager() ?: run {
             dismiss()
             return

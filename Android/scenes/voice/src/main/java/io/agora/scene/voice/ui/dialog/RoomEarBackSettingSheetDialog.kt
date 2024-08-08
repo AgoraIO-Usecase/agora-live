@@ -49,7 +49,9 @@ class RoomEarBackSettingSheetDialog: BaseSheetDialog<VoiceDialogChatroomEarbackS
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.attributes?.windowAnimations = R.style.voice_BottomSheetDialogAnimation
-
+        binding?.apply {
+            setOnApplyWindowInsets(root)
+        }
         setupHeadPhoneReceiver()
         setupView()
         updateViewState()

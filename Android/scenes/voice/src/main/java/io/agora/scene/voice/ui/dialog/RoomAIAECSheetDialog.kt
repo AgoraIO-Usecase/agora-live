@@ -38,10 +38,15 @@ class RoomAIAECSheetDialog: BaseSheetDialog<VoiceDialogChatroomAiaecBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.attributes?.windowAnimations = R.style.voice_BottomSheetDialogAnimation
-
-        binding?.accbAEC?.isChecked = isOn
-        binding?.accbAEC?.setOnCheckedChangeListener { _, isChecked ->
-            onClickCheckBox?.invoke(isChecked)
+        binding?.apply {
+            setOnApplyWindowInsets(root)
+            accbAEC.isChecked = isOn
+            accbAEC.setOnCheckedChangeListener { _, isChecked ->
+                onClickCheckBox?.invoke(isChecked)
+            }
+            ivBottomSheetBack.setOnClickListener {
+                onHandleOnBackPressed()
+            }
         }
     }
 }

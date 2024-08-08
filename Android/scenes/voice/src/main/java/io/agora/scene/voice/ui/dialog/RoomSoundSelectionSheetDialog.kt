@@ -44,7 +44,6 @@ class RoomSoundSelectionSheetDialog constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.attributes?.windowAnimations = R.style.voice_BottomSheetDialogAnimation
-        dialog?.setCanceledOnTouchOutside(false)
         arguments?.apply {
             val currentSelection: Int = getInt(KEY_CURRENT_SELECTION)
             soundSelectionList.addAll(

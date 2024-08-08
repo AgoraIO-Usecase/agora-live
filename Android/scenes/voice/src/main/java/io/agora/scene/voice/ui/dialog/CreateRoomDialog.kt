@@ -11,6 +11,8 @@ import android.text.*
 import android.text.style.ForegroundColorSpan
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import io.agora.scene.base.component.BaseBottomSheetDialogFragment
 import io.agora.scene.base.utils.ToastUtils
@@ -44,6 +46,14 @@ class CreateRoomDialog constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.let {
+            ViewCompat.setOnApplyWindowInsetsListener(it.decorView) { v: View?, insets: WindowInsetsCompat ->
+                val systemInset = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                view.setPadding(0, 0, 0, systemInset.bottom)
+                WindowInsetsCompat.CONSUMED
+            }
+        }
+
         roomCreateViewModel = ViewModelProvider(this)[VoiceCreateViewModel::class.java]
         val spannableString = SpannableString(getString(R.string.voice_create_room_tips))
         spannableString.setSpan(ForegroundColorSpan(Color.parseColor("#FA396A")), 77, 118, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -69,6 +79,15 @@ class CreateRoomDialog constructor(
             createRoom()
         }
         mBinding.etCode.setOnTextChangeListener {  }
+
+        mBinding.layoutRoomName.isEndIconVisible = mBinding.etRoomName.isFocused
+        mBinding.etRoomName.setOnFocusChangeListener { v, hasFocus ->
+            mBinding.layoutRoomName.isEndIconVisible = hasFocus
+        }
+
+        mBinding.layoutRoomName.setEndIconOnClickListener {
+            mBinding.etRoomName.setText("")
+        }
 
         activity?.window?.let { window ->
             val initialWindowHeight = Rect().apply { window.decorView.getWindowVisibleDisplayFrame(this) }.height()

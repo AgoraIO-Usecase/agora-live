@@ -1,5 +1,7 @@
 package io.agora.scene.voice.ui
 
+import android.content.DialogInterface
+import android.content.DialogInterface.OnCancelListener
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
@@ -8,6 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import com.google.gson.reflect.TypeToken
 import io.agora.CallBack
 import io.agora.scene.base.component.OnItemClickListener
+import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.voice.R
 import io.agora.scene.voice.global.VoiceBuddyFactory
 import io.agora.scene.voice.imkit.bean.ChatMessageData
@@ -711,12 +714,13 @@ class RoomObservableViewDelegate constructor(
         } else if ((micInfo.micStatus == MicStatus.Idle || micInfo.micStatus == MicStatus.ForceMute) && micInfo.member == null) {
             val mineMicIndex = iRoomMicView.findMicByUid(VoiceBuddyFactory.get().getVoiceBuddy().userId())
             if (mineMicIndex > 0) {
-                showAlertDialog(activity.getString(R.string.voice_chatroom_exchange_mic),
-                    object : CommonSheetAlertDialog.OnClickBottomListener {
-                        override fun onConfirmClick() {
-                            roomLivingViewModel.changeMic(mineMicIndex, micInfo.micIndex)
-                        }
-                    })
+                roomLivingViewModel.changeMic(mineMicIndex, micInfo.micIndex)
+//                showAlertDialog(activity.getString(R.string.voice_chatroom_exchange_mic),
+//                    object : CommonSheetAlertDialog.OnClickBottomListener {
+//                        override fun onConfirmClick() {
+//                            roomLivingViewModel.changeMic(mineMicIndex, micInfo.micIndex)
+//                        }
+//                    })
             } else {
                 if (isRequesting) {
                     ToastTools.show(activity, activity.getString(R.string.voice_chatroom_mic_submit_sent))

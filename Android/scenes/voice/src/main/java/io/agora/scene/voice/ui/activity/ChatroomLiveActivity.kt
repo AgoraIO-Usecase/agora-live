@@ -46,6 +46,7 @@ import io.agora.voice.common.constant.ConfigConstants
 import io.agora.voice.common.net.OnResourceParseCallback
 import io.agora.voice.common.net.Resource
 import io.agora.voice.common.ui.IParserSource
+import io.agora.voice.common.ui.dialog.BaseSheetDialog
 import io.agora.voice.common.utils.GsonTools
 import io.agora.voice.common.utils.LogTools
 import io.agora.voice.common.utils.LogTools.logD
@@ -602,6 +603,10 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                     return
                 }
                 if (f is BottomSheetDialogFragment) {
+                    if (f is BaseSheetDialog<*> && f.onCancel){
+                        // 手动取消则不显示之前的弹框
+                        return
+                    }
                     val lastFragment = dialogFragments.lastOrNull()
                     if (lastFragment == f) {
                         dialogFragments.remove(f)
