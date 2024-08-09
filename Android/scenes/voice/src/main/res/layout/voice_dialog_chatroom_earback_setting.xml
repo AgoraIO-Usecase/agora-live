@@ -78,9 +78,10 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:textColor="@color/voice_dark_grey_color_979cbb"
-        android:drawableStart="@drawable/voice_icon_room_setting_introduce"
         android:textSize="@dimen/voice_sp_12"
         android:textAlignment="textStart"
+        android:gravity="start|top"
+        tools:text="dadadadadadadadadadadadadada dadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadada"
         android:text="@string/voice_chatroom_settings_earback_tip"
         app:layout_constraintTop_toBottomOf="@+id/tvOpenSwitch" />
     

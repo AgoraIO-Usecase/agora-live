@@ -9,6 +9,9 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.media.AudioManager
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ImageSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -158,6 +161,20 @@ class RoomEarBackSettingSheetDialog : BaseFixedHeightSheetDialog<VoiceDialogChat
 //        }
     }
 
+    private fun setTips(tips: String) {
+        binding?.apply {
+            // 创建一个 Drawable 对象并设置它的大小
+            val icon = ContextCompat.getDrawable(root.context, R.drawable.voice_icon_room_setting_introduce)
+            icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
+            // 创建一个 SpannableString 并将图标设置在字符串的开始位置
+            val spannableString = SpannableString("  $tips")
+            val imageSpan = ImageSpan(icon!!, ImageSpan.ALIGN_BASELINE)
+            spannableString.setSpan(imageSpan, 0, 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+            // 设置 SpannableString 到 TextView
+            tvTips.text = spannableString
+        }
+    }
+
     private fun updateViewState() {
         val c = context ?: return
         if (!isPlugIn) {
@@ -165,8 +182,7 @@ class RoomEarBackSettingSheetDialog : BaseFixedHeightSheetDialog<VoiceDialogChat
                 cbSwitch.isChecked = false
                 cbSwitch.isEnabled = false
                 tvTips.setTextColor(Color.rgb(255, 18, 22))
-
-                tvTips.text = getString(R.string.voice_chatroom_settings_earback_waring)
+                setTips(getString(R.string.voice_chatroom_settings_earback_waring))
                 cvPing.visibility = View.GONE
                 clSetting.alpha = 0.3f
                 enableDisableView(clSetting, false)
@@ -175,7 +191,7 @@ class RoomEarBackSettingSheetDialog : BaseFixedHeightSheetDialog<VoiceDialogChat
         }
         binding?.apply {
             tvTips.setTextColor(ContextCompat.getColor(c, R.color.voice_dark_grey_color_979cbb))
-            tvTips.text = getString(R.string.voice_chatroom_settings_earback_tip)
+            setTips(getString(R.string.voice_chatroom_settings_earback_tip))
             cbSwitch.isEnabled = true
             val isOn = AgoraRtcEngineController.get().earBackManager()?.params?.isOn ?: false
             cbSwitch.isChecked = isOn

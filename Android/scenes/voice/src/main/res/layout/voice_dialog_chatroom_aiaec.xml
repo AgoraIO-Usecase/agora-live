@@ -53,8 +53,9 @@
         android:layout_marginTop="1dp"
         android:layout_marginBottom="15dp"
         android:layout_marginStart="20dp"
-        android:drawableStart="@drawable/voice_icon_room_setting_bot"
+        android:drawableStart="@drawable/voice_icon_room_jiqi"
         android:text="@string/voice_chatroom_turnon_aiaec"
+        android:drawablePadding="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mtBottomSheetTitle" />
 
