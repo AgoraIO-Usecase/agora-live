@@ -607,6 +607,9 @@ class RoomObservableViewDelegate constructor(
         val dialog = SoundCardSettingDialog()
         dialog.onClickSoundCardType = {
             val preset = SoundPresetTypeDialog()
+            preset.mOnSoundTypeChange = {
+                dialog.updateView()
+            }
             preset.show(activity.supportFragmentManager, SoundPresetTypeDialog.TAG)
         }
         dialog.onSoundCardStateChange = {

@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceDialogChatroomAiagcBinding
-import io.agora.voice.common.ui.dialog.BaseSheetDialog
+import io.agora.voice.common.ui.dialog.BaseFixedHeightSheetDialog
 
-class RoomAIAGCSheetDialog : BaseSheetDialog<VoiceDialogChatroomAiagcBinding>() {
+class RoomAIAGCSheetDialog : BaseFixedHeightSheetDialog<VoiceDialogChatroomAiagcBinding>() {
 
     companion object {
         const val KEY_IS_ON = "isOn"

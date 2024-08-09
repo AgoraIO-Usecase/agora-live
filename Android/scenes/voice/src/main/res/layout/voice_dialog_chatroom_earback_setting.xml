@@ -7,18 +7,6 @@
     tools:theme="@style/Theme.AppCompat"
     android:background="@drawable/voice_bg_rect_top_radius20_white">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/btnClose"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="9dp"
-        android:src="@mipmap/back_empty_white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -36,6 +24,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/btnClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="9dp"
+        android:src="@mipmap/back_empty_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/mtBottomSheetTitle"
+        app:layout_constraintBottom_toBottomOf="@+id/mtBottomSheetTitle"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/mtBottomSheetTitle"
@@ -83,8 +82,7 @@
         android:textSize="@dimen/voice_sp_12"
         android:textAlignment="textStart"
         android:text="@string/voice_chatroom_settings_earback_tip"
-        app:layout_constraintTop_toBottomOf="@+id/tvOpenSwitch"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/tvOpenSwitch" />
     
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvSetting"
@@ -96,17 +94,7 @@
         android:text="@string/voice_ear_settings"
         android:background="@color/voice_color_f7f8fb"
         android:textColor="@color/voice_dark_grey_color_6c7192"
-        app:layout_constraintTop_toBottomOf="@+id/tvTips"
-        />
-
-    <View
-        android:id="@+id/vSettingMark"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:elevation="0.5dp"
-        android:background="@color/voice_transparent"
-        android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@+id/tvSetting" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTips" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clSetting"
@@ -152,6 +140,7 @@
             style="@style/voice_bottom_sheet_divider_style"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvVolumeTitle" />
@@ -238,16 +227,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
-        android:id="@+id/vPingMark"
-        android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:layout_marginTop="@dimen/voice_sp_8"
-        android:elevation="2dp"
-        android:background="@color/white"
-        android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@+id/clSetting" />
-    
     <androidx.cardview.widget.CardView
         android:id="@+id/cvPing"
         android:layout_width="match_parent"
@@ -259,56 +238,64 @@
         app:cardElevation="0dp"
         app:cardBackgroundColor="#FAFBFC"
         app:cardCornerRadius="@dimen/voice_sp_8"
-        app:layout_constraintTop_toBottomOf="@+id/clSetting" />
+        app:layout_constraintTop_toBottomOf="@+id/clSetting" >
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvPingTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="8dp"
-        android:textColor="@color/voice_color_3c4267"
-        android:textSize="@dimen/voice_sp_13"
-        android:text="@string/voice_chatroom_settings_earback_ping"
-        app:layout_constraintStart_toStartOf="@+id/cvPing"
-        app:layout_constraintTop_toTopOf="@+id/cvPing" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutPing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvPingInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:textSize="@dimen/voice_sp_11"
-        android:text="@string/voice_chatroom_settings_earback_ping_tips"
-        android:textColor="@color/voice_color_979cbb"
-        app:layout_constraintStart_toStartOf="@+id/cvPing"
-        app:layout_constraintTop_toBottomOf="@+id/tvPingTitle" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvPingTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/voice_color_3c4267"
+                android:textSize="@dimen/voice_sp_13"
+                android:text="@string/voice_chatroom_settings_earback_ping"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvPing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textColor="#6d7291"
-        android:gravity="center"
-        android:text="60ms"
-        app:layout_constraintStart_toStartOf="@id/cvPing"
-        app:layout_constraintEnd_toEndOf="@+id/cvPing"
-        app:layout_constraintTop_toBottomOf="@+id/tvPingInfo" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvPingInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textSize="@dimen/voice_sp_11"
+                android:text="@string/voice_chatroom_settings_earback_ping_tips"
+                android:textColor="@color/voice_color_979cbb"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvPingTitle" />
 
-    <ProgressBar
-        android:id="@+id/pbPing"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_marginTop="@dimen/voice_space_8dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginRight="28dp"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:progressDrawable="@drawable/voice_ear_back_ping_progress"
-        android:max="150"
-        android:progress="60"
-        app:layout_constraintEnd_toEndOf="@+id/cvPing"
-        app:layout_constraintTop_toBottomOf="@+id/tvPing"
-        />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvPing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textColor="#6d7291"
+                android:gravity="center"
+                android:text="60ms"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvPingInfo" />
+
+            <ProgressBar
+                android:id="@+id/pbPing"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="@dimen/voice_space_8dp"
+                android:layout_marginHorizontal="28dp"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:progressDrawable="@drawable/voice_ear_back_ping_progress"
+                android:max="150"
+                android:progress="60"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

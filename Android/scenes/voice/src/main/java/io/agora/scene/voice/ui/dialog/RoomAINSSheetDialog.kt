@@ -1,6 +1,5 @@
 package io.agora.scene.voice.ui.dialog
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.base.component.BaseRecyclerViewAdapter
 import io.agora.scene.base.component.OnItemChildClickListener
-import io.agora.scene.base.utils.ToastUtils
-import io.agora.voice.common.ui.dialog.BaseFixedHeightSheetDialog
 import io.agora.voice.common.utils.ToastTools
 import io.agora.voice.common.constant.ConfigConstants
 import io.agora.scene.voice.R
@@ -22,6 +19,7 @@ import io.agora.scene.voice.databinding.VoiceItemRoomAgoraAinsBinding
 import io.agora.scene.voice.databinding.VoiceItemRoomAinsAuditionBinding
 import io.agora.scene.voice.model.constructor.RoomAINSConstructor
 import io.agora.scene.voice.ui.adapter.viewholder.*
+import io.agora.voice.common.ui.dialog.BaseFixedHeightSheetDialog
 
 class RoomAINSSheetDialog constructor() : BaseFixedHeightSheetDialog<VoiceDialogChatroomAinsBinding>() {
 

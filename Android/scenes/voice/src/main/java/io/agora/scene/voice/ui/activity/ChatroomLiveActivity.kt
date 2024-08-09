@@ -592,7 +592,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                     }
                     val lastFragment = dialogFragments.lastOrNull()
                     dialogFragments.add(f)
-                    lastFragment?.dismiss()
+//                    lastFragment?.dismiss()
                 }
                 super.onFragmentStarted(fm, f)
             }
@@ -604,16 +604,22 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                 }
                 if (f is BottomSheetDialogFragment) {
                     if (f is BaseSheetDialog<*> && f.onCancel){
-                        // 手动取消则不显示之前的弹框
+                        // 手动取消则关闭所有弹框
+                        val iterator = dialogFragments.iterator()
+                        while (iterator.hasNext()){
+                            iterator.next().dismiss()
+                            iterator.remove()
+                        }
                         return
                     }
-                    val lastFragment = dialogFragments.lastOrNull()
-                    if (lastFragment == f) {
-                        dialogFragments.remove(f)
-                        dialogFragments.lastOrNull()?.let {
-                            it.show(fm, it.tag)
-                        }
-                    }
+
+//                    val lastFragment = dialogFragments.lastOrNull()
+//                    if (lastFragment == f) {
+//                        dialogFragments.remove(f)
+//                        dialogFragments.lastOrNull()?.let {
+//                            it.show(fm, it.tag)
+//                        }
+//                    }
                 }
             }
         }, true)

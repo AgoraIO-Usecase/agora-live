@@ -2,6 +2,7 @@ package io.agora.scene.voice.model
 
 import com.google.gson.annotations.SerializedName
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
+import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.voice.global.VoiceBuddyFactory
 import io.agora.voice.common.constant.ConfigConstants
@@ -166,3 +167,10 @@ data class VoiceGiftModel constructor(
     var portrait: String? = "",
     var isChecked: Boolean? = false
 )
+
+val AUIUserThumbnailInfo.fullHeadUrl
+    get() = if (this.userAvatar.startsWith("http")) {
+        this.userAvatar
+    } else {
+        "file:///android_asset/" + this.userAvatar + ".png"
+    }

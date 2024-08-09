@@ -21,9 +21,6 @@ class RoomSocialChatSheetDialog constructor() : BaseSheetDialog<VoiceDialogRoomS
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
             setOnApplyWindowInsets(root)
-            mtSocialChatMore.setOnClickListener {
-                onClickSocialChatListener?.onMoreSound()
-            }
             mtBottomSheetTitle.text = titleText
             mtSocialChatContent.text = contentText
             customers?.forEach { customerBean ->
