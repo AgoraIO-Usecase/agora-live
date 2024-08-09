@@ -54,7 +54,7 @@ class AgoraChatRoomHeaderView: UIView {
         } else {
             iconImgView.image = UIImage(named: owner.portrait ?? "")
         }
-        self.titleLabel.text = "\((room.member_list?.count ?? 0)+(room.owner?.chat_uid ?? "" == VoiceRoomUserInfo.shared.user?.chat_uid ?? "" ? 3:4))\("voice_online".voice_localized) ｜ \(room.click_count ?? 0)\("voice_watch".voice_localized)"
+        self.titleLabel.text = "\((room.member_count ?? 3))\("voice_online".voice_localized) ｜ \(room.click_count ?? 0)\("voice_watch".voice_localized)"
         self.roomLabel.text = room.name
         let gift_count = room.gift_amount ?? 0
         let count = gift_count >= 1000 ? afterDecimals(value: gift_count) : "\(gift_count)"
