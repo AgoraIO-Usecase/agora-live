@@ -26,14 +26,14 @@ import RTMSyncManager
     public var channel_id: String? // agora rtc channel id
     public var chatroom_id: String? // agora chat chatroom id
     @objc public var name: String? //Room Name
-    public var member_count: Int? = 3 //Number of people in the room
+    public var member_count: Int? = 0 //Number of people in the room
     public var gift_amount: Int? = 0 //Number of gifts
     public var owner: VRUser?
     @objc public var is_private: Bool = false //Is it a private room
     public var type: Int? = 0 //Room type, 0: Normal room, 1:3D room
     public var created_at: UInt? //Create room timestamp in milliseconds
     @objc public var roomPassword = ""
-    public var click_count: Int? = 3 //Number of viewers
+    public var click_count: Int? = 0 //Number of viewers
     public var announcement: String? // Notice
     public var ranking_list: [VRUser]? = [VRUser]() //Rich List
     public var member_list: [VRUser]? = [VRUser]() //User List

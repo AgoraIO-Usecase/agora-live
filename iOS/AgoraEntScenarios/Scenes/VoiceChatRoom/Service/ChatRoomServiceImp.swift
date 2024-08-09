@@ -196,7 +196,7 @@ extension ChatRoomServiceImp: VoiceRoomIMDelegate {
         }
         if map.keys.contains(where: { $0.hasPrefix("click_count") }) {
             guard let click_count = map["click_count"] else { return }
-            self.roomServiceDelegate?.onClickCountChanged(roomId: roomId, count: Int(click_count) ?? 3)
+            self.roomServiceDelegate?.onClickCountChanged(roomId: roomId, count: Int(click_count) ?? 0)
         }
         if map.keys.contains(where: { $0.hasPrefix("ranking_list") }) {
             guard let json = map["ranking_list"] else { return }
