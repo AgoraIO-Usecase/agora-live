@@ -10,6 +10,7 @@ import KakaJSON
 import ZSwiftBaseLib
 import AgoraChat.AgoraChatError
 import AgoraSyncManager_overseas
+import RTMSyncManager
 
 private let kSceneId = "scene_chatRoom_0.2.0"
 
@@ -29,8 +30,31 @@ public class ChatRoomServiceImp: NSObject {
     public var mics: [VRRoomMic] = [VRRoomMic]()
     public var applicants: [VoiceRoomApply] = [VoiceRoomApply]()
     private var connectState: ChatRoomServiceConnectState?
-    var syncUtilsInited: Bool = false
     @objc public weak var roomServiceDelegate:ChatRoomServiceSubscribeDelegate?
+    
+    private var isLogined: Bool = false
+    private lazy var roomManager = AUIRoomManagerImpl(sceneId: kSceneId)
+    private lazy var syncManager: AUISyncManager = {
+        let config = AUICommonConfig()
+        config.appId = AppContext.shared.appId()
+        let owner = AUIUserThumbnailInfo()
+        owner.userId = VLUserCenter.user.id
+        owner.userName = VLUserCenter.user.name
+        owner.userAvatar = VLUserCenter.user.headUrl
+        config.owner = owner
+        config.host = KeyCenter.RTMHostUrl
+        let manager = AUISyncManager(rtmClient: nil, commonConfig: config, logConfig: nil)
+        return manager
+    }()
+    
+    private lazy var roomService: AUIRoomService = {
+        let service = AUIRoomService(expirationPolicy: RoomExpirationPolicy.defaultPolicy(),
+                                     roomManager: roomManager,
+                                     syncmanager: syncManager)
+        return service
+    }()
+    
+    private var auiUserList = [AUIUserInfo]()
     
     func cleanCache() {
         self.userList = nil
@@ -170,6 +194,10 @@ extension ChatRoomServiceImp: VoiceRoomIMDelegate {
             guard let robot_volume = map["robot_volume"] else { return }
             self.roomServiceDelegate?.onRobotVolumeChanged(roomId: roomId, volume: UInt(robot_volume) ?? 50, from: fromId)
         }
+        if map.keys.contains(where: { $0.hasPrefix("click_count") }) {
+            guard let click_count = map["click_count"] else { return }
+            self.roomServiceDelegate?.onClickCountChanged(roomId: roomId, count: Int(click_count) ?? 3)
+        }
         if map.keys.contains(where: { $0.hasPrefix("ranking_list") }) {
             guard let json = map["ranking_list"] else { return }
             let ranking_list = json.toArray()?.kj.modelArray(VRUser.self)
@@ -271,7 +299,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
     }
     
     func fetchRoomDetail(entity: VRRoomEntity, completion: @escaping (Error?, VRRoomInfo?) -> Void) {
-        let keys = ["ranking_list","member_list","gift_amount","mic_0","mic_1","mic_2","mic_3","mic_4","mic_5","mic_6","mic_7","robot_volume","use_robot"]
+        let keys = ["ranking_list","member_list","gift_amount", "click_count", "mic_0","mic_1","mic_2","mic_3","mic_4","mic_5","mic_6","mic_7","robot_volume","use_robot"]
         let roomInfo = VRRoomInfo()
         roomInfo.room = entity
         let group = DispatchGroup()
@@ -296,6 +324,9 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
             }
             if let gift_amount = map?["gift_amount"] as? String {
                 roomInfo.room?.gift_amount = Int(gift_amount)
+            }
+            if let click_count = map?["click_count"] as? String {
+                roomInfo.room?.click_count = Int(click_count)
             }
             if let use_robot = map?["use_robot"] as? String {
                 roomInfo.room?.use_robot = (Int(use_robot) ?? 0 > 0)
@@ -719,39 +750,43 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         }
         return mic_index
     }
-
-    func initScene(completion: @escaping () -> Void) {
-        if syncUtilsInited {
-            completion()
+    
+    private func preGenerateToken(completion:@escaping (NSError?)->()) {
+        AppContext.shared.agoraRTCToken = ""
+        AppContext.shared.agoraRTMToken = ""
+        let date = Date()
+        NetworkManager.shared.generateToken(channelName: "",
+                                            uid: "\(UserInfo.userId)",
+                                            tokenTypes: [.rtc, .rtm]) { token in
+            guard let rtcToken = token, let rtmToken = token else {
+                completion(NSError(domain: "generate token fail", code: -1))
+                return
+            }
+            AppContext.shared.agoraRTCToken = rtcToken
+            AppContext.shared.agoraRTMToken = rtmToken
+            agoraPrint("[Token] sync manager login token rtm:\(rtmToken) rtc: \(rtcToken)")
+            agoraPrint("[Timing]preGenerateToken rtc & rtm cost: \(Int64(-date.timeIntervalSinceNow * 1000)) ms")
+            completion(nil)
+        }
+    }
+    
+    private func login(completion:(@escaping (NSError?)-> Void)) {
+        let token = AppContext.shared.agoraRTMToken
+        if !token.isEmpty {
+            let date = Date()
+            self.syncManager.rtmManager.login(token: token) { err in
+                agoraPrint("[Timing]login cost: \(Int64(-date.timeIntervalSinceNow * 1000))ms")
+                self.isLogined = err == nil ? true : false
+                completion(err)
+            }
             return
         }
-        SyncUtil.reset()
-        SyncUtil.initSyncManager(sceneId: kSceneId) {
-//            guard let self = self else {
-//                return
-//            }
-//            self.syncUtilsInited = true
-//
-//            completion()
-        }
-        
-        SyncUtil.subscribeConnectState { [weak self] (state) in
-            guard let self = self else {
+        preGenerateToken { [weak self] err in
+            if let err = err {
+                completion(err)
                 return
             }
-            self.connectState = ChatRoomServiceConnectState(rawValue: state.rawValue)
-            if let chatState = self.connectState {
-                self.roomServiceDelegate?.onConnectStateChanged(state: chatState)
-            }
-            agoraPrint("subscribeConnectState: \(state) \(self.syncUtilsInited)")
-//            self.networkDidChanged?(KTVServiceNetworkStatus(rawValue: UInt(state.rawValue)))
-            guard !self.syncUtilsInited else {
-                //TODO: retry get data if restore connection
-                return
-            }
-            
-            self.syncUtilsInited = true
-            completion()
+            self?.login(completion: completion)
         }
     }
     
@@ -761,24 +796,27 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
     ///- completion: Complete callback (error message, room list)
     func fetchRoomList(page: Int,
                      completion: @escaping (Error?, [VRRoomEntity]?) -> Void) {
-        agoraPrint("fetchRoomList start")
-        initScene { [weak self] in
-            if self?.connectState != .open {
-                DispatchQueue.main.async {
-                    completion(self?.networkError(),nil)
+        if isLogined == false {
+            login {[weak self] err in
+                if let err = err {
+                    completion(err, nil)
+                    return
                 }
-                return
+                self?.fetchRoomList(page: page, completion: completion)
             }
-            SyncUtil.fetchAll { [weak self] results in
-                agoraPrint("fetchRoomList result == \(results.compactMap { $0.toJson() })")
-                
-                let dataArray = results.map({ info in
-                    return model(from: info.toJson()?.z.jsonToDictionary() ?? [:], VRRoomEntity.self)
-                })
-                self?.roomList = dataArray.sorted(by: {$0.created_at ?? 0 > $1.created_at ?? 0})
-                completion(nil, self?.roomList)
-            } fail: { error in
-                completion(error, nil)
+            return
+        }
+        let currentUserId = VLUserCenter.user.id
+        roomService.getRoomList(lastCreateTime: 0,
+                                pageSize: 50) { info in
+            return info.owner?.userId == currentUserId
+        } completion: { err, ts, list in
+            if let err = err {
+                completion(err, nil)
+            } else {
+                let roomList = list?.map({ $0.voice_toRoomEntity()}) ?? []
+                self.roomList = roomList.sorted(by: {$0.created_at ?? 0 > $1.created_at ?? 0})
+                completion(nil, self.roomList)
             }
         }
     }
@@ -802,150 +840,126 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
     /// - Parameters:
     ///- room: Room object information
     ///- completion: Complete callback (error message)
-    func createRoom(room: VRRoomEntity, completion: @escaping (SyncError?, VRRoomEntity?) -> Void) {
-        agoraPrint("createRoom  roomId: \(room.room_id ?? "") roomName: \(room.name ?? "")")
-        let owner: VRUser = VRUser()
-        owner.rtc_uid = VLUserCenter.user.id
-        owner.name = VLUserCenter.user.name
-        owner.uid = VLUserCenter.user.id
-        owner.mic_index = 0
-        owner.portrait = VLUserCenter.user.headUrl
-        
-        self.roomList?.append(room)
-        let params = room.kj.JSONObject()
-        self.initScene {
-            if self.connectState != .open {
-                completion(SyncError(message: "voice_network_disconnected".voice_localized, code: self.connectState?.rawValue ?? -1),nil)
+    func createRoom(room: VRRoomEntity, completion: @escaping (Error?, VRRoomEntity?) -> Void) {
+        if isLogined == false {
+            login {[weak self] err in
+                if let err = err {
+                    completion(err, nil)
+                    return
+                }
+                self?.createRoom(room: room,
+                                 completion: completion)
+            }
+            return
+        }
+        guard let roomId = room.room_id else {
+            completion(NSError(domain: "error", code: -1), nil)
+            return
+        }
+        let roomInfo = AUIRoomInfo.voice_fromVRRoomEntity(room)
+        roomService.createRoom(room: roomInfo) { [weak self] err, info in
+            guard let `self` = self, err == nil else {
+                completion(err, nil)
                 return
             }
-            SyncUtil.joinScene(id: room.room_id ?? "",
-                               userId:VLUserCenter.user.id,
-                               isOwner: true,
-                               property: params) {[weak self] result in
-                let model = model(from: result.toJson()?.z.jsonToDictionary() ?? [:], VRRoomEntity.self)
-                self?.roomId = room.room_id
-                self?._startCheckExpire()
-                //Add yellow detection interface
-                NetworkManager.shared.voiceIdentify(channelName: room.channel_id ?? "", channelType: room.sound_effect == 3 ? 0 : 1, sceneType: .voice) { msg in
-                    agoraPrint("\(msg == nil ? "开启鉴黄成功" : "开启鉴黄失败")")
+            roomList?.append(room)
+            self.roomId = room.room_id
+            self._startCheckExpire()
+            if let scene = self.syncManager.getScene(channelName: roomId) {
+                scene.bindRespDelegate(delegate: self)
+                scene.userService.bindRespDelegate(delegate: self)
+                self.auiUserList = scene.userService.userList
+                let count = self.auiUserList.count + 2
+                self.roomServiceDelegate?.onMemberCountChanged(roomId: roomId, count: count)
+            }
+            //添加鉴黄接口
+            NetworkManager.shared.voiceIdentify(channelName: room.channel_id ?? "", channelType: room.sound_effect == 3 ? 0 : 1, sceneType: .voice) { msg in
+                agoraPrint("\(msg == nil ? "open voice security success" : "open voice security failed")")
+            }
+            NetworkManager.shared.generateToken(channelName: room.room_id ?? "",
+                                                uid: "\(UserInfo.userId)",
+                                                tokenTypes: [.rtc, .rtm]) { token in
+                guard let rtcToken = token, let rtmToken = token else {
+                    completion(nil, nil)
+                    return
                 }
-                
-                NetworkManager.shared.generateToken(channelName: room.room_id ?? "",
-                                                    uid: "\(UserInfo.userId)",
-                                                    tokenTypes: [.rtc, .rtm]) { token in
-                    guard let rtcToken = token, let rtmToken = token else {
-                        completion(nil, nil)
-                        return
-                    }
-                    AppContext.shared.agoraRTCToken = rtcToken
-                    AppContext.shared.agoraRTMToken = rtmToken
-                    completion(nil, model)
-                }
-                
-            } fail: { error in
-                completion(error, nil)
+                AppContext.shared.agoraRTCToken = rtcToken
+                AppContext.shared.agoraRTMToken = rtmToken
+                agoraPrint("[Token] create room token room:\(roomInfo.roomId) rtm:\(rtmToken) rtc: \(rtcToken)")
+                let roomEntity = info?.voice_toRoomEntity()
+                completion(nil, roomEntity)
             }
         }
-
     }
     
     func joinRoom(_ roomId: String, completion: @escaping (Error?, VRRoomEntity?) -> Void) {
-        agoraPrint("joinRoom  roomId: \(roomId)")
-        /**
-         Get the corresponding room information first
-         1. Obtain user information
-         2. Modify click_ Count
-         3. Update syncManager
-         4. Join the chat room and update KV
-         */
-        
-        if let roomList = self.roomList {
-            for room in roomList {
-                if room.room_id == roomId {
-                    let updateRoom: VRRoomEntity = room
-                    if room.member_count ?? 0 >= 19 {
-                        completion(self.limitError(),nil)
-                        return
-                    }
-                    updateRoom.member_count = (updateRoom.member_count ?? 0) + 1
-                    updateRoom.click_count = (updateRoom.click_count ?? 0) + 1
-                    let params = updateRoom.kj.JSONObject()
-                    
-                    initScene{
-                        if self.connectState != .open {
-                            completion(self.networkError(),nil)
-                            return
-                        }
-                        SyncUtil.joinScene(id: roomId,
-                                           userId: VLUserCenter.user.id,
-                                           isOwner: VLUserCenter.user.id == room.owner?.uid,
-                                           property: params) {[weak self] result in
-
-                            NetworkManager.shared.generateToken(channelName: room.room_id ?? "",
-                                                                uid: "\(UserInfo.userId)",
-                                                                tokenTypes: [.rtc, .rtm]) { token in
-                                guard let rtcToken = token, let rtmToken = token else {
-                                    completion(nil, nil)
-                                    return
-                                }
-                                AppContext.shared.agoraRTCToken = rtcToken
-                                AppContext.shared.agoraRTMToken = rtmToken
-                                self?.roomId = roomId
-                                self?._startCheckExpire()
-                                completion(nil, updateRoom)
-                            }
-                        } fail: { error in
-                            completion(error, nil)
-                        }
-                    }
-                    break
+        if isLogined == false {
+            login {[weak self] err in
+                if let err = err {
+                    completion(err, nil)
+                    return
                 }
+                self?.joinRoom(roomId, completion: completion)
+            }
+            return
+        }
+        guard let roomEntity = self.roomList?.first(where: {$0.room_id == roomId}) else {
+            completion(nil, nil)
+            return
+        }
+        let roomInfo = AUIRoomInfo.voice_fromVRRoomEntity(roomEntity)
+        agoraPrint("joinRoom roomId: \(roomInfo.roomId) roomName: \(roomInfo.roomName)")
+        roomService.enterRoom(roomInfo: roomInfo) {[weak self] err in
+            guard let `self` = self else { return }
+            if err != nil {
+                completion(err, nil)
+                return
+            }
+            NetworkManager.shared.generateToken(channelName:roomId,
+                                                uid: "\(UserInfo.userId)",
+                                                tokenTypes: [.rtc, .rtm]) { token in
+                guard let rtcToken = token, let rtmToken = token else {
+                    completion(nil, nil)
+                    return
+                }
+                AppContext.shared.agoraRTCToken = rtcToken
+                AppContext.shared.agoraRTMToken = rtmToken
+                self.roomId = roomId
+                self._startCheckExpire()
+                let scene = self.syncManager.getScene(channelName: roomId)
+                scene?.bindRespDelegate(delegate: self)
+                scene?.userService.bindRespDelegate(delegate: self)
+                completion(nil, roomEntity)
             }
         }
-        
-        
     }
     
     //Todo Remove Owner
     func leaveRoom(_ roomId: String, completion: @escaping (Error?, Bool) -> Void) {
-        agoraPrint("leaveRoom  roomId: \(roomId)")
-        self.roomId = nil
-        /**
-         Get the corresponding room information first
-         If the homeowner needs to destroy the room, ordinary members need to click_ Count -1 Simultaneously, it is necessary to exit RTC+IM
-         2. The homeowner needs to call destory
-         */
-        if let roomList = self.roomList {
-            for (index,room) in roomList.enumerated() {
-                if room.room_id == roomId {
-                    var isOwner = false
-                    if let owner_uid = room.owner?.uid {
-                        isOwner = owner_uid == VLUserCenter.user.id
-                    }
-                    if isOwner {
-                        self.roomList?.remove(at: index)
-                        VoiceRoomIMManager.shared?.userDestroyedChatroom()
-                        SyncUtil.scene(id: roomId)?.deleteScenes()
-                    } else {
-                        let updateRoom: VRRoomEntity = room
-                        updateRoom.member_count = (updateRoom.member_count ?? 0) - 1
-                        let params = updateRoom.kj.JSONObject()
-                        SyncUtil
-                            .scene(id: roomId)?
-                            .update(key: "",
-                                    data: params,
-                                    success: { obj in
-                                agoraPrint("updateUserCount success")
-                            },
-                                    fail: { error in
-                                agoraPrint("updateUserCount fail")
-                            })
-                        VoiceRoomIMManager.shared?.userQuitRoom(completion: nil)
-                    }
-                    break
+        if isLogined == false {
+            login {[weak self] err in
+                if let err = err {
+                    completion(err, false)
+                    return
                 }
+                self?.leaveRoom(roomId, completion: completion)
             }
+            return
         }
+        roomService.leaveRoom(roomId: roomId)
+        if let scene = self.syncManager.getScene(channelName: roomId) {
+            scene.unbindRespDelegate(delegate: self)
+            scene.userService.unbindRespDelegate(delegate: self)
+            scene.arbiter.unSubscribeEvent(delegate: self)
+        }
+        if roomService.isRoomOwner(roomId: roomId) {
+            VoiceRoomIMManager.shared?.userDestroyedChatroom()
+            SyncUtil.scene(id: roomId)?.deleteScenes()
+        } else {
+            // 更新房间列表人数信息
+            VoiceRoomIMManager.shared?.userQuitRoom(completion: nil)
+        }
+        completion(nil, true)
     }
     
     func createMics() -> [String:String] {
@@ -1019,4 +1033,95 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         }
     }
 }
+
+extension ChatRoomServiceImp: AUISceneRespDelegate {
+    /// 房间过期的回调
+    /// - Parameter channelName: <#channelName description#>
+    public func onSceneExpire(channelName: String) {
+        
+    }
+    
+    /// 房间被销毁的回调
+    /// - Parameter channelName: 房间id
+    public func onSceneDestroy(channelName: String) {
+        roomService.leaveRoom(roomId: channelName)
+        self.roomServiceDelegate?.onRoomExpired()
+    }
+    
+    /// Description 房间异常，需要退出
+    ///
+    /// - Parameters:
+    ///   - channelName: 房间id
+    ///   - reason: 异常原因
+    public func onSceneFailed(channelName: String, reason: String) {
+        
+    }
+}
+
+extension ChatRoomServiceImp: AUIArbiterDelegate {
+    public func onArbiterDidChange(channelName: String, arbiterId: String) {
+        
+    }
+    
+    public func onError(channelName: String, error: NSError) {
+        
+    }
+}
+
+extension ChatRoomServiceImp: AUIUserRespDelegate {
+    public func onRoomUserSnapshot(roomId: String, userList: [AUIUserInfo]) {
+        self.auiUserList = userList
+        let count = self.auiUserList.count + 2
+        self.roomServiceDelegate?.onMemberCountChanged(roomId: roomId, count: count)
+    }
+    
+    public func onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
+        guard roomId == self.roomId else {
+            return
+        }
+        self.auiUserList.removeAll(where: {$0.userId == userInfo.userId})
+        self.auiUserList.append(userInfo)
+        if let roomEntity = self.roomList?.first(where: {$0.room_id == roomId}) {
+            let count = self.auiUserList.count + 2
+            let roomInfo = AUIRoomInfo.voice_fromVRRoomEntity(roomEntity)
+            roomInfo.customPayload["member_count"] = count
+            roomManager.updateRoom(room: roomInfo) { error, info in
+            }
+            self.roomServiceDelegate?.onMemberCountChanged(roomId: roomId, count: count)
+        }
+    }
+    
+    public func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo, reason: AUIRtmUserLeaveReason) {
+        guard roomId == self.roomId else {
+            return
+        }
+        self.auiUserList.removeAll(where: {$0.userId == userInfo.userId})
+        if let roomEntity = self.roomList?.first(where: {$0.room_id == roomId}) {
+            let count = self.auiUserList.count + 2
+            let roomInfo = AUIRoomInfo.voice_fromVRRoomEntity(roomEntity)
+            roomInfo.customPayload["member_count"] = count
+            roomManager.updateRoom(room: roomInfo) { error, info in
+            }
+            self.roomServiceDelegate?.onMemberCountChanged(roomId: roomId, count: count)
+        }
+    }
+    
+    public func onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {
+        
+    }
+    
+    public func onUserAudioMute(userId: String, mute: Bool) {
+        
+    }
+    
+    public func onUserVideoMute(userId: String, mute: Bool) {
+        
+    }
+    
+    public func onUserBeKicked(roomId: String, userId: String) {
+        
+    }
+    
+}
+
 

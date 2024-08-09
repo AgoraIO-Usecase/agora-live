@@ -7,6 +7,7 @@
 
 import Foundation
 import KakaJSON
+import RTMSyncManager
 
 @objc public class VRRoomsEntity: NSObject, Convertible {
     public var total: Int? //Total number of rooms
@@ -25,14 +26,14 @@ import KakaJSON
     public var channel_id: String? // agora rtc channel id
     public var chatroom_id: String? // agora chat chatroom id
     @objc public var name: String? //Room Name
-    public var member_count: Int? = 0 //Number of people in the room
+    public var member_count: Int? = 3 //Number of people in the room
     public var gift_amount: Int? = 0 //Number of gifts
     public var owner: VRUser?
     @objc public var is_private: Bool = false //Is it a private room
     public var type: Int? = 0 //Room type, 0: Normal room, 1:3D room
     public var created_at: UInt? //Create room timestamp in milliseconds
     @objc public var roomPassword = ""
-    public var click_count: Int? = 0 //Number of viewers
+    public var click_count: Int? = 3 //Number of viewers
     public var announcement: String? // Notice
     public var ranking_list: [VRUser]? = [VRUser]() //Rich List
     public var member_list: [VRUser]? = [VRUser]() //User List
@@ -52,6 +53,49 @@ import KakaJSON
 
     public func kj_modelKey(from property: Property) -> ModelPropertyKey {
         property.name
+    }
+}
+
+extension AUIRoomInfo {
+    
+    func voice_toRoomEntity() -> VRRoomEntity {
+        let model = VRRoomEntity()
+        model.room_id = roomId
+        model.name = roomName
+        let chatRoomOwner = VRUser()
+        chatRoomOwner.name = owner?.userName ?? ""
+        chatRoomOwner.portrait = owner?.userAvatar ?? ""
+        chatRoomOwner.uid = owner?.userId ?? ""
+        chatRoomOwner.chat_uid = owner?.userId ?? ""
+        chatRoomOwner.rtc_uid = owner?.userId ?? ""
+        model.owner = chatRoomOwner
+        model.created_at = UInt(createTime)
+        model.channel_id = roomId
+        model.chatroom_id = customPayload["chatroom_id"] as? String
+        model.is_private = customPayload["is_private"] as? Bool ?? false
+        model.roomPassword = customPayload["roomPassword"] as? String ?? ""
+        model.rtc_uid = Int(owner?.userId ?? "") ?? 0
+        model.sound_effect = customPayload["sound_effect"] as? Int ?? 1
+        model.member_count = customPayload["member_count"] as? Int ?? 1
+        return model
+    }
+    
+    static func voice_fromVRRoomEntity(_ model: VRRoomEntity) -> AUIRoomInfo {
+        let roomInfo = AUIRoomInfo()
+        roomInfo.roomId = model.room_id ?? ""
+        roomInfo.roomName = model.name ?? ""
+        let owner = AUIUserThumbnailInfo()
+        owner.userId = model.owner?.uid ?? ""
+        owner.userName = model.owner?.name ?? ""
+        owner.userAvatar = model.owner?.portrait ?? ""
+        roomInfo.owner = owner
+        roomInfo.createTime = Int64(model.created_at ?? 0)
+        roomInfo.customPayload["chatroom_id"] = model.chatroom_id
+        roomInfo.customPayload["is_private"] = model.is_private
+        roomInfo.customPayload["roomPassword"] = model.roomPassword
+        roomInfo.customPayload["sound_effect"] = model.sound_effect
+        roomInfo.customPayload["member_count"] = model.member_count
+        return roomInfo
     }
 }
 
