@@ -189,7 +189,7 @@ extension CommerceAgoraKitManager {
         let net = netCondition
         let performance = performanceMode
         rtcParam.suggested = true
-        if ([.fluent, .smooth].contains(performance)) {
+        if ([.fluent].contains(performance)) {
             CommerceSettingKey.PVC.writeValue(true)
             rtcParam.pvc = true
         } else {
