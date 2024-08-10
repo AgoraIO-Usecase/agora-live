@@ -2575,6 +2575,10 @@ class LiveDetailFragment : Fragment() {
                 eventListener
             ).let {
                 if(Math.abs(it) == Constants.ERR_JOIN_CHANNEL_REJECTED){
+                    mRtcEngine.updateChannelMediaOptionsEx(
+                        channelMediaOptions,
+                        pkRtcConnection
+                    )
                     mPKEventHandler = eventListener
                     mRtcEngine.addHandlerEx(mPKEventHandler, RtcConnection(interactionInfo!!.roomId, UserManager.getInstance().user.id.toInt()))
                 }
