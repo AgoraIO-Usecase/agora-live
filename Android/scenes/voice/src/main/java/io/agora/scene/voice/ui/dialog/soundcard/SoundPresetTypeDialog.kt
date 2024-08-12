@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceDialogSoundPresetTypeBinding
 import io.agora.scene.voice.rtckit.*
-import io.agora.voice.common.ui.dialog.BaseSheetDialog
+import io.agora.voice.common.ui.dialog.BaseFixedHeightSheetDialog
 
-class SoundPresetTypeDialog: BaseSheetDialog<VoiceDialogSoundPresetTypeBinding>() {
+class SoundPresetTypeDialog: BaseFixedHeightSheetDialog<VoiceDialogSoundPresetTypeBinding>() {
 
     companion object {
         const val TAG: String = "SoundTypeFragment"
@@ -21,7 +21,7 @@ class SoundPresetTypeDialog: BaseSheetDialog<VoiceDialogSoundPresetTypeBinding>(
 
     private var adapter: SoundPresetsAdapter? = null
 
-    private var mOnSoundTypeChange: (() -> Unit)? = null
+    var mOnSoundTypeChange: (() -> Unit)? = null
 
     private lateinit var mManager: AgoraSoundCardManager
 
@@ -44,6 +44,10 @@ class SoundPresetTypeDialog: BaseSheetDialog<VoiceDialogSoundPresetTypeBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.attributes?.windowAnimations = R.style.voice_BottomSheetDialogAnimation
+        binding?.apply {
+            setOnApplyWindowInsets(root)
+        }
         mManager = AgoraRtcEngineController.get().soundCardManager() ?: run {
             dismiss()
             return
@@ -58,17 +62,17 @@ class SoundPresetTypeDialog: BaseSheetDialog<VoiceDialogSoundPresetTypeBinding>(
             }
             adapter = SoundPresetsAdapter(soundTypes, index) { index ->
                 val soundType = soundTypes[index]
-                mManager.setPresetSound(soundType) {}
+                mManager.setPresetSound(soundType) {
+                    mOnSoundTypeChange?.invoke()
+                }
                 adapter?.notifyDataSetChanged()
+
             }
             binding.rvSoundType.adapter = adapter
             binding.btnClose.setOnClickListener {
                 dismiss()
             }
         }
-    }
-    fun setOnSoundTypeChange(action: (() -> Unit)?) {
-        mOnSoundTypeChange = action
     }
 }
 private class SoundPresetsAdapter(

@@ -14,12 +14,13 @@ import io.agora.scene.voice.model.constructor.RoomAudioSettingsConstructor
 import io.agora.scene.voice.rtckit.AgoraRtcEngineController
 import io.agora.voice.common.constant.ConfigConstants.DISABLE_ALPHA
 import io.agora.voice.common.constant.ConfigConstants.ENABLE_ALPHA
+import io.agora.voice.common.ui.dialog.BaseFixedHeightSheetDialog
 import io.agora.voice.common.ui.dialog.BaseSheetDialog
 import io.agora.voice.common.utils.LogTools.logD
 import io.agora.voice.common.utils.ToastTools
 import io.agora.voice.common.utils.onStopTrackingTouch
 
-class RoomAudioSettingsSheetDialog : BaseSheetDialog<VoiceDialogAudioSettingBinding>() {
+class RoomAudioSettingsSheetDialog : BaseFixedHeightSheetDialog<VoiceDialogAudioSettingBinding>() {
 
     companion object {
         const val KEY_AUDIO_SETTINGS_INFO = "audio_settings"

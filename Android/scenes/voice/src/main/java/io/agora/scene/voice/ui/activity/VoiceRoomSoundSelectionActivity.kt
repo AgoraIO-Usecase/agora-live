@@ -94,8 +94,10 @@ class VoiceRoomSoundSelectionActivity : BaseViewBindingActivity<VoiceActivitySou
         binding.list.adapter = soundSelectAdapter
 
         voiceRoomViewModel.createRoomObservable.observe(this) { roomInfo: AUIRoomInfo? ->
-            hideLoadingView()
-            roomInfo ?: return@observe
+            if (roomInfo == null) {
+                hideLoadingView()
+                return@observe
+            }
             gotoChatRoom(roomInfo)
         }
     }

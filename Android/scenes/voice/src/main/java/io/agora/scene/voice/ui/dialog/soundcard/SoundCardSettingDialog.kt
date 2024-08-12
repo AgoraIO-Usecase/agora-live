@@ -1,22 +1,13 @@
 package io.agora.scene.voice.ui.dialog.soundcard
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.Typeface
-import android.media.AudioManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.text.style.TypefaceSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -26,9 +17,9 @@ import androidx.core.view.isVisible
 import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceDialogSoundCardBinding
 import io.agora.scene.voice.rtckit.*
-import io.agora.voice.common.ui.dialog.BaseSheetDialog
+import io.agora.voice.common.ui.dialog.BaseFixedHeightSheetDialog
 
-class SoundCardSettingDialog: BaseSheetDialog<VoiceDialogSoundCardBinding>() {
+class SoundCardSettingDialog: BaseFixedHeightSheetDialog<VoiceDialogSoundCardBinding>() {
 
     companion object {
         const val TAG: String = "SoundCardFragment"
@@ -45,11 +36,20 @@ class SoundCardSettingDialog: BaseSheetDialog<VoiceDialogSoundCardBinding>() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.attributes?.windowAnimations = R.style.voice_BottomSheetDialogAnimation
         mManager = AgoraRtcEngineController.get().soundCardManager() ?: run {
             dismiss()
             return
         }
         super.onViewCreated(view, savedInstanceState)
+        binding?.apply {
+            setOnApplyWindowInsets(root)
+        }
+        setupView()
+    }
+
+    fun updateView(){
         setupView()
     }
 
@@ -71,7 +71,7 @@ class SoundCardSettingDialog: BaseSheetDialog<VoiceDialogSoundCardBinding>() {
             }
             groupSoundCardAbnormal.isVisible = false
             mcbSoundCardSwitch.isChecked = mManager.isEnable()
-            ivBackIcon.setOnClickListener {
+            btnClose.setOnClickListener {
                 dismiss()
             }
             mcbSoundCardSwitch.setOnCheckedChangeListener { buttonView, isChecked ->

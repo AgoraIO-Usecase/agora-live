@@ -100,6 +100,7 @@ public class GiftBottomDialog extends BaseSheetDialog<VoiceDialogGiftLayoutBindi
         adapter.setOnVpFragmentItemListener(new GiftFragmentAdapter.OnVpFragmentItemListener() {
             @Override
             public void onVpFragmentItem(int position, Object bean) {
+                adapter.notifyDataSetChanged();
                 giftBean = (GiftBean) bean;
                 check(giftBean.getPrice());
                 reset();
@@ -114,6 +115,7 @@ public class GiftBottomDialog extends BaseSheetDialog<VoiceDialogGiftLayoutBindi
                 binding.count.setText("1");
             }
         });
+
     }
 
     private void isShowPop(boolean isShow) {
