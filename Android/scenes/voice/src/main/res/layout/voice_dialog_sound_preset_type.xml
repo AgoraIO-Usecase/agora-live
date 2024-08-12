@@ -11,7 +11,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/voice_bg_rect_top_radius20_white"
+        android:background="@drawable/voice_bg_rect_top_radius20_gradient_white"
         app:layout_constraintTop_toTopOf="@+id/ivBottomSheetTitle"
         app:layout_constraintBottom_toBottomOf="@+id/mtBottomSheetTitle"/>
 
@@ -19,35 +19,30 @@
         android:id="@+id/ivBottomSheetTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingVertical="8dp"
+        android:src="@drawable/voice_icon_room_rectangle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/mtBottomSheetTitle"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:textSize="18sp"
-        android:text="@string/voice_sound_preset_type"
-        android:textStyle="bold"
-        android:textColor="@color/def_text_color_040"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivBottomSheetTitle" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/btnClose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
         android:paddingHorizontal="16dp"
         android:paddingVertical="9dp"
         android:src="@mipmap/back_empty_white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="@+id/mtBottomSheetTitle"
+        app:layout_constraintBottom_toBottomOf="@+id/mtBottomSheetTitle"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/mtBottomSheetTitle"
+        style="@style/voice_bottom_sheet_title_style"
+        android:text="@string/voice_sound_preset_type"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivBottomSheetTitle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSoundType"
@@ -57,7 +52,6 @@
         tools:listitem="@layout/voice_dialog_sound_type_item_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mtBottomSheetTitle"
-        />
+        app:layout_constraintTop_toBottomOf="@id/mtBottomSheetTitle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

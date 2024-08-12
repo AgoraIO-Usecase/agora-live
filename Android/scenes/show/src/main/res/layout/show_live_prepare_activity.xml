@@ -188,8 +188,6 @@
             android:id="@+id/tvTip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@mipmap/show_live_prepare_ic_tip"
-            android:drawablePadding="6dp"
             android:paddingHorizontal="50dp"
             android:paddingVertical="25dp"
             android:text="@string/show_live_prepare_tip"

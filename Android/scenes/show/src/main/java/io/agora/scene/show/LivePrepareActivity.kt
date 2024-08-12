@@ -7,7 +7,10 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.TextUtils
+import android.text.style.ImageSpan
 import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.view.View
@@ -16,6 +19,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -101,6 +105,20 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
 
     }
 
+    private fun setTips(tips: String) {
+        binding.apply {
+            // 创建一个 Drawable 对象并设置它的大小
+            val icon = ContextCompat.getDrawable(root.context, R.mipmap.show_live_prepare_ic_tip)
+            icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
+            // 创建一个 SpannableString 并将图标设置在字符串的开始位置
+            val spannableString = SpannableString("  $tips")
+            val imageSpan = ImageSpan(icon!!, ImageSpan.ALIGN_BASELINE)
+            spannableString.setSpan(imageSpan, 0, 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+            // 设置 SpannableString 到 TextView
+            tvTip.text = spannableString
+        }
+    }
+
     /**
      * Init view
      *
@@ -115,13 +133,12 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
             binding.root.setPaddingRelative(inset.left, 0, inset.right, inset.bottom)
             WindowInsetsCompat.CONSUMED
         }
+        setTips(getString(R.string.show_live_prepare_tip))
         binding.ivRoomCover.setImageResource(getThumbnailIcon(mThumbnailId))
         binding.tvRoomId.text = getString(R.string.show_room_id, mRoomId)
         binding.etRoomName.setOnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    mInputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
-                }
+                mInputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false

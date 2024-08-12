@@ -8,7 +8,6 @@ import io.agora.mediaplayer.IMediaPlayer
 import io.agora.mediaplayer.data.CacheStatistics
 import io.agora.mediaplayer.data.PlayerPlaybackStats
 import io.agora.rtc2.*
-import io.agora.scene.base.AudioModeration
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.voice.global.VoiceBuddyFactory
 import io.agora.scene.voice.model.SoundAudioBean
@@ -74,8 +73,6 @@ class AgoraRtcEngineController {
                 this.joinCallback = joinCallback
                 VoiceBuddyFactory.get().rtcChannelTemp.broadcaster = broadcaster
                 checkJoinChannel(channelId, rtcUid, soundEffect, broadcaster)
-                AudioModeration.moderationAudio(channelId, rtcUid.toLong(),
-                    AudioModeration.AgoraChannelType.broadcast, "voice", {})
             },{
                 joinCallback?.onError(Constants.ERR_FAILED, "get token error")
             }
