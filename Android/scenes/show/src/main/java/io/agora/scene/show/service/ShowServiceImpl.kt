@@ -48,6 +48,7 @@ import io.agora.scene.show.service.rtmsync.isExConnected
 import io.agora.scene.show.service.rtmsync.isExRoomOwner
 import io.agora.scene.show.service.rtmsync.setupExtensions
 import io.agora.scene.show.service.rtmsync.subscribeExConnectionState
+import io.agora.scene.show.utils.ShowConstants
 
 const val kRoomSceneId = "overseas_show_1.3.0"
 const val kRoomPresenceChannelName = "overseas_show_1_3_0_9999999999"
@@ -182,9 +183,25 @@ class ShowServiceImpl(context: Context) : ShowServiceProtocol {
             if (ex != null) {
                 error?.invoke(RuntimeException(ex))
             } else {
-                success.invoke(appendRobotRooms(list?.map { it.toShowRoomDetailModel() } ?: emptyList()))
+                val roomList = appendRobotRooms(list?.map { it.toShowRoomDetailModel() } ?: emptyList())
+                success.invoke(removeReportRooms(roomList))
             }
         }
+    }
+
+    private fun removeReportRooms(roomList: List<ShowRoomDetailModel>): MutableList<ShowRoomDetailModel> {
+        val retRoomList = mutableListOf<ShowRoomDetailModel>()
+        retRoomList.addAll(roomList)
+
+        val reportRoomList = roomList.filter {
+            (ShowConstants.reportContents.contains(it.roomName) || ShowConstants.reportUsers.contains(it.ownerId))
+        }
+        if (reportRoomList.isNotEmpty()) {
+            reportRoomList.forEach {
+                retRoomList.remove(it)
+            }
+        }
+        return retRoomList
     }
 
     override fun createRoom(

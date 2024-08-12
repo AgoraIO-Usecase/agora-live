@@ -307,7 +307,7 @@ class LiveDetailFragment : Fragment() {
 
     private fun onClickMore() {
         context?.let {
-            val dialog = TopFunctionDialog(it)
+            val dialog = TopFunctionDialog(it, true)
             dialog.reportContentCallback = {
                 CommerceConstants.reportContents[mRoomInfo.roomName] = true
                 activity?.finish()
