@@ -48,7 +48,7 @@ class ShowSyncManagerServiceImpl constructor(
     /**
      * K scene id
      */
-    private val kSceneId = "scene_ecommerce_1_3_0"
+    private val kSceneId = "scene_ecommerce_1.3.0"
     private val kCollectionIdLike = "commerce_like_collection"
     private val kCollectionIdMessage = "commerce_message_collection"
     private val kCollectionIdBid = "commerce_goods_bid_collection"
@@ -171,6 +171,10 @@ class ShowSyncManagerServiceImpl constructor(
             }
         }
         roomInfoControllers.clear()
+        syncManager.logout()
+        syncManager.release()
+        isRtmLogin = false
+        RtmClient.release()
     }
 
     override fun getCurrentTimestamp(roomId: String): Long {

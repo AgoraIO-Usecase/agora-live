@@ -915,25 +915,29 @@ class LiveDetailFragment : Fragment() {
             refreshTopUserCount(count)
         }
         mService.subscribeUserJoin(mRoomId) { id, name, _ ->
-            animateUserEntryExit(name, mBinding.root)
-            insertMessageItem(
-                ShowMessage(
-                    id,
-                    name,
-                    getString(R.string.commerce_live_chat_coming),
-                    System.currentTimeMillis().toDouble()
+            if (context != null) {
+                animateUserEntryExit(name, mBinding.root)
+                insertMessageItem(
+                    ShowMessage(
+                        id,
+                        name,
+                        getString(R.string.commerce_live_chat_coming),
+                        System.currentTimeMillis().toDouble()
+                    )
                 )
-            )
+            }
         }
         mService.subscribeUserLeave(mRoomId) { id, name, _ ->
-            insertMessageItem(
-                ShowMessage(
-                    id,
-                    name,
-                    getString(R.string.commerce_live_chat_leaving),
-                    System.currentTimeMillis().toDouble()
+            if (context != null) {
+                insertMessageItem(
+                    ShowMessage(
+                        id,
+                        name,
+                        getString(R.string.commerce_live_chat_leaving),
+                        System.currentTimeMillis().toDouble()
+                    )
                 )
-            )
+            }
         }
         mService.auctionSubscribe(mRoomId) { auctionModel ->
             CommerceLogger.d("LiveAuctionFragment", "[commerce]$this $mRoomId auctionSubscribe call back, auctionModel:$auctionModel")
@@ -975,6 +979,14 @@ class LiveDetailFragment : Fragment() {
 
     private fun initRtcEngine() {
         val eventListener = object : IRtcEngineEventHandler() {
+            override fun onJoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
+                super.onJoinChannelSuccess(channel, uid, elapsed)
+                VideoSetting.updateBroadcastSetting(
+                    VideoSetting.LiveMode.OneVOne,
+                    isJoinedRoom = true,
+                    rtcConnection = mMainRtcConnection
+                )
+            }
             override fun onLocalVideoStateChanged(
                 source: Constants.VideoSourceType?,
                 state: Int,
@@ -1146,12 +1158,6 @@ class LiveDetailFragment : Fragment() {
         } else {
             mRtcEngine.addHandlerEx(eventListener, mMainRtcConnection)
         }
-
-        VideoSetting.updateBroadcastSetting(
-            VideoSetting.LiveMode.OneVOne,
-            isJoinedRoom = true,
-            rtcConnection = mMainRtcConnection
-        )
     }
 
     /**
@@ -1189,7 +1195,6 @@ class LiveDetailFragment : Fragment() {
             container.lifecycleOwner,
             videoView, container.renderMode, container.uid
         )
-        local.mirrorMode = Constants.VIDEO_MIRROR_MODE_DISABLED
         mRtcEngine.setupLocalVideo(local)
     }
 

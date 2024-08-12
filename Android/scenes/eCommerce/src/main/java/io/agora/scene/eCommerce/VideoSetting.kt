@@ -1106,7 +1106,7 @@ object VideoSetting {
         recordingSignalVolume: Int? = null,
         audioMixingVolume: Int? = null
     ) {
-        //CommerceLogger.d("VideoSettings", "updateRTCBroadcastSetting, frameRate:$frameRate")
+        CommerceLogger.d("VideoSettings", "updateRTCBroadcastSetting, frameRate:$frameRate")
         val rtcEngine = RtcEngineInstance.rtcEngine
         val videoEncoderConfiguration = RtcEngineInstance.videoEncoderConfiguration
         codecType?.let {

@@ -3,6 +3,7 @@ package io.agora.scene.show.service
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import io.agora.rtm.RtmClient
 import io.agora.rtmsyncmanager.ISceneResponse
 import io.agora.rtmsyncmanager.RoomExpirationPolicy
 import io.agora.rtmsyncmanager.SyncManager
@@ -162,6 +163,7 @@ class ShowServiceImpl(context: Context) : ShowServiceProtocol {
         syncManager.destroyExtensions()
         syncManager.logout()
         syncManager.release()
+        RtmClient.release()
     }
 
     override fun getRoomList(
