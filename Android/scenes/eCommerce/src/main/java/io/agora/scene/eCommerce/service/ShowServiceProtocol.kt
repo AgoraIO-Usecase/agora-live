@@ -15,22 +15,28 @@ interface ShowServiceProtocol {
         /**
          * Room Available Duration
          */
-        var ROOM_AVAILABLE_DURATION: Long = 20 * 60 * 1000
+        var ROOM_AVAILABLE_DURATION: Long = 10 * 60 * 1000
 
-        private val instance by lazy {
-            ShowSyncManagerServiceImpl(AgoraApplication.the()){
-                if (it.message != "action error") {
-                    ToastUtils.showToast(it.message)
+        private var instance : ShowServiceProtocol? = null
+            get() {
+                if (field == null) {
+                    field = ShowSyncManagerServiceImpl(AgoraApplication.the()) {
+                        if (it.message != "action error") {
+                            ToastUtils.showToast(it.message)
+                        }
+                    }
                 }
+                return field
             }
-        }
 
-        /**
-         * Get impl instance
-         *
-         * @return
-         */
-        fun getImplInstance(): ShowServiceProtocol = instance
+        @Synchronized
+        fun getImplInstance(): ShowServiceProtocol = instance!!
+
+        @Synchronized
+        fun destroy() {
+            (instance as? ShowSyncManagerServiceImpl)?.destroy()
+            instance = null
+        }
     }
 
     /**

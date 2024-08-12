@@ -48,7 +48,7 @@ class VoiceSyncManagerServiceImp(
 
     private val TAG = "VOICE_SYNC_LOG"
 
-    private val voiceSceneId = "scene_chatRoom_0.2.0"
+    private val voiceSceneId = "scene_chatRoom_1.3.0"
 
     // current user
     private val mCurrentUser: AUIUserThumbnailInfo get() = AUIRoomContext.shared().currentUserInfo

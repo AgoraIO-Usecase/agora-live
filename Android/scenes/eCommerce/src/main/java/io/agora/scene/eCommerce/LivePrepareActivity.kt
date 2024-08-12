@@ -12,19 +12,16 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcConnection
-import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoCanvas
 import io.agora.scene.base.TokenGenerator
-import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.manager.UserManager
-import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.eCommerce.databinding.CommerceLivePrepareActivityBinding
 import io.agora.scene.eCommerce.service.ShowServiceProtocol
+import io.agora.scene.eCommerce.widget.PictureQualityDialog
 import io.agora.scene.eCommerce.widget.PresetDialog
 import io.agora.scene.widget.dialog.PermissionLeakDialog
 import io.agora.scene.widget.utils.StatusBarUtil
@@ -67,6 +64,8 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      * Is finish to live detail
      */
     private var isFinishToLiveDetail = false
+
+    private val deviceScore by lazy { RtcEngineInstance.rtcEngine.queryDeviceScore() }
 
     /**
      * Get view binding
@@ -127,8 +126,13 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
         }
 
         toggleVideoRun = Runnable {
-            onPresetNetworkModeSelected()
-            initRtcEngine()
+            onDefaultPresetNetworkModeSelected()
+            val view = TextureView(this)
+            binding.flVideoContainer.addView(view)
+            val canvas = VideoCanvas(view, 0, 0)
+            canvas.mirrorMode = Constants.VIDEO_MIRROR_MODE_DISABLED
+            canvas.renderMode = Constants.RENDER_MODE_HIDDEN
+            mRtcEngine.setupLocalVideo(canvas)
         }
         requestCameraPermission(true)
     }
@@ -164,7 +168,7 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      * Show preset dialog
      *
      */
-    private fun showPresetDialog() = PresetDialog(this, mRtcEngine.queryDeviceScore(), RtcConnection(mRoomId, UserManager.getInstance().user.id.toInt())).show()
+    private fun showPresetDialog() = PresetDialog(this, deviceScore, RtcConnection(mRoomId, UserManager.getInstance().user.id.toInt())).show()
 
     /**
      * On resume
@@ -185,20 +189,6 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
         if (!isFinishToLiveDetail) {
             mRtcEngine.stopPreview()
         }
-    }
-
-    /**
-     * Init rtc engine
-     *
-     */
-    private fun initRtcEngine() {
-        val view = TextureView(this)
-        binding.flVideoContainer.addView(view)
-        val canvas = VideoCanvas(view, 0, 0)
-        canvas.mirrorMode = Constants.VIDEO_MIRROR_MODE_DISABLED
-        canvas.renderMode = Constants.RENDER_MODE_HIDDEN
-        mRtcEngine.setupLocalVideo(canvas)
-        mRtcEngine.startPreview()
     }
 
     /**
@@ -271,10 +261,8 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
                 TokenGenerator.AgoraTokenType.Rtm
             ),
             success = {
-                val rtcToken = it[TokenGenerator.AgoraTokenType.Rtc] ?: return@generateTokens
-                val rtmToken = it[TokenGenerator.AgoraTokenType.Rtm] ?: return@generateTokens
-                RtcEngineInstance.setupGeneralRtcToken(rtcToken)
-                RtcEngineInstance.setupGeneralRtmToken(rtmToken)
+                RtcEngineInstance.setupGeneralRtcToken(it)
+                RtcEngineInstance.setupGeneralRtmToken(it)
                 complete?.invoke(null)
             },
             failure = {
@@ -312,13 +300,13 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
         else -> R.drawable.commerce_room_cover_0
     }
 
-    private fun onPresetNetworkModeSelected() {
+    private fun onDefaultPresetNetworkModeSelected() {
         val broadcastStrategy = VideoSetting.BroadcastStrategy.Smooth
         val network = VideoSetting.NetworkLevel.Good
 
-        val deviceLevel = if (mRtcEngine.queryDeviceScore() >= 90) {
+        val deviceLevel = if (deviceScore >= 90) {
             VideoSetting.DeviceLevel.High
-        } else if (mRtcEngine.queryDeviceScore() >= 75) {
+        } else if (deviceScore >= 75) {
             VideoSetting.DeviceLevel.Medium
         } else {
             VideoSetting.DeviceLevel.Low
