@@ -133,6 +133,18 @@ public enum updateRoomState {
     ///- From Id: Operator userName
     func onContributionListChanged(roomId: String, ranking_list: [VRUser], from fromId: String)
     
+    /// Description
+    /// - Parameters: watched count changed
+    ///   - roomId: Chat room ID
+    ///   - count: watched count
+    func onClickCountChanged(roomId: String, count: Int)
+    
+    /// Description
+    /// - Parameters: member in room count changed
+    ///   - roomId: Chat room ID
+    ///   - count: member count
+    func onMemberCountChanged(roomId: String, count: Int)
+    
     ///Description member leaves
     /// - Parameters:
     ///- roomId: Huanxin IMSDK chat room ID
@@ -282,7 +294,7 @@ protocol ChatRoomServiceProtocol: NSObjectProtocol {
     /// - Parameters:
     ///- room: Room object information
     ///- completion: Complete callback (error message)
-    func createRoom(room: VRRoomEntity, completion: @escaping (SyncError?, VRRoomEntity?) -> Void)
+    func createRoom(room: VRRoomEntity, completion: @escaping (Error?, VRRoomEntity?) -> Void)
     
     ///Description Update Announcement
     /// - Parameters:

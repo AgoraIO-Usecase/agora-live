@@ -15,6 +15,7 @@ import io.agora.scene.base.component.BaseViewBindingFragment
 import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceFragmentRoomListLayoutBinding
 import io.agora.scene.voice.databinding.VoiceItemRoomListBinding
+import io.agora.scene.voice.model.fullHeadUrl
 import io.agora.scene.voice.model.isPrivate
 import io.agora.scene.voice.model.memberCount
 import io.agora.scene.voice.ui.activity.ChatroomLiveActivity
@@ -135,7 +136,7 @@ class VoiceRoomListFragment : BaseViewBindingFragment<VoiceFragmentRoomListLayou
             val list = mList ?: return
             val data: AUIRoomInfo = list[position]
             GlideApp.with(holder.binding.ivAvatar.context)
-                .load(data.roomOwner?.userAvatar)
+                .load(data.roomOwner?.fullHeadUrl)
                 .into(holder.binding.ivAvatar)
             holder.binding.tvRoomName.text = data.roomName
             holder.binding.tvPersonNum.text = mContext.getString(R.string.voice_room_list_count, data.memberCount())

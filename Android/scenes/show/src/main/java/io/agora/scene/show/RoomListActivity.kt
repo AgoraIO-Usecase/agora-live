@@ -122,6 +122,7 @@ class RoomListActivity : AppCompatActivity() {
     private fun initView() {
         onRoomListScrollEventHandler = object: OnRoomListScrollEventHandler(mRtcEngine, UserManager.getInstance().user.id.toInt()) {}
         mBinding.titleView.setLeftClick {
+            mBinding.smartRefreshLayout.setOnRefreshListener(null)
             ShowServiceProtocol.destroy()
             RtcEngineInstance.destroy()
             RtcEngineInstance.setupGeneralToken("")
@@ -303,6 +304,7 @@ class RoomListActivity : AppCompatActivity() {
      *
      */
     override fun onBackPressed() {
+        mBinding.smartRefreshLayout.setOnRefreshListener(null)
         ShowServiceProtocol.destroy()
         RtcEngineInstance.destroy()
         RtcEngineInstance.setupGeneralToken("")
