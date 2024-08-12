@@ -90,7 +90,7 @@ class RoomListActivity : AppCompatActivity() {
     private fun initView() {
         onRoomListScrollEventHandler = object: OnRoomListScrollEventHandler(mRtcEngine, UserManager.getInstance().user.id.toInt()) {}
         mBinding.titleView.setLeftClick {
-            mService.destroy()
+            ShowServiceProtocol.destroy()
             RtcEngineInstance.destroy()
             RtcEngineInstance.setupGeneralRtcToken("")
             RtcEngineInstance.setupGeneralRtmToken("")
@@ -275,7 +275,7 @@ class RoomListActivity : AppCompatActivity() {
      */
     override fun onBackPressed() {
         super.onBackPressed()
-        mService.destroy()
+        ShowServiceProtocol.destroy()
         RtcEngineInstance.destroy()
         RtcEngineInstance.setupGeneralRtcToken("")
         RtcEngineInstance.setupGeneralRtmToken("")
@@ -305,10 +305,8 @@ class RoomListActivity : AppCompatActivity() {
             ),
             success = {
                 //ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
-                val rtcToken = it[TokenGenerator.AgoraTokenType.Rtc] ?: return@generateTokens
-                val rtmToken = it[TokenGenerator.AgoraTokenType.Rtm] ?: return@generateTokens
-                RtcEngineInstance.setupGeneralRtcToken(rtcToken)
-                RtcEngineInstance.setupGeneralRtmToken(rtmToken)
+                RtcEngineInstance.setupGeneralRtcToken(it)
+                RtcEngineInstance.setupGeneralRtmToken(it)
                 success.invoke()
             },
             failure = {
