@@ -56,15 +56,30 @@ class LiveGiftListFragment : BaseBindingFragment<VoiceFragmentGiftListLayoutBind
             rvList.isHorizontalScrollBarEnabled = true
         }
         adapter?.setOnItemClickListener(this)
+        adapter?.data = GiftRepository.getGiftsByPage(context, position)
+        if (position == 0) {
+            if (!adapter?.data.isNullOrEmpty()) {
+                adapter?.setSelectedPosition(0)
+                listener?.onFirstItem(adapter?.getItem(0))
+            }
+        }
     }
+
+    var isSelect = false
+        set(value) {
+            field = value
+           if (!value){
+               adapter?.setSelectedPosition(-1)
+           }
+        }
 
     override fun onResume() {
         super.onResume()
         adapter?.data = GiftRepository.getGiftsByPage(context, position)
-        if (!adapter?.data.isNullOrEmpty()){
-            adapter?.setSelectedPosition(0)
-            listener?.onFirstItem(adapter?.getItem(0))
-        }
+//        if (!adapter?.data.isNullOrEmpty()){
+//            adapter?.setSelectedPosition(0)
+//            listener?.onFirstItem(adapter?.getItem(0))
+//        }
     }
 
     override fun onItemClick(view: View, position: Int) {

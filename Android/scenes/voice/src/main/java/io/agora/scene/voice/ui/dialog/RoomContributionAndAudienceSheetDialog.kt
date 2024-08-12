@@ -13,15 +13,15 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import io.agora.scene.voice.ui.fragment.RoomContributionRankingFragment
-import io.agora.voice.common.ui.dialog.BaseFixedHeightSheetDialog
 import io.agora.voice.common.utils.ResourcesTools
 import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceDialogContributionAndAudienceBinding
 import io.agora.scene.voice.model.VoiceRoomModel
 import io.agora.scene.voice.ui.fragment.RoomAudienceListFragment
+import io.agora.voice.common.ui.dialog.BaseSheetDialog
 
 class RoomContributionAndAudienceSheetDialog constructor() :
-    BaseFixedHeightSheetDialog<VoiceDialogContributionAndAudienceBinding>() {
+    BaseSheetDialog<VoiceDialogContributionAndAudienceBinding>() {
 
     companion object {
         const val KEY_ROOM_KIT_BEAN = "room_kit_bean"

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.agora.scene.voice.model.GiftBean;
@@ -15,6 +16,10 @@ import io.agora.scene.voice.model.GiftBean;
 public class GiftFragmentAdapter extends FragmentStateAdapter {
     private OnVpFragmentItemListener listener;
     private List<GiftBean> list;
+
+    private List<LiveGiftListFragment> fragments = new ArrayList<>();
+
+    private int mSelection = 0;
 
     public GiftFragmentAdapter(@NonNull FragmentActivity fragment) {
         super(fragment);
@@ -31,6 +36,14 @@ public class GiftFragmentAdapter extends FragmentStateAdapter {
         fragment.setOnItemSelectClickListener(new OnConfirmClickListener() {
             @Override
             public void onConfirmClick(View view, Object bean) {
+                fragments.forEach(f -> {
+                    if (f == fragment) {
+                        fragment.setSelect(true);
+                    } else {
+                        f.setSelect(false);
+                    }
+                });
+
                 if(listener != null) {
                     listener.onVpFragmentItem(position, bean);
                 }
@@ -43,6 +56,8 @@ public class GiftFragmentAdapter extends FragmentStateAdapter {
                 }
             }
         });
+        fragment.setSelect(position == mSelection);
+        fragments.add(fragment);
         return fragment;
     }
 

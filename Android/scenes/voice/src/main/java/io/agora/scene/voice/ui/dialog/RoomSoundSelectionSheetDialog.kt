@@ -19,6 +19,7 @@ import io.agora.scene.voice.databinding.VoiceItemRoomSoundSelectionBinding
 import io.agora.scene.voice.model.constructor.RoomSoundSelectionConstructor
 import io.agora.scene.voice.ui.adapter.viewholder.RoomSoundSelectionFooterViewHolder
 import io.agora.scene.voice.ui.adapter.viewholder.RoomSoundSelectionViewHolder
+import io.agora.voice.common.ui.dialog.BaseSheetDialog
 
 class RoomSoundSelectionSheetDialog constructor(
     private val isEnable: Boolean = true,
@@ -44,7 +45,6 @@ class RoomSoundSelectionSheetDialog constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.attributes?.windowAnimations = R.style.voice_BottomSheetDialogAnimation
-        dialog?.setCanceledOnTouchOutside(false)
         arguments?.apply {
             val currentSelection: Int = getInt(KEY_CURRENT_SELECTION)
             soundSelectionList.addAll(
