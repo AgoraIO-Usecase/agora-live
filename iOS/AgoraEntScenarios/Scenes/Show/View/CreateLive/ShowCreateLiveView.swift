@@ -91,7 +91,7 @@ class ShowCreateLiveView: UIView {
             make.centerY.equalTo(nameTextField)
         }
         roomIdLabel = UILabel()
-        roomIdLabel.text = "ID: " + roomNo
+        roomIdLabel.text = roomNo
         roomIdLabel.font = .show_R_10
         roomIdLabel.textColor = .show_main_text
         roomInfoCoverVeiw.addSubview(roomIdLabel)

@@ -112,6 +112,8 @@ class CommerceGoodsBuyModel: NSObject, YYModel {
     }
 }
 
+let kDefaultAuctionGoodsName = "commerce_shop_goods_auction"
+
 @objcMembers
 class CommerceGoodsAuctionModel: NSObject, YYModel {
     var goods: CommerceGoodsModel?
