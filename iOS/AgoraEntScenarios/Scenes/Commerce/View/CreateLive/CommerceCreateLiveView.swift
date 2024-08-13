@@ -90,7 +90,7 @@ class CommerceCreateLiveView: UIView {
             make.centerY.equalTo(nameTextField)
         }
         roomIdLabel = UILabel()
-        roomIdLabel.text = "ID: " + roomNo
+        roomIdLabel.text = roomNo
         roomIdLabel.font = .commerce_R_10
         roomIdLabel.textColor = .commerce_main_text
         roomInfoCoverVeiw.addSubview(roomIdLabel)
