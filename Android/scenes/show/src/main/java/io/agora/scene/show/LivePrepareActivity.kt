@@ -418,6 +418,8 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                 }
             )
 
+            var downloadSuccess = false
+
             manifest?.files?.forEach { resource ->
                 if (resource.uri == "beauty_faceunity") {
 
@@ -444,6 +446,7 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                         completionHandler = { _, e ->
                             if (e == null) {
                                 ShowLogger.d(tag, "download success: ${resource.uri}")
+                                downloadSuccess = true
                             } else {
                                 ShowLogger.e(tag, e, "download failed: ${e.message}")
                                 binding.statusPrepareViewLrc.isVisible = false
@@ -451,6 +454,10 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                             }
                         }
                     )
+
+                    if (!downloadSuccess) {
+                        return@forEach
+                    }
 
                     val arch = System.getProperty("os.arch")
                     if (arch == "armv7") {
@@ -461,6 +468,7 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                         DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/arm64-v8a/", "libCNamaSDK")
                     }
                     faceunity.LoadConfig.loadLibrary(this@LivePrepareActivity.getDir("libs", Context.MODE_PRIVATE).absolutePath)
+                    RtcEngineInstance.beautySoLoaded = true
 
                     binding.statusPrepareViewLrc.isVisible = false
                     binding.tvSetting.isEnabled = true

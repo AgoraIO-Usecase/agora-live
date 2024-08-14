@@ -1,6 +1,7 @@
 package io.agora.scene.widget.dialog
 
 import android.content.Context
+import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -57,7 +58,7 @@ class TopFunctionDialog constructor(context: Context, val showReportUser: Boolea
     }
 
     override fun initView() {
-        binding.layoutReportUser.visibility = if (showReportUser) View.VISIBLE else View.GONE
+
         binding.layoutReportContent.setOnClickListener {
             ToastUtils.showToast(context.getString(R.string.common_report_content_tips))
             reportContentCallback?.invoke()
@@ -69,6 +70,11 @@ class TopFunctionDialog constructor(context: Context, val showReportUser: Boolea
             reportUserCallback?.invoke()
             dismiss()
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding.layoutReportUser.visibility = if (showReportUser) View.VISIBLE else View.GONE
     }
 
     override fun setGravity() {

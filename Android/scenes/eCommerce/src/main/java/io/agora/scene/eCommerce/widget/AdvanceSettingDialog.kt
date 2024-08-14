@@ -464,7 +464,7 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
         }
         val selectPosition = defaultItemValues[itemId] ?: 0
         binding.tvValue.text = selectList.getOrNull(selectPosition)
-        onSelectorChanged(itemId, selectPosition)
+        //onSelectorChanged(itemId, selectPosition)
         binding.root.setOnClickListener {
             if (!checkPresetMode()) {
                 BottomLightListDialog(context).apply {
@@ -584,6 +584,7 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
                         binding.slider.value =
                             VideoSetting.getCurrBroadcastSetting().video.bitRateRecommend.toFloat()
                         VideoSetting.updateBroadcastSetting(
+                            rtcConnection,
                             bitRate = VideoSetting.getCurrBroadcastSetting().video.bitRateRecommend
                         )
                     } else {
@@ -701,15 +702,17 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
         if (index < 0) return
         when (itemId) {
             ITEM_ID_SELECTOR_RESOLUTION -> VideoSetting.updateBroadcastSetting(
+                rtcConnection = rtcConnection,
                 encoderResolution = VideoSetting.ResolutionList[index],
                 captureResolution = VideoSetting.ResolutionList[index]
             )
 
             ITEM_ID_SELECTOR_FRAME_RATE -> VideoSetting.updateBroadcastSetting(
-                captureResolution = VideoSetting.ResolutionList[index],
+                rtcConnection = rtcConnection,
                 frameRate = VideoSetting.FrameRateList[index]
             )
             ITEM_ID_SELECTOR_ENCODER -> VideoSetting.updateBroadcastSetting(
+                rtcConnection = rtcConnection,
                 codecType = VideoSetting.EncoderList[index]
             )
         }
