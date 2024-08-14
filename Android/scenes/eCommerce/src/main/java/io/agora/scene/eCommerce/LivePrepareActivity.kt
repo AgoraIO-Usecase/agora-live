@@ -147,7 +147,6 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
             val view = TextureView(this)
             binding.flVideoContainer.addView(view)
             val canvas = VideoCanvas(view, 0, 0)
-            canvas.mirrorMode = Constants.VIDEO_MIRROR_MODE_DISABLED
             canvas.renderMode = Constants.RENDER_MODE_HIDDEN
             mRtcEngine.setupLocalVideo(canvas)
         }
@@ -193,7 +192,6 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      */
     override fun onResume() {
         super.onResume()
-        mRtcEngine.setParameters("{\"rtc.camera_capture_mirror_mode\":0}")
         mRtcEngine.startPreview()
     }
 

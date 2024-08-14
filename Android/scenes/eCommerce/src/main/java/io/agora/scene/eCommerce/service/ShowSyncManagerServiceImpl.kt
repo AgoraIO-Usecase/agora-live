@@ -750,7 +750,7 @@ class ShowSyncManagerServiceImpl constructor(
         val auctionModel = AuctionModel().apply {
             goods = GoodsModel(
                 goodsId = "",
-                title = context.getString(io.agora.scene.eCommerce.R.string.commerce_shop_auction_item_0),
+                title = context.getString(io.agora.scene.eCommerce.R.string.commerce_shop_auction_item),
                 quantity = 1,
                 price = 1f
             )

@@ -49,6 +49,8 @@ object RtcEngineInstance {
      */
     val debugSettingModel = DebugSettingModel().apply { }
 
+    var beautySoLoaded = false
+
     private val workingExecutor = Executors.newSingleThreadExecutor()
 
     private var innerBeautyProcessor: IBeautyProcessor? = null
@@ -142,7 +144,9 @@ object RtcEngineInstance {
 
     fun releaseBeautyProcessor() {
         innerBeautyProcessor?.let { processor ->
-            processor.release()
+            if (beautySoLoaded) {
+                processor.release()
+            }
             innerBeautyProcessor = null
         }
     }
@@ -159,7 +163,9 @@ object RtcEngineInstance {
             innerRtcEngine = null
         }
         innerBeautyProcessor?.let { processor ->
-            processor.release()
+            if (beautySoLoaded) {
+                processor.release()
+            }
             innerBeautyProcessor = null
         }
         debugSettingModel.apply {
