@@ -78,10 +78,10 @@ class RoomListActivity : AppCompatActivity() {
         initView()
         initVideoSettings()
 
-        SceneAliveTime.fetchShowAliveTime ({ show, pk ->
-            //CommerceLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
-            ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
-        })
+//        SceneAliveTime.fetchShowAliveTime ({ show, pk ->
+//            //CommerceLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
+//            ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
+//        })
     }
 
     /**
@@ -163,8 +163,8 @@ class RoomListActivity : AppCompatActivity() {
     private fun updateList(data: List<RoomDetailModel>) {
         mBinding.tvTips1.isVisible = data.isEmpty()
         mBinding.ivBgMobile.isVisible = data.isEmpty()
-        mBinding.btnCreateRoom2.isVisible = data.isEmpty()
-        mBinding.btnCreateRoom.isVisible = data.isNotEmpty()
+        mBinding.btnCreateRoom2.isVisible = false
+        mBinding.btnCreateRoom.isVisible = true
         mBinding.rvRooms.isVisible = data.isNotEmpty()
         mRoomAdapter.resetAll(data)
 
