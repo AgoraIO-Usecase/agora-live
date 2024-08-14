@@ -183,9 +183,11 @@ import Foundation
     
     @objc func soundChange(swich: UISwitch) {
         if swich.isOn {
-            self.gainValue = 1.0;
+            self.gainValue = 100.0;
             self.effectType = 0;
             self.typeValue = 4;
+            gainBlock?(gainValue)
+            typeBlock?(effectType)
         }
         self.soundOpen = swich.isOn
         coverView.isHidden = swich.isOn
@@ -268,7 +270,7 @@ extension VRSoundCardSettingView: UITableViewDataSource, UITableViewDelegate {
         }else if indexPath.row == 2 {
             let cell: VRSoundCardSwitchCell = tableView.dequeueReusableCell(withIdentifier: "gain", for: indexPath) as! VRSoundCardSwitchCell
             cell.selectionStyle = .none
-            cell.slider.value = Float(1/4.0 * gainValue)
+            cell.slider.value = Float(1/400.0 * gainValue)
             cell.numLable.text = String(format: "%.1f",gainValue)
             cell.valueBlock = {[weak self] gain in
                 guard let self = self, let gainBlock = self.gainBlock else {return}
@@ -299,7 +301,7 @@ extension VRSoundCardSettingView: UITableViewDataSource, UITableViewDelegate {
             //Pop up sound effect selection
             block(2)
         } else if indexPath.row == 3 {
-////Pop up microphone type
+            //Pop up microphone type
 //            block(4)
         }
     }

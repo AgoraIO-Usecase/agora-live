@@ -121,11 +121,11 @@ class VoiceRoomViewController: VRBaseViewController {
         }
     }
     
+    //virtual soundcard presenter
+    public var soundcardPresenter = VirtualSoundcardPresenter()
+    
     //Properties of Virtual Sound Card
     public var soundOpen: Bool = false
-    public var gainValue: String = ""
-    public var typeValue: Int = 0
-    public var effectType: Int = 0
 
     convenience init(info: VRRoomInfo) {
         self.init()
@@ -154,7 +154,7 @@ class VoiceRoomViewController: VRBaseViewController {
         loadKit()
         //Handle bottom events
         charBarEvents()
-        self.subscribeSceneRoom()
+//        self.subscribeSceneRoom()
         NotificationCenter.default.addObserver(self, selector: #selector(leaveRoom), name: Notification.Name("terminate"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateMicInfo), name: Notification.Name("updateMicInfo"), object: nil)
         
@@ -165,15 +165,15 @@ class VoiceRoomViewController: VRBaseViewController {
         }
     }
     
-    private func subscribeSceneRoom() {
-        SyncUtil.scene(id: self.roomInfo?.room?.room_id ?? "")?.subscribe(key: "",onDeleted: { 
-            
-            if self.isHeaderBack == false,$0.getId() == self.roomInfo?.room?.room_id ?? "" {
-                self.view.window?.makeToast("voice_time_limit_desc".voice_localized)
-                self.quitRoom()
-            }
-        })
-    }
+//    private func subscribeSceneRoom() {
+//        SyncUtil.scene(id: self.roomInfo?.room?.room_id ?? "")?.subscribe(key: "",onDeleted: { 
+//            
+//            if self.isHeaderBack == false,$0.getId() == self.roomInfo?.room?.room_id ?? "" {
+//                self.view.window?.makeToast("voice_time_limit_desc".voice_localized)
+//                self.quitRoom()
+//            }
+//        })
+//    }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -547,8 +547,8 @@ extension VoiceRoomViewController {
     }
 
     func notifySeverLeave() {
-        guard let roomId = roomInfo?.room?.room_id else { return }
-        ChatRoomServiceImp.getSharedInstance().leaveMic(mic_index: self.local_index ?? ChatRoomServiceImp.getSharedInstance().findMicIndex()) { error, result in
+        guard let index = self.local_index else { return }
+        ChatRoomServiceImp.getSharedInstance().leaveMic(mic_index: index) { error, result in
         }
 
     }
