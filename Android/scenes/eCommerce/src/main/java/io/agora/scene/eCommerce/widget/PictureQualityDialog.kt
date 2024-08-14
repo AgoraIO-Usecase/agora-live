@@ -77,7 +77,7 @@ class PictureQualityDialog(context: Context) : BottomDarkDialog(context) {
          * Get cache quality resolution
          *
          */
-        fun getCacheQualityResolution() = QualityItemList[cacheSelectedIndex].size
+        fun getCacheQualityResolution(index: Int) = QualityItemList[index].size
     }
 
     /**

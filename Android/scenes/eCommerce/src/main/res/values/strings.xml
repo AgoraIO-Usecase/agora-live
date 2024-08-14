@@ -3,7 +3,7 @@
     <string name="commerce_create_room">Create</string>
     <string name="commerce_create_tips1">Welcome to Live Streaming!</string>
     <string name="commerce_living">LIVE</string>
-    <string name="commerce_room_id">ID: %s</string>
+    <string name="commerce_room_id">%s</string>
     <string name="commerce_user_count">%d</string>
     <string name="commerce_app_name">E-Commerce</string>
     <string name="commerce_live_top_close">Close</string>
@@ -49,7 +49,7 @@
     <string name="commerce_live_prepare_rotate">Flip</string>
     <string name="commerce_setting_advance_encoder">Encoder</string>
     <string name="commerce_live_prepare_hd">Video Quality</string>
-    <string name="commerce_live_prepare_tip"> NOTE: For demo purposes only. Please limit live streams to 20 minutes or less.</string>
+    <string name="commerce_live_prepare_tip"> NOTE: For demo purposes only. Please limit live streams to 10 minutes or less.</string>
     <string name="commerce_live_prepare_start_live">Go Live</string>
     <string name="commerce_live_prepare_room_empty">Room name cannot be empty!</string>
     <string name="commerce_live_prepare_room_clipboard_copyed">Room ID has been copied to the clipboard!</string>
@@ -81,9 +81,10 @@
     <string name="commerce_statistic_svc">SVC: %s</string>
     <string name="commerce_statistic_h265">H265: %s</string>
     <!-- shop  -->
-    <string name="commerce_shop_auction_item_0">Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray</string>
-    <string name="commerce_shop_auction_item_1">Meta Quest 2 &#8211; 128GB Holiday Bundle - Advanced All-In-One Virtual Reality Headset</string>
-    <string name="commerce_shop_auction_item_2">Meta Quest 2 &#8211; 128GB Holiday Bundle - Advanced All-In-One Virtual Reality Headset</string>
+    <string name="commerce_shop_auction_item">Diamond Ring</string>
+    <string name="commerce_shop_auction_item_0">Ear Ring</string>
+    <string name="commerce_shop_auction_item_1">Necklace</string>
+    <string name="commerce_shop_auction_item_2">Emerald Ring</string>
     <string name="commerce_shop_auction_start_from">Start from</string>
     <string name="commerce_shop_auction_current_bid">Current Bid:</string>
     <string name="commerce_shop_auction_start">Start</string>

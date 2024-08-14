@@ -78,10 +78,10 @@ class RoomListActivity : AppCompatActivity() {
         initView()
         initVideoSettings()
 
-        SceneAliveTime.fetchShowAliveTime ({ show, pk ->
-            //CommerceLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
-            ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
-        })
+//        SceneAliveTime.fetchShowAliveTime ({ show, pk ->
+//            //CommerceLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
+//            ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
+//        })
     }
 
     /**
@@ -90,7 +90,7 @@ class RoomListActivity : AppCompatActivity() {
     private fun initView() {
         onRoomListScrollEventHandler = object: OnRoomListScrollEventHandler(mRtcEngine, UserManager.getInstance().user.id.toInt()) {}
         mBinding.titleView.setLeftClick {
-            mService.destroy()
+            ShowServiceProtocol.destroy()
             RtcEngineInstance.destroy()
             RtcEngineInstance.setupGeneralRtcToken("")
             RtcEngineInstance.setupGeneralRtmToken("")
@@ -163,8 +163,8 @@ class RoomListActivity : AppCompatActivity() {
     private fun updateList(data: List<RoomDetailModel>) {
         mBinding.tvTips1.isVisible = data.isEmpty()
         mBinding.ivBgMobile.isVisible = data.isEmpty()
-        mBinding.btnCreateRoom2.isVisible = data.isEmpty()
-        mBinding.btnCreateRoom.isVisible = data.isNotEmpty()
+        mBinding.btnCreateRoom2.isVisible = false
+        mBinding.btnCreateRoom.isVisible = true
         mBinding.rvRooms.isVisible = data.isNotEmpty()
         mRoomAdapter.resetAll(data)
 
@@ -275,7 +275,7 @@ class RoomListActivity : AppCompatActivity() {
      */
     override fun onBackPressed() {
         super.onBackPressed()
-        mService.destroy()
+        ShowServiceProtocol.destroy()
         RtcEngineInstance.destroy()
         RtcEngineInstance.setupGeneralRtcToken("")
         RtcEngineInstance.setupGeneralRtmToken("")
@@ -305,10 +305,8 @@ class RoomListActivity : AppCompatActivity() {
             ),
             success = {
                 //ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
-                val rtcToken = it[TokenGenerator.AgoraTokenType.Rtc] ?: return@generateTokens
-                val rtmToken = it[TokenGenerator.AgoraTokenType.Rtm] ?: return@generateTokens
-                RtcEngineInstance.setupGeneralRtcToken(rtcToken)
-                RtcEngineInstance.setupGeneralRtmToken(rtmToken)
+                RtcEngineInstance.setupGeneralRtcToken(it)
+                RtcEngineInstance.setupGeneralRtmToken(it)
                 success.invoke()
             },
             failure = {

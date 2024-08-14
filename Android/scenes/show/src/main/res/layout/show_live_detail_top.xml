@@ -354,6 +354,17 @@
 
                 </TableRow>
 
+                <TableRow
+                    android:id="@+id/trFirstTime"
+                    android:paddingVertical="3dp">
+
+                <TextView
+                    android:id="@+id/tvQuickStartTime"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    tools:text="@string/show_statistic_quick_start_time" />
+                </TableRow>
             </TableLayout>
 
         </LinearLayout>

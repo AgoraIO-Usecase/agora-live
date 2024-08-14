@@ -61,6 +61,7 @@ import io.agora.scene.show.service.isRobotRoom
 import io.agora.scene.show.utils.ShowConstants
 import io.agora.scene.show.videoLoaderAPI.OnPageScrollEventHandler
 import io.agora.scene.show.videoLoaderAPI.VideoLoader
+import io.agora.scene.show.videoLoaderAPI.VideoLoaderImpl
 import io.agora.scene.show.widget.AdvanceSettingAudienceDialog
 import io.agora.scene.show.widget.AdvanceSettingDialog
 import io.agora.scene.show.widget.BeautyDialog
@@ -455,7 +456,7 @@ class LiveDetailFragment : Fragment() {
 
     private fun onClickMore() {
         context?.let {
-            val dialog = TopFunctionDialog(it)
+            val dialog = TopFunctionDialog(it,true)
             dialog.reportContentCallback = {
                 ShowConstants.reportContents[mRoomInfo.roomName] = true
                 activity?.finish()
@@ -932,6 +933,16 @@ class LiveDetailFragment : Fragment() {
             else
                 getString(R.string.show_setting_closed)
         )
+
+        topBinding.tvQuickStartTime.isVisible = true
+        if (isRoomOwner) {
+            topBinding.tvQuickStartTime.text =
+                getString(R.string.show_statistic_quick_start_time, "--")
+        } else {
+            // TODO
+            topBinding.tvQuickStartTime.text =
+                getString(R.string.show_statistic_quick_start_time, (mRtcVideoLoaderApi as VideoLoaderImpl).getProfiler(mRoomInfo.roomId, mRoomInfo.ownerId.toInt()).perceivedCost.toString())
+        }
 
         val score = mRtcEngine.queryDeviceScore()
         topBinding.tvStatisticDeviceGrade.isVisible = true
@@ -2575,6 +2586,10 @@ class LiveDetailFragment : Fragment() {
                 eventListener
             ).let {
                 if(Math.abs(it) == Constants.ERR_JOIN_CHANNEL_REJECTED){
+                    mRtcEngine.updateChannelMediaOptionsEx(
+                        channelMediaOptions,
+                        pkRtcConnection
+                    )
                     mPKEventHandler = eventListener
                     mRtcEngine.addHandlerEx(mPKEventHandler, RtcConnection(interactionInfo!!.roomId, UserManager.getInstance().user.id.toInt()))
                 }

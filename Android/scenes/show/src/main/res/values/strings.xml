@@ -4,7 +4,7 @@
     <string name="show_create_tips1">Welcome to Live Streaming!</string>
     <string name="show_living">LIVE</string>
     <string name="show_pure">PURE</string>
-    <string name="show_room_id">ID: %s</string>
+    <string name="show_room_id">%s</string>
     <string name="show_user_count">%d</string>
     <string name="show_app_name">Live Streaming</string>
     <string name="show_live_top_close">Close</string>
@@ -50,7 +50,7 @@
     <string name="show_live_prepare_rotate">Flip</string>
     <string name="show_live_prepare_beauty">Beautification</string>
     <string name="show_live_prepare_hd">Video Quality</string>
-    <string name="show_live_prepare_tip"> NOTE: This version allows you to livestream for up to 20 minutes. Please
+    <string name="show_live_prepare_tip"> NOTE: This version allows you to livestream for up to 10 minutes. Please
         ensure that the content of your livestream does not violate the Terms of Service you have agreed to, or the laws and regulations of your location, otherwise your livestream will be interrupted."</string>
     <string name="show_live_prepare_start_live">Go Live</string>
     <string name="show_live_prepare_room_empty">Room name cannot be empty!</string>
@@ -279,7 +279,7 @@
     <string name="show_video_quailty">Video Quality</string>
     <string name="show_video_quailty_smooth">Smooth First</string>
     <string name="show_video_quailty_clear">Clarity First</string>
-    <string name="show_video_pure_mode">Pure Mode</string>
+    <string name="show_video_pure_mode">Default</string>
     <string name="show_video_quailty_tips">Adaptive video quality strategies for different audience</string>
     <string name="show_video_device_result">Device Level: %s (%d)</string>
     <string name="show_video_device_high">High-end Device</string>

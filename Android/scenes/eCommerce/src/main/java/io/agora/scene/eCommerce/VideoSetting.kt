@@ -1106,7 +1106,7 @@ object VideoSetting {
         recordingSignalVolume: Int? = null,
         audioMixingVolume: Int? = null
     ) {
-        //CommerceLogger.d("VideoSettings", "updateRTCBroadcastSetting, frameRate:$frameRate")
+        CommerceLogger.d("VideoSettings", "updateRTCBroadcastSetting, frameRate:$frameRate")
         val rtcEngine = RtcEngineInstance.rtcEngine
         val videoEncoderConfiguration = RtcEngineInstance.videoEncoderConfiguration
         codecType?.let {
@@ -1155,6 +1155,12 @@ object VideoSetting {
         }
         frameRate?.let {
             videoEncoderConfiguration.frameRate = it.fps
+            rtcEngine.setCameraCapturerConfiguration(
+                CameraCapturerConfiguration(
+                    CameraCapturerConfiguration.CaptureFormat(videoEncoderConfiguration.dimensions.width, videoEncoderConfiguration.dimensions.height, it.fps)
+                ).apply {
+                    followEncodeDimensionRatio = true
+                })
             if (rtcConnection != null) {
                 rtcEngine.setVideoEncoderConfigurationEx(videoEncoderConfiguration, rtcConnection)
             } else {

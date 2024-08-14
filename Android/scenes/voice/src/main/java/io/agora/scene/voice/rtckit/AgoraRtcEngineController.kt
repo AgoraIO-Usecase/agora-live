@@ -66,7 +66,7 @@ class AgoraRtcEngineController {
                 TokenGenerator.AgoraTokenType.Rtm
             ),
             { ret ->
-                mRtmToken = ret[TokenGenerator.AgoraTokenType.Rtm] ?: ""
+                mRtmToken = ret
 
                 initRtcEngine(context)
                 this.mLocalUid = rtcUid
