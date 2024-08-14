@@ -464,7 +464,7 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
         }
         val selectPosition = defaultItemValues[itemId] ?: 0
         binding.tvValue.text = selectList.getOrNull(selectPosition)
-        onSelectorChanged(itemId, selectPosition)
+        //onSelectorChanged(itemId, selectPosition)
         binding.root.setOnClickListener {
             if (!checkPresetMode()) {
                 BottomLightListDialog(context).apply {
@@ -584,6 +584,7 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
                         binding.slider.value =
                             VideoSetting.getCurrBroadcastSetting().video.bitRateRecommend.toFloat()
                         VideoSetting.updateBroadcastSetting(
+                            rtcConnection,
                             bitRate = VideoSetting.getCurrBroadcastSetting().video.bitRateRecommend
                         )
                     } else {

@@ -4,4 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/commerce_room_default_bg">
+
+    <View
+        android:id="@+id/video_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@drawable/commerce_room_default_bg"/>
 </FrameLayout>

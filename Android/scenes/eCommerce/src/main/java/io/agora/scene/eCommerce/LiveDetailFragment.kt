@@ -505,6 +505,7 @@ class LiveDetailFragment : Fragment() {
         }
         messageLayout.rvMessage.adapter = mMessageAdapter
     }
+
     /** 拍卖 */
     private fun initAuctionLayout() {
         auctionFragment = LiveAuctionFragment.newInstance(mRoomId)
@@ -521,6 +522,21 @@ class LiveDetailFragment : Fragment() {
         }
         mBinding.flAuction.layoutParams = layoutParams
     }
+
+    private fun setVideoOverlayVisible(visible: Boolean, userId: String) {
+        if (userId == UserManager.getInstance().user.id.toString()) {
+            // Local video state change
+            if (isRoomOwner) {
+                mBinding.videoLinkingLayout.videoOverlay.isVisible = visible
+            }
+        } else if (userId == mRoomInfo.ownerId) {
+            // Room owner video state change
+            if (!isRoomOwner) {
+                mBinding.videoLinkingLayout.videoOverlay.isVisible = visible
+            }
+        }
+    }
+
     /**
      * Refresh bottom layout
      *
@@ -1007,14 +1023,6 @@ class LiveDetailFragment : Fragment() {
                 super.onRemoteVideoStateChanged(uid, state, reason, elapsed)
                 if (uid == mRoomInfo.ownerId.toInt()) {
                     isAudioOnlyMode = state == Constants.REMOTE_VIDEO_STATE_STOPPED
-
-                    runOnUiThread {
-                        if (reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_MUTED) {
-                            //enableComeBackSoonView(true)
-                        } else if (reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_UNMUTED) {
-                            //enableComeBackSoonView(false)
-                        }
-                    }
                 }
 
                 if (state == Constants.REMOTE_VIDEO_STATE_DECODING
@@ -1022,6 +1030,14 @@ class LiveDetailFragment : Fragment() {
                 ) {
                     val durationFromSubscribe = SystemClock.elapsedRealtime() - subscribeMediaTime
                     quickStartTime = durationFromSubscribe
+                }
+
+                runOnUiThread {
+                    if (reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_MUTED) {
+                        setVideoOverlayVisible(true, uid.toString())
+                    } else if (reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_UNMUTED) {
+                        setVideoOverlayVisible(false, uid.toString())
+                    }
                 }
             }
 
@@ -1127,6 +1143,7 @@ class LiveDetailFragment : Fragment() {
         } else {
             mRtcEngine.stopPreview()
         }
+        setVideoOverlayVisible(!enable, UserManager.getInstance().user.id.toString())
     }
 
     /**
