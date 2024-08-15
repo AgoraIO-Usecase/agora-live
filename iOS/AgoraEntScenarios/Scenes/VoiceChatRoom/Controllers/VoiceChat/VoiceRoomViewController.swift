@@ -277,6 +277,7 @@ extension VoiceRoomViewController {
         VoiceRoomIMManager.shared?.setChatroomAttributes(attributes: ChatRoomServiceImp.getSharedInstance().createMics() , completion: { error in
             if error == nil {
                 self.refreshRoomInfo()
+                self.refreshLocalMicPhoneState()
             } else {
                 self.view.makeToast("Set chatroom attributes failed!")
             }
