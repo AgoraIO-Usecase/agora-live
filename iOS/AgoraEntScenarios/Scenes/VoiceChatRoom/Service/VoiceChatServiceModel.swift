@@ -80,3 +80,24 @@ class VoiceChatGift: VoiceChatBaseInfo {
     var userNo: String?           //Invite user ID for online streaming
     var createAt: Double = 0      //Creation time, milliseconds compared to 19700101 time
 }
+
+struct VoiceChatBGM {
+    let songName: String
+    let singerName: String
+    let isOrigin: Bool
+    
+    func toDict() -> [String: Any] {
+        return [
+            "songName": songName,
+            "singerName": singerName,
+            "isOrigin": isOrigin,
+        ]
+    }
+    
+    static func fromDict(dict: [String: Any]) -> VoiceChatBGM {
+        let songName = dict["songName"] as? String ?? ""
+        let singerName = dict["singerName"] as? String ?? ""
+        let isOrigin = dict["isOrigin"] as? Bool ?? true
+        return VoiceChatBGM(songName: songName, singerName: singerName, isOrigin: isOrigin)
+    }
+}

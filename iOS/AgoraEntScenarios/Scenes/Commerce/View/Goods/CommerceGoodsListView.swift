@@ -261,7 +261,7 @@ class CommerceGoodsListViewCell: UITableViewCell {
         model.status = (model.goods?.quantity ?? 0) <= 0 ? .sold_out : .buy
         statusButton.setTitle(model.status.title, for: .normal)
         statusButton.isSelected = isBroadcaster
-        print("aaaa \(model.goods?.title ?? ""): \(model.goods?.quantity ?? 0)")
+        commerceLogger.info("setShoppingData \(model.goods?.title ?? ""): \(model.goods?.quantity ?? 0)")
         if isBroadcaster {
             statusButton.widthAnchor.constraint(equalToConstant: 64).isActive = true
         } else {

@@ -317,7 +317,6 @@ class CommerceLiveViewController: UIViewController {
         guard role == .broadcaster else { return }
         let auctionModel = CommerceGoodsAuctionModel()
         let goodsModel = CommerceGoodsModel()
-        goodsModel.imageName = "commerce_shop_goods_0"
         goodsModel.title = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
         goodsModel.price = 1
         goodsModel.quantity = 1
