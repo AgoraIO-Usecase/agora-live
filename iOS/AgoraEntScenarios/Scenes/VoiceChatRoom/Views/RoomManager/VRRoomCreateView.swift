@@ -27,7 +27,7 @@ public class VRRoomCreateView: UIImageView {
         isUserInteractionEnabled = true
         createRoom.imageView?.contentMode = .scaleAspectFit
         createRoom.backgroundColor = .voice_btn_bg
-        createRoom.setImage(UIImage.voice_image("show_create_add"), for: .normal)
+        createRoom.setImage(UIImage.voice_image("voice_create_add"), for: .normal)
         createRoom.setTitle("voice_create_room".voice_localized, for: .normal)
         createRoom.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         createRoom.spacingBetweenImageAndTitle = 7
