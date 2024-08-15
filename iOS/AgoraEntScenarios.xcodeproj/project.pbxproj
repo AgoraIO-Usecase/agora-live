@@ -572,6 +572,8 @@
 		E732CD912B47F82C004D6FB9 /* AUiMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CD902B47F82C004D6FB9 /* AUiMoreDialog.swift */; };
 		E73F23292B6F64850000B523 /* RTMSyncUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F23282B6F64850000B523 /* RTMSyncUtil.swift */; };
 		E73F232D2B7219F40000B523 /* GradualTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F232C2B7219F40000B523 /* GradualTableView.swift */; };
+		F70DE5452C6E022500FFC922 /* UIColor+Voice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70DE5442C6E022500FFC922 /* UIColor+Voice.swift */; };
+		F70DE5472C6E028B00FFC922 /* UIFont+Voice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70DE5462C6E028B00FFC922 /* UIFont+Voice.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1303,6 +1305,8 @@
 		E732CD902B47F82C004D6FB9 /* AUiMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AUiMoreDialog.swift; sourceTree = "<group>"; };
 		E73F23282B6F64850000B523 /* RTMSyncUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTMSyncUtil.swift; sourceTree = "<group>"; };
 		E73F232C2B7219F40000B523 /* GradualTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradualTableView.swift; sourceTree = "<group>"; };
+		F70DE5442C6E022500FFC922 /* UIColor+Voice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Voice.swift"; sourceTree = "<group>"; };
+		F70DE5462C6E028B00FFC922 /* UIFont+Voice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Voice.swift"; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -3064,6 +3068,8 @@
 				E732CC432B47EC6D004D6FB9 /* UIViewController+Presentation.swift */,
 				E732CC442B47EC6D004D6FB9 /* HorizontalTextCarousel.swift */,
 				E732CC452B47EC6D004D6FB9 /* VoiceRoomEmojiManager.swift */,
+				F70DE5442C6E022500FFC922 /* UIColor+Voice.swift */,
+				F70DE5462C6E028B00FFC922 /* UIFont+Voice.swift */,
 				E732CC462B47EC6D004D6FB9 /* Animation */,
 				E732CC4B2B47EC6D004D6FB9 /* VoiceRoomPasswordAlert.swift */,
 				E732CC4C2B47EC6D004D6FB9 /* Xcode14.h */,
@@ -3575,6 +3581,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A84C2D0A2B4FB01700D6EFCF /* UIImage+Commerce.swift in Sources */,
+				F70DE5472C6E028B00FFC922 /* UIFont+Voice.swift in Sources */,
 				E732CD6B2B47F336004D6FB9 /* ActionSheetManager.swift in Sources */,
 				E732CD092B47EC6D004D6FB9 /* VoiceRoomViewController+IM.swift in Sources */,
 				AB60EBCF2C35230E00AB6DF1 /* KTVSoundLoader.swift in Sources */,
@@ -3882,6 +3889,7 @@
 				ABA095902A8373F400A54FCC /* ShowSettingBitrateCell.swift in Sources */,
 				A84C2D482B4FB01700D6EFCF /* CommerceRoomInfoView.swift in Sources */,
 				DD619B8429E3E262008F63E4 /* VerifyCodeView.swift in Sources */,
+				F70DE5452C6E022500FFC922 /* UIColor+Voice.swift in Sources */,
 				A84C2D452B4FB01700D6EFCF /* CommerceUserJoinView.swift in Sources */,
 				DD3610A129B70CDC00CE7984 /* ShowMusicTableHeaderView.swift in Sources */,
 				A84C2D042B4FB01700D6EFCF /* NSString+Commerce.swift in Sources */,
@@ -4324,11 +4332,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
+				DEVELOPMENT_TEAM = G726234S43;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -4504,7 +4510,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -4521,11 +4526,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
+				DEVELOPMENT_TEAM = G726234S43;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -4701,7 +4704,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -4716,7 +4718,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = G726234S43;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
@@ -4736,7 +4738,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = G726234S43;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
