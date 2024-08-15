@@ -181,7 +181,7 @@ class ShowDataPanelPresenter {
         let svcStr = "show_statistic_svc_switch".show_localized + ": " + svc
         let localUid = "Local UID: \(VLUserCenter.user.id)"
         if audience {
-            let left = [title, localUid, levelStr, srStr].joined(separator: "\n") + "\n"
+            let left = [title, startupStr, localUid, levelStr, srStr].joined(separator: "\n") + "\n"
             let right = ""
             return ShowPanelData(left: left, right: right)
         } else {

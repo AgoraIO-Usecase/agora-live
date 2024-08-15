@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import AgoraSyncManager_overseas
 
 public enum updateRoomState {
     case activeAlien

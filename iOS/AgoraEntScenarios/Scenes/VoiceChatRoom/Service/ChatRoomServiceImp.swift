@@ -9,18 +9,24 @@ import Foundation
 import KakaJSON
 import ZSwiftBaseLib
 import AgoraChat.AgoraChatError
-import AgoraSyncManager_overseas
 import RTMSyncManager
+import AgoraRtmKit
 
 private let kSceneId = "scene_chatRoom_0.2.0"
 
-
-private func agoraPrint(_ message: String) {
-    voiceLogger.info(message, context: "Service")
+@objc public class VoiceChatLog: NSObject {
+    
+    static let kLogKey = "VoiceChat"
+    
+    @objc public static func info(_ text: String, context: String = "Service") {
+        AgoraEntLog.getSceneLogger(with: kLogKey).info(text, context: context)
+    }
+    @objc public static func err(_ text: String, context: String = "Service") {
+        AgoraEntLog.getSceneLogger(with: kLogKey).error(text, context: context)
+    }
 }
-let roomBGMKey = "room_bgm"
 
-let voiceLogger = AgoraEntLog.createLog(config: AgoraEntLogConfig.init(sceneName: "VoiceChat"))
+let roomBGMKey = "room_bgm"
 public class ChatRoomServiceImp: NSObject {
     
     static var _sharedInstance: ChatRoomServiceImp?
@@ -29,21 +35,21 @@ public class ChatRoomServiceImp: NSObject {
     var userList: [VRUser]?
     public var mics: [VRRoomMic] = [VRRoomMic]()
     public var applicants: [VoiceRoomApply] = [VoiceRoomApply]()
-    private var connectState: ChatRoomServiceConnectState?
     @objc public weak var roomServiceDelegate:ChatRoomServiceSubscribeDelegate?
     
+    private let user: AUIUserThumbnailInfo
     private var isLogined: Bool = false
     private lazy var roomManager = AUIRoomManagerImpl(sceneId: kSceneId)
     private lazy var syncManager: AUISyncManager = {
         let config = AUICommonConfig()
         config.appId = AppContext.shared.appId()
-        let owner = AUIUserThumbnailInfo()
-        owner.userId = VLUserCenter.user.id
-        owner.userName = VLUserCenter.user.name
-        owner.userAvatar = VLUserCenter.user.headUrl
-        config.owner = owner
+        config.owner = user
         config.host = KeyCenter.RTMHostUrl
-        let manager = AUISyncManager(rtmClient: nil, commonConfig: config, logConfig: nil)
+        let logConfig = AgoraRtmLogConfig()
+        logConfig.filePath = AgoraEntLog.rtmSdkLogPath()
+        logConfig.fileSizeInKB = 1024
+        logConfig.level = .info
+        let manager = AUISyncManager(rtmClient: nil, commonConfig: config, logConfig: logConfig)
         return manager
     }()
     
@@ -54,7 +60,21 @@ public class ChatRoomServiceImp: NSObject {
         return service
     }()
     
+    private var bgm: VoiceChatBGM? = nil
+    
     private var auiUserList = [AUIUserInfo]()
+    
+    public override init() {
+        let owner = AUIUserThumbnailInfo()
+        owner.userId = VLUserCenter.user.id
+        owner.userName = VLUserCenter.user.name
+        owner.userAvatar = VLUserCenter.user.headUrl
+        self.user = owner
+        AUIRoomContext.shared.displayLogClosure = { msg in
+            ShowLogger.info(msg, context: "RTMSyncManager")
+        }
+        super.init()
+    }
     
     func cleanCache() {
         self.userList = nil
@@ -69,7 +89,7 @@ public class ChatRoomServiceImp: NSObject {
         
         let currentTs = Int64(Date().timeIntervalSince1970 * 1000)
         let expiredDuration = (AppContext.shared.sceneConfig?.chat ?? 20 * 60) * 1000
-//        agoraPrint("checkRoomExpire: \(currentTs - Int64(created_at)) / \(expiredDuration)")
+//        VoiceChatLog.info("checkRoomExpire: \(currentTs - Int64(created_at)) / \(expiredDuration)")
         guard currentTs - Int64(created_at) > expiredDuration else { return }
         
         self.roomServiceDelegate?.onRoomExpired()
@@ -115,21 +135,21 @@ extension ChatRoomServiceImp: VoiceRoomIMDelegate {
     }
     
     public func receiveApplySite(roomId: String, meta: [String : String]?) {
-            if self.roomServiceDelegate != nil,self.roomServiceDelegate!.responds(to: #selector(ChatRoomServiceSubscribeDelegate.onReceiveSeatRequest(roomId:applicant:))) {
-                guard let map = meta?["user"],let chatroomId = meta?["chatroomId"] else { return }
-                if chatroomId != VoiceRoomIMManager.shared?.currentRoomId ?? "" {
-                    return
-                }
-                let apply = model(from: map, type: VoiceRoomApply.self) as! VoiceRoomApply
-                let user = self.applicants.first {
-                    $0.member?.chat_uid ?? "" == apply.member?.chat_uid ?? ""
-                }
-                if user == nil {
-                    self.applicants.append(apply)
-                }
-                self.roomServiceDelegate?.onReceiveSeatRequest(roomId: roomId, applicant: apply)
+        if self.roomServiceDelegate != nil,self.roomServiceDelegate!.responds(to: #selector(ChatRoomServiceSubscribeDelegate.onReceiveSeatRequest(roomId:applicant:))) {
+            guard let map = meta?["user"],let chatroomId = meta?["chatroomId"] else { return }
+            if chatroomId != VoiceRoomIMManager.shared?.currentRoomId ?? "" {
+                return
             }
+            let apply = model(from: map, type: VoiceRoomApply.self) as! VoiceRoomApply
+            let user = self.applicants.first {
+                $0.member?.chat_uid ?? "" == apply.member?.chat_uid ?? ""
+            }
+            if user == nil {
+                self.applicants.append(apply)
+            }
+            self.roomServiceDelegate?.onReceiveSeatRequest(roomId: roomId, applicant: apply)
         }
+    }
     
     public func receiveCancelApplySite(roomId: String, chat_uid: String) {
         if self.roomServiceDelegate != nil,self.roomServiceDelegate!.responds(to: #selector(ChatRoomServiceSubscribeDelegate.onReceiveSeatRequestRejected(roomId:chat_uid:))) {
@@ -196,7 +216,7 @@ extension ChatRoomServiceImp: VoiceRoomIMDelegate {
         }
         if map.keys.contains(where: { $0.hasPrefix("click_count") }) {
             guard let click_count = map["click_count"] else { return }
-            self.roomServiceDelegate?.onClickCountChanged(roomId: roomId, count: Int(click_count) ?? 0)
+            self.roomServiceDelegate?.onClickCountChanged(roomId: roomId, count: Int(click_count) ?? 3)
         }
         if map.keys.contains(where: { $0.hasPrefix("ranking_list") }) {
             guard let json = map["ranking_list"] else { return }
@@ -230,25 +250,32 @@ extension ChatRoomServiceImp: VoiceRoomIMDelegate {
 //MARK: ChatRoomServiceProtocol
 extension ChatRoomServiceImp: ChatRoomServiceProtocol {
     func fetchRoomBGM(roomId: String?, completion: @escaping (String?, String?, Bool) -> Void) {
-        SyncUtil.scene(id: roomId ?? "")?.get(key: roomBGMKey, success: { object in
-            let singerName = object?.toDict()["singerName"] as? String
-            let isOrigin = object?.toDict()["isOrigin"] as? Bool
-            let songName = object?.toDict()["songName"] as? String
-            completion(songName, singerName, isOrigin ?? false)
-        })
+        guard let `roomId` = roomId,
+              let scene = self.syncManager.getScene(channelName: roomId)
+        else { return }
     }
     
     func updateRoomBGM(songName: String?, singerName: String?, isOrigin: Bool) {
-        let params = ["songName": songName ?? "", "singerName": singerName ?? "", "isOrigin": !isOrigin] as [String : Any]
-        SyncUtil.scene(id: roomId ?? "")?.update(key: roomBGMKey, data: params)
+        guard let `roomId` = roomId,
+              let scene = self.syncManager.getScene(channelName: roomId)
+        else { return }
+        let bgm = VoiceChatBGM(songName: songName ?? "", singerName: singerName ?? "", isOrigin: isOrigin)
+        let collection: AUIMapCollection? = scene.getCollection(key: roomBGMKey)
+        collection?.updateMetaData(valueCmd: nil, value: bgm.toDict()) { e in
+        }
     }
     
     func subscribeRoomBGMChange(roomId: String?, completion: @escaping (String?, String?, Bool) -> Void) {
-        SyncUtil.scene(id: roomId ?? "")?.subscribe(key: roomBGMKey, onUpdated: { object in
-            let singerName = object.toDict()["singerName"] as? String
-            let isOrigin = object.toDict()["isOrigin"] as? Bool
-            let songName = object.toDict()["songName"] as? String
-            completion(songName, singerName, isOrigin ?? false)
+        guard let `roomId` = roomId,
+              let scene = self.syncManager.getScene(channelName: roomId)
+        else { return }
+        let collection: AUIMapCollection? = scene.getCollection(key: roomBGMKey)
+        collection?.subscribeAttributesDidChanged(callback: { channelName, key, object in
+            guard let dict = object.getMap() else {
+                return
+            }
+            let bgm = VoiceChatBGM.fromDict(dict: dict)
+            completion(bgm.songName, bgm.singerName, bgm.isOrigin)
         })
     }
     
@@ -267,7 +294,6 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
             completion(self.convertError(error: error))
         })
     }
-    
     
     func subscribeEvent(with delegate: ChatRoomServiceSubscribeDelegate) {
         VoiceRoomIMManager.shared?.delegate = self
@@ -311,13 +337,13 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         group.enter()
         VoiceRoomIMManager.shared?.fetchChatroomAttributes(keys: keys, completion: { error, map in
             if let ranking_list = map?["ranking_list"]?.toArray() {
-                agoraPrint("ranking_list: \(ranking_list)")
+                VoiceChatLog.info("ranking_list: \(ranking_list)")
                 roomInfo.room?.ranking_list = ranking_list.kj.modelArray(VRUser.self)
             } else {
                 roomInfo.room?.ranking_list = [VRUser]()
             }
             if let member_list = map?["member_list"]?.toArray() {
-                agoraPrint("member_list: \(member_list)")
+                VoiceChatLog.info("member_list: \(member_list)")
                 roomInfo.room?.member_list = member_list.kj.modelArray(VRUser.self)
             } else {
                 roomInfo.room?.member_list = [VRUser]()
@@ -617,10 +643,13 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         let user = ChatRoomServiceImp.getSharedInstance().userList?.first(where: {
             $0.uid == VoiceRoomUserInfo.shared.user?.uid ?? ""
         })
-        if index != nil {
-            mic.mic_index = index ?? self.findMicIndex()
+        if let `index` = index {
+            mic.mic_index = index
+        } else if let `index` = self.findMicIndex() {
+            mic.mic_index = index
         } else {
-            mic.mic_index = self.findMicIndex()
+            completion(NSError(domain: "No Enabled Mic Seat Found", code: -1), nil)
+            return
         }
         switch self.mics[safe: mic.mic_index]?.status ?? -1 {
         case 2:
@@ -698,7 +727,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         }
     
     func acceptMicSeatApply(chatUid: String, completion: @escaping (Error?,VRRoomMic?) -> Void) {
-        var mic_index = 1
+        var mic_index: Int? = nil
         let user = self.applicants.first(where: {
             $0.member?.chat_uid ?? "" == chatUid
         })
@@ -706,6 +735,10 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
             mic_index = self.findMicIndex()
         } else {
             mic_index = user?.index ?? 1
+        }
+        guard let `mic_index` = mic_index else {
+            completion(NSError(domain: "No Enabled Mic Seat Found", code: -1), nil)
+            return
         }
         let mic = VRRoomMic()
         mic.mic_index = mic_index
@@ -740,9 +773,9 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         })
     }
     
-    func findMicIndex() -> Int {
-        var mic_index = 1
-        for i in 0...7 {
+    func findMicIndex() -> Int? {
+        var mic_index: Int? = nil
+        for i in 0...5 {
             if let mic = self.mics[safe: i] ,mic.member == nil,mic.status != 3,mic.status != 4 {
                 mic_index = mic.mic_index
                 break
@@ -750,6 +783,8 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         }
         return mic_index
     }
+
+// MARK: Room Management
     
     private func preGenerateToken(completion:@escaping (NSError?)->()) {
         AppContext.shared.agoraRTCToken = ""
@@ -764,8 +799,8 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
             }
             AppContext.shared.agoraRTCToken = rtcToken
             AppContext.shared.agoraRTMToken = rtmToken
-            agoraPrint("[Token] sync manager login token rtm:\(rtmToken) rtc: \(rtcToken)")
-            agoraPrint("[Timing]preGenerateToken rtc & rtm cost: \(Int64(-date.timeIntervalSinceNow * 1000)) ms")
+            VoiceChatLog.info("[Token] sync manager login token rtm:\(rtmToken) rtc: \(rtcToken)")
+            VoiceChatLog.info("[Timing]preGenerateToken rtc & rtm cost: \(Int64(-date.timeIntervalSinceNow * 1000)) ms")
             completion(nil)
         }
     }
@@ -775,7 +810,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         if !token.isEmpty {
             let date = Date()
             self.syncManager.rtmManager.login(token: token) { err in
-                agoraPrint("[Timing]login cost: \(Int64(-date.timeIntervalSinceNow * 1000))ms")
+                VoiceChatLog.info("[Timing]login cost: \(Int64(-date.timeIntervalSinceNow * 1000))ms")
                 self.isLogined = err == nil ? true : false
                 completion(err)
             }
@@ -795,7 +830,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
     ///- Page: pagination index, starting from 0 (this attribute is temporarily invalid due to SyncManager's inability to perform pagination)
     ///- completion: Complete callback (error message, room list)
     func fetchRoomList(page: Int,
-                     completion: @escaping (Error?, [VRRoomEntity]?) -> Void) {
+                       completion: @escaping (Error?, [VRRoomEntity]?) -> Void) {
         if isLogined == false {
             login {[weak self] err in
                 if let err = err {
@@ -806,7 +841,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
             }
             return
         }
-        let currentUserId = VLUserCenter.user.id
+        let currentUserId = user.userId
         roomService.getRoomList(lastCreateTime: 0,
                                 pageSize: 50) { info in
             return info.owner?.userId == currentUserId
@@ -873,22 +908,15 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
                 self.roomServiceDelegate?.onMemberCountChanged(roomId: roomId, count: count)
             }
             //添加鉴黄接口
-            NetworkManager.shared.voiceIdentify(channelName: room.channel_id ?? "", channelType: room.sound_effect == 3 ? 0 : 1, sceneType: .voice) { msg in
-                agoraPrint("\(msg == nil ? "open voice security success" : "open voice security failed")")
+            NetworkManager.shared.voiceIdentify(channelName: room.channel_id ?? "", 
+                                                channelType: room.sound_effect == 3 ? 0 : 1,
+                                                sceneType: .voice) { msg in
+                VoiceChatLog.info("\(msg == nil ? "开启鉴黄成功" : "开启鉴黄失败")")
             }
-            NetworkManager.shared.generateToken(channelName: room.room_id ?? "",
-                                                uid: "\(UserInfo.userId)",
-                                                tokenTypes: [.rtc, .rtm]) { token in
-                guard let rtcToken = token, let rtmToken = token else {
-                    completion(nil, nil)
-                    return
-                }
-                AppContext.shared.agoraRTCToken = rtcToken
-                AppContext.shared.agoraRTMToken = rtmToken
-                agoraPrint("[Token] create room token room:\(roomInfo.roomId) rtm:\(rtmToken) rtc: \(rtcToken)")
-                let roomEntity = info?.voice_toRoomEntity()
-                completion(nil, roomEntity)
-            }
+            
+            VoiceChatLog.info("[Token] create room token room:\(roomInfo.roomId)")
+            let roomEntity = info?.voice_toRoomEntity()
+            completion(nil, roomEntity)
         }
     }
     
@@ -908,33 +936,23 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
             return
         }
         let roomInfo = AUIRoomInfo.voice_fromVRRoomEntity(roomEntity)
-        agoraPrint("joinRoom roomId: \(roomInfo.roomId) roomName: \(roomInfo.roomName)")
+        VoiceChatLog.info("joinRoom roomId: \(roomInfo.roomId) roomName: \(roomInfo.roomName)")
         roomService.enterRoom(roomInfo: roomInfo) {[weak self] err in
             guard let `self` = self else { return }
             if err != nil {
                 completion(err, nil)
                 return
             }
-            NetworkManager.shared.generateToken(channelName:roomId,
-                                                uid: "\(UserInfo.userId)",
-                                                tokenTypes: [.rtc, .rtm]) { token in
-                guard let rtcToken = token, let rtmToken = token else {
-                    completion(nil, nil)
-                    return
-                }
-                AppContext.shared.agoraRTCToken = rtcToken
-                AppContext.shared.agoraRTMToken = rtmToken
-                self.roomId = roomId
-                self._startCheckExpire()
-                let scene = self.syncManager.getScene(channelName: roomId)
-                scene?.bindRespDelegate(delegate: self)
-                scene?.userService.bindRespDelegate(delegate: self)
-                completion(nil, roomEntity)
-            }
+            
+            self.roomId = roomId
+            self._startCheckExpire()
+            let scene = self.syncManager.getScene(channelName: roomId)
+            scene?.bindRespDelegate(delegate: self)
+            scene?.userService.bindRespDelegate(delegate: self)
+            completion(nil, roomEntity)
         }
     }
     
-    //Todo Remove Owner
     func leaveRoom(_ roomId: String, completion: @escaping (Error?, Bool) -> Void) {
         if isLogined == false {
             login {[weak self] err in
@@ -954,7 +972,6 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         }
         if roomService.isRoomOwner(roomId: roomId) {
             VoiceRoomIMManager.shared?.userDestroyedChatroom()
-            SyncUtil.scene(id: roomId)?.deleteScenes()
         } else {
             // 更新房间列表人数信息
             VoiceRoomIMManager.shared?.userQuitRoom(completion: nil)
@@ -997,39 +1014,21 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         return micsMap
     }
     
-    func initIM(with roomName: String, type: Int,chatId: String?, channelId: String, imUid: String?, pwd: String, completion: @escaping (String, String, String) -> Void) {
-
-        var im_token = ""
-        var im_uid = ""
-        var chatroom_id = ""
-
-        let impGroup = DispatchGroup()
-        let imQueue = DispatchQueue(label: "com.agora.imp.www")
-        let tokenQueue = DispatchQueue(label: "token")
-
-        impGroup.enter()
-        imQueue.async {
-            NetworkManager.shared.generateIMConfig(type: type,channelName: roomName, nickName: VLUserCenter.user.name, chatId: chatId, imUid: imUid, password: pwd, uid:  VLUserCenter.user.id, sceneType: .voice) { uid, room_id, token in
-                im_uid = uid ?? ""
-                chatroom_id = room_id ?? ""
-                im_token = token ?? ""
-                impGroup.leave()
-            }
-            
-        }
-        
-        impGroup.enter()
-        tokenQueue.async {
-            NetworkManager.shared.generateToken(channelName: channelId, 
-                                                uid: VLUserCenter.user.id,
-                                                tokenTypes: [.rtc]) { token in
-                AppContext.shared.agoraRTCToken = token ?? ""
-                impGroup.leave()
-            }
-        }
-        
-        impGroup.notify(queue: .main) {
-            completion(im_token, im_uid, chatroom_id )
+    func initIM(with roomName: String,
+                type: Int,
+                chatId: String?,
+                channelId: String, 
+                imUid: String?,
+                pwd: String,
+                completion: @escaping (String, String, String) -> Void) {
+        NetworkManager.shared.generateIMConfig(type: type,channelName: roomName,
+                                               nickName: VLUserCenter.user.name,
+                                               chatId: chatId,
+                                               imUid: imUid,
+                                               password: pwd,
+                                               uid:  VLUserCenter.user.id,
+                                               sceneType: .voice) { uid, room_id, token in
+            completion(token ?? "", uid ?? "", room_id ?? "" )
         }
     }
 }
@@ -1123,5 +1122,3 @@ extension ChatRoomServiceImp: AUIUserRespDelegate {
     }
     
 }
-
-

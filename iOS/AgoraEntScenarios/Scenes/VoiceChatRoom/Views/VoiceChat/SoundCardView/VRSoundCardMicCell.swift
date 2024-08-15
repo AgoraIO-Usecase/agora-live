@@ -78,7 +78,7 @@ class VRSoundCardMicCell: UITableViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        let numWidth = 30.0
+        let numWidth = 40.0
         let sliderWidth = 70.0
         titleLabel.frame = CGRect(x: 20, y: 5, width: width - 20 - numWidth - sliderWidth, height: 18)
         detailLabel.frame = CGRect(x: 20, y: 25, width: width - 20 - numWidth - sliderWidth, height: 18)

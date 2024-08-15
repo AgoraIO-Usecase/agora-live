@@ -36,7 +36,7 @@ import Agora_Scene_Utils
                         for: .normal,
                         postion: .top,
                         spacing: 4)
-        button.setTitle("report_content".show_localized, for: .normal)
+        button.setTitle("report_content".commerce_localized, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         button.setTitleColor(.gray, for: .normal)
         button.addTargetFor(self, action: #selector(onClickReportContentButton(_:)), for: .touchUpInside)
@@ -48,7 +48,7 @@ import Agora_Scene_Utils
                         for: .normal,
                         postion: .top,
                         spacing: 4)
-        button.setTitle("report_user".show_localized, for: .normal)
+        button.setTitle("report_user".commerce_localized, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         button.setTitleColor(.gray, for: .normal)
         

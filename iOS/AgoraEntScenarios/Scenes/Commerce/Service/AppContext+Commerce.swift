@@ -47,7 +47,6 @@ extension AppContext {
     
     static func unloadCommerceServiceImp() {
         _commerceServiceImpMap = [String: CommerceSyncManagerServiceImp]()
-        SyncUtilsWrapper.cleanScene()
         _commerceExpiredImp.removeAll()
     }
     

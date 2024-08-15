@@ -32,7 +32,7 @@ class CommerceAuctionShoppingView: UIView {
         return view
     }()
     private lazy var coverImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage.sceneImage(name: ""))
+        let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 6
         imageView.layer.masksToBounds = true
@@ -146,8 +146,8 @@ class CommerceAuctionShoppingView: UIView {
     
     func setGoodsData(model: CommerceGoodsAuctionModel, isBroadcaster: Bool) {
         currentAuctionModel = model
-        coverImageView.sd_setImage(with: URL(string: model.goods?.imageName ?? ""),
-                                   placeholderImage: UIImage.commerce_sceneImage(name: model.goods?.imageName ?? ""))
+        let imageName = kDefaultAuctionGoodsName
+        coverImageView.image = UIImage.commerce_sceneImage(name: imageName)
         titleLabel.text = model.goods?.title
         descLabel.text = (model.bidUser == nil || model.bidUser?.id == "") ? "Start from" : "Current Bid:"
         let bidPrint = model.status == .completion ? (model.goods?.price ?? 1) : model.bid

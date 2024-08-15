@@ -134,7 +134,7 @@ class CommerceDataPanelPresenter {
     }
     
     private func otherData(send: Bool, receive: Bool, audience: Bool) -> ShowPanelData {
-        let params = ShowAgoraKitManager.shared.rtcParam
+        let params = CommerceAgoraKitManager.shared.rtcParam
         let onStr = "show_setting_switch_on".show_localized
         let offStr = "show_setting_switch_off".show_localized
         // left:
@@ -166,8 +166,8 @@ class CommerceDataPanelPresenter {
         // device cpu level
         let levelStr = "show_statistic_device_level".show_localized
         + ": "
-        + ShowAgoraKitManager.shared.deviceLevel.description()
-        + "(\(ShowAgoraKitManager.shared.deviceScore))"
+        + CommerceAgoraKitManager.shared.deviceLevel.description()
+        + "(\(CommerceAgoraKitManager.shared.deviceScore))"
         //pvc switch
         let pvc = send ? (params.pvc ? onStr : offStr) : "--"
         let pvcStr = "show_statistic_pvc_switch".show_localized + ": " + pvc
