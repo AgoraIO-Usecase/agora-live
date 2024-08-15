@@ -573,7 +573,6 @@
 		E73F23292B6F64850000B523 /* RTMSyncUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F23282B6F64850000B523 /* RTMSyncUtil.swift */; };
 		E73F232D2B7219F40000B523 /* GradualTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F232C2B7219F40000B523 /* GradualTableView.swift */; };
 		F70DE5452C6E022500FFC922 /* UIColor+Voice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70DE5442C6E022500FFC922 /* UIColor+Voice.swift */; };
-		F70DE5472C6E028B00FFC922 /* UIFont+Voice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70DE5462C6E028B00FFC922 /* UIFont+Voice.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1306,7 +1305,6 @@
 		E73F23282B6F64850000B523 /* RTMSyncUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTMSyncUtil.swift; sourceTree = "<group>"; };
 		E73F232C2B7219F40000B523 /* GradualTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradualTableView.swift; sourceTree = "<group>"; };
 		F70DE5442C6E022500FFC922 /* UIColor+Voice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Voice.swift"; sourceTree = "<group>"; };
-		F70DE5462C6E028B00FFC922 /* UIFont+Voice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Voice.swift"; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -3069,7 +3067,6 @@
 				E732CC442B47EC6D004D6FB9 /* HorizontalTextCarousel.swift */,
 				E732CC452B47EC6D004D6FB9 /* VoiceRoomEmojiManager.swift */,
 				F70DE5442C6E022500FFC922 /* UIColor+Voice.swift */,
-				F70DE5462C6E028B00FFC922 /* UIFont+Voice.swift */,
 				E732CC462B47EC6D004D6FB9 /* Animation */,
 				E732CC4B2B47EC6D004D6FB9 /* VoiceRoomPasswordAlert.swift */,
 				E732CC4C2B47EC6D004D6FB9 /* Xcode14.h */,
@@ -3581,7 +3578,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A84C2D0A2B4FB01700D6EFCF /* UIImage+Commerce.swift in Sources */,
-				F70DE5472C6E028B00FFC922 /* UIFont+Voice.swift in Sources */,
 				E732CD6B2B47F336004D6FB9 /* ActionSheetManager.swift in Sources */,
 				E732CD092B47EC6D004D6FB9 /* VoiceRoomViewController+IM.swift in Sources */,
 				AB60EBCF2C35230E00AB6DF1 /* KTVSoundLoader.swift in Sources */,
