@@ -17,15 +17,24 @@ import Foundation
     var headLabel: UILabel!
     var exLabel: UILabel!
     var coverView: UIView!
-    @objc var soundOpen:Bool = false
-    @objc var gainValue: Float = 0
-    @objc var effectType: Int = 0
-    @objc var typeValue: Int = 2
+    private var soundOpen:Bool = false
+    private var gainValue: Float = 0
+    private var effectType: Int = 0
+    private var typeValue: Int = 2
     
     @objc var clicKBlock:((Int) -> Void)?
     @objc var gainBlock:((Float) -> Void)?
     @objc var typeBlock:((Int) -> Void)?
     @objc var soundCardBlock:((Bool) -> Void)?
+    
+    @objc func setup(enable: Bool, typeValue: Int, gainValue: Float, effectType: Int) {
+        self.soundOpen = enable
+        self.gainValue = gainValue
+        self.effectType = effectType
+        self.typeValue = typeValue
+        self.tableView.reloadData()
+    }
+    
     @objc func setUseSoundCard(enable: Bool) {
         self.noSoundCardView.isHidden = enable
         self.tableView.isHidden = !enable
@@ -66,7 +75,7 @@ import Foundation
         
 //        noSoundCardView = UIView()
 //        self.addSubview(noSoundCardView)
-//        
+//
 //        // 创建图片 attachment
 //        let imageAttachment = NSTextAttachment()
 //        imageAttachment.image = UIImage.sceneImage(name: "candel")
@@ -95,18 +104,18 @@ import Foundation
 //        warNingLabel.textColor = .red
 //        warNingLabel.font = UIFont.systemFont(ofSize: 12)
 //        noSoundCardView.addSubview(warNingLabel)
-//        
+//
 //        tipsView = UIView()
 //        tipsView.backgroundColor = UIColor(red: 1, green: 251/255.0, blue: 252/255.0, alpha: 1)
 //        noSoundCardView.addSubview(tipsView)
 //        tipsView.layer.cornerRadius = 5
 //        tipsView.layer.masksToBounds = true
-//        
+//
 //        headLabel = UILabel()
 //        headLabel.text = "目前支持以下设备:"
 //        headLabel.font = UIFont.systemFont(ofSize: 13, weight: .bold)
 //        tipsView.addSubview(headLabel)
-//        
+//
 //        exLabel = UILabel()
 //        exLabel.text = "1.有线耳机 \n2.有线麦克风"
 //        exLabel.numberOfLines = 0
@@ -114,7 +123,7 @@ import Foundation
 //        exLabel.textColor = UIColor(red: 60/255.0, green: 66/255.0, blue: 103/255.0, alpha: 1)
 //        tableView.tableFooterView = UIView()
 //        tipsView.addSubview(exLabel)
-//        
+//
 //        noSoundCardView.isHidden = true
         
 //        let flag = KTVHeadSetUtil.hasSoundCard()
@@ -174,11 +183,6 @@ import Foundation
     }
     
     @objc func soundChange(swich: UISwitch) {
-        if swich.isOn {
-            self.gainValue = 100.0;
-            self.effectType = 0;
-            self.typeValue = 4;
-        }
         self.soundOpen = swich.isOn
         coverView.isHidden = swich.isOn
         guard let soundCardBlock = soundCardBlock else {return}
