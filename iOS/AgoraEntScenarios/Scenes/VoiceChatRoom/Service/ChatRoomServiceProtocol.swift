@@ -309,11 +309,6 @@ protocol ChatRoomServiceProtocol: NSObjectProtocol {
     ///- Parameter value: Volume value
     func updateRobotVolume(value: Int,completion: @escaping (Error?) -> Void)
     
-    ///Description: Get room background music
-    ///- Parameter roomId: Room ID
-    ///- Parameter completion: Callback
-    func fetchRoomBGM(roomId: String?, completion: @escaping (_ songName: String?, _ singerName: String?, _ isPlaying: Bool) -> Void)
-    
     ///Update room background music in Description
     ///- Parameter songName: Song name
     ///- Parameter singer Name: Singer

@@ -65,7 +65,6 @@
 #pragma setter
 - (void)setIsPlayAccompany:(BOOL)isPlayAccompany {
     [self.trackBtn setSelected:!isPlayAccompany];
-   // [self _refreshOriginButton];
     
     VLKTVMVViewActionType targetOrigin = isPlayAccompany ? VLKTVMVViewActionTypeSingAcc : VLKTVMVViewActionTypeSingOrigin;
     if ([self.delegate respondsToSelector:@selector(onKTVMVView:btnTappedWithActionType:)]) {
@@ -242,17 +241,6 @@
     CGFloat totalHeight = imageSize.height + titleSize.height;
     button.imageEdgeInsets = UIEdgeInsetsMake(- (totalHeight - imageSize.height + spacing), 0.0, 15.0, - titleSize.width);
     button.titleEdgeInsets = UIEdgeInsetsMake(0, - imageSize.width, - (totalHeight - titleSize.height + spacing), 0);
-}
-
-- (void)_refreshOriginButton {
-    if(self.actionType == VLKTVMVViewActionTypeSingAcc){
-        [self.trackBtn setTitle:KTVLocalizedString(@"ktv_ori_sing") forState:UIControlStateNormal];
-    } else if (self.actionType == VLKTVMVViewActionTypeSingLead) {
-        [self.trackBtn setTitle:KTVLocalizedString(@"ktv_lead_sing") forState:UIControlStateHighlighted];
-    } else if (self.actionType == VLKTVMVViewActionTypeSingOrigin) {
-        [self.trackBtn setTitle:KTVLocalizedString(@"ktv_ori_sing") forState:UIControlStateSelected];
-    }
-    [self setNeedsLayout];
 }
 
 -(void)joinChorus:(UIButton *)btn{
@@ -561,17 +549,14 @@
 {
     switch (type) {
         case VLKTVMVViewActionTypeSingOrigin:
-            _trackBtn.selected = YES;
-            [_trackBtn setTitle:KTVLocalizedString(@"ktv_ori_sing") forState:UIControlStateSelected];
-            [self.trackBtn setImage:[UIImage ktv_sceneImageWithName:@"original" ] forState:UIControlStateSelected];
+            [_trackBtn setTitle:KTVLocalizedString(@"ktv_ori_sing") forState:UIControlStateNormal];
+            [self.trackBtn setImage:[UIImage ktv_sceneImageWithName:@"original" ] forState:UIControlStateNormal];
             break;
         case VLKTVMVViewActionTypeSingLead:
-            _trackBtn.selected = NO;
             [_trackBtn setTitle:KTVLocalizedString(@"ktv_lead_sing") forState:UIControlStateNormal];
             [self.trackBtn setImage:[UIImage ktv_sceneImageWithName:@"original" ] forState:UIControlStateNormal];
             break;
         case VLKTVMVViewActionTypeSingAcc:
-            _trackBtn.selected = NO;
             [_trackBtn setTitle:KTVLocalizedString(@"ktv_ori_sing") forState:UIControlStateNormal];
             [self.trackBtn setImage:[UIImage ktv_sceneImageWithName:@"acc" ] forState:UIControlStateNormal];
             break;
@@ -685,10 +670,7 @@
         [self.trackBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         self.trackBtn.titleLabel.font = UIFontMake(10.0);
         [self.trackBtn setTitle:KTVLocalizedString(@"ktv_ori_sing") forState:UIControlStateNormal];
-        [self.trackBtn setTitle:KTVLocalizedString(@"ktv_lead_sing") forState:UIControlStateSelected];
-        [_trackBtn setImage:[UIImage ktv_sceneImageWithName:@"ktv_mic_acc" ] forState:UIControlStateSelected];
         [_trackBtn setImage:[UIImage ktv_sceneImageWithName:@"ktv_mic_origin" ] forState:UIControlStateNormal];
-        _trackBtn.selected = NO;
         [_trackBtn addTarget:self action:@selector(originClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _trackBtn;
