@@ -215,7 +215,7 @@ extension VoiceRoomViewController {
             checkEnterSeatAudioAuthorized()
             rtckit.initMusicControlCenter()
         }
-
+        soundcardPresenter.setupEngine(rtckit.rtcKit)
         var rtcJoinSuccess = false
         var IMJoinSuccess = false
 
@@ -256,6 +256,8 @@ extension VoiceRoomViewController {
                 }
                 self.quitRoom()
             } else {
+                showMockJoinedMessage()
+                
                 if self.isOwner == true {
                     //Landlord updates environmental information KV
                     self.setChatroomAttributes()
@@ -271,6 +273,11 @@ extension VoiceRoomViewController {
         }
         //Collect APM full link audio
         rtckit.setAPMOn(isOn: AppContext.shared.isVRApmOn)
+    }
+    
+    private func showMockJoinedMessage () {
+        guard let user = VoiceRoomUserInfo.shared.user else {return}
+        self.convertShowText(userName: user.name ?? "", content: "voice_joined".voice_localized, joined: true)
     }
     
     private func setChatroomAttributes() {
@@ -448,7 +455,8 @@ extension VoiceRoomViewController {
             view.addSubViews([chatView, giftList(), chatBar, inputBar])
             inputBar.isHidden = true
         }
-        chatView.messages?.append(startMessage())
+        //安卓无提示信息，和安卓对齐
+//        chatView.messages?.append(startMessage())
         
         view.addSubview(debugButton)
         debugButton.translatesAutoresizingMaskIntoConstraints = false

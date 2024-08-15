@@ -707,7 +707,6 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 status: MusicLoadStatus,
                 lyricUrl: String?
             ) {
-                KTVLogger.d(TAG, "joinChorus onMusicLoadProgress,songCode:$songCode,percent:$percent")
                 loadMusicProgressLiveData.postValue(percent)
             }
 
@@ -1327,7 +1326,6 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 status: MusicLoadStatus,
                 lyricUrl: String?
             ) {
-                KTVLogger.d(TAG, "onMusicLoadProgress, songCode: $songCode percent: $percent")
                 loadMusicProgressLiveData.postValue(percent)
             }
 
