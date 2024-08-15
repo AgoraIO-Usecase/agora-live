@@ -35,13 +35,13 @@ class VMNorSetTableViewCell: UITableViewCell {
         iconView.image = UIImage.sceneImage(name: "icons／set／jiqi", bundleName: "VoiceChatRoomResource")
         contentView.addSubview(iconView)
 
-        titleLabel.frame = CGRect(x: 50, y: 17, width: 200, height: 20)
+        titleLabel.frame = CGRect(x: 50, y: 17, width: 217, height: 20)
         titleLabel.text = "AgoraBlue"
         titleLabel.textColor = UIColor(red: 60 / 255.0, green: 66 / 255.0, blue: 103 / 255.0, alpha: 1)
         titleLabel.font = UIFont.systemFont(ofSize: 13, weight: .bold)
         contentView.addSubview(titleLabel)
 
-        contentLabel.frame = CGRect(x: screenWidth - 150, y: 17, width: 100, height: 30)
+        contentLabel.frame = CGRect(x: screenWidth - 150, y: 17, width: 60, height: 30)
         contentLabel.text = "Medium"
         contentLabel.textColor = UIColor(red: 60 / 255.0, green: 66 / 255.0, blue: 103 / 255.0, alpha: 1)
         contentLabel.textAlignment = .right
