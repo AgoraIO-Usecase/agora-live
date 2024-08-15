@@ -276,7 +276,7 @@ extension VoiceRoomViewController {
     }
 
     func changeMicState() {
-        if chatBar.micState {
+        if chatBar.micState == .unSelected {
             checkAudioAuthorized()
         }
         guard let idx = local_index else {
@@ -292,9 +292,9 @@ extension VoiceRoomViewController {
             view.makeToast("voice_the_current_microphone_has_been_muted".voice_localized, point: view.center, title: nil, image: nil, completion: nil)
             return
         }
-        chatBar.micState = !chatBar.micState
-        chatBar.refresh(event: .mic, state: chatBar.micState ? .selected : .unSelected, asCreator: false)
-        let status = (chatBar.micState == true ? 0:1)
+        chatBar.micState = (chatBar.micState == .selected) ? .unSelected : .selected
+        chatBar.refresh(event: .mic, state: (chatBar.micState == .selected) ? .unSelected : .selected, asCreator: false)
+        let status = (chatBar.micState == .selected ? 0:1)
         VoiceRoomUserInfo.shared.user?.micStatus = status
         ChatRoomServiceImp.getSharedInstance().changeMicUserStatus(status: status) { [weak self] error, mic in
             guard let `self` = self else { return }

@@ -19,7 +19,9 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
     
     func onRoomExpired() {
         ToastView.show(text: ChatRoomServiceKickedReason.destroyed.errorDesc())
-        fetchDetailError()
+        self.notifySeverLeave()
+        self.rtckit.leaveChannel()
+        self.backAction()
     }
     
     func chatTokenWillExpire() {
@@ -199,6 +201,7 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
         for mic in mics {
             ChatRoomServiceImp.getSharedInstance().mics[mic.mic_index] = mic
         }
+        refreshLocalMicPhoneState()
         //If there are two mic objects from the same person, it proves that the microphone has been switched, otherwise it is switched on and off, or the microphone has been muted, etc
         if mics.count == 2,let first = mics.first,let last = mics.last {
             ChatRoomServiceImp.getSharedInstance().mics[first.mic_index] = first
@@ -303,6 +306,16 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
                 let seatUser = ChatRoomServiceImp.getSharedInstance().mics.first(where: { $0.member?.uid == VLUserCenter.user.id && $0.status != -1 })
                 rtckit.enableinearmonitoring(enable: seatUser == nil ? false : roomInfo?.room?.turn_InEar ?? false)
             }
+        }
+    }
+    
+    func refreshLocalMicPhoneState() {
+        let local_uid: String = VoiceRoomUserInfo.shared.user?.chat_uid ?? ""
+        if let localMicSeatInfo = ChatRoomServiceImp.getSharedInstance().mics.first(where: {$0.member?.chat_uid == local_uid}) {
+            let isMicOn = (localMicSeatInfo.member?.micStatus == 1)
+            chatBar.refresh(event: .mic, state: isMicOn ? .unSelected : .selected, asCreator: self.isOwner)
+        } else {
+            chatBar.refresh(event: .mic, state: .disable, asCreator: self.isOwner)
         }
     }
 
