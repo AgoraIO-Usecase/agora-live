@@ -127,30 +127,26 @@ extension VRRoomsViewController {
                                                password: "12345678", 
                                                uid:  VLUserCenter.user.id,
                                                sceneType: .voice) { [weak self] uid, room_id, token in
-            SVProgressHUD.dismiss()
             VLUserCenter.user.chat_uid = uid ?? ""
             VLUserCenter.user.im_token = token ?? ""
-            if let userId = uid,let im_token = token {
-                if self?.initialError == nil {
-                    SVProgressHUD.show()
-                    VoiceRoomIMManager.shared?.loginIM(userName: userId, token: im_token, completion: { userName, error in
-                        SVProgressHUD.dismiss()
-                        if error == nil {
-                            completion?(true)
-                        } else {
-                            self?.loginError = error
-                            self?.view.makeToast("login failed!".voice_localized, point: CGPoint(x: ScreenWidth/2.0, y: ScreenHeight/2.0), title: nil, image: nil, completion: nil)
-                            completion?(false)
-                            self?.navigationController?.popViewController(animated: true)
-                        }
-                    })
-                }
-            } else {
-                VoiceChatLog.err("fetchIMConfig fail, generateIMConfig empty")
+            guard let userId = uid, let im_token = token, self?.initialError == nil else {
+                SVProgressHUD.dismiss()
                 self?.view.makeToast("login failed!".voice_localized, point: CGPoint(x: ScreenWidth/2.0, y: ScreenHeight/2.0), title: nil, image: nil, completion: nil)
                 completion?(false)
                 self?.navigationController?.popViewController(animated: true)
+                return
             }
+            VoiceRoomIMManager.shared?.loginIM(userName: userId, token: im_token, completion: { userName, error in
+                SVProgressHUD.dismiss()
+                guard error == nil else {
+                    self?.loginError = error
+                    self?.view.makeToast("login failed!".voice_localized, point: CGPoint(x: ScreenWidth/2.0, y: ScreenHeight/2.0), title: nil, image: nil, completion: nil)
+                    completion?(false)
+                    self?.navigationController?.popViewController(animated: true)
+                    return
+                }
+                completion?(true)
+            })
         }
     }
     
