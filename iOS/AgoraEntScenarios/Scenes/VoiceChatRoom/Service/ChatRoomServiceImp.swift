@@ -12,7 +12,7 @@ import AgoraChat.AgoraChatError
 import RTMSyncManager
 import AgoraRtmKit
 
-private let kSceneId = "scene_chatRoom_0.2.0"
+private let kSceneId = "scene_chatRoom_1.3.0"
 
 @objc public class VoiceChatLog: NSObject {
     
