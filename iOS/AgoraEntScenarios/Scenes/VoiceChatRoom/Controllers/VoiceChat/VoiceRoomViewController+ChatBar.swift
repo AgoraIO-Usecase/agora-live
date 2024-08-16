@@ -292,8 +292,8 @@ extension VoiceRoomViewController {
             view.makeToast("voice_the_current_microphone_has_been_muted".voice_localized, point: view.center, title: nil, image: nil, completion: nil)
             return
         }
-        chatBar.micState = (chatBar.micState == .selected) ? .unSelected : .selected
-        chatBar.refresh(event: .mic, state: (chatBar.micState == .selected) ? .unSelected : .selected, asCreator: false)
+        let micState: VoiceRoomChatBarState = (chatBar.micState == .selected) ? .unSelected : .selected
+        chatBar.refresh(event: .mic, state: micState, asCreator: self.isOwner)
         let status = (chatBar.micState == .selected ? 0:1)
         VoiceRoomUserInfo.shared.user?.micStatus = status
         ChatRoomServiceImp.getSharedInstance().changeMicUserStatus(status: status) { [weak self] error, mic in
