@@ -26,15 +26,21 @@ public class VRRoomCreateView: UIImageView {
 //        createContainer.layer.shadowOpacity = 1
         isUserInteractionEnabled = true
         createRoom.imageView?.contentMode = .scaleAspectFit
-        createRoom.setBackgroundImage(UIImage.voice_image("create_room"), for: .normal)
-        createRoom.setImage(UIImage.voice_image("create_room_add"), for: .normal)
+        createRoom.backgroundColor = .voice_btn_bg
+        createRoom.setImage(UIImage.voice_image("voice_create_add"), for: .normal)
         createRoom.setTitle("voice_create_room".voice_localized, for: .normal)
         createRoom.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         createRoom.spacingBetweenImageAndTitle = 7
+        createRoom.imageEdgeInsets(UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5))
+        createRoom.titleEdgeInsets(UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 0))
+        createRoom.layer.cornerRadius = 48 * 0.5
+        createRoom.layer.masksToBounds = true
         createRoom.accessibilityIdentifier = "voice_chat_create_room_button_title"
         createRoom.translatesAutoresizingMaskIntoConstraints = false
         createRoom.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         createRoom.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
+        createRoom.heightAnchor.constraint(equalToConstant: 48).isActive = true
+        createRoom.widthAnchor.constraint(equalToConstant: 195).isActive = true
     }
 
     @available(*, unavailable)

@@ -25,7 +25,7 @@
     </string-array>
 
     <string-array name="ktv_audioPreset">
-        <item>Karaoke</item>
+        <item>KTV</item>
         <item>Origin</item>
         <item>Concert</item>
         <item>Studio</item>

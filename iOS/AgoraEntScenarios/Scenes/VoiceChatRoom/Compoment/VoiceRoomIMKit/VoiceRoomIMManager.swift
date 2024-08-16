@@ -265,7 +265,7 @@ public extension VoiceRoomIMManager {
             }
         })
     }
-    
+        
     func userDestroyedChatroom() {
         AgoraChatClient.shared().roomManager?.destroyChatroom(self.currentRoomId)
     }
