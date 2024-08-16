@@ -1,13 +1,9 @@
 package io.agora.scene.voice.global
 
-import android.app.Application
-
 /**
  * @author create by zhangwei03
  */
 interface IVoiceBuddy {
-    /** app */
-    fun application(): Application
 
     /** user avatar */
     fun headUrl(): String

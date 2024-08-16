@@ -134,6 +134,12 @@ public class BaseRecyclerViewAdapter<B extends ViewBinding, T, H extends BaseRec
                 }
             };
         }
+        if (mOnItemChildClickListener != null) {
+            holder.mChildListener = (view, extData, position, itemViewType) -> {
+                T itemData = getItemData(position);
+                mOnItemChildClickListener.onItemChildClick(itemData, extData, view, position, viewType);
+            };
+        }
         return holder;
     }
 

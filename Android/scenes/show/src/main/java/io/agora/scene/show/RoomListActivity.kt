@@ -9,7 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import io.agora.scene.base.SceneAliveTime
+import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
@@ -109,11 +109,8 @@ class RoomListActivity : AppCompatActivity() {
             initVideoSettings()
         }
 
-        SceneAliveTime.fetchShowAliveTime ({ show, pk ->
-            ShowLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
-            // ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
-            ShowServiceProtocol.PK_AVAILABLE_DURATION = pk * 1000L
-        })
+        ShowServiceProtocol.ROOM_AVAILABLE_DURATION = SceneConfigManager.showExpireTime * 1000L
+        ShowServiceProtocol.PK_AVAILABLE_DURATION = SceneConfigManager.showPkExpireTime * 1000L
     }
 
     /**

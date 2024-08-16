@@ -2,7 +2,7 @@ package io.agora.scene.voice.service
 
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.rtmsyncmanager.utils.ObservableHelper
-import io.agora.scene.voice.global.VoiceBuddyFactory
+import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.voice.model.*
 import io.agora.voice.common.utils.LogTools
 
@@ -27,7 +27,7 @@ interface VoiceServiceProtocol {
         val serviceProtocol: VoiceServiceProtocol
             get() {
                 if (innerProtocol == null) {
-                    innerProtocol =   VoiceSyncManagerServiceImp(VoiceBuddyFactory.get().getVoiceBuddy().application()) { error ->
+                    innerProtocol =   VoiceSyncManagerServiceImp(AgoraApplication.the()) { error ->
                         LogTools.e("VoiceServiceProtocol", "voice chat protocol error：${error?.message}")
                     }
                 }
