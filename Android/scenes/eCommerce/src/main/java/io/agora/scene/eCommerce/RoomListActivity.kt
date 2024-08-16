@@ -9,7 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import io.agora.scene.base.SceneAliveTime
+import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.ToastUtils
@@ -78,10 +78,7 @@ class RoomListActivity : AppCompatActivity() {
         initView()
         initVideoSettings()
 
-//        SceneAliveTime.fetchShowAliveTime ({ show, pk ->
-//            //CommerceLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
-//            ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
-//        })
+        ShowServiceProtocol.ROOM_AVAILABLE_DURATION = SceneConfigManager.ecommerce * 1000L
     }
 
     /**

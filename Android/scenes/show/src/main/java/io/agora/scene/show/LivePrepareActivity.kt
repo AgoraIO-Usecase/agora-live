@@ -401,6 +401,8 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
         beautyResource.checkResource(BuildConfig.BEAUTY_RESOURCE)
 
         lifecycleScope.launch {
+            var downloadSuccess = false
+
             beautyResource.downloadManifest(
                 url = BuildConfig.BEAUTY_RESOURCE,
                 progressHandler = {
@@ -414,11 +416,10 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                         ShowLogger.d(tag, "download failed: ${e.message}")
                         binding.statusPrepareViewLrc.isVisible = false
                         ToastUtils.showToastLong(R.string.show_beauty_loading_failed)
+                        downloadSuccess = false
                     }
                 }
             )
-
-            var downloadSuccess = false
 
             manifest?.files?.forEach { resource ->
                 if (resource.uri == "beauty_faceunity") {
@@ -451,43 +452,44 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                                 ShowLogger.e(tag, e, "download failed: ${e.message}")
                                 binding.statusPrepareViewLrc.isVisible = false
                                 ToastUtils.showToastLong(R.string.show_beauty_loading_failed)
+                                downloadSuccess = false
                             }
                         }
                     )
-
-                    if (!downloadSuccess) {
-                        return@forEach
-                    }
-
-                    val arch = System.getProperty("os.arch")
-                    if (arch == "armv7") {
-                        DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/armeabi-v7a/", "libfuai")
-                        DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/armeabi-v7a/", "libCNamaSDK")
-                    } else if (arch == "aarch64") {
-                        DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/arm64-v8a/", "libfuai")
-                        DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/arm64-v8a/", "libCNamaSDK")
-                    }
-                    faceunity.LoadConfig.loadLibrary(this@LivePrepareActivity.getDir("libs", Context.MODE_PRIVATE).absolutePath)
-                    RtcEngineInstance.beautySoLoaded = true
-
-                    binding.statusPrepareViewLrc.isVisible = false
-                    binding.tvSetting.isEnabled = true
-                    binding.tvBeauty.isEnabled = true
-                    binding.tvRotate.isEnabled = true
-                    binding.btnStartLive.isEnabled = true
-
-                    mBeautyProcessor.initialize(mRtcEngine)
-                    if (mRtcEngine.queryDeviceScore() < 75) {
-                        mBeautyProcessor.setBeautyEnable(false)
-                    } else {
-                        mBeautyProcessor.setBeautyEnable(true)
-                    }
-                    mBeautyProcessor.getBeautyAPI().setupLocalVideo(SurfaceView(this@LivePrepareActivity).apply {
-                        view = this
-                        binding.flVideoContainer.addView(this)
-                    }, Constants.RENDER_MODE_HIDDEN)
                 }
             }
+
+            if (!downloadSuccess) {
+                return@launch
+            }
+
+            val arch = System.getProperty("os.arch")
+            if (arch == "armv7") {
+                DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/armeabi-v7a/", "libfuai")
+                DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/armeabi-v7a/", "libCNamaSDK")
+            } else if (arch == "aarch64") {
+                DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/arm64-v8a/", "libfuai")
+                DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/arm64-v8a/", "libCNamaSDK")
+            }
+            faceunity.LoadConfig.loadLibrary(this@LivePrepareActivity.getDir("libs", Context.MODE_PRIVATE).absolutePath)
+            RtcEngineInstance.beautySoLoaded = true
+
+            binding.statusPrepareViewLrc.isVisible = false
+            binding.tvSetting.isEnabled = true
+            binding.tvBeauty.isEnabled = true
+            binding.tvRotate.isEnabled = true
+            binding.btnStartLive.isEnabled = true
+
+            mBeautyProcessor.initialize(mRtcEngine)
+            if (mRtcEngine.queryDeviceScore() < 75) {
+                mBeautyProcessor.setBeautyEnable(false)
+            } else {
+                mBeautyProcessor.setBeautyEnable(true)
+            }
+            mBeautyProcessor.getBeautyAPI().setupLocalVideo(SurfaceView(this@LivePrepareActivity).apply {
+                view = this
+                binding.flVideoContainer.addView(this)
+            }, Constants.RENDER_MODE_HIDDEN)
         }
     }
 }
