@@ -34,7 +34,7 @@ import java.util.Locale
  *
  * @param context
  */
-class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcConnection) :
+class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcConnection, val onMusicVolumeChange: (volume : Int) -> Unit) :
     BottomFullDialog(context) {
 
     companion object {
@@ -686,10 +686,13 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
                 recordingSignalVolume = value
             )
 
-            ITEM_ID_SEEKBAR_MUSIC_VOLUME -> VideoSetting.updateBroadcastSetting(
-                rtcConnection,
-                audioMixingVolume = value
-            )
+            ITEM_ID_SEEKBAR_MUSIC_VOLUME -> {
+                VideoSetting.updateBroadcastSetting(
+                    rtcConnection,
+                    audioMixingVolume = value
+                )
+                onMusicVolumeChange.invoke(value)
+            }
         }
     }
 

@@ -13,6 +13,7 @@ import androidx.navigation.ui.BottomNavigationViewKt;
 import com.agora.entfulldemo.R;
 import com.agora.entfulldemo.databinding.AppActivityMainBinding;
 
+import io.agora.scene.base.SceneConfigManager;
 import io.agora.scene.base.component.BaseViewBindingActivity;
 import io.agora.scene.widget.dialog.PermissionLeakDialog;
 
@@ -25,6 +26,12 @@ public class MainActivity extends BaseViewBindingActivity<AppActivityMainBinding
     @Override
     protected AppActivityMainBinding getViewBinding(@NonNull LayoutInflater inflater) {
         return AppActivityMainBinding.inflate(inflater);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        SceneConfigManager.INSTANCE.fetchSceneConfig(null, null);
     }
 
     @Override
