@@ -151,7 +151,7 @@ import Foundation
         headTitleLabel.frame = CGRect(x: 0, y: 30, width: self.bounds.width, height: 22)
         tableView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10, width: self.bounds.width, height: self.bounds.height - headTitleLabel.frame.maxY - 10)
         
-        coverView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10 + 140, width: self.bounds.width, height: 140)
+        coverView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10 + 52, width: self.bounds.width, height: 156)
 //
 //        noSoundCardView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10, width: self.bounds.width, height: 200)
 //        warNingLabel.frame = CGRect(x: 20, y: 10, width: self.bounds.width, height: 20)
