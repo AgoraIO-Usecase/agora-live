@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class VMNorSetTableViewCell: UITableViewCell {
     private var screenWidth: CGFloat = UIScreen.main.bounds.size.width
@@ -22,6 +23,7 @@ class VMNorSetTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         layoutUI()
+        createConstrains()
     }
 
     @available(*, unavailable)
@@ -54,5 +56,15 @@ class VMNorSetTableViewCell: UITableViewCell {
         contentView.addSubview(indView)
 
         selectionStyle = .none
+    }
+    
+    private func createConstrains() {
+        indView.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+        }
+        contentLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.right.equalTo(indView.snp.left).offset(-5)
+        }
     }
 }
