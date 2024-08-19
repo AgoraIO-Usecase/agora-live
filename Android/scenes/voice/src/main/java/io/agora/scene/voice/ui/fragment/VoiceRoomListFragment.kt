@@ -57,7 +57,9 @@ class VoiceRoomListFragment : BaseViewBindingFragment<VoiceFragmentRoomListLayou
             }
         }
         showLoadingView()
-        voiceRoomViewModel.checkLoginIm()
+        voiceRoomViewModel.checkLoginIm(completion = {
+            hideLoadingView()
+        })
         voiceRoomObservable()
     }
 
@@ -67,10 +69,6 @@ class VoiceRoomListFragment : BaseViewBindingFragment<VoiceFragmentRoomListLayou
     }
 
     private fun voiceRoomObservable() {
-        voiceRoomViewModel.loginImObservable.observe(this) {
-            hideLoadingView()
-        }
-
         voiceRoomViewModel.roomListObservable.observe(this) { roomList: List<AUIRoomInfo>? ->
             binding?.apply {
                 smartRefreshLayout.finishRefresh()
@@ -104,6 +102,7 @@ class VoiceRoomListFragment : BaseViewBindingFragment<VoiceFragmentRoomListLayou
             .setOnClickListener(object : RoomEncryptionInputDialog.OnClickBottomListener {
                 override fun onCancelClick() {}
                 override fun onConfirmClick(password: String) {
+                    showLoadingView()
                     voiceRoomViewModel.joinRoom(voiceRoomModel.roomId, password)
                 }
             })
