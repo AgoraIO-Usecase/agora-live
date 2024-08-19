@@ -2054,7 +2054,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         return;
     } else if(self.singRole == KTVSingRoleSoloSinger || self.singRole == KTVSingRoleLeadSinger) {
         [self.MVView setOriginBtnState: trackMode == KTVPlayerTrackModeOrigin ? VLKTVMVViewActionTypeSingOrigin : VLKTVMVViewActionTypeSingAcc];
-        [[self.ktvApi getMusicPlayer] selectMultiAudioTrack:trackMode == KTVPlayerTrackModeAcc ? 1 : 0 publishTrackIndex:trackMode == KTVPlayerTrackModeOrigin ? 0 : 1 ];
+        int ret = [[self.ktvApi getMusicPlayer] selectMultiAudioTrack:trackMode == KTVPlayerTrackModeAcc ? 1 : 0 publishTrackIndex:trackMode == KTVPlayerTrackModeOrigin ? 0 : 1 ];
         
         switch (trackMode) {
             case KTVPlayerTrackModeOrigin:

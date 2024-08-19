@@ -228,7 +228,9 @@ extension KTVApiImpl {
         self.songMode = .songCode
         self.songCode = songCode
         self.songIdentifier = config.songIdentifier
-        _loadMusic(config: config, mode: config.mode, onMusicLoadStateListener: onMusicLoadStateListener)
+        songLoader?.fetchSongList(complete: { list in
+            self._loadMusic(config: config, mode: config.mode, onMusicLoadStateListener: onMusicLoadStateListener)
+        })
     }
     
     func loadMusic(config: KTVSongConfiguration, url: String) {
@@ -804,6 +806,9 @@ extension KTVApiImpl {
         if self.songUrl != songUrl {
             agoraPrintError("startSing failed: canceled")
             return
+        }
+        if self.singerRole == .leadSinger || self.singerRole == .soloSinger {
+            mediaPlayer?.setPlayerOption("enable_multi_audio_track", value: 1)
         }
         apiConfig?.engine?.adjustPlaybackSignalVolume(Int(remoteVolume))
         let ret = mediaPlayer?.open(filePath, startPos: startPos)
