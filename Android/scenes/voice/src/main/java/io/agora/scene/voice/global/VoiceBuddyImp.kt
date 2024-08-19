@@ -1,7 +1,5 @@
 package io.agora.scene.voice.global
 
-import android.app.Application
-import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.manager.UserManager
 
 /**
@@ -12,10 +10,6 @@ class VoiceBuddyImp : IVoiceBuddy {
     private var chatToken: String = ""
     private var rtcToken: String = ""
     private var rtmToken: String = ""
-
-    override fun application(): Application {
-        return AgoraApplication.the()
-    }
 
     override fun headUrl(): String {
         return UserManager.getInstance().user?.headUrl ?: ""

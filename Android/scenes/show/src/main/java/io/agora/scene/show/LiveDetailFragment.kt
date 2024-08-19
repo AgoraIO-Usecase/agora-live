@@ -1101,7 +1101,9 @@ class LiveDetailFragment : Fragment() {
      *
      */
     private fun showAdvanceSettingDialog() {
-        AdvanceSettingDialog(requireContext(), mMainRtcConnection).apply {
+        AdvanceSettingDialog(requireContext(), mMainRtcConnection) {
+            adjustAudioMixingVolume(it)
+        }.apply {
             //setItemShowTextOnly(AdvanceSettingDialog.ITEM_ID_SWITCH_BITRATE_SAVE, true)
             show()
         }

@@ -1,6 +1,5 @@
 package io.agora.voice.common.net;
 
-import android.content.Context;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
@@ -43,19 +42,17 @@ public class VRHttpClientManager {
      */
     public static VRHttpClientManager mInstance;
     private static final int REQUEST_FAILED_CODE = 408;
-    private static Context mContext;
 
     /**
      * Gets instance.
      *
-     * @param context the context
      * @return the instance
      */
-    public static VRHttpClientManager getInstance(Context context) {
+    public static VRHttpClientManager getInstance() {
         if(mInstance == null) {
             synchronized (VRHttpClientManager.class) {
                 if(mInstance == null) {
-                    mInstance = new VRHttpClientManager(context);
+                    mInstance = new VRHttpClientManager();
                 }
             }
         }
@@ -65,10 +62,9 @@ public class VRHttpClientManager {
     /**
      * Instantiates a new Vr http client manager.
      *
-     * @param context the context
      */
-    VRHttpClientManager(Context context){
-        mContext = context;
+    VRHttpClientManager(){
+
     }
 
     /**
@@ -195,7 +191,7 @@ public class VRHttpClientManager {
      */
     public static Pair<Integer,String> sendRequest(final String reqURL, final Map<String, String> headers, final String body, final String method) throws IOException, VRException{
         Pair<Integer,String> value = null;
-        VRHttpResponse response = new Builder(mContext)
+        VRHttpResponse response = new Builder()
                 .setRequestMethod(method)
                 .setUrl(reqURL)
                 .setHeaders(headers)
@@ -220,7 +216,7 @@ public class VRHttpClientManager {
      * @throws IOException the io exception
      */
     public VRHttpResponse httpExecute(String reqURL, Map<String, String> headers, String body, String method, int timeout) throws IOException{
-        return new Builder(mContext)
+        return new Builder()
                 .setRequestMethod(method)
                 .setUrl(reqURL)
                 .setConnectTimeout(timeout)
@@ -257,7 +253,7 @@ public class VRHttpClientManager {
      * @throws IOException the io exception
      */
     public VRHttpResponse httpExecute(String reqURL, Map<String, String> headers, String body, String method, VRHttpCallback callback, int timeout) throws IOException{
-        return new Builder(mContext)
+        return new Builder()
                 .setRequestMethod(method)
                 .setUrl(reqURL)
                 .setConnectTimeout(timeout)
@@ -285,8 +281,8 @@ public class VRHttpClientManager {
     public static class Builder {
         private final VRHttpClientController.HttpParams p;
 
-        public Builder(Context context) {
-            p = new VRHttpClientController.HttpParams(context);
+        public Builder() {
+            p = new VRHttpClientController.HttpParams();
         }
 
         public Builder get() {
@@ -442,7 +438,7 @@ public class VRHttpClientManager {
          * @throws IOException the io exception
          */
         public VRHttpClientController build() throws IOException {
-            VRHttpClientController controller = new VRHttpClientController(p.mContext);
+            VRHttpClientController controller = new VRHttpClientController();
             p.apply(controller);
             return controller;
         }

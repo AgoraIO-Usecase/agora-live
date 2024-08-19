@@ -120,11 +120,11 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
         if (this.voiceRoomModel.isOwner) {
             toggleAudioRun = Runnable {
                 "onPermissionGrant initSdkJoin".logD(TAG)
-                roomLivingViewModel.initSdkJoin(this.voiceRoomModel)
+                roomLivingViewModel.initSdkJoin(this, this.voiceRoomModel)
             }
             requestRecordPermission(true)
         } else {
-            roomLivingViewModel.initSdkJoin(this.voiceRoomModel)
+            roomLivingViewModel.initSdkJoin(this, this.voiceRoomModel)
         }
     }
 
@@ -197,6 +197,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                 }
 
                 override fun onError(code: Int, message: String?) {
+                    voiceServiceProtocol.leaveRoom {  }
                     ToastTools.show(
                         this@ChatroomLiveActivity,
                         message ?: getString(R.string.voice_chatroom_join_room_failed)

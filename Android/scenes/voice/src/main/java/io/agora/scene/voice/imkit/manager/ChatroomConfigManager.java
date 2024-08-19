@@ -42,7 +42,7 @@ public class ChatroomConfigManager {
     }
 
     public void initRoomConfig(Context context, String imKey) {
-        this.mContext = context;
+        this.mContext = context.getApplicationContext();
         ChatOptions options = initChatOptions(imKey);
         if (!isMainProcess(context)) {
             LogTools.e(TAG, "enter the service process!");
