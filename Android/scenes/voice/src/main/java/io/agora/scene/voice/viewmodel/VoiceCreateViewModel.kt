@@ -26,15 +26,11 @@ class VoiceCreateViewModel : ViewModel() {
         VoiceServiceProtocol.serviceProtocol
     }
 
-    private val _loginImObservable: SingleSourceLiveData<Boolean> = SingleSourceLiveData()
-
     private val _roomListObservable: SingleSourceLiveData<List<AUIRoomInfo>?> = SingleSourceLiveData()
 
     private val _createRoomObservable: SingleSourceLiveData<AUIRoomInfo?> = SingleSourceLiveData()
 
     private val _joinRoomObservable: SingleSourceLiveData<AUIRoomInfo?> = SingleSourceLiveData()
-
-    val loginImObservable: LiveData<Boolean> get() = _loginImObservable
 
     val roomListObservable: LiveData<List<AUIRoomInfo>?> get() = _roomListObservable
 
@@ -42,7 +38,7 @@ class VoiceCreateViewModel : ViewModel() {
 
     val joinRoomObservable: LiveData<AUIRoomInfo?> get() = _joinRoomObservable
 
-    fun checkLoginIm() {
+    fun checkLoginIm(completion: (error: Exception?) -> Unit) {
         VoiceToolboxServerHttpManager.createImRoom(
             roomName = "",
             roomOwner = "",
@@ -57,14 +53,14 @@ class VoiceCreateViewModel : ViewModel() {
                     val chatToken = VoiceBuddyFactory.get().getVoiceBuddy().chatToken()
                     ChatroomIMManager.getInstance().login(chatUsername, chatToken, object : CallBack {
                         override fun onSuccess() {
-                            _loginImObservable.postValue(true)
+                            completion.invoke(null)
                         }
 
                         override fun onError(code: Int, desc: String) {
                             if (code == EMAError.USER_ALREADY_LOGIN) {
-                                _loginImObservable.postValue(true)
+                                completion.invoke(null)
                             } else {
-                                _loginImObservable.postValue(false)
+                                completion.invoke(Exception(desc))
                                 ToastUtils.showToast(R.string.voice_room_login_exception)
                             }
                         }
@@ -72,9 +68,8 @@ class VoiceCreateViewModel : ViewModel() {
                 }
 
                 override fun onError(code: Int, message: String?) {
-                    _loginImObservable.postValue(false)
+                    completion.invoke(Exception(message ?: ""))
                 }
-
             })
     }
 

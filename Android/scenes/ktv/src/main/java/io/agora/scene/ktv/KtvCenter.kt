@@ -84,4 +84,9 @@ object KtvCenter {
                 callback.invoke(null, exception)
             })
     }
+
+    fun reset(){
+        mRtmToken = ""
+        mRtcToken = ""
+    }
 }

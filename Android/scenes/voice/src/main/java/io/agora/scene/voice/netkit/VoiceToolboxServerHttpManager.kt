@@ -4,7 +4,6 @@ import android.content.Context
 import com.google.gson.reflect.TypeToken
 import io.agora.scene.base.BuildConfig
 import io.agora.scene.voice.global.VoiceBuddyFactory
-import io.agora.scene.voice.service.VoiceServiceProtocol
 import io.agora.voice.common.net.VRHttpClientManager
 import io.agora.voice.common.net.callback.VRHttpCallback
 import io.agora.voice.common.net.callback.VRValueCallBack
@@ -12,12 +11,10 @@ import io.agora.voice.common.utils.GsonTools
 import io.agora.voice.common.utils.LogTools
 import io.agora.voice.common.utils.LogTools.logD
 import io.agora.voice.common.utils.LogTools.logE
-import io.agora.voice.common.utils.ThreadManager
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
-import java.util.concurrent.CountDownLatch
 
 /**
  * @author create by zhangwei03
@@ -25,10 +22,6 @@ import java.util.concurrent.CountDownLatch
 object VoiceToolboxServerHttpManager {
 
     private val TAG = "VoiceToolboxServerHttpManager"
-
-    private fun context(): Context {
-        return VoiceBuddyFactory.get().getVoiceBuddy().application().applicationContext
-    }
 
     /**
      * 生成RTC/RTM/Chat等Token007
@@ -60,7 +53,7 @@ object VoiceToolboxServerHttpManager {
     fun generateToken(
         channelName: String,
         uid: String,
-        expire: Int = 3600,
+        expire: Int = 60 * 60 * 24,
         src: String = "android",
         types: Array<Int> = arrayOf(1, 2),
         callBack: VRValueCallBack<VRGenerateTokenResponse>
@@ -83,7 +76,7 @@ object VoiceToolboxServerHttpManager {
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-        VRHttpClientManager.Builder(context())
+        VRHttpClientManager.Builder()
             .setUrl(VoiceToolboxRequestApi.get().generateToken())
             .setHeaders(headers)
             .setParams(requestBody.toString())
@@ -160,7 +153,7 @@ object VoiceToolboxServerHttpManager {
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-        VRHttpClientManager.Builder(context())
+        VRHttpClientManager.Builder()
             .setUrl(VoiceToolboxRequestApi.get().createImRoom())
             .setHeaders(headers)
             .setParams(requestBody.toString())
