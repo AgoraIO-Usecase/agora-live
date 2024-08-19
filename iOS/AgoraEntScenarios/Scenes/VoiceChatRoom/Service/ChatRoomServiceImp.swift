@@ -74,6 +74,9 @@ public class ChatRoomServiceImp: NSObject {
             ShowLogger.info(msg, context: "RTMSyncManager")
         }
         super.init()
+        
+        AppContext.shared.agoraRTCToken = ""
+        AppContext.shared.agoraRTMToken = ""
     }
     
     func cleanCache() {
