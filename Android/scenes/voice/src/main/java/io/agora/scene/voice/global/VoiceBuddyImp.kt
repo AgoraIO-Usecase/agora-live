@@ -1,7 +1,5 @@
 package io.agora.scene.voice.global
 
-import android.app.Application
-import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.manager.UserManager
 
 /**
