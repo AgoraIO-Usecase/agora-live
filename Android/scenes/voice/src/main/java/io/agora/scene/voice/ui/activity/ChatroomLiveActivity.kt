@@ -18,6 +18,7 @@ import com.google.gson.reflect.TypeToken
 import io.agora.CallBack
 import io.agora.Error
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
+import io.agora.scene.base.AgoraScenes
 import io.agora.scene.base.LogUploader
 import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.component.AgoraApplication
@@ -695,7 +696,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
     override fun onDestroy() {
         super.onDestroy()
         if (SceneConfigManager.logUpload) {
-            LogUploader.uploadLog(LogUploader.SceneType.CHAT)
+            LogUploader.uploadLog(AgoraScenes.ChatRoom)
         }
     }
 }

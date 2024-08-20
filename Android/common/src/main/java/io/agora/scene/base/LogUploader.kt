@@ -1,6 +1,5 @@
 package io.agora.scene.base
 
-import android.os.HandlerThread
 import android.util.Log
 import io.agora.scene.base.api.ApiManager
 import io.agora.scene.base.api.ApiManagerService
@@ -22,13 +21,6 @@ import java.io.File
 import java.util.UUID
 
 object LogUploader {
-
-    enum class SceneType(val value: String) {
-        KTV("ktv_log"),
-        CHAT("voice_log"),
-        SHOW("showlive_log"),
-        ECOMMERCE("ecommerce_log"),
-    }
 
     private val apiService by lazy {
         ApiManager.getApi(ApiManagerService::class.java)
@@ -70,26 +62,16 @@ object LogUploader {
 
 
     private const val tag = "LogUploader"
-    private val logFolder = AgoraApplication.the().getExternalFilesDir("")!!.absolutePath
-    private val logFileWriteThread by lazy {
-        HandlerThread("AgoraFeedback.$logFolder").apply {
-            start()
-        }
-    }
-
-    private const val rtcSdkPrefix = "agorasdk"
-    private const val rtcApiPrefix = "agoraapi"
-    private const val rtmSdkPrefix = "agorartmsdk"
-    private const val commonBaseMiddle = "commonbase"
-    private const val commonUIMiddle = "commonui"
+    private val agoraLogFolder = AgoraApplication.the().getExternalFilesDir("")!!.absolutePath
+    private val entLogFolder = AgoraApplication.the().getExternalFilesDir("")!!.absolutePath  + File.separator + "ent"
 
     private fun getAgoraSDKPaths(): List<String> {
         val paths = mutableListOf<String>()
-        File(logFolder).listFiles()?.forEach { file ->
+        File(agoraLogFolder).listFiles()?.forEach { file ->
             if (file.isFile) {
-                if (file.name.startsWith(rtcSdkPrefix) ||
-                    file.name.startsWith(rtcApiPrefix) ||
-                    file.name.startsWith(rtmSdkPrefix)
+                if (file.name.startsWith("agorasdk") ||
+                    file.name.startsWith("agoraapi") ||
+                    file.name.startsWith("agorartmsdk")
                 ) {
                     paths.add(file.path)
                 }
@@ -98,13 +80,13 @@ object LogUploader {
         return paths
     }
 
-    private fun getScenePaths(type: SceneType): List<String> {
+    private fun getScenePaths(type: AgoraScenes): List<String> {
         val paths = mutableListOf<String>()
-        File(logFolder + File.separator + "ent").listFiles()?.forEach { file ->
+        File(entLogFolder).listFiles()?.forEach { file ->
             if (file.isFile) {
-                if (!file.name.contains(commonBaseMiddle) &&
-                    !file.name.contains(commonUIMiddle) &&
-                    file.name.contains(type.value)
+                // 不需要传 common
+                if (!file.name.contains(AgoraScenes.CommonBase.name) &&
+                    file.name.contains(type.name,true)
                 ) {
                     paths.add(file.path)
                 }
@@ -115,12 +97,12 @@ object LogUploader {
 
     @Volatile
     private var isUploading = false
-    fun uploadLog(type: SceneType) {
+    fun uploadLog(type: AgoraScenes) {
         if (isUploading) return
         isUploading = true
         OverallLayoutController.show()
 
-        val sdkLogZipPath = logFolder + File.separator + "agoraSdkLog.zip"
+        val allLogZipPath = agoraLogFolder + File.separator + "agoraSdkLog.zip"
 
         val sdkPaths = getAgoraSDKPaths()
         val scenePaths = getScenePaths(type)
@@ -128,17 +110,17 @@ object LogUploader {
             addAll(sdkPaths)
             addAll(scenePaths)
         }
-        ZipUtils.compressFiles(logPaths, sdkLogZipPath, object : ZipUtils.ZipCallback {
+        ZipUtils.compressFiles(logPaths, allLogZipPath, object : ZipUtils.ZipCallback {
             override fun onFileZipped(destinationFilePath: String) {
                 requestUploadLog(File(destinationFilePath),
                     onSuccess = {
-                        FileUtils.deleteFile(sdkLogZipPath)
+                        FileUtils.deleteFile(allLogZipPath)
                         isUploading = false
                         OverallLayoutController.uploadStatus(UploadStatus.Upload_Complete, it.logId)
                         Log.d(tag, "upload log success: ${it.logId}")
                     },
                     onError = {
-                        FileUtils.deleteFile(sdkLogZipPath)
+                        FileUtils.deleteFile(allLogZipPath)
                         isUploading = false
                         Log.e(tag, "upload log failed:${it.message}")
                         OverallLayoutController.uploadStatus(UploadStatus.Upload_Failed, "")
