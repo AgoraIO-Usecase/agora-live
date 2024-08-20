@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import io.agora.scene.base.LogUploader
+import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.manager.UserManager
@@ -341,6 +343,13 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
         TokenGenerator.expireSecond = -1
         RtcEngineInstance.cleanCache()
         super.finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (SceneConfigManager.logUpload) {
+            LogUploader.uploadLog(LogUploader.SceneType.ECOMMERCE)
+        }
     }
 
 }
