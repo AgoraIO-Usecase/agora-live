@@ -7,6 +7,8 @@ import io.agora.scene.base.api.ApiManagerService
 import io.agora.scene.base.api.BaseResponse
 import io.agora.scene.base.api.UploadLogResponse
 import io.agora.scene.base.component.AgoraApplication
+import io.agora.scene.base.uploader.OverallLayoutController
+import io.agora.scene.base.uploader.UploadStatus
 import io.agora.scene.base.utils.FileUtils
 import io.agora.scene.base.utils.ZipUtils
 import kotlinx.coroutines.CoroutineScope
@@ -22,10 +24,10 @@ import java.util.UUID
 object LogUploader {
 
     enum class SceneType(val value: String) {
-        KTV("KTV"),
-        CHAT("Voice"),
-        SHOW("ShowLive"),
-        ECOMMERCE("eCommerce"),
+        KTV("ktv_log"),
+        CHAT("voice_log"),
+        SHOW("showlive_log"),
+        ECOMMERCE("ecommerce_log"),
     }
 
     private val apiService by lazy {
@@ -81,8 +83,6 @@ object LogUploader {
     private const val commonBaseMiddle = "commonbase"
     private const val commonUIMiddle = "commonui"
 
-    private var mUploadLogId: String = ""
-
     private fun getAgoraSDKPaths(): List<String> {
         val paths = mutableListOf<String>()
         File(logFolder).listFiles()?.forEach { file ->
@@ -117,7 +117,9 @@ object LogUploader {
     private var isUploading = false
     fun uploadLog(type: SceneType) {
         if (isUploading) return
-        mUploadLogId = ""
+        isUploading = true
+        OverallLayoutController.show()
+
         val sdkLogZipPath = logFolder + File.separator + "agoraSdkLog.zip"
 
         val sdkPaths = getAgoraSDKPaths()
@@ -130,20 +132,29 @@ object LogUploader {
             override fun onFileZipped(destinationFilePath: String) {
                 requestUploadLog(File(destinationFilePath),
                     onSuccess = {
-                        isUploading = false
-                        mUploadLogId = it.logId
                         FileUtils.deleteFile(sdkLogZipPath)
+                        isUploading = false
+                        OverallLayoutController.uploadStatus(UploadStatus.Upload_Complete, it.logId)
                         Log.d(tag, "upload log success: ${it.logId}")
                     },
                     onError = {
-                        isUploading = false
                         FileUtils.deleteFile(sdkLogZipPath)
+                        isUploading = false
                         Log.e(tag, "upload log failed:${it.message}")
+                        OverallLayoutController.uploadStatus(UploadStatus.Upload_Failed, "")
+                        OverallLayoutController.setOnRepeatUploadListener {
+                            uploadLog(type)
+                        }
                     })
             }
 
             override fun onError(e: java.lang.Exception?) {
                 isUploading = false
+                Log.e(tag, "upload log onError:${e?.message}")
+                OverallLayoutController.uploadStatus(UploadStatus.Upload_Failed, "")
+                OverallLayoutController.setOnRepeatUploadListener {
+                    uploadLog(type)
+                }
             }
         })
     }
