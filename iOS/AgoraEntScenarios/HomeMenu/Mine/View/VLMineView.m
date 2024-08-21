@@ -62,7 +62,6 @@ static NSString * const kDefaultCellID = @"kDefaultCellID";
         [self.dataArray addObject:model];
     }
     _mineTable.frame = CGRectMake(20, _mineTopView.bottom+VLREALVALUE_WIDTH(15), SCREEN_WIDTH-40, VLREALVALUE_WIDTH(58)* self.dataArray.count + 10);
-
 }
 
 - (void)editButtonClickEvent {

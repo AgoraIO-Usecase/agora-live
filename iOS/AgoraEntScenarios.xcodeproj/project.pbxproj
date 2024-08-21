@@ -299,7 +299,6 @@
 		DDA19A0928FFE579009D3E61 /* DeviceAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA1994928FFE579009D3E61 /* DeviceAssistant.swift */; };
 		DDA19A0A28FFE579009D3E61 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA1994A28FFE579009D3E61 /* Screen.swift */; };
 		DDA19A0B28FFE579009D3E61 /* JSONObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA1994B28FFE579009D3E61 /* JSONObject.swift */; };
-		DDA19A0C28FFE579009D3E61 /* SyncUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA1994C28FFE579009D3E61 /* SyncUtil.swift */; };
 		DDA19A0D28FFE579009D3E61 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA1994F28FFE579009D3E61 /* NetworkManager.swift */; };
 		DDA19A0F28FFE579009D3E61 /* VLUserCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = DDA1995928FFE579009D3E61 /* VLUserCenter.m */; };
 		DDA19A1028FFE579009D3E61 /* VLGlobalHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DDA1995B28FFE579009D3E61 /* VLGlobalHelper.m */; };
@@ -464,7 +463,6 @@
 		E732CD092B47EC6D004D6FB9 /* VoiceRoomViewController+IM.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC752B47EC6D004D6FB9 /* VoiceRoomViewController+IM.swift */; };
 		E732CD0A2B47EC6D004D6FB9 /* VoiceRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC762B47EC6D004D6FB9 /* VoiceRoomViewController.swift */; };
 		E732CD0B2B47EC6D004D6FB9 /* VoiceRoomGiftersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC772B47EC6D004D6FB9 /* VoiceRoomGiftersViewController.swift */; };
-		E732CD0C2B47EC6D004D6FB9 /* VoiceRoomViewController+SoundCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC782B47EC6D004D6FB9 /* VoiceRoomViewController+SoundCard.swift */; };
 		E732CD0D2B47EC6D004D6FB9 /* VoiceRoomAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC792B47EC6D004D6FB9 /* VoiceRoomAlertViewController.swift */; };
 		E732CD0E2B47EC6D004D6FB9 /* VRCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC7A2B47EC6D004D6FB9 /* VRCreateViewController.swift */; };
 		E732CD0F2B47EC6D004D6FB9 /* VoiceRoomAudioSettingDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CC7B2B47EC6D004D6FB9 /* VoiceRoomAudioSettingDetailViewController.swift */; };
@@ -573,6 +571,10 @@
 		E732CD912B47F82C004D6FB9 /* AUiMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CD902B47F82C004D6FB9 /* AUiMoreDialog.swift */; };
 		E73F23292B6F64850000B523 /* RTMSyncUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F23282B6F64850000B523 /* RTMSyncUtil.swift */; };
 		E73F232D2B7219F40000B523 /* GradualTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F232C2B7219F40000B523 /* GradualTableView.swift */; };
+		F70CAB7B2C75A0B7000B0F61 /* VirtualSoundcardPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB7A2C75A0B7000B0F61 /* VirtualSoundcardPresenter.swift */; };
+		F70CAB7D2C75A10C000B0F61 /* UIColor+Voice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB7C2C75A10C000B0F61 /* UIColor+Voice.swift */; };
+		F70CAB7F2C75D823000B0F61 /* DebugModeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB7E2C75D823000B0F61 /* DebugModeViewController.swift */; };
+		F70CAB812C75E47B000B0F61 /* DebugModeKeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB802C75E47B000B0F61 /* DebugModeKeyCenter.swift */; };
 		F7533F932C62184100108911 /* VLLogToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7533F922C62184100108911 /* VLLogToast.swift */; };
 		F7533F972C62249E00108911 /* VoiceLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7533F962C62249E00108911 /* VoiceLogger.swift */; };
 /* End PBXBuildFile section */
@@ -953,7 +955,6 @@
 		DDA1994928FFE579009D3E61 /* DeviceAssistant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceAssistant.swift; sourceTree = "<group>"; };
 		DDA1994A28FFE579009D3E61 /* Screen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Screen.swift; sourceTree = "<group>"; };
 		DDA1994B28FFE579009D3E61 /* JSONObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONObject.swift; sourceTree = "<group>"; };
-		DDA1994C28FFE579009D3E61 /* SyncUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUtil.swift; sourceTree = "<group>"; };
 		DDA1994F28FFE579009D3E61 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		DDA1995428FFE579009D3E61 /* VLURLPathConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLURLPathConfig.h; sourceTree = "<group>"; };
 		DDA1995528FFE579009D3E61 /* VLMacroDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLMacroDefine.h; sourceTree = "<group>"; };
@@ -1198,7 +1199,6 @@
 		E732CC752B47EC6D004D6FB9 /* VoiceRoomViewController+IM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VoiceRoomViewController+IM.swift"; sourceTree = "<group>"; };
 		E732CC762B47EC6D004D6FB9 /* VoiceRoomViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceRoomViewController.swift; sourceTree = "<group>"; };
 		E732CC772B47EC6D004D6FB9 /* VoiceRoomGiftersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceRoomGiftersViewController.swift; sourceTree = "<group>"; };
-		E732CC782B47EC6D004D6FB9 /* VoiceRoomViewController+SoundCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VoiceRoomViewController+SoundCard.swift"; sourceTree = "<group>"; };
 		E732CC792B47EC6D004D6FB9 /* VoiceRoomAlertViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceRoomAlertViewController.swift; sourceTree = "<group>"; };
 		E732CC7A2B47EC6D004D6FB9 /* VRCreateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VRCreateViewController.swift; sourceTree = "<group>"; };
 		E732CC7B2B47EC6D004D6FB9 /* VoiceRoomAudioSettingDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceRoomAudioSettingDetailViewController.swift; sourceTree = "<group>"; };
@@ -1307,6 +1307,10 @@
 		E732CD902B47F82C004D6FB9 /* AUiMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AUiMoreDialog.swift; sourceTree = "<group>"; };
 		E73F23282B6F64850000B523 /* RTMSyncUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTMSyncUtil.swift; sourceTree = "<group>"; };
 		E73F232C2B7219F40000B523 /* GradualTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradualTableView.swift; sourceTree = "<group>"; };
+		F70CAB7A2C75A0B7000B0F61 /* VirtualSoundcardPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualSoundcardPresenter.swift; sourceTree = "<group>"; };
+		F70CAB7C2C75A10C000B0F61 /* UIColor+Voice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Voice.swift"; sourceTree = "<group>"; };
+		F70CAB7E2C75D823000B0F61 /* DebugModeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugModeViewController.swift; sourceTree = "<group>"; };
+		F70CAB802C75E47B000B0F61 /* DebugModeKeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugModeKeyCenter.swift; sourceTree = "<group>"; };
 		F7533F922C62184100108911 /* VLLogToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLLogToast.swift; sourceTree = "<group>"; };
 		F7533F962C62249E00108911 /* VoiceLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceLogger.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2199,6 +2203,7 @@
 				DD619C0329E3E81D008F63E4 /* AboutAgoraEntertainmentViewController.swift */,
 				DD8416C829090C520026B624 /* VLMineViewController.h */,
 				DD8416C929090C520026B624 /* VLMineViewController.m */,
+				F70CAB7E2C75D823000B0F61 /* DebugModeViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -2615,8 +2620,8 @@
 				DDA1994928FFE579009D3E61 /* DeviceAssistant.swift */,
 				DDA1994A28FFE579009D3E61 /* Screen.swift */,
 				DDA1994B28FFE579009D3E61 /* JSONObject.swift */,
-				DDA1994C28FFE579009D3E61 /* SyncUtil.swift */,
 				E73F23282B6F64850000B523 /* RTMSyncUtil.swift */,
+				F70CAB802C75E47B000B0F61 /* DebugModeKeyCenter.swift */,
 				E3735CAC2A5E81B6004737EF /* AESMacro.h */,
 			);
 			path = Utils;
@@ -2625,6 +2630,7 @@
 		DDA1994D28FFE579009D3E61 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
+				F70CAB7A2C75A0B7000B0F61 /* VirtualSoundcardPresenter.swift */,
 				DD91E1F32C553C0C0028E966 /* StateManager */,
 				DD6199CA29E3D36D008F63E4 /* Authorized */,
 				DDA1994E28FFE579009D3E61 /* NetworkManager */,
@@ -3072,6 +3078,7 @@
 				E732CC442B47EC6D004D6FB9 /* HorizontalTextCarousel.swift */,
 				E732CC452B47EC6D004D6FB9 /* VoiceRoomEmojiManager.swift */,
 				F7533F962C62249E00108911 /* VoiceLogger.swift */,
+				F70CAB7C2C75A10C000B0F61 /* UIColor+Voice.swift */,
 				E732CC462B47EC6D004D6FB9 /* Animation */,
 				E732CC4B2B47EC6D004D6FB9 /* VoiceRoomPasswordAlert.swift */,
 				E732CC4C2B47EC6D004D6FB9 /* Xcode14.h */,
@@ -3177,7 +3184,6 @@
 				E732CC752B47EC6D004D6FB9 /* VoiceRoomViewController+IM.swift */,
 				E732CC762B47EC6D004D6FB9 /* VoiceRoomViewController.swift */,
 				E732CC772B47EC6D004D6FB9 /* VoiceRoomGiftersViewController.swift */,
-				E732CC782B47EC6D004D6FB9 /* VoiceRoomViewController+SoundCard.swift */,
 				E732CC792B47EC6D004D6FB9 /* VoiceRoomAlertViewController.swift */,
 				E732CC7A2B47EC6D004D6FB9 /* VRCreateViewController.swift */,
 				E732CC7B2B47EC6D004D6FB9 /* VoiceRoomAudioSettingDetailViewController.swift */,
@@ -3625,6 +3631,7 @@
 				DD91E1F42C553C0C0028E966 /* AppStateManager.swift in Sources */,
 				DD36105E29B70CDC00CE7984 /* ShowThrottle.swift in Sources */,
 				A8F904912B4BDE1700A4C5A7 /* ShowDebugSettingVC.swift in Sources */,
+				F70CAB7B2C75A0B7000B0F61 /* VirtualSoundcardPresenter.swift in Sources */,
 				DDA199E928FFE579009D3E61 /* VLResponseDataModel.m in Sources */,
 				E732CCF72B47EC6D004D6FB9 /* VoiceRoomRTCManager.swift in Sources */,
 				E3735CA72A5E8023004737EF /* VRBaseViewController.swift in Sources */,
@@ -3699,6 +3706,7 @@
 				DDCBEADA2C33BD4D00A64FCC /* VLRoomListModel.swift in Sources */,
 				A84C2D352B4FB01700D6EFCF /* CommerceMusicEffectCell.swift in Sources */,
 				A84C2D5A2B4FB01700D6EFCF /* CommerceSettingHeaderView.swift in Sources */,
+				F70CAB7F2C75D823000B0F61 /* DebugModeViewController.swift in Sources */,
 				DD36109429B70CDC00CE7984 /* ShowSettingActionSheetVC.swift in Sources */,
 				DD3610B329B70CDC00CE7984 /* ShowRoomInfoView.swift in Sources */,
 				DD36109A29B70CDC00CE7984 /* ShowPresentTransitioningDelegate.swift in Sources */,
@@ -3740,6 +3748,7 @@
 				DD3610BF29B70CDC00CE7984 /* ShowSettingActionSheetCell.swift in Sources */,
 				E732CD512B47EC6D004D6FB9 /* VoiceMusicPlayingView.swift in Sources */,
 				DDA199DE28FFE579009D3E61 /* AlertManager.swift in Sources */,
+				F70CAB812C75E47B000B0F61 /* DebugModeKeyCenter.swift in Sources */,
 				DDA199EE28FFE579009D3E61 /* VLUIView.m in Sources */,
 				A84C2D5D2B4FB01700D6EFCF /* AppContext+Commerce.swift in Sources */,
 				DD3610C829B70CDC00CE7984 /* ShowServiceModel.swift in Sources */,
@@ -3802,7 +3811,6 @@
 				DDA19A0B28FFE579009D3E61 /* JSONObject.swift in Sources */,
 				A84C2D4A2B4FB01700D6EFCF /* CommerceNumberButton.swift in Sources */,
 				E732CD602B47EC6D004D6FB9 /* VREmptyView.swift in Sources */,
-				DDA19A0C28FFE579009D3E61 /* SyncUtil.swift in Sources */,
 				A84C2D152B4FB01700D6EFCF /* CommerceDebugPrivateParamsVC.swift in Sources */,
 				A84C2D4D2B4FB01700D6EFCF /* CommerceAuctionResultView.swift in Sources */,
 				DD84178829090C520026B624 /* VLMineViewController.m in Sources */,
@@ -3887,7 +3895,6 @@
 				A8F904932B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift in Sources */,
 				DD36105B29B70CDC00CE7984 /* Date+Show.swift in Sources */,
 				DDCBEB112C33BD4D00A64FCC /* VLDebugView.m in Sources */,
-				E732CD0C2B47EC6D004D6FB9 /* VoiceRoomViewController+SoundCard.swift in Sources */,
 				E732CD392B47EC6D004D6FB9 /* VoiceMusicListView.swift in Sources */,
 				DDDDDC3728FFD78C005F4E8B /* AppContext.swift in Sources */,
 				DDA19A0228FFE579009D3E61 /* UIGestureRecognizer+VL.m in Sources */,
@@ -3986,6 +3993,7 @@
 				E36EC8B52A663A600089A374 /* AEACategoryView.swift in Sources */,
 				E732CD422B47EC6D004D6FB9 /* VoiceRoomGiftsView.swift in Sources */,
 				DDCBEB252C33BD4D00A64FCC /* VLKTVViewController.m in Sources */,
+				F70CAB7D2C75A10C000B0F61 /* UIColor+Voice.swift in Sources */,
 				DD3610A029B70CDC00CE7984 /* ShowMusicEffectCell.swift in Sources */,
 				E732CCE82B47EC6D004D6FB9 /* VoiceRoomPasswordAlert.swift in Sources */,
 				E732CD1D2B47EC6D004D6FB9 /* VRRoomHomeListCell.swift in Sources */,
@@ -4318,11 +4326,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
+				DEVELOPMENT_TEAM = G726234S43;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -4377,8 +4383,6 @@
 					"\"AgoraSoundTouch\"",
 					"-framework",
 					"\"AgoraSpatialAudioExtension\"",
-					"-framework",
-					"\"AgoraSyncManager_overseas\"",
 					"-framework",
 					"\"AgoraVideoDecoderExtension\"",
 					"-framework",
@@ -4500,7 +4504,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -4517,11 +4520,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
+				DEVELOPMENT_TEAM = G726234S43;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -4576,8 +4577,6 @@
 					"\"AgoraSoundTouch\"",
 					"-framework",
 					"\"AgoraSpatialAudioExtension\"",
-					"-framework",
-					"\"AgoraSyncManager_overseas\"",
 					"-framework",
 					"\"AgoraVideoDecoderExtension\"",
 					"-framework",
@@ -4699,7 +4698,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

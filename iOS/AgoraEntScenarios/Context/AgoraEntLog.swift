@@ -157,8 +157,9 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
     }
     
     @objc public static func autoUploadLog(scene: String) {
-        guard AppContext.shared.sceneConfig?.logUpload == 1 else {
-            return
+        let enableUpload = UserDefaults.standard.bool(forKey: DebugModeKeyCenter.upLoadLogFileAutomatic)
+        if enableUpload == false {
+            return;
         }
         
         if VLLogToast.isShow() {
@@ -166,18 +167,12 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
         }
         //show uploading alert
         let uuid = UUID().uuidString
-        VLLogToast.show(title:"log uploading", message: uuid, confirmButtonTitle: "", cancelButtonTitle: "")
-        uploadLogHander(scene: scene) { url, error in
-            if let error = error {
+        VLLogToast.show(title:"uploading log file", message: "", confirmButtonTitle: "", cancelButtonTitle: "")
+        uploadLogHander(scene: scene) { logId, error in
+            if error != nil {
                 showRetryToast(retryScene: scene)
             } else {
-                submitFeedbackData(description: uuid, logUrl: url) { error in
-                    if error != nil {
-                        showRetryToast(retryScene: scene)
-                    } else {
-                        VLLogToast.dismiss()
-                    }
-                }
+                VLLogToast.show(title: "upload success", message: "\(logId ?? "")", confirmButtonTitle: "confirm", cancelButtonTitle: "")
             }
         }
     }
@@ -214,17 +209,21 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
                 }
                 print("[AgoraEntLog] autoUploadLog: upload start t:\(DispatchTime.now())")
                 let req = AUIUploadNetworkModel()
-                req.interfaceName = "/api-login/upload/log"
+                req.interfaceName = "upload/log"
                 req.fileData = data
                 req.name = "file"
                 req.mimeType = "application/zip"
                 req.fileName = URL(fileURLWithPath: filePath).lastPathComponent
+                req.appId = KeyCenter.AppId
                 req.upload { progress in
                     
                 } completion: { err, content in
                     VLLogToast.dismiss()
-                    if let e = err {
+                    var logId: String? = nil
+                    if let content = content as? [String: Any], let data = content["data"] as? [String: Any], let value = data["logId"] as? String {
+                        logId = value
                     }
+                    completion(logId, err)
                 }
             })
         }
