@@ -11,7 +11,9 @@ import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Logger
 import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.ServerConfig
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import retrofit2.Retrofit
@@ -40,9 +42,11 @@ object ApiManager {
 
     private val okHttpClient by lazy {
         val builder = OkHttpClient.Builder()
-            .connectTimeout(20, TimeUnit.SECONDS)
+            .addInterceptor(DynamicConnectTimeout())
+            .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .addInterceptor(CurlInterceptor(object : Logger {
@@ -68,5 +72,17 @@ object ApiManager {
     }
 }
 
-
-
+class DynamicConnectTimeout : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        val requestUrl = request.url.toString()
+        val isUploadFileApi = requestUrl.contains(ApiManagerService.requestUploadLog)
+        if (isUploadFileApi) {
+            return chain.withConnectTimeout(60 * 3, TimeUnit.SECONDS)
+                .withReadTimeout(60 * 3, TimeUnit.SECONDS)
+                .withWriteTimeout(60 * 3, TimeUnit.SECONDS)
+                .proceed(request)
+        }
+        return chain.proceed(request)
+    }
+}

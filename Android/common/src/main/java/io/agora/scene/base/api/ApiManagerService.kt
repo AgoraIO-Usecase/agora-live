@@ -8,8 +8,12 @@ import retrofit2.http.Query
 
 interface ApiManagerService {
 
+    companion object{
+        const val requestUploadLog = "/toolbox-overseas/v1/upload/log"
+    }
+
     @Multipart
-    @POST("/toolbox/v1/upload/log")
+    @POST(requestUploadLog)
     suspend fun requestUploadLog(
         @Query("appId") appId: String,
         @Query("traceId") traceId: String,
