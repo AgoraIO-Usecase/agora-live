@@ -30,7 +30,7 @@ typedef NS_ENUM(NSUInteger, AVAuthorizationRequestType){
 };
 
 @interface VLMineViewController ()
-<UINavigationControllerDelegate,UIImagePickerControllerDelegate,VLMineViewDelegate, UITextFieldDelegate>
+<UINavigationControllerDelegate,UIImagePickerControllerDelegate,VLMineViewDelegate, UITextFieldDelegate, AboutAgoraEntertainmentViewControllerDelegate>
 
 @property (nonatomic, strong) VLMineView *mineView;
 @property (nonatomic, assign) NSInteger maxInputLength;
@@ -69,6 +69,8 @@ typedef NS_ENUM(NSUInteger, AVAuthorizationRequestType){
         case VLMineViewClickTypeAboutUS:
             [self about];
             break;
+        case VLMineViewClickTypeDebug:
+            [self gotoDebugMode];
         default:
             break;
     }
@@ -90,6 +92,13 @@ typedef NS_ENUM(NSUInteger, AVAuthorizationRequestType){
 
 - (void)about {
     AboutAgoraEntertainmentViewController *VC = [[AboutAgoraEntertainmentViewController alloc] init];
+    VC.hidesBottomBarWhenPushed = YES;
+    VC.aboutAgoraDeletate = self;
+    [self.navigationController pushViewController:VC animated:YES];
+}
+
+- (void)gotoDebugMode {
+    DebugModeViewController *VC = [DebugModeViewController new];
     VC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:VC animated:YES];
 }
@@ -378,6 +387,12 @@ typedef NS_ENUM(NSUInteger, AVAuthorizationRequestType){
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     NSInteger newLength = textField.text.length + string.length - range.length;
     return newLength <= self.maxInputLength;
+}
+
+#pragma mark - AboutAgoraEntertainmentViewControllerDelegate
+
+- (void)debugModeChangedCallback {
+    [self.mineView refreshTableView];
 }
 
 @end
