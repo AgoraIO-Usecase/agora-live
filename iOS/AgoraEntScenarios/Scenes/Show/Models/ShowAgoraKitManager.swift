@@ -142,7 +142,7 @@ class ShowAgoraKitManager: NSObject {
                                      "traceId": NSString.withUUID().md5(),
                                      "src": "iOS",
                                      "payload": JSONObject.toJsonString(dict: userInfo) ?? ""]
-        let baseURL = KeyCenter.baseServerUrl ?? ""
+        let baseURL = KeyCenter.releaseBaseServerUrl ?? ""
         NetworkManager.shared.postRequest(urlString: "\(baseURL)/v1/moderation/audio",
                                           params: parasm) { response in
             ShowLogger.info("response === \(response)")
