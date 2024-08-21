@@ -316,6 +316,7 @@ class ShowLiveViewController: UIViewController {
     }
     
     func leaveRoom(){
+        AgoraEntLog.autoUploadLog(scene: ShowLogger.kLogKey)
         ShowAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
         ShowAgoraKitManager.shared.cleanCapture()
         ShowBeautyFaceVC.resetData()
