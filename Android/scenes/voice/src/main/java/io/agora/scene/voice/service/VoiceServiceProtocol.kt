@@ -39,6 +39,8 @@ interface VoiceServiceProtocol {
             (innerProtocol as? VoiceSyncManagerServiceImp)?.destroy()
             innerProtocol = null
         }
+
+        var ROOM_AVAILABLE_DURATION: Long = 20 * 60 * 1000 // 20min
     }
 
     /**
