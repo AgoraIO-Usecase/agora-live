@@ -863,8 +863,20 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
     
     public func rtcEngine(_ engine: AgoraRtcEngineKit, didVideoMuted muted: Bool, byUid uid: UInt) {
         ShowLogger.info("didVideoMuted[\(uid)] \(muted)")
-        guard "\(uid)" == currentInteraction?.userId else {return}
-        liveView.blurGusetCanvas = muted
+        if "\(uid)" == currentInteraction?.userId {
+            liveView.blurGusetCanvas = muted
+        } else if uid == roomOwnerId {
+            liveView.blurHostCanvas = muted
+        }
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didAudioMuted muted: Bool, byUid uid: UInt) {
+        ShowLogger.info("didAudioMuted[\(uid)] \(muted)")
+        if "\(uid)" == currentInteraction?.userId {
+            liveView.canvasView.isRemoteMuteMic = muted
+        } else if uid == roomOwnerId {
+            liveView.canvasView.isLocalMuteMic = muted
+        }
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, remoteAudioStats stats: AgoraRtcRemoteAudioStats) {
@@ -1005,7 +1017,7 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
     
     func onClickSettingButton() {
         let muteAudio = self.muteLocalAudio
-        settingMenuVC.selectedMap = [.camera: self.muteLocalVideo, .mic: muteAudio]
+        settingMenuVC.selectedMap = [.camera: self.muteLocalVideo, .mic: muteAudio, .mute_mic: muteAudio]
         
         if interactionStatus == .idle {
             settingMenuVC.type = role == .broadcaster ? .idle_broadcaster : .idle_audience
