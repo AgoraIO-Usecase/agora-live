@@ -863,6 +863,7 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
     
     public func rtcEngine(_ engine: AgoraRtcEngineKit, didVideoMuted muted: Bool, byUid uid: UInt) {
         ShowLogger.info("didVideoMuted[\(uid)] \(muted)")
+        guard "\(uid)" == currentInteraction?.userId else {return}
         liveView.blurGusetCanvas = muted
     }
     
