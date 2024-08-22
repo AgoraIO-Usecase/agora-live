@@ -128,6 +128,9 @@ interface KTVServiceProtocol {
             instance = null
             KtvCenter.reset()
         }
+
+        // time limit
+        var ROOM_AVAILABLE_DURATION: Long = 20 * 60 * 1000 // 20min
     }
 
     /**

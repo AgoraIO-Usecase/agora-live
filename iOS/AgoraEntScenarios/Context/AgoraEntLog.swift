@@ -33,7 +33,6 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
 @objc public class AgoraEntLog: NSObject {
     
     private static var currentLogKey = ""
-    
     public static func currentLogger(with defaultKey: String) -> SwiftyBeaver.Type {
         if currentLogKey.isEmpty {
             return getSceneLogger(with: defaultKey)
@@ -54,7 +53,7 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
         return logger
     }
     
-    public static func createLog(config: AgoraEntLogConfig) -> SwiftyBeaver.Type {
+    @discardableResult public static func createLog(config: AgoraEntLogConfig) -> SwiftyBeaver.Type {
         let log = SwiftyBeaver.self
         
         // add log destinations. at least one is needed!
@@ -86,20 +85,20 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
         return dir ?? ""
     }
     
-    @objc public static func logsDir() ->String {
-        let dir = cacheDir()
-        let logDir = "\(dir)/agora_ent_log"
-        try? FileManager.default.createDirectory(at: URL(fileURLWithPath: logDir), withIntermediateDirectories: true)
-        
-        return logDir
-    }
-    
     @objc public static func sdkLogPath() -> String {
         return AgoraEntLog.cacheDir() + "/agorasdk.log"
     }
     
     @objc public static func rtmSdkLogPath() -> String {
         return AgoraEntLog.cacheDir() + "/agorartmsdk.log"
+    }
+    
+    @objc public static func logsDir() ->String {
+        let dir = cacheDir()
+        let logDir = "\(dir)/agora_ent_log"
+        try? FileManager.default.createDirectory(at: URL(fileURLWithPath: logDir), withIntermediateDirectories: true)
+        
+        return logDir
     }
     
     @objc public static func allLogsUrls() -> [URL] {
@@ -158,13 +157,51 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
     }
     
     @objc public static func autoUploadLog(scene: String) {
-        let zipStart = DispatchTime.now()
-        print("[AgoraEntLog] autoUploadLog: func start t:\(zipStart)")
-        DispatchQueue.global().async {
-            guard AppContext.shared.sceneConfig?.logUpload == 1 else {
+        let enableUpload = UserDefaults.standard.bool(forKey: DebugModeKeyCenter.upLoadLogFileAutomatic)
+        if enableUpload == false {
+            return;
+        }
+        
+        if VLLogToast.isShow() {
+            return
+        }
+        //show uploading alert
+        let uuid = UUID().uuidString
+        VLLogToast.show(title:"uploading log file", message: "", confirmButtonTitle: "", cancelButtonTitle: "")
+        uploadLogHander(scene: scene) { logId, error in
+            if error != nil {
+                showRetryToast(retryScene: scene)
+            } else {
+                VLLogToast.show(title: "upload success", message: "\(logId ?? "")", confirmButtonTitle: "confirm", cancelButtonTitle: "")
+            }
+        }
+    }
+    
+    private static func showRetryToast(retryScene: String) {
+        VLLogToast.dismiss()
+        VLLogToast.show(title:"log upload failed", message: "", confirmButtonTitle: "retry", cancelButtonTitle: "cancel", confirmAction:  {
+            AgoraEntLog.autoUploadLog(scene: retryScene)
+        })
+    }
+    
+    private static func submitFeedbackData(description: String, logUrl: String?, completion: @escaping (Error?) -> Void) {
+        let params = ["screenshotURLs": [],
+                      "tags": [],
+                      "description": description,
+                      "logURL": logUrl ?? ""] as [String : Any]
+        VLAPIRequest.postURL("/api-login/feedback/upload", parameter: params, showHUD: true) { response in
+            guard response.code == 0 else {
+                completion(nil)
                 return
             }
-            print("[AgoraEntLog] autoUploadLog: zip start t:\(DispatchTime.now())")
+        } failure: { error, _ in
+            completion(error)
+        }
+    }
+    
+    static func uploadLogHander(scene: String, completion: @escaping (String?, Error?) -> Void) {
+        let zipStart = DispatchTime.now()
+        DispatchQueue.global().async {
             AgoraEntLog.zipSceneLog(scene: scene, completion: { str, err in
                 print("[AgoraEntLog] autoUploadLog: zip end cost: \(zipStart.distance(to: DispatchTime.now()))")
                 guard let filePath = str, let data = try? Data.init(contentsOf: URL(fileURLWithPath: filePath)) else {
@@ -172,19 +209,24 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
                 }
                 print("[AgoraEntLog] autoUploadLog: upload start t:\(DispatchTime.now())")
                 let req = AUIUploadNetworkModel()
-                req.interfaceName = "/api-login/upload/log"
+                req.interfaceName = "upload/log"
                 req.fileData = data
                 req.name = "file"
                 req.mimeType = "application/zip"
                 req.fileName = URL(fileURLWithPath: filePath).lastPathComponent
+                req.appId = KeyCenter.AppId
                 req.upload { progress in
                     
                 } completion: { err, content in
-                    print("[AgoraEntLog] autoUploadLog: upload end cost:\(zipStart.distance(to: DispatchTime.now())) e: \(err?.localizedDescription)")
-                    if let e = err {
+                    VLLogToast.dismiss()
+                    var logId: String? = nil
+                    if let content = content as? [String: Any], let data = content["data"] as? [String: Any], let value = data["logId"] as? String {
+                        logId = value
                     }
+                    completion(logId, err)
                 }
             })
         }
     }
 }
+

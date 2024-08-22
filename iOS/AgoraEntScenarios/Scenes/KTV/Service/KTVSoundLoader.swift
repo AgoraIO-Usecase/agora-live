@@ -100,7 +100,7 @@ private class VLSongListNetworkModel: VLCommonNetworkModel {
         
     public override init() {
         super.init()
-        host = KeyCenter.baseServerUrl ?? ""
+        host = KeyCenter.releaseBaseServerUrl ?? ""
         interfaceName = "/ktv/songs"
         method = .get
     }

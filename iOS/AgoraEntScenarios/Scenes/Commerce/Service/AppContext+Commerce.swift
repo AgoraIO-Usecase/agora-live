@@ -8,6 +8,7 @@
 import Foundation
 
 let kCommerceLogBaseContext = "AgoraKit"
+
 let commerceLogger = AgoraEntLog.createLog(config: AgoraEntLogConfig(sceneName: "Commerce"))
 
 private let kCommerceRoomListKey = "kCommerceRoomListKey"
@@ -16,6 +17,33 @@ private let kRtcTokenMapKey = "kRtcTokenMapKey"
 private let kRtcToken = "kRtcToken"
 private let kRtmToken = "kRtmToken"
 private let kDebugModeKey = "kDebugModeKey"
+
+public class CommerceLogger: NSObject {
+    
+    public static let kLogKey = "Commerce"
+    
+    public static func info(_ text: String, context: String? = nil) {
+        agoraDoMainThreadTask {
+            AgoraEntLog.getSceneLogger(with: kLogKey).info(text, context: context)
+        }
+    }
+    
+    public static func warning(_ text: String, context: String? = nil) {
+        warn(text, context: context)
+    }
+
+    public static func warn(_ text: String, context: String? = nil) {
+        agoraDoMainThreadTask {
+            AgoraEntLog.getSceneLogger(with: kLogKey).warning(text, context: context)
+        }
+    }
+
+    public static func error(_ text: String, context: String? = nil) {
+        agoraDoMainThreadTask {
+            AgoraEntLog.getSceneLogger(with: kLogKey).error(text, context: context)
+        }
+    }
+}
 
 extension AppContext {
     static private var _commerceServiceImpMap: [String: CommerceSyncManagerServiceImp] = [String: CommerceSyncManagerServiceImp]()
