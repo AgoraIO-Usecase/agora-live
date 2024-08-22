@@ -11,12 +11,11 @@ class CommerceThumnbnailCanvasView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        let blurEffect = UIBlurEffect(style: .regular)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(blurEffectView)
-        
-        blurEffectView.snp.makeConstraints { make in
+        let image = UIImage.show_sceneImage(name: "show_live_room_bg")
+        let view = UIImageView(image: image)
+        addSubview(view)
+
+        view.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
