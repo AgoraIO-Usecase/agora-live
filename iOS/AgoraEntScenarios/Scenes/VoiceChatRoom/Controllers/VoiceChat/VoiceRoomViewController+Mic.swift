@@ -158,6 +158,7 @@ extension VoiceRoomViewController {
     }
 
     @objc func leaveRoom() {
+        AgoraEntLog.autoUploadLog(scene: VoiceLogger.kLogKey)
         ChatRoomServiceImp.getSharedInstance().leaveRoom(self.roomInfo?.room?.room_id ?? "") { _, _ in
         }
     }

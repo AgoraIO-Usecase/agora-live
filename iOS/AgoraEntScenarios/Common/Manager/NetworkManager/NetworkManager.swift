@@ -75,7 +75,7 @@ class NetworkManager:NSObject {
     @objc static let shared = NetworkManager()
     private let baseUrl = "https://agoraktv.xyz/1.1/functions/"
     private var baseServerUrl: String {
-        return KeyCenter.baseServerUrl ?? ""
+        return KeyCenter.releaseBaseServerUrl ?? ""
     }
     
     private func basicAuth(key: String, password: String) -> String {

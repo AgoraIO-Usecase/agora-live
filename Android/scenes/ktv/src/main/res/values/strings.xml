@@ -77,7 +77,6 @@
     <string name="ktv_confirm">Confirm</string>
     <string name="ktv_cancel">Cancel</string>
     <string name="ktv_song_list_empty">No songs in the list</string>
-    <string name="ktv_iknow">Got it</string>
     <string name="ktv_skip_prelude">Skip prelude</string>
     <string name="ktv_skip_postlude">Skip postlude</string>
     <string name="ktv_load_failed_no_song">"Song download failed, no songs available now"</string>
