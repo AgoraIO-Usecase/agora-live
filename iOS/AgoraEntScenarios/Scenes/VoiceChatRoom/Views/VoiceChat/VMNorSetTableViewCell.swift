@@ -61,6 +61,7 @@ class VMNorSetTableViewCell: UITableViewCell {
     private func createConstrains() {
         indView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
+            make.right.equalTo(-16)
         }
         contentLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
