@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setBeautyWithPath:(NSString *)path key:(NSString *)key value:(float)value;
 
-- (void)setStyleWithPath:(NSString *)path key:(NSString *)key value:(float)value isCombined:(BOOL)isCombined;
+- (void)setStyleWithPath:(NSString *)path key:(NSString *)key value:(float)value;
 
 - (void)setAnimojiWithPath:(NSString *)path;
 

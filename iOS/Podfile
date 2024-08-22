@@ -1,6 +1,6 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, '12.0'
+platform :ios, '13.0'
 inhibit_all_warnings!
 
 def all_pods
@@ -21,13 +21,16 @@ def all_pods
   pod 'JXCategoryView', '1.6.1'
 
   # Byted
-#  pod 'BytedEffect', :path => 'bytedEffect.podspec'
+ # pod 'BytedEffect', :path => 'bytedEffect.podspec'
 #  # Sense
-#  pod 'SenseLib', :path => 'sense.podspec'
+ # pod 'SenseLib', :path => 'sense.podspec'
   # FU
-#  pod 'fuLib', :path => 'fu.podspec'
-  
+   pod 'fuLib', :path => 'fu.podspec'
+ # FU
+   #pod 'FURender', :path => 'FURender.podspec'
+
   pod 'RTMSyncManager', :path => 'AgoraEntScenarios/Common/API/RTMSyncManager'
+  pod 'AGResourceManager', :path => 'AgoraEntScenarios/Common/API/AGResourceManager'
 
 #  pod 'sdk', :path => 'sdk.podspec'
 #  pod 'AgoraRtcEngine_iOS', '4.3.1'
@@ -66,7 +69,7 @@ def all_pods
   pod 'SwiftyBeaver', '1.9.5'
   pod 'Protobuf', '3.22.1'
   pod 'SwiftProtobuf'
-#  pod 'LookinServer', :subspecs => ['Swift'], :configurations => ['Debug']
+  pod 'LookinServer', :subspecs => ['Swift'], :configurations => ['Debug']
 
 end
 
