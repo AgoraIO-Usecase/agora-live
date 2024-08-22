@@ -55,9 +55,6 @@ class VoiceSyncManagerServiceImp(
 
     private val mObservableHelper = ObservableHelper<VoiceServiceListenerProtocol>()
 
-    private val ROOM_AVAILABLE_DURATION: Long = 20 * 60 * 1000 // 20min
-
-
     private val mMainHandler by lazy { Handler(Looper.getMainLooper()) }
 
     /**
@@ -136,7 +133,7 @@ class VoiceSyncManagerServiceImp(
         mSyncManager = SyncManager(mContext, null, commonConfig)
 
         val roomExpirationPolicy = RoomExpirationPolicy()
-        roomExpirationPolicy.expirationTime = ROOM_AVAILABLE_DURATION
+        roomExpirationPolicy.expirationTime = VoiceServiceProtocol.ROOM_AVAILABLE_DURATION
         roomExpirationPolicy.isAssociatedWithOwnerOffline = true
         mRoomService = RoomService(roomExpirationPolicy, mRoomManager, mSyncManager)
     }
@@ -149,7 +146,7 @@ class VoiceSyncManagerServiceImp(
         override fun run() {
             if (mCurRoomNo.isEmpty()) return
             val roomDuration = getCurrentDuration(mCurRoomNo)
-            if (roomDuration >= ROOM_AVAILABLE_DURATION) {
+            if (roomDuration >= VoiceServiceProtocol.ROOM_AVAILABLE_DURATION) {
                 mMainHandler.removeCallbacks(this)
                 onSceneExpire(mCurRoomNo)
             } else {

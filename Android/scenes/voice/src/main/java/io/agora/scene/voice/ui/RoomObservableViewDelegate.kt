@@ -1,7 +1,5 @@
 package io.agora.scene.voice.ui
 
-import android.content.DialogInterface
-import android.content.DialogInterface.OnCancelListener
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
@@ -10,7 +8,6 @@ import androidx.fragment.app.FragmentActivity
 import com.google.gson.reflect.TypeToken
 import io.agora.CallBack
 import io.agora.scene.base.component.OnItemClickListener
-import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.voice.R
 import io.agora.scene.voice.global.VoiceBuddyFactory
 import io.agora.scene.voice.imkit.bean.ChatMessageData
