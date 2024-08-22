@@ -26,6 +26,7 @@ import io.agora.rtmsyncmanager.service.rtm.AUIRtmUserLeaveReason
 import io.agora.rtmsyncmanager.utils.AUILogger
 import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.rtmsyncmanager.utils.ObservableHelper
+import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.ServerConfig
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.ktv.KTVLogger
@@ -143,9 +144,6 @@ class KTVSyncManagerServiceImp constructor(
      */
     private val mObservableHelper = ObservableHelper<KtvServiceListenerProtocol>()
 
-    // time limit
-    private val ROOM_AVAILABLE_DURATION: Long = 20 * 60 * 1000 // 20min
-
     init {
         KTVHttpManager.setBaseURL(ServerConfig.toolBoxUrl)
         HttpManager.setBaseURL(ServerConfig.roomManagerUrl)
@@ -185,7 +183,7 @@ class KTVSyncManagerServiceImp constructor(
         mSyncManager = SyncManager(mContext, null, commonConfig)
 
         val roomExpirationPolicy = RoomExpirationPolicy()
-        roomExpirationPolicy.expirationTime = ROOM_AVAILABLE_DURATION
+        roomExpirationPolicy.expirationTime = KTVServiceProtocol.ROOM_AVAILABLE_DURATION
         roomExpirationPolicy.isAssociatedWithOwnerOffline = true
         mRoomService = RoomService(roomExpirationPolicy, mRoomManager, mSyncManager)
     }
@@ -199,7 +197,7 @@ class KTVSyncManagerServiceImp constructor(
         override fun run() {
             if (mCurRoomNo.isEmpty()) return
             val roomDuration = getCurrentDuration(mCurRoomNo)
-            if (roomDuration >= ROOM_AVAILABLE_DURATION) {
+            if (roomDuration >= KTVServiceProtocol.ROOM_AVAILABLE_DURATION) {
                 mMainHandler.removeCallbacks(this)
                 onSceneExpire(mCurRoomNo)
             } else {
