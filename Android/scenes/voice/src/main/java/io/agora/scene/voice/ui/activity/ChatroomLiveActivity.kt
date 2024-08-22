@@ -81,7 +81,6 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
     private lateinit var roomObservableDelegate: RoomObservableViewDelegate
 
     private val voiceRoomModel = VoiceRoomModel()
-    private var isRoomOwnerLeave = false
     private val dialogFragments = mutableListOf<BottomSheetDialogFragment>()
 
     override fun getViewBinding(inflater: LayoutInflater): VoiceActivityChatroomBinding {
@@ -197,7 +196,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                 }
 
                 override fun onError(code: Int, message: String?) {
-                    voiceServiceProtocol.leaveRoom {  }
+                    voiceServiceProtocol.leaveRoom { }
                     ToastTools.show(
                         this@ChatroomLiveActivity,
                         message ?: getString(R.string.voice_chatroom_join_room_failed)
@@ -350,11 +349,17 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                 "userBeKicked $reason".logD(TAG)
                 ThreadManager.getInstance().runOnMainThread {
                     if (reason == VoiceRoomServiceKickedReason.destroyed) {
-                        ToastTools.show(this@ChatroomLiveActivity, getString(R.string.voice_room_close))
-                        leaveRoom()
+                        innerRelease()
+                        roomObservableDelegate.onTimeUpExitRoom(
+                            getString(R.string.room_has_close), finishBack = {
+                                finish()
+                            })
                     } else if (reason == VoiceRoomServiceKickedReason.removed) {
-                        ToastTools.show(this@ChatroomLiveActivity, getString(R.string.voice_room_kick_member))
-                        leaveRoom()
+                        innerRelease()
+                        roomObservableDelegate.onTimeUpExitRoom(
+                            getString(R.string.voice_room_kick_member), finishBack = {
+                                finish()
+                            })
                     }
                 }
             }
@@ -402,10 +407,12 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                 super.onRoomDestroyed(roomId)
                 if (!TextUtils.equals(this@ChatroomLiveActivity.voiceRoomModel.chatroomId, roomId)) return
                 "onRoomDestroyed $roomId".logD(TAG)
-                isRoomOwnerLeave = true
                 ThreadManager.getInstance().runOnMainThread {
-                    ToastTools.show(this@ChatroomLiveActivity, getString(R.string.voice_room_close))
-                    finish()
+                    innerRelease()
+                    roomObservableDelegate.onTimeUpExitRoom(
+                        getString(R.string.room_has_close), finishBack = {
+                            finish()
+                        })
                 }
             }
 
@@ -417,26 +424,18 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
             }
 
             override fun onSyncRoomDestroy() {
+                innerRelease()
                 roomObservableDelegate.onTimeUpExitRoom(
-                    getString(R.string.voice_room_close), finishBack = {
-                        if (this@ChatroomLiveActivity.voiceRoomModel.isOwner) {
-                            leaveRoom()
-                        } else {
-                            roomObservableDelegate.checkUserLeaveMic()
-                            leaveRoom()
-                        }
+                    getString(R.string.room_has_close), finishBack = {
+                        finish()
                     })
             }
 
             override fun onSyncRoomExpire() {
+                innerRelease()
                 roomObservableDelegate.onTimeUpExitRoom(
                     getString(R.string.voice_chatroom_time_up_tips), finishBack = {
-                        if (this@ChatroomLiveActivity.voiceRoomModel.isOwner) {
-                            leaveRoom()
-                        } else {
-                            roomObservableDelegate.checkUserLeaveMic()
-                            leaveRoom()
-                        }
+                       finish()
                     })
             }
         })
@@ -499,7 +498,8 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                 roomObservableDelegate.onClickSoundSocial(
                     this@ChatroomLiveActivity.voiceRoomModel.soundEffect,
                     finishBack = {
-                        leaveRoom()
+                        innerRelease()
+                        finish()
                     })
             }
 
@@ -513,7 +513,8 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                 when (itemId) {
                     R.id.voice_extend_item_eq -> {
                         roomObservableDelegate.onAudioSettingsDialog(finishBack = {
-                            leaveRoom()
+                            innerRelease()
+                            finish()
                         })
                     }
 
@@ -604,10 +605,10 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                     return
                 }
                 if (f is BottomSheetDialogFragment) {
-                    if (f is BaseSheetDialog<*> && f.onCancel){
+                    if (f is BaseSheetDialog<*> && f.onCancel) {
                         // 手动取消则关闭所有弹框
                         val iterator = dialogFragments.iterator()
-                        while (iterator.hasNext()){
+                        while (iterator.hasNext()) {
                             iterator.next().dismiss()
                             iterator.remove()
                         }
@@ -644,37 +645,44 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
             roomObservableDelegate.onExitRoom(
                 getString(R.string.voice_chatroom_end_live),
                 getString(R.string.voice_chatroom_end_live_tips), finishBack = {
-                    leaveRoom()
+                    innerRelease()
+                    finish()
                 })
         } else {
             roomObservableDelegate.checkUserLeaveMic()
-            leaveRoom()
+            innerRelease()
+            finish()
         }
     }
 
-    private fun leaveRoom() {
+    private fun innerRelease() {
+
+        roomLivingViewModel.leaveSyncManagerRoom()
+
         if (this.voiceRoomModel.isOwner) {
+            ChatroomIMManager.getInstance().leaveChatRoom(this.voiceRoomModel.chatroomId)
             ChatroomIMManager.getInstance().asyncDestroyChatRoom(this.voiceRoomModel.chatroomId, object :
                 CallBack {
                 override fun onSuccess() {}
 
                 override fun onError(code: Int, error: String?) {}
             })
+        } else {
+            roomObservableDelegate.checkUserLeaveMic()
+            ChatroomIMManager.getInstance().leaveChatRoom(this.voiceRoomModel.chatroomId)
         }
-        roomLivingViewModel.leaveSyncManagerRoom()
+        ChatroomIMManager.getInstance().removeChatRoomChangeListener()
+        ChatroomIMManager.getInstance().clearCache()
+
+        binding.chatroomGiftView.clear()
+        roomObservableDelegate.destroy()
+        voiceServiceProtocol.unsubscribeEvent()
+        binding.subtitle.clearTask()
+        dialogFragments.clear()
         finish()
     }
 
     override fun finish() {
-        ChatroomIMManager.getInstance().leaveChatRoom(this.voiceRoomModel.chatroomId)
-        ChatroomIMManager.getInstance().removeChatRoomChangeListener()
-        ChatroomIMManager.getInstance().clearCache()
-        binding.chatroomGiftView.clear()
-        roomObservableDelegate.destroy()
-        voiceServiceProtocol.unsubscribeEvent()
-        isRoomOwnerLeave = false
-        binding.subtitle.clearTask()
-        dialogFragments.clear()
         super.finish()
     }
 

@@ -43,7 +43,6 @@
     <string name="voice_empty_invite_hands">No audience yet</string>
     <string name="voice_empty_raised_hands">No requests to speak yet</string>
     <string name="voice_room_profile">Profile</string>
-    <string name="voice_room_close">The room has been dissolved</string>
     <string name="voice_room_kick_member">Kicked out of the room</string>
     <string name="voice_member_count_action_kick">Kick Out</string>
     <string name="voice_room_welcome">Welcome to Agora Voice Chat Room! Pornography, gambling, or violence is strictly prohibited in the room.</string>
@@ -231,7 +230,7 @@
     <string name="voice_room_unblock">Unlock</string>
     <string name="voice_room_kickoff">Kick</string>
     <string name="voice_room_unmute">Unmute</string>
-    <string name="voice_room_off_stage">Off Stage</string>
+    <string name="voice_room_off_stage">Remove</string>
     <string name="voice_room_host">Host</string>
     <string name="voice_room_active">Activate</string>
     <string name="voice_room_ask_upstage">Request to Co-host</string>

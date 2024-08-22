@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="room_has_close">The host has disbanded the room. Please confirm your departure from the room.</string>
+    <string name="room_has_close">The host has disbanded the room. </string>
+    <string name="room_iknow">Got it</string>
     <string name="confirm_to_dismiss_room">Are you sure you want to disband this room?</string>
     <string name="confirm_to_exit_room">Are you sure you want to leave this room?</string>
     <string name="exit_room">Leave the room</string>
