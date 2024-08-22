@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.scene.base.GlideApp
+import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.component.OnItemClickListener
 import io.agora.scene.ktv.KtvCenter
@@ -42,6 +43,11 @@ class RoomListActivity : BaseViewBindingActivity<KtvActivityRoomListBinding>() {
     private var isJoining = false
     override fun getViewBinding(inflater: LayoutInflater): KtvActivityRoomListBinding {
         return KtvActivityRoomListBinding.inflate(inflater)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        KTVServiceProtocol.ROOM_AVAILABLE_DURATION = SceneConfigManager.ktvExpireTime * 1000L
     }
 
     /**
