@@ -264,7 +264,6 @@ class ShowAgoraKitManager: NSObject {
             }
             let option = AgoraRtcChannelMediaOptions()
             option.token = token
-            AppContext.shared.rtcToken = token
             self?.updateChannelEx(channelId: channelId, options: option)
         }
     }
