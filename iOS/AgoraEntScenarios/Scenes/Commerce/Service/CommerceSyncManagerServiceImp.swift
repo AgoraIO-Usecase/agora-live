@@ -376,6 +376,7 @@ extension CommerceSyncManagerServiceImp {
                 roomModel.roomName = info.roomName
                 roomModel.thumbnailId = info.customPayload["thumbnailId"] as? String
                 roomModel.createdAt = info.createTime
+                roomModel.roomUserCount = (info.customPayload["roomUserCount"] as? Int) ?? 0
                 return roomModel
             })
             completion(nil, dataArray)
