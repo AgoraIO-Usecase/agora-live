@@ -33,12 +33,11 @@ class CommerceEmptyView: UIView {
         descLabel = UILabel()
         descLabel.textColor = .commerce_empty_desc
         descLabel.font = .commerce_R_14
-        descLabel.text = "room_list_empty_desc".commerce_localized
+        descLabel.text = "commerce_room_list_empty".commerce_localized
         addSubview(descLabel)
         descLabel.snp.makeConstraints { make in
-            make.bottom.equalToSuperview()
-            make.centerX.equalToSuperview()
-            make.top.equalTo(imageView.snp.bottom).offset(40)
+            make.bottom.equalTo(imageView.snp.top).offset(-40)
+            make.centerX.equalTo(imageView)
         }
     }
 }
