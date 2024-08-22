@@ -199,6 +199,7 @@
     self.joinChorusBtn = [[UIButton alloc]initWithFrame:CGRectMake(self.width / 2.0 - 56, 10, 112, 34)];
     [self.joinChorusBtn setBackgroundImage:[UIImage ktv_sceneImageWithName:@"ic_join_chorus" ] forState:UIControlStateNormal];
     [self.joinChorusBtn setBackgroundImage:[UIImage ktv_sceneImageWithName:@"ic_join_chorus_loading" ] forState:UIControlStateSelected];
+    
     _joinChorusBtn.layer.cornerRadius = 17;
     _joinChorusBtn.layer.masksToBounds = true;
     [self.joinChorusBtn addTarget:self action:@selector(joinChorus:) forControlEvents:UIControlEventTouchUpInside];
