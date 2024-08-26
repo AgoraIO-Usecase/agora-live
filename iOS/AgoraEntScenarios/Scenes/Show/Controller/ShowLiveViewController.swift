@@ -161,7 +161,14 @@ class ShowLiveViewController: UIViewController {
     private var interactionList: [ShowInteractionInfo]? {
         didSet {
             self.pkInviteView.interactionList = interactionList ?? []
-            self.currentInteraction = interactionList?.first
+            if AppContext.shared.rtcToken?.isEmpty == false {
+                self.currentInteraction = interactionList?.first
+                return
+            }
+            ShowAgoraKitManager.shared.preGenerateToken {[weak self] _ in
+                guard let self = self else {return}
+                self.currentInteraction = self.interactionList?.first
+            }
         }
     }
     
@@ -856,7 +863,20 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
     
     public func rtcEngine(_ engine: AgoraRtcEngineKit, didVideoMuted muted: Bool, byUid uid: UInt) {
         ShowLogger.info("didVideoMuted[\(uid)] \(muted)")
-        liveView.blurGusetCanvas = muted
+        if "\(uid)" == currentInteraction?.userId {
+            liveView.blurGusetCanvas = muted
+        } else if uid == roomOwnerId {
+            liveView.blurHostCanvas = muted
+        }
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didAudioMuted muted: Bool, byUid uid: UInt) {
+        ShowLogger.info("didAudioMuted[\(uid)] \(muted)")
+        if "\(uid)" == currentInteraction?.userId {
+            liveView.canvasView.isRemoteMuteMic = muted
+        } else if uid == roomOwnerId {
+            liveView.canvasView.isLocalMuteMic = muted
+        }
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, remoteAudioStats stats: AgoraRtcRemoteAudioStats) {
@@ -997,7 +1017,7 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
     
     func onClickSettingButton() {
         let muteAudio = self.muteLocalAudio
-        settingMenuVC.selectedMap = [.camera: self.muteLocalVideo, .mic: muteAudio]
+        settingMenuVC.selectedMap = [.camera: self.muteLocalVideo, .mic: muteAudio, .mute_mic: muteAudio]
         
         if interactionStatus == .idle {
             settingMenuVC.type = role == .broadcaster ? .idle_broadcaster : .idle_audience
