@@ -411,6 +411,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
                                                            setting: self.settingModel
                                                        settingView:self.settingView
                                                       withDelegate:self];
+    popView.identifier = @"settingView";
     
     self.settingView = (VLKTVSettingView*)popView.currCustomView;
     BOOL flag = self.selSongsArray.count > 0;
@@ -1430,6 +1431,11 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 }
 
 #pragma mark - VLKTVSettingViewDelegate
+
+- (void)settingViewBackAction {
+    [[LSTPopView getPopViewForKey:@"settingView"] dismiss];
+}
+
 - (void)settingViewSettingChanged:(VLKTVSettingModel *)setting
               valueDidChangedType:(VLKTVValueDidChangedType)type {
     self.settingModel = setting;
