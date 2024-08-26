@@ -168,6 +168,11 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
     public void resetChosenSongList(List<SongItem> songs) {
         songChosenFragment.resetSongList(songs);
         setChosenSongCount(songChosenFragment.getSongSize());
+
+        // 歌单-更新选中歌曲
+        for (int i = 0; i < songs.size(); i++) {
+            songChooseFragment.setSongItemStatus(songs.get(i), true);
+        }
     }
 
     /**
