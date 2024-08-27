@@ -26,14 +26,14 @@ class CommerceLivePagesViewController: ViewController {
                   localUid != info.uid else {
                 return nil
             }
-            commerceLogger.info("[\(room.roomId)]onRequireRenderVideo: \(info.channelName)  \(vc.liveView.canvasView.localView)", context: kPagesVCTag)
+            CommerceLogger.info("[\(room.roomId)]onRequireRenderVideo: \(info.channelName)  \(vc.liveView.canvasView.localView)", context: kPagesVCTag)
             if room.channelName() == info.channelName, room.userId() == "\(info.uid)" {
                 return vc.liveView.canvasView.localView
             } else {
                 if let _ = room.interactionAnchorInfoList.filter({ $0.uid == info.uid && $0.channelName == info.channelName }).first {
                     return vc.liveView.canvasView.remoteView
                 }
-                commerceLogger.info("onRequireRenderVideo fail: \(info.channelName)/\(room.roomId)", context: kPagesVCTag)
+                CommerceLogger.info("onRequireRenderVideo fail: \(info.channelName)/\(room.roomId)", context: kPagesVCTag)
                 return nil
             }
         }
@@ -72,14 +72,14 @@ class CommerceLivePagesViewController: ViewController {
     }()
     
     deinit {
-        commerceLogger.info("deinit-- CommerceLivePagesViewController", context: kPagesVCTag)
+        CommerceLogger.info("deinit-- CommerceLivePagesViewController", context: kPagesVCTag)
         CommerceAgoraKitManager.shared.leaveAllRoom()
         AppContext.unloadCommerceServiceImp()
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        commerceLogger.info("init-- CommerceLivePagesViewController", context: kPagesVCTag)
+        CommerceLogger.info("init-- CommerceLivePagesViewController", context: kPagesVCTag)
     }
     
     required init?(coder: NSCoder) {
@@ -236,7 +236,7 @@ class CommerceLivePagesSlicingDelegateHandler: AGCollectionSlicingDelegateHandle
         let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
         let idx = indexPath.row
         defer {
-            commerceLogger.info("collectionView cellForItemAt: \(idx)/\(indexPath.row)", context: kPagesVCTag)
+            CommerceLogger.info("collectionView cellForItemAt: \(idx)/\(indexPath.row)", context: kPagesVCTag)
         }
         
         guard let room = roomList?[idx] as? CommerceRoomListModel else {
@@ -292,7 +292,7 @@ class CommerceLivePagesSlicingDelegateHandler: AGCollectionSlicingDelegateHandle
         if let cycleArray = roomList as? CommerceCycleRoomArray {
             let realIndex = cycleArray.realCellIndex(with: toIndex)
             let fakeIndex = cycleArray.fakeCellIndex(with: realIndex)
-            commerceLogger.info("scrollViewDidEndDecelerating: from: \(currentIndex) to: \(fakeIndex)", context: kPagesVCTag)
+            CommerceLogger.info("scrollViewDidEndDecelerating: from: \(currentIndex) to: \(fakeIndex)", context: kPagesVCTag)
             self.scrollView = nil
             (scrollView as? UICollectionView)?.scrollToItem(at: IndexPath(row: fakeIndex, section: 0),
                                                             at: .centeredVertically,
