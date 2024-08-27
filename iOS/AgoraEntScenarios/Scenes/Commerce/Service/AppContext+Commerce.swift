@@ -9,8 +9,6 @@ import Foundation
 
 let kCommerceLogBaseContext = "AgoraKit"
 
-let commerceLogger = AgoraEntLog.createLog(config: AgoraEntLogConfig(sceneName: "Commerce"))
-
 private let kCommerceRoomListKey = "kCommerceRoomListKey"
 private let kCommerceUserListKey = "kCommerceUserListKey"
 private let kRtcTokenMapKey = "kRtcTokenMapKey"
@@ -19,7 +17,6 @@ private let kRtmToken = "kRtmToken"
 private let kDebugModeKey = "kDebugModeKey"
 
 public class CommerceLogger: NSObject {
-    
     public static let kLogKey = "Commerce"
     
     public static func info(_ text: String, context: String? = nil) {
