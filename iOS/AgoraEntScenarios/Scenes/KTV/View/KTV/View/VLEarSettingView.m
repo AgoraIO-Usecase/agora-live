@@ -14,6 +14,7 @@
 #import "VLMacroDefine.h"
 #import "AgoraEntScenarios-Swift.h"
 @interface VLEarSettingView()<VLKTVSliderViewDelegate>
+@property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic,strong) UILabel *titleLabel;
 @property (nonatomic,strong) UILabel *earLabel;
 @property (nonatomic,strong) UISwitch *earSwitch;
@@ -27,6 +28,18 @@
 @property (nonatomic, strong) HeadSetManager *headeSet;
 @end
 @implementation VLEarSettingView
+#pragma mark - Lazy
+
+- (UIButton *)backButton {
+    if (!_backButton) {
+        _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_backButton setImage:[UIImage ktv_sceneImageWithName:@"ktv_back_whiteIcon"] forState:UIControlStateNormal];
+        [_backButton addTarget:self action:@selector(backAction) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _backButton;
+}
+
+#pragma mark - lift cycle
 
 - (instancetype)initWithFrame:(CGRect)frame isEarOn:(BOOL)isEarOn vol:(CGFloat)vol withDelegate:(id<VLEarSettingViewViewDelegate>)delegate {
     if (self = [super initWithFrame:frame]) {
@@ -69,6 +82,8 @@
     _titleLabel.textAlignment = NSTextAlignmentCenter;
     _titleLabel.textColor = [UIColor whiteColor];
     [self addSubview:_titleLabel];
+    
+    [self addSubview:self.backButton];
     
     _earLabel = [[UILabel alloc]init];
     _earLabel.text = KTVLocalizedString(@"ktv_ear_switch");
@@ -148,6 +163,12 @@
         make.top.mas_equalTo(30);
     }];
     
+    [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(20);
+        make.height.with.mas_equalTo(35);
+        make.centerY.mas_equalTo(self.titleLabel);
+    }];
+    
     [self.earLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(20);
         make.top.mas_equalTo(65);
@@ -192,6 +213,11 @@
         make.top.mas_equalTo(self.earSetView.mas_bottom).offset(25);
         make.height.mas_equalTo(22);
     }];
+}
+
+
+- (void)backAction {
+    [self.delegate settingViewBackAction];
 }
 
 - (VLKTVSliderView *)earSlider {

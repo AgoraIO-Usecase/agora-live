@@ -43,6 +43,8 @@
 NSInteger ktvApiStreamId = -1;
 NSInteger ktvStreamId = -1;
 
+NSString* const kSettingViewId = @"settingView";
+
 @interface VLKTVViewController ()<
 VLKTVTopViewDelegate,
 VLKTVMVViewDelegate,
@@ -69,6 +71,7 @@ VLDebugViewDelegate,
 KTVServiceListenerProtocol,
 VirtualSoundcardPresenterDelegate
 >
+
 
 typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 @property (nonatomic, assign) BOOL isEnterSeatNotFirst;
@@ -411,7 +414,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
                                                            setting: self.settingModel
                                                        settingView:self.settingView
                                                       withDelegate:self];
-    popView.identifier = @"settingView";
+    popView.identifier = kSettingViewId;
     
     self.settingView = (VLKTVSettingView*)popView.currCustomView;
     BOOL flag = self.selSongsArray.count > 0;
@@ -1437,7 +1440,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 #pragma mark - VLKTVSettingViewDelegate
 
 - (void)settingViewBackAction {
-    [[LSTPopView getPopViewForKey:@"settingView"] dismiss];
+    [[[LSTPopView getAllPopView] lastObject] dismiss];
 }
 
 - (void)settingViewSettingChanged:(VLKTVSettingModel *)setting
@@ -1539,6 +1542,9 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     
     self.soundSettingView.soundCardBlock = ^(BOOL flag) {
         [weakself.soundcardPresenter setSoundCardEnable:flag];
+    };
+    self.soundSettingView.clickBackBlock = ^ {
+        [weakself settingViewBackAction];
     };
     self.popSoundSettingView = [LSTPopView popSoundCardViewWithParentView:self.view soundCardView:self.soundSettingView];
 }
