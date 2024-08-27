@@ -57,7 +57,7 @@ class CommerceGoodsListView: UIView {
     private func getGoodsList() {
         serviceImp?.getGoodsList(roomId: roomId, completion: { [weak self] error, res in
             if error != nil {
-                commerceLogger.error("error == \(error?.localizedDescription ?? "")")
+                CommerceLogger.error("error == \(error?.localizedDescription ?? "")")
                 return
             }
             guard let list = res else { return }
@@ -68,14 +68,14 @@ class CommerceGoodsListView: UIView {
     
     private func updateGoodsInfo(goods: CommerceGoodsModel?, completion: @escaping (NSError?)-> ()) {
         serviceImp?.updateGoodsInfo(roomId: roomId, goods: goods, completion: { error in
-            commerceLogger.error("error == \(error?.localizedDescription ?? "")")
+            CommerceLogger.error("error == \(error?.localizedDescription ?? "")")
             completion(error)
         })
     }
     
     private func calcGoodsInfo(goods: CommerceGoodsModel?, increase: Bool, completion: @escaping (NSError?)-> ()) {
         serviceImp?.calcGoodsInfo(roomId: roomId, goods: goods, increase: increase, completion: { error in
-            commerceLogger.error("error == \(error?.localizedDescription ?? "")")
+            CommerceLogger.error("error == \(error?.localizedDescription ?? "")")
             completion(error)
         })
     }
@@ -83,7 +83,7 @@ class CommerceGoodsListView: UIView {
     private func subscribeEventGoodsList() {
         serviceImp?.subscribeGoodsInfo(roomId: roomId, completion: { [weak self] error, res in
             if error != nil {
-                commerceLogger.error("error == \(error?.localizedDescription ?? "")")
+                CommerceLogger.error("error == \(error?.localizedDescription ?? "")")
                 return
             }
             guard let list = res?.compactMap({ item in
@@ -261,7 +261,7 @@ class CommerceGoodsListViewCell: UITableViewCell {
         model.status = (model.goods?.quantity ?? 0) <= 0 ? .sold_out : .buy
         statusButton.setTitle(model.status.title, for: .normal)
         statusButton.isSelected = isBroadcaster
-        commerceLogger.info("setShoppingData \(model.goods?.title ?? ""): \(model.goods?.quantity ?? 0)")
+        CommerceLogger.info("setShoppingData \(model.goods?.title ?? ""): \(model.goods?.quantity ?? 0)")
         if isBroadcaster {
             statusButton.widthAnchor.constraint(equalToConstant: 64).isActive = true
         } else {

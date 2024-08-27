@@ -27,7 +27,7 @@ class CommerceEmptyView: UIView {
         addSubview(imageView)
         imageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview()
+            make.top.equalToSuperview().offset(-20)
         }
         
         descLabel = UILabel()
@@ -36,7 +36,7 @@ class CommerceEmptyView: UIView {
         descLabel.text = "commerce_room_list_empty".commerce_localized
         addSubview(descLabel)
         descLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(imageView.snp.top).offset(-40)
+            make.top.equalTo(imageView.snp.bottom).offset(40)
             make.centerX.equalTo(imageView)
         }
     }
