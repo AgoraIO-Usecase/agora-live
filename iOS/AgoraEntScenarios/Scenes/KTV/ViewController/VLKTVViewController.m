@@ -399,7 +399,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     [[VLKTVAlert shared]showKTVToastWithFrame: UIScreen.mainScreen.bounds
                                         image: [UIImage ktv_sceneImageWithName:@"empty" ]
                                       message: KTVLocalizedString(@"ktv_owner_leave")
-                                  buttonTitle:KTVLocalizedString(KTVLocalizedString(@"ktv_confirm"))
+                                  buttonTitle:KTVLocalizedString(KTVLocalizedString(@"ktv_gotit"))
                                    completion:^(bool flag, NSString * _Nullable text) {
         [weakSelf leaveRoom];
         [[VLKTVAlert shared] dismiss];
@@ -1187,7 +1187,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     BOOL isOwner = [self.roomModel.creatorNo isEqualToString:VLUserCenter.user.id];
     NSString *title = isOwner ? KTVLocalizedString(@"ktv_disband_room") : KTVLocalizedString(@"ktv_exit_room");
     NSString *message = isOwner ? KTVLocalizedString(@"ktv_confirm_disband_room") : KTVLocalizedString(@"ktv_confirm_exit_room");
-    NSArray *array = [[NSArray alloc]initWithObjects:KTVLocalizedString(@"ktv_cancel"),KTVLocalizedString(@"ktv_confirm"), nil];
+    NSArray *array = [[NSArray alloc]initWithObjects:KTVLocalizedString(@"ktv_cancel"),KTVLocalizedString(@"ktv_gotit"), nil];
     [[VLAlert shared] showAlertWithFrame:UIScreen.mainScreen.bounds title:title message:message placeHolder:@"" type:ALERTYPENORMAL buttonTitles:array completion:^(bool flag, NSString * _Nullable text) {
         if(flag == YES){
             [weakSelf leaveRoom];
@@ -1392,7 +1392,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 
         NSString *title = KTVLocalizedString(@"ktv_change_song");
         NSString *message = KTVLocalizedString(@"ktv_change_next_song");
-        NSArray *array = [[NSArray alloc]initWithObjects:KTVLocalizedString(@"ktv_cancel"),KTVLocalizedString(@"ktv_confirm"), nil];
+        NSArray *array = [[NSArray alloc]initWithObjects:KTVLocalizedString(@"ktv_cancel"),KTVLocalizedString(@"ktv_gotit"), nil];
         [[VLAlert shared] showAlertWithFrame:UIScreen.mainScreen.bounds title:title message:message placeHolder:@"" type:ALERTYPENORMAL buttonTitles:array completion:^(bool flag, NSString * _Nullable text) {
             if(flag == YES){
                 [weakSelf removeCurrentSong];
@@ -2242,7 +2242,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         [[VLKTVAlert shared]showKTVToastWithFrame: UIScreen.mainScreen.bounds
                                             image: [UIImage ktv_sceneImageWithName:@"empty" ]
                                           message: mes
-                                      buttonTitle: KTVLocalizedString(@"ktv_confirm")
+                                      buttonTitle: KTVLocalizedString(@"ktv_gotit")
                                        completion: ^(bool flag, NSString * _Nullable text) {
             [[VLKTVAlert shared]dismiss];
             [weakself leaveRoom];

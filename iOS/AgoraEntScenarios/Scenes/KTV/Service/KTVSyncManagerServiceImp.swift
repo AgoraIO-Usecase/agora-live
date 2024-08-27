@@ -535,6 +535,9 @@ extension KTVSyncManagerServiceImp {
         _subscribeSeat()
         _subscribeSong()
         _subscribeChorus()
+        subscribeRoomWillExpire { [weak self] in
+            self?.onSceneExpire(channelName: roomNo)
+        }
     }
     
     private func _subscribeSeat() {
