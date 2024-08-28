@@ -324,7 +324,7 @@ class RoomListActivity : AppCompatActivity() {
             TokenGenerator.TokenGeneratorType.Token007,
             TokenGenerator.AgoraTokenType.Rtc,
             success = {
-                ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
+                ShowLogger.d("RoomListActivity", "generateToken success, uid：$localUId")
                 RtcEngineInstance.setupGeneralToken(it)
                 success.invoke()
             },
