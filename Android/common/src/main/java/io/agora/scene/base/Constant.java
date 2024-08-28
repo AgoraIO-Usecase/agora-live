@@ -65,4 +65,6 @@ public final class Constant {
      * The constant CURR_AUDIENCE_SETTING.
      */
     public static final String CURR_AUDIENCE_SETTING = "currAudienceSetting";
+
+    public static final Boolean logUpload = false;
 }

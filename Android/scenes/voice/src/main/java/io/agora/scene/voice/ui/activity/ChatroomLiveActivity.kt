@@ -18,6 +18,9 @@ import com.google.gson.reflect.TypeToken
 import io.agora.CallBack
 import io.agora.Error
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
+import io.agora.scene.base.AgoraScenes
+import io.agora.scene.base.LogUploader
+import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.component.OnItemClickListener
@@ -696,5 +699,12 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
 
     private fun checkFocus(focus: Boolean) {
         binding.likeView.isVisible = focus
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (SceneConfigManager.logUpload) {
+            LogUploader.uploadLog(AgoraScenes.ChatRoom)
+        }
     }
 }

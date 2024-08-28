@@ -85,7 +85,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textColor="#191919"
-        android:text="@string/commerce_shop_auction_item_0"
+        android:text="@string/commerce_shop_auction_item"
         android:textSize="18sp"
         />
 
