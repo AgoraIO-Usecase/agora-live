@@ -2,6 +2,7 @@ package com.agora.entfulldemo.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 
 import androidx.annotation.NonNull;
@@ -15,7 +16,11 @@ import com.agora.entfulldemo.databinding.AppActivityMainBinding;
 
 import io.agora.scene.base.SceneConfigManager;
 import io.agora.scene.base.component.BaseViewBindingActivity;
+import io.agora.scene.widget.uploader.OverallLayoutController;
+import io.agora.scene.base.utils.ToastUtils;
 import io.agora.scene.widget.dialog.PermissionLeakDialog;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 /**
  * Main Activity.
@@ -41,6 +46,18 @@ public class MainActivity extends BaseViewBindingActivity<AppActivityMainBinding
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        OverallLayoutController.checkOverlayPermission(this, new Function0<Unit>() {
+            @Override
+            public Unit invoke() {
+                OverallLayoutController.startMonkServer(MainActivity.this);
+                return null;
+            }
+        });
+    }
+
+    @Override
     protected boolean isCanExit() {
         return true;
     }
@@ -52,6 +69,14 @@ public class MainActivity extends BaseViewBindingActivity<AppActivityMainBinding
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == OverallLayoutController.REQUEST_FLOAT_CODE) {
+            if (Settings.canDrawOverlays(this)) {
+                ToastUtils.showToast("The floating window permission has been turned on");
+                OverallLayoutController.startMonkServer(MainActivity.this);
+            } else {
+                ToastUtils.showToast("Please enable floating window permission");
+            }
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 

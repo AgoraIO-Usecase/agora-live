@@ -62,4 +62,11 @@
 
     <string name="id_is_" translatable="false">ID: %s</string>
 
+    <string name="comm_cancel">Cancel</string>
+    <string name="comm_i_know">OK</string>
+    <string name="comm_upload_logging">Log uploading</string>
+    <string name="comm_upload_logging_error">Log upload error</string>
+    <string name="comm_upload_logging_complete">Log upload success</string>
+    <string name="comm_upload_repeat">Retry</string>
+
 </resources>
