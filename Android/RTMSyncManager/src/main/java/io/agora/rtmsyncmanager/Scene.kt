@@ -436,6 +436,15 @@ class Scene constructor(
         override fun onArbiterDidChange(channelName: String, arbiterId: String) {
             if (arbiterId.isEmpty()) {return}
             enterCondition.lockOwnerRetrieved = true
+
+            //TODO: 目前回调会多次造成syncLocalMetaData多次，需要定位问题
+            //网络恢复并获取到仲裁者(不确定锁是不是丢失了，所以需要获取)，同步本地metadata到远端
+            if (getArbiter().isArbiter()) {
+                AUILogger.logger().d(tag, "retry syncLocalMetaData")
+                collectionMap.values.forEach {
+                    it.syncLocalMetaData()
+                }
+            }
         }
 
         override fun onError(channelName: String, error: AUIRtmException) {
