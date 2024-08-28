@@ -62,18 +62,6 @@ public class MainActivity extends BaseViewBindingActivity<AppActivityMainBinding
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        OverallLayoutController.checkOverlayPermission(this, new Function0<Unit>() {
-            @Override
-            public Unit invoke() {
-                OverallLayoutController.startMonkServer(MainActivity.this);
-                return null;
-            }
-        });
-    }
-
-    @Override
     protected boolean isCanExit() {
         return true;
     }
