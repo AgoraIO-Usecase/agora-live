@@ -14,9 +14,10 @@ import androidx.navigation.ui.BottomNavigationViewKt;
 import com.agora.entfulldemo.R;
 import com.agora.entfulldemo.databinding.AppActivityMainBinding;
 
+import io.agora.scene.base.LogUploader;
 import io.agora.scene.base.SceneConfigManager;
 import io.agora.scene.base.component.BaseViewBindingActivity;
-import io.agora.scene.widget.uploader.OverallLayoutController;
+import io.agora.scene.base.uploader.OverallLayoutController;
 import io.agora.scene.base.utils.ToastUtils;
 import io.agora.scene.widget.dialog.PermissionLeakDialog;
 import kotlin.Unit;
@@ -36,7 +37,22 @@ public class MainActivity extends BaseViewBindingActivity<AppActivityMainBinding
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SceneConfigManager.INSTANCE.fetchSceneConfig(null, null);
+        SceneConfigManager.fetchSceneConfig(new Function0<Unit>() {
+            @Override
+            public Unit invoke() {
+                if (SceneConfigManager.getLogUpload()){
+                    checkPermissionAndStartMonkServer();
+                }
+                return null;
+            }
+        }, null);
+    }
+
+    private void checkPermissionAndStartMonkServer(){
+        OverallLayoutController.checkOverlayPermission(this, () -> {
+            OverallLayoutController.startMonkServer(MainActivity.this);
+            return null;
+        });
     }
 
     @Override
@@ -71,10 +87,8 @@ public class MainActivity extends BaseViewBindingActivity<AppActivityMainBinding
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == OverallLayoutController.REQUEST_FLOAT_CODE) {
             if (Settings.canDrawOverlays(this)) {
-                ToastUtils.showToast("The floating window permission has been turned on");
                 OverallLayoutController.startMonkServer(MainActivity.this);
             } else {
-                ToastUtils.showToast("Please enable floating window permission");
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

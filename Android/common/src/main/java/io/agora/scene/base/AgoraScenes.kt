@@ -1,4 +1,4 @@
-package com.agora.entfulldemo.home.constructor
+package io.agora.scene.base
 
 /**
  * Agora scenes
@@ -6,6 +6,13 @@ package com.agora.entfulldemo.home.constructor
  * @constructor Create empty Agora scenes
  */
 enum class AgoraScenes {
+
+    /**
+     * Common base
+     *
+     * @constructor Create empty Common base
+     */
+    CommonBase,
     /**
      * Ktv
      *
