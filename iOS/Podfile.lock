@@ -25,7 +25,6 @@ PODS:
   - fuLib (1.0):
     - FURenderKit (= 8.6.0)
   - FURenderKit (8.6.0)
-  - HWWeakTimer (1.0)
   - JXCategoryView (1.6.1)
   - KakaJSON (1.1.2)
   - LEEAlert (1.6.4)
@@ -72,7 +71,6 @@ DEPENDENCIES:
   - AgoraRtcEngine_Special_iOS (= 4.3.2.2)
   - AgoraRtm (from `AgoraRtm.podspec`)
   - fuLib (from `fu.podspec`)
-  - HWWeakTimer (= 1.0)
   - JXCategoryView (= 1.6.1)
   - KakaJSON
   - LEEAlert (= 1.6.4)
@@ -102,7 +100,6 @@ SPEC REPOS:
     - AgoraComponetLog
     - AgoraRtcEngine_Special_iOS
     - FURenderKit
-    - HWWeakTimer
     - JXCategoryView
     - KakaJSON
     - LEEAlert
@@ -153,7 +150,6 @@ SPEC CHECKSUMS:
   AgoraRtm: 021fe357e5e6629a35dff013e84e2a06c84f5e0c
   fuLib: a59e706f8b8a3826dcbe93d427fba2bcafc643aa
   FURenderKit: bcff9889dbbafcd12839d57ee85d03b466e1a6fb
-  HWWeakTimer: 79488095ef2dd8937f94b676d12bd5fa954486e6
   JXCategoryView: 7b1ee69ede4843c581688afe84d0f047723262f2
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
   LEEAlert: a604ad481e3e9b021421a271f78594926dd034bb
@@ -177,6 +173,6 @@ SPEC CHECKSUMS:
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: 64ea38999c775b832f68daba39f7cd1407f74ba8
+PODFILE CHECKSUM: b94bd4983c3ca53acf3c65cedda39724a197c53b
 
 COCOAPODS: 1.15.2
