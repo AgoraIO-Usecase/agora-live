@@ -140,8 +140,10 @@ static FUManager *shareManager = NULL;
 
 - (void)destoryItems {
 #if __has_include(<FURenderKit/FURenderKit.h>)
-    [FURenderKit clear];
-    [FURenderKit destroy];
+    [FURenderKit shareRenderKit].beauty = nil;
+    [FURenderKit shareRenderKit].bodyBeauty = nil;
+    [FURenderKit shareRenderKit].makeup = nil;
+    [[FURenderKit shareRenderKit].stickerContainer removeAllSticks];
     self.currentSticker = nil;
 #endif
 }
