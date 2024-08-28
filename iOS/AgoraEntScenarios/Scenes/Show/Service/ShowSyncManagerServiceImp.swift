@@ -223,6 +223,11 @@ extension ShowSyncManagerServiceImp {
         expireTimer?.invalidate()
         expireTimerMap[roomId] = nil
     }
+    
+    func destroy() {
+        syncManager.logout()
+        syncManager.destroy()
+    }
 }
 
 //MARK: ShowServiceProtocol
