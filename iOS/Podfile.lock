@@ -16,12 +16,42 @@ PODS:
     - AFNetworking/NSURLSession
   - Agora-Scene-Utils (1.1.0)
   - Agora_Chat_iOS (1.0.8)
+  - AgoraCommon (0.0.1):
+    - AFNetworking
+    - AgoraSyncManager
+    - Bugly
+    - KakaJSON
+    - Masonry
+    - SnapKit
+    - SSZipArchive
+    - SVProgressHUD
+    - SwiftyBeaver
+    - YYCategories
+    - YYModel
+    - ZSwiftBaseLib
   - AgoraComponetLog (0.0.2)
   - AgoraLyricsScore (2.1.0-alpha-2):
     - AgoraComponetLog
     - Zip
   - AgoraRtcEngine_Special_iOS (4.3.2.2)
   - AgoraRtm (2.2.1)
+  - AgoraSyncManager (2.1.6):
+    - SocketRocket
+  - Bugly (2.6.1)
+  - DreamFlow (0.1.0):
+    - Agora-Scene-Utils
+    - AgoraCommon
+    - AgoraRtcEngine_Special_iOS
+    - AgoraSyncManager
+    - MJRefresh
+    - RTMSyncManager
+    - SDWebImage
+    - SnapKit
+    - SVProgressHUD
+    - SwiftyBeaver
+    - VideoLoaderAPI
+    - YYCategories
+    - YYModel
   - fuLib (1.0):
     - FURenderKit (= 8.6.0)
   - FURenderKit (8.6.0)
@@ -29,6 +59,9 @@ PODS:
   - JXCategoryView (1.6.1)
   - KakaJSON (1.1.2)
   - LEEAlert (1.6.4)
+  - LookinServer/Core (1.2.8)
+  - LookinServer/Swift (1.2.8):
+    - LookinServer/Core
   - Masonry (1.1.0)
   - MJRefresh (3.7.9)
   - Protobuf (3.22.1)
@@ -68,14 +101,17 @@ DEPENDENCIES:
   - AFNetworking (= 4.0.1)
   - Agora-Scene-Utils (= 1.1.0)
   - Agora_Chat_iOS (= 1.0.8)
+  - AgoraCommon (from `AgoraEntScenarios`)
   - AgoraLyricsScore (from `https://github.com/AgoraIO-Community/LrcView-iOS.git`, commit `b06752185ed5264fd09a8117bd78fb11202749b5`, branch `feature/dev_2.1.0`)
   - AgoraRtcEngine_Special_iOS (= 4.3.2.2)
   - AgoraRtm (from `AgoraRtm.podspec`)
+  - DreamFlow (from `AgoraEntScenarios/Scenes/DreamFlow`)
   - fuLib (from `fu.podspec`)
   - HWWeakTimer (= 1.0)
   - JXCategoryView (= 1.6.1)
   - KakaJSON
   - LEEAlert (= 1.6.4)
+  - LookinServer/Swift
   - Masonry (= 1.1.0)
   - MJRefresh (= 3.7.9)
   - Protobuf (= 3.22.1)
@@ -101,11 +137,14 @@ SPEC REPOS:
     - Agora_Chat_iOS
     - AgoraComponetLog
     - AgoraRtcEngine_Special_iOS
+    - AgoraSyncManager
+    - Bugly
     - FURenderKit
     - HWWeakTimer
     - JXCategoryView
     - KakaJSON
     - LEEAlert
+    - LookinServer
     - Masonry
     - MJRefresh
     - Protobuf
@@ -125,12 +164,16 @@ SPEC REPOS:
     - ZSwiftBaseLib
 
 EXTERNAL SOURCES:
+  AgoraCommon:
+    :path: AgoraEntScenarios
   AgoraLyricsScore:
     :branch: feature/dev_2.1.0
     :commit: b06752185ed5264fd09a8117bd78fb11202749b5
     :git: https://github.com/AgoraIO-Community/LrcView-iOS.git
   AgoraRtm:
     :path: AgoraRtm.podspec
+  DreamFlow:
+    :path: AgoraEntScenarios/Scenes/DreamFlow
   fuLib:
     :path: fu.podspec
   RTMSyncManager:
@@ -147,16 +190,21 @@ SPEC CHECKSUMS:
   AFNetworking: 3bd23d814e976cd148d7d44c3ab78017b744cd58
   Agora-Scene-Utils: 3f9b1c422cfdda4a7051cf4cffdd0cfef80c9c89
   Agora_Chat_iOS: fcd8afa4f1cff55da59535a6ed573594ace3c169
+  AgoraCommon: ff6c750f5562b8aea6fcbb912a28314e61e924eb
   AgoraComponetLog: b359777d2ff8e9ee0237cbd0c42ceb422fd514f1
   AgoraLyricsScore: 47fa1cc855810ddc3013ee4ec6ce8c926ca9b22c
   AgoraRtcEngine_Special_iOS: 4f1a1d2f2e7b564735fd74ced733c76e33b5dc04
   AgoraRtm: 021fe357e5e6629a35dff013e84e2a06c84f5e0c
+  AgoraSyncManager: b483f264a363fc7cad7b747b22e39d96f21cbe64
+  Bugly: 217ac2ce5f0f2626d43dbaa4f70764c953a26a31
+  DreamFlow: 9efa19591281f4b4735ed94c95bf687409903108
   fuLib: a59e706f8b8a3826dcbe93d427fba2bcafc643aa
   FURenderKit: bcff9889dbbafcd12839d57ee85d03b466e1a6fb
   HWWeakTimer: 79488095ef2dd8937f94b676d12bd5fa954486e6
   JXCategoryView: 7b1ee69ede4843c581688afe84d0f047723262f2
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
   LEEAlert: a604ad481e3e9b021421a271f78594926dd034bb
+  LookinServer: 1b2b61c6402ae29fa22182d48f5cd067b4e99e80
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
   Protobuf: d7f7c8329edf5eb8af65547a8ba3e9c1cee927d5
@@ -177,6 +225,6 @@ SPEC CHECKSUMS:
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: 64ea38999c775b832f68daba39f7cd1407f74ba8
+PODFILE CHECKSUM: f900ec9e296cef5a5cee8fcaaf754779ab954606
 
 COCOAPODS: 1.15.2

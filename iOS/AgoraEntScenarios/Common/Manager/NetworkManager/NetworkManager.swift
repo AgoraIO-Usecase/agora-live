@@ -5,7 +5,6 @@
 //  Created by zhaoyongqiang on 2021/11/19.
 //
 import UIKit
-import YYCategories
 
 public let kAppProjectName = "appProject"
 public let kAppProjectValue = "agora_ent_demo"
@@ -14,7 +13,7 @@ public let kAppOSValue = "iOS"
 public let kAppVersion = "versionName"
 
 @objc
-class NetworkManager:NSObject {
+public class NetworkManager:NSObject {
     @objc public enum AgoraTokenType: Int {
         case rtc = 1
         case rtm = 2
@@ -49,8 +48,8 @@ class NetworkManager:NSObject {
 
     var gameToken: String = ""
 
-    typealias SuccessClosure = ([String: Any]) -> Void
-    typealias FailClosure = (String) -> Void
+    public typealias SuccessClosure = ([String: Any]) -> Void
+    public typealias FailClosure = (String) -> Void
 
     private var sessionConfig: URLSessionConfiguration = {
         let config = URLSessionConfiguration.default
@@ -72,10 +71,10 @@ class NetworkManager:NSObject {
         return config
     }()
 
-    @objc static let shared = NetworkManager()
+    @objc public static let shared = NetworkManager()
     private let baseUrl = "https://agoraktv.xyz/1.1/functions/"
     private var baseServerUrl: String {
-        return KeyCenter.releaseBaseServerUrl ?? ""
+        return AppContext.shared.releaseBaseUrl
     }
     
     private func basicAuth(key: String, password: String) -> String {
@@ -87,7 +86,7 @@ class NetworkManager:NSObject {
         return base64LoginString
     }
     
-    func generateToken(channelName: String,
+    public func generateToken(channelName: String,
                        uid: String,
                        tokenTypes: [AgoraTokenType],
                        expire: UInt = 24 * 60 * 60,
@@ -104,8 +103,8 @@ class NetworkManager:NSObject {
                               types: [NSNumber],
                               expire: UInt = 24 * 60 * 60,
                               success: @escaping (String?) -> Void) {
-        let params = ["appCertificate": KeyCenter.Certificate ?? "",
-                      "appId": KeyCenter.AppId,
+        let params = ["appCertificate": AppContext.shared.certificate,
+                      "appId": AppContext.shared.appId,
                       "channelName": channelName,
                       "expire": expire,
                       "src": "iOS",
@@ -165,15 +164,15 @@ class NetworkManager:NSObject {
         ]
         
         let imConfig = [
-            "appKey":KeyCenter.IMAppKey,
-            "clientId":KeyCenter.IMClientId,
-            "clientSecret":KeyCenter.IMClientSecret,
+            "appKey":AppContext.shared.imAppKey,
+            "clientId":AppContext.shared.imClientId,
+            "clientSecret":AppContext.shared.imClientSecret
         ]
         
         let payload: String = getPlayloadWithSceneType(.voice) ?? ""
         let traceId = UUID().uuidString.md5Encrypt
-        let params = ["appCertificate": KeyCenter.Certificate ?? "",
-                      "appId": KeyCenter.AppId,
+        let params = ["appCertificate": AppContext.shared.certificate,
+                      "appId": AppContext.shared.appId,
                       "chat": chatParams,
                       "src": "iOS",
                       "im": imConfig,
@@ -204,8 +203,8 @@ class NetworkManager:NSObject {
                              sceneType: SceneType,
                              success: @escaping (String?) -> Void) {
         let payload: String = getPlayloadWithSceneType(sceneType) ?? ""
-        let params = ["appCertificate": KeyCenter.Certificate ?? "",
-                      "appId": KeyCenter.AppId,
+        let params = ["appCertificate": AppContext.shared.certificate,
+                      "appId": AppContext.shared.appId,
                       "channelName": channelName,
                       "channelType": channelType,
                       "src": "iOS",
@@ -239,13 +238,13 @@ class NetworkManager:NSObject {
         return payload
     }
     
-    func startCloudPlayer(channelName: String,
+    public func startCloudPlayer(channelName: String,
                           uid: String,
                           robotUid: UInt,
                           streamUrl: String,
                           success: @escaping (String?) -> Void) {
-        let params: [String: Any] = ["appCertificate": KeyCenter.Certificate ?? "",
-                                     "appId": KeyCenter.AppId,
+        let params: [String: Any] = ["appCertificate": AppContext.shared.certificate,
+                                     "appId": AppContext.shared.appId,
                                      "channelName": channelName,
                                      "uid": uid,
                                      "robotUid": robotUid,
@@ -266,11 +265,11 @@ class NetworkManager:NSObject {
         })
     }
     
-    func cloudPlayerHeartbeat(channelName: String,
+    public func cloudPlayerHeartbeat(channelName: String,
                               uid: String,
                               success: @escaping (String?) -> Void) {
-        let params: [String: String] = ["appCertificate": KeyCenter.Certificate ?? "",
-                                        "appId": KeyCenter.AppId,
+        let params: [String: String] = ["appCertificate": AppContext.shared.certificate,
+                                        "appId": AppContext.shared.appId,
                                         "channelName": channelName,
                                         "uid": uid,
                                         "src": "iOS",
@@ -294,7 +293,7 @@ class NetworkManager:NSObject {
         }
     }
 
-    func postRequest(urlString: String, params: [String: Any]?, success: SuccessClosure?, failure: FailClosure?) {
+    public func postRequest(urlString: String, params: [String: Any]?, success: SuccessClosure?, failure: FailClosure?) {
         DispatchQueue.global().async {
             self.request(urlString: urlString, params: params, method: .POST, success: success, failure: failure)
         }
@@ -439,7 +438,7 @@ extension NetworkManager {
         let params = ["appVersion": appVersion ,
                       "platform": "iOS",
                       "model": deviceModel] as [String : Any]
-        let url = KeyCenter.HostUrl + "/api-login/report/device?userNo=\(VLUserCenter.user.userNo)&sceneId=\(sceneName)&appId=\(KeyCenter.AppId)&projectId=agora_ent_demo"
+        let url = AppContext.shared.hostUrl + "/api-login/report/device?userNo=\(VLUserCenter.user.userNo)&sceneId=\(sceneName)&appId=\(AppContext.shared.appId)&projectId=agora_ent_demo"
         NetworkManager.shared.postRequest(urlString: url,
                                           params: params,
                                           success: { response in
@@ -455,7 +454,7 @@ extension NetworkManager {
         let appVersion = UIApplication.shared.appVersion ?? ""
         let deviceModel = UIDevice.current.machineModel ?? ""
         let params = ["action": sceneName] as [String : Any]
-        let url = KeyCenter.HostUrl + "/api-login/report/action?userNo=\(VLUserCenter.user.userNo)&sceneId=\(sceneName)&appId=\(KeyCenter.AppId)&projectId=agora_ent_demo"
+        let url = AppContext.shared.hostUrl + "/api-login/report/action?userNo=\(VLUserCenter.user.userNo)&sceneId=\(sceneName)&appId=\(AppContext.shared.appId)&projectId=agora_ent_demo"
         NetworkManager.shared.postRequest(urlString: url,
                                           params: params,
                                           success: { response in

@@ -43,7 +43,7 @@ extension UIButton {
         static var touchAreaEdgeInsets = UIEdgeInsets.zero
     }
     /// Set the button by clicking on the edge of the response area
-    var touchAreaEdgeInsets: UIEdgeInsets {
+   @objc public var touchAreaEdgeInsets: UIEdgeInsets {
         get {
             if let value = objc_getAssociatedObject(self, &AssociatedKeys.touchAreaEdgeInsets) as? UIEdgeInsets {
                 return value

@@ -5,6 +5,7 @@
 
 #import "VLMineTCell.h"
 #import "AESMacro.h"
+#import <AgoraCommon/QMUICommonDefines.h>
 
 @interface VLMineTCell ()
 @end

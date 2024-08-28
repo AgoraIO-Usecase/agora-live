@@ -6,8 +6,8 @@
 //
 
 import UIKit
+import AgoraCommon
 
-@objc
 class VLLoginViewController: VRBaseViewController {
     private lazy var backgroundIconImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "login_background_icon"))

@@ -8,6 +8,7 @@
 import UIKit
 import ZSwiftBaseLib
 import AgoraRtcKit
+import AgoraCommon
 
 @objc protocol AboutAgoraEntertainmentViewControllerDelegate: NSObjectProtocol {
     func debugModeChangedCallback()

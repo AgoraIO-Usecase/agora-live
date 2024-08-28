@@ -13,7 +13,13 @@ open class AUINetworking: NSObject {
     
     private var reqMap: [String: (URLSessionDataTask, AUINetworkModel)] = [:]
     
-    override init() {}
+    override init() {
+        super.init()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private func baserequest(model: AUINetworkModel, progress: ((Float) -> Void)?, completion: ((Error?, Any?) -> Void)?) {
         cancel(model: model)

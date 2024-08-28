@@ -7,6 +7,7 @@
 #import "VLHomeItemModel.h"
 #import "VLMacroDefine.h"
 #import "AESMacro.h"
+#import <AgoraCommon/QMUICommonDefines.h>
 
 @interface VLHomeItemView ()
 

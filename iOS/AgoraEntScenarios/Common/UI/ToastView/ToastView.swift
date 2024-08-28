@@ -10,7 +10,7 @@ enum ToastViewPostion {
     case top, center, bottom
 }
 
-class ToastView: UIView {
+public class ToastView: UIView {
     private lazy var tagImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -68,7 +68,7 @@ class ToastView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    static func showWait(text: String, view: UIView? = nil) {
+    public static func showWait(text: String, view: UIView? = nil) {
         DispatchQueue.main.async {
             self.currentToastView?.removeFromSuperview()
             let toastView = show(text: text,
@@ -82,7 +82,7 @@ class ToastView: UIView {
         }
     }
 
-    static func hidden(delay: CGFloat = 0.0) {
+    public static func hidden(delay: CGFloat = 0.0) {
         if delay <= 0 {
             currentToastView?.removeFromSuperview()
             return
@@ -96,7 +96,7 @@ class ToastView: UIView {
         }
     }
 
-    static func show(text: String, duration: CGFloat = 2.5, view: UIView? = nil) {
+    public static func show(text: String, duration: CGFloat = 2.5, view: UIView? = nil) {
         DispatchQueue.main.async {
             let toastView = show(text: text, tagImage: nil,
                                  textColor: .white, font: nil,

@@ -30,7 +30,7 @@
     configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
     CGFloat y = IPHONE_X ? 15 : 0;
     const int clear_cut = 10;
-    self.webViewWK = [[WKWebView alloc]initWithFrame:CGRectMake(0, kStatusBarHeight - y + clear_cut, SCREEN_WIDTH, SCREEN_HEIGHT - kSafeAreaBottomHeight - y + clear_cut) configuration:configuration];
+    self.webViewWK = [[WKWebView alloc]initWithFrame:CGRectMake(0, kStatusBarHeight - y + clear_cut, CGRectGetWidth([UIScreen mainScreen].bounds), CGRectGetHeight([UIScreen mainScreen].bounds) - kSafeAreaBottomHeight - y + clear_cut) configuration:configuration];
     self.webViewWK.scrollView.backgroundColor = UIColorMakeWithHex(@"#F7FAFE");
     self.webViewWK.backgroundColor = UIColorMakeWithHex(@"#F7FAFE");
     self.webViewWK.navigationDelegate=self;

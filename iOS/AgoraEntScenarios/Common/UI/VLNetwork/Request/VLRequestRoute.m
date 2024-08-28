@@ -6,7 +6,7 @@
 #import "VLRequestRoute.h"
 #import "VLNetworkConfig.h"
 #import "VLUserCenter.h"
-#import "AgoraEntScenarios-Swift.h"
+#import "AgoraCommon/AgoraCommon-Swift.h"
 
 @implementation VLRequestRoute
 
@@ -24,10 +24,10 @@
     return url;
 }
 + (NSString*)getHostUrl {
-    return [NSString stringWithFormat:@"%@", [AppContext.shared appHostUrl]];
+    return [NSString stringWithFormat:@"%@", [AppContext.shared hostUrl]];
 }
 + (NSString*)getRequestUrl:(NSString *)url {
-    return [NSString stringWithFormat:@"%@%@", [AppContext.shared appHostUrl], url];
+    return [NSString stringWithFormat:@"%@%@", [AppContext.shared hostUrl], url];
 }
 
 + (NSString *)getToken {

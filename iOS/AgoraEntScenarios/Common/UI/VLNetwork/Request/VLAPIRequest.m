@@ -5,12 +5,10 @@
 
 #import "VLAPIRequest.h"
 //#import "AppDelegate+Config.h"
-#import "UIWindow+Router.h"
 #import "VLMacroDefine.h"
 #import "VLToast.h"
 #import "VLUserCenter.h"
 #import "NSString+Helper.h"
-#import "MenuUtils.h"
 #import "NSObject+JKAppInfo.h"
 @import AFNetworking;
 @import YYModel;
@@ -306,10 +304,11 @@ static AFHTTPSessionManager *_sessionManager;
 
 #pragma mark - Switch to the login page after the token is invalid
 + (void)setLoginVC {
-    [VLToast toast:AGLocalizedString(@"app_expire")];
+    [VLToast toast:NSLocalizedString(@"app_expire", nil)];
     // TODO: goto login page
     [[VLUserCenter center] logout];
-    [[UIApplication sharedApplication].delegate.window configRootViewController];
+    NSNotification *notification = [NSNotification notificationWithName:@"AGORAENTTOKENEXPIRED" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotification:notification];
 }
 
 + (void)requestProgress:(progressBlock)progressBlock value:(NSProgress *)value{

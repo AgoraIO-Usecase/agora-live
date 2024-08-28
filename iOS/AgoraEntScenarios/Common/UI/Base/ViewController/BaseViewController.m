@@ -7,6 +7,8 @@
 #import "VLMacroDefine.h"
 #import "VLHotSpotBtn.h"
 #import "AESMacro.h"
+#import "QMUICommonDefines.h"
+#import "AgoraCommon/AgoraCommon-Swift.h"
 
 @interface BaseViewController ()
 

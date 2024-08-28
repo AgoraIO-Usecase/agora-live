@@ -21,6 +21,8 @@
 #import <Photos/Photos.h>
 #import "AgoraEntScenarios-Swift.h"
 #import "AESMacro.h"
+#import "VLURLPathConfig.h"
+
 @import Masonry;
 @import LEEAlert;
 

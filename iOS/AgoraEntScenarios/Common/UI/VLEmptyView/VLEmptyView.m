@@ -6,9 +6,9 @@
 #import "VLEmptyView.h"
 #import "VLMacroDefine.h"
 #import "NSString+Helper.h"
-#import "MenuUtils.h"
 #import "AESMacro.h"
-@import Masonry;
+#import <Masonry/Masonry.h>
+#import "QMUICommonDefines.h"
 
 @interface VLEmptyView ()
 
@@ -86,7 +86,7 @@
     [self.button setTitle:buttonTitle forState:UIControlStateNormal];
 }
 - (void)buttonEvent {
-    if ([self.button.titleLabel.text isEqualToString:AGLocalizedString(@"comm_try_again")]) {
+    if ([self.button.titleLabel.text isEqualToString:NSLocalizedString(@"comm_try_again", nil)]) {
         if (self.emptyViewButtonBlock) {
             self.emptyViewButtonBlock();
         }

@@ -6,7 +6,6 @@
 //  Copyright © 2019 Agora. All rights reserved.
 //
 
-import AgoraRtcKit
 import UIKit
 
 extension UIApplication {

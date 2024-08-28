@@ -36,8 +36,8 @@ let SERVICE_TYPE: Int = 12
 
 let chatViewWidth = ScreenWidth * (287 / 375.0)
 
-enum UserInfo {
-    static var userId: String {
+public enum UserInfo {
+    public static var userId: String {
         return VLUserCenter.user.id
 
 //        let id = UserDefaults.standard.integer(forKey: "UserId")
