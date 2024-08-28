@@ -699,7 +699,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
         if (creatorExitDialog == null) {
             creatorExitDialog = KtvCommonDialog(this).apply {
                 setDescText(getString(R.string.room_has_close))
-                setDialogBtnText("", getString(R.string.ktv_iknow))
+                setDialogBtnText("", getString(R.string.room_iknow))
                 onButtonClickListener = object : OnButtonClickListener {
                     override fun onLeftButtonClick() {}
                     override fun onRightButtonClick() {
