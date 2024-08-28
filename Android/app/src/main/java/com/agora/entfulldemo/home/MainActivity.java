@@ -22,7 +22,6 @@ import io.agora.scene.base.utils.ToastUtils;
 import io.agora.scene.widget.dialog.PermissionLeakDialog;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 
 /**
  * Main Activity.
@@ -63,6 +62,18 @@ public class MainActivity extends BaseViewBindingActivity<AppActivityMainBinding
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        OverallLayoutController.checkOverlayPermission(this, new Function0<Unit>() {
+            @Override
+            public Unit invoke() {
+                OverallLayoutController.startMonkServer(MainActivity.this);
+                return null;
+            }
+        });
+    }
+
+    @Override
     protected boolean isCanExit() {
         return true;
     }
@@ -78,7 +89,6 @@ public class MainActivity extends BaseViewBindingActivity<AppActivityMainBinding
             if (Settings.canDrawOverlays(this)) {
                 OverallLayoutController.startMonkServer(MainActivity.this);
             } else {
-
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

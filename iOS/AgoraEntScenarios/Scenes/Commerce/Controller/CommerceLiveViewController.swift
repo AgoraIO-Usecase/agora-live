@@ -254,6 +254,7 @@ class CommerceLiveViewController: UIViewController {
     
     func leaveRoom(){
         guard let room = room else { return }
+        AgoraEntLog.autoUploadLog(scene: CommerceLogger.kLogKey)
         _leaveRoom(room)
         
 //        CommerceAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
@@ -317,7 +318,7 @@ class CommerceLiveViewController: UIViewController {
         guard role == .broadcaster else { return }
         let auctionModel = CommerceGoodsAuctionModel()
         let goodsModel = CommerceGoodsModel()
-        goodsModel.title = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
+        goodsModel.title = "Diamond Ring"
         goodsModel.price = 1
         goodsModel.quantity = 1
         auctionModel.goods = goodsModel

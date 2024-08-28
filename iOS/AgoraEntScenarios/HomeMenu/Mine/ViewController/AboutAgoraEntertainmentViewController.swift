@@ -9,8 +9,12 @@ import UIKit
 import ZSwiftBaseLib
 import AgoraRtcKit
 
+@objc protocol AboutAgoraEntertainmentViewControllerDelegate: NSObjectProtocol {
+    func debugModeChangedCallback()
+}
+
 @objcMembers final class AboutAgoraEntertainmentViewController: VRBaseViewController {
-    
+    weak var aboutAgoraDeletate: AboutAgoraEntertainmentViewControllerDelegate?
     var infos = [["contents":[["title": NSLocalizedString("app_about_customer_service", comment: ""),
                                "detail": "408.879.5885"],
                               ["title": NSLocalizedString("app_about_official_website", comment: ""),
@@ -71,6 +75,9 @@ import AgoraRtcKit
         let submit = UIAlertAction(title: NSLocalizedString("confirm", comment: ""), style: .default, handler: { action in
             AppContext.shared.isDebugMode = false
             self.debugModeButton.isHidden = true
+            if let delegate = self.aboutAgoraDeletate {
+                delegate.debugModeChangedCallback()
+            }
         })
         let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .default)
         alert.addAction(submit)
@@ -84,6 +91,10 @@ extension AboutAgoraEntertainmentViewController: AboutAgoraHeaderDelegate {
     func enterDebugMode() {
         AppContext.shared.isDebugMode = true
         debugModeButton.isHidden = false
+        
+        if let delegate = self.aboutAgoraDeletate {
+            delegate.debugModeChangedCallback()
+        }
     }
 }
 // MARK: - Table View

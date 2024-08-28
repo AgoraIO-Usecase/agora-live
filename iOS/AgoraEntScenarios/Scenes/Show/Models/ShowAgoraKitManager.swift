@@ -142,7 +142,7 @@ class ShowAgoraKitManager: NSObject {
                                      "traceId": NSString.withUUID().md5(),
                                      "src": "iOS",
                                      "payload": JSONObject.toJsonString(dict: userInfo) ?? ""]
-        let baseURL = KeyCenter.baseServerUrl ?? ""
+        let baseURL = KeyCenter.releaseBaseServerUrl ?? ""
         NetworkManager.shared.postRequest(urlString: "\(baseURL)/v1/moderation/audio",
                                           params: parasm) { response in
             ShowLogger.info("response === \(response)")
@@ -264,7 +264,6 @@ class ShowAgoraKitManager: NSObject {
             }
             let option = AgoraRtcChannelMediaOptions()
             option.token = token
-            AppContext.shared.rtcToken = token
             self?.updateChannelEx(channelId: channelId, options: option)
         }
     }
@@ -477,7 +476,7 @@ class ShowAgoraKitManager: NSObject {
         completion?()
     }
     
-    func setupLocalVideo(mirrorMode: AgoraVideoMirrorMode = .enabled,
+    func setupLocalVideo(mirrorMode: AgoraVideoMirrorMode = .disabled,
                          canvasView: UIView?) {
         guard let engine = engine else {
             assert(true, "rtc engine not initlized")

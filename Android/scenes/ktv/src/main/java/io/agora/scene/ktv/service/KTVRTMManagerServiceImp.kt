@@ -26,6 +26,7 @@ import io.agora.rtmsyncmanager.service.rtm.AUIRtmUserLeaveReason
 import io.agora.rtmsyncmanager.utils.AUILogger
 import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.rtmsyncmanager.utils.ObservableHelper
+import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.ServerConfig
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.ktv.KTVLogger
@@ -107,6 +108,8 @@ class KTVSyncManagerServiceImp constructor(
      */
     private val mRoomService: RoomService
 
+    private val roomList: MutableList<AUIRoomInfo> = mutableListOf()
+
     /**
      * current room no
      */
@@ -142,9 +145,6 @@ class KTVSyncManagerServiceImp constructor(
      * Observable helper
      */
     private val mObservableHelper = ObservableHelper<KtvServiceListenerProtocol>()
-
-    // time limit
-    private val ROOM_AVAILABLE_DURATION: Long = 20 * 60 * 1000 // 20min
 
     init {
         KTVHttpManager.setBaseURL(ServerConfig.toolBoxUrl)
@@ -185,7 +185,7 @@ class KTVSyncManagerServiceImp constructor(
         mSyncManager = SyncManager(mContext, null, commonConfig)
 
         val roomExpirationPolicy = RoomExpirationPolicy()
-        roomExpirationPolicy.expirationTime = ROOM_AVAILABLE_DURATION
+        roomExpirationPolicy.expirationTime = KTVServiceProtocol.ROOM_AVAILABLE_DURATION
         roomExpirationPolicy.isAssociatedWithOwnerOffline = true
         mRoomService = RoomService(roomExpirationPolicy, mRoomManager, mSyncManager)
     }
@@ -199,7 +199,7 @@ class KTVSyncManagerServiceImp constructor(
         override fun run() {
             if (mCurRoomNo.isEmpty()) return
             val roomDuration = getCurrentDuration(mCurRoomNo)
-            if (roomDuration >= ROOM_AVAILABLE_DURATION) {
+            if (roomDuration >= KTVServiceProtocol.ROOM_AVAILABLE_DURATION) {
                 mMainHandler.removeCallbacks(this)
                 onSceneExpire(mCurRoomNo)
             } else {
@@ -276,6 +276,8 @@ class KTVSyncManagerServiceImp constructor(
                             KTVLogger.d(TAG, "getRoomList ts:$serverTs")
                         }
                         val newRoomList = roomList?.sortedBy { -it.createTime } ?: emptyList()
+                        this.roomList.clear()
+                        this.roomList.addAll(newRoomList)
                         KTVLogger.d(TAG, "getRoomList success, roomCount:${newRoomList.size}")
                         runOnMainThread { completion.invoke(null, newRoomList) }
                     } else {
@@ -364,7 +366,7 @@ class KTVSyncManagerServiceImp constructor(
             completion.invoke(Exception("already join room $mCurRoomNo!"))
             return
         }
-        val cacheRoom = AUIRoomContext.shared().getRoomInfo(roomId)
+        val cacheRoom = roomList.firstOrNull { it.roomId == roomId }
         if (cacheRoom == null) {
             completion.invoke(Exception("room $mCurRoomNo null!"))
             return

@@ -107,7 +107,6 @@
 		ABE4B37A2A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE4B3792A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift */; };
 		BF370B5409C9BBA693EEFB80 /* Pods_AgoraEntScenarios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */; };
 		DD1603442963CAFD00182A04 /* AgoraEntLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD1603432963CAFD00182A04 /* AgoraEntLog.swift */; };
-		DD1973562C6CBA0C002C3345 /* VirtualSoundcardPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD1973552C6CBA0C002C3345 /* VirtualSoundcardPresenter.swift */; };
 		DD220BC9295B48FD00F57F30 /* QMUIHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DD220BC7295B48FD00F57F30 /* QMUIHelper.m */; };
 		DD2A43CB28FFCEE7004CEDCF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2A43CA28FFCEE7004CEDCF /* AppDelegate.swift */; };
 		DD2A43CF28FFCEE7004CEDCF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2A43CE28FFCEE7004CEDCF /* ViewController.swift */; };
@@ -572,7 +571,12 @@
 		E732CD912B47F82C004D6FB9 /* AUiMoreDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732CD902B47F82C004D6FB9 /* AUiMoreDialog.swift */; };
 		E73F23292B6F64850000B523 /* RTMSyncUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F23282B6F64850000B523 /* RTMSyncUtil.swift */; };
 		E73F232D2B7219F40000B523 /* GradualTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F232C2B7219F40000B523 /* GradualTableView.swift */; };
-		F70DE5452C6E022500FFC922 /* UIColor+Voice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70DE5442C6E022500FFC922 /* UIColor+Voice.swift */; };
+		F70CAB7B2C75A0B7000B0F61 /* VirtualSoundcardPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB7A2C75A0B7000B0F61 /* VirtualSoundcardPresenter.swift */; };
+		F70CAB7D2C75A10C000B0F61 /* UIColor+Voice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB7C2C75A10C000B0F61 /* UIColor+Voice.swift */; };
+		F70CAB7F2C75D823000B0F61 /* DebugModeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB7E2C75D823000B0F61 /* DebugModeViewController.swift */; };
+		F70CAB812C75E47B000B0F61 /* DebugModeKeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB802C75E47B000B0F61 /* DebugModeKeyCenter.swift */; };
+		F7533F932C62184100108911 /* VLLogToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7533F922C62184100108911 /* VLLogToast.swift */; };
+		F7533F972C62249E00108911 /* VoiceLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7533F962C62249E00108911 /* VoiceLogger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -697,7 +701,6 @@
 		ABA0958F2A8373F300A54FCC /* ShowSettingBitrateCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowSettingBitrateCell.swift; sourceTree = "<group>"; };
 		ABE4B3792A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowNetStateSelectViewController.swift; sourceTree = "<group>"; };
 		DD1603432963CAFD00182A04 /* AgoraEntLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraEntLog.swift; sourceTree = "<group>"; };
-		DD1973552C6CBA0C002C3345 /* VirtualSoundcardPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualSoundcardPresenter.swift; sourceTree = "<group>"; };
 		DD220BC1295B340A00F57F30 /* MenuUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuUtils.h; sourceTree = "<group>"; };
 		DD220BC3295B48FD00F57F30 /* QMUICommonDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QMUICommonDefines.h; sourceTree = "<group>"; };
 		DD220BC5295B48FD00F57F30 /* QMUIHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QMUIHelper.h; sourceTree = "<group>"; };
@@ -1304,7 +1307,12 @@
 		E732CD902B47F82C004D6FB9 /* AUiMoreDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AUiMoreDialog.swift; sourceTree = "<group>"; };
 		E73F23282B6F64850000B523 /* RTMSyncUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTMSyncUtil.swift; sourceTree = "<group>"; };
 		E73F232C2B7219F40000B523 /* GradualTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradualTableView.swift; sourceTree = "<group>"; };
-		F70DE5442C6E022500FFC922 /* UIColor+Voice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Voice.swift"; sourceTree = "<group>"; };
+		F70CAB7A2C75A0B7000B0F61 /* VirtualSoundcardPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualSoundcardPresenter.swift; sourceTree = "<group>"; };
+		F70CAB7C2C75A10C000B0F61 /* UIColor+Voice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Voice.swift"; sourceTree = "<group>"; };
+		F70CAB7E2C75D823000B0F61 /* DebugModeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugModeViewController.swift; sourceTree = "<group>"; };
+		F70CAB802C75E47B000B0F61 /* DebugModeKeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugModeKeyCenter.swift; sourceTree = "<group>"; };
+		F7533F922C62184100108911 /* VLLogToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLLogToast.swift; sourceTree = "<group>"; };
+		F7533F962C62249E00108911 /* VoiceLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceLogger.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -2195,6 +2203,7 @@
 				DD619C0329E3E81D008F63E4 /* AboutAgoraEntertainmentViewController.swift */,
 				DD8416C829090C520026B624 /* VLMineViewController.h */,
 				DD8416C929090C520026B624 /* VLMineViewController.m */,
+				F70CAB7E2C75D823000B0F61 /* DebugModeViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -2351,6 +2360,7 @@
 				E357353D29EFD631009D54E1 /* VLKTVAlert.m */,
 				DDA198E828FFE579009D3E61 /* VLToast.h */,
 				DDA198E928FFE579009D3E61 /* VLToast.m */,
+				F7533F922C62184100108911 /* VLLogToast.swift */,
 			);
 			path = Toast;
 			sourceTree = "<group>";
@@ -2611,6 +2621,7 @@
 				DDA1994A28FFE579009D3E61 /* Screen.swift */,
 				DDA1994B28FFE579009D3E61 /* JSONObject.swift */,
 				E73F23282B6F64850000B523 /* RTMSyncUtil.swift */,
+				F70CAB802C75E47B000B0F61 /* DebugModeKeyCenter.swift */,
 				E3735CAC2A5E81B6004737EF /* AESMacro.h */,
 			);
 			path = Utils;
@@ -2619,7 +2630,7 @@
 		DDA1994D28FFE579009D3E61 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
-				DD1973552C6CBA0C002C3345 /* VirtualSoundcardPresenter.swift */,
+				F70CAB7A2C75A0B7000B0F61 /* VirtualSoundcardPresenter.swift */,
 				DD91E1F32C553C0C0028E966 /* StateManager */,
 				DD6199CA29E3D36D008F63E4 /* Authorized */,
 				DDA1994E28FFE579009D3E61 /* NetworkManager */,
@@ -3066,7 +3077,8 @@
 				E732CC432B47EC6D004D6FB9 /* UIViewController+Presentation.swift */,
 				E732CC442B47EC6D004D6FB9 /* HorizontalTextCarousel.swift */,
 				E732CC452B47EC6D004D6FB9 /* VoiceRoomEmojiManager.swift */,
-				F70DE5442C6E022500FFC922 /* UIColor+Voice.swift */,
+				F7533F962C62249E00108911 /* VoiceLogger.swift */,
+				F70CAB7C2C75A10C000B0F61 /* UIColor+Voice.swift */,
 				E732CC462B47EC6D004D6FB9 /* Animation */,
 				E732CC4B2B47EC6D004D6FB9 /* VoiceRoomPasswordAlert.swift */,
 				E732CC4C2B47EC6D004D6FB9 /* Xcode14.h */,
@@ -3359,7 +3371,7 @@
 				DD2A43C428FFCEE7004CEDCF /* Frameworks */,
 				DD2A43C528FFCEE7004CEDCF /* Resources */,
 				AD4E4CC20B1F880834B4962F /* [CP] Embed Pods Frameworks */,
-				9164A8FDB4792B3A6309E021 /* [CP] Copy Pods Resources */,
+				D0C112A11886F1B3495E06CE /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -3514,23 +3526,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		9164A8FDB4792B3A6309E021 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AgoraEntScenarios/Pods-AgoraEntScenarios-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AgoraEntScenarios/Pods-AgoraEntScenarios-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AgoraEntScenarios/Pods-AgoraEntScenarios-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		AD4E4CC20B1F880834B4962F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3568,6 +3563,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D0C112A11886F1B3495E06CE /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AgoraEntScenarios/Pods-AgoraEntScenarios-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AgoraEntScenarios/Pods-AgoraEntScenarios-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AgoraEntScenarios/Pods-AgoraEntScenarios-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -3637,6 +3649,7 @@
 				DD91E1F42C553C0C0028E966 /* AppStateManager.swift in Sources */,
 				DD36105E29B70CDC00CE7984 /* ShowThrottle.swift in Sources */,
 				A8F904912B4BDE1700A4C5A7 /* ShowDebugSettingVC.swift in Sources */,
+				F70CAB7B2C75A0B7000B0F61 /* VirtualSoundcardPresenter.swift in Sources */,
 				DDA199E928FFE579009D3E61 /* VLResponseDataModel.m in Sources */,
 				E732CCF72B47EC6D004D6FB9 /* VoiceRoomRTCManager.swift in Sources */,
 				E3735CA72A5E8023004737EF /* VRBaseViewController.swift in Sources */,
@@ -3682,6 +3695,7 @@
 				DD84178429090C520026B624 /* VLDiscoveryViewController.m in Sources */,
 				E732CD282B47EC6D004D6FB9 /* AgoraChatRoomBaseAlienCollectionViewCell.swift in Sources */,
 				DD84177D29090C520026B624 /* VLHomeItemModel.m in Sources */,
+				F7533F972C62249E00108911 /* VoiceLogger.swift in Sources */,
 				DD84178429090C520026B624 /* VLDiscoveryViewController.m in Sources */,
 				DD3610C629B70CDC00CE7984 /* ShowToolMenuView.swift in Sources */,
 				DDA199F628FFE579009D3E61 /* UIImage+Color.swift in Sources */,
@@ -3710,6 +3724,7 @@
 				DDCBEADA2C33BD4D00A64FCC /* VLRoomListModel.swift in Sources */,
 				A84C2D352B4FB01700D6EFCF /* CommerceMusicEffectCell.swift in Sources */,
 				A84C2D5A2B4FB01700D6EFCF /* CommerceSettingHeaderView.swift in Sources */,
+				F70CAB7F2C75D823000B0F61 /* DebugModeViewController.swift in Sources */,
 				DD36109429B70CDC00CE7984 /* ShowSettingActionSheetVC.swift in Sources */,
 				DD3610B329B70CDC00CE7984 /* ShowRoomInfoView.swift in Sources */,
 				DD36109A29B70CDC00CE7984 /* ShowPresentTransitioningDelegate.swift in Sources */,
@@ -3751,12 +3766,14 @@
 				DD3610BF29B70CDC00CE7984 /* ShowSettingActionSheetCell.swift in Sources */,
 				E732CD512B47EC6D004D6FB9 /* VoiceMusicPlayingView.swift in Sources */,
 				DDA199DE28FFE579009D3E61 /* AlertManager.swift in Sources */,
+				F70CAB812C75E47B000B0F61 /* DebugModeKeyCenter.swift in Sources */,
 				DDA199EE28FFE579009D3E61 /* VLUIView.m in Sources */,
 				A84C2D5D2B4FB01700D6EFCF /* AppContext+Commerce.swift in Sources */,
 				DD3610C829B70CDC00CE7984 /* ShowServiceModel.swift in Sources */,
 				DDDDDB9E28FFD78C005F4E8B /* KeyCenter.swift in Sources */,
 				DD36109829B70CDC00CE7984 /* ShowVideoSettingVC.swift in Sources */,
 				DD84177B29090C520026B624 /* VLHomeViewController.m in Sources */,
+				F7533F932C62184100108911 /* VLLogToast.swift in Sources */,
 				E357353F29EFD631009D54E1 /* VLKTVAlert.m in Sources */,
 				A84C2D512B4FB01700D6EFCF /* CommerceSettingActionSheetCell.swift in Sources */,
 				E732CCE72B47EC6D004D6FB9 /* CrossDissolveAnimation.swift in Sources */,
@@ -3885,14 +3902,12 @@
 				ABA095902A8373F400A54FCC /* ShowSettingBitrateCell.swift in Sources */,
 				A84C2D482B4FB01700D6EFCF /* CommerceRoomInfoView.swift in Sources */,
 				DD619B8429E3E262008F63E4 /* VerifyCodeView.swift in Sources */,
-				F70DE5452C6E022500FFC922 /* UIColor+Voice.swift in Sources */,
 				A84C2D452B4FB01700D6EFCF /* CommerceUserJoinView.swift in Sources */,
 				DD3610A129B70CDC00CE7984 /* ShowMusicTableHeaderView.swift in Sources */,
 				A84C2D042B4FB01700D6EFCF /* NSString+Commerce.swift in Sources */,
 				A84C2D162B4FB01700D6EFCF /* CommerceDebug1TFModel.swift in Sources */,
 				DD36109129B70CDC00CE7984 /* ShowToolMenuViewController.swift in Sources */,
 				DD84178029090C520026B624 /* VLDiscoveryHeaderView.m in Sources */,
-				DD1973562C6CBA0C002C3345 /* VirtualSoundcardPresenter.swift in Sources */,
 				E732CCF02B47EC6D004D6FB9 /* AppContext+VR.swift in Sources */,
 				E732CD002B47EC6D004D6FB9 /* ChatRoomServiceImp.swift in Sources */,
 				A8F904932B4BDE1700A4C5A7 /* ShowDebug1TFModel.swift in Sources */,
@@ -3996,6 +4011,7 @@
 				E36EC8B52A663A600089A374 /* AEACategoryView.swift in Sources */,
 				E732CD422B47EC6D004D6FB9 /* VoiceRoomGiftsView.swift in Sources */,
 				DDCBEB252C33BD4D00A64FCC /* VLKTVViewController.m in Sources */,
+				F70CAB7D2C75A10C000B0F61 /* UIColor+Voice.swift in Sources */,
 				DD3610A029B70CDC00CE7984 /* ShowMusicEffectCell.swift in Sources */,
 				E732CCE82B47EC6D004D6FB9 /* VoiceRoomPasswordAlert.swift in Sources */,
 				E732CD1D2B47EC6D004D6FB9 /* VRRoomHomeListCell.swift in Sources */,
@@ -4330,7 +4346,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = G726234S43;
+				DEVELOPMENT_TEAM = YS397FG5PA;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -4524,7 +4540,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = G726234S43;
+				DEVELOPMENT_TEAM = YS397FG5PA;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -4714,7 +4730,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = G726234S43;
+				DEVELOPMENT_TEAM = YS397FG5PA;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
@@ -4734,7 +4750,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = G726234S43;
+				DEVELOPMENT_TEAM = YS397FG5PA;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;

@@ -66,7 +66,8 @@ class KeyCenter: NSObject {
     static let CloudPlayerSecret: String? = nil
     
     static var HostUrl: String = "https://gateway-fulldemo.agoralab.co"
-    static var baseServerUrl: String? = "https://service.agora.io/toolbox-overseas/v1/"
-    static var onlineBaseServerUrl: String? = baseServerUrl
+    static var releaseBaseServerUrl: String? = "https://service.agora.io/toolbox-overseas/v1/"
+    static var debugBaseServerUrl: String? = "https://service-staging.agora.io/toolbox-overseas/v1/"
+    static var onlineBaseServerUrl: String? = releaseBaseServerUrl
     static var RTMHostUrl: String = "https://service.agora.io/room-manager-overseas"
 }
