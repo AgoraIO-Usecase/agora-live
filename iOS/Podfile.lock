@@ -25,8 +25,6 @@ PODS:
   - AGResourceManager (0.1.0):
     - AFNetworking
     - SSZipArchive
-  - FURender (1.0):
-    - FURenderKit (= 8.11.1)
   - FURenderKit (8.11.1)
   - HWWeakTimer (1.0)
   - JXCategoryView (1.6.1)
@@ -78,7 +76,7 @@ DEPENDENCIES:
   - AgoraRtcEngine_Special_iOS (= 4.3.2.2)
   - AgoraRtm (from `AgoraRtm.podspec`)
   - AGResourceManager (from `AgoraEntScenarios/Common/API/AGResourceManager`)
-  - FURender (from `FURender.podspec`)
+  - FURenderKit (from `FURenderKit.podspec`)
   - HWWeakTimer (= 1.0)
   - JXCategoryView (= 1.6.1)
   - KakaJSON
@@ -109,7 +107,6 @@ SPEC REPOS:
     - Agora_Chat_iOS
     - AgoraComponetLog
     - AgoraRtcEngine_Special_iOS
-    - FURenderKit
     - HWWeakTimer
     - JXCategoryView
     - KakaJSON
@@ -142,8 +139,8 @@ EXTERNAL SOURCES:
     :path: AgoraRtm.podspec
   AGResourceManager:
     :path: AgoraEntScenarios/Common/API/AGResourceManager
-  FURender:
-    :path: FURender.podspec
+  FURenderKit:
+    :path: FURenderKit.podspec
   RTMSyncManager:
     :path: AgoraEntScenarios/Common/API/RTMSyncManager
   VideoLoaderAPI:
@@ -163,8 +160,7 @@ SPEC CHECKSUMS:
   AgoraRtcEngine_Special_iOS: 4f1a1d2f2e7b564735fd74ced733c76e33b5dc04
   AgoraRtm: 021fe357e5e6629a35dff013e84e2a06c84f5e0c
   AGResourceManager: e6616ad4d9d0461c84d9582ef1118004fa534e5c
-  FURender: 1c5ec72dc81b3351384e35f855584a5e0e0b039e
-  FURenderKit: c9ab24549ad6669ce4cfcdec16a08232af5b2d15
+  FURenderKit: f6e65256a551ca84848e2bfcce35ad2dd3b213ec
   HWWeakTimer: 79488095ef2dd8937f94b676d12bd5fa954486e6
   JXCategoryView: 7b1ee69ede4843c581688afe84d0f047723262f2
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
@@ -190,6 +186,6 @@ SPEC CHECKSUMS:
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: 8a402bb1ce609d8f5c9594ec4a7a62b9563ab599
+PODFILE CHECKSUM: 3adfcf5c89fa3469c9dbc6a5837c2d8d0a05b865
 
 COCOAPODS: 1.15.2

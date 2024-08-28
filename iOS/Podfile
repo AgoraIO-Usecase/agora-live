@@ -25,9 +25,9 @@ def all_pods
 #  # Sense
  # pod 'SenseLib', :path => 'sense.podspec'
   # FU
-   pod 'fuLib', :path => 'fu.podspec'
+#   pod 'fuLib', :path => 'fu.podspec'
  # FU
-   #pod 'FURender', :path => 'FURender.podspec'
+   pod 'FURenderKit', :path => 'FURenderKit.podspec'
 
   pod 'RTMSyncManager', :path => 'AgoraEntScenarios/Common/API/RTMSyncManager'
   pod 'AGResourceManager', :path => 'AgoraEntScenarios/Common/API/AGResourceManager'

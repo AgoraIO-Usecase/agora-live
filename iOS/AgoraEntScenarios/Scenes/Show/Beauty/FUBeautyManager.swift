@@ -32,8 +32,8 @@ class FUBeautyManager: NSObject {
         }
     }
     
-    func setStyle(path: String?, key: String?, value: CGFloat) {
-        render.setStyleWithPath(path ?? "", key: key ?? "", value: Float(value))
+    func setStyle(path: String?, key: String?, value: CGFloat, isCombined: Bool) {
+        render.setStyleWithPath(path ?? "", key: key ?? "", value: Float(value), isCombined: isCombined)
     }
     func setAnimoji(path: String?) {
         render.setAnimojiWithPath(path ?? "")
