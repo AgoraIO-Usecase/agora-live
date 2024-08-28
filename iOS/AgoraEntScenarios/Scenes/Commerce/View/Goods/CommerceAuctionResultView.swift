@@ -91,7 +91,7 @@ class CommerceAuctionResultView: UIView {
     func setBidGoods(model: CommerceGoodsAuctionModel) {
         avatarImageView.image = UIImage(named: model.bidUser?.headUrl ?? "")
         titleLabel.text = model.bidUser?.name
-//        shoppingNameLabel.text = model.goods?.title
+        shoppingNameLabel.text = "Diamond Ring"//model.goods?.title
     }
     
     private func setupUI() {
