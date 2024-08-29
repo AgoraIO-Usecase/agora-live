@@ -456,7 +456,7 @@ public class VRHttpClientManager {
                     controller.addParams(p.mParams, out);
                 }
                 response = p.getResponse(controller);
-                LogTools.d(TAG, response.toString());
+                //LogTools.d(TAG, response.toString());
 
                 if(response.code==401) {
                     LogTools.d(TAG, "Unable to authenticate (OAuth)");

@@ -1,5 +1,6 @@
 package io.agora.scene.show
 
+import io.agora.scene.base.AgoraScenes
 import io.agora.scene.base.EntLogger
 
 /**
@@ -9,7 +10,7 @@ import io.agora.scene.base.EntLogger
  */
 object ShowLogger {
 
-    private val entLogger = EntLogger(EntLogger.Config("ShowLive"))
+    private val entLogger = EntLogger(EntLogger.Config(AgoraScenes.LiveShow.name))
 
     /**
      * D

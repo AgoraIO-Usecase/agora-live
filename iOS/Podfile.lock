@@ -25,8 +25,9 @@ PODS:
   - AGResourceManager (0.1.0):
     - AFNetworking
     - SSZipArchive
+  - fuLib (1.0):
+    - FURenderKit
   - FURenderKit (8.11.1)
-  - HWWeakTimer (1.0)
   - JXCategoryView (1.6.1)
   - KakaJSON (1.1.2)
   - LEEAlert (1.6.4)
@@ -46,7 +47,6 @@ PODS:
   - SDWebImageAPNGCoder (0.1.1):
     - SDWebImage/Core (~> 4.2)
   - SnapKit (5.7.1)
-  - SocketRocket (0.7.0)
   - SSZipArchive (2.4.3)
   - SVGAPlayer (2.5.7):
     - SVGAPlayer/Core (= 2.5.7)
@@ -76,8 +76,8 @@ DEPENDENCIES:
   - AgoraRtcEngine_Special_iOS (= 4.3.2.2)
   - AgoraRtm (from `AgoraRtm.podspec`)
   - AGResourceManager (from `AgoraEntScenarios/Common/API/AGResourceManager`)
+  - fuLib (from `fu.podspec`)
   - FURenderKit (from `FURenderKit.podspec`)
-  - HWWeakTimer (= 1.0)
   - JXCategoryView (= 1.6.1)
   - KakaJSON
   - LEEAlert (= 1.6.4)
@@ -90,7 +90,6 @@ DEPENDENCIES:
   - SDWebImage (= 4.4.8)
   - SDWebImageAPNGCoder
   - SnapKit
-  - SocketRocket (= 0.7.0)
   - SVGAPlayer
   - SVProgressHUD (= 2.2.5)
   - SwiftProtobuf
@@ -107,7 +106,6 @@ SPEC REPOS:
     - Agora_Chat_iOS
     - AgoraComponetLog
     - AgoraRtcEngine_Special_iOS
-    - HWWeakTimer
     - JXCategoryView
     - KakaJSON
     - LEEAlert
@@ -119,7 +117,6 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageAPNGCoder
     - SnapKit
-    - SocketRocket
     - SSZipArchive
     - SVGAPlayer
     - SVProgressHUD
@@ -139,6 +136,8 @@ EXTERNAL SOURCES:
     :path: AgoraRtm.podspec
   AGResourceManager:
     :path: AgoraEntScenarios/Common/API/AGResourceManager
+  fuLib:
+    :path: fu.podspec
   FURenderKit:
     :path: FURenderKit.podspec
   RTMSyncManager:
@@ -160,8 +159,8 @@ SPEC CHECKSUMS:
   AgoraRtcEngine_Special_iOS: 4f1a1d2f2e7b564735fd74ced733c76e33b5dc04
   AgoraRtm: 021fe357e5e6629a35dff013e84e2a06c84f5e0c
   AGResourceManager: e6616ad4d9d0461c84d9582ef1118004fa534e5c
+  fuLib: 43b6990d34caa47e0f12a61db57fe9bd2372f584
   FURenderKit: f6e65256a551ca84848e2bfcce35ad2dd3b213ec
-  HWWeakTimer: 79488095ef2dd8937f94b676d12bd5fa954486e6
   JXCategoryView: 7b1ee69ede4843c581688afe84d0f047723262f2
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
   LEEAlert: a604ad481e3e9b021421a271f78594926dd034bb
@@ -174,7 +173,6 @@ SPEC CHECKSUMS:
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   SDWebImageAPNGCoder: 3e4c684c8223eef2f45a50bdd0beaab345e4eb24
   SnapKit: d612e99e678a2d3b95bf60b0705ed0a35c03484a
-  SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   SVGAPlayer: 318b85a78b61292d6ae9dfcd651f3f0d1cdadd86
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
@@ -186,6 +184,6 @@ SPEC CHECKSUMS:
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: 3adfcf5c89fa3469c9dbc6a5837c2d8d0a05b865
+PODFILE CHECKSUM: b89ae43d8f751f6772f399def93cdce856807ff2
 
 COCOAPODS: 1.15.2

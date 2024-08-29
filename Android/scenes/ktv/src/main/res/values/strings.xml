@@ -16,7 +16,7 @@
     <string name="ktv_create_tips1">Welcome to the online Karaoke, with voice effects, synchronized lyrics, scoring, and other functions to easily recreate the offline KTV experience. Enjoy high-quality sound and make friends through music. Come and experience it together!</string>
     <string name="ktv_room_before_speaker">Click on an empty seat to join</string>
     <string name="ktv_room_owner">Host</string>
-    <string name="ktv_room_original">Original</string>
+    <string name="ktv_room_original">Origin</string>
     <string name="ktv_room_daochang">Lead Singer</string>
     <string name="ktv_room_change_song">Next</string>
     <string name="ktv_room_seat_off">Leave Seat</string>
@@ -74,7 +74,7 @@
     <string name="ktv_remote_volume_down">Click to lower remote volume</string>
     <string name="ktv_remote_volume_up">Click to raise remote volume</string>
     <string name="ktv_ok">OK</string>
-    <string name="ktv_confirm">Confirm</string>
+    <string name="ktv_confirm">Got it</string>
     <string name="ktv_cancel">Cancel</string>
     <string name="ktv_song_list_empty">No songs in the list</string>
     <string name="ktv_skip_prelude">Skip prelude</string>
@@ -104,7 +104,7 @@
     <string name="ktv_earback_delay">Ear Return Delay</string>
     <string name="ktv_earback_delay_test">Please speak into the mic to test the real-time ear return delay</string>
     <string name="ktv_virtual_sound_card">Voice AI Tuner</string>
-    <string name="ktv_sound_card_switch">Voice AI Tuner Switch</string>
+    <string name="ktv_sound_card_switch">Voice AI Tuner</string>
     <string name="ktv_preset_sound_dashu">Mature Male</string>
     <string name="ktv_preset_sound_dashu_tips">Male Singing 1: High Reverb | KTV</string>
     <string name="ktv_preset_sound_mum">Mature Female</string>

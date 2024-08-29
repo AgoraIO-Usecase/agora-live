@@ -43,6 +43,8 @@
 NSInteger ktvApiStreamId = -1;
 NSInteger ktvStreamId = -1;
 
+NSString* const kSettingViewId = @"settingView";
+
 @interface VLKTVViewController ()<
 VLKTVTopViewDelegate,
 VLKTVMVViewDelegate,
@@ -69,6 +71,7 @@ VLDebugViewDelegate,
 KTVServiceListenerProtocol,
 VirtualSoundcardPresenterDelegate
 >
+
 
 typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 @property (nonatomic, assign) BOOL isEnterSeatNotFirst;
@@ -399,7 +402,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     [[VLKTVAlert shared]showKTVToastWithFrame: UIScreen.mainScreen.bounds
                                         image: [UIImage ktv_sceneImageWithName:@"empty" ]
                                       message: KTVLocalizedString(@"ktv_owner_leave")
-                                  buttonTitle:KTVLocalizedString(KTVLocalizedString(@"ktv_confirm"))
+                                  buttonTitle:KTVLocalizedString(KTVLocalizedString(@"ktv_gotit"))
                                    completion:^(bool flag, NSString * _Nullable text) {
         [weakSelf leaveRoom];
         [[VLKTVAlert shared] dismiss];
@@ -411,6 +414,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
                                                            setting: self.settingModel
                                                        settingView:self.settingView
                                                       withDelegate:self];
+    popView.identifier = kSettingViewId;
     
     self.settingView = (VLKTVSettingView*)popView.currCustomView;
     BOOL flag = self.selSongsArray.count > 0;
@@ -1157,13 +1161,17 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     //退出合唱
     [[AppContext ktvServiceImp] leaveChorusWithSongCode:self.selSongsArray.firstObject.songNo
                                              completion:^(NSError * error) {
-    }];
-    [self stopPlaySong];
-    self.isNowMicMuted = true;
-    [self.MVView.incentiveView reset];
-    [self.MVView setOriginBtnState: VLKTVMVViewActionTypeSingAcc];
-    [[AppContext ktvServiceImp] updateSeatAudioMuteStatusWithMuted:YES
-                                                        completion:^(NSError * error) {
+        if (error == nil) {
+            [self stopPlaySong];
+            self.isNowMicMuted = true;
+            [self.MVView.incentiveView reset];
+            [self.MVView setOriginBtnState: VLKTVMVViewActionTypeSingAcc];
+            [[AppContext ktvServiceImp] updateSeatAudioMuteStatusWithMuted:YES
+                                                                completion:^(NSError * error) {
+            }];
+        } else {
+            [VLToast toast:error.localizedDescription];
+        }
     }];
 }
 
@@ -1182,7 +1190,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     BOOL isOwner = [self.roomModel.creatorNo isEqualToString:VLUserCenter.user.id];
     NSString *title = isOwner ? KTVLocalizedString(@"ktv_disband_room") : KTVLocalizedString(@"ktv_exit_room");
     NSString *message = isOwner ? KTVLocalizedString(@"ktv_confirm_disband_room") : KTVLocalizedString(@"ktv_confirm_exit_room");
-    NSArray *array = [[NSArray alloc]initWithObjects:KTVLocalizedString(@"ktv_cancel"),KTVLocalizedString(@"ktv_confirm"), nil];
+    NSArray *array = [[NSArray alloc]initWithObjects:KTVLocalizedString(@"ktv_cancel"),KTVLocalizedString(@"ktv_gotit"), nil];
     [[VLAlert shared] showAlertWithFrame:UIScreen.mainScreen.bounds title:title message:message placeHolder:@"" type:ALERTYPENORMAL buttonTitles:array completion:^(bool flag, NSString * _Nullable text) {
         if(flag == YES){
             [weakSelf leaveRoom];
@@ -1387,7 +1395,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 
         NSString *title = KTVLocalizedString(@"ktv_change_song");
         NSString *message = KTVLocalizedString(@"ktv_change_next_song");
-        NSArray *array = [[NSArray alloc]initWithObjects:KTVLocalizedString(@"ktv_cancel"),KTVLocalizedString(@"ktv_confirm"), nil];
+        NSArray *array = [[NSArray alloc]initWithObjects:KTVLocalizedString(@"ktv_cancel"),KTVLocalizedString(@"ktv_gotit"), nil];
         [[VLAlert shared] showAlertWithFrame:UIScreen.mainScreen.bounds title:title message:message placeHolder:@"" type:ALERTYPENORMAL buttonTitles:array completion:^(bool flag, NSString * _Nullable text) {
             if(flag == YES){
                 [weakSelf removeCurrentSong];
@@ -1430,6 +1438,11 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 }
 
 #pragma mark - VLKTVSettingViewDelegate
+
+- (void)settingViewBackAction {
+    [[[LSTPopView getAllPopView] lastObject] dismiss];
+}
+
 - (void)settingViewSettingChanged:(VLKTVSettingModel *)setting
               valueDidChangedType:(VLKTVValueDidChangedType)type {
     self.settingModel = setting;
@@ -1530,6 +1543,9 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     self.soundSettingView.soundCardBlock = ^(BOOL flag) {
         [weakself.soundcardPresenter setSoundCardEnable:flag];
     };
+    self.soundSettingView.clickBackBlock = ^ {
+        [weakself settingViewBackAction];
+    };
     self.popSoundSettingView = [LSTPopView popSoundCardViewWithParentView:self.view soundCardView:self.soundSettingView];
 }
 
@@ -1539,9 +1555,10 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     LSTPopView* popEffectView = [LSTPopView popSoundCardViewWithParentView:self.view soundCardView:effectView];
     kWeakSelf(self);
     effectView.clickBlock = ^(NSInteger index) {
+        if (index != -1) {
+            [weakself.soundcardPresenter setPresetSoundEffectType:index];
+        }
         [LSTPopView removePopView:popEffectView];
-        //根据不同的音效设置不同的参数 同时更新设置界面UI
-        [weakself.soundcardPresenter setPresetSoundEffectType:index];
         [LSTPopView removePopView:self.popSoundSettingView];
         [weakself showSoundCardView];
     };
@@ -2181,16 +2198,16 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             KTVLogInfo(@"onMusicLoadFail break songCode missmatch %@/%ld", model.songNo, songCode);
             return;
         }
-        if(self.loadMusicCallBack) {
-            self.loadMusicCallBack(NO, songCode);
-            self.loadMusicCallBack = nil;
-        }
         self.MVView.loadingProgress = 100;
         if (reason == KTVLoadSongFailReasonNoLyricUrl) {
             [self.MVView setMvState:[self isRoomOwner] ? VLKTVMVViewStateMusicOwnerLoadLrcFailed : VLKTVMVViewStateMusicLoadLrcFailed];
         } else {
             BOOL isOwner = [self isRoomOwner] || [AppContext isKtvSongOwnerWithUserId:VLUserCenter.user.id];
             [self.MVView setMvState:isOwner ? VLKTVMVViewStateMusicOwnerLoadFailed : VLKTVMVViewStateMusicLoadFailed];
+        }
+        if(self.loadMusicCallBack) {
+            self.loadMusicCallBack(NO, songCode);
+            self.loadMusicCallBack = nil;
         }
     });
 }
@@ -2231,7 +2248,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         [[VLKTVAlert shared]showKTVToastWithFrame: UIScreen.mainScreen.bounds
                                             image: [UIImage ktv_sceneImageWithName:@"empty" ]
                                           message: mes
-                                      buttonTitle: KTVLocalizedString(@"ktv_confirm")
+                                      buttonTitle: KTVLocalizedString(@"ktv_gotit")
                                        completion: ^(bool flag, NSString * _Nullable text) {
             [[VLKTVAlert shared]dismiss];
             [weakself leaveRoom];

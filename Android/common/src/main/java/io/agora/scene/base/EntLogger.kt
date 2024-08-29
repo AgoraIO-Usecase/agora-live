@@ -13,7 +13,7 @@ class EntLogger constructor(private val config: Config) {
 
     companion object {
         private val MAX_FILE_COUNT = 2 // 默认最大文件个数 2
-        private val mLogFolder = AgoraApplication.the().getExternalFilesDir("")!!.absolutePath + File.separator + "ent"
+        val mLogFolder = AgoraApplication.the().getExternalFilesDir("")!!.absolutePath + File.separator + "ent"
         private val mLogFileWriteThread by lazy {
             HandlerThread("AndroidFileLogger.$mLogFolder").apply {
                 start()

@@ -65,7 +65,7 @@ static VLKTVAlert *_alert = nil;
     self.mesLabel.numberOfLines = 0;
     self.mesLabel.textColor = [UIColor colorWithRed:0.235 green:0.257 blue:0.403 alpha:1];
     self.mesLabel.font = [UIFont systemFontOfSize:14];
-    self.mesLabel.lineBreakMode = NSLineBreakByCharWrapping;
+    self.mesLabel.lineBreakMode = NSLineBreakByWordWrapping;
     self.mesLabel.textAlignment = NSTextAlignmentCenter;
     [self.alertView addSubview:self.mesLabel];
 
@@ -98,7 +98,9 @@ static VLKTVAlert *_alert = nil;
     self.bgView.frame = UIScreen.mainScreen.bounds;
     //1.Determine what kind of alert it is, then calculate the altitude
     CGFloat contentHeight = 20 + 120 + 10;
-    CGFloat mesHeight = [self heightWithString:self.message];
+    CGSize textSize = CGSizeMake([[UIScreen mainScreen] bounds].size.width - 120, 10000);
+    textSize = [self.mesLabel sizeThatFits:textSize];
+    CGFloat mesHeight = textSize.height;
      
     contentHeight += mesHeight;
 
@@ -110,16 +112,8 @@ static VLKTVAlert *_alert = nil;
     self.mesLabel.frame = CGRectMake(20, 150, self.alertView.bounds.size.width - 40, mesHeight);
 
     self.confirmBtn.frame = CGRectMake(self.alertView.bounds.size.width / 2.0 - 60, contentHeight - 60,120, 40);
-
 }
 
-- (CGFloat)heightWithString:(NSString *)text {
-    CGSize textSize = CGSizeMake([[UIScreen mainScreen] bounds].size.width - 120, 0);
-    NSDictionary *font = @{NSFontAttributeName : [UIFont systemFontOfSize:15]};
-    CGRect rect = [text boundingRectWithSize:textSize options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:font context:nil];
-    return rect.size.height;
-    
-}
 
 - (UIColor *)colorWithHexString:(NSString *)color alpha:(CGFloat)alpha {
     NSString * colorStr = [[color stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];

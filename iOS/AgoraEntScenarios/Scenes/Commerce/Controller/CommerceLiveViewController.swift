@@ -194,13 +194,13 @@ class CommerceLiveViewController: UIViewController {
         let roomId = room?.roomId ?? ""
         leaveRoom()
         AppContext.unloadCommerceServiceImp(roomId)
-        commerceLogger.info("deinit-- CommerceLiveViewController \(roomId)")
+        CommerceLogger.info("deinit-- CommerceLiveViewController \(roomId)")
 //        musicManager?.destory()
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        commerceLogger.info("init-- CommerceLiveViewController")
+        CommerceLogger.info("init-- CommerceLiveViewController")
     }
     
     required init?(coder: NSCoder) {
@@ -268,7 +268,7 @@ class CommerceLiveViewController: UIViewController {
     
     private func joinChannel(needUpdateCavans: Bool = true) {
         guard let channelId = room?.roomId, let ownerId = room?.ownerId, let uid: UInt = UInt(ownerId) else {
-            commerceLogger.warning("joinChannel[\(room?.roomId ?? "")] break ownerId: \(room?.ownerId ?? "")")
+            CommerceLogger.warning("joinChannel[\(room?.roomId ?? "")] break ownerId: \(room?.ownerId ?? "")")
             return
         }
         currentChannelId = channelId
@@ -282,7 +282,7 @@ class CommerceLiveViewController: UIViewController {
                 CommerceAgoraKitManager.shared.setupLocalVideo(uid: uid, canvasView: self.liveView.canvasView.localView)
             }
         }
-        commerceLogger.info("joinChannelEx[\(channelId)] ownerId: \(ownerId) role: \(role.rawValue)")
+        CommerceLogger.info("joinChannelEx[\(channelId)] ownerId: \(ownerId) role: \(role.rawValue)")
         CommerceAgoraKitManager.shared.joinChannelEx(currentChannelId: channelId,
                                                      targetChannelId: channelId,
                                                      ownerId: uid,
@@ -318,7 +318,7 @@ class CommerceLiveViewController: UIViewController {
         guard role == .broadcaster else { return }
         let auctionModel = CommerceGoodsAuctionModel()
         let goodsModel = CommerceGoodsModel()
-        goodsModel.title = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
+        goodsModel.title = "Diamond Ring"
         goodsModel.price = 1
         goodsModel.quantity = 1
         auctionModel.goods = goodsModel
@@ -328,7 +328,7 @@ class CommerceLiveViewController: UIViewController {
         auctionModel.bidUser = nil
         auctionModel.bid = 1
         serviceImp?.addBidGoodsInfo(roomId: roomId, goods: auctionModel, completion: { error in
-            commerceLogger.info("error: \(error?.localizedDescription ?? "")")
+            CommerceLogger.info("error: \(error?.localizedDescription ?? "")")
             completion?(error)
         })
     }
@@ -344,7 +344,7 @@ class CommerceLiveViewController: UIViewController {
         serviceImp?.subscribeBidGoodsInfo(roomId: roomId, completion: { [weak self] error, auctionModel in
             guard let self = self else {return}
             if error != nil {
-                commerceLogger.info("error: \(error?.localizedDescription ?? "")")
+                CommerceLogger.info("error: \(error?.localizedDescription ?? "")")
                 return
             }
             guard let model = auctionModel else { return }
@@ -382,7 +382,7 @@ extension CommerceLiveViewController {
                 guard let self = self else {return}
                 guard self.room?.roomId == room.roomId else { return }
                 if let err = error {
-                    commerceLogger.info("joinRoom[\(room.roomId)] error: \(error?.code ?? 0)")
+                    CommerceLogger.info("joinRoom[\(room.roomId)] error: \(error?.code ?? 0)")
                     if err.code == -1 {
                         self.onRoomExpired()
                     } else {
@@ -515,7 +515,7 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
     
     func onUserLeftRoom(user: CommerceUser) {
         if user.userId == room?.ownerId {
-            commerceLogger.info(" finishAlertVC onUserLeftRoom : roomid = \(roomId)")
+            CommerceLogger.info(" finishAlertVC onUserLeftRoom : roomid = \(roomId)")
             onRoomExpired()
         }
     }
@@ -531,22 +531,22 @@ extension CommerceLiveViewController: CommerceSubscribeServiceProtocol {
 extension CommerceLiveViewController: AgoraRtcEngineDelegate {
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraWarningCode) {
-        commerceLogger.warning("rtcEngine warningCode == \(warningCode.rawValue)")
+        CommerceLogger.warning("rtcEngine warningCode == \(warningCode.rawValue)")
     }
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraErrorCode) {
-        commerceLogger.warning("rtcEngine errorCode == \(errorCode.rawValue)")
+        CommerceLogger.warning("rtcEngine errorCode == \(errorCode.rawValue)")
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
-        commerceLogger.info("rtcEngine didJoinChannel \(channel) with uid \(uid) elapsed \(elapsed)ms")
+        CommerceLogger.info("rtcEngine didJoinChannel \(channel) with uid \(uid) elapsed \(elapsed)ms")
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
-        commerceLogger.info("rtcEngine didJoinedOfUid \(uid) channelId: \(roomId)", context: kCommerceLogBaseContext)
+        CommerceLogger.info("rtcEngine didJoinedOfUid \(uid) channelId: \(roomId)", context: kCommerceLogBaseContext)
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
-        commerceLogger.info("rtcEngine didOfflineOfUid === \(uid)")
+        CommerceLogger.info("rtcEngine didOfflineOfUid === \(uid)")
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, reportRtcStats stats: AgoraChannelStats) {
@@ -590,7 +590,7 @@ extension CommerceLiveViewController: AgoraRtcEngineDelegate {
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, contentInspectResult result: AgoraContentInspectResult) {
-        commerceLogger.warning("contentInspectResult: \(result.rawValue)")
+        CommerceLogger.warning("contentInspectResult: \(result.rawValue)")
         guard result != .neutral else { return }
         ToastView.show(text: "A violation of the current content has been detected")
     }
@@ -615,12 +615,12 @@ extension CommerceLiveViewController: AgoraRtcEngineDelegate {
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstLocalVideoFramePublishedWithElapsed elapsed: Int, sourceType: AgoraVideoSourceType) {
-        commerceLogger.info("firstLocalVideoFramePublishedWithElapsed: \(elapsed)ms \(sourceType.rawValue)",
+        CommerceLogger.info("firstLocalVideoFramePublishedWithElapsed: \(elapsed)ms \(sourceType.rawValue)",
                         context: kCommerceLogBaseContext)
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, tokenPrivilegeWillExpire token: String) {
-        commerceLogger.warning("tokenPrivilegeWillExpire: \(roomId)",
+        CommerceLogger.warning("tokenPrivilegeWillExpire: \(roomId)",
                            context: kCommerceLogBaseContext)
         if let channelId = currentChannelId {
             CommerceAgoraKitManager.shared.preGenerateToken {
