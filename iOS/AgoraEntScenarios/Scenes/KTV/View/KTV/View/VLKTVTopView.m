@@ -61,20 +61,20 @@
     self.titleLabel.textColor = [UIColor whiteColor];
     [self addSubview:self.titleLabel];
 
-    self.countLabel = [[UILabel alloc]initWithFrame:CGRectMake(54 + 10, 30, 60, 12)];
-    self.countLabel.font = [UIFont systemFontOfSize:12];
+    self.countLabel = [[UILabel alloc]initWithFrame:CGRectMake(54 + 10, 30, 55, 12)];
+    self.countLabel.font = [UIFont systemFontOfSize:10];
     self.countLabel.textAlignment = NSTextAlignmentLeft;
     self.countLabel.textColor = [UIColor whiteColor];
     [self addSubview:self.countLabel];
     
     self.networkStatusBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.networkStatusBtn.frame = CGRectMake(115, 30, 140, 12);
+    self.networkStatusBtn.frame = CGRectMake(110, 30, 140, 12);
     [self.networkStatusBtn setTitle:KTVLocalizedString(@"ktv_net_status_good") forState:UIControlStateNormal];
     [self.networkStatusBtn setImage:[UIImage ktv_sceneImageWithName:@"ktv_network_wellIcon" ] forState:UIControlStateNormal];
     self.networkStatusBtn.spacingBetweenImageAndTitle = 0;
     self.networkStatusBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
     [self.networkStatusBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    self.networkStatusBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+    self.networkStatusBtn.titleLabel.font = [UIFont systemFontOfSize:10];
     [self addSubview:self.networkStatusBtn];
 }
 
@@ -97,10 +97,10 @@
     NSString *roomCountPre = KTVLocalizedString(@"ktv_room_count");
     self.logoImgView.image = [UIImage imageNamed:listModel.creatorAvatar];
     if (listModel.roomPeopleNum) {
-        NSString *roomCountString = [NSString stringWithFormat:@"%ld %@  |", listModel.roomPeopleNum, roomCountPre];
+        NSString *roomCountString = [NSString stringWithFormat:@"%ld %@ |", listModel.roomPeopleNum, roomCountPre];
         self.countLabel.text = roomCountString;
     }else{
-        NSString *roomCountString = [NSString stringWithFormat:@"%i %@  |",1, roomCountPre];
+        NSString *roomCountString = [NSString stringWithFormat:@"%i %@ |",1, roomCountPre];
         self.countLabel.text = roomCountString;
     }
 }

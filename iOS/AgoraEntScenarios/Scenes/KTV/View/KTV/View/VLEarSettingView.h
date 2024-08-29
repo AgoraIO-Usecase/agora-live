@@ -10,6 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 @class VLEarSettingView;
 @protocol VLEarSettingViewViewDelegate <NSObject>
+- (void)settingViewBackAction;
 - (void)onVLKTVEarSettingViewValueChanged:(double)Value;
 - (void)onVLKTVEarSettingViewSwitchChanged:(BOOL)flag;
 @end

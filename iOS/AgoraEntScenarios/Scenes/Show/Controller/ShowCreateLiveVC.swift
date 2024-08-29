@@ -26,10 +26,7 @@ class ShowCreateLiveVC: UIViewController {
         configNaviBar()
 
         ShowAgoraKitManager.shared.resetBroadcasterProfile()
-        if let e = ShowAgoraKitManager.shared.engine {
-            BeautyManager.shareManager.configBeautyAPIWithRtcEngine(engine: e)
-        }
-        ShowAgoraKitManager.shared.startPreview(canvasView: self.localView)
+        ShowAgoraKitManager.shared.setupLocalVideo(canvasView: self.localView)
     }
     
     func configNaviBar() {
@@ -73,11 +70,29 @@ class ShowCreateLiveVC: UIViewController {
             self?.createView.hideBottomViews = false
         }
         
-        ShowBeautyFaceVC.beautyData.forEach({
-            BeautyManager.shareManager.setBeauty(path: $0.path,
-                                                 key: $0.key,
-                                                 value: $0.value)
-        })
+        if let engine = ShowAgoraKitManager.shared.engine {
+            BeautyManager.shareManager.setup(engine: engine)
+        } else {
+            assert(false, "rtc engine == nil")
+        }
+        
+        self.checkAndSetupBeautyPath() {[weak self] err in
+            guard let self = self else {return}
+            if let _ = err {return}
+            
+            BeautyManager.shareManager.initBeautyRender()
+            
+            // 创建默认美颜效果
+            ShowBeautyFaceVC.beautyData.forEach({
+                BeautyManager.shareManager.setBeauty(path: $0.path,
+                                                     key: $0.key,
+                                                     value: $0.value)
+            })
+            
+            // 美颜设置
+            BeautyManager.shareManager.configBeautyAPI()
+            ShowAgoraKitManager.shared.startPreview(canvasView: self.localView)
+        }
     }
     
     private func showPreset() {
@@ -102,19 +117,24 @@ class ShowCreateLiveVC: UIViewController {
 extension ShowCreateLiveVC: ShowCreateLiveViewDelegate {
     
     func onClickSettingBtnAction() {
+        guard isBeautyDownloaded() else { return }
         showPreset()
     }
     
     func onClickCameraBtnAction() {
+        guard isBeautyDownloaded() else { return }
         ShowAgoraKitManager.shared.switchCamera(enableBeauty: true)
     }
     
     func onClickBeautyBtnAction() {
+        guard isBeautyDownloaded() else { return }
         createView.hideBottomViews = true
         present(beautyVC, animated: true)
     }
     
     func onClickStartBtnAction() {
+        guard isBeautyDownloaded() else { return }
+
         guard let roomName = createView.roomName, roomName.count > 0 else {
             ToastView.show(text: "create_room_name_can_not_empty".show_localized)
             return

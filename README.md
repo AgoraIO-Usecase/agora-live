@@ -17,7 +17,7 @@
 
 Demo screenshots:
 <figure class="third">
-  <img src="./README_Resources/AgoraLive_Home.png" width="300" height="640" />
+  <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/agora-live/readme/images/common/AgoraLive_Home.png" width="300" height="640" />
   <img src="https://download.agora.io/demo/release/AgoraLiveShot02.png" width="300" height="640" />
 </figure>
 
