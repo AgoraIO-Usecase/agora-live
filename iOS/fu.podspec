@@ -13,5 +13,5 @@ Pod::Spec.new do |spec|
    spec.source_files  =  "FULib/*.h"
    spec.requires_arc  = true
    spec.ios.deployment_target  = '9.0'
-   spec.dependency 'FURenderKit', '8.6.0'
+   spec.dependency 'FURenderKit'
  end
