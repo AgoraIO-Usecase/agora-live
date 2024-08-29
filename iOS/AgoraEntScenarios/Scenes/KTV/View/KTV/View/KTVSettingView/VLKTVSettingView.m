@@ -33,6 +33,7 @@ UICollectionViewDataSource
 >
 
 @property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) VLKTVSwitcherView *soundSwitcher;
 @property (nonatomic, strong) VLKTVTonesView *tonesView;
@@ -48,6 +49,7 @@ UICollectionViewDataSource
 @property (nonatomic, strong) VLSettingAIAECSwitcherView *aiAecSwitcherView;
 @property (nonatomic, strong) VLSettingSwitcherView *perBroSwitcherView;
 @property (nonatomic, strong) VLSettingSwitcherView *delaySwitcherView;
+@property (nonatomic, strong) UIView *headerView;
 @property (nonatomic, strong, readonly) VLKTVSettingModel *setting;
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, assign) CGFloat cellWidth;
@@ -128,11 +130,16 @@ UICollectionViewDataSource
 }
 
 - (void)initSubViews {
+    self.headerView = [UIView new];
+    self.headerView.backgroundColor = [UIColor clearColor];
+    [self addSubview:self.headerView];
+    [self.headerView addSubview:self.backButton];
+    [self.headerView addSubview:self.titleLabel];
+
     self.scrollView = [[UIScrollView alloc]init];
     self.scrollView.scrollEnabled = true;
     self.scrollView.contentSize = CGSizeMake(0, 760);
     [self addSubview:self.scrollView];
-    [self.scrollView addSubview:self.titleLabel];
     [self.scrollView addSubview:self.soundSwitcher];
     [self.scrollView addSubview:self.soundCardSwitcher];
     [self.scrollView addSubview:self.soundSlider];
@@ -147,18 +154,30 @@ UICollectionViewDataSource
 }
 
 - (void)addSubViewConstraints {
-    [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.bottom.left.right.mas_equalTo(self);
+    [self.headerView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.left.right.mas_equalTo(0);
+        make.height.mas_equalTo(45);
     }];
     
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(20);
-        make.centerX.mas_equalTo(self);
+        make.centerY.mas_equalTo(self.headerView);
+        make.centerX.mas_equalTo(self.headerView);
+    }];
+    
+    [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(20);
+        make.height.with.mas_equalTo(35);
+        make.centerY.mas_equalTo(self.headerView);
+    }];
+    
+    [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.headerView.mas_bottom);
+        make.bottom.left.right.mas_equalTo(self);
     }];
     
     [self.soundSwitcher mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.mas_equalTo(self);
-        make.top.mas_equalTo(self.titleLabel.mas_bottom).offset(16);
+        make.top.mas_equalTo(16);
     }];
     
     [self.soundCardSwitcher mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -303,6 +322,10 @@ UICollectionViewDataSource
     }
 }
 
+- (void)backAction {
+    [self.delegate settingViewBackAction];
+}
+
 #pragma mark - VLKTVKindsViewDelegate
 
 - (void)kindsViewDidClickIndex:(NSInteger)index {
@@ -338,6 +361,15 @@ UICollectionViewDataSource
 }
 
 #pragma mark - Lazy
+
+- (UIButton *)backButton {
+    if (!_backButton) {
+        _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_backButton setImage:[UIImage ktv_sceneImageWithName:@"ktv_back_whiteIcon"] forState:UIControlStateNormal];
+        [_backButton addTarget:self action:@selector(backAction) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _backButton;
+}
 
 - (UILabel *)titleLabel {
     if (!_titleLabel) {

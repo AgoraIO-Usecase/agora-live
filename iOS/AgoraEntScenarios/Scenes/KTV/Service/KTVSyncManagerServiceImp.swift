@@ -84,6 +84,9 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
         }
         super.init()
         syncManager.rtmManager.subscribeError(channelName: "", delegate: self)
+        
+        AppContext.shared.agoraRTCToken = ""
+        AppContext.shared.agoraRTMToken = ""
     }
     
     private func currentUserId() -> String {
@@ -532,6 +535,9 @@ extension KTVSyncManagerServiceImp {
         _subscribeSeat()
         _subscribeSong()
         _subscribeChorus()
+        subscribeRoomWillExpire { [weak self] in
+            self?.onSceneExpire(channelName: roomNo)
+        }
     }
     
     private func _subscribeSeat() {
@@ -1005,6 +1011,11 @@ extension KTVSyncManagerServiceImp: AUISceneRespDelegate {
         return [
             SYNC_MANAGER_SEAT_INFO: map
         ]
+    }
+    
+    func onSceneFailed(channelName: String, reason: String) {
+        //login when occur error
+        agoraPrint("onSceneFailed: \(channelName) reason: \(reason)")
     }
     
     func onSceneExpire(channelName: String) {

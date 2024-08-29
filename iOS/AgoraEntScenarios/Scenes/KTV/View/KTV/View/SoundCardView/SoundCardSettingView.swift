@@ -8,6 +8,12 @@
 import Foundation
 
 @objc class SoundCardSettingView: UIView {
+    private lazy var backButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage.ktv_sceneImage(name: "ktv_back_whiteIcon"), for: .normal)
+        button.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+        return button
+    }()
     var headIconView: UIView!
     var headTitleLabel: UILabel!
     var noSoundCardView: UIView!
@@ -22,6 +28,7 @@ import Foundation
     private var effectType: Int = 0
     private var typeValue: Int = 2
     
+    @objc var clickBackBlock: (()->())?
     @objc var clicKBlock:((Int) -> Void)?
     @objc var gainBlock:((Float) -> Void)?
     @objc var typeBlock:((Int) -> Void)?
@@ -57,6 +64,8 @@ import Foundation
         headTitleLabel.textAlignment = .center
         headTitleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         self.addSubview(headTitleLabel)
+        
+        self.addSubview(backButton)
         
         tableView = UITableView()
         tableView.dataSource = self
@@ -147,11 +156,12 @@ import Foundation
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        backButton.frame = CGRect(x: 20, y: 24, width: 35, height: 35)
         headIconView.frame = CGRect(x: (self.bounds.width - 38)/2.0, y: 8, width: 38, height: 4)
         headTitleLabel.frame = CGRect(x: 0, y: 30, width: self.bounds.width, height: 22)
         tableView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10, width: self.bounds.width, height: self.bounds.height - headTitleLabel.frame.maxY - 10)
         
-        coverView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10 + 52, width: self.bounds.width, height: 156)
+        coverView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10 + 52, width: self.bounds.width, height: 250)
 //
 //        noSoundCardView.frame = CGRect(x: 0, y: headTitleLabel.frame.maxY + 10, width: self.bounds.width, height: 200)
 //        warNingLabel.frame = CGRect(x: 20, y: 10, width: self.bounds.width, height: 20)
@@ -189,6 +199,9 @@ import Foundation
         soundCardBlock(swich.isOn)
     }
     
+    @objc func backAction() {
+        clickBackBlock?()
+    }
 }
 
 extension SoundCardSettingView: UITableViewDataSource, UITableViewDelegate {

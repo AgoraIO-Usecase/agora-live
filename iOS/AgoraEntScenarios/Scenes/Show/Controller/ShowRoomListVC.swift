@@ -60,8 +60,6 @@ class ShowRoomListVC: UIViewController {
     private var needUpdateAudiencePresetType = false
     
     deinit {
-        AppContext.unloadShowServiceImp()
-        ShowAgoraKitManager.shared.destoryEngine()
         ShowLogger.info("deinit-- ShowRoomListVC")
     }
     
@@ -100,6 +98,13 @@ class ShowRoomListVC: UIViewController {
         super.viewWillAppear(animated)
         checkTokenValid()
         self.collectionView.mj_header?.beginRefreshing()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if isMovingFromParent {
+            destroyService()
+        }
     }
     
     @objc private func didClickCreateButton(){
@@ -175,10 +180,16 @@ class ShowRoomListVC: UIViewController {
     }
     
     private func checkTokenValid() {
-        guard AppContext.shared.rtcToken?.count ?? 0 > 0, let date = AppContext.shared.tokenDate, Int64(-date.timeIntervalSinceNow) < 20 * 60 * 60 else{
+        if AppContext.shared.rtcToken?.count ?? 0 > 0, let date = AppContext.shared.tokenDate, Int64(-date.timeIntervalSinceNow) < 20 * 60 * 60 {
             return
         }
         preGenerateToken()
+    }
+    
+    private func destroyService() {
+        AppContext.unloadShowServiceImp()
+        VideoLoaderApiImpl.shared.cleanCache()
+        ShowAgoraKitManager.shared.destoryEngine()
     }
 }
 // MARK: - UICollectionView Call Back

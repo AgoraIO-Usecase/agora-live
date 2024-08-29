@@ -74,6 +74,9 @@ public class ChatRoomServiceImp: NSObject {
             ShowLogger.info(msg, context: "RTMSyncManager")
         }
         super.init()
+        
+        AppContext.shared.agoraRTCToken = ""
+        AppContext.shared.agoraRTMToken = ""
     }
     
     func cleanCache() {
@@ -108,6 +111,11 @@ public class ChatRoomServiceImp: NSObject {
         DispatchQueue.main.async {
             self._checkRoomExpire()
         }
+    }
+    
+    func destroy() {
+        syncManager.logout()
+        syncManager.destroy()
     }
 }
 
@@ -249,7 +257,6 @@ extension ChatRoomServiceImp: VoiceRoomIMDelegate {
 
 //MARK: ChatRoomServiceProtocol
 extension ChatRoomServiceImp: ChatRoomServiceProtocol {
-    
     func updateRoomBGM(songName: String?, singerName: String?, isOrigin: Bool) {
         guard let `roomId` = roomId,
               let scene = self.syncManager.getScene(channelName: roomId)
@@ -1048,7 +1055,8 @@ extension ChatRoomServiceImp: AUISceneRespDelegate {
     ///   - channelName: 房间id
     ///   - reason: 异常原因
     public func onSceneFailed(channelName: String, reason: String) {
-        
+        //login when occur error
+        VoiceChatLog.info("onSceneFailed: \(channelName) reason: \(reason)")
     }
 }
 
