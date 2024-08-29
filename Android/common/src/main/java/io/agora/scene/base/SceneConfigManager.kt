@@ -12,21 +12,28 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 
 object SceneConfigManager {
+
+    @JvmStatic
     var chatExpireTime = 1200
         private set
 
+    @JvmStatic
     var ktvExpireTime = 1200
         private set
 
+    @JvmStatic
     var showExpireTime = 600
         private set
 
+    @JvmStatic
     var showPkExpireTime = 120
         private set
 
+    @JvmStatic
     var ecommerce = 600
         private set
 
+    @JvmStatic
     var logUpload = false
         private set
 
@@ -39,6 +46,7 @@ object SceneConfigManager {
         builder.build()
     }
 
+    @JvmStatic
     fun fetchSceneConfig(
         success: (() -> Unit)? = null,
         failure: ((Exception?) -> Unit)? = null,

@@ -106,7 +106,16 @@ public final class FileUtils {
         }
     }
 
-
-
-
+    /**
+     *
+     * @param filePath
+     * @return
+     */
+    public static boolean deleteFile(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            return file.delete();
+        }
+        return false;
+    }
 }
