@@ -148,7 +148,7 @@ class CommerceAuctionShoppingView: UIView {
         currentAuctionModel = model
         let imageName = kDefaultAuctionGoodsName
         coverImageView.image = UIImage.commerce_sceneImage(name: imageName)
-        titleLabel.text = model.goods?.title
+        titleLabel.text = "Diamond Ring"//model.goods?.title
         descLabel.text = (model.bidUser == nil || model.bidUser?.id == "") ? "Start from" : "Current Bid:"
         let bidPrint = model.status == .completion ? (model.goods?.price ?? 1) : model.bid
         priceLabel.text = "$\(bidPrint)"

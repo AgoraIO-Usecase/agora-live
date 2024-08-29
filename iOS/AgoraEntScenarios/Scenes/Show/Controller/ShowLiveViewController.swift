@@ -972,7 +972,24 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
     }
     
     func onClickMoreButton() {
-        let dialog = AUiMoreDialog(frame: view.bounds)
+//        let dialog = AUiMoreDialog(frame: view.bounds)
+//        view.addSubview(dialog)
+//        dialog.show()
+        let dialog = CommerceLiveMoreDialog(frame: view.bounds)
+        dialog.onClickDislikeClosure = { [weak self] in
+            guard let self = self else { return }
+            AppContext.shared.addDislikeRoom(at: self.room?.roomId)
+            self.leaveRoom()
+            self.onClickDislikeClosure?()
+            self.dismiss(animated: true)
+        }
+        dialog.onClickDisUserClosure = { [weak self] in
+            guard let self = self else { return }
+            AppContext.shared.addDislikeUser(at: self.room?.ownerId)
+            self.leaveRoom()
+            self.onClickDisUserClosure?()
+            self.dismiss(animated: true)
+        }
         view.addSubview(dialog)
         dialog.show()
     }

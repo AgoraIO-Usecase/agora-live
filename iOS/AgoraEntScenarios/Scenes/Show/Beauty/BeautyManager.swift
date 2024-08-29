@@ -21,11 +21,14 @@ class BeautyManager: NSObject {
         }
     }
     
+    private weak var agoraKit: AgoraRtcEngineKit?
     public let beautyAPI = BeautyAPI()
     
-    override init() {
-        super.init()
-    
+    func setup(engine: AgoraRtcEngineKit) {
+        agoraKit = engine
+    }
+
+    func initBeautyRender() {
         switch BeautyModel.beautyType {
         case .byte:
             break//beautyAPI.beautyRender = ByteBeautyManager.shareManager.render
@@ -42,9 +45,9 @@ class BeautyManager: NSObject {
         }
     }
     
-    func configBeautyAPIWithRtcEngine(engine: AgoraRtcEngineKit) {
+    func configBeautyAPI() {
         let config = BeautyConfig()
-        config.rtcEngine = engine
+        config.rtcEngine = agoraKit
         config.captureMode = .agora
         switch BeautyModel.beautyType {
         case .byte:
@@ -65,7 +68,6 @@ class BeautyManager: NSObject {
         if result != 0 {
             print("initialize error == \(result)")
         }
-        beautyAPI.initialize(config)
         beautyAPI.enable(true)
     }
     
