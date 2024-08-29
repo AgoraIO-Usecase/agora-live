@@ -148,7 +148,7 @@ class VMMuteView: UIView {
 
         muteBtn.frame = CGRect(x: ScreenWidth / 2, y: 170, width: ScreenWidth / 2.0, height: 40)
         muteBtn.setTitleColor(UIColor(red: 21 / 255.0, green: 110 / 255.0, blue: 243 / 255.0, alpha: 1), for: .normal)
-        muteBtn.setTitle("voice_unmute".voice_localized, for: .normal)
+        muteBtn.setTitle("voice_mute".voice_localized, for: .normal)
         muteBtn.font(UIFont.systemFont(ofSize: 14))
         muteBtn.tag = 401
         muteBtn.addTargetFor(self, action: #selector(click), for: .touchUpInside)

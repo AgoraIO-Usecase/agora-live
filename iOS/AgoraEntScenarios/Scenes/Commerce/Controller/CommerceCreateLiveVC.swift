@@ -15,7 +15,7 @@ class CommerceCreateLiveVC: UIViewController {
     private var localView: UIView!
     
     deinit {
-        commerceLogger.info("deinit-- ShowCreateLiveVC")
+        CommerceLogger.info("deinit-- ShowCreateLiveVC")
     }
     
     override func viewDidLoad() {
