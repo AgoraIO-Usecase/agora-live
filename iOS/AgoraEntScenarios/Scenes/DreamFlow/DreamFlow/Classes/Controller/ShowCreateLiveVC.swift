@@ -54,7 +54,6 @@ class ShowCreateLiveVC: UIViewController {
     
     private func setUpUI() {
         localView = UIView()
-        localView.backgroundColor = .purple
         view.addSubview(localView)
         localView.snp.makeConstraints { make in
             make.edges.equalToSuperview()

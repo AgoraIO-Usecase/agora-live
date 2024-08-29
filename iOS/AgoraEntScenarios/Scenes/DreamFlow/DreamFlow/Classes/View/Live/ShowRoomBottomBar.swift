@@ -109,12 +109,12 @@ class ShowRoomBottomBar: UIView {
     }
     
     private func createSubviews(){
-        if isBroadcastor {
-            buttonArray = [pkButton, linkButton, beautyButton, musicButton, settingButton]
-        }else{
-            buttonArray = [linkButton,settingButton]
-        }
-        
+//        if isBroadcastor {
+//            buttonArray = [pkButton, linkButton, beautyButton, musicButton, settingButton]
+//        }else{
+//            buttonArray = [linkButton,settingButton]
+//        }
+        buttonArray = [beautyButton, settingButton]
         var i = 0
         let btnWidth: CGFloat = 38
         let btnHeight: CGFloat = 38

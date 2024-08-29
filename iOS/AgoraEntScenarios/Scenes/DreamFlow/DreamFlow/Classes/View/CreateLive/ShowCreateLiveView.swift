@@ -77,6 +77,7 @@ class ShowCreateLiveView: UIView {
         nameTextField.placeholder = "create_name_text_field_placeholder".show_localized
         nameTextField.font = .show_M_15
         nameTextField.textColor = .show_main_text
+        
         nameTextField.snp.makeConstraints { make in
             make.left.equalTo(roomBgImgView.snp.right).offset(10)
             make.top.equalTo(18)
@@ -144,10 +145,11 @@ class ShowCreateLiveView: UIView {
             make.leading.trailing.equalToSuperview().inset(15)
         }
         
+        
         let btnHeight: CGFloat = 48
-        let startButton = UIButton(type: .custom)
+        let startButton = UIButton(type: .system)
         startButton.setTitle("create_start_live".show_localized, for: .normal)
-        startButton.backgroundColor = .show_btn_bg
+        startButton.setTitleColor(.white, for: .normal)
         startButton.titleLabel?.font = .show_btn_title
         startButton.layer.cornerRadius = btnHeight * 0.5
         startButton.layer.masksToBounds = true
@@ -160,19 +162,31 @@ class ShowCreateLiveView: UIView {
             make.height.equalTo(btnHeight)
         }
         
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = CGRectMake(0, 0, 230, btnHeight)
+
+        gradientLayer.colors = [
+            UIColor(red: 33/255, green: 155/255, blue: 255/255, alpha: 1).cgColor,
+            UIColor(red: 52/255, green: 93/255, blue: 255/255, alpha: 1).cgColor
+        ]
+        
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1)
+        startButton.layer.insertSublayer(gradientLayer, at: 0)
+
         let cameraButton = createButton(imgName: "show_create_camera", title: "create_button_switch".show_localized)
         cameraButton.addTarget(self, action: #selector(didClickCameraButton), for: .touchUpInside)
         
-        let beautyButton = createButton(imgName: "show_create_beauty", title: "create_button_beauty".show_localized)
-        beautyButton.addTarget(self, action: #selector(didClickBeautyButton), for: .touchUpInside)
+//        let beautyButton = createButton(imgName: "show_create_beauty", title: "create_button_ai".show_localized)
+//        beautyButton.addTarget(self, action: #selector(didClickBeautyButton), for: .touchUpInside)
         
-        let settingButton = createButton(imgName: "show_setting", title: "create_button_settings".show_localized)
+        let settingButton = createButton(imgName: "dream_flow_hd_icon", title: "create_button_settings".show_localized)
         settingButton.addTarget(self, action: #selector(didClickSettingButton), for: .touchUpInside)
         
-        let buttonArray = [cameraButton, beautyButton, settingButton]
+        let buttonArray = [cameraButton, settingButton]
         
         let stackView = UIStackView(arrangedSubviews: buttonArray)
-        stackView.spacing = 25
+        stackView.spacing = 50
         stackView.alignment = .fill
         stackView.axis = .horizontal
         stackView.distribution = .fill

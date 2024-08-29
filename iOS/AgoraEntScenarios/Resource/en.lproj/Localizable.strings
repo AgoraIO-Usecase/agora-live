@@ -33,6 +33,7 @@
 "app_e_commerce"= "E-Commerce";
 "app_voice_chat"= "Voice Chat";
 "app_online_ktv"= "Karaoke";
+"app_dream_flow"= "Dreamflow";
 
 "app_debug_upload_log_file_title"="upload log file automatic";
 "app_debug_mode"="Debug Mode";
