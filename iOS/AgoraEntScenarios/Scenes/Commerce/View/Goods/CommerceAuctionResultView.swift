@@ -40,13 +40,14 @@ class CommerceAuctionResultView: UIView {
         let label = UILabel()
         label.text = "won"
         label.textColor = UIColor(hex: "#191919", alpha: 1.0)
-        label.font = .systemFont(ofSize: 18, weight: .bold)
+        label.font = .systemFont(ofSize: 18)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     private lazy var shoppingNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
+        label.text = "Diamond Ring"
+        label.textAlignment = .center
         label.textColor = UIColor(hex: "#191919", alpha: 1.0)
         label.font = .systemFont(ofSize: 18, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -90,7 +91,7 @@ class CommerceAuctionResultView: UIView {
     func setBidGoods(model: CommerceGoodsAuctionModel) {
         avatarImageView.image = UIImage(named: model.bidUser?.headUrl ?? "")
         titleLabel.text = model.bidUser?.name
-        shoppingNameLabel.text = model.goods?.title
+        shoppingNameLabel.text = "Diamond Ring"//model.goods?.title
     }
     
     private func setupUI() {

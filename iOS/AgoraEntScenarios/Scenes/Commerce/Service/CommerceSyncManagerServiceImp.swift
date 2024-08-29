@@ -73,15 +73,15 @@ private func agoraAssert(_ condition: Bool, _ message: String) {
 }
 
 func commercePrintLog(_ message: String, tag: String? = "UI") {
-    commerceLogger.info(message, context: tag)
+    CommerceLogger.info(message, context: tag)
 }
 
 func commerceWarnLog(_ message: String, tag: String? = "UI") {
-    commerceLogger.warning(message, context: tag)
+    CommerceLogger.warning(message, context: tag)
 }
 
 func commerceErrorLog(_ message: String, tag: String? = "UI") {
-    commerceLogger.error(message, context: tag)
+    CommerceLogger.error(message, context: tag)
 }
 
 private func agoraPrint(_ message: String) {
