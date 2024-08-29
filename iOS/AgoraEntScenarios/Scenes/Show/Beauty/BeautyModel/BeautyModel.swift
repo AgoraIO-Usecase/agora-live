@@ -15,6 +15,14 @@ enum BeautyFactoryType: Int {
     case sense
     // 相芯
     case fu
+    
+    var title: String {
+        switch self {
+        case .byte: return "Byte"
+        case .sense: return "Sense"
+        case .fu: return "Fu"
+        }
+    }
 }
 
 class BeautyBaseModel: NSObject, Codable {

@@ -22,3 +22,4 @@
 #import "VLCommonWebViewController.h"
 #import "VLURLPathConfig.h"
 #import "VLAPIRequest.h"
+#import "FUDynmicResourceConfig.h"

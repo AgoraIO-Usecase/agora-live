@@ -575,6 +575,12 @@
 		F70CAB7D2C75A10C000B0F61 /* UIColor+Voice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB7C2C75A10C000B0F61 /* UIColor+Voice.swift */; };
 		F70CAB7F2C75D823000B0F61 /* DebugModeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB7E2C75D823000B0F61 /* DebugModeViewController.swift */; };
 		F70CAB812C75E47B000B0F61 /* DebugModeKeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB802C75E47B000B0F61 /* DebugModeKeyCenter.swift */; };
+		F70CAB842C76D389000B0F61 /* AGResourceManager+Ent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB832C76D389000B0F61 /* AGResourceManager+Ent.swift */; };
+		F70CAB862C76E02B000B0F61 /* ShowCreateLiveVC+Beauty.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB852C76E02B000B0F61 /* ShowCreateLiveVC+Beauty.swift */; };
+		F70CAB8C2C76E0F0000B0F61 /* FUDynmicResourceConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB882C76E0EF000B0F61 /* FUDynmicResourceConfig.m */; };
+		F70CAB8D2C76E0F0000B0F61 /* fu_authpack_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB892C76E0EF000B0F61 /* fu_authpack_reader.c */; };
+		F70CAB912C76E1DD000B0F61 /* GradientProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB8F2C76E1DC000B0F61 /* GradientProgressBar.swift */; };
+		F70CAB922C76E1DD000B0F61 /* LRCLodingProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB902C76E1DD000B0F61 /* LRCLodingProgressView.swift */; };
 		F7533F932C62184100108911 /* VLLogToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7533F922C62184100108911 /* VLLogToast.swift */; };
 		F7533F972C62249E00108911 /* VoiceLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7533F962C62249E00108911 /* VoiceLogger.swift */; };
 /* End PBXBuildFile section */
@@ -1311,6 +1317,14 @@
 		F70CAB7C2C75A10C000B0F61 /* UIColor+Voice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Voice.swift"; sourceTree = "<group>"; };
 		F70CAB7E2C75D823000B0F61 /* DebugModeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugModeViewController.swift; sourceTree = "<group>"; };
 		F70CAB802C75E47B000B0F61 /* DebugModeKeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugModeKeyCenter.swift; sourceTree = "<group>"; };
+		F70CAB832C76D389000B0F61 /* AGResourceManager+Ent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AGResourceManager+Ent.swift"; sourceTree = "<group>"; };
+		F70CAB852C76E02B000B0F61 /* ShowCreateLiveVC+Beauty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShowCreateLiveVC+Beauty.swift"; sourceTree = "<group>"; };
+		F70CAB882C76E0EF000B0F61 /* FUDynmicResourceConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUDynmicResourceConfig.m; sourceTree = "<group>"; };
+		F70CAB892C76E0EF000B0F61 /* fu_authpack_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fu_authpack_reader.c; sourceTree = "<group>"; };
+		F70CAB8A2C76E0EF000B0F61 /* FUDynmicResourceConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUDynmicResourceConfig.h; sourceTree = "<group>"; };
+		F70CAB8B2C76E0F0000B0F61 /* fu_authpack_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fu_authpack_reader.h; sourceTree = "<group>"; };
+		F70CAB8F2C76E1DC000B0F61 /* GradientProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientProgressBar.swift; sourceTree = "<group>"; };
+		F70CAB902C76E1DD000B0F61 /* LRCLodingProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LRCLodingProgressView.swift; sourceTree = "<group>"; };
 		F7533F922C62184100108911 /* VLLogToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLLogToast.swift; sourceTree = "<group>"; };
 		F7533F962C62249E00108911 /* VoiceLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceLogger.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1808,6 +1822,7 @@
 				DD36100529B70CDC00CE7984 /* ShowMusicEffectVC.swift */,
 				DD36100629B70CDC00CE7984 /* CreateLive */,
 				DD36100A29B70CDC00CE7984 /* ShowCreateLiveVC.swift */,
+				F70CAB852C76E02B000B0F61 /* ShowCreateLiveVC+Beauty.swift */,
 				DD36100B29B70CDC00CE7984 /* ShowToolMenuViewController.swift */,
 				DD36100C29B70CDC00CE7984 /* ShowLivePagesViewController.swift */,
 				DD36100D29B70CDC00CE7984 /* ShowLiveViewController.swift */,
@@ -1878,6 +1893,7 @@
 		DD36102129B70CDC00CE7984 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				F70CAB8E2C76E1BC000B0F61 /* Progress */,
 				DD36102229B70CDC00CE7984 /* Music */,
 				DD36102629B70CDC00CE7984 /* Alert */,
 				DD36102929B70CDC00CE7984 /* CreateLive */,
@@ -2670,6 +2686,7 @@
 		DDA1995A28FFE579009D3E61 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				F70CAB822C76D36D000B0F61 /* ResourceManager */,
 				DDA1995728FFE579009D3E61 /* UserCenter */,
 				DDA1995B28FFE579009D3E61 /* VLGlobalHelper.m */,
 				DDA1995C28FFE579009D3E61 /* VLGlobalHelper.h */,
@@ -3038,6 +3055,7 @@
 		E72F624E2A822D3500C963D2 /* FUBeauty */ = {
 			isa = PBXGroup;
 			children = (
+				F70CAB872C76E0E4000B0F61 /* DynamicSetting */,
 				E72F62512A822D3500C963D2 /* FUManager.h */,
 				E72F62532A822D3500C963D2 /* FUManager.m */,
 			);
@@ -3357,6 +3375,34 @@
 				E732CD872B47F6E9004D6FB9 /* SACrossZoomAnimation.swift */,
 			);
 			path = Animation;
+			sourceTree = "<group>";
+		};
+		F70CAB822C76D36D000B0F61 /* ResourceManager */ = {
+			isa = PBXGroup;
+			children = (
+				F70CAB832C76D389000B0F61 /* AGResourceManager+Ent.swift */,
+			);
+			path = ResourceManager;
+			sourceTree = "<group>";
+		};
+		F70CAB872C76E0E4000B0F61 /* DynamicSetting */ = {
+			isa = PBXGroup;
+			children = (
+				F70CAB892C76E0EF000B0F61 /* fu_authpack_reader.c */,
+				F70CAB8B2C76E0F0000B0F61 /* fu_authpack_reader.h */,
+				F70CAB8A2C76E0EF000B0F61 /* FUDynmicResourceConfig.h */,
+				F70CAB882C76E0EF000B0F61 /* FUDynmicResourceConfig.m */,
+			);
+			path = DynamicSetting;
+			sourceTree = "<group>";
+		};
+		F70CAB8E2C76E1BC000B0F61 /* Progress */ = {
+			isa = PBXGroup;
+			children = (
+				F70CAB8F2C76E1DC000B0F61 /* GradientProgressBar.swift */,
+				F70CAB902C76E1DD000B0F61 /* LRCLodingProgressView.swift */,
+			);
+			path = Progress;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -3762,6 +3808,7 @@
 				DD2A43CF28FFCEE7004CEDCF /* ViewController.swift in Sources */,
 				DD84178129090C520026B624 /* VLDiscoveryItemTCell.m in Sources */,
 				DDA199F428FFE579009D3E61 /* String+Extension.swift in Sources */,
+				F70CAB912C76E1DD000B0F61 /* GradientProgressBar.swift in Sources */,
 				A84C2D5F2B4FB01700D6EFCF /* CommerceServiceProtocol.swift in Sources */,
 				DD3610BF29B70CDC00CE7984 /* ShowSettingActionSheetCell.swift in Sources */,
 				E732CD512B47EC6D004D6FB9 /* VoiceMusicPlayingView.swift in Sources */,
@@ -3772,6 +3819,7 @@
 				DD3610C829B70CDC00CE7984 /* ShowServiceModel.swift in Sources */,
 				DDDDDB9E28FFD78C005F4E8B /* KeyCenter.swift in Sources */,
 				DD36109829B70CDC00CE7984 /* ShowVideoSettingVC.swift in Sources */,
+				F70CAB8C2C76E0F0000B0F61 /* FUDynmicResourceConfig.m in Sources */,
 				DD84177B29090C520026B624 /* VLHomeViewController.m in Sources */,
 				F7533F932C62184100108911 /* VLLogToast.swift in Sources */,
 				E357353F29EFD631009D54E1 /* VLKTVAlert.m in Sources */,
@@ -3885,6 +3933,7 @@
 				E72F624B2A7CEE7700C963D2 /* BaseNavigationView.swift in Sources */,
 				A84C2D362B4FB01700D6EFCF /* CommerceMusicItemCell.swift in Sources */,
 				DD36109929B70CDC00CE7984 /* ShowCunstomNaviBar.swift in Sources */,
+				F70CAB842C76D389000B0F61 /* AGResourceManager+Ent.swift in Sources */,
 				DD84177F29090C520026B624 /* UIWindow+Router.m in Sources */,
 				DD3610AA29B70CDC00CE7984 /* ShowEmptyView.swift in Sources */,
 				E732CD0A2B47EC6D004D6FB9 /* VoiceRoomViewController.swift in Sources */,
@@ -4021,6 +4070,7 @@
 				DD84178229090C520026B624 /* VLDiscoveryView.m in Sources */,
 				DD3610C429B70CDC00CE7984 /* ShowApplyView.swift in Sources */,
 				E73F23292B6F64850000B523 /* RTMSyncUtil.swift in Sources */,
+				F70CAB8D2C76E0F0000B0F61 /* fu_authpack_reader.c in Sources */,
 				AB4746E72A5E82AB00E68FBA /* ShowRobotService.swift in Sources */,
 				E732CD542B47EC6D004D6FB9 /* AgoraChatRoomHeaderView.swift in Sources */,
 				E732CD5B2B47EC6D004D6FB9 /* VoiceRoomInviteCell.swift in Sources */,
@@ -4073,12 +4123,14 @@
 				E732CCFB2B47EC6D004D6FB9 /* VoiceServiceModel.swift in Sources */,
 				E732CD402B47EC6D004D6FB9 /* AgoraMicVolView.swift in Sources */,
 				DD7A5E352C3B9A7800FFDCD4 /* CommerceThumnbnailCanvasView.swift in Sources */,
+				F70CAB922C76E1DD000B0F61 /* LRCLodingProgressView.swift in Sources */,
 				E732CCE92B47EC6D004D6FB9 /* PresentedViewType.swift in Sources */,
 				A84C2D3E2B4FB01700D6EFCF /* CommerceEmptyView.swift in Sources */,
 				A84C2D292B4FB01700D6EFCF /* CommerceCreateLiveVC.swift in Sources */,
 				A84C2D202B4FB01700D6EFCF /* CommerceRoomListVC.swift in Sources */,
 				A84C2D5C2B4FB01700D6EFCF /* CommerceToolMenuView.swift in Sources */,
 				DD3610B829B70CDC00CE7984 /* ShowSettingBaseCell.swift in Sources */,
+				F70CAB862C76E02B000B0F61 /* ShowCreateLiveVC+Beauty.swift in Sources */,
 				E732CD342B47EC6D004D6FB9 /* VoiceRoomEmojiListView.swift in Sources */,
 				DD3610B829B70CDC00CE7984 /* ShowSettingBaseCell.swift in Sources */,
 				DDCBEAD82C33BD4D00A64FCC /* VLAddRoomModel.m in Sources */,
@@ -4466,8 +4518,6 @@
 					"-framework",
 					"\"SnapKit\"",
 					"-framework",
-					"\"SocketRocket\"",
-					"-framework",
 					"\"SwiftyBeaver\"",
 					"-framework",
 					"\"UIKit\"",
@@ -4657,8 +4707,6 @@
 					"\"Security\"",
 					"-framework",
 					"\"SnapKit\"",
-					"-framework",
-					"\"SocketRocket\"",
 					"-framework",
 					"\"SwiftyBeaver\"",
 					"-framework",
