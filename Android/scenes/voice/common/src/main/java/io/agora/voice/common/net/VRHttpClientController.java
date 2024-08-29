@@ -197,7 +197,7 @@ class VRHttpClientController {
     * @throws IOException the io exception
     */
    public void addParams(String params, OutputStream out) throws IOException {
-      LogTools.d(TAG, "request String params = "+params);
+      //LogTools.d(TAG, "request String params = "+params);
       if(TextUtils.isEmpty(params)) {
          return;
       }
@@ -254,7 +254,7 @@ class VRHttpClientController {
       }
       if(showInfo) {//展示详细信息
          LogTools.d(TAG, "response ==========================start =================");
-         LogTools.d(TAG, "content: "+response.content);
+         //LogTools.d(TAG, "content: "+response.content);
          LogTools.d(TAG, "url: "+mConn.getURL().toString());
          LogTools.d(TAG, "headers: "+mConn.getHeaderFields().toString());
          LogTools.d(TAG, "response ==========================end =================");

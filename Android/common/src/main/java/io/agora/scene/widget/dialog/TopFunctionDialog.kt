@@ -15,7 +15,7 @@ import io.agora.scene.widget.utils.StatusBarUtil
 /**
  * top function dialog.
  */
-class TopFunctionDialog constructor(context: Context, val showReportUser: Boolean = false) :
+class TopFunctionDialog constructor(context: Context, val showReportUser: Boolean = true) :
     BaseDialog<DialogTopFunctionBinding>
         (context) {
     override fun getViewBinding(inflater: LayoutInflater): DialogTopFunctionBinding {

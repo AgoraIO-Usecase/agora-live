@@ -1,10 +1,11 @@
 package io.agora.scene.ktv
 
+import io.agora.scene.base.AgoraScenes
 import io.agora.scene.base.EntLogger
 
 object KTVLogger {
 
-    private val entLogger = EntLogger(EntLogger.Config("KTV"))
+    private val entLogger = EntLogger(EntLogger.Config(AgoraScenes.KTV.name))
 
     @JvmStatic
     fun d(tag: String, message: String, vararg args: Any) {
