@@ -120,11 +120,15 @@ class NetworkManager:NSObject {
                                           success: { response in
             let data = response["data"] as? [String: String]
             let token = data?["token"]
+        #if DEBUG
             print(response)
+        #endif
             success(token)
 //            ToastView.hidden()
         }, failure: { error in
+        #if DEBUG
             print(error)
+        #endif
             success(nil)
 //            ToastView.hidden()
         })
