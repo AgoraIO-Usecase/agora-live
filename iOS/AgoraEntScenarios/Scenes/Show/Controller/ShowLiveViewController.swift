@@ -611,11 +611,11 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
         
         //recv invitation
         if invitation.type == .inviting {
-            let uid = UInt(VLUserCenter.user.id)!
+//            let uid = UInt(VLUserCenter.user.id)!
             //join the PK anchor's channel as an audience member
             ShowAgoraKitManager.shared.joinChannelEx(currentChannelId: roomId,
                                                      targetChannelId: invitation.fromRoomId,
-                                                     ownerId: uid,
+                                                     ownerId: UInt(invitation.fromUserId) ?? 0,
                                                      options: self.channelOptions,
                                                      role: .audience) {
                 ShowLogger.info("\(self.roomId) joinChannelEx inviting channel completion _onStartInteraction---------- \(invitation.fromRoomId)")

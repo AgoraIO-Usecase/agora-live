@@ -184,7 +184,7 @@ extension VideoLoaderApiImpl: IVideoLoaderApi {
                                   localUid: UInt,
                                   anchorInfo: AnchorInfo,
                                   tagId: String?) {
-        _reportMethod(event: "\(#function)", label: "newState=\(newState.rawValue)&localUid=\(localUid)&tagId=\(tagId ?? "")&anchorChannelName=\(anchorInfo.channelName)&anchorUid\(anchorInfo.uid)")
+        _reportMethod(event: "\(#function)", label: "newState=\(newState.rawValue)&localUid=\(localUid)&tagId=\(tagId ?? "")&anchorChannelName=\(anchorInfo.channelName)&anchorUid=\(anchorInfo.uid)")
         if localUid == 0 {
             warningLoaderPrint("\(anchorInfo.channelName) localUid invalidate")
             return
@@ -268,7 +268,7 @@ extension VideoLoaderApiImpl: IVideoLoaderApi {
     }
     
     public func getAnchorState(anchorInfo: AnchorInfo) -> AnchorState {
-        _reportMethod(event: "\(#function)", label: "anchorChannelName=\(anchorInfo.channelName)&anchorUid\(anchorInfo.uid)")
+        _reportMethod(event: "\(#function)", label: "anchorChannelName=\(anchorInfo.channelName)&anchorUid=\(anchorInfo.uid)")
         return _getAnchorState(anchorInfo: anchorInfo)
     }
     
@@ -277,7 +277,7 @@ extension VideoLoaderApiImpl: IVideoLoaderApi {
     }
     
     public func renderVideo(anchorInfo: AnchorInfo, container: VideoCanvasContainer) {
-        _reportMethod(event: "\(#function)", label: "anchorChannelName=\(anchorInfo.channelName)&anchorUid\(anchorInfo.uid)")
+        _reportMethod(event: "\(#function)", label: "anchorChannelName=\(anchorInfo.channelName)&anchorUid=\(anchorInfo.uid)")
         guard let engine = config?.rtcEngine,
               let connection = exConnectionMap[anchorInfo.channelName] else {
             errorLoaderPrint("renderVideo fail: connection is empty")

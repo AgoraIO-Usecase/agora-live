@@ -463,7 +463,7 @@ class ShowAgoraKitManager: NSObject {
     
     func joinChannelEx(currentChannelId: String,
                        targetChannelId: String,
-                       ownerId: UInt,
+                       ownerId: UInt,  //anchor uid, only useful when joining the anchor channel as audience
                        options:AgoraRtcChannelMediaOptions,
                        role: AgoraClientRole,
                        completion: (()->())?) {
