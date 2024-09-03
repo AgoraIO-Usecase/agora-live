@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <include
+        android:id="@+id/videoLinkingLayout"
+        layout="@layout/dream_flow_live_detail_video_link"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <include
+        android:id="@+id/topLayout"
+        layout="@layout/dream_flow_live_detail_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        tools:layout_editor_absoluteX="13dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <FrameLayout
+        android:id="@+id/flAuction"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/commerce_auction_bg_user"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent">
+    </FrameLayout>
+
+    <include
+        android:id="@+id/bottomLayout"
+        layout="@layout/dream_flow_live_detail_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/flAuction" />
+
+    <include
+        android:id="@+id/livingEndLayout"
+        layout="@layout/dream_flow_live_detail_living_end"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dream_flow_create_room">Create</string>
+    <string name="dream_flow_create_tips1">Welcome to DreamFlow!</string>
+    <string name="dream_flow_living">LIVE</string>
+    <string name="dream_flow_room_id">%s</string>
+    <string name="dream_flow_user_count">%d</string>
+    <string name="dream_flow_app_name">DreamFlow</string>
+    <string name="dream_flow_live_top_close">Close</string>
+    <string name="dream_flow_live_bottom_chat">Say something...</string>
+    <string name="dream_flow_live_perms_leak_tip" >Missing permissions required for live streaming. Would you like to reapply?</string>
+    <string name="dream_flow_live_yes">Yes</string>
+    <string name="dream_flow_live_no">No</string>
+    <string name="dream_flow_text_input_sent">Send</string>
+    <string name="dream_flow_text_input_hint">Please input...</string>
+    <string name="dream_flow_text_input_empty">Empty input</string>
+    <string name="dream_flow_setting_switch_camera">Flip</string>
+    <string name="dream_flow_setting_video_on">Camera On</string>
+    <string name="dream_flow_setting_video_off">Camera Off</string>
+    <string name="dream_flow_setting_mic_on">Mic On</string>
+    <string name="dream_flow_setting_mic_off">Mic Off</string>
+    <string name="dream_flow_setting_statistic">Stats</string>
+    <string name="dream_flow_setting_quality">Video Quality</string>
+    <string name="dream_flow_setting_advance_setting">Advanced Settings</string>
+    <string name="dream_flow_setting_stylized_setting">Stylized Settings</string>
+    <string name="dream_flow_setting_quality_enhance_tip">Due to your device being a low-end model, the super-resolution feature has been disabled to ensure smooth device performance.</string>
+    <string name="dream_flow_setting_quality_enhance_tip2">Due to your device model or resolution settings, the super-resolution feature has been temporarily disabled to ensure smooth performance.</string>
+    <string name="dream_flow_picture_quality_title">Resolution</string>
+    <string name="dream_flow_picture_quality_1080p">1080P\nFHD</string>
+    <string name="dream_flow_picture_quality_720p">720P\nHD</string>
+    <string name="dream_flow_picture_quality_540p">540P\n</string>
+    <string name="dream_flow_picture_quality_360p">360P\nSD</string>
+    <string name="dream_flow_picture_quality_270p">270P\n</string>
+    <string name="dream_flow_picture_quality_180p">180P\n</string>
+    <string name="dream_flow_beauty_group_beauty">Beautification</string>
+    <string name="dream_flow_beauty_item_none">None</string>
+    <string name="dream_flow_beauty_item_beauty_smooth">Smooth</string>
+    <string name="dream_flow_music_effect_title">Music Effects</string>
+    <string name="dream_flow_music_effect_background">Background Music</string>
+    <string name="dream_flow_music_effect_voice">Vocal Enhancement</string>
+    <string name="dream_flow_music_effect_mixing">Reverb</string>
+    <string name="dream_flow_music_effect_back_music_joy">Joy</string>
+    <string name="dream_flow_music_effect_back_music_romantic">Romantic</string>
+    <string name="dream_flow_music_effect_back_music_joy2">Joy2</string>
+    <string name="dream_flow_music_effect_beauty_voice_original">Original</string>
+    <string name="dream_flow_music_effect_beauty_voice_sweet">Sweet</string>
+    <string name="dream_flow_music_effect_mixing_ktv">KTV</string>
+    <string name="dream_flow_music_effect_mixing_concert">Concert</string>
+    <string name="dream_flow_live_prepare_title">DreamFlow</string>
+    <string name="dream_flow_live_prepare_rotate">Flip</string>
+    <string name="dream_flow_setting_advance_encoder">Encoder</string>
+    <string name="dream_flow_live_prepare_hd">Video Quality</string>
+    <string name="dream_flow_live_prepare_tip"> NOTE: For demo purposes only. Please limit live streams to 10 minutes or less.</string>
+    <string name="dream_flow_live_prepare_start_live">Go Live</string>
+    <string name="dream_flow_live_prepare_room_empty">Room name cannot be empty!</string>
+    <string name="dream_flow_live_prepare_room_clipboard_copyed">Room ID has been copied to the clipboard!</string>
+    <string name="dream_flow_live_prepare_room_name_hint">Please enter the room name</string>
+    <string name="dream_flow_statistic_bitrate">Bitrate: %s kbps</string>
+    <string name="dream_flow_statistic_up_bitrate">Send Bitrate: %s kbps</string>
+    <string name="dream_flow_statistic_down_bitrate">Receive Bitrate: %s kbps</string>
+    <string name="dream_flow_statistic_fps">FPS: %s fps</string>
+    <string name="dream_flow_statistic_delay">Latency: %s ms</string>
+    <string name="dream_flow_statistic_encoder">Encoder: %s</string>
+    <string name="dream_flow_statistic_loss_package">Packet Loss: %s ％</string>
+    <string name="dream_flow_statistic_up_net_speech">Uplink Speed: %s KB/s</string>
+    <string name="dream_flow_statistic_down_net_speech">Downlink Speed: %s KB/s</string>
+    <string name="dream_flow_statistic_resolution">Resolution: %s</string>
+    <string name="dream_flow_statistic_up">Sender</string>
+    <string name="dream_flow_statistic_encode_resolution">Encode Resolution: %s</string>
+    <string name="dream_flow_statistic_encode_fps">Encode FPS: %s fps</string>
+    <string name="dream_flow_statistic_up_loss_package">Uplink Packet Loss: %s ％</string>
+    <string name="dream_flow_statistic_down">Receiver</string>
+    <string name="dream_flow_statistic_receive_resolution">Received Resolution: %s</string>
+    <string name="dream_flow_statistic_receive_fps">Received FPS: %s fps</string>
+    <string name="dream_flow_statistic_down_loss_package">Downlink Packet Loss: %s ％</string>
+    <string name="dream_flow_statistic_else">Others</string>
+    <string name="dream_flow_statistic_quick_start_time">First Frame: %s ms</string>
+    <string name="dream_flow_device_grade">Device Level: %s</string>
+    <string name="dream_flow_statistic_sr">Super Clarity: %s</string>
+    <string name="dream_flow_statistic_pvc">PVC: %s</string>
+    <string name="dream_flow_statistic_low_stream">Low-quality Video Stream: %s</string>
+    <string name="dream_flow_statistic_svc">SVC: %s</string>
+    <string name="dream_flow_statistic_h265">H265: %s</string>
+
+    <string name="dream_flow_setting_preset">Preset</string>
+    <string name="dream_flow_setting_advance_video_setting">Video Settings</string>
+    <string name="dream_flow_setting_advance_audio_setting">Audio Settings</string>
+    <string name="dream_flow_setting_advance_quality_enhance">Super Clarity</string>
+    <string name="dream_flow_setting_advance_quality_h265">H265</string>
+    <string name="dream_flow_setting_advance_ok">OK</string>
+    <string name="dream_flow_setting_confirm">Save</string>
+    <string name="dream_flow_setting_preset_title">Video Preset</string>
+    <string name="dream_flow_setting_advance_quality_enhance_tip">After enabling the switch, a series of video enhancement strategies will be applied, including but not limited to super Clarity. The main goal is to improve the visual experience while maintaining the same bitrate.</string>
+    <string name="dream_flow_setting_advance_quality_h265_tip">After enabling the switch, a series of video enhancement strategies will be applied, including but not limited to H.265. The main goal is to improve the visual experience while maintaining the same bitrate.</string>
+    <string name="dream_flow_setting_advance_color_enhance">Color Enhancement</string>
+    <string name="dream_flow_setting_advance_color_enhance_tip">fter enabling this switch, the video image\'s color saturation will be automatically adjusted to make the colors more vibrant and lifelike, enhancing the visual experience.</string>
+    <string name="dream_flow_setting_advance_dark_enhance">Low-light Enhancement</string>
+    <string name="dream_flow_setting_advance_dark_enhance_tip">After enabling this switch, the system will automatically process the video taken in low-light conditions. It will employ techniques such as intelligent fill light to enhance clarity and brightness, ultimately improving the video quality.</string>
+    <string name="dream_flow_setting_advance_video_noise_reduce">Video Noise Reduction</string>
+    <string name="dream_flow_setting_advance_video_noise_reduce_tip">After enabling this switch, it will automatically remove the noise from the video, making the video appear clearer.</string>
+    <string name="dream_flow_setting_advance_bitrate_save">PVC</string>
+    <string name="dream_flow_setting_advance_bitrate_save_tip">After enabling this switch, it will automatically achieve a reduction in bitrate while maintaining the same video quality.</string>
+    <string name="dream_flow_setting_advance_resolution">Resolution</string>
+    <string name="dream_flow_setting_advance_encode_resolution">Encode Resolution</string>
+    <string name="dream_flow_setting_advance_encode_resolution_tip">After modifying the encoding resolution, please check the quality change effect on the audience end.</string>
+    <string name="dream_flow_setting_advance_bitrate">Adaptive Bitrate</string>
+    <string name="dream_flow_setting_advance_bitrate_tips">After enabling this switch, the algorithm will automatically match the appropriate bitrate based on the current resolution and frame rate.</string>
+    <string name="dream_flow_setting_advance_ear_back">IEM</string>
+    <string name="dream_flow_setting_advance_ear_back_tip">In-Ear Monitoring</string>
+    <string name="dream_flow_setting_advance_vocal_volume">Vocal Volume</string>
+    <string name="dream_flow_setting_advance_music_volume">Music Volume</string>
+    <string name="dream_flow_bottom_list_cancel">Cancel</string>
+    <string name="dream_flow_setting_advance_framerate">Frame Rate</string>
+    <string name="dream_flow_setting_advance_encode_framerate">Encode FPS</string>
+    <string name="dream_flow_setting_advance_encode_framerate_tip">To ensure the best video quality, frame rates of 15fps and below will be effective by default for mid-to-low-end devices. Frame rates exceeding 15fps will not be effective.</string>
+    <string name="dream_flow_setting_preset_dream_flow_title">Live Streaming Mode</string>
+    <string name="dream_flow_setting_preset_dream_flow_description">Typically, hosts adopt a seated position from the upper body to engage in chat-based live streaming. The focus of the frame is primarily on the host\'s makeup, upper clothing, and low-frequency movements.</string>
+    <string name="dream_flow_setting_preset_device_low">Low-end</string>
+    <string name="dream_flow_setting_preset_device_medium">Mid-range</string>
+    <string name="dream_flow_setting_preset_device_high">High-end</string>
+    <string name="dream_flow_setting_preset_device_low_des">Below $350</string>
+    <string name="dream_flow_setting_preset_device_medium_des">$350 - $600</string>
+    <string name="dream_flow_setting_preset_device_high_des">Above $600</string>
+    <string name="dream_flow_setting_preset_recommend">Recommendation</string>
+    <string name="dream_flow_setting_preset_no_choise_tip">Please select a preset mode.</string>
+    <string name="dream_flow_tip">Tips</string>
+    <string name="dream_flow_setting_advance_preset_mode">The current preset mode is \"Live Streaming\" with optimal settings. Modifying the parameters will change the video experience.</string>
+    <string name="dream_flow_setting_cancel">Cancel</string>
+    <string name="dream_flow_setting_report">Report</string>
+    <string name="dream_flow_setting_preset_done">The settings have been updated to the \"Live Streaming\" optimal configuration.</string>
+    <string name="dream_flow_setting_audience">Audience Settings</string>
+    <string name="dream_flow_living_end_title">Live Ended</string>
+    <string name="dream_flow_living_end_back_room_list">Return to the room list</string>
+    <string name="dream_flow_live_chat_coming">joined</string>
+    <string name="dream_flow_live_chat_leaving">left</string>
+    <string name="dream_flow_live_end_room_or_not">Do you want to end the live stream?</string>
+    <string name="dream_flow_setting_opened">On</string>
+    <string name="dream_flow_setting_closed">Off</string>
+    <string name="dream_flow_setting_preset_audience_title">Audience Settings</string>
+    <string name="dream_flow_setting_preset_audience_enhance_title">Super Clarity Mode</string>
+    <string name="dream_flow_setting_preset_audience_enhance_description">Corresponding image quality strategies have been adapted for different device models.</string>
+    <string name="dream_flow_setting_preset_audience_basic_title">Basic Mode</string>
+    <string name="dream_flow_setting_preset_audience_basic_description">No optimization</string>
+    <string name="dream_flow_live_prepare_setting">Settings</string>
+    <string name="dream_flow_beauty_group_adjust">Adjustment</string>
+    <string name="dream_flow_beauty_item_adjust_contrast">Contrast</string>
+    <string name="dream_flow_beauty_item_adjust_saturation">Saturation</string>
+    <string name="dream_flow_beauty_item_adjust_sharpen">Sharpen</string>
+    <string name="dream_flow_beauty_item_adjust_clarity">Clarity</string>
+    <string name="dream_flow_beauty_item_beauty_redden">Rosy</string>
+    <string name="dream_flow_beauty_item_beauty_contouring">Contouring</string>
+    <string name="dream_flow_beauty_item_beauty_bright_eye">Clarity</string>
+    <string name="dream_flow_beauty_item_beauty_round_eye">Pupils</string>
+    <string name="dream_flow_beauty_item_beauty_eye_distance">Eye Distance</string>
+    <string name="dream_flow_beauty_item_beauty_eye_downturn">Eyelid</string>
+    <string name="dream_flow_beauty_item_beauty_remove_dark_circles">Circles</string>
+    <string name="dream_flow_beauty_item_beauty_brow_position">Brow</string>
+    <string name="dream_flow_beauty_item_beauty_brow_thickness">Brow-trim</string>
+    <string name="dream_flow_beauty_item_beauty_remove_nasolabial_folds">Wrinkles</string>
+    <string name="dream_flow_beauty_item_beauty_mouth_position">Mouth Position</string>
+    <string name="dream_flow_beauty_item_beauty_nose_lift">Nose Lift</string>
+    <string name="dream_flow_beauty_group_virtual_bg">Virtual Background</string>
+    <string name="dream_flow_beauty_green_screen">Green Screen</string>
+    <string name="dream_flow_beauty_strength">Intensity</string>
+    <string name="dream_flow_beauty_item_virtual_bg_blur">Blur</string>
+    <string name="dream_flow_beauty_item_virtual_bg_mitao">Peach</string>
+    <string name="dream_flow_beauty_green_screen_tip">To ensure the best virtual background effect, please make sure you have set up a green screen in your actual environment. Otherwise, the virtual background will not take effect.</string>
+    <string name="dream_flow_live_detail_living_end">The live stream has ended.</string>
+    <string name="dream_flow_live_detail_try_to_move">Swipe to switch and try another host.</string>
+    <string name="dream_flow_broadcast_header">Suggestions: </string>
+    <string name="dream_flow_broadcast_tips">Please ensure that the network connection in the broadcasting environment is stable, and the upload bandwidth is equal to or greater than 3 Mbps.</string>
+    <string name="dream_flow_network_quailty">Network conditions of the target audience</string>
+    <string name="dream_flow_network_quailty_tips">Video strategy tailored to the network conditions of the target region</string>
+    <string name="dream_flow_network_quailty_good">Good</string>
+    <string name="dream_flow_network_quailty_good_tag">Stable and smooth network conditions</string>
+    <string name="dream_flow_network_quailty_normal">Unstable</string>
+    <string name="dream_flow_network_quailty_normal_tag">Unstable network conditions</string>
+    <string name="dream_flow_video_quailty">Video Quality</string>
+    <string name="dream_flow_video_quailty_smooth">Smooth First</string>
+    <string name="dream_flow_video_quailty_clear">Clarity First</string>
+    <string name="dream_flow_video_quailty_tips">Adaptive video quality strategies for different audience</string>
+    <string name="dream_flow_video_device_result">Device Level: %s (%d)</string>
+    <string name="dream_flow_video_device_high">High-end Device</string>
+    <string name="dream_flow_video_device_middle">Mid-range Device</string>
+    <string name="dream_flow_video_device_low">Low-end Device</string>
+    <string name="dream_flow_broadcaster_bad_exit">Detected an abnormal exit from the last live broadcast, please create a new live room to start broadcasting again.</string>
+
+    <string name="dream_flow_setting_preset_show_title">Live Streaming Mode</string>
+    <string name="dream_flow_setting_preset_show_description">Typically, hosts adopt a seated position from the upper body to engage in chat-based live streaming. The focus of the frame is primarily on the host\'s makeup, upper clothing, and low-frequency movements.</string>
+
+    <string name="dream_flow_local_uid">Local UID：%s</string>
+
+    <string name="dream_flow_setting_stylized">Stylized Effect</string>
+    <string name="dream_flow_setting_effect">Face Mode</string>
+
+    <string-array name="dream_flow_encoder">
+        <item>Hardware Encoder</item>
+        <item>Software Encoder</item>
+    </string-array>
+
+    <string-array name="dream_flow_codec">
+        <item>h265</item>
+        <item>h264</item>
+    </string-array>
+
+    <string-array name="dream_flow_render_mode">
+        <item>hidden</item>
+        <item>fix</item>
+    </string-array>
+
+    <string-array name="dream_flow_sr_type">
+        <item>1x SR</item>
+        <item>1.33x SR</item>
+        <item>1.5x SR</item>
+        <item>2x SR</item>
+    </string-array>
+
+    <string-array name="dream_flow_style">
+        <item>Miyazaki</item>
+        <item>Toonyou</item>
+        <item>Sexytoon</item>
+        <item>Clay</item>
+    </string-array>
+
+</resources>

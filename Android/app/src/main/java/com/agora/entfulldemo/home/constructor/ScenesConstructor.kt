@@ -50,6 +50,14 @@ object ScenesConstructor {
                 R.mipmap.bg_btn_home1,
                 R.mipmap.bg_btn_home_ktv,
                 true
+            ),
+            ScenesModel(
+                AgoraScenes.DreamFlow,
+                "io.agora.scene.dreamFlow.RoomListActivity",
+                "DreamFlow",
+                R.mipmap.bg_btn_home2,
+                R.mipmap.bg_btn_home_live,
+                true
             )
         )
     }

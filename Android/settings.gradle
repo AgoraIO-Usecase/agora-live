@@ -30,3 +30,5 @@ include ':scenes:voice'
 include ':scenes:voice:common'
 
 include ':scenes:ktv'
+
+include ':scenes:dreamFlow'

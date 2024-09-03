@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    tools:theme="@style/Theme.AppCompat"
+    android:paddingTop="@dimen/base_status_height"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:layout_gravity="start|center_vertical"
+            android:src="@drawable/commerce_setting_advance_ic_back"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_gravity="center"
+            android:text="@string/dream_flow_setting_stylized_setting"/>
+
+    </FrameLayout>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/stylizedEffect"
+                layout="@layout/dream_flow_setting_advance_item_switch"/>
+
+            <include
+                android:id="@+id/FaceMode"
+                layout="@layout/dream_flow_setting_advance_item_switch"/>
+
+            <include
+                android:id="@+id/Style"
+                layout="@layout/dream_flow_settings_item_slider"/>
+
+            <include
+                android:id="@+id/Effect"
+                layout="@layout/dream_flow_settings_item_slider"/>
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>
