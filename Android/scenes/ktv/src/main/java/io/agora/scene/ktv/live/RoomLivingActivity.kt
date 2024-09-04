@@ -395,7 +395,7 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                 }
 
                 JoinChorusStatus.ON_IDLE -> {
-                    //nothing
+                    binding.lrcControlView.onSelfJoinedChorusIdle()
                 }
             }
         }
