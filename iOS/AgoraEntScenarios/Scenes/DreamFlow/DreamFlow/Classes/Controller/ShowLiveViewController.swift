@@ -779,7 +779,10 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
     
     func onClickLinkButton(_ button: ShowRedDotButton) { }
     
-    func onClickBeautyButton() { }
+    func onClickBeautyButton() {
+        let vc = DFStylizedSettting()
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
     
     func onClickMusicButton() { }
     
