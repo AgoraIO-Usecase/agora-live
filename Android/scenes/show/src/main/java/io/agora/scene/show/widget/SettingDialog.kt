@@ -281,6 +281,7 @@ class SettingDialog(context: Context) : BottomDarkDialog(context) {
     fun resetItemStatus(@ItemId itemId: Int, activate: Boolean) {
         when (itemId) {
             ITEM_ID_VIDEO -> isVideoActivated = activate
+            ITEM_ID_MIC -> isVoiceActivated = activate
             else -> {}
         }
         for (i in 0..mAdapter.itemCount) {
