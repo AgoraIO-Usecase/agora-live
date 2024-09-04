@@ -11,7 +11,7 @@ import AgoraCommon
 private let kTableViewBottomOffset: CGFloat = Screen.safeAreaBottomHeight() + 109
 private let kChatInputViewHeight: CGFloat = 56
 
-protocol ShowRoomLiveViewDelegate: ShowRoomBottomBarDelegate, ShowCanvasViewDelegate {
+protocol ShowRoomLiveViewDelegate: ShowRoomBottomBarDelegate {
     func onClickSendMsgButton(text: String)
     func onClickCloseButton()
     func onClickMoreButton()
@@ -38,25 +38,12 @@ class ShowRoomLiveView: UIView {
     weak var delegate: ShowRoomLiveViewDelegate? {
         didSet{
             bottomBar.delegate = delegate
-            canvasView.delegate = delegate
         }
     }
     lazy var canvasView: ShowCanvasView = {
         let view = ShowCanvasView()
         return view
     }()
-    
-    var blurHostCanvas = false {
-        didSet{
-            canvasView.localView.showBlurView = blurHostCanvas
-        }
-    }
-    
-    var blurGusetCanvas = false {
-        didSet{
-            canvasView.remoteView.showBlurView = blurGusetCanvas
-        }
-    }
         
     private lazy var roomInfoView: ShowRoomInfoView = {
         let roomInfoView = ShowRoomInfoView()

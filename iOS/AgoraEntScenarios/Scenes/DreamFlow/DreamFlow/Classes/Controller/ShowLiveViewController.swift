@@ -30,7 +30,6 @@ class ShowLiveViewController: UIViewController {
             if oldValue?.roomId == room?.roomId { return }
             oldValue?.interactionAnchorInfoList.removeAll()
             liveView.room = room
-            liveView.canvasView.canvasType = .none
 //            if let oldRoom = oldValue {
 //                _leavRoom(oldRoom)
 //            }
@@ -156,13 +155,9 @@ class ShowLiveViewController: UIViewController {
                 ShowLogger.info("currentInteraction: \(currentInteraction.description)")
             }
             if self.room?.userId() == self.currentUserId {
-                self.liveView.blurHostCanvas = false
-                self.liveView.blurGusetCanvas = false
             }
             //update audio status
             if let interaction = currentInteraction {
-                liveView.canvasView.setLocalUserInfo(name: room?.ownerName ?? "")
-                liveView.canvasView.setRemoteUserInfo(name: interaction.userName)
             } else if role == .broadcaster {
                 //unmute if interaction did stop
                 self.muteLocalAudio = false
@@ -295,8 +290,7 @@ class ShowLiveViewController: UIViewController {
                                                  role: role) {
         }
         ShowAgoraKitManager.shared.addRtcDelegate(delegate: self, roomId: channelId)
-        ShowAgoraKitManager.shared.setupLocalVideo(canvasView: self.liveView.canvasView.localView)
-        liveView.canvasView.setLocalUserInfo(name: room?.ownerName ?? "", img: room?.ownerAvatar ?? "")
+        ShowAgoraKitManager.shared.setupLocalVideo(canvasView: self.liveView.canvasView.localBackgroundView.contentView)
         self.muteLocalVideo = false
         self.muteLocalAudio = false
     }
@@ -558,12 +552,8 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
                 
                 ShowAgoraKitManager.shared.updateVideoProfileForMode(.pk)
                 currentChannelId = roomId
-                liveView.canvasView.canvasType = .pk
-                liveView.canvasView.setRemoteUserInfo(name: interaction.userName)
             }
         case .linking:
-            liveView.canvasView.canvasType = .joint_broadcasting
-            liveView.canvasView.setRemoteUserInfo(name: interaction.userName)
             
             //TODO: 这个是不是需要真正的角色，放进switchRole里？
             if role == .audience {
@@ -604,11 +594,7 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
             
             ShowAgoraKitManager.shared.updateVideoProfileForMode(.single)
             ShowAgoraKitManager.shared.leaveChannelEx(roomId: self.roomId, channelId: interaction.roomId)
-            liveView.canvasView.canvasType = .none
-            liveView.canvasView.setRemoteUserInfo(name: interaction.userName)
         case .linking:
-            liveView.canvasView.setRemoteUserInfo(name: interaction.userName)
-            liveView.canvasView.canvasType = .none
             liveView.bottomBar.linkButton.isSelected = false
 //            currentInteraction?.ownerMuteAudio = false
             //TODO: 这个是不是需要真正的角色，放进switchRole里？
@@ -667,28 +653,8 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
                    reason: AgoraVideoRemoteReason, elapsed: Int) {
         if uid == roomOwnerId {
             if reason == .remoteMuted , currentInteraction?.type != .pk{
-                liveView.blurHostCanvas = true
             }else if reason == .remoteUnmuted {
-                liveView.blurHostCanvas = false
             }
-        }
-    }
-    
-    public func rtcEngine(_ engine: AgoraRtcEngineKit, didVideoMuted muted: Bool, byUid uid: UInt) {
-        ShowLogger.info("didVideoMuted[\(uid)] \(muted)")
-        if "\(uid)" == currentInteraction?.userId {
-            liveView.blurGusetCanvas = muted
-        } else if uid == roomOwnerId {
-            liveView.blurHostCanvas = muted
-        }
-    }
-    
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didAudioMuted muted: Bool, byUid uid: UInt) {
-        ShowLogger.info("didAudioMuted[\(uid)] \(muted)")
-        if "\(uid)" == currentInteraction?.userId {
-            liveView.canvasView.isRemoteMuteMic = muted
-        } else if uid == roomOwnerId {
-            liveView.canvasView.isLocalMuteMic = muted
         }
     }
     
@@ -822,18 +788,8 @@ extension ShowLiveViewController: ShowToolMenuViewControllerDelegate {
             self.muteLocalVideo = selected
             if selected {
                 ShowAgoraKitManager.shared.engine?.stopPreview()
-                if self.role == .broadcaster {
-                    self.liveView.blurHostCanvas = true
-                } else {
-                    self.liveView.blurGusetCanvas = true
-                }
             } else {
                 ShowAgoraKitManager.shared.engine?.startPreview()
-                if self.role == .broadcaster {
-                    self.liveView.blurHostCanvas = false
-                } else {
-                    self.liveView.blurGusetCanvas = false
-                }
             }
         }
     }

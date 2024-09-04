@@ -6,330 +6,176 @@
 //
 
 import UIKit
-import Agora_Scene_Utils
-import AgoraCommon
+import SnapKit
 
-enum ShowLiveCanvasType {
-    case none
-    case pk
-    case joint_broadcasting 
-}
-
-protocol ShowCanvasViewDelegate: NSObjectProtocol {
-    func onClickRemoteCanvas()
-    func onPKDidTimeout()
-    func getPKDuration() -> UInt64
-}
-
-class ShowUserCanvasView: UIView {
-    var showBlurView: Bool = false {
-        didSet {
-            if showBlurView {
-                addSubview(thumnbnailCanvasView)
-                thumnbnailCanvasView.isHidden = false
-            } else {
-                thumnbnailCanvasView.isHidden = true
-            }
-            thumnbnailCanvasView.frame = bounds
-        }
-    }
-    
-    lazy var thumnbnailCanvasView: ShowThumnbnailCanvasView = {
-        let view = ShowThumnbnailCanvasView(frame: self.bounds)
-        return view
-    }()
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        thumnbnailCanvasView.frame = bounds
-    }
-}
-
-class ShowCanvasView: UIView {
-    weak var delegate: ShowCanvasViewDelegate?
-    
-    lazy var localView = ShowUserCanvasView()
-    lazy var remoteView: ShowUserCanvasView = {
-        let view = ShowUserCanvasView()
-        view.isHidden = true
-//        view.addTarget(self, action: #selector(onTapRemoteButton), for: .touchUpInside)
-        let tap = UITapGestureRecognizer(target: self, action: #selector(onTapRemoteButton))
-        view.addGestureRecognizer(tap)
-        view.addSubview(remoteBgView)
-        remoteBgView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        return view
-    }()
-    
-    private lazy var remoteBgView: UIView = {
+class DFLocalView: UIView {
+    lazy var contentView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(hex: "141650")
         return view
     }()
-    
-    private lazy var broadcastorImgView: UIImageView = {
-        let imgView = UIImageView()
-        imgView.cornerRadius(42)
-        return imgView
-    }()
-    
-    private lazy var audienceImgView: UIImageView = {
-        let imgView = UIImageView()
-        imgView.cornerRadius(25)
-        return imgView
-    }()
-    
-    private lazy var localUser: AGEButton = {
-        let button = AGEButton()
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 12)
-        button.setTitle("user name1", for: .normal)
-        button.setImage(UIImage.show_sceneImage(name: "show_mic"),
-                        for: .normal,
-                        postion: .right,
-                        spacing: 5)
-        button.setImage(UIImage.show_sceneImage(name: "show_mic_off"),
-                        for: .selected,
-                        postion: .right,
-                        spacing: 5)
-        return button
-    }()
-    private lazy var remoteUser: AGEButton = {
-        let button = AGEButton()
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 12)
-        button.setTitle("user name2", for: .normal)
-        button.setImage(UIImage.show_sceneImage(name: "show_mic"),
-                        for: .normal,
-                        postion: .right,
-                        spacing: 5)
-        button.setImage(UIImage.show_sceneImage(name: "show_mic_off"),
-                        for: .selected,
-                        postion: .right,
-                        spacing: 5)
-        return button
-    }()
-    private lazy var remoteUserLabel: UILabel = {
-        let label = UILabel()
-        
-        return label
-    }()
-    private lazy var timerView: UIButton = {
-        let button = UIButton()
-        button.setBackgroundImage(UIImage.show_sceneImage(name: "show_pk_timer_bg"), for: .normal)
-        button.setTitle("PK 02:00", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 12)
-        button.isUserInteractionEnabled = false
-        return button
-    }()
-    private lazy var pkView: UIImageView = {
-        let imageView = UIImageView(image: UIImage.show_sceneImage(name: "show_pk_progress_bg"))
-        return imageView
-    }()
-    
-    private lazy var timer = GCDTimer()
-    
-    private var localCanvasWCons: NSLayoutConstraint?
-    private var localCanvasHCons: NSLayoutConstraint?
-    private var localCanvasTopCons: NSLayoutConstraint?
-    private var remoteCanvasRCons: NSLayoutConstraint?
-    private var remoteCanvasTCons: NSLayoutConstraint?
-    private var remoteCanvasWCons: NSLayoutConstraint?
-    private var remoteCanvasHCons: NSLayoutConstraint?
-    private var localUserBottomCons: NSLayoutConstraint?
-    
-    var canvasType: ShowLiveCanvasType = .none {
-        didSet {
-            switch canvasType {
-            case .none:
-                localUser.isHidden = true
-                remoteView.isHidden = true
-                remoteUser.isHidden = true
-                timerView.isHidden = true
-                pkView.isHidden = true
-                broadcastorImgView.isHidden = true
-                audienceImgView.isHidden = true
-                localCanvasHCons?.constant = Screen.height
-                localCanvasWCons?.constant = Screen.width
-                localCanvasTopCons?.constant = 0
-                timer.destoryAllTimer()
-                
-            case .pk:
-                localUser.isHidden = false
-                remoteUser.isHidden = false
-                remoteView.isHidden = false
-                timerView.isHidden = false
-                pkView.isHidden = false
-                broadcastorImgView.isHidden = true
-                audienceImgView.isHidden = true
-                localCanvasHCons?.constant = 315
-                localCanvasWCons?.constant = Screen.width * 0.5
-                localCanvasTopCons?.constant = 76 + Screen.safeAreaTopHeight() + timerView.height + 15
-                remoteCanvasRCons?.constant = 0
-                remoteCanvasTCons?.constant = 15
-                remoteCanvasHCons?.constant = 315
-                remoteCanvasWCons?.constant = Screen.width * 0.5
-                localUserBottomCons?.constant = -10
-                remoteView.cornerRadius(0)
-                remoteBgView.cornerRadius(0)
-                timer.scheduledSecondsTimer(withName: "pk", timeInterval: 1, queue: .main) { [weak self] _, duration in
-                    guard let self = self else { return }
-                    let maxTime: TimeInterval = TimeInterval(AppContext.shared.sceneConfig?.showpk ?? 120)
-                    var timeLeft = maxTime - TimeInterval((self.delegate?.getPKDuration() ?? 0) / 1000)
-                    if timeLeft < 0 {
-                        self.timer.destoryAllTimer()
-                        self.delegate?.onPKDidTimeout()
-                        timeLeft = 0
-                    }
-                    self.timerView.setTitle("PK "+"".timeFormat(secounds: timeLeft), for: .normal)
-                }
-                
-            case .joint_broadcasting:
-                remoteView.isHidden = false
-                remoteUser.isHidden = false
-                timerView.isHidden = true
-                pkView.isHidden = true
-                localUser.isHidden = true
-                broadcastorImgView.isHidden = true
-                audienceImgView.isHidden = true
-                localCanvasHCons?.constant = Screen.height
-                localCanvasWCons?.constant = Screen.width
-                localCanvasTopCons?.constant = 0
-                remoteCanvasRCons?.constant = -15
-                remoteCanvasTCons?.constant = -30
-                remoteCanvasHCons?.constant = 163
-                remoteCanvasWCons?.constant = 109
-//                localUserBottomCons?.constant = -468 / 812 * Screen.height
-                remoteView.cornerRadius(20)
-                remoteBgView.cornerRadius(20)
-                timer.destoryAllTimer()
-            }
-            localCanvasHCons?.isActive = true
-            localCanvasWCons?.isActive = true
-            localCanvasTopCons?.isActive = true
-            remoteCanvasRCons?.isActive = true
-            remoteCanvasTCons?.isActive = true
-            remoteCanvasHCons?.isActive = true
-            remoteCanvasWCons?.isActive = true
-        }
-    }
-    var isLocalMuteMic: Bool = false {
-        didSet {
-            localUser.isSelected = isLocalMuteMic
-        }
-    }
-    var isRemoteMuteMic: Bool = false {
-        didSet {
-            remoteUser.isSelected = isRemoteMuteMic
-        }
-    }
-    
-    var isLocalVideoEnable: Bool = false {
-        didSet {
-            audienceImgView.isHidden = isLocalVideoEnable
-            localUser.isHidden = isLocalVideoEnable
-        }
-    }
-    
-    var isRemoteVideoEnable: Bool = false {
-        didSet {
-            broadcastorImgView.isHidden = isRemoteVideoEnable
-            remoteUser.isHidden = isRemoteVideoEnable
-        }
-    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        defer {
-            canvasType = .none
-        }
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setLocalUserInfo(name: String, img: String? = nil) {
-        localUser.setTitle(name, for: .normal)
-        if let img = img {
-            broadcastorImgView.sd_setImage(with: URL(string: img))
+    func setupUI() {
+        self.addSubview(contentView)
+        contentView.snp.makeConstraints { make in
+            make.left.top.right.bottom.equalTo(0)
         }
     }
+}
+
+class ShowCanvasView: UIView {
+    lazy var contentView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage.show_sceneImage(name: "drame_flow_avatar")
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
     
-    func setRemoteUserInfo(name: String, img: String? = nil) {
-        remoteUser.setTitle(name, for: .normal)
-        if let img = img {
-            audienceImgView.sd_setImage(with: URL(string: img))
-        }
+    lazy var localBackgroundView: DFLocalView = {
+        let view = DFLocalView()
+        view.layer.cornerRadius = 20
+        view.layer.masksToBounds = true
+        return view
+    }()
+    
+    lazy var remoteView: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    lazy var indicatorButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage.show_sceneImage(name: "drame_flow_Indicator"), for: .normal)
+        button.addTarget(self, action: #selector(toggleLocalView), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var originTitle: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.show_R_12
+        label.textColor = UIColor.show_slider_tint
+        label.text = "Origin"
+        return label
+    }()
+    
+    lazy var arrowButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage.show_sceneImage(name: "drame_flow_arrow"), for: .normal)
+        button.addTarget(self, action: #selector(toggleLocalView), for: .touchUpInside)
+    
+        return button
+    }()
+    
+    var localViewHidden = false
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupViews()
+        setupGestures()
     }
     
-    private func setupUI() {
-        addSubview(localView)
-        
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupViews() {
+        addSubview(contentView)
         addSubview(remoteView)
-        addSubview(timerView)
-        addSubview(pkView)
-        addSubview(localUser)
-        addSubview(remoteUser)
-        addSubview(broadcastorImgView)
-        addSubview(audienceImgView)
-        timerView.translatesAutoresizingMaskIntoConstraints = false
-        localView.translatesAutoresizingMaskIntoConstraints = false
-        remoteView.translatesAutoresizingMaskIntoConstraints = false
-        pkView.translatesAutoresizingMaskIntoConstraints = false
-        localUser.translatesAutoresizingMaskIntoConstraints = false
-        remoteUser.translatesAutoresizingMaskIntoConstraints = false
-        broadcastorImgView.translatesAutoresizingMaskIntoConstraints = false
-        audienceImgView.translatesAutoresizingMaskIntoConstraints = false
-                
-        timerView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        timerView.topAnchor.constraint(equalTo: topAnchor,
-                                       constant: 76 + Screen.safeAreaTopHeight()).isActive = true
+        addSubview(localBackgroundView)
+        addSubview(indicatorButton)
+        localBackgroundView.addSubview(originTitle)
+        localBackgroundView.addSubview(arrowButton)
         
-        localView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        localCanvasTopCons = localView.topAnchor.constraint(equalTo: topAnchor, constant: 0)
-        localCanvasTopCons?.isActive = true
-        localCanvasWCons = localView.widthAnchor.constraint(equalToConstant: Screen.width)
-        localCanvasWCons?.isActive = true
-        localCanvasHCons = localView.heightAnchor.constraint(equalToConstant: Screen.height)
-        localCanvasHCons?.isActive = true
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         
-        remoteCanvasRCons = remoteView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        remoteCanvasRCons?.isActive = true
-        remoteCanvasWCons = remoteView.widthAnchor.constraint(equalToConstant: Screen.width * 0.5)
-        remoteCanvasWCons?.isActive = true
-        remoteCanvasHCons = remoteView.heightAnchor.constraint(equalToConstant: 315)
-        remoteCanvasHCons?.isActive = true
-        remoteCanvasTCons = remoteView.topAnchor.constraint(equalTo: timerView.bottomAnchor, constant: 15)
-        remoteCanvasTCons?.isActive = true
+        remoteView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         
-        localUser.centerXAnchor.constraint(equalTo: localView.centerXAnchor).isActive = true
-        localUserBottomCons = localUser.bottomAnchor.constraint(equalTo: localView.bottomAnchor, constant: -10)
-        localUserBottomCons?.priority = .defaultHigh
-        localUserBottomCons?.isActive = true
-        remoteUser.centerXAnchor.constraint(equalTo: remoteView.centerXAnchor).isActive = true
-        remoteUser.bottomAnchor.constraint(equalTo: remoteView.bottomAnchor, constant: -10).isActive = true
+        localBackgroundView.snp.makeConstraints { make in
+            make.width.equalTo(109)
+            make.height.equalTo(163)
+            make.left.equalToSuperview().offset(15)
+            make.bottom.equalToSuperview().offset(-75)
+        }
         
-        broadcastorImgView.centerXAnchor.constraint(equalTo: localView.centerXAnchor).isActive = true
-        broadcastorImgView.bottomAnchor.constraint(equalTo: localUser.topAnchor, constant: -15).isActive = true
-        broadcastorImgView.widthAnchor.constraint(equalToConstant: 84).isActive = true
-        broadcastorImgView.heightAnchor.constraint(equalToConstant: 84).isActive = true
+        arrowButton.snp.makeConstraints { make in
+            make.right.equalTo(-12)
+            make.bottom.equalTo(-10)
+            make.height.equalTo(12)
+            make.width.equalTo(25)
+        }
         
-        audienceImgView.centerXAnchor.constraint(equalTo: remoteView.centerXAnchor).isActive = true
-        audienceImgView.bottomAnchor.constraint(equalTo: remoteUser.topAnchor, constant: -10).isActive = true
-        audienceImgView.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        audienceImgView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        originTitle.snp.makeConstraints { make in
+            make.right.equalTo(arrowButton.snp.left)
+            make.centerY.equalTo(arrowButton.snp.centerY)
+            make.height.equalTo(17)
+        }
         
-        pkView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 15).isActive = true
-        pkView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -15).isActive = true
-        pkView.topAnchor.constraint(equalTo: remoteView.bottomAnchor, constant: 12).isActive = true
+        indicatorButton.snp.makeConstraints { make in
+            make.width.equalTo(20)
+            make.height.equalTo(52)
+            make.left.equalToSuperview().offset(0)
+            make.centerY.equalTo(localBackgroundView.snp.centerY)
+        }
+        
+        indicatorButton.isHidden = true
     }
     
-    @objc
-    private func onTapRemoteButton() {
-        delegate?.onClickRemoteCanvas()
+    private func setupGestures() {
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        localBackgroundView.addGestureRecognizer(panGesture)
+    }
+    
+    @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+        let translation = gesture.translation(in: self)
+        guard let localView = gesture.view else { return }
+        
+        var newCenter = CGPoint(x: localView.center.x + translation.x, y: localView.center.y + translation.y)
+        
+        // 限制 localView 的拖动范围
+        let halfWidth = localView.bounds.width / 2
+        let halfHeight = localView.bounds.height / 2
+        
+        newCenter.x = max(halfWidth, newCenter.x)
+        newCenter.x = min(self.bounds.width - halfWidth, newCenter.x)
+        
+        newCenter.y = max(64 + halfHeight, newCenter.y)
+        newCenter.y = min(self.bounds.height - 38 - halfHeight, newCenter.y)
+        
+        localView.center = newCenter
+        gesture.setTranslation(.zero, in: self)
+    }
+    
+    @objc private func toggleLocalView() {
+        localViewHidden.toggle()
+        if localViewHidden {
+            UIView.animate(withDuration: 0.3) {
+                self.localBackgroundView.snp.updateConstraints { make in
+                    make.left.equalToSuperview().offset(-self.localBackgroundView.frame.width)
+                }
+                self.layoutIfNeeded()
+            } completion: { _ in
+                self.indicatorButton.isHidden = false
+            }
+        } else {
+            self.indicatorButton.isHidden = true
+            UIView.animate(withDuration: 0.3) {
+                self.localBackgroundView.snp.updateConstraints { make in
+                    make.left.equalToSuperview().offset(15)
+                }
+                self.layoutIfNeeded()
+            }
+        }
     }
 }

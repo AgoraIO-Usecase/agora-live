@@ -27,9 +27,9 @@ class ShowLivePagesViewController: UIViewController {
                   localUid != info.uid else {
                 return nil
             }
-            ShowLogger.info("[\(room.roomId)]onRequireRenderVideo: \(info.channelName)  \(vc.liveView.canvasView.localView)", context: kPagesVCTag)
+            ShowLogger.info("[\(room.roomId)]onRequireRenderVideo: \(info.channelName)  \(vc.liveView.canvasView.localBackgroundView.contentView)", context: kPagesVCTag)
             if room.channelName() == info.channelName, room.userId() == "\(info.uid)" {
-                return vc.liveView.canvasView.localView
+                return vc.liveView.canvasView.localBackgroundView.contentView
             } else {
                 if let _ = room.interactionAnchorInfoList.filter({ $0.uid == info.uid && $0.channelName == info.channelName }).first {
                     return vc.liveView.canvasView.remoteView
