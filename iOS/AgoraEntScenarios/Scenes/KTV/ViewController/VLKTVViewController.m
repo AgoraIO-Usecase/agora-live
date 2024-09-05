@@ -2391,9 +2391,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     NSString* currentTopSongNo = NullToString(songs.firstObject.songNo);
     if (![origTopSongNo isEqualToString:currentTopSongNo]) {
         KTVLogInfo(@"clean old song: %@", origTopSongNo);
-        if ([self.ktvApi isSongLoadingWithSongCode:origTopSongNo]) {
-            [self.ktvApi removeMusicWithSongCode:[origTopSongNo integerValue]];
-        }
+        [self.ktvApi cancelIfDownload];
         [self stopPlaySong];
         self.coSingerDegree = 0;
         [LSTPopView removeAllPopView];

@@ -184,6 +184,10 @@ extension KTVApiImpl {
         })
     }
     
+    @objc func cancelIfDownload() {
+        songLoader?.cancelDownload()
+    }
+    
     func setLrcView(view: KTVLrcViewDelegate) {
         sendCustomMessage(with: "renewInnerDataStreamId", label: "view:\(view.description)")
         lrcControl = view
