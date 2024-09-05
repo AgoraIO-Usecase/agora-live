@@ -32,6 +32,7 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
     @objc var songList: [VLRoomSelSongModel] = []
     @objc var choristerList: [KTVChoristerModel] = []
     
+    private weak var scene: AUIScene?
     private weak var delegate: KTVServiceListenerProtocol?
     
     private var roomNo: String?
@@ -87,6 +88,14 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
         
         AppContext.shared.agoraRTCToken = ""
         AppContext.shared.agoraRTMToken = ""
+        
+        KTVAPIContext.shared.errorClosure = { msg in
+            KTVLog.error(text: msg, tag: "KTVAPI")
+        }
+        
+        KTVAPIContext.shared.printClosure = { msg in
+            KTVLog.info(text: msg, tag: "KTVAPI")
+        }
     }
     
     private func currentUserId() -> String {
@@ -172,7 +181,7 @@ extension KTVSyncManagerServiceImp {
             _subscribeAll()
             roomService.createRoom(room: roomInfo) {  err, room in
                 if let err = err {
-                    agoraPrint("enter scene fail: \(err.localizedDescription)")
+                    agoraPrint("create scene fail: \(err.localizedDescription)")
                     _hideLoadingView()
                     completion(KTVServiceError.createRoomFail(err.code).toNSError(), nil)
                     return
@@ -1116,10 +1125,14 @@ extension KTVSyncManagerServiceImp: AUIUserRespDelegate {
 //MARK: AUIRtmErrorProxyDelegate
 extension KTVSyncManagerServiceImp: AUIRtmErrorProxyDelegate {
     private func getCurrentScene(with channelName: String) -> AUIScene? {
-        let scene = self.syncManager.getScene(channelName: channelName)
-        scene?.userService.bindRespDelegate(delegate: self)
-        scene?.bindRespDelegate(delegate: self)
-        scene?.arbiter.subscribeEvent(delegate: self)
+        if let scene = self.scene {
+            return scene
+        }
+        let scene = syncManager.createScene(channelName: channelName)
+        scene.userService.bindRespDelegate(delegate: self)
+        scene.bindRespDelegate(delegate: self)
+        scene.arbiter.subscribeEvent(delegate: self)
+        self.scene = scene
         return scene
     }
     

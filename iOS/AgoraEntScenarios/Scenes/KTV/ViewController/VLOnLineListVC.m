@@ -87,6 +87,7 @@
     kWeakSelf(self);
     createRoomVC.createRoomVCBlock = ^(UIViewController *vc) {
         [[KTVCreateRoomPresentView shared] dismiss];
+        KTVLogInfo(@"createRoomVCBlock");
         [weakself.navigationController pushViewController:vc animated:true];
     };
     KTVCreateRoomPresentView *presentView = [KTVCreateRoomPresentView shared];

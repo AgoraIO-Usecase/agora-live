@@ -54,6 +54,7 @@
     [[AppContext ktvServiceImp] createRoomWithInputModel:intputModel
                                               completion:^(NSError* error, SyncRoomInfo* outputModel) {
         weakSelf.view.userInteractionEnabled = YES;
+        KTVLogInfo(@"createRoomWithInputModel: %@", error.localizedDescription);
         if (error != nil) {
             [VLToast toast:error.localizedDescription];
             return;
