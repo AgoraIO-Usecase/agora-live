@@ -2,9 +2,14 @@ package io.agora.scene.dreamFlow.widget
 
 import android.content.Context
 import android.graphics.Rect
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
@@ -16,10 +21,9 @@ import io.agora.scene.base.utils.dp
 import io.agora.scene.dreamFlow.R
 import io.agora.scene.dreamFlow.VideoSetting
 import io.agora.scene.dreamFlow.databinding.DreamFlowItemAiEffectBinding
-import io.agora.scene.dreamFlow.databinding.DreamFlowSettingAdvanceDialogAudienceBinding
 import io.agora.scene.dreamFlow.databinding.DreamFlowSettingAdvanceItemSwitchBinding
 import io.agora.scene.dreamFlow.databinding.DreamFlowSettingDialogBinding
-import io.agora.scene.dreamFlow.databinding.DreamFlowSettingsItemSliderBinding
+import io.agora.scene.dreamFlow.service.DreamFlowService
 
 data class StyleBean constructor(
     var id: Int,
@@ -39,7 +43,10 @@ class StyleHolder constructor(mBinding: DreamFlowItemAiEffectBinding) :
     }
 }
 
-class StylizedSettingDialog constructor(context: Context) : BottomFullDialog(context) {
+class StylizedSettingDialog constructor(
+    context: Context,
+    private val service: DreamFlowService
+) : BottomFullDialog(context) {
 
     companion object {
 
@@ -76,6 +83,9 @@ class StylizedSettingDialog constructor(context: Context) : BottomFullDialog(con
         )
     }
 
+    private var mStyleAdapter: BaseRecyclerViewAdapter<DreamFlowItemAiEffectBinding, StyleBean, StyleHolder>? =
+        null
+
     private var mEffectAdapter: BaseRecyclerViewAdapter<DreamFlowItemAiEffectBinding, StyleBean, StyleHolder>? =
         null
 
@@ -86,9 +96,63 @@ class StylizedSettingDialog constructor(context: Context) : BottomFullDialog(con
         mBinding.ivBack.setOnClickListener {
             dismiss()
         }
-        setupSwitchItem(ITEM_ID_SWITCH_STYLIZED, mBinding.stylizedEffect, R.string.dream_flow_setting_stylized, 0)
-        setupSwitchItem(ITEM_ID_SWITCH_FACE_MODE, mBinding.FaceMode, R.string.dream_flow_setting_effect, 0)
+        setupSwitchItem(ITEM_ID_SWITCH_STYLIZED, mBinding.stylizedEffect, R.string.dream_flow_setting_stylized, R.string.dream_flow_setting_stylized)
+        setupSwitchItem(ITEM_ID_SWITCH_FACE_MODE, mBinding.FaceMode, R.string.dream_flow_setting_effect, R.string.dream_flow_setting_effect)
+        setupStrength()
         setupVoiceEffectAdapter()
+        setupStyleAdapter()
+        mBinding.etDreamFlowDescribe.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                val layoutParams = mBinding.vDreamFlowSettingBottom.layoutParams
+                layoutParams?.height = 300.dp.toInt()
+                mBinding.vDreamFlowSettingBottom.layoutParams = layoutParams
+                Handler(Looper.getMainLooper()).postDelayed({
+                    mBinding.svStylizedSettings.smoothScrollTo(0, mBinding.svStylizedSettings.getChildAt(0).bottom)
+                }, 300)
+            } else {
+                val layoutParams = mBinding.vDreamFlowSettingBottom.layoutParams
+                layoutParams?.height = 40.dp.toInt()
+                mBinding.vDreamFlowSettingBottom.layoutParams = layoutParams
+                Handler(Looper.getMainLooper()).postDelayed({
+                    mBinding.svStylizedSettings.smoothScrollTo(0, 0)
+                }, 300)
+            }
+        }
+        mBinding.svStylizedSettings.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                hideKeyboard()
+                true
+            } else {
+                false
+            }
+        }
+        window?.let { window ->
+            val initialWindowHeight = Rect().apply { window.decorView.getWindowVisibleDisplayFrame(this) }.height()
+            mBinding.root.viewTreeObserver?.addOnGlobalLayoutListener {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    val currentWindowHeight = Rect().apply { window.decorView.getWindowVisibleDisplayFrame(this) }.height()
+                    if (currentWindowHeight < initialWindowHeight) {
+                    } else {
+                        mBinding.etDreamFlowDescribe.clearFocus()
+                    }
+                }, 300)
+            }
+        }
+        mBinding.tvDreamFlowSave.setOnClickListener {
+            onClickSave()
+        }
+    }
+
+    private fun onClickSave() {
+        val bean = DreamFlowService.SettingBean(
+            mBinding.stylizedEffect.switchCompat.isChecked,
+            mBinding.FaceMode.switchCompat.isChecked,
+            mBinding.Strength.sbProgress.progress * 0.01f,
+            mStyleAdapter?.dataList?.firstOrNull { it.isSelect }?.title ?: "",
+            mEffectAdapter?.dataList?.firstOrNull { it.isSelect }?.title ?: "",
+            mBinding.etDreamFlowDescribe.text.toString()
+        )
+
     }
 
     /**
@@ -137,19 +201,105 @@ class StylizedSettingDialog constructor(context: Context) : BottomFullDialog(con
         }
     }
 
-    // 音效
-    private fun setupVoiceEffectAdapter() {
+    private fun setupStyleAdapter() {
         val stringArray = context.resources.getStringArray(R.array.dream_flow_style)
         val list: MutableList<StyleBean> = ArrayList()
         for (i in stringArray.indices) {
             val drawable: Int = if (i == 0) {
-                R.drawable.dream_flow_miyazaki
+                R.drawable.dream_flow_style_0
             } else if (i == 1) {
-                R.drawable.dream_flow_toonyou
+                R.drawable.dream_flow_style_1
             } else if (i == 2) {
-                R.drawable.dream_flow_sexytoon
+                R.drawable.dream_flow_style_2
             } else {
-                R.drawable.dream_flow_clay
+                R.drawable.dream_flow_style_3
+            }
+            //val audioEffect = mSetting.getEffectIndex(i)
+            list.add(StyleBean(i, 0, drawable, stringArray[i]))
+        }
+//        for (item in list) {
+//            item.isSelect = (mSetting.mAudioEffect == item.audioEffect)
+//        }
+        mStyleAdapter =
+            BaseRecyclerViewAdapter(
+                list, object : OnItemClickListener<StyleBean> {
+                    override fun onItemClick(data: StyleBean, view: View?, position: Int, viewType: Long) {
+                        super.onItemClick(data, view, position, viewType)
+                        //Log.d(TAG, "onItemClick audio effect  $position")
+                        mStyleAdapter?.apply {
+                            for (i in list.indices) {
+                                list[i].isSelect = i == position
+                                notifyItemChanged(i)
+                            }
+                            //mSetting.mAudioEffect = data.audioEffect
+                        }
+                    }
+                },
+                StyleHolder::class.java
+            )
+
+        mBinding.Style.recyclerView.adapter = mStyleAdapter
+        mBinding.Style.tvTitle.text = context.resources.getString(R.string.dream_flow_setting_style_title)
+        val context = context ?: return
+        val itemDecoration = object : DividerItemDecoration(context, HORIZONTAL) {
+            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                val itemCount = state.itemCount
+                when (parent.getChildAdapterPosition(view)) {
+                    0 -> { // first
+                        //outRect.left = 20.dp.toInt()
+                        outRect.right = 10.dp.toInt()
+                    }
+
+                    itemCount - 1 -> { // last
+                        outRect.right = 20.dp.toInt()
+                    }
+
+                    else -> {
+                        outRect.right = 10.dp.toInt()
+                    }
+                }
+            }
+        }
+        mBinding.Style.recyclerView.addItemDecoration(itemDecoration)
+    }
+
+
+    private fun setupStrength() {
+        mBinding.Strength.apply {
+            tvTitle.text = context.resources.getString(R.string.dream_flow_setting_strength_title)
+            val value = 0.2
+            tvSeekBarValue.text = String.format("%.1f", value)
+            sbProgress.max = 1 * 100
+            sbProgress.progress = (value * 100).toInt()
+            sbProgress.setOnSeekBarChangeListener(object: OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    tvSeekBarValue.text = String.format("%.1f", (progress * 0.01))
+                }
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+                }
+            })
+        }
+    }
+
+    // 音效
+    private fun setupVoiceEffectAdapter() {
+        val stringArray = context.resources.getStringArray(R.array.dream_flow_effect)
+        val list: MutableList<StyleBean> = ArrayList()
+        for (i in stringArray.indices) {
+            val drawable: Int = if (i == 0) {
+                R.drawable.dream_flow_effect_0
+            } else if (i == 1) {
+                R.drawable.dream_flow_effect_1
+            } else if (i == 2) {
+                R.drawable.dream_flow_effect_2
+            } else if (i == 3) {
+                R.drawable.dream_flow_effect_3
+            } else if (i == 4) {
+                R.drawable.dream_flow_effect_4
+            } else {
+                R.drawable.dream_flow_effect_5
             }
             //val audioEffect = mSetting.getEffectIndex(i)
             list.add(StyleBean(i, 0, drawable, stringArray[i]))
@@ -175,9 +325,9 @@ class StylizedSettingDialog constructor(context: Context) : BottomFullDialog(con
                 },
                 StyleHolder::class.java
             )
-
-        mBinding.Style.recyclerView.adapter = mEffectAdapter
-        val context = context ?: return
+        mBinding.Effect.tvTitle.text = context.resources.getString(R.string.dream_flow_setting_effect_title)
+        mBinding.Effect.recyclerView.adapter = mEffectAdapter
+        mBinding.Effect.vBottomLine.visibility = View.GONE
         val itemDecoration = object : DividerItemDecoration(context, HORIZONTAL) {
             override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
                 val itemCount = state.itemCount
@@ -197,8 +347,13 @@ class StylizedSettingDialog constructor(context: Context) : BottomFullDialog(con
                 }
             }
         }
-        mBinding.Style.recyclerView.addItemDecoration(itemDecoration)
+        mBinding.Effect.recyclerView.addItemDecoration(itemDecoration)
     }
 
+    private fun hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val v = mBinding.root
+        imm.hideSoftInputFromWindow(v.windowToken, 0)
+    }
 }
 

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:orientation="vertical"
+    tools:theme="@style/Theme.AppCompat">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#303553"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Progress" />
+
+    <SeekBar
+        android:id="@+id/sb_progress"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:max="100"
+        android:minWidth="100dp"
+        android:progressDrawable="@drawable/dream_flow_seekbar_progress"
+        android:thumb="@drawable/dream_flow_seekbar_thumb18"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:progress="30" />
+
+    <TextView
+        android:id="@+id/tv_seek_bar_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#6D7291"
+        android:textSize="14sp"
+        tools:text="0.2"
+        app:layout_constraintEnd_toStartOf="@id/sb_progress"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dream_flow_deliver"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

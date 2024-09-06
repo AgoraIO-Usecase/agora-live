@@ -23,6 +23,7 @@
     <string name="dream_flow_setting_quality">Video Quality</string>
     <string name="dream_flow_setting_advance_setting">Advanced Settings</string>
     <string name="dream_flow_setting_stylized_setting">Stylized Settings</string>
+    <string name="dream_flow_setting_stylized_save">Save</string>
     <string name="dream_flow_setting_quality_enhance_tip">Due to your device being a low-end model, the super-resolution feature has been disabled to ensure smooth device performance.</string>
     <string name="dream_flow_setting_quality_enhance_tip2">Due to your device model or resolution settings, the super-resolution feature has been temporarily disabled to ensure smooth performance.</string>
     <string name="dream_flow_picture_quality_title">Resolution</string>
@@ -192,6 +193,11 @@
 
     <string name="dream_flow_setting_stylized">Stylized Effect</string>
     <string name="dream_flow_setting_effect">Face Mode</string>
+    <string name="dream_flow_setting_style_title">Style</string>
+    <string name="dream_flow_setting_effect_title">Effect</string>
+    <string name="dream_flow_setting_strength_title">Strength</string>
+    <string name="dream_flow_setting_desc_hint">Customized Prompt</string>
+    <string name="dream_flow_window_origin">Origin</string>
 
     <string-array name="dream_flow_encoder">
         <item>Hardware Encoder</item>
@@ -220,6 +226,15 @@
         <item>Toonyou</item>
         <item>Sexytoon</item>
         <item>Clay</item>
+    </string-array>
+
+    <string-array name="dream_flow_effect">
+        <item>Sandstorm</item>
+        <item>Vibrant</item>
+        <item>Fantasy</item>
+        <item>Cinematic</item>
+        <item>Cartoon</item>
+        <item>Customized</item>
     </string-array>
 
 </resources>

@@ -86,7 +86,7 @@
 
     <style name="dream_flow_cornerNormalStyle">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">12dp</item>
+        <item name="cornerSize">3dp</item>
     </style>
 
 </resources>

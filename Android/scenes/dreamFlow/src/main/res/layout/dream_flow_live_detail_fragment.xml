@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <include
         android:id="@+id/videoLinkingLayout"
         layout="@layout/dream_flow_live_detail_video_link"
@@ -45,5 +44,46 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>
+
+    <FrameLayout
+        android:id="@+id/v_drag_content"
+        android:elevation="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <io.agora.scene.dreamFlow.widget.DraggableView
+            android:id="@+id/v_drag_window"
+            android:layout_gravity="start|bottom"
+            android:layout_width="109dp"
+            android:layout_height="163dp"
+            android:layout_marginBottom="76dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:visibility="visible"/>
+    </FrameLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_dream_flow_window_show"
+        android:layout_width="30dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="76dp"
+        android:layout_marginStart="-10dp"
+        android:visibility="gone"
+        app:cardCornerRadius="6dp"
+        android:backgroundTint="#151325D9"
+        app:cardElevation="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_gravity="center_vertical|end"
+            android:src="@drawable/dream_flow_window_show"
+            />
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

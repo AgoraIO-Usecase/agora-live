@@ -23,6 +23,7 @@ import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoCanvas
 import io.agora.rtc2.video.VideoEncoderConfiguration
+import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.dreamFlow.databinding.DreamFlowLiveDetailFragmentBinding
@@ -115,6 +116,14 @@ class LiveDetailFragment : Fragment() {
      * M rtc video loader api
      */
     private val mRtcVideoLoaderApi by lazy { VideoLoader.getImplInstance(mRtcEngine) }
+
+    private val mDreamFlowService by lazy {
+        DreamFlowService(
+            BuildConfig.TOOLBOX_SERVER_HOST,
+            "cn",
+            BuildConfig.AGORA_APP_ID
+        )
+    }
 
     /**
      * Is audio only mode
@@ -306,6 +315,18 @@ class LiveDetailFragment : Fragment() {
         initTopLayout()
         initBottomLayout()
 
+        if (isRoomOwner) {
+            mBinding.vDragWindow.visibility = View.VISIBLE
+            mBinding.vDragWindow.setOnHideClick {
+                mBinding.vDragWindow.visibility = View.INVISIBLE
+                mBinding.cvDreamFlowWindowShow.visibility = View.VISIBLE
+            }
+            mBinding.cvDreamFlowWindowShow.setOnClickListener {
+                mBinding.vDragWindow.visibility = View.VISIBLE
+                mBinding.cvDreamFlowWindowShow.visibility = View.INVISIBLE
+            }
+        }
+
         // Render host video
         if (needRender) {
             mRtcVideoLoaderApi.renderVideo(
@@ -334,7 +355,7 @@ class LiveDetailFragment : Fragment() {
                 setupLocalVideo(
                     VideoLoader.VideoCanvasContainer(
                         it,
-                        mBinding.videoLinkingLayout.videoContainer,
+                        mBinding.vDragWindow.canvasContainer,
                         0
                     )
                 )
@@ -690,7 +711,7 @@ class LiveDetailFragment : Fragment() {
     }
 
     private fun showStylizedDialog() {
-        StylizedSettingDialog(requireContext()).apply {
+        StylizedSettingDialog(requireContext(), mDreamFlowService).apply {
             show()
         }
     }
