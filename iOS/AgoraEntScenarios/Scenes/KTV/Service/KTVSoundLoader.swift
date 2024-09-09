@@ -62,6 +62,18 @@ import AFNetworking
         }
     }
     
+    func isSongLoading(songCode: Int) -> Bool {
+        let url = getMusicURL(songCode: songCode)
+        return downloadTask?.currentRequest?.url?.absoluteString == url
+    }
+    
+    func cancelDownload() {
+        if (downloadTask != nil) {
+            downloadTask?.cancel()
+            downloadTask = nil
+        }
+    }
+    
     @objc func preloadMusic(songCode: Int, onProgress: @escaping((Double)->Void), onCompelete: @escaping(NSError?)->Void) {
         guard let musicURLStr = getMusicURL(songCode: songCode),
               let musicURL = URL(string: musicURLStr),
