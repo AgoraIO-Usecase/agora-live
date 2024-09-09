@@ -27,10 +27,25 @@ class DreamFlowService(
         var description: String = ""
     )
 
+    enum class ServiceStatus(val value: String) {
+        ACTIVE("active"),
+        INACTIVE("inactive"),
+        PENDING("pending");
+
+        companion object {
+            private val map = values().associateBy { it.value }
+
+            fun fromString(value: String): ServiceStatus? {
+                return map[value]
+            }
+        }
+    }
+
     var inUid: Int = 0
     var inRole: Int = 0
 
-    private val state: String = ""
+    private var status: ServiceStatus = ServiceStatus.INACTIVE
+
     private var workerId: String = ""
 
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
@@ -42,42 +57,74 @@ class DreamFlowService(
         builder.build()
     }
 
-    fun create(
-        settingBean: SettingBean,
-        success: (userId: String) -> Unit,
-        failure: ((Exception?) -> Unit)? = null
-    ) {
+    fun save(settingBean: SettingBean,
+             success: () -> Unit,
+             failure: ((Exception?) -> Unit)? = null) {
         scope.launch(Dispatchers.Main) {
             try {
-                success.invoke(create(settingBean))
+                if (settingBean.isEffectOn) {
+                    // turn effect on
+                    if (status == DreamFlowService.ServiceStatus.ACTIVE) {
+                        update(settingBean)
+                        success.invoke()
+                    } else {
+                        create(settingBean)
+                        success.invoke()
+                    }
+                } else {
+                    // turn effect off
+                    if (status == DreamFlowService.ServiceStatus.ACTIVE) {
+                        delete()
+                        success.invoke()
+                    } else {
+                        // service is not active, do noting
+                        success.invoke()
+                    }
+                }
             } catch (e: Exception) {
                 failure?.invoke(e)
             }
         }
     }
 
-    fun delete(
+    private fun create(
         settingBean: SettingBean,
-        success: (userId: String) -> Unit,
+        success: () -> Unit,
         failure: ((Exception?) -> Unit)? = null
     ) {
         scope.launch(Dispatchers.Main) {
             try {
-                success.invoke(delete())
+                create(settingBean)
+                success.invoke()
             } catch (e: Exception) {
                 failure?.invoke(e)
             }
         }
     }
 
-    fun update(
-        settingBean: SettingBean,
-        success: (userId: String) -> Unit,
+    private fun delete(
+        success: () -> Unit,
         failure: ((Exception?) -> Unit)? = null
     ) {
         scope.launch(Dispatchers.Main) {
             try {
-                success.invoke(update(settingBean))
+                delete()
+                success.invoke()
+            } catch (e: Exception) {
+                failure?.invoke(e)
+            }
+        }
+    }
+
+    private fun update(
+        settingBean: SettingBean,
+        success: () -> Unit,
+        failure: ((Exception?) -> Unit)? = null
+    ) {
+        scope.launch(Dispatchers.Main) {
+            try {
+                update(settingBean)
+                success.invoke()
             } catch (e: Exception) {
                 failure?.invoke(e)
             }
@@ -85,7 +132,7 @@ class DreamFlowService(
     }
 
     fun getStatus(
-        success: (userId: String) -> Unit,
+        success: (ServiceStatus) -> Unit,
         failure: ((Exception?) -> Unit)? = null
     ) {
         scope.launch(Dispatchers.Main) {
@@ -153,7 +200,8 @@ class DreamFlowService(
             if (bodyJobj["code"] != 0) {
                 throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, reqCode=${bodyJobj["code"]}, reqMsg=${bodyJobj["msg"]},")
             } else {
-                (bodyJobj["data"] as JSONObject)["userId"] as String
+                // update state
+
             }
         } else {
             throw RuntimeException("Fetch token error: httpCode=${execute.code}, httpMsg=${execute.message}")
@@ -215,7 +263,8 @@ class DreamFlowService(
             if (bodyJobj["code"] != 0) {
                 throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, reqCode=${bodyJobj["code"]}, reqMsg=${bodyJobj["msg"]},")
             } else {
-                (bodyJobj["data"] as JSONObject)["userId"] as String
+                ServiceStatus.ACTIVE
+                // TODO: Analysis status
             }
         } else {
             throw RuntimeException("Fetch token error: httpCode=${execute.code}, httpMsg=${execute.message}")

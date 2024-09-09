@@ -152,7 +152,11 @@ class StylizedSettingDialog constructor(
             mEffectAdapter?.dataList?.firstOrNull { it.isSelect }?.title ?: "",
             mBinding.etDreamFlowDescribe.text.toString()
         )
-
+        service.save(bean, {
+            // succeed
+        }, { e ->
+            // failure
+        })
     }
 
     /**
