@@ -923,6 +923,7 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
 //MARK: ShowRoomLiveViewDelegate
 extension ShowLiveViewController: ShowRoomLiveViewDelegate {
     func onPKDidTimeout() {
+        ShowLogger.info("onPKDidTimeout", context: kShowLogBaseContext)
         guard let _ = currentInteraction else { return }
         serviceImp?.stopInteraction(roomId: roomId) { _ in
         }

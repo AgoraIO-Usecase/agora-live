@@ -51,10 +51,11 @@
     VL(weakSelf);
     self.view.userInteractionEnabled = NO;
     VLKTVViewController *ktvVC = [[VLKTVViewController alloc]init];
+    KTVLogInfo(@"createRoomWithInputModel start");
     [[AppContext ktvServiceImp] createRoomWithInputModel:intputModel
                                               completion:^(NSError* error, SyncRoomInfo* outputModel) {
         weakSelf.view.userInteractionEnabled = YES;
-        KTVLogInfo(@"createRoomWithInputModel: %@", error.localizedDescription);
+        KTVLogInfo(@"createRoomWithInputModel completion, error: %@", error.localizedDescription);
         if (error != nil) {
             [VLToast toast:error.localizedDescription];
             return;
