@@ -22,8 +22,8 @@ class DreamFlowService(
         var isEffectOn: Boolean = false,
         var isFaceModeOn: Boolean = false,
         var strength: Float = 0.2f,
-        var style: String,
-        var effect: String,
+        var style: String? = null,
+        var effect: String? = null,
         var description: String = ""
     )
 
@@ -43,6 +43,9 @@ class DreamFlowService(
 
     var inUid: Int = 0
     var inRole: Int = 0
+
+    var currentSetting: SettingBean = SettingBean()
+        private set
 
     private var status: ServiceStatus = ServiceStatus.INACTIVE
 
@@ -66,18 +69,21 @@ class DreamFlowService(
                     // turn effect on
                     if (status == DreamFlowService.ServiceStatus.ACTIVE) {
                         update(settingBean)
+                        currentSetting = settingBean
                         success.invoke()
                     } else {
                         create(settingBean)
+                        currentSetting = settingBean
                         success.invoke()
                     }
                 } else {
                     // turn effect off
                     if (status == DreamFlowService.ServiceStatus.ACTIVE) {
                         delete()
+                        currentSetting = settingBean
                         success.invoke()
                     } else {
-                        // service is not active, do noting
+                        currentSetting = settingBean
                         success.invoke()
                     }
                 }

@@ -141,6 +141,33 @@ class StylizedSettingDialog constructor(
         mBinding.tvDreamFlowSave.setOnClickListener {
             onClickSave()
         }
+        setupWithSetting()
+    }
+
+    private fun setupWithSetting() {
+        val bean = service.currentSetting
+        mBinding.stylizedEffect.switchCompat.isChecked = bean.isEffectOn
+        mBinding.FaceMode.switchCompat.isChecked = bean.isFaceModeOn
+        mBinding.Strength.sbProgress.progress = (bean.strength * 100).toInt()
+        mStyleAdapter?.let { adapter ->
+            val list = adapter.dataList
+            for (i in adapter.dataList.indices) {
+                if (list[i].title == bean.style) {
+                    list[i].isSelect = true
+                    adapter.notifyItemChanged(i)
+                }
+            }
+        }
+        mEffectAdapter?.let { adapter ->
+            val list = adapter.dataList
+            for (i in adapter.dataList.indices) {
+                if (list[i].title == bean.effect) {
+                    list[i].isSelect = true
+                    adapter.notifyItemChanged(i)
+                }
+            }
+        }
+        mBinding.etDreamFlowDescribe.setText(bean.description)
     }
 
     private fun onClickSave() {
