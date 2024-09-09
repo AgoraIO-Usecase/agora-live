@@ -438,7 +438,7 @@
             self.musicTitleLabel.hidden = NO;
             break;
         case VLKTVMVViewStateMusicLoadFailed:
-            self.joinChorusBtn.hidden = YES;
+            self.joinChorusBtn.hidden = [self.delegate enableShowJoinChorusButton] ? NO : YES;
             self.leaveChorusBtn.hidden = YES;
             self.pauseBtn.hidden = YES;
        //     self.settingBtn.hidden = YES;
@@ -465,7 +465,7 @@
             [self bringSubviewToFront:self.retryButton];
             break;
         case VLKTVMVViewStateMusicLoadLrcFailed:
-            self.joinChorusBtn.hidden = YES;
+            self.joinChorusBtn.hidden = [self.delegate enableShowJoinChorusButton] ? NO : YES;
             self.leaveChorusBtn.hidden = YES;
             self.pauseBtn.hidden = YES;
        //     self.settingBtn.hidden = YES;
