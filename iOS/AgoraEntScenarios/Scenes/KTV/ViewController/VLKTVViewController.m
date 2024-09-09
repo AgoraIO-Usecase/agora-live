@@ -91,8 +91,6 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 @property (nonatomic, strong) VLSongItmModel *choosedSongModel; //点的歌曲
 @property (nonatomic, strong) AgoraRtcEngineKit *RTCkit;
 
-@property (nonatomic, strong) VLPopScoreView *scoreView;
-
 @property (nonatomic, assign) BOOL isNowMicMuted;
 @property (nonatomic, assign) BOOL isNowCameraMuted;
 @property (nonatomic, assign) BOOL isOnMicSeat;
@@ -430,21 +428,11 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 
 - (void)showScoreViewWithScore:(NSInteger)score {
                         //  song:(VLRoomSelSongModel *)song {
-    if (score < 0) return;
-    if(_scoreView == nil) {
-        _scoreView = [[VLPopScoreView alloc] initWithFrame:self.view.bounds withDelegate:self];
-        [self.view addSubview:_scoreView];
-    }
-    KTVLogInfo(@"Avg score for the song: %ld", (long)score);
-    [_scoreView configScore:(int)score];
-    [self.view bringSubviewToFront:_scoreView];
-    self.scoreView.hidden = NO;
 }
 
 - (void)popScoreViewDidClickConfirm
 {
     KTVLogInfo(@"Using as score view hidding");
-    self.scoreView = nil;
 }
 
 #define VLEarSettingView
