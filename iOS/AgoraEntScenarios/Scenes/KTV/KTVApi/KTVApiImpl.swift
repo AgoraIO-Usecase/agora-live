@@ -184,10 +184,6 @@ extension KTVApiImpl {
         })
     }
     
-    @objc func cancelIfDownload() {
-        songLoader?.cancelDownload()
-    }
-    
     func setLrcView(view: KTVLrcViewDelegate) {
         sendCustomMessage(with: "renewInnerDataStreamId", label: "view:\(view.description)")
         lrcControl = view
@@ -412,11 +408,7 @@ extension KTVApiImpl {
     }
     
     @objc public func removeMusic(songCode: Int) {
-        sendCustomMessage(with: "removeMusic", label: "songCode:\(songCode)")
-        let ret: Int = mcc?.removeCache(songCode: songCode) ?? 0
-        if ret < 0 {
-            agoraPrint("removeMusic failed: ret:\(ret)")
-        }
+        songLoader?.cancelDownload()
     }
     
     @objc public func enableMutipath(enable: Bool) {
@@ -1590,9 +1582,8 @@ class KTVApiRTCDelegateHandler: NSObject, AgoraRtcEngineDelegate {
     }
 }
 
-
 extension KTVApiImpl {
     @objc public func isSongLoading(songCode: String) -> Bool {
-        return musicCallbacks[songCode] == nil ? false : true
+        return songLoader?.isSongLoading(songCode: Int(songCode) ?? 0) ?? false
     }
 }
