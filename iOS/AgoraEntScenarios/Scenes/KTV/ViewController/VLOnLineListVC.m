@@ -7,7 +7,6 @@
 #import "VLHomeOnLineListView.h"
 #import "VLKTVViewController.h"
 
-#import "VLPopScoreView.h"
 #import "VLCreateRoomViewController.h"
 #import "LSTPopView.h"
 #import "VLUserCenter.h"
@@ -19,7 +18,7 @@
 #import "VLAlert.h"
 #import "AgoraEntScenarios-Swift.h"
 
-@interface VLOnLineListVC ()<VLHomeOnLineListViewDelegate/*,AgoraRtmDelegate*/,VLPopScoreViewDelegate>
+@interface VLOnLineListVC ()<VLHomeOnLineListViewDelegate/*,AgoraRtmDelegate*/>
 
 @property (nonatomic, strong) VLHomeOnLineListView *listView;
 @end
