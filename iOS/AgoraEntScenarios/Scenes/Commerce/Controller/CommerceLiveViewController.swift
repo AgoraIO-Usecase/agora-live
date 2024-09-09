@@ -318,7 +318,7 @@ class CommerceLiveViewController: UIViewController {
         guard role == .broadcaster else { return }
         let auctionModel = CommerceGoodsAuctionModel()
         let goodsModel = CommerceGoodsModel()
-        goodsModel.title = "Diamond Ring"
+        goodsModel.title = ""
         goodsModel.price = 1
         goodsModel.quantity = 1
         auctionModel.goods = goodsModel

@@ -65,7 +65,7 @@ enum CommerceAuctionStatus: Int {
 @objcMembers
 class CommerceGoodsModel: NSObject, YYModel {
     var imageName: String?
-    var title: String?
+    var title: String? = "Diamond Ring"
     var quantity: Int = 0
     var price: Int = 0
     var goodsId: String? = UUID().uuidString
