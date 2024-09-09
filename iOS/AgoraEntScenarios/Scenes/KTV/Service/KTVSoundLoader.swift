@@ -62,7 +62,12 @@ import AFNetworking
         }
     }
     
-    @objc func cancelDownload() {
+    func isSongLoading(songCode: Int) -> Bool {
+        let url = getMusicURL(songCode: songCode)
+        return downloadTask?.currentRequest?.url?.absoluteString == url
+    }
+    
+    func cancelDownload() {
         if (downloadTask != nil) {
             downloadTask?.cancel()
             downloadTask = nil
