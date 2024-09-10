@@ -21,6 +21,13 @@ fileprivate enum KTVSongMode: Int {
     case songUrl
 }
 
+@objc class KTVAPIContext: NSObject {
+    @objc static let shared: KTVAPIContext = KTVAPIContext()
+    public var printClosure: ((String)->())?
+    public var warningClosure: ((String)->())?
+    public var errorClosure: ((String)->())?
+}
+
 @objc class KTVApiImpl: NSObject, KTVApiDelegate{
     
     private var apiConfig: KTVApiConfig?
@@ -425,6 +432,9 @@ extension KTVApiImpl {
     }
 
     private func agoraPrint(_ message: String) {
+        if let closure = KTVAPIContext.shared.printClosure {
+            closure(message)
+        }
         #if DEBUG
             print(message)
         #else
@@ -433,8 +443,11 @@ extension KTVApiImpl {
     }
     
     private func agoraPrintError(_ message: String) {
+        if let closure = KTVAPIContext.shared.errorClosure {
+            closure(message)
+        }
         #if DEBUG
-            print(message)
+//            print(message)
         #else
 //            apiConfig?.engine?.writeLog(.error, content: "ktv_err:\(message)")
         #endif
