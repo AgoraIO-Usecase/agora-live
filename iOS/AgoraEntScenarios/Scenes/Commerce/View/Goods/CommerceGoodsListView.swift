@@ -175,7 +175,7 @@ class CommerceGoodsListViewCell: UITableViewCell {
     }()
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Diamond Ring"
+        label.text = ""
         label.textColor = UIColor(hex: "#191919", alpha: 1.0)
         label.font = .systemFont(ofSize: 16, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -255,7 +255,7 @@ class CommerceGoodsListViewCell: UITableViewCell {
         guard let model = model else { return }
         coverImageView.sd_setImage(with: URL(string: model.goods?.imageName ?? ""),
                                    placeholderImage: UIImage.commerce_sceneImage(name: model.goods?.imageName ?? ""))
-        titleLabel.text = "Diamond Ring"//model.goods?.title
+        titleLabel.text = model.goods?.title
         numberLabel.text = "Qty: \(model.goods?.quantity ?? 0)"
         priceLabel.text = "$\(model.goods?.price ?? 0)"
         model.status = (model.goods?.quantity ?? 0) <= 0 ? .sold_out : .buy

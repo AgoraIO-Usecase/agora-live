@@ -86,6 +86,7 @@
     kWeakSelf(self);
     createRoomVC.createRoomVCBlock = ^(UIViewController *vc) {
         [[KTVCreateRoomPresentView shared] dismiss];
+        KTVLogInfo(@"createRoomVCBlock");
         [weakself.navigationController pushViewController:vc animated:true];
     };
     KTVCreateRoomPresentView *presentView = [KTVCreateRoomPresentView shared];
@@ -116,7 +117,9 @@
     }
     VL(weakSelf);
     VLKTVViewController *ktvVC = [[VLKTVViewController alloc]init];
+    KTVLogInfo(@"joinRoomWithRoomId[%@] start", listModel.roomNo);
     [[AppContext ktvServiceImp] joinRoomWithRoomId:listModel.roomNo password:inputText completion:^(NSError * _Nullable error) {
+        KTVLogInfo(@"joinRoomWithRoomId[%@] completion", error.localizedDescription);
         if (error != nil) {
             [VLToast toast:error.localizedDescription];
             return;
