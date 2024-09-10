@@ -1,7 +1,6 @@
 package io.agora.scene.ktv.widget.song
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.scwang.smart.refresh.layout.api.RefreshLayout
@@ -57,6 +56,21 @@ class SongChooseFragment : BaseViewBindingFragment<KtvFragmentSongListBinding?>(
                 break
             }
         }
+    }
+
+    /**
+     * Set rest song status
+     *
+     * @param chosenSongs
+     */
+    fun setRestSongStatus(chosenSongs:List<SongItem>){
+        val dataList = mChooseAdapter.dataList
+        for ((i, oldItem) in dataList.withIndex()) {
+            oldItem?.loading = false
+            val newItem:SongItem = chosenSongs.firstOrNull { it.songNo == oldItem?.songNo } ?: continue
+            oldItem?.isChosen = newItem.isChosen
+        }
+        mChooseAdapter.notifyDataSetChanged()
     }
 
     /**
