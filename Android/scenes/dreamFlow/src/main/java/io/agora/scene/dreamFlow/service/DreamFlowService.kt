@@ -43,6 +43,7 @@ class DreamFlowService(
 
     var inUid: Int = 0
     var inRole: Int = 0
+    var channelName: String = ""
 
     var currentSetting: SettingBean = SettingBean()
         private set
@@ -72,7 +73,7 @@ class DreamFlowService(
                         currentSetting = settingBean
                         success.invoke()
                     } else {
-                        create(settingBean)
+                        workerId = create(settingBean)
                         currentSetting = settingBean
                         success.invoke()
                     }
@@ -152,13 +153,13 @@ class DreamFlowService(
 
     private suspend fun create(settingBean: SettingBean) = withContext(Dispatchers.IO) {
         val postBody = JSONObject().apply {
-            put("name", "lhz") // ?
+            put("name", "agoralive") // ?
             put("rtcConfigure", JSONObject().apply {
                 put("userids", JSONArray().apply {
                     put(JSONObject().apply {
                         put("inUid", inUid) // 房主uid
                         put("inToken", "") // 是否是通用token？
-                        put("inChannelName", "stylize1") // 频道名
+                        put("inChannelName", channelName) // 频道名
                         put("inRole", inRole) // ?
                         put("inVideo", "") // ?
                         put("genaiUid", 444) // 是否要给个定值
@@ -184,10 +185,10 @@ class DreamFlowService(
                 ?: throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, body is null")
             val bodyJobj = JSONObject(body.string())
             Log.d(tag, "graspSong: $bodyJobj")
-            if (bodyJobj["code"] != 0) {
+            if (bodyJobj["code"] != 0 && bodyJobj["code"] != 1) {
                 throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, reqCode=${bodyJobj["code"]}, reqMsg=${bodyJobj["msg"]},")
             } else {
-                (bodyJobj["data"] as JSONObject)["userId"] as String
+                (bodyJobj["data"] as JSONObject)["id"] as String
             }
         } else {
             throw RuntimeException("Fetch token error: httpCode=${execute.code}, httpMsg=${execute.message}")

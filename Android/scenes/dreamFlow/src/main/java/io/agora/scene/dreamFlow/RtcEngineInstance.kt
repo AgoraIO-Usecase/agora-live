@@ -32,11 +32,13 @@ object RtcEngineInstance {
 
     private val workingExecutor = Executors.newSingleThreadExecutor()
 
+    // TODO 暂时使用静态 appid
     @Volatile
-    private var generalRtcToken: String = ""
+    private var generalRtcToken: String = io.agora.scene.base.BuildConfig.AGORA_APP_ID
 
+    // TODO 暂时使用静态 appid
     @Volatile
-    private var generalRtmToken: String = ""
+    private var generalRtmToken: String = io.agora.scene.base.BuildConfig.AGORA_APP_ID
 
     /**
      * Setup general token

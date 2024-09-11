@@ -119,7 +119,7 @@ class LiveDetailFragment : Fragment() {
 
     private val mDreamFlowService by lazy {
         DreamFlowService(
-            BuildConfig.TOOLBOX_SERVER_HOST,
+            "http://104.15.30.249:49327",//BuildConfig.TOOLBOX_SERVER_HOST,
             "cn",
             BuildConfig.AGORA_APP_ID
         )
@@ -343,6 +343,9 @@ class LiveDetailFragment : Fragment() {
                 )
             )
         }
+
+        mDreamFlowService.channelName = mRoomInfo.roomId
+        mDreamFlowService.inUid = mRoomInfo.ownerId.toInt()
     }
 
     /**
