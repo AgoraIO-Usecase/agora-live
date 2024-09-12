@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="commerce_create_room">Create</string>
-    <string name="commerce_create_tips1">Welcome to Live Streaming!</string>
+    <string name="commerce_create_tips1">Welcome to E-commerce!</string>
     <string name="commerce_living">LIVE</string>
     <string name="commerce_room_id">%s</string>
     <string name="commerce_user_count">%d</string>

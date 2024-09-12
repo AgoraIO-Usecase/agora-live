@@ -170,6 +170,7 @@ class AGResourceManager(private val context: Context) {
                 }
             } else {
                 // 没有下载过
+                Log.d(tag, "oldResource is null")
                 if (inputFile.length() != resource.size) {
                     DownloadManager.instance.download(
                         url = resource.url,
