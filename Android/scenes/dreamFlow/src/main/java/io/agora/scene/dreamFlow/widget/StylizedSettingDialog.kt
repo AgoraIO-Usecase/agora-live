@@ -7,6 +7,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.scene.base.component.BaseRecyclerViewAdapter
 import io.agora.scene.base.component.OnItemClickListener
+import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.base.utils.dp
 import io.agora.scene.dreamFlow.R
 import io.agora.scene.dreamFlow.VideoSetting
@@ -179,10 +181,15 @@ class StylizedSettingDialog constructor(
             mEffectAdapter?.dataList?.firstOrNull { it.isSelect }?.title ?: "",
             mBinding.etDreamFlowDescribe.text.toString()
         )
+        addLoadingView()
         service.save(bean, {
             // succeed
+            hideLoadingView()
+            dismiss()
         }, { e ->
             // failure
+            hideLoadingView()
+            ToastUtils.showToast(e?.message ?: "error")
         })
     }
 
@@ -385,6 +392,30 @@ class StylizedSettingDialog constructor(
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         val v = mBinding.root
         imm.hideSoftInputFromWindow(v.windowToken, 0)
+    }
+
+    private var loadingView: View? = null
+    private fun addLoadingView() {
+        if (this.loadingView == null) {
+            val rootView = window?.decorView?.findViewById<ViewGroup>(android.R.id.content)?.getChildAt(0) as ViewGroup
+            this.loadingView = LayoutInflater.from(context).inflate(R.layout.view_base_loading, rootView, false)
+            rootView.addView(
+                this.loadingView,
+                ViewGroup.LayoutParams(-1, -1)
+            )
+        }
+        this.loadingView?.visibility = View.VISIBLE
+    }
+
+    private fun hideLoadingView() {
+        if (loadingView == null) {
+            return
+        }
+        window?.apply {
+            decorView.post {
+                loadingView?.visibility = View.GONE
+            }
+        }
     }
 }
 

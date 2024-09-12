@@ -11,6 +11,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <RelativeLayout
+        android:id="@+id/rl_progress_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#303553"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/pb_dream_flow_progress"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_centerInParent="true"
+            android:indeterminate="true" />
+
+        <TextView
+            android:id="@+id/tv_dream_flow_progress_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:layout_alignTop="@+id/pb_dream_flow_progress"
+            android:layout_centerHorizontal="true"
+            android:textColor="#D9FFFFFF"
+            android:textSize="12sp"
+            tools:text="Initializing"
+            />
+
+        <TextView
+            android:id="@+id/tv_dream_flow_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_dream_flow_progress_title"
+            android:layout_centerHorizontal="true"
+            android:textColor="#D9FFFFFF"
+            android:textSize="24sp"
+            tools:text="75%" />
+
+    </RelativeLayout>
+
     <include
         android:id="@+id/topLayout"
         layout="@layout/dream_flow_live_detail_top"
@@ -47,13 +85,23 @@
 
     <FrameLayout
         android:id="@+id/v_drag_content"
-        android:elevation="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <io.agora.scene.dreamFlow.widget.DraggableView
             android:id="@+id/v_drag_window"
             android:layout_gravity="start|bottom"
+            android:layout_width="109dp"
+            android:layout_height="163dp"
+            android:layout_marginBottom="76dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:visibility="visible"/>
+
+        <io.agora.scene.dreamFlow.widget.DraggableView
+            android:id="@+id/v_drag_window2"
+            android:layout_gravity="end|bottom"
             android:layout_width="109dp"
             android:layout_height="163dp"
             android:layout_marginBottom="76dp"

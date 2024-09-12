@@ -121,7 +121,8 @@ class LiveDetailFragment : Fragment() {
         DreamFlowService(
             "http://104.15.30.249:49327",//BuildConfig.TOOLBOX_SERVER_HOST,
             "cn",
-            BuildConfig.AGORA_APP_ID
+            BuildConfig.AGORA_APP_ID,
+            "101821"
         )
     }
 
@@ -151,7 +152,7 @@ class LiveDetailFragment : Fragment() {
     /**
      * M main rtc connection
      */
-    private val mMainRtcConnection by lazy { RtcConnection(mRoomInfo.roomId, UserManager.getInstance().user.id.toInt()) }
+    private val mMainRtcConnection by lazy { RtcConnection("101821", UserManager.getInstance().user.id.toInt()) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -344,7 +345,6 @@ class LiveDetailFragment : Fragment() {
             )
         }
 
-        mDreamFlowService.channelName = mRoomInfo.roomId
         mDreamFlowService.inUid = mRoomInfo.ownerId.toInt()
     }
 
@@ -361,6 +361,14 @@ class LiveDetailFragment : Fragment() {
                         mBinding.vDragWindow.canvasContainer,
                         0
                     )
+                )
+                mRtcEngine.setupRemoteVideoEx(
+                    VideoCanvas(
+                        mBinding.vDragWindow2.canvasContainer,
+                        Constants.RENDER_MODE_HIDDEN,
+                        mDreamFlowService.genaiUid
+                    ),
+                    mMainRtcConnection
                 )
             }
         }
@@ -451,9 +459,9 @@ class LiveDetailFragment : Fragment() {
      */
     private fun initBottomLayout() {
         val bottomLayout = mBinding.bottomLayout
-        bottomLayout.ivSetting.setOnClickListener {
-            showSettingDialog()
-        }
+//        bottomLayout.ivSetting.setOnClickListener {
+//            showSettingDialog()
+//        }
         bottomLayout.ivStylized.setOnClickListener {
             showStylizedDialog()
         }
@@ -717,6 +725,24 @@ class LiveDetailFragment : Fragment() {
         StylizedSettingDialog(requireContext(), mDreamFlowService).apply {
             show()
         }
+        mDreamFlowService.setListener(object: IDreamFlowStateListener {
+            override fun onStatusChanged(status: DreamFlowService.ServiceStatus) {
+                when (status) {
+                    DreamFlowService.ServiceStatus.STARTING -> {
+                        // show progress
+                        mBinding.rlProgressContainer.visibility = View.VISIBLE
+                    }
+                    DreamFlowService.ServiceStatus.STARTED -> {
+                        // hide progress
+                        mBinding.rlProgressContainer.visibility = View.GONE
+                    }
+                    DreamFlowService.ServiceStatus.INACTIVE -> {
+                        // show empty
+                        mBinding.rlProgressContainer.visibility = View.INVISIBLE
+                    }
+                }
+            }
+        })
     }
 
     /**
@@ -957,7 +983,11 @@ class LiveDetailFragment : Fragment() {
 
         if (activity is LiveDetailActivity) {
             (activity as LiveDetailActivity).toggleSelfVideo(isRoomOwner, callback = {
-                joinChannel(eventListener)
+//                joinChannel(eventListener)
+                mBinding.bottomLayout.ivSetting.setOnClickListener {
+                    joinChannel(eventListener)
+                    mDreamFlowService.forceStarted()
+                }
                 initVideoView()
             })
             (activity as LiveDetailActivity).toggleSelfAudio(isRoomOwner, callback = {

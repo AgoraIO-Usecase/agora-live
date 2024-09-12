@@ -14,6 +14,7 @@ class DreamFlowService(
     private val domain: String,
     private val region: String,
     private val appId: String,
+    private val channelName: String,
 ) {
 
     private val tag = "DreamFlowService"
@@ -28,22 +29,22 @@ class DreamFlowService(
     )
 
     enum class ServiceStatus(val value: String) {
-        ACTIVE("active"),
-        INACTIVE("inactive"),
-        PENDING("pending");
+        STARTING("starting"),
+        STARTED("started"),
+        INACTIVE("inactive");
 
         companion object {
             private val map = values().associateBy { it.value }
 
-            fun fromString(value: String): ServiceStatus? {
-                return map[value]
+            fun fromString(value: String): ServiceStatus {
+                return map[value] ?: INACTIVE
             }
         }
     }
 
     var inUid: Int = 0
     var inRole: Int = 0
-    var channelName: String = ""
+    val genaiUid: Int = 999
 
     var currentSetting: SettingBean = SettingBean()
         private set
@@ -61,6 +62,26 @@ class DreamFlowService(
         builder.build()
     }
 
+    private var listener: IDreamFlowStateListener? = null
+    fun setListener(l: IDreamFlowStateListener) {
+        listener = l
+    }
+
+    fun clean() {
+        listener = null
+    }
+
+    fun forceStarted() {
+        updateStatus(ServiceStatus.STARTED)
+    }
+
+    private fun updateStatus(s: ServiceStatus) {
+        if (status != s) {
+            status = s
+            listener?.onStatusChanged(status)
+        }
+    }
+
     fun save(settingBean: SettingBean,
              success: () -> Unit,
              failure: ((Exception?) -> Unit)? = null) {
@@ -68,18 +89,20 @@ class DreamFlowService(
             try {
                 if (settingBean.isEffectOn) {
                     // turn effect on
-                    if (status == DreamFlowService.ServiceStatus.ACTIVE) {
+                    if (status == DreamFlowService.ServiceStatus.STARTING ||
+                        status == DreamFlowService.ServiceStatus.STARTED) {
                         update(settingBean)
                         currentSetting = settingBean
                         success.invoke()
                     } else {
-                        workerId = create(settingBean)
+                        create(settingBean)
                         currentSetting = settingBean
                         success.invoke()
                     }
                 } else {
                     // turn effect off
-                    if (status == DreamFlowService.ServiceStatus.ACTIVE) {
+                    if (status == DreamFlowService.ServiceStatus.STARTING ||
+                        status == DreamFlowService.ServiceStatus.STARTED) {
                         delete()
                         currentSetting = settingBean
                         success.invoke()
@@ -153,16 +176,16 @@ class DreamFlowService(
 
     private suspend fun create(settingBean: SettingBean) = withContext(Dispatchers.IO) {
         val postBody = JSONObject().apply {
-            put("name", "agoralive") // ?
+            put("name", "agoralive")
             put("rtcConfigure", JSONObject().apply {
                 put("userids", JSONArray().apply {
                     put(JSONObject().apply {
-                        put("inUid", inUid) // 房主uid
-                        put("inToken", "") // 是否是通用token？
+                        put("inUid", inUid)
+                        put("inToken", appId)
                         put("inChannelName", channelName) // 频道名
                         put("inRole", inRole) // ?
                         put("inVideo", "") // ?
-                        put("genaiUid", 444) // 是否要给个定值
+                        put("genaiUid", genaiUid) // 是否要给个定值
                         put("genaiToken", "") // 是否需要获取？
                         put("genaiChannelName", "") // ?
                         put("genaiRole", 0) // 是否需要在风格选择时指定？
@@ -188,7 +211,9 @@ class DreamFlowService(
             if (bodyJobj["code"] != 0 && bodyJobj["code"] != 1) {
                 throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, reqCode=${bodyJobj["code"]}, reqMsg=${bodyJobj["msg"]},")
             } else {
-                (bodyJobj["data"] as JSONObject)["id"] as String
+                val data = bodyJobj["data"] as JSONObject
+                workerId = data["id"] as String
+                updateStatus(ServiceStatus.fromString((data["stat"] as String)))
             }
         } else {
             throw RuntimeException("Fetch token error: httpCode=${execute.code}, httpMsg=${execute.message}")
@@ -208,7 +233,8 @@ class DreamFlowService(
                 throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, reqCode=${bodyJobj["code"]}, reqMsg=${bodyJobj["msg"]},")
             } else {
                 // update state
-
+                workerId = ""
+                updateStatus(ServiceStatus.INACTIVE)
             }
         } else {
             throw RuntimeException("Fetch token error: httpCode=${execute.code}, httpMsg=${execute.message}")
@@ -226,7 +252,7 @@ class DreamFlowService(
                         put("inChannelName", "stylize1")
                         put("inRole", inRole)
                         put("inVideo", "")
-                        put("genaiUid", 444)
+                        put("genaiUid", genaiUid)
                         put("genaiToken", "")
                         put("genaiChannelName", "")
                         put("genaiRole", 0)
@@ -270,7 +296,7 @@ class DreamFlowService(
             if (bodyJobj["code"] != 0) {
                 throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, reqCode=${bodyJobj["code"]}, reqMsg=${bodyJobj["msg"]},")
             } else {
-                ServiceStatus.ACTIVE
+                ServiceStatus.STARTED
                 // TODO: Analysis status
             }
         } else {
