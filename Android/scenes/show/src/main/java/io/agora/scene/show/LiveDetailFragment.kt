@@ -273,6 +273,127 @@ class LiveDetailFragment : Fragment() {
 
     private val mUserMuteAudioStateMap = mutableMapOf<Int, Boolean>()
 
+    private val onInteractionChanged =
+        object : (ShowSubscribeStatus, ShowInteractionInfo?) -> Unit {
+            override fun invoke(status: ShowSubscribeStatus, info: ShowInteractionInfo?) {
+                ShowLogger.d("interaction", "interaction changed")
+                context ?: return
+                if (status == ShowSubscribeStatus.updated
+                    && info != null
+                    && info.interactStatus != ShowInteractionStatus.idle
+                ) {
+                    ShowLogger.d(
+                        "interaction",
+                        "old interaction: $interactionInfo, new interaction: $info"
+                    )
+                    interactionInfo = info
+                    // UI
+                    updateVideoSetting(true)
+                    refreshBottomLayout()
+                    refreshViewDetailLayout(info.interactStatus)
+                    mLinkDialog.setOnSeatStatus(info.userName, info.interactStatus)
+                    mPKDialog.setPKInvitationItemStatus(info.userName, info.interactStatus)
+                    // RTC
+                    updateLinkingMode()
+                    updatePKingMode()
+                    refreshPKTimeCount()
+
+                    dismissMicInvitaionDialog()
+                    dismissPKInvitationDialog()
+
+                } else {
+                    ShowLogger.d(
+                        "interaction",
+                        "old interaction: $interactionInfo, new interaction: $info"
+                    )
+                    // UI
+                    refreshViewDetailLayout(ShowInteractionStatus.idle)
+                    mLinkDialog.setOnSeatStatus("", null)
+                    mPKDialog.setPKInvitationItemStatus("", null)
+                    // RTC
+                    updateIdleMode()
+                    interactionInfo = null
+                    updateStatisticView()
+                    refreshBottomLayout()
+                    refreshPKTimeCount()
+                    updateVideoSetting(false)
+                    onMeLinkingListener?.onMeLinking(false)
+                }
+            }
+
+        }
+
+    private val onPKInvitationChanged = object : (ShowSubscribeStatus, ShowPKInvitation?) -> Unit {
+        override fun invoke(status: ShowSubscribeStatus, info: ShowPKInvitation?) {
+            ShowLogger.d("pk", "pk invitation changed: $status, info:$info")
+            context ?: return
+            info ?: return
+            when (info.type) {
+                ShowInvitationType.invitation -> {
+                    isPKCompetition = true
+                    preparePKingMode(info.fromRoomId)
+                    showPKInvitationDialog(info.fromUserName, info)
+                }
+
+                ShowInvitationType.reject -> {
+                    isPKCompetition = false
+                    updateIdleMode()
+                }
+            }
+        }
+    }
+
+    private val onMicSeatApplyChanged =
+        object : (ShowSubscribeStatus, List<ShowMicSeatApply>) -> Unit {
+            override fun invoke(status: ShowSubscribeStatus, list: List<ShowMicSeatApply>) {
+                ShowLogger.d("Link", "mic seat apply changed")
+                mBinding.bottomLayout.vLinkingDot.isVisible = list.isNotEmpty() && isRoomOwner
+                mLinkDialog.setSeatApplyList(interactionInfo, list)
+            }
+        }
+
+    private val onMicSeatInvitationChange =
+        object : (ShowSubscribeStatus, ShowMicSeatInvitation?) -> Unit {
+            override fun invoke(status: ShowSubscribeStatus, invitation: ShowMicSeatInvitation?) {
+                invitation ?: return
+                context ?: return
+                if (invitation.type == ShowInvitationType.invitation) {
+                    showInvitationDialog(invitation)
+                }
+            }
+        }
+
+    private val onUserChange = object : (ShowSubscribeStatus, ShowUser?) -> Unit {
+        override fun invoke(status: ShowSubscribeStatus, user: ShowUser?) {
+            reFetchUserList()
+        }
+    }
+
+    private val onMessageChange = object : (ShowSubscribeStatus, ShowMessage) -> Unit {
+        override fun invoke(status: ShowSubscribeStatus, showMessage: ShowMessage) {
+            insertMessageItem(showMessage)
+        }
+    }
+
+    private val onCurrRoomEvent = object : (ShowSubscribeStatus, ShowRoomDetailModel?) -> Unit {
+        override fun invoke(status: ShowSubscribeStatus, info: ShowRoomDetailModel?) {
+            if (status == ShowSubscribeStatus.deleted) {
+                destroy(false)
+                showLivingEndLayout()
+                ShowLogger.d("showLivingEndLayout", "room delete by owner!")
+            }
+        }
+    }
+
+    private var onReconnectEvent = object : () -> Unit {
+        override fun invoke() {
+            context ?: return
+            reFetchUserList()
+        }
+    }
+
+
+
     /**
      * On create view
      *
@@ -1682,91 +1803,14 @@ class LiveDetailFragment : Fragment() {
      */
     private fun initService() {
         reFetchUserList()
-        mService.subscribeReConnectEvent(mRoomInfo.roomId) {
-            context ?: return@subscribeReConnectEvent
-            reFetchUserList()
-        }
-        mService.subscribeCurrRoomEvent(mRoomInfo.roomId) { status, _ ->
-            if (status == ShowSubscribeStatus.deleted) {
-                destroy(false)
-                showLivingEndLayout()
-                ShowLogger.d("showLivingEndLayout","room delete by owner!")
-            }
-        }
-        mService.subscribeMicSeatInvitation(mRoomInfo.roomId) { _, invitation ->
-            invitation ?: return@subscribeMicSeatInvitation
-            context ?: return@subscribeMicSeatInvitation
-            if (invitation.type == ShowInvitationType.invitation) {
-                showInvitationDialog(invitation)
-            }
-        }
-        mService.subscribeUser(mRoomInfo.roomId) { status, user ->
-            reFetchUserList()
-        }
-        mService.subscribeMessage(mRoomInfo.roomId) { _, showMessage ->
-            insertMessageItem(showMessage)
-        }
-        mService.subscribeMicSeatApply(mRoomInfo.roomId) { _, list ->
-            ShowLogger.d("Link","mic seat apply changed")
-            mBinding.bottomLayout.vLinkingDot.isVisible = list.isNotEmpty() && isRoomOwner
-            mLinkDialog.setSeatApplyList(interactionInfo, list)
-        }
-        mService.subscribeInteractionChanged(mRoomInfo.roomId) { status, info ->
-            ShowLogger.d("interaction","interaction changed")
-            context ?: return@subscribeInteractionChanged
-            if (status == ShowSubscribeStatus.updated
-                && info != null
-                && info.interactStatus != ShowInteractionStatus.idle
-            ) {
-                ShowLogger.d("interaction", "old interaction: $interactionInfo, new interaction: $info")
-                interactionInfo = info
-                // UI
-                updateVideoSetting(true)
-                refreshBottomLayout()
-                refreshViewDetailLayout(info.interactStatus)
-                mLinkDialog.setOnSeatStatus(info.userName, info.interactStatus)
-                mPKDialog.setPKInvitationItemStatus(info.userName, info.interactStatus)
-                // RTC
-                updateLinkingMode()
-                updatePKingMode()
-                refreshPKTimeCount()
-
-                dismissMicInvitaionDialog()
-                dismissPKInvitationDialog()
-
-            } else {
-                ShowLogger.d("interaction","old interaction: $interactionInfo, new interaction: $info")
-                // UI
-                refreshViewDetailLayout(ShowInteractionStatus.idle)
-                mLinkDialog.setOnSeatStatus("", null)
-                mPKDialog.setPKInvitationItemStatus("", null)
-                // RTC
-                updateIdleMode()
-                interactionInfo = null
-                updateStatisticView()
-                refreshBottomLayout()
-                refreshPKTimeCount()
-                updateVideoSetting(false)
-                onMeLinkingListener?.onMeLinking(false)
-            }
-        }
-
-        mService.subscribePKInvitationChanged(mRoomInfo.roomId) { status, info ->
-            ShowLogger.d("pk","pk invitation changed: $status, info:$info")
-            info ?: return@subscribePKInvitationChanged
-            context ?: return@subscribePKInvitationChanged
-            when(info.type){
-                ShowInvitationType.invitation -> {
-                    isPKCompetition = true
-                    preparePKingMode(info.fromRoomId)
-                    showPKInvitationDialog(info.fromUserName, info)
-                }
-                ShowInvitationType.reject -> {
-                    isPKCompetition = false
-                    updateIdleMode()
-                }
-            }
-        }
+        mService.subscribeReConnectEvent(mRoomInfo.roomId, onReconnectEvent)
+        mService.subscribeCurrRoomEvent(mRoomInfo.roomId, onCurrRoomEvent)
+        mService.subscribeMicSeatInvitation(mRoomInfo.roomId, onMicSeatInvitationChange)
+        mService.subscribeUser(mRoomInfo.roomId, onUserChange)
+        mService.subscribeMessage(mRoomInfo.roomId, onMessageChange)
+        mService.subscribeMicSeatApply(mRoomInfo.roomId, onMicSeatApplyChanged)
+        mService.subscribeInteractionChanged(mRoomInfo.roomId, onInteractionChanged)
+        mService.subscribePKInvitationChanged(mRoomInfo.roomId, onPKInvitationChanged)
 
         mService.getInteractionInfo(mRoomInfo.roomId, { interactionInfo ->
             ShowLogger.d(TAG,"getInteractionInfo: ${mRoomInfo.roomId}, interactionInfo:$interactionInfo")
@@ -2253,6 +2297,7 @@ class LiveDetailFragment : Fragment() {
             mRtcEngine.leaveChannelEx(RtcConnection(prepareRkRoomId, UserManager.getInstance().user.id.toInt()))
         }
         prepareRkRoomId = ""
+        mBinding.videoLinkingAudienceLayout.videoContainer.removeAllViews()
         mBinding.videoLinkingAudienceLayout.videoContainer.setOnClickListener(null)
         mBinding.videoPKLayout.iBroadcasterBView.setOnClickListener(null)
 
