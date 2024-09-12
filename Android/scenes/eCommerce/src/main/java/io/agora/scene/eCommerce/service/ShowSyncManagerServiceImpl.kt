@@ -248,6 +248,15 @@ class ShowSyncManagerServiceImpl constructor(
                 System.currentTimeMillis()
             )
             roomInfo.customPayload = GsonTools.beanToMap(roomDetailModel)
+
+
+            val scene = syncManager.createScene(roomInfo.roomId)
+            val controller = RoomInfoController(roomInfo.roomId, scene, roomDetailModel)
+            roomInfoControllers.add(controller)
+            scene.userService.registerRespObserver(userObserver)
+            CommerceLogger.d(TAG, "[commerce] add controller ${roomInfo.roomId}， roomInfoControllers：${roomInfoControllers}")
+            actionSubscribe(controller)
+            scene.bindRespDelegate(this)
             roomService.createRoom(BuildConfig.AGORA_APP_ID, kSceneId, roomInfo) { e, info ->
                 if (info != null) {
                     val temp = mutableListOf<RoomDetailModel>()
@@ -257,17 +266,12 @@ class ShowSyncManagerServiceImpl constructor(
                     success.invoke(roomDetailModel)
                 }
                 if (e != null) {
+                    scene.userService.unRegisterRespObserver(userObserver)
+                    roomInfoControllers.remove(controller)
+                    scene.unbindRespDelegate(this)
                     error?.invoke(Exception(e.message))
                 }
             }
-
-            val scene = syncManager.createScene(roomInfo.roomId)
-            val controller = RoomInfoController(roomInfo.roomId, scene, roomDetailModel)
-            roomInfoControllers.add(controller)
-            scene.userService.registerRespObserver(userObserver)
-            CommerceLogger.d(TAG, "[commerce] add controller ${roomInfo.roomId}， roomInfoControllers：${roomInfoControllers}")
-            actionSubscribe(controller)
-            scene.bindRespDelegate(this)
         }
     }
 
@@ -413,53 +417,6 @@ class ShowSyncManagerServiceImpl constructor(
                 CommerceLogger.e(TAG, e, "subscribeAttributesDidChanged: ${e.message}")
             }
         }
-    }
-
-    private fun addOriginalData(controller: RoomInfoController) {
-        val map1 = GsonTools.beanToMap(
-            GoodsModel(
-                goodsId = "0",
-                imageName = "commerce_shop_goods_0",
-                title = context.getString(io.agora.scene.eCommerce.R.string.commerce_shop_auction_item_0),
-                quantity = 6,
-                price = 20f,
-            )
-        )
-        val map2 = GsonTools.beanToMap(
-            GoodsModel(
-                goodsId = "1",
-                imageName = "commerce_shop_goods_1",
-                title = context.getString(io.agora.scene.eCommerce.R.string.commerce_shop_auction_item_1),
-                quantity = 0,
-                price = 5f,
-            )
-        )
-        val map3 = GsonTools.beanToMap(
-            GoodsModel(
-                goodsId = "2",
-                imageName = "commerce_shop_goods_2",
-                title = context.getString(io.agora.scene.eCommerce.R.string.commerce_shop_auction_item_2),
-                quantity = 6,
-                price = 12f,
-            )
-        )
-        controller.shopCollection?.addMetaData(null, map1, null) {}
-        controller.shopCollection?.addMetaData(null, map2, null) {}
-        controller.shopCollection?.addMetaData(null, map3, null) {}
-        val auctionModel = AuctionModel().apply {
-            goods = GoodsModel(
-                goodsId = "",
-                title = context.getString(io.agora.scene.eCommerce.R.string.commerce_shop_auction_item_0),
-                quantity = 1,
-                price = 1f
-            )
-            status = 0L
-        }
-        val auctionMap = GsonTools.beanToMap(auctionModel)
-        controller.auctionCollection?.addMetaData(null, auctionMap) {}
-
-        val keys = mapOf<String, Any>("count" to 0L)
-        controller.likeCollection?.addMetaData(null, keys) {}
     }
 
     /** User Actions */

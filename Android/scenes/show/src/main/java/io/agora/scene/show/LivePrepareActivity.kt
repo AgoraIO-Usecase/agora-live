@@ -398,7 +398,6 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
 
         val beautyResource = AGResourceManager(this)
         var manifest: AGManifest? = null
-        beautyResource.checkResource(BuildConfig.BEAUTY_RESOURCE)
 
         lifecycleScope.launch {
             var downloadSuccess = false
@@ -420,6 +419,8 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                     }
                 }
             )
+
+            beautyResource.checkResource(BuildConfig.BEAUTY_RESOURCE)
 
             manifest?.files?.forEach { resource ->
                 if (resource.uri == "beauty_faceunity") {
