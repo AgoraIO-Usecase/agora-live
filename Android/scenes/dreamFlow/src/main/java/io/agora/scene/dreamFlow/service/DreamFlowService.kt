@@ -286,8 +286,8 @@ class DreamFlowService(
             put("strength", settingBean.strength)
             put("face_mode", settingBean.isFaceModeOn)
         }
-        val request = Request.Builder().url("$domain/$region/v1/projects/$appId/stylize").
-        addHeader("Content-Type", "application/json").post(postBody.toString().toRequestBody()).build()
+        val request = Request.Builder().url("$domain/$region/v1/projects/$appId/stylize/$workerId").
+        addHeader("Content-Type", "application/json").patch(postBody.toString().toRequestBody()).build()
         val execute = okHttpClient.newCall(request).execute()
         if (execute.isSuccessful) {
             val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
@@ -296,7 +296,7 @@ class DreamFlowService(
             if (bodyJobj["code"] != 0) {
                 throw RuntimeException("error: ${execute.code} message: ${execute.message}")
             } else {
-                (bodyJobj["data"] as JSONObject)["userId"] as String
+                // do noting
             }
         } else {
             throw RuntimeException("error: ${execute.code} message: ${execute.message}")
