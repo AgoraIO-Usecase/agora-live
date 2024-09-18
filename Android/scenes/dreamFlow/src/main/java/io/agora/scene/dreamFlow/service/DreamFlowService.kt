@@ -17,7 +17,11 @@ class DreamFlowService(
     private val channelName: String,
 ) {
 
-    private val tag = "DreamFlowService"
+    companion object {
+        val genaiUid: Int = 999
+    }
+
+    private val tag = "DreamFlowServiceAPI"
 
     data class SettingBean constructor(
         var isEffectOn: Boolean = false,
@@ -25,33 +29,33 @@ class DreamFlowService(
         var strength: Float = 0.2f,
         var style: String? = null,
         var effect: String? = null,
-        var description: String = ""
+        var prmopt: String = ""
     )
 
     enum class ServiceStatus(val value: String) {
         STARTING("starting"),
         STARTED("started"),
-        INACTIVE("inactive");
+        IDLE("idle");
 
         companion object {
             private val map = values().associateBy { it.value }
 
             fun fromString(value: String): ServiceStatus {
-                return map[value] ?: INACTIVE
+                return map[value] ?: IDLE
             }
         }
     }
 
     var inUid: Int = 0
     var inRole: Int = 0
-    val genaiUid: Int = 999
 
     var currentSetting: SettingBean = SettingBean()
         private set
 
-    private var status: ServiceStatus = ServiceStatus.INACTIVE
+    var status: ServiceStatus = ServiceStatus.IDLE
+        private set
 
-    private var workerId: String = ""
+    private var workerId: String = "b3a21856-88a8-4523-b553-cfaf14af5784"
 
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
     private val okHttpClient by lazy {
@@ -71,7 +75,8 @@ class DreamFlowService(
         listener = null
     }
 
-    fun forceStarted() {
+    fun updateStarted() {
+        updateProgress(100)
         updateStatus(ServiceStatus.STARTED)
     }
 
@@ -82,6 +87,12 @@ class DreamFlowService(
         }
     }
 
+    private fun updateProgress(p: Int) {
+        if (status == ServiceStatus.STARTING) {
+            listener?.onLoadingProgressChanged(p)
+        }
+    }
+
     fun save(settingBean: SettingBean,
              success: () -> Unit,
              failure: ((Exception?) -> Unit)? = null) {
@@ -89,8 +100,8 @@ class DreamFlowService(
             try {
                 if (settingBean.isEffectOn) {
                     // turn effect on
-                    if (status == DreamFlowService.ServiceStatus.STARTING ||
-                        status == DreamFlowService.ServiceStatus.STARTED) {
+                    if (status == ServiceStatus.STARTING ||
+                        status == ServiceStatus.STARTED) {
                         update(settingBean)
                         currentSetting = settingBean
                         success.invoke()
@@ -98,17 +109,20 @@ class DreamFlowService(
                         create(settingBean)
                         currentSetting = settingBean
                         success.invoke()
+                        updateStatus(ServiceStatus.STARTING)
                     }
                 } else {
                     // turn effect off
-                    if (status == DreamFlowService.ServiceStatus.STARTING ||
-                        status == DreamFlowService.ServiceStatus.STARTED) {
+                    if (status == ServiceStatus.STARTING ||
+                        status == ServiceStatus.STARTED) {
                         delete()
                         currentSetting = settingBean
                         success.invoke()
+                        updateStatus(ServiceStatus.IDLE)
                     } else {
                         currentSetting = settingBean
                         success.invoke()
+                        updateStatus(ServiceStatus.IDLE)
                     }
                 }
             } catch (e: Exception) {
@@ -132,7 +146,7 @@ class DreamFlowService(
         }
     }
 
-    private fun delete(
+    fun delete(
         success: () -> Unit,
         failure: ((Exception?) -> Unit)? = null
     ) {
@@ -162,12 +176,13 @@ class DreamFlowService(
     }
 
     fun getStatus(
-        success: (ServiceStatus) -> Unit,
+        success: () -> Unit,
         failure: ((Exception?) -> Unit)? = null
     ) {
         scope.launch(Dispatchers.Main) {
             try {
-                success.invoke(getStatus())
+                getStatus()
+                success.invoke()
             } catch (e: Exception) {
                 failure?.invoke(e)
             }
@@ -182,74 +197,7 @@ class DreamFlowService(
                     put(JSONObject().apply {
                         put("inUid", inUid)
                         put("inToken", appId)
-                        put("inChannelName", channelName) // 频道名
-                        put("inRole", inRole) // ?
-                        put("inVideo", "") // ?
-                        put("genaiUid", genaiUid) // 是否要给个定值
-                        put("genaiToken", "") // 是否需要获取？
-                        put("genaiChannelName", "") // ?
-                        put("genaiRole", 0) // 是否需要在风格选择时指定？
-                        put("genaiVideo", "") // ?
-                        put("prompt", "Best quality") // 是否需要在config中获取?
-                    })
-                })
-            })
-            put("prompt", "Best quality") // 和上边的是否相同？
-            put("style", settingBean.style)
-            put("strength", settingBean.strength)
-            put("face_mode", settingBean.isFaceModeOn)
-        }
-        // region 如何获取到
-        val request = Request.Builder().url("$domain/$region/v1/projects/$appId/stylize").
-        addHeader("Content-Type", "application/json").post(postBody.toString().toRequestBody()).build()
-        val execute = okHttpClient.newCall(request).execute()
-        if (execute.isSuccessful) {
-            val body = execute.body
-                ?: throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, body is null")
-            val bodyJobj = JSONObject(body.string())
-            Log.d(tag, "graspSong: $bodyJobj")
-            if (bodyJobj["code"] != 0 && bodyJobj["code"] != 1) {
-                throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, reqCode=${bodyJobj["code"]}, reqMsg=${bodyJobj["msg"]},")
-            } else {
-                val data = bodyJobj["data"] as JSONObject
-                workerId = data["id"] as String
-                updateStatus(ServiceStatus.fromString((data["stat"] as String)))
-            }
-        } else {
-            throw RuntimeException("Fetch token error: httpCode=${execute.code}, httpMsg=${execute.message}")
-        }
-    }
-
-    private suspend fun delete() = withContext(Dispatchers.IO) {
-        val request = Request.Builder().url("$domain/$region/v1/projects/$appId/stylize/$workerId").
-        addHeader("Content-Type", "application/json").delete().build()
-        val execute = okHttpClient.newCall(request).execute()
-        if (execute.isSuccessful) {
-            val body = execute.body
-                ?: throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, body is null")
-            val bodyJobj = JSONObject(body.string())
-            Log.d(tag, "graspSong: $bodyJobj")
-            if (bodyJobj["code"] != 0) {
-                throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, reqCode=${bodyJobj["code"]}, reqMsg=${bodyJobj["msg"]},")
-            } else {
-                // update state
-                workerId = ""
-                updateStatus(ServiceStatus.INACTIVE)
-            }
-        } else {
-            throw RuntimeException("Fetch token error: httpCode=${execute.code}, httpMsg=${execute.message}")
-        }
-    }
-
-    private suspend fun update(settingBean: SettingBean) = withContext(Dispatchers.IO) {
-        val postBody = JSONObject().apply {
-            put("name", "lhz")
-            put("rtcConfigure", JSONObject().apply {
-                put("userids", JSONArray().apply {
-                    put(JSONObject().apply {
-                        put("inUid", inUid)
-                        put("inToken", "")
-                        put("inChannelName", "stylize1")
+                        put("inChannelName", channelName)
                         put("inRole", inRole)
                         put("inVideo", "")
                         put("genaiUid", genaiUid)
@@ -257,11 +205,83 @@ class DreamFlowService(
                         put("genaiChannelName", "")
                         put("genaiRole", 0)
                         put("genaiVideo", "")
-                        put("prompt", "Best quality")
+                        put("prompt", settingBean.prmopt)
                     })
                 })
             })
-            put("prompt", "Best quality")
+            put("prompt", settingBean.prmopt)
+            put("style", settingBean.style)
+            put("strength", settingBean.strength)
+            put("face_mode", settingBean.isFaceModeOn)
+        }
+
+        val request = Request.Builder().url("$domain/$region/v1/projects/$appId/stylize").
+        addHeader("Content-Type", "application/json").post(postBody.toString().toRequestBody()).build()
+        val execute = okHttpClient.newCall(request).execute()
+        if (execute.isSuccessful) {
+            val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            Log.d(tag, "create result body: $body")
+            val bodyJobj = JSONObject(body.string())
+            Log.d(tag, "create result body obj: $bodyJobj")
+            if (bodyJobj["code"] != 0 && bodyJobj["code"] != 1) {
+                throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            } else {
+                val data = bodyJobj["data"] as JSONObject
+                workerId = data["id"] as String
+                Log.d(tag, "create result succeed: $data workerId: $workerId")
+            }
+        } else {
+            val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            val obj = JSONObject(body.string())
+            val code = obj["code"] as Int
+            val msg = obj["message"] as String
+            throw RuntimeException("error: $code message: $msg")
+        }
+    }
+
+    private suspend fun delete() = withContext(Dispatchers.IO) {
+        val postBody = JSONObject().apply {
+            put("admin", true)
+        }
+        val request = Request.Builder().url("$domain/$region/v1/projects/$appId/stylize/$workerId").
+        addHeader("Content-Type", "application/json").delete(postBody.toString().toRequestBody()).build()
+        val execute = okHttpClient.newCall(request).execute()
+        if (execute.isSuccessful) {
+            val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            val bodyJobj = JSONObject(body.string())
+            Log.d(tag, "delete result body obj: $bodyJobj")
+            if (bodyJobj["code"] != 0) {
+                throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            } else {
+                // update state
+                workerId = ""
+            }
+        } else {
+            throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+        }
+    }
+
+    private suspend fun update(settingBean: SettingBean) = withContext(Dispatchers.IO) {
+        val postBody = JSONObject().apply {
+            put("name", "agoralive")
+            put("rtcConfigure", JSONObject().apply {
+                put("userids", JSONArray().apply {
+                    put(JSONObject().apply {
+                        put("inUid", inUid)
+                        put("inToken", appId)
+                        put("inChannelName", channelName)
+                        put("inRole", inRole)
+                        put("inVideo", "")
+                        put("genaiUid", genaiUid)
+                        put("genaiToken", "")
+                        put("genaiChannelName", "")
+                        put("genaiRole", 0)
+                        put("genaiVideo", "")
+                        put("prompt", settingBean.prmopt)
+                    })
+                })
+            })
+            put("prompt", settingBean.prmopt)
             put("style", settingBean.style)
             put("strength", settingBean.strength)
             put("face_mode", settingBean.isFaceModeOn)
@@ -270,17 +290,16 @@ class DreamFlowService(
         addHeader("Content-Type", "application/json").post(postBody.toString().toRequestBody()).build()
         val execute = okHttpClient.newCall(request).execute()
         if (execute.isSuccessful) {
-            val body = execute.body
-                ?: throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, body is null")
+            val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
             val bodyJobj = JSONObject(body.string())
-            Log.d(tag, "graspSong: $bodyJobj")
+            Log.d(tag, "update result body obj: $bodyJobj")
             if (bodyJobj["code"] != 0) {
-                throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, reqCode=${bodyJobj["code"]}, reqMsg=${bodyJobj["msg"]},")
+                throw RuntimeException("error: ${execute.code} message: ${execute.message}")
             } else {
                 (bodyJobj["data"] as JSONObject)["userId"] as String
             }
         } else {
-            throw RuntimeException("Fetch token error: httpCode=${execute.code}, httpMsg=${execute.message}")
+            throw RuntimeException("error: ${execute.code} message: ${execute.message}")
         }
     }
 
@@ -289,18 +308,16 @@ class DreamFlowService(
         addHeader("Content-Type", "application/json").get().build()
         val execute = okHttpClient.newCall(request).execute()
         if (execute.isSuccessful) {
-            val body = execute.body
-                ?: throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, body is null")
+            val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
             val bodyJobj = JSONObject(body.string())
-            Log.d(tag, "graspSong: $bodyJobj")
+            Log.d(tag, "status result body obj: $bodyJobj")
             if (bodyJobj["code"] != 0) {
-                throw RuntimeException("graspSong error: httpCode=${execute.code}, httpMsg=${execute.message}, reqCode=${bodyJobj["code"]}, reqMsg=${bodyJobj["msg"]},")
+                throw RuntimeException("error: ${execute.code} message: ${execute.message}")
             } else {
-                ServiceStatus.STARTED
                 // TODO: Analysis status
             }
         } else {
-            throw RuntimeException("Fetch token error: httpCode=${execute.code}, httpMsg=${execute.message}")
+            throw RuntimeException("error: ${execute.code} message: ${execute.message}")
         }
     }
 }

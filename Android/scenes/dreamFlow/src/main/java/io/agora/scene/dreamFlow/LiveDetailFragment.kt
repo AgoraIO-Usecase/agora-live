@@ -2,6 +2,7 @@ package io.agora.scene.dreamFlow
 
 import android.content.Context
 import android.os.*
+import android.util.Log
 import android.util.Size
 import android.view.LayoutInflater
 import android.view.SurfaceView
@@ -122,7 +123,7 @@ class LiveDetailFragment : Fragment() {
             "http://104.15.30.249:49327",//BuildConfig.TOOLBOX_SERVER_HOST,
             "cn",
             BuildConfig.AGORA_APP_ID,
-            "101821"
+            mRoomId
         )
     }
 
@@ -152,7 +153,7 @@ class LiveDetailFragment : Fragment() {
     /**
      * M main rtc connection
      */
-    private val mMainRtcConnection by lazy { RtcConnection("101821", UserManager.getInstance().user.id.toInt()) }
+    private val mMainRtcConnection by lazy { RtcConnection(mRoomId, UserManager.getInstance().user.id.toInt()) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -340,12 +341,13 @@ class LiveDetailFragment : Fragment() {
                 VideoLoader.VideoCanvasContainer(
                     viewLifecycleOwner,
                     mBinding.videoLinkingLayout.videoContainer,
-                    mRoomInfo.ownerId.toIntOrNull() ?: 0
+                    DreamFlowService.genaiUid
                 )
             )
         }
 
         mDreamFlowService.inUid = mRoomInfo.ownerId.toInt()
+        mDreamFlowService.delete({})
     }
 
     /**
@@ -361,14 +363,6 @@ class LiveDetailFragment : Fragment() {
                         mBinding.vDragWindow.canvasContainer,
                         0
                     )
-                )
-                mRtcEngine.setupRemoteVideoEx(
-                    VideoCanvas(
-                        mBinding.vDragWindow2.canvasContainer,
-                        Constants.RENDER_MODE_HIDDEN,
-                        mDreamFlowService.genaiUid
-                    ),
-                    mMainRtcConnection
                 )
             }
         }
@@ -388,7 +382,7 @@ class LiveDetailFragment : Fragment() {
             return VideoLoader.VideoCanvasContainer(
                 viewLifecycleOwner,
                 mBinding.videoLinkingLayout.videoContainer,
-                mRoomInfo.ownerId.toInt()
+                DreamFlowService.genaiUid
             )
         }
         return null
@@ -437,12 +431,6 @@ class LiveDetailFragment : Fragment() {
         val topLayout = mBinding.topLayout
         val dataFormat =
             SimpleDateFormat("HH:mm:ss").apply { timeZone = TimeZone.getTimeZone("GMT") }
-//        DreamFlowLogger.d(
-//           TAG,
-//           "TopTimer curr=${TimeUtils.currentTimeMillis()}, createAt=${mRoomInfo.createdAt}, diff=${TimeUtils.currentTimeMillis() - mRoomInfo.createdAt}, time=${
-//               dataFormat.format(Date(TimeUtils.currentTimeMillis() - mRoomInfo.createdAt))
-//           }"
-//       )
         topLayout.tvTimer.post(object : Runnable {
             override fun run() {
                 topLayout.tvTimer.text =
@@ -459,9 +447,9 @@ class LiveDetailFragment : Fragment() {
      */
     private fun initBottomLayout() {
         val bottomLayout = mBinding.bottomLayout
-//        bottomLayout.ivSetting.setOnClickListener {
-//            showSettingDialog()
-//        }
+        bottomLayout.ivSetting.setOnClickListener {
+            showSettingDialog()
+        }
         bottomLayout.ivStylized.setOnClickListener {
             showStylizedDialog()
         }
@@ -731,18 +719,54 @@ class LiveDetailFragment : Fragment() {
                     DreamFlowService.ServiceStatus.STARTING -> {
                         // show progress
                         mBinding.rlProgressContainer.visibility = View.VISIBLE
+                        mBinding.bottomLayout.ivStylized.visibility = View.INVISIBLE
+                        val runnable = Runnable {
+                            joinChannelAndShowDreamFlow()
+                        }
+                        handler.postDelayed(runnable, 2 * 60 * 1000)
+                        dreamFlowStartRunnable = runnable
                     }
                     DreamFlowService.ServiceStatus.STARTED -> {
                         // hide progress
                         mBinding.rlProgressContainer.visibility = View.GONE
+                        mBinding.bottomLayout.ivStylized.visibility = View.VISIBLE
                     }
-                    DreamFlowService.ServiceStatus.INACTIVE -> {
+                    DreamFlowService.ServiceStatus.IDLE -> {
                         // show empty
                         mBinding.rlProgressContainer.visibility = View.INVISIBLE
+                        mBinding.bottomLayout.ivStylized.visibility = View.VISIBLE
+                        // leave channel
+                        mRtcEngine.leaveChannelEx(mMainRtcConnection)
                     }
                 }
             }
+
+            override fun onLoadingProgressChanged(progress: Int) {
+                val percent = "$progress%"
+                mBinding.tvDreamFlowProgress.text = percent
+                mBinding.pbDreamFlowProgress.setProgress(progress, true)
+            }
         })
+    }
+    private val handler = Handler(Looper.getMainLooper())
+    private var dreamFlowStartRunnable: Runnable? = null
+    fun joinChannelAndShowDreamFlow() {
+        eventListener?.let { joinChannel(it) }
+
+        val textureView = TextureView(requireContext())
+        mBinding.videoLinkingLayout.videoContainer.addView(textureView)
+        textureView.bringToFront()
+        val canvas = VideoCanvas(
+            textureView,
+            Constants.RENDER_MODE_HIDDEN,
+            DreamFlowService.genaiUid
+        )
+        canvas.mirrorMode = Constants.VIDEO_MIRROR_MODE_ENABLED
+        val ret = mRtcEngine.setupRemoteVideoEx(
+            canvas,
+            mMainRtcConnection
+        )
+        Log.d("dreamflow1", "ret = $ret")
     }
 
     /**
@@ -883,9 +907,11 @@ class LiveDetailFragment : Fragment() {
     private var quickStartTime = 0L
     private var subscribeMediaTime = 0L
 
+    private var eventListener: IRtcEngineEventHandler? = null
     private fun initRtcEngine() {
-        val eventListener = object : IRtcEngineEventHandler() {
+        eventListener = object : IRtcEngineEventHandler() {
             override fun onJoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
+                Log.d("dreamflow", "onJoinChannelSuccess uid: $uid")
                 super.onJoinChannelSuccess(channel, uid, elapsed)
                 VideoSetting.updateBroadcastSetting(
                     VideoSetting.LiveMode.OneVOne,
@@ -911,6 +937,7 @@ class LiveDetailFragment : Fragment() {
                 elapsed: Int
             ) {
                 super.onRemoteVideoStateChanged(uid, state, reason, elapsed)
+                Log.d("dreamflow", "onRemoteVideoStateChanged uid: $uid")
                 if (uid == mRoomInfo.ownerId.toInt()) {
                     isAudioOnlyMode = state == Constants.REMOTE_VIDEO_STATE_STOPPED
                 }
@@ -927,6 +954,14 @@ class LiveDetailFragment : Fragment() {
                         setVideoOverlayVisible(true, uid.toString())
                     } else if (reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_UNMUTED) {
                         setVideoOverlayVisible(false, uid.toString())
+                    }
+                }
+
+                if (uid == DreamFlowService.genaiUid) {
+                    if ((state == 2) && (reason == 6 || reason == 4 || reason == 3 )) {
+                        runOnUiThread {
+                            mDreamFlowService.updateStarted()
+                        }
                     }
                 }
             }
@@ -983,10 +1018,8 @@ class LiveDetailFragment : Fragment() {
 
         if (activity is LiveDetailActivity) {
             (activity as LiveDetailActivity).toggleSelfVideo(isRoomOwner, callback = {
-//                joinChannel(eventListener)
-                mBinding.bottomLayout.ivSetting.setOnClickListener {
-                    joinChannel(eventListener)
-                    mDreamFlowService.forceStarted()
+                if (!isRoomOwner) {
+                    eventListener?.let { joinChannel(it) }
                 }
                 initVideoView()
             })
@@ -1155,6 +1188,7 @@ class LiveDetailFragment : Fragment() {
             view = null
             mRtcEngine.setupLocalVideo(this)
             localVideoCanvas = null
+            dreamFlowStartRunnable?.let { handler.removeCallbacks(it) }
         }
     }
 }

@@ -290,8 +290,8 @@ class LivePrepareActivity : BaseViewBindingActivity<DreamFlowLivePrepareActivity
      * Get random room id
      *
      */
-    private fun getRandomRoomId() =
-        (Random(System.currentTimeMillis()).nextInt(10000) + 100000).toString()
+    private fun getRandomRoomId() = "100100"
+//        (Random(System.currentTimeMillis()).nextInt(10000) + 100000).toString()
 
     /**
      * Get random thumbnail id

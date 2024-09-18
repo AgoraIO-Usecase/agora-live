@@ -144,6 +144,13 @@ class StylizedSettingDialog constructor(
             onClickSave()
         }
         setupWithSetting()
+        // setting mask view
+        mBinding.vDreamFlowMask.setOnClickListener {  }
+        if (service.status == DreamFlowService.ServiceStatus.IDLE) {
+            mBinding.vDreamFlowMask.visibility = View.INVISIBLE
+        } else {
+            mBinding.vDreamFlowMask.visibility = View.VISIBLE
+        }
     }
 
     private fun setupWithSetting() {
@@ -169,7 +176,7 @@ class StylizedSettingDialog constructor(
                 }
             }
         }
-        mBinding.etDreamFlowDescribe.setText(bean.description)
+        mBinding.etDreamFlowDescribe.setText(bean.prmopt)
     }
 
     private fun onClickSave() {

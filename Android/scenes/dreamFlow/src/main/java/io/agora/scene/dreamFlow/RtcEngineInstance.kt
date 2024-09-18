@@ -21,7 +21,7 @@ object RtcEngineInstance {
      * Video encoder configuration
      */
     val videoEncoderConfiguration = VideoEncoderConfiguration().apply {
-        orientationMode = VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_ADAPTIVE
+        orientationMode = VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT
     }
     /**
      * Video capture configuration

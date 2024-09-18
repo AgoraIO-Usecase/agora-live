@@ -16,14 +16,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#303553"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible" >
 
         <ProgressBar
             android:id="@+id/pb_dream_flow_progress"
             android:layout_width="120dp"
             android:layout_height="120dp"
+            android:progress="80"
+            android:max="100"
             android:layout_centerInParent="true"
-            android:indeterminate="true" />
+            android:indeterminate="false" />
 
         <TextView
             android:id="@+id/tv_dream_flow_progress_title"
@@ -34,8 +37,7 @@
             android:layout_centerHorizontal="true"
             android:textColor="#D9FFFFFF"
             android:textSize="12sp"
-            tools:text="Initializing"
-            />
+            android:text="@string/dream_flow_setting_initializing" />
 
         <TextView
             android:id="@+id/tv_dream_flow_progress"
@@ -91,17 +93,6 @@
         <io.agora.scene.dreamFlow.widget.DraggableView
             android:id="@+id/v_drag_window"
             android:layout_gravity="start|bottom"
-            android:layout_width="109dp"
-            android:layout_height="163dp"
-            android:layout_marginBottom="76dp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:visibility="visible"/>
-
-        <io.agora.scene.dreamFlow.widget.DraggableView
-            android:id="@+id/v_drag_window2"
-            android:layout_gravity="end|bottom"
             android:layout_width="109dp"
             android:layout_height="163dp"
             android:layout_marginBottom="76dp"

@@ -51,34 +51,62 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp"
             android:orientation="vertical">
 
-            <include
-                android:id="@+id/stylizedEffect"
-                layout="@layout/dream_flow_setting_advance_item_switch"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="20dp"
+                android:layout_height="wrap_content">
 
-            <include
-                android:id="@+id/FaceMode"
-                layout="@layout/dream_flow_setting_advance_item_switch"/>
+                <include
+                    android:id="@+id/stylizedEffect"
+                    android:paddingHorizontal="20dp"
+                    layout="@layout/dream_flow_setting_advance_item_switch" />
+            </FrameLayout>
 
-            <include
-                android:id="@+id/Strength"
-                layout="@layout/dream_flow_setting_item_progress"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <include
-                android:id="@+id/Style"
-                layout="@layout/dream_flow_settings_item_slider"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="20dp"
+                    android:orientation="vertical">
 
-            <include
-                android:id="@+id/Effect"
-                layout="@layout/dream_flow_settings_item_slider"/>
+                    <include
+                        android:id="@+id/FaceMode"
+                        layout="@layout/dream_flow_setting_advance_item_switch" />
+
+                    <include
+                        android:id="@+id/Strength"
+                        layout="@layout/dream_flow_setting_item_progress" />
+
+                    <include
+                        android:id="@+id/Style"
+                        layout="@layout/dream_flow_settings_item_slider" />
+
+                    <include
+                        android:id="@+id/Effect"
+                        layout="@layout/dream_flow_settings_item_slider" />
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/v_dream_flow_mask"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="10dp"
+                    android:background="#8DECECF0" />
+
+            </FrameLayout>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                app:cardCornerRadius="12dp"
+                android:layout_marginHorizontal="20dp"
                 android:backgroundTint="#F2F2F5"
+                app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
 
                 <EditText

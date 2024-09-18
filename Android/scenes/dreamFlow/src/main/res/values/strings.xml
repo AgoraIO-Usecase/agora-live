@@ -198,6 +198,7 @@
     <string name="dream_flow_setting_strength_title">Strength</string>
     <string name="dream_flow_setting_desc_hint">Customized Prompt</string>
     <string name="dream_flow_window_origin">Origin</string>
+    <string name="dream_flow_setting_initializing">Initializing</string>
 
     <string-array name="dream_flow_encoder">
         <item>Hardware Encoder</item>
@@ -223,8 +224,8 @@
 
     <string-array name="dream_flow_style">
         <item>Miyazaki</item>
-        <item>Toonyou</item>
-        <item>Sexytoon</item>
+        <item>toonyou</item>
+        <item>sexytoon</item>
         <item>Clay</item>
     </string-array>
 
