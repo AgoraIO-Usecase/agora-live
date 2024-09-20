@@ -231,16 +231,18 @@ class ShowLiveViewController: UIViewController {
             timer?.invalidate()
             timer = nil
             countDownNumber = 120
-            self.hideProgressView()
-            self.joinChannel()
+            dreamFlowService.workState = .loaded
+            updateStylizedButton()
+            hideProgressView()
+            joinChannel()
         }
     }
     
-    private func createWork(settings: DFStylizedSettingConfig) {
+    private func createWorker(stylizedConfig: DFStylizedSettingConfig) {
         guard let channelId = room?.roomId else { return }
         currentChannelId = channelId
         
-        dreamFlowService.creatWork(channelName: currentChannelId ?? "", stylizedConfig: settings) { [weak self] error, res in
+        dreamFlowService.creatWork(channelName: currentChannelId ?? "", stylizedConfig: stylizedConfig) { [weak self] error, res in
             if error != nil {
                 return
             }
@@ -254,24 +256,56 @@ class ShowLiveViewController: UIViewController {
             } else {
                 self?.joinChannel()
             }
+            
+            self?.updateStylizedButton()
         }
     }
     
-    private func deleteWork() {
+    private func deleteWorker() {
+        guard let workId = dreamFlowService.responseModel?.id else { return }
+        
+        dreamFlowService.deleteWorker(workerId: workId) { error, res in
+            if let err = error {
+                print("delete work failed, error: \(err.localizedDescription)")
+                return
+            }
+        }
     }
     
-    private func updateWork() {
+    private func updateWorker(stylizedConfig:DFStylizedSettingConfig) {
+        guard let workerId = dreamFlowService.responseModel?.id else {
+            return
+        }
         
+        dreamFlowService.updateWorker(workerId: workerId, stylizedConfig: stylizedConfig) { error, res in
+            if error != nil {
+                return
+            }
+            
+            print("update worker success!")
+        }
     }
     
     private func deleteAllWork() {
-        dreamFlowService.deleteAllWork { error, res in
+        dreamFlowService.deleteAllWorker { error, res in
             print("")
         }
     }
     
+    private func updateStylizedButton() {
+        let workState = dreamFlowService.workState
+        switch workState {
+        case .initialize:
+            self.liveView.bottomBar.beautyButton.isHidden = true
+            break
+        case .loaded, .unload:
+            self.liveView.bottomBar.beautyButton.isHidden = false
+            break
+        }
+    }
+    
     func leaveRoom(){
-        deleteWork()
+        deleteWorker()
         AgoraEntLog.autoUploadLog(scene: ShowLogger.kLogKey)
         ShowAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
         ShowAgoraKitManager.shared.cleanCapture()
@@ -279,9 +313,8 @@ class ShowLiveViewController: UIViewController {
         
         serviceImp?.unsubscribeEvent(roomId: roomId, delegate: self)
         
-        serviceImp?.leaveRoom(roomId: roomId) {_ in
-        }
-}
+        serviceImp?.leaveRoom(roomId: roomId) {_ in }
+    }
     
     //broadcaster join channel
     private func joinChannel() {
@@ -301,17 +334,6 @@ class ShowLiveViewController: UIViewController {
         self.muteLocalAudio = false
         ShowAgoraKitManager.shared.setupRemoteVideo(channelId: currentChannelId ?? "", uid: UInt(dreamFlowService.genaiUid), canvasView: liveView.canvasView.remoteView)
         
-    }
-    
-    private func sendMessageWithText(_ text: String) {
-        let showMsg = ShowMessage()
-        showMsg.userId = VLUserCenter.user.id
-        showMsg.userName = VLUserCenter.user.name
-        showMsg.message = text
-        showMsg.createAt = Date().millionsecondSince1970()
-        
-        serviceImp?.sendChatMessage(roomId: roomId, message: showMsg) { error in
-        }
     }
 }
 
@@ -551,7 +573,6 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
 //MARK: ShowRoomLiveViewDelegate
 extension ShowLiveViewController: ShowRoomLiveViewDelegate {
     func onClickSendMsgButton(text: String) {
-        sendMessageWithText(text)
     }
     
     func onClickCloseButton() {
@@ -579,6 +600,7 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
     
     func onClickBeautyButton() {
         let vc = DFStylizedSettting()
+        vc.workerState = dreamFlowService.workState
         vc.delegate = self
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -674,6 +696,29 @@ extension ShowLiveViewController: ShowReceiveFinishViewDelegate {
 
 extension ShowLiveViewController: DFStylizedSetttingDelegate {
     func saveStylizedSetting(setting: DFStylizedSettting) {
-        createWork(settings: setting.stylizedSettingConfig)
+        let config = setting.stylizedSettingConfig
+        let workerState = setting.workerState
+
+        //初始化worker
+        if config.style_effect, workerState == .unload {
+            createWorker(stylizedConfig: config)
+            return
+        }
+        
+        //检查更新worker
+        if config.style_effect, workerState == .loaded {
+            guard let currentConfig = dreamFlowService.currentConfig else { return }
+            let currentPrompt = currentConfig.prompt
+            
+            if currentPrompt == config.prompt { return }
+            
+            updateWorker(stylizedConfig: config)
+            return
+        }
+        
+        //删除worker
+        if !config.style_effect, workerState == .loaded {
+            deleteWorker()
+        }
     }
 }

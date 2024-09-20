@@ -12,6 +12,8 @@ protocol DFStylizedSetttingDelegate: AnyObject {
 }
 
 class DFStylizedSettting: UIViewController {
+    var workerState: DreamFlowWorkState = .unload
+    
     let switchCellIdentifier = "SwitchCell"
     let strengthCellIdentifier = "StrengthCell"
     let horizontalScrollCellIdentifier = "HorizontalScrollCell"
@@ -166,6 +168,10 @@ extension DFStylizedSettting: UITableViewDelegate, UITableViewDataSource {
                 cell.switchHandler = { [weak self] state in
                     self?.stylizedSettingConfig.face_mode = state
                 }
+                
+                if workerState == .loaded {
+                    cell.setUserInteractionEnabled(enabled: false)
+                }
             }
             cell.selectionStyle = .none
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
@@ -178,6 +184,9 @@ extension DFStylizedSettting: UITableViewDelegate, UITableViewDataSource {
             cell.sliderHandler = { [weak self] value in
                 self?.stylizedSettingConfig.strength = value
             }
+            if workerState == .loaded {
+                cell.setUserInteractionEnabled(enabled: false)
+            }
             return cell
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: horizontalScrollCellIdentifier, for: indexPath) as! DFHorizontalScrollTableViewCell
@@ -187,6 +196,9 @@ extension DFStylizedSettting: UITableViewDelegate, UITableViewDataSource {
             cell.styleHandler = { [weak self] selItem in
                 self?.stylizedSettingConfig.style = selItem.title
                 self?.defaultStyle = selItem
+            }
+            if workerState == .loaded {
+                cell.setUserInteractionEnabled(enabled: false)
             }
             return cell
         case 4:

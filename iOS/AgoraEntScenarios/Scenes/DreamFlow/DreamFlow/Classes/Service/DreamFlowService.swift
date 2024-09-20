@@ -9,6 +9,7 @@ import Foundation
 import AgoraCommon
 
 enum DreamFlowWorkState {
+    case unload
     case loaded
     case initialize
 }
@@ -18,10 +19,13 @@ class DreamFlowService {
     let inUid = 0
     let inRole = 0
     let genaiUid = 999
-    
+    var workState: DreamFlowWorkState = .unload
     var responseModel: DreamFlowResponseModel?
+    var currentConfig: DFStylizedSettingConfig?
     
     func creatWork(channelName: String, stylizedConfig:DFStylizedSettingConfig, completion: @escaping ((Error?, DreamFlowWorkState?) -> Void)) {
+        currentConfig = stylizedConfig
+        
         var requestModel = DreamFlowCreatWorkModel(region: region, appId: AppContext.shared.appId)
         let rtcConfigure = DreamFlowUidConfig()
         let config = DreamFlowRtcConfig()
@@ -48,11 +52,12 @@ class DreamFlowService {
                 
                 self.responseModel = model
                 if response.code == 0 {
-                    completion(nil, .initialize)
+                    self.workState = .initialize
                 } else if response.code == 1 {
-                    completion(nil, .loaded)
+                    self.workState = .loaded
                 }
                 
+                completion(nil, self.workState)
                 return
             }
             
@@ -60,20 +65,33 @@ class DreamFlowService {
         }
     }
     
-    func deleteWork(workId: String, completion: @escaping ((Error?, Any?) -> Void)) {
-        let requestModel = DreamFlowDeleteWorkModel(region: region, appId: AppContext.shared.appId, workId: workId)
+    func deleteWorker(workerId: String, completion: @escaping ((Error?, Any?) -> Void)) {
+        let requestModel = DreamFlowDeleteWorkModel(region: region, appId: AppContext.shared.appId, workerId: workerId)
+        requestModel.request { error, res in
+            if error != nil {
+                print("delete worker: \(workerId) failed error: \(error?.localizedDescription)")
+            } else {
+                self.workState = .unload
+            }
+            
+            completion(error, res)
+        }
+    }
+    
+    func updateWorker(workerId: String, stylizedConfig:DFStylizedSettingConfig, completion: @escaping ((Error?, Any?) -> Void)) {
+        let requestModel = DreamFlowUpdateWorkModel(region: region, appId: AppContext.shared.appId, workerId: workerId)
         requestModel.request(completion: completion)
     }
     
-    func updateWork(workId: String, completion: @escaping ((Error?, Any?) -> Void)) {
-        let requestModel = DreamFlowUpdateWorkModel(region: region, appId: AppContext.shared.appId, workId: workId)
-        requestModel.request(completion: completion)
-    }
-    
-    func deleteAllWork(completion: @escaping ((Error?, Any?) -> Void)) {
-        let requestModel = DreamFlowDeleteWorkModel(region: region, appId: AppContext.shared.appId, workId: "b3a21856-88a8-4523-b553-cfaf14af5784")
-//        requestModel.admin = true
-        requestModel.request(completion: completion)
+    func deleteAllWorker(completion: @escaping ((Error?, Any?) -> Void)) {
+        let requestModel = DreamFlowDeleteWorkModel(region: region, appId: AppContext.shared.appId, workerId: "b3a21856-88a8-4523-b553-cfaf14af5784")
+        requestModel.request { error, res in
+            if error != nil {
+                print("delete worker failed error: \(error?.localizedDescription)")
+            }
+            
+            completion(error, res)
+        }
     }
 }
 

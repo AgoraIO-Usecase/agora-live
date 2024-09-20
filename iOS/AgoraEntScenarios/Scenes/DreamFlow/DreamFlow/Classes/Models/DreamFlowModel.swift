@@ -60,23 +60,12 @@ class DreamFlowUidConfig: NSObject {
 }
 
 @objcMembers
-class DreamFlowModifyWorkModel: DreamFlowNetworkModel {
-    init(region: String, appId: String, workId: String, method: AUINetworkMethod) {
-        super.init(region: region, appId: appId)
-        self.interfaceName = "/\(region)/v1/projects/\(appId)/stylize/\(workId)"
-        self.method = method
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-@objcMembers
-class DreamFlowDeleteWorkModel: DreamFlowModifyWorkModel {
+class DreamFlowDeleteWorkModel: DreamFlowNetworkModel {
     var admin: Bool = true
-    init(region: String, appId: String, workId: String) {
-        super.init(region: region, appId: appId, workId: workId, method: .delete)
+    init(region: String, appId: String, workerId: String) {
+        super.init(region: region, appId: appId)
+        self.interfaceName = "/\(region)/v1/projects/\(appId)/stylize/\(workerId)"
+        self.method = .delete
     }
     
     required init?(coder: NSCoder) {
@@ -84,11 +73,11 @@ class DreamFlowDeleteWorkModel: DreamFlowModifyWorkModel {
     }
 }
 
-class DreamFlowUpdateWorkModel: DreamFlowModifyWorkModel {
-    var rtcConfigure: DreamFlowUidConfig?
-
-    init(region: String, appId: String, workId: String) {
-        super.init(region: region, appId: appId, workId: workId, method: .patch)
+class DreamFlowUpdateWorkModel: DreamFlowCreatWorkModel {
+    init(region: String, appId: String, workerId: String) {
+        super.init(region: region, appId: appId)
+        self.interfaceName = "/\(region)/v1/projects/\(appId)/stylize/\(workerId)"
+        self.method = .patch
     }
     
     required init?(coder: NSCoder) {

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DFStrengthTableViewCell: UITableViewCell {
+class DFStrengthTableViewCell: DFStylizedCell {
     private let titleLabel = UILabel()
     private let slider = UISlider()
     let progressValueLabel = UILabel()
@@ -33,7 +33,7 @@ class DFStrengthTableViewCell: UITableViewCell {
         contentView.addSubview(titleLabel)
         contentView.addSubview(slider)
         contentView.addSubview(progressValueLabel)
-        
+
         titleLabel.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(20)
             make.height.equalTo(48)
@@ -50,6 +50,12 @@ class DFStrengthTableViewCell: UITableViewCell {
             make.right.equalTo(progressValueLabel.snp.left).offset(-20)
         }
 
+        darkView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    
+        setUserInteractionEnabled(enabled: true)
+        
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
     }
     

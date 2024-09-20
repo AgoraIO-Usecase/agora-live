@@ -7,9 +7,10 @@
 
 import UIKit
 
-class DFSwitchTableViewCell: UITableViewCell {
+class DFSwitchTableViewCell: DFStylizedCell {
     private let titleLabel = UILabel()
     private let switchControl = UISwitch()
+    
     var switchHandler: ((Bool) -> Void)?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -32,6 +33,12 @@ class DFSwitchTableViewCell: UITableViewCell {
             make.trailing.equalToSuperview().offset(-20)
             make.centerY.equalToSuperview()
         }
+        
+        darkView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    
+        setUserInteractionEnabled(enabled: true)
     }
     
     func setData(title: String, state: Bool) {

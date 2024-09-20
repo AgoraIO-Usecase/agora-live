@@ -56,7 +56,6 @@ class ShowRedDotButton: UIButton {
 class ShowRoomBottomBar: UIView {
     
     weak var delegate: ShowRoomBottomBarDelegate?
-    
     // pk
     private lazy var pkButton: ShowRedDotButton = {
         let button = ShowRedDotButton(type: .custom)
@@ -74,7 +73,7 @@ class ShowRoomBottomBar: UIView {
         return button
     }()
     
-    private lazy var beautyButton: UIButton = {
+    lazy var beautyButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage.show_sceneImage(name: "show_live_beauty"), for: .normal)
         button.addTarget(self, action: #selector(didClickBeautyButton), for: .touchUpInside)

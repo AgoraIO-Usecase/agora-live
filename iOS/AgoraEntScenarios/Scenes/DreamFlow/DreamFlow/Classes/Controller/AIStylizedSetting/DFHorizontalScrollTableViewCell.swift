@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DFHorizontalScrollTableViewCell: UITableViewCell {
+class DFHorizontalScrollTableViewCell: DFStylizedCell {
     let scrollView = UIScrollView()
     let titleLabel = UILabel()
     let stackView = UIStackView()
@@ -26,8 +26,9 @@ class DFHorizontalScrollTableViewCell: UITableViewCell {
         scrollView.addSubview(stackView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(scrollView)
-        
+
         configSubViews()
+        setUserInteractionEnabled(enabled: true)
     }
     
     func configSubViews() {
@@ -47,6 +48,10 @@ class DFHorizontalScrollTableViewCell: UITableViewCell {
         stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.height.equalToSuperview()
+        }
+        
+        darkView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
     }
     
