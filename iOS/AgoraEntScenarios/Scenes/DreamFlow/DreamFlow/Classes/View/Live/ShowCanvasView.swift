@@ -32,11 +32,25 @@ class DFLocalView: UIView {
 }
 
 class ShowCanvasView: UIView {
-    lazy var contentView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage.show_sceneImage(name: "drame_flow_avatar")
-        imageView.contentMode = .scaleAspectFill
-        return imageView
+    var showBlurView: Bool = false {
+        didSet {
+            if showBlurView {
+                thumnbnailCanvasView.isHidden = false
+            } else {
+                thumnbnailCanvasView.isHidden = true
+            }
+        }
+    }
+    
+    lazy var thumnbnailCanvasView: ShowThumnbnailCanvasView = {
+        let view = ShowThumnbnailCanvasView(frame: self.bounds)
+        return view
+    }()
+    
+    lazy var contentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.show_Ellipse6
+        return view
     }()
     
     lazy var localBackgroundView: DFLocalView = {
@@ -93,8 +107,13 @@ class ShowCanvasView: UIView {
         addSubview(indicatorButton)
         localBackgroundView.addSubview(originTitle)
         localBackgroundView.addSubview(arrowButton)
+        contentView.addSubview(thumnbnailCanvasView)
         
         contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        thumnbnailCanvasView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
         

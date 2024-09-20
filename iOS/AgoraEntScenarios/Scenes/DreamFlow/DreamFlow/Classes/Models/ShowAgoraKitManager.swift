@@ -237,13 +237,13 @@ class ShowAgoraKitManager: NSObject {
     func addRtcDelegate(delegate: AgoraRtcEngineDelegate, roomId: String) {
         ShowLogger.info("addRtcDelegate[\(roomId)]")
         
-        if let _ = VideoLoaderApiImpl.shared.getConnectionMap()[roomId] {
+//        if let _ = VideoLoaderApiImpl.shared.getConnectionMap()[roomId] {
             VideoLoaderApiImpl.shared.addRTCListener(anchorId: roomId, listener: delegate)
-        } else {
-            let localUid = Int(VLUserCenter.user.id)!
-            let connection = AgoraRtcConnection(channelId: roomId, localUid: localUid)
-            engine?.addDelegateEx(delegate, connection: connection)
-        }
+//        } else {
+//            let localUid = Int(VLUserCenter.user.id)!
+//            let connection = AgoraRtcConnection(channelId: roomId, localUid: localUid)
+//            engine?.addDelegateEx(delegate, connection: connection)
+//        }
     }
     
     func removeRtcDelegate(delegate: AgoraRtcEngineDelegate, roomId: String) {
@@ -392,7 +392,6 @@ class ShowAgoraKitManager: NSObject {
         }
     }
     
-    
     /// 预加载连麦
     /// - Parameters:
     ///   - isOn: <#isOn description#>
@@ -470,7 +469,7 @@ class ShowAgoraKitManager: NSObject {
                        role: role)
         completion?()
     }
-    
+        
     func setupLocalVideo(mirrorMode: AgoraVideoMirrorMode = .disabled,
                          canvasView: UIView?) {
         guard let engine = engine else {
@@ -488,7 +487,7 @@ class ShowAgoraKitManager: NSObject {
         ShowLogger.info("setupLocalVideo, user uid:\(UserInfo.userId) view: \(canvasView?.description ?? "")", context: kShowLogBaseContext)
     }
     
-    private func setupRemoteVideo(channelId: String, uid: UInt, canvasView: UIView?) {
+    func setupRemoteVideo(channelId: String, uid: UInt, canvasView: UIView?) {
         let connection = AgoraRtcConnection(channelId: channelId, localUid: Int(VLUserCenter.user.id) ?? 0)
         //先清理老的view
         if let uid = channelIdUidCanvasMap[channelId] {

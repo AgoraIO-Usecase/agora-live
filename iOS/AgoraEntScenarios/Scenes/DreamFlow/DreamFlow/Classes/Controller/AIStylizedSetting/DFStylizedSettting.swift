@@ -7,12 +7,17 @@
 
 import Foundation
 
+protocol DFStylizedSetttingDelegate: AnyObject {
+    func saveStylizedSetting(setting: DFStylizedSettting)
+}
+
 class DFStylizedSettting: UIViewController {
     let switchCellIdentifier = "SwitchCell"
     let strengthCellIdentifier = "StrengthCell"
     let horizontalScrollCellIdentifier = "HorizontalScrollCell"
     let textViewCellIdentifier = "TextViewCell"
     var stylizedSettingConfig = DFStylizedSettingConfig()
+    weak var delegate: DFStylizedSetttingDelegate?
     
     let tableView = UITableView()
     
@@ -132,7 +137,7 @@ class DFStylizedSettting: UIViewController {
     
     @objc private func rightAction() {
         dataService.saveStylizedSettingConfig(self.stylizedSettingConfig)
-        
+        self.delegate?.saveStylizedSetting(setting: self)
         self.navigationController?.popViewController(animated: true)
     }
 }

@@ -12,6 +12,8 @@ import YYModel
 public enum AUINetworkMethod: Int {
     case get = 0
     case post
+    case patch
+    case delete
     
     func getAfMethod() -> String {
         switch self {
@@ -19,6 +21,10 @@ public enum AUINetworkMethod: Int {
             return "GET"
         case .post:
             return "POST"
+        case .patch:
+            return "PATCH"
+        case .delete:
+            return "DELETE"
         }
     }
 }
@@ -43,7 +49,7 @@ open class AUINetworkModel: NSObject {
         return param
     }
     
-    public func getHttpBody() -> Data? {
+    open func getHttpBody() -> Data? {
         return self.yy_modelToJSONData()
     }
     
@@ -58,7 +64,7 @@ open class AUINetworkModel: NSObject {
             throw AUICommonError.networkParseFail.toNSError()
         }
         
-        if let dic = (dic as? [String: Any]), let code = dic["code"] as? Int, code != 0 {
+        if let dic = (dic as? [String: Any]), let code = dic["code"] as? Int, code != 0, code != 1 {
             let message = dic["message"] as? String ?? ""
             if code == 401 {
                 self.tokenExpired()

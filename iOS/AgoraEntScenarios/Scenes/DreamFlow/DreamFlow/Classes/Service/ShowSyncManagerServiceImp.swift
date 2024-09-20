@@ -115,7 +115,7 @@ extension ShowSyncManagerServiceImp {
             
             agoraPrint("[Timing]preGenerateToken rtc & rtm cost: \(Int64(-date.timeIntervalSinceNow * 1000)) ms")
             AppContext.shared.agoraRTCToken = rtcToken
-            AppContext.shared.agoraRTMToken = rtmToken
+            AppContext.shared.agoraRTMToken = AppContext.shared.appId
             completion(nil)
         }
     }
@@ -234,16 +234,16 @@ extension ShowSyncManagerServiceImp {
 extension ShowSyncManagerServiceImp: ShowServiceProtocol {
     func getRoomList(page: Int, 
                      completion: @escaping (NSError?, [ShowRoomListModel]?) -> Void) {
-        if isLogined == false {
-            login {[weak self] err in
-                if let err = err {
-                    completion(err, nil)
-                    return
-                }
-                self?.getRoomList(page: page, completion: completion)
-            }
-            return
-        }
+//        if isLogined == false {
+//            login {[weak self] err in
+//                if let err = err {
+//                    completion(err, nil)
+//                    return
+//                }
+//                self?.getRoomList(page: page, completion: completion)
+//            }
+//            return
+//        }
         
         let currentUserId = user.userId
         roomService.getRoomList(lastCreateTime: 0,
@@ -252,8 +252,7 @@ extension ShowSyncManagerServiceImp: ShowServiceProtocol {
         } completion: { err, ts, list in
             let roomList = list?.map({ $0.createShowServiceModel()}) ?? []
             
-            let dataArray = ShowRobotService.shared.generateRobotRoomsAppend(rooms: roomList)
-            completion(err, dataArray)
+            completion(err, roomList)
         }
     }
     

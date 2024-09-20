@@ -22,7 +22,12 @@ protocol ShowLiveViewControllerDelegate: NSObjectProtocol {
 }
 
 class ShowLiveViewController: UIViewController {
+    private var timer: Timer?
+    private var countDownNumber = 120
+    private var isJoined = false
+    
     weak var delegate: ShowLiveViewControllerDelegate?
+    let dreamFlowService: DreamFlowService = DreamFlowService()
     var onClickDislikeClosure: (() -> Void)?
     var onClickDisUserClosure: (() -> Void)?
     var room: ShowRoomListModel? {
@@ -54,7 +59,6 @@ class ShowLiveViewController: UIViewController {
             case .joinedWithVideo, .joinedWithAudioVideo:
                 if let room = room {
                     serviceImp = AppContext.showServiceImp()
-                    _joinRoom(room)
                 }
             }
         }
@@ -99,10 +103,6 @@ class ShowLiveViewController: UIViewController {
             VLUserCenter.user.id
         }
     }
-    
-    private var isPublishCameraStream: Bool {
-        return role == .broadcaster || currentInteraction?.userId == VLUserCenter.user.id
-    }
 
     private var role: AgoraClientRole {
         return room?.ownerId == VLUserCenter.user.id ? .broadcaster : .audience
@@ -117,86 +117,12 @@ class ShowLiveViewController: UIViewController {
         return view
     }()
         
+    private var progressView: DFProgressView?
+    
     private var finishView: ShowReceiveFinishView?
     
     private var ownerExpiredView: ShowRoomOwnerExpiredView?
-    
-    //interaction list
-    private var interactionList: [ShowInteractionInfo]? {
-        didSet {
-            if AppContext.shared.rtcToken?.isEmpty == false {
-                self.currentInteraction = interactionList?.first
-                return
-            }
-            ShowAgoraKitManager.shared.preGenerateToken {[weak self] _ in
-                guard let self = self else {return}
-                self.currentInteraction = self.interactionList?.first
-            }
-        }
-    }
-        
-    //get current interaction status
-    private var interactionStatus: InteractionType {
-        return currentInteraction?.type ?? .idle
-    }
-    
-    private var seatInteraction: ShowInteractionInfo? {
-        get {
-            if interactionStatus == .linking {
-                return currentInteraction
-            }
-            return nil
-        }
-    }
-    
-    private var currentInteraction: ShowInteractionInfo? {
-        didSet {
-            if let currentInteraction = currentInteraction {
-                ShowLogger.info("currentInteraction: \(currentInteraction.description)")
-            }
-            if self.room?.userId() == self.currentUserId {
-            }
-            //update audio status
-            if let interaction = currentInteraction {
-            } else if role == .broadcaster {
-                //unmute if interaction did stop
-                self.muteLocalAudio = false
-            }
-            
-            //stop or start interaction
-            if currentInteraction == oldValue {
-                return
-            }
-            
-            if let info = oldValue {
-                _onStopInteraction(interaction: info)
-                
-                room?.interactionAnchorInfoList.removeAll()
-            }
-            var needUpdateInteraction = false
-            if let info = currentInteraction {
-                needUpdateInteraction = true
-                
-                if let uid = UInt(info.userId) {
-                    let anchorInfo = AnchorInfo()
-                    anchorInfo.channelName = info.roomId
-                    anchorInfo.uid = uid
-                    anchorInfo.token = AppContext.shared.rtcToken ?? ""
-                    assert(anchorInfo.token.count > 0)
-                    room?.interactionAnchorInfoList = [anchorInfo]
-                }
-            }
-            
-            if let room = room {
-                delegate?.interactionDidChange(roomInfo: room)
-            }
-            if needUpdateInteraction, let info = currentInteraction {
-                //update pk in interactionDidChange before joining the channel, and ensure that delegate is added only after joining the channel (implemented in _onStartInteraction)
-                _onStartInteraction(interaction: info)
-            }
-        }
-    }
-    
+
     private var muteLocalAudio: Bool = false {
         didSet {
             ShowLogger.info("muteLocalAudio: \(muteLocalVideo)")
@@ -230,11 +156,11 @@ class ShowLiveViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        deleteAllWork()
         guard let room = room else {return}
         setupUI()
         if room.ownerId == VLUserCenter.user.id {
-            self.joinChannel()
+            setupLocalView()
             AgoraEntAuthorizedManager.checkMediaAuthorized(parent: self)
         }
     }
@@ -253,6 +179,15 @@ class ShowLiveViewController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
     }
+    
+    private func setupLocalView() {
+        guard let channelId = room?.roomId else {
+            return
+        }
+        
+        ShowAgoraKitManager.shared.addRtcDelegate(delegate: self, roomId: channelId)
+        ShowAgoraKitManager.shared.setupLocalVideo(canvasView: self.liveView.canvasView.localBackgroundView.contentView)
+    }
         
     private func setupUI(){
         view.layer.contents = UIImage.show_sceneImage(name: "show_live_room_bg")?.cgImage
@@ -264,7 +199,79 @@ class ShowLiveViewController: UIViewController {
         }
     }
     
+    private func startTimer() {
+        if isJoined {
+            return
+        }
+        
+        if timer == nil {
+            timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateCountdown), userInfo: nil, repeats: true)
+        }
+    }
+    
+    private func showProgressView() {
+        var currentProgress = 0.0
+        var totalProgress = 120.0
+        progressView = DFProgressView.show(in: self.view, totalProgress: totalProgress)
+    }
+    
+    private func hideProgressView() {
+        DFProgressView.hide(from: self.view)
+    }
+    
+    @objc private func updateCountdown() {
+        if countDownNumber > 0 {
+            print("-----count down: \(countDownNumber)")
+            countDownNumber -= 1
+            if let progressView = progressView {
+                let total = progressView.totalProgress
+                progressView.currentProgress = total - CGFloat(countDownNumber);
+            }
+        } else {
+            timer?.invalidate()
+            timer = nil
+            countDownNumber = 120
+            self.hideProgressView()
+            self.joinChannel()
+        }
+    }
+    
+    private func createWork(settings: DFStylizedSettingConfig) {
+        guard let channelId = room?.roomId else { return }
+        currentChannelId = channelId
+        
+        dreamFlowService.creatWork(channelName: currentChannelId ?? "", stylizedConfig: settings) { [weak self] error, res in
+            if error != nil {
+                return
+            }
+            
+            guard let res = res else { return }
+            self?.showProgressView()
+            
+            self?.liveView.blurGusetCanvas = false
+            if res == .initialize {
+                self?.startTimer()
+            } else {
+                self?.joinChannel()
+            }
+        }
+    }
+    
+    private func deleteWork() {
+    }
+    
+    private func updateWork() {
+        
+    }
+    
+    private func deleteAllWork() {
+        dreamFlowService.deleteAllWork { error, res in
+            print("")
+        }
+    }
+    
     func leaveRoom(){
+        deleteWork()
         AgoraEntLog.autoUploadLog(scene: ShowLogger.kLogKey)
         ShowAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
         ShowAgoraKitManager.shared.cleanCapture()
@@ -283,16 +290,17 @@ class ShowLiveViewController: UIViewController {
             return
         }
         currentChannelId = channelId
-        ShowAgoraKitManager.shared.joinChannelEx(currentChannelId: channelId,
-                                                 targetChannelId: channelId,
+        
+        ShowAgoraKitManager.shared.joinChannelEx(currentChannelId: currentChannelId ?? "",
+                                                 targetChannelId: currentChannelId ?? "",
                                                  ownerId: uid,
                                                  options: self.channelOptions,
                                                  role: role) {
         }
-        ShowAgoraKitManager.shared.addRtcDelegate(delegate: self, roomId: channelId)
-        ShowAgoraKitManager.shared.setupLocalVideo(canvasView: self.liveView.canvasView.localBackgroundView.contentView)
         self.muteLocalVideo = false
         self.muteLocalAudio = false
+        ShowAgoraKitManager.shared.setupRemoteVideo(channelId: currentChannelId ?? "", uid: UInt(dreamFlowService.genaiUid), canvasView: liveView.canvasView.remoteView)
+        
     }
     
     private func sendMessageWithText(_ text: String) {
@@ -469,35 +477,6 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
     }
     
     func onMicSeatInvitationUpdated(channelName: String, invitation: ShowMicSeatInvitation) {
-        guard invitation.userId == VLUserCenter.user.id, inviteVC == nil else { return }
-        if invitation.type == .inviting {
-            isSendJointBroadcasting = true
-            muteLocalVideo = true
-            //收到连麦邀请，先推流，加速出图
-            ShowAgoraKitManager.shared.prePublishOnseatVideo(isOn: true, channelId: roomId)
-            inviteVC = ShowReceivePKAlertVC.present(name: invitation.userName, style: .mic) {[weak self] result in
-                guard let self = self else {return}
-                switch result {
-                case .accept:
-                    ToastView.show(text: "show_is_onseat_doing".show_localized)
-                    self.serviceImp?.acceptMicSeatInvitation(roomId: roomId,
-                                                             invitationId: invitation.id) { err in
-                        guard let err = err else { return }
-                        ToastView.show(text: "\("show_accept_invite_linking_fail".show_localized)\(err.code)")
-                        //失败，关闭推流
-                        ShowAgoraKitManager.shared.prePublishOnseatVideo(isOn: false, channelId: self.roomId)
-                    }
-                default:
-                    self.isSendJointBroadcasting = false
-                    //拒绝邀请，关闭推流
-                    ShowAgoraKitManager.shared.prePublishOnseatVideo(isOn: false, channelId: self.roomId)
-                    self.serviceImp?.rejectMicSeatInvitation(roomId: roomId,
-                                                             invitationId: invitation.id) { error in
-                    }
-                    break
-                }
-            }
-        }
     }
     
     func onMicSeatInvitationAccepted(channelName: String, invitation: ShowMicSeatInvitation) {
@@ -518,112 +497,8 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
     
     func onPKInvitationRejected(channelName: String, invitation: ShowPKInvitation) { }
     
-    func onInteractionUpdated(channelName: String, interactions: [ShowInteractionInfo]) {
-        if interactions.count == 0 {
-            var toastTitle = interruptInteractionReason
-            let type = currentInteraction?.type ?? .idle
-            switch type {
-            case .idle:
-                break
-            case .linking:
-                toastTitle = "show_end_broadcasting".show_localized
-            case .pk:
-                toastTitle = "show_end_pk".show_localized
-            }
-            if let toastStr = toastTitle {
-                ToastView.show(text: toastStr)
-            }
-            interruptInteractionReason = nil
-        }
-        
-        interactionList = interactions
-        _refreshPKUserList()
-    }
+    func onInteractionUpdated(channelName: String, interactions: [ShowInteractionInfo]) { }
     
-    private func _onStartInteraction(interaction: ShowInteractionInfo) {
-        ShowLogger.info("_onStartInteraction: \(interaction.userId) \(interaction.userName) status: \(interaction.type.rawValue)")
-        switch interaction.type {
-        case .pk:
-            view.layer.contents = UIImage.show_sceneImage(name: "show_live_pk_bg")?.cgImage
-            let interactionRoomId = interaction.roomId
-            if interactionRoomId.isEmpty { return }
-            if roomId != interaction.roomId {
-                ShowAgoraKitManager.shared.addRtcDelegate(delegate: self, roomId: interactionRoomId)
-                
-                ShowAgoraKitManager.shared.updateVideoProfileForMode(.pk)
-                currentChannelId = roomId
-            }
-        case .linking:
-            
-            //TODO: 这个是不是需要真正的角色，放进switchRole里？
-            if role == .audience {
-                ShowAgoraKitManager.shared.setSuperResolutionOn(false)
-            }
-            //如果是连麦双方为broadcaster，观众不修改，因为观众可能已经申请上麦，申请时已经修改了角色并提前推流
-            let toRole: AgoraClientRole? = isPublishCameraStream ? .broadcaster : nil
-            ShowAgoraKitManager.shared.updateLiveView(role: toRole,
-                                                      channelId: roomId,
-                                                      uid: interaction.userId,
-                                                      canvasView: liveView.canvasView.remoteView)
-            ShowAgoraKitManager.shared.switchRole(role: toRole,
-                                                  channelId: roomId,
-                                                  options: self.channelOptions,
-                                                  uid: interaction.userId)
-            
-            liveView.bottomBar.linkButton.isSelected = true
-            AlertManager.hiddenView()
-            if toRole == .broadcaster {
-                self.delegate?.currentUserIsOnSeat()
-                // setup default effect
-            }
-        default:
-            break
-        }
-        if isPublishCameraStream {
-            self.muteLocalVideo = false
-            self.muteLocalAudio = false
-        }
-    }
-    
-    private func _onStopInteraction(interaction: ShowInteractionInfo) {
-        ShowLogger.info("_onStopInteraction: \(interaction.userId) \(interaction.userName) status: \(interaction.type.rawValue)")
-        switch interaction.type {
-        case .pk:
-            view.layer.contents = UIImage.show_sceneImage(name: "show_live_room_bg")?.cgImage
-            ShowAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: interaction.roomId)
-            
-            ShowAgoraKitManager.shared.updateVideoProfileForMode(.single)
-            ShowAgoraKitManager.shared.leaveChannelEx(roomId: self.roomId, channelId: interaction.roomId)
-        case .linking:
-            liveView.bottomBar.linkButton.isSelected = false
-//            currentInteraction?.ownerMuteAudio = false
-            //TODO: 这个是不是需要真正的角色，放进switchRole里？
-            if role == .audience {
-                ShowAgoraKitManager.shared.setSuperResolutionOn(true)
-            } else {
-                ShowAgoraKitManager.shared.updateVideoProfileForMode(.single)
-            }
-            
-            //停止连麦需要修改角色的只有连麦主播，其他用户保持原有角色，有可能观众已经申请连麦改变了角色并推流
-            let toRole: AgoraClientRole? = interaction.userId == VLUserCenter.user.id ? .audience : nil
-            ShowAgoraKitManager.shared.switchRole(role: toRole,
-                                                  channelId: roomId,
-                                                  options: self.channelOptions,
-                                                  uid: interaction.userId)
-            ShowAgoraKitManager.shared.updateLiveView(role: toRole,
-                                                      channelId: roomId,
-                                                      uid: interaction.userId,
-                                                      canvasView: nil)
-            self.delegate?.currentUserIsOffSeat()
-        default:
-            break
-        }
-        
-        if isPublishCameraStream {
-            self.muteLocalVideo = false
-            self.muteLocalAudio = false
-        }
-    }
 }
 
 extension ShowLiveViewController: AgoraRtcEngineDelegate {
@@ -636,6 +511,7 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
+        isJoined = true
         ShowLogger.info("rtcEngine didJoinChannel \(channel) with uid \(uid) elapsed \(elapsed)ms")
     }
     
@@ -650,13 +526,7 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
     func rtcEngine(_ engine: AgoraRtcEngineKit, 
                    remoteVideoStateChangedOfUid uid: UInt,
                    state: AgoraVideoRemoteState, 
-                   reason: AgoraVideoRemoteReason, elapsed: Int) {
-        if uid == roomOwnerId {
-            if reason == .remoteMuted , currentInteraction?.type != .pk{
-            }else if reason == .remoteUnmuted {
-            }
-        }
-    }
+                   reason: AgoraVideoRemoteReason, elapsed: Int) {  }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, contentInspectResult result: AgoraContentInspectResult) {
         ShowLogger.warn("contentInspectResult: \(result.rawValue)")
@@ -680,44 +550,6 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
 
 //MARK: ShowRoomLiveViewDelegate
 extension ShowLiveViewController: ShowRoomLiveViewDelegate {
-    func onPKDidTimeout() {
-        guard let _ = currentInteraction else { return }
-        serviceImp?.stopInteraction(roomId: roomId) { _ in
-        }
-        
-        interruptInteractionReason = "show_pk_end_timeout".show_localized
-    }
-    
-    func getPKDuration() -> UInt64 {
-        guard let ts = serviceImp?.getCurrentNtpTs(roomId: roomId),
-              let interactionTs = currentInteraction?.createdAt,
-              interactionTs <= ts else {
-            return 0
-        }
-        return ts - interactionTs
-    }
-    
-    func onClickRemoteCanvas() {
-        guard let info = currentInteraction else { return }
-        guard isPublishCameraStream else { return }
-        
-        let toolView = ShowToolMenuView(type: info.type == .linking ? .joint_broadcasting : .end)
-        toolView.title = "To audience \(info.userName)"
-        toolView.heightAnchor.constraint(equalToConstant: 150 + Screen.safeAreaBottomHeight()).isActive = true
-        toolView.onTapItemClosure = { [weak self] type, _ in
-            guard let self = self else {return}
-            AlertManager.hiddenView()
-            switch type {
-            case .end_pk:
-                self.serviceImp?.stopInteraction(roomId: self.roomId) { _ in
-                }
-                
-            default: break
-            }
-        }
-        AlertManager.show(view: toolView, alertPostion: .bottom)
-    }
-    
     func onClickSendMsgButton(text: String) {
         sendMessageWithText(text)
     }
@@ -747,6 +579,7 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
     
     func onClickBeautyButton() {
         let vc = DFStylizedSettting()
+        vc.delegate = self
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -755,13 +588,9 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
     func onClickSettingButton() {
         let muteAudio = self.muteLocalAudio
         settingMenuVC.selectedMap = [.camera: self.muteLocalVideo, .mic: muteAudio, .mute_mic: muteAudio]
-        
-        if interactionStatus == .idle {
-            settingMenuVC.type = role == .broadcaster ? .idle_broadcaster : .idle_audience
-        }else{
-            settingMenuVC.type = role == .broadcaster ? .pking : (currentInteraction?.userId == VLUserCenter.user.id ? .pking : .idle_audience)
-            settingMenuVC.menuTitle = currentInteraction?.type == .pk ? "show_setting_menu_on_pk_title".show_localized : "show_setting_menu_on_seat_title".show_localized
-        }
+        settingMenuVC.type = .idle_broadcaster
+        settingMenuVC.menuTitle = "show_setting_menu_on_seat_title".show_localized
+
         present(settingMenuVC, animated: true)
     }
 }
@@ -796,9 +625,6 @@ extension ShowLiveViewController: ShowToolMenuViewControllerDelegate {
     
     // End wheat connection
     func onClickEndPkButtonSelected(_ menu:ShowToolMenuViewController, _ selected: Bool) {
-        guard let _ = currentInteraction else { return }
-        serviceImp?.stopInteraction(roomId: roomId) { _ in
-        }
     }
     
     // Microphone switch
@@ -831,7 +657,7 @@ extension ShowLiveViewController: ShowToolMenuViewControllerDelegate {
             }else {
                 let vc = ShowAdvancedSettingVC()
                 vc.isPureMode = (self?.room?.isPureMode != 0)
-                vc.mode = wSelf.interactionStatus == .pk ? .pk : .single
+                vc.mode = .single
                 vc.isBroadcaster = wSelf.role == .broadcaster
                 vc.currentChannelId = wSelf.currentChannelId
                 wSelf.navigationController?.pushViewController(vc, animated: true)
@@ -846,3 +672,8 @@ extension ShowLiveViewController: ShowReceiveFinishViewDelegate {
     }
 }
 
+extension ShowLiveViewController: DFStylizedSetttingDelegate {
+    func saveStylizedSetting(setting: DFStylizedSettting) {
+        createWork(settings: setting.stylizedSettingConfig)
+    }
+}

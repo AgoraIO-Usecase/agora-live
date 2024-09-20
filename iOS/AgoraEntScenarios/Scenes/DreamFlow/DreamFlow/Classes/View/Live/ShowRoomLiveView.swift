@@ -44,6 +44,12 @@ class ShowRoomLiveView: UIView {
         let view = ShowCanvasView()
         return view
     }()
+    
+    var blurGusetCanvas = false {
+        didSet{
+            canvasView.showBlurView = blurGusetCanvas
+        }
+    }
         
     private lazy var roomInfoView: ShowRoomInfoView = {
         let roomInfoView = ShowRoomInfoView()

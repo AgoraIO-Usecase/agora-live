@@ -28,7 +28,9 @@ open class AUINetworking: NSObject {
             return
         }
         var url = "\(model.host)\(model.interfaceName ?? "")"
-        url = url.appendingParameters(parameters: model.getParameters())
+        if model.method == .get {
+            url = url.appendingParameters(parameters: model.getParameters())
+        }
         
         guard let url = URL(string: url) else {
             completion?(AUICommonError.httpError(-1, "invalid url").toNSError(), nil)
@@ -38,7 +40,7 @@ open class AUINetworking: NSObject {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = model.method.getAfMethod()
         urlRequest.allHTTPHeaderFields = model.getHeaders()
-        if model.method == .post {
+        if model.method == .post || model.method == .delete {
             urlRequest.httpBody = model.getHttpBody()
         }
         
