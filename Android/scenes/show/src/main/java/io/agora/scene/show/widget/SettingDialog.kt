@@ -329,8 +329,7 @@ class SettingDialog(context: Context) : BottomDarkDialog(context) {
      *
      * @param mute
      */
-    fun resetSettingsItem(mute: Boolean) {
-        isVoiceActivated = !mute
+    fun resetSettingsItem() {
         val itemList = listOf(SettingItem(
             ITEM_ID_CAMERA,
             R.mipmap.show_setting_ic_camera,

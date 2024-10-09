@@ -836,7 +836,7 @@ class LiveDetailFragment : Fragment() {
                 bottomLayout.flLinking.isVisible = true
                 bottomLayout.ivLinking.imageTintList = null
                 mSettingDialog.apply {
-                    resetSettingsItem(false)
+                    resetSettingsItem()
                 }
             } else {
                 bottomLayout.flPK.isEnabled = true
@@ -846,7 +846,7 @@ class LiveDetailFragment : Fragment() {
                 bottomLayout.ivLinking.imageTintList =
                     ColorStateList.valueOf(context.resources.getColor(R.color.grey_7e))
                 mSettingDialog.apply {
-                    resetSettingsItem(false)
+                    resetSettingsItem()
                 }
             }
 
