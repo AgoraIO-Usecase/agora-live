@@ -229,13 +229,22 @@
         <item>Clay</item>
     </string-array>
 
-    <string-array name="dream_flow_effect">
-        <item>Sandstorm</item>
-        <item>Vibrant</item>
-        <item>Fantasy</item>
-        <item>Cinematic</item>
+    <string-array name="dream_flow_effect_title">
         <item>Cartoon</item>
+        <item>Joker</item>
+        <item>Elf</item>
+        <item>Cyberpunk</item>
+        <item>Art</item>
         <item>Customized</item>
+    </string-array>
+
+    <string-array name="dream_flow_effect">
+        <item>WesternAnimeLike, ((1boy, solo, male focus)), ((cowboy shot)), military uniform, black eyes, closed mouth, grey hair, grey jacket, grey shirt, hair between eyes, jacket, looking at viewer, multicolored hair, red pupils, short hair, simple background, smile, solo, two-tone hair, white background, [CHAR-M Genshin Impact Alhaitham] ((perfect face)), very deep eyes, (cinematic lighting), detailed eyes, best quality, bishoujo, sidelight, highres, (intricate details)</item>
+        <item>upper body,((glossy eyes)),(masterpiece, best quality:1.4)best quality, high detail, (detailed face), detailed eyes, (beautiful, aesthetic, perfect, delicate, intricate:1.0), joker painting of a man with green hair and a yellow jacket, digital art by Nicholas Marsicano, reddit, digital art, portrait of joker, portrait of the joker, portrait of a joker, the joker, joker, from joker (2019),  film still of the joker,</item>
+        <item>(masterpiece, best quality), 1girl, solo, elf, green curvy hairs, mist, sundress, forest, sitting, in water, waterfall, looking at viewer, blurry foreground, dappled sunlight, moss, (intricate, lotus, mushroom)</item>
+        <item>cyberpunk, skyscraper, (bokeh, best quality, masterpiece, highres_1) 1girl, purple hair, ((purple eyeshadow)), emo_hairstyle</item>
+        <item>bare shoulders, close-up shot, 35mm, masterpiece, best quality, highly detailed, 1girl, white hair, long hair, long white-haired female wearing a white hoodie, digital art</item>
+        <item>  </item>
     </string-array>
 
 </resources>

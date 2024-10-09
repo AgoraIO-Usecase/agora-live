@@ -123,7 +123,8 @@ class LiveDetailFragment : Fragment() {
             "http://104.15.30.249:49327",//BuildConfig.TOOLBOX_SERVER_HOST,
             "cn",
             BuildConfig.AGORA_APP_ID,
-            mRoomId
+            mRoomId,
+            mRoomInfo.ownerId.toInt()
         )
     }
 
@@ -345,8 +346,6 @@ class LiveDetailFragment : Fragment() {
                 )
             )
         }
-
-        mDreamFlowService.inUid = mRoomInfo.ownerId.toInt()
         mDreamFlowService.delete({})
     }
 
@@ -721,7 +720,7 @@ class LiveDetailFragment : Fragment() {
                         mBinding.rlProgressContainer.visibility = View.VISIBLE
                         mBinding.bottomLayout.ivStylized.visibility = View.INVISIBLE
                         val runnable = Runnable {
-                            joinChannelAndShowDreamFlow()
+                            mDreamFlowService.updateStarted()
                         }
                         handler.postDelayed(runnable, 2 * 60 * 1000)
                         dreamFlowStartRunnable = runnable
@@ -730,6 +729,8 @@ class LiveDetailFragment : Fragment() {
                         // hide progress
                         mBinding.rlProgressContainer.visibility = View.GONE
                         mBinding.bottomLayout.ivStylized.visibility = View.VISIBLE
+                        // started: join channel
+                        joinChannelAndShowDreamFlow()
                     }
                     DreamFlowService.ServiceStatus.IDLE -> {
                         // show empty
@@ -954,14 +955,6 @@ class LiveDetailFragment : Fragment() {
                         setVideoOverlayVisible(true, uid.toString())
                     } else if (reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_UNMUTED) {
                         setVideoOverlayVisible(false, uid.toString())
-                    }
-                }
-
-                if (uid == DreamFlowService.genaiUid) {
-                    if ((state == 2) && (reason == 6 || reason == 4 || reason == 3 )) {
-                        runOnUiThread {
-                            mDreamFlowService.updateStarted()
-                        }
                     }
                 }
             }

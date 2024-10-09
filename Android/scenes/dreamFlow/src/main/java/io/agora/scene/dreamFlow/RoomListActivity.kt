@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.manager.UserManager
@@ -308,8 +309,11 @@ class RoomListActivity : AppCompatActivity() {
             },
             failure = {
                 //ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
-                ToastUtils.showToast(it?.message ?: "generate token failure")
-                error?.invoke(it)
+//                ToastUtils.showToast(it?.message ?: "generate token failure")
+//                error?.invoke(it)
+                RtcEngineInstance.setupGeneralRtcToken(BuildConfig.AGORA_APP_ID)
+                RtcEngineInstance.setupGeneralRtmToken(BuildConfig.AGORA_APP_ID)
+                success.invoke()
             })
     }
 

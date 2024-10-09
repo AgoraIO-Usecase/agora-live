@@ -15,6 +15,7 @@ class DreamFlowService(
     private val region: String,
     private val appId: String,
     private val channelName: String,
+    private val inUid: Int,
 ) {
 
     companion object {
@@ -28,7 +29,7 @@ class DreamFlowService(
         var isFaceModeOn: Boolean = false,
         var strength: Float = 0.2f,
         var style: String? = null,
-        var effect: String? = null,
+        var effect: Int? = null,
         var prmopt: String = ""
     )
 
@@ -46,7 +47,6 @@ class DreamFlowService(
         }
     }
 
-    var inUid: Int = 0
     var inRole: Int = 0
 
     var currentSetting: SettingBean = SettingBean()
@@ -106,16 +106,20 @@ class DreamFlowService(
                         currentSetting = settingBean
                         success.invoke()
                     } else {
-                        create(settingBean)
+                        val code = create(settingBean)
                         currentSetting = settingBean
                         success.invoke()
-                        updateStatus(ServiceStatus.STARTING)
+                        if (code == 0) {
+                            updateStatus(ServiceStatus.STARTING)
+                        } else {
+                            updateStatus(ServiceStatus.STARTED)
+                        }
                     }
                 } else {
                     // turn effect off
                     if (status == ServiceStatus.STARTING ||
                         status == ServiceStatus.STARTED) {
-                        delete()
+                        delete(false)
                         currentSetting = settingBean
                         success.invoke()
                         updateStatus(ServiceStatus.IDLE)
@@ -152,7 +156,7 @@ class DreamFlowService(
     ) {
         scope.launch(Dispatchers.Main) {
             try {
-                delete()
+                delete(true)
                 success.invoke()
             } catch (e: Exception) {
                 failure?.invoke(e)
@@ -229,6 +233,7 @@ class DreamFlowService(
                 val data = bodyJobj["data"] as JSONObject
                 workerId = data["id"] as String
                 Log.d(tag, "create result succeed: $data workerId: $workerId")
+                bodyJobj["code"]
             }
         } else {
             val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
@@ -239,9 +244,9 @@ class DreamFlowService(
         }
     }
 
-    private suspend fun delete() = withContext(Dispatchers.IO) {
+    private suspend fun delete(admin: Boolean) = withContext(Dispatchers.IO) {
         val postBody = JSONObject().apply {
-            put("admin", true)
+            put("admin", admin)
         }
         val request = Request.Builder().url("$domain/$region/v1/projects/$appId/stylize/$workerId").
         addHeader("Content-Type", "application/json").delete(postBody.toString().toRequestBody()).build()

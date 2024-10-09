@@ -168,15 +168,15 @@ class StylizedSettingDialog constructor(
             }
         }
         mEffectAdapter?.let { adapter ->
-            val list = adapter.dataList
-            for (i in adapter.dataList.indices) {
-                if (list[i].title == bean.effect) {
-                    list[i].isSelect = true
-                    adapter.notifyItemChanged(i)
-                }
+            var i = 0
+            if (bean.effect != null) {
+                i = bean.effect ?: 0
             }
+            adapter.dataList[i].isSelect = true
+            adapter.notifyItemChanged(i)
+            val effectPrompts = context.resources.getStringArray(R.array.dream_flow_effect)
+            mBinding.etDreamFlowDescribe.setText(effectPrompts[i])
         }
-        mBinding.etDreamFlowDescribe.setText(bean.prmopt)
     }
 
     private fun onClickSave() {
@@ -185,7 +185,7 @@ class StylizedSettingDialog constructor(
             mBinding.FaceMode.switchCompat.isChecked,
             mBinding.Strength.sbProgress.progress * 0.01f,
             mStyleAdapter?.dataList?.firstOrNull { it.isSelect }?.title ?: "",
-            mEffectAdapter?.dataList?.firstOrNull { it.isSelect }?.title ?: "",
+            mEffectAdapter?.dataList?.indexOfFirst { it.isSelect },
             mBinding.etDreamFlowDescribe.text.toString()
         )
         addLoadingView()
@@ -259,7 +259,6 @@ class StylizedSettingDialog constructor(
             } else {
                 R.drawable.dream_flow_style_3
             }
-            //val audioEffect = mSetting.getEffectIndex(i)
             list.add(StyleBean(i, 0, drawable, stringArray[i]))
         }
 //        for (item in list) {
@@ -330,7 +329,7 @@ class StylizedSettingDialog constructor(
 
     // 音效
     private fun setupVoiceEffectAdapter() {
-        val stringArray = context.resources.getStringArray(R.array.dream_flow_effect)
+        val stringArray = context.resources.getStringArray(R.array.dream_flow_effect_title)
         val list: MutableList<StyleBean> = ArrayList()
         for (i in stringArray.indices) {
             val drawable: Int = if (i == 0) {
@@ -364,8 +363,9 @@ class StylizedSettingDialog constructor(
                                 list[i].isSelect = i == position
                                 notifyItemChanged(i)
                             }
-                            //mSetting.mAudioEffect = data.audioEffect
                         }
+                        val effectPrompts = context.resources.getStringArray(R.array.dream_flow_effect)
+                        mBinding.etDreamFlowDescribe.setText(effectPrompts[position])
                     }
                 },
                 StyleHolder::class.java
