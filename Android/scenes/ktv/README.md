@@ -93,7 +93,7 @@
 >
 > * Load songs
 >
->   ~~~kotlin
+>   ```kotlin
 >   /**
 >    * Synchronously load the song URI; only one song can be loaded at a time using loadSong
 >    * @param url music url
@@ -110,14 +110,14 @@
 >   fun loadMusic(
 >     url: String,
 >     config: KTVLoadMusicConfiguration,
->   )
->   ~~~
+>   ){}
+>   ```
 >
 > * Switch the singing role
 >
 >   Through this interface, you can switch between different roles during the singing process, and the result of the role switch will be notified to you via callback.
 >
->   ~~~kotlin
+>   ```kotlin
 >   /**
 >    * Asynchronously switch singing roles, and the result will be notified to the business layer via callback.
 >    * @param newRole The new singing role.
@@ -136,38 +136,38 @@
 >   fun switchSingerRole(
 >     newRole: KTVSingRole,
 >     onSwitchRoleStateListener: OnSwitchRoleStateListener?
->   )
->   ~~~
+>   ){}
+>   ```
 >
 > * Control the song
 >
->   ~~~kotlin
+>   ```kotlin
 >   /**
 >   * Start sing
 >   */
->   fun startSing(songCode: Long, startPos: Long)
+>   fun startSing(songCode: Long, startPos: Long){}
 >   
 >   /**
 >   * Resume sing
 >   */
->   fun resumeSing()
+>   fun resumeSing(){}
 >   
 >   /**
 >   * Pause sing
 >   */
->   fun pauseSing()
+>   fun pauseSing(){}
 >   
 >   /**
 >   * Seek to a specific position
 >   */
->   fun seekSing(time: Long)
->   ~~~
+>   fun seekSing(time: Long){}
+>   ```
 >
 > * Work together with the lyrics component
 >
 >   You can pass in your custom lyrics component to work with the KTVApi module. Your lyrics component needs to extend the **ILrcView** class and implement the following three interfaces. The KTVApi module will send the singing pitch, song playback progress, and lyrics URL to your lyrics component through the following three callbacks.
 >
->   ~~~kotlin
+>   ```kotlin
 >   interface ILrcView {
 >       /**
 >        * When the KTVApi updates the pitch, it will call this method to pass the pitch value to your lyrics component
@@ -191,8 +191,8 @@
 >    * Set the lyrics component; it can take effect at any time when set.
 >    * @param view The lyrics component view that is passed in needs to extend ILrcView and implement the three interfaces of ILrcView.
 >    */
->   fun setLrcView(view: ILrcView)
->   ~~~
+>   fun setLrcView(view: ILrcView){}
+>   ```
 >
 >   
 >
@@ -210,10 +210,11 @@
 >         pageSize: Int,
 >         cleanClosure: ((AUIRoomInfo) -> Boolean)? = null,
 >         completion: (AUIException?, Long?, List<AUIRoomInfo>?) -> Unit
->     )
->   fun createRoom(appId: String, sceneId: String, room: AUIRoomInfo, completion: (AUIRtmException?, AUIRoomInfo?) -> Unit)
->   fun enterRoom(appId: String, sceneId: String, roomId: String, completion: (AUIRtmException?) -> Unit)
->   fun leaveRoom(appId: String, sceneId: String, roomId: String)
+>     ){}
+>   fun createRoom(appId: String, sceneId: String, room: AUIRoomInfo, completion: (AUIRtmException?, AUIRoomInfo?) 
+> -> Unit){}
+>   fun enterRoom(appId: String, sceneId: String, roomId: String, completion: (AUIRtmException?) -> Unit){}
+>   fun leaveRoom(appId: String, sceneId: String, roomId: String){}
 >   ```
 >
 > #### Other Features
@@ -235,8 +236,4 @@
 > Option 1: If you are already using Agora services or in the process of integration, you can directly contact your sales or service representative.
 >
 > Option 2: Send an email to [support@agora.io](mailto:support@agora.io)
->
-> Option 3: Scan the QR code to join our WeChat group and ask questions.
->
-> <img src="https://download.agora.io/demo/release/SDHY_QA.jpg" width="360" height="360">
 ---
