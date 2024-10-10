@@ -368,7 +368,7 @@ class NetworkManager:NSObject {
             case 200...201:
                 if let resultData = data {
                     let result = String(data: resultData, encoding: .utf8)
-                    print(result ?? "")
+                    print("checkResponse \(result ?? "")")
                     success?(JSONObject.toDictionary(jsonString: result ?? ""))
                 } else {
                     failure?("Error in the request status code \(httpResponse.statusCode), response: \(String(describing: response))")
@@ -425,7 +425,7 @@ extension NetworkManager {
                               ] as [String : Any]],
                       "src": src,
                       "ts": ts,
-                      "sign": "src=\(src)&ts=\(ts)".md5Encrypt] as [String: Any]
+                      "sign": "src=\(src)&ts=\(ts)".md5() ?? ""] as [String: Any]
         let url = "https://report-ad.agoralab.co/v1/report"
         NetworkManager.shared.postRequest(urlString: url,
                                           params: params,
