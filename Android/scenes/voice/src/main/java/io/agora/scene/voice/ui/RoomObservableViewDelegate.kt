@@ -55,15 +55,15 @@ class RoomObservableViewDelegate constructor(
         private const val TAG = "RoomObservableDelegate"
     }
 
-    /**麦位信息，index,rtcUid*/
+    /** mic seat info，index,rtcUid*/
     private val micMap = mutableMapOf<Int, Int>()
 
     private var localUserMicInfo: VoiceMicInfoModel? = null
 
-    /**举手dialog*/
+    /** hands up dialog*/
     private var handsDialog: ChatroomHandsDialog? = null
 
-    /**申请上麦标志*/
+    /** sign of take mic seat apply */
     private var isRequesting: Boolean = false
 
     private fun localUserIndex(): Int {
@@ -325,7 +325,7 @@ class RoomObservableViewDelegate constructor(
     }
 
     /**
-     * 房间详情
+     * room detail
      */
     fun onRoomDetails(voiceRoomInfo: VoiceRoomInfo) {
         voiceRoomInfo.roomInfo?.let { vRoomInfo ->
@@ -360,7 +360,7 @@ class RoomObservableViewDelegate constructor(
     }
 
     /**
-     * 排行榜
+     * rank list
      */
     fun onClickRank(currentItem: Int = 0) {
         val dialog = RoomContributionAndAudienceSheetDialog().apply {
@@ -375,7 +375,7 @@ class RoomObservableViewDelegate constructor(
     }
 
     /**
-     * 公告
+     * notice
      */
     fun onClickNotice() {
         var announcement = voiceRoomModel.announcement
@@ -879,7 +879,7 @@ class RoomObservableViewDelegate constructor(
         handsDialog?.setInviteMicIndex(inviteIndex)
         handsDialog?.setFragmentListener(object : ChatroomHandsDialog.OnFragmentListener {
             override fun onAcceptMicSeatApply(voiceMicInfoModel: VoiceMicInfoModel) {
-                // 更新麦位
+                // update mic seat
                 val newMicMap = mutableMapOf(voiceMicInfoModel.micIndex to voiceMicInfoModel)
                 dealMicDataMap(newMicMap)
                 updateViewByMicMap(newMicMap)
@@ -1035,7 +1035,7 @@ class RoomObservableViewDelegate constructor(
         AgoraRtcEngineController.get().switchRole(localUserIndex() >= 0)
         if (localUserMicInfo?.member?.micStatus == 1 &&
             localUserMicInfo?.micStatus == MicStatus.Normal
-        ) {   // 状态正常
+        ) {
             AgoraRtcEngineController.get().enableLocalAudio(true)
         } else {
             AgoraRtcEngineController.get().enableLocalAudio(false)

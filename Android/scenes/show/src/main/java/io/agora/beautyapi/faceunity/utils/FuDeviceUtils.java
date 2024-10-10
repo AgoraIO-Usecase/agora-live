@@ -290,12 +290,6 @@ public class FuDeviceUtils {
         return DEVICEINFO_UNKNOWN;
     }
 
-    /**
-     * 获取当前剩余内存(ram)
-     *
-     * @param context
-     * @return
-     */
     public static long getAvailMemory(Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
@@ -303,29 +297,17 @@ public class FuDeviceUtils {
         return mi.availMem;
     }
 
-    /**
-     * 获取厂商信息
-     *
-     * @return
-     */
+
     public static String getBrand() {
         return Build.BRAND;
     }
 
-    /**
-     * 获取手机机型
-     *
-     * @return
-     */
+
     public static String getModel() {
         return Build.MODEL;
     }
 
-    /**
-     * 获取硬件信息(cpu型号)
-     *
-     * @return
-     */
+
     public static String getHardWare() {
         try {
             FileReader fr = new FileReader("/proc/cpuinfo");
@@ -335,7 +317,6 @@ public class FuDeviceUtils {
             while ((text = br.readLine()) != null) {
                 last = text;
             }
-            //一般机型的cpu型号都会在cpuinfo文件的最后一行
             if (last.contains("Hardware")) {
                 String[] hardWare = last.split(":\\s+", 2);
                 return hardWare[1];
@@ -357,7 +338,6 @@ public class FuDeviceUtils {
      */
     public static int judgeDeviceLevel(Context context) {
         int level;
-        //有一些设备不符合下述的判断规则，则走一个机型判断模式
         int specialDevice = judgeDeviceLevelInDeviceName();
         if (specialDevice >= 0) return specialDevice;
 
@@ -376,10 +356,6 @@ public class FuDeviceUtils {
         return level;
     }
 
-    /**
-     * -1 不是特定的高低端机型
-     * @return
-     */
     private static int judgeDeviceLevelInDeviceName() {
         String currentDeviceName = getDeviceName();
         for (String deviceName:upscaleDevice) {
@@ -406,98 +382,79 @@ public class FuDeviceUtils {
     public static final String[] lowDevice = {};
     public static final String[] middleDevice = {"OPPO R11s","PAR-AL00","MI 8 Lite","ONEPLUS A6000","PRO 6","PRO 7 Plus"};
 
-    /**
-     * 评定内存的等级.
-     *
-     * @return
-     */
+
     private static int judgeMemory(Context context) {
         long ramMB = getTotalMemory(context) / (1024 * 1024);
         int level = -1;
-        if (ramMB <= 2000) { //2G或以下的最低档
+        if (ramMB <= 2000) {
             level = 0;
-        } else if (ramMB <= 3000) { //2-3G
+        } else if (ramMB <= 3000) {
             level = 1;
-        } else if (ramMB <= 4000) { //4G档 2018主流中端机
+        } else if (ramMB <= 4000) {
             level = 2;
-        } else if (ramMB <= 6000) { //6G档 高端机
+        } else if (ramMB <= 6000) {
             level = 3;
-        } else { //6G以上 旗舰机配置
+        } else {
             level = 4;
         }
         return level;
     }
 
-    /**
-     * 评定CPU等级.（按频率和厂商型号综合判断）
-     *
-     * @return
-     */
     private static int judgeCPU() {
         int level = 0;
         String cpuName = getHardWare();
         int freqMHz = getCPUMaxFreqKHz() / 1024;
 
-        //一个不符合下述规律的高级白名单
-        //如果可以获取到CPU型号名称 -> 根据不同的名称走不同判定策略
         if (!TextUtils.isEmpty(cpuName)) {
-            if (cpuName.contains("qcom") || cpuName.contains("Qualcomm")) { //高通骁龙
+            if (cpuName.contains("qcom") || cpuName.contains("Qualcomm")) {
                 return judgeQualcommCPU(cpuName, freqMHz);
-            } else if (cpuName.contains("hi") || cpuName.contains("kirin")) { //海思麒麟
+            } else if (cpuName.contains("hi") || cpuName.contains("kirin")) {
                 return judgeSkinCPU(cpuName, freqMHz);
-            } else if (cpuName.contains("MT")) {//联发科
+            } else if (cpuName.contains("MT")) {
                 return judgeMTCPU(cpuName, freqMHz);
             }
         }
 
-        //cpu型号无法获取的普通规则
-        if (freqMHz <= 1600) { //1.5G 低端
+        if (freqMHz <= 1600) {
             level = 0;
-        } else if (freqMHz <= 1950) { //2GHz 低中端
+        } else if (freqMHz <= 1950) {
             level = 1;
-        } else if (freqMHz <= 2500) { //2.2 2.3g 中高端
+        } else if (freqMHz <= 2500) {
             level = 2;
-        } else { //高端
+        } else {
             level = 3;
         }
         return level;
     }
 
-    /**
-     * 联发科芯片等级判定
-     *
-     * @return
-     */
+
     private static int judgeMTCPU(String cpuName, int freqMHz) {
-        //P60之前的全是低端机 MT6771V/C
         int level = 0;
         int mtCPUVersion = getMTCPUVersion(cpuName);
         if (mtCPUVersion == -1) {
-            //读取不出version 按照一个比较严格的方式来筛选出高端机
-            if (freqMHz <= 1600) { //1.5G 低端
+            if (freqMHz <= 1600) {
                 level = 0;
-            } else if (freqMHz <= 2200) { //2GHz 低中端
+            } else if (freqMHz <= 2200) {
                 level = 1;
-            } else if (freqMHz <= 2700) { //2.2 2.3g 中高端
+            } else if (freqMHz <= 2700) {
                 level = 2;
-            } else { //高端
+            } else {
                 level = 3;
             }
         } else if (mtCPUVersion < 6771) {
-            //均为中低端机
-            if (freqMHz <= 1600) { //1.5G 低端
+            if (freqMHz <= 1600) {
                 level = 0;
-            } else { //2GHz 中端
+            } else {
                 level = 1;
             }
         } else {
-            if (freqMHz <= 1600) { //1.5G 低端
+            if (freqMHz <= 1600) {
                 level = 0;
-            } else if (freqMHz <= 1900) { //2GHz 低中端
+            } else if (freqMHz <= 1900) {
                 level = 1;
-            } else if (freqMHz <= 2500) { //2.2 2.3g 中高端
+            } else if (freqMHz <= 2500) {
                 level = 2;
-            } else { //高端
+            } else {
                 level = 3;
             }
         }
@@ -505,14 +462,7 @@ public class FuDeviceUtils {
         return level;
     }
 
-    /**
-     * 通过联发科CPU型号定义 -> 获取cpu version
-     *
-     * @param cpuName
-     * @return
-     */
     private static int getMTCPUVersion(String cpuName) {
-        //截取MT后面的四位数字
         int cpuVersion = -1;
         if (cpuName.length() > 5) {
             String cpuVersionStr = cpuName.substring(2, 6);
@@ -526,31 +476,22 @@ public class FuDeviceUtils {
         return cpuVersion;
     }
 
-    /**
-     * 高通骁龙芯片等级判定
-     *
-     * @return
-     */
     private static int judgeQualcommCPU(String cpuName, int freqMHz) {
         int level = 0;
-        //xxxx inc MSM8937 比较老的芯片
-        //7 8 xxx inc SDM710
         if (cpuName.contains("MSM")) {
-            //老芯片
-            if (freqMHz <= 1600) { //1.5G 低端
+            if (freqMHz <= 1600) {
                 level = 0;
-            } else { //2GHz 低中端
+            } else {
                 level = 1;
             }
         } else {
-            //新的芯片
-            if (freqMHz <= 1600) { //1.5G 低端
+            if (freqMHz <= 1600) {
                 level = 0;
-            } else if (freqMHz <= 2000) { //2GHz 低中端
+            } else if (freqMHz <= 2000) {
                 level = 1;
-            } else if (freqMHz <= 2500) { //2.2 2.3g 中高端
+            } else if (freqMHz <= 2500) {
                 level = 2;
-            } else { //高端
+            } else {
                 level = 3;
             }
         }
@@ -558,31 +499,23 @@ public class FuDeviceUtils {
         return level;
     }
 
-    /**
-     * 麒麟芯片等级判定
-     *
-     * @param freqMHz
-     * @return
-     */
+
     private static int judgeSkinCPU(String cpuName, int freqMHz) {
-        //型号 -> kirin710之后 & 最高核心频率
         int level = 0;
         if (cpuName.startsWith("hi")) {
-            //这个是海思的芯片中低端
-            if (freqMHz <= 1600) { //1.5G 低端
+            if (freqMHz <= 1600) {
                 level = 0;
-            } else if (freqMHz <= 2000) { //2GHz 低中端
+            } else if (freqMHz <= 2000) {
                 level = 1;
             }
         } else {
-            //这个是海思麒麟的芯片
-            if (freqMHz <= 1600) { //1.5G 低端
+            if (freqMHz <= 1600) {
                 level = 0;
-            } else if (freqMHz <= 2000) { //2GHz 低中端
+            } else if (freqMHz <= 2000) {
                 level = 1;
-            } else if (freqMHz <= 2500) { //2.2 2.3g 中高端
+            } else if (freqMHz <= 2500) {
                 level = 2;
-            } else { //高端
+            } else {
                 level = 3;
             }
         }
@@ -592,11 +525,6 @@ public class FuDeviceUtils {
 
     public static final String Nexus_6P = "Nexus 6P";
 
-    /**
-     * 获取设备名
-     *
-     * @return
-     */
     public static String getDeviceName() {
         String deviceName = "";
         if (Build.MODEL != null) deviceName = Build.MODEL;

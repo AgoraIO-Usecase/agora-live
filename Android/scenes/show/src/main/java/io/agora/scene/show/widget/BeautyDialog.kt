@@ -532,7 +532,7 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
      * Change green screen switch
      *
      * @param isChecked
-     */// 修改绿幕开关
+     */
     private fun changeGreenScreenSwitch(isChecked: Boolean) {
         beautyProcessor?.setGreenScreen(isChecked)
         mGroupList[mBottomBinding.tabLayout.selectedTabPosition].apply {
@@ -570,7 +570,6 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
         mTopBinding.mSwitchMaterial.setOnCheckedChangeListener(null)
 
         when (groupId) {
-            // 虚拟背景
             GROUP_ID_VIRTUAL_BG -> {
                 mTopBinding.llGreenScreen.isVisible = true
                 mTopBinding.ivCompare.isVisible = false
@@ -605,7 +604,6 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                     }
                 }
             }
-            // 美颜
             GROUP_ID_BEAUTY -> {
                 mTopBinding.llGreenScreen.isVisible = false
                 mTopBinding.ivCompare.isVisible = true
@@ -619,7 +617,6 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                     }
                 }
             }
-            // 特效
             GROUP_ID_EFFECT -> {
 
                 mTopBinding.llGreenScreen.isVisible = false
@@ -634,7 +631,6 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                     }
                 }
             }
-            // 调整
             GROUP_ID_ADJUST -> {
                 mTopBinding.llGreenScreen.isVisible = false
                 mTopBinding.ivCompare.isVisible = true
@@ -648,7 +644,6 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                     }
                 }
             }
-            // 贴纸
             GROUP_ID_STYLE, GROUP_ID_AR, GROUP_ID_STICKER -> {
                 mTopBinding.llGreenScreen.isVisible = false
                 mTopBinding.ivCompare.isVisible = true
@@ -673,7 +668,6 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
         when (groupId) {
             GROUP_ID_VIRTUAL_BG -> {
                 when (itemId) {
-                    // 无
                     ITEM_ID_VIRTUAL_BG_NONE -> {
                         RtcEngineInstance.rtcEngine.enableVirtualBackground(
                             false,
@@ -681,7 +675,6 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                             SegmentationProperty(if (greenScreen) SegmentationProperty.SEG_MODEL_GREEN else SegmentationProperty.SEG_MODEL_AI, greenScreenStrength)
                         )
                     }
-                    // 模糊
                     ITEM_ID_VIRTUAL_BG_BLUR -> {
                         RtcEngineInstance.rtcEngine.enableVirtualBackground(
                             true,
@@ -689,7 +682,6 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                             SegmentationProperty(if (greenScreen) SegmentationProperty.SEG_MODEL_GREEN else SegmentationProperty.SEG_MODEL_AI, greenScreenStrength)
                         )
                     }
-                    // 蜜桃
                     ITEM_ID_VIRTUAL_BG_MITAO -> {
                         RtcEngineInstance.rtcEngine.enableVirtualBackground(
                             true,

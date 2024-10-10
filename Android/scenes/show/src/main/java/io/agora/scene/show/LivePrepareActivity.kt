@@ -107,14 +107,11 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
 
     private fun setTips(tips: String) {
         binding.apply {
-            // 创建一个 Drawable 对象并设置它的大小
             val icon = ContextCompat.getDrawable(root.context, R.mipmap.show_live_prepare_ic_tip)
             icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
-            // 创建一个 SpannableString 并将图标设置在字符串的开始位置
             val spannableString = SpannableString("  $tips")
             val imageSpan = ImageSpan(icon!!, ImageSpan.ALIGN_BASELINE)
             spannableString.setSpan(imageSpan, 0, 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
-            // 设置 SpannableString 到 TextView
             tvTip.text = spannableString
         }
     }
