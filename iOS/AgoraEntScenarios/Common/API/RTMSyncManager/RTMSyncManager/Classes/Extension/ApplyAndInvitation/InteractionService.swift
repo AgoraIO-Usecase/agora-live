@@ -24,10 +24,10 @@ import Foundation
 
 @objc public class InteractionInfo: NSObject, Codable {
     public var type: InteractionType = .idle
-    public var userId: String = ""     // 互动者ID
-    public var userName: String = ""   // 互动者用户名
-    public var roomId: String = ""     // 互动者所在房间ID
-    public var createdAt: UInt64 = 0   // 互动开始时间，与19700101的时间差，单位ms
+    public var userId: String = ""     // Interactor ID
+    public var userName: String = ""   // User name of the interactor
+    public var roomId: String = ""     // Room ID of the interactor
+    public var createdAt: UInt64 = 0   // The start time of the interaction is different from the time difference of 19700101, and the unit is ms
     
     enum CodingKeys: String, CodingKey {
         case type, userId, userName, roomId, createdAt
@@ -124,10 +124,10 @@ extension InteractionService {
     }
     
     public func startPKInteraction(roomId: String, userId: String, userName: String, completion: ((NSError?)->())?) {
-        //TODO: 仲裁者需要检查Interaction表
+        //TODO: The arbitrator needs to check the Interaction form.
         /*
-         仲裁者需要检测如下情况
-         更新的时候判断连麦是否存在
+         The arbitrator needs to test the following situations
+         When updating, judge whether Lianmai exists or not.
          */
         aui_info("startPKInteraction roomId: \(roomId) userId: \(userId)", tag: "InteractionService")
         let info = InteractionInfo()
@@ -145,10 +145,10 @@ extension InteractionService {
     }
     
     public func startLinkingInteraction(userId: String, completion: ((NSError?)->())?) {
-        //TODO: 仲裁者需要检查Interaction表
+        //TODO: The arbitrator needs to check the Interaction form.
         /*
-         仲裁者需要检测如下情况
-         更新的时候判断连麦是否存在
+         The arbitrator needs to test the following situations
+         When updating, judge whether Lianmai exists or not.
          */
         guard let scene = syncManager.getScene(channelName: channelName),
               let userInfo = scene.userService.userList.first(where: { $0.userId == userId }) else {
@@ -174,17 +174,17 @@ extension InteractionService {
     }
     
     public func stopInteraction(completion: ((NSError?)->())?) {
-        //TODO: 不可以直接remove key‘ 需要带条件update
+        //TODO: You can't directly remove the key'. You need to update with conditions.
         /*
-         仲裁者需要检测如下情况
-         收到stop，需要比较当前发起stop的对象是不是互动中的用户，如果不是拒绝
-         防止该种极端情况出现
-         1.房主A和观众B连麦
-         2.B断网或网络不好
-         3.A结束和B连麦
-         4.观众C和A连麦
-         5.B网络恢复，但是暂未收到连麦变化
-         6.B发起结束连麦，此时会造成A和C的连麦结束
+         The arbitrator needs to test the following situations
+         After receiving a stop, you need to compare whether the current stop-initiating object is a user in the interaction, and if not, it is rejected.
+         Prevent this kind of extreme situation from happening
+         1. The owner A and the audience B connected the microphone
+         2. B The network is disconnected or the network is not good.
+         3. A ends and B connects the microphone
+         4. Audience C and A connected microphones
+         5. B The network has been restored, but the continuous microphone has not been changed yet.
+         6. B initiates the end of the continuous microphone, which will cause the end of the continuous microphone of A and C.
          
          */
         

@@ -29,7 +29,7 @@ public class AUIRoomService: NSObject {
                             pageSize: Int,
                             cleanClosure: ((AUIRoomInfo) ->(Bool))? = nil,
                             completion: @escaping (NSError?, Int64, [AUIRoomInfo]?)->()) {
-        //房间列表会返回最新的服务端时间ts
+        //The room list will return the latest server time ts
         let date = Date()
         roomManager.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: pageSize) {[weak self] err, ts, roomList in
             aui_info("[Timing]getRoomList cost: \(Int64(-date.timeIntervalSinceNow * 1000))ms", tag: RoomServiceTag)
@@ -41,10 +41,10 @@ public class AUIRoomService: NSObject {
             
             var list: [AUIRoomInfo] = []
             roomList?.forEach({ roomInfo in
-                //遍历每个房间信息，查询是否已经过期
+                //Traverse the information of each room to check whether it has expired.
                 var needCleanRoom: Bool = false
                 if self.creatingRoomIds.contains(roomInfo.roomId) {
-                    //正在创建，不删除，防止刷新的时候开始创建，导致因为时序问题创建的restful房间被删除了
+                    //It is being created, not deleted, to prevent the creation from starting when refreshing, resulting in the deletion of the restful room created due to timing problems.
                 } else if self.expirationPolicy.expirationTime > 0, ts - roomInfo.createTime >= self.expirationPolicy.expirationTime + 60 * 1000 {
                     aui_info("remove expired room[\(roomInfo.roomId)]", tag: RoomServiceTag)
                     needCleanRoom = true
@@ -68,8 +68,8 @@ public class AUIRoomService: NSObject {
         }
     }
     
-    //TODO: AUIRoomInfo替换成协议IAUIRoomInfo？服务端会创建房间id，这里是否roomManager创建后往外抛roomId
-    public func createRoom(room: AUIRoomInfo, 
+    //TODO: Replace AUIRoomInfo with the protocol IAUIRoomInfo? The server will create a room id. Do you throw the roomId out after the roomManager is created?
+    public func createRoom(room: AUIRoomInfo,
                            enterEnable: Bool = true,
                            expirationPolicy: RoomExpirationPolicy? = nil,
                            completion: @escaping ((NSError?, AUIRoomInfo?)->())) {
@@ -81,13 +81,13 @@ public class AUIRoomService: NSObject {
             guard let self = self else {return}
             self.creatingRoomIds.remove(room.roomId)
             if let error = error {
-                //失败需要清理脏房间信息
+                //Failure needs to clean up the dirty room information.
                 self.createRoomRevert(roomId: room.roomId)
                 completion(error, nil)
                 return
             }
             guard let info = info else {
-                //失败需要清理脏房间信息
+                //Failure needs to clean up the dirty room information.
                 self.createRoomRevert(roomId: room.roomId)
                 aui_info("create fail[\(room.roomId)] room info not found", tag: RoomServiceTag)
                 completion(NSError(domain: "room not found", code: -1), nil)
@@ -109,7 +109,7 @@ public class AUIRoomService: NSObject {
             
             aui_info("[Timing]createRoom create restful[\(roomInfo.roomId)] cost: \(Int64(-date.timeIntervalSinceNow * 1000))ms", tag: RoomServiceTag)
             self.roomInfoMap[roomInfo.roomId] = roomInfo
-            //传入服务端设置的创建房间的时间戳createTime
+            //The timestamp createTime of the creation room set by the incoming server
             scene.create(createTime: roomInfo.createTime,
                          payload: [kRoomServicePayloadOwnerId: room.owner?.userId ?? ""]) {[weak self] err in
                 aui_info("[Timing]createRoom create scene[\(roomInfo.roomId)] cost: \(Int64(-date.timeIntervalSinceNow * 1000))ms", tag: RoomServiceTag)

@@ -7,7 +7,7 @@
 
 import UIKit
 
-//秒开CollectionView delegate handler
+//Fast open CollectionView delegate handler
 @objcMembers
 open class AGCollectionLoadingDelegateHandler: AGBaseDelegateHandler {
     private weak var scrollView: UIScrollView? {

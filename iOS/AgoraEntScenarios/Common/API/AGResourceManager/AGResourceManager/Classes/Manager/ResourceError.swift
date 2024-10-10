@@ -9,11 +9,11 @@ import Foundation
 
 
 enum ResourceError: Int {
-    case unknown = 1000  //未知错误
-    case urlInvalide  //url异常
-    case resourceNotFound  //本地找不到文件
-    case resourceDownloadingAlready    //正在下载
-    case md5Mismatch   //本地文件md5不匹配
+    case unknown = 1000  //Unknown error
+    case urlInvalide  //Url is abnormal
+    case resourceNotFound  //Unable to find the file locally
+    case resourceDownloadingAlready    //Downloading
+    case md5Mismatch   //The local file md5 does not match
     
     func toNSError(errorStr: String) -> NSError {
         return NSError(domain: "ResourceManager",

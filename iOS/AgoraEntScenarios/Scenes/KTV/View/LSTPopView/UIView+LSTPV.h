@@ -11,37 +11,37 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIView (LSTPV)
 
-/** 获取/设置view的x坐标 */
+/** Get/set the x coordinates of view */
 @property (nonatomic, assign) CGFloat pv_X;
-/** 获取/设置view的x坐标 */
+/** Get/set the x coordinates of view */
 @property (nonatomic, assign) CGFloat pv_Y;
-/** 获取/设置view的x坐标 */
+/** Get/set the x coordinates of view */
 @property (nonatomic, assign) CGFloat pv_Width;
-/** 获取/设置view的x坐标 */
+/** Get/set the x coordinates of view */
 @property (nonatomic, assign) CGFloat pv_Height;
-/** 获取/设置view的x坐标 */
+/** Get/set the x coordinates of view */
 @property (nonatomic, assign) CGFloat pv_CenterX;
-/** 获取/设置view的x坐标 */
+/** Get/set the x coordinates of view */
 @property (nonatomic, assign) CGFloat pv_CenterY;
-/** 获取/设置view的x坐标 */
+/** Get/set the x coordinates of view */
 @property (nonatomic, assign) CGFloat pv_Top;
-/** 获取/设置view的左边坐标 */
+/** Get/set the left coordinates of view */
 @property (nonatomic, assign) CGFloat pv_Left;
-/** 获取/设置view的底部坐标Y */
+/** Get/set the bottom coordinates of view Y */
 @property (nonatomic, assign) CGFloat pv_Bottom;
-/** 获取/设置view的右边坐标 */
+/** Get/set the right coordinates of view */
 @property (nonatomic, assign) CGFloat pv_Right;
-/** 获取/设置view的size */
+/** Get/set the size of view */
 @property (nonatomic, assign) CGSize pv_Size;
 
 
-/** 是否是苹果X系列(刘海屏系列) */
+/** Is it Apple X series (Liu Haiping series) */
 BOOL pv_IsIphoneX_ALL(void);
-/** 屏幕大小 */
+/** Screen size */
 CGSize pv_ScreenSize(void);
-/** 屏幕宽度 */
+/** Screen width */
 CGFloat pv_ScreenWidth(void);
-/** 屏幕高度 */
+/** Screen height */
 CGFloat pv_ScreenHeight(void);
 
 @end
