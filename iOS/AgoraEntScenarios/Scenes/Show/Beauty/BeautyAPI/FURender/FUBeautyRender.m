@@ -12,7 +12,7 @@
 @interface FUBeautyRender ()
 
 #if __has_include(FURenderMoudle)
-/// 当前的贴纸
+/// Current stickers
 @property (nonatomic, strong) FUSticker *currentSticker;
 @property (nonatomic, strong) FUAnimoji *currentAnimoji;
 #endif

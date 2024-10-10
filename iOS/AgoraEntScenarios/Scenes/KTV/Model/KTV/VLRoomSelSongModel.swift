@@ -9,8 +9,8 @@ import Foundation
 import RTMSyncManager
 
 @objc enum VLSongPlayStatus: Int {
-    case idle = 0 //未播放
-    case playing = 1 //正在播放
+    case idle = 0 //Not played
+    case playing = 1 //Now playing
 }
 
 
@@ -22,11 +22,11 @@ class VLRoomSelSongModel: VLBaseModel {
     
     @objc var owner: AUIUserThumbnailInfo?
     
-    /// 创建时间
+    /// Creation time
     @objc var createAt: UInt64 = 0
-    // 置顶时间
+    // Pin time
     @objc var pinAt: UInt64 = 0
     
-    /// 0 未开始 1.已唱 2.正在唱 3. match完毕
+    /// 0 Not started 1. Sung 2. Singing 3. Match is over
     @objc var status: VLSongPlayStatus = .idle
 }

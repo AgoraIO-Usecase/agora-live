@@ -10,100 +10,100 @@
 
 
 #ifdef DEBUG
-#define LSTPVLog(format, ...) printf("class: <%p %s:(第%d行) > method: %s \n%s\n", self, [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String], __LINE__, __PRETTY_FUNCTION__, [[NSString stringWithFormat:(format), ##__VA_ARGS__] UTF8String] )
+#define LSTPVLog(format, ...) printf("class: <%p %s:(row of %d) > method: %s \n%s\n", self, [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String], __LINE__, __PRETTY_FUNCTION__, [[NSString stringWithFormat:(format), ##__VA_ARGS__] UTF8String] )
 #else
 #define LSTPVLog(format, ...)
 #endif
 
-/** 调试日志类型 */
+/** Debugging log type */
 typedef NS_ENUM(NSInteger, LSTPopViewLogStyle) {
-    LSTPopViewLogStyleNO = 0,          // 关闭调试信息(窗口和控制台日志输出)
-    LSTPopViewLogStyleWindow,          // 开启左上角小窗
-    LSTPopViewLogStyleConsole,         // 开启控制台日志输出
-    LSTPopViewLogStyleALL              // 开启小窗和控制台日志
+    LSTPopViewLogStyleNO = 0,          // Turn off debugging information (window and console log output)
+    LSTPopViewLogStyleWindow,          // Open the small window in the upper left corner
+    LSTPopViewLogStyleConsole,         // Turn on the console log output
+    LSTPopViewLogStyleALL              // Open the small window and console log
 };
 
-/** 显示动画样式 */
+/** Display animation style */
 typedef NS_ENUM(NSInteger, LSTPopStyle) {
-    LSTPopStyleFade = 0,               // 默认 渐变出现
-    LSTPopStyleNO,                     // 无动画
-    LSTPopStyleScale,                  // 缩放 先放大 后恢复至原大小
-    LSTPopStyleSmoothFromTop,          // 顶部 平滑淡入动画
-    LSTPopStyleSmoothFromLeft,         // 左侧 平滑淡入动画
-    LSTPopStyleSmoothFromBottom,       // 底部 平滑淡入动画
-    LSTPopStyleSmoothFromRight,        // 右侧 平滑淡入动画
-    LSTPopStyleSpringFromTop,          // 顶部 平滑淡入动画 带弹簧
-    LSTPopStyleSpringFromLeft,         // 左侧 平滑淡入动画 带弹簧
-    LSTPopStyleSpringFromBottom,       // 底部 平滑淡入动画 带弹簧
-    LSTPopStyleSpringFromRight,        // 右侧 平滑淡入动画 带弹簧
-    LSTPopStyleCardDropFromLeft,       // 顶部左侧 掉落动画
-    LSTPopStyleCardDropFromRight,      // 顶部右侧 掉落动画
+    LSTPopStyleFade = 0,               // Default gradient appearance
+    LSTPopStyleNO,                     // No animation
+    LSTPopStyleScale,                  // Zoom in, enlarge first, and then restore to the original size
+    LSTPopStyleSmoothFromTop,          // Top Smooth fade-in animation
+    LSTPopStyleSmoothFromLeft,         // Smooth fade-in animation on the left
+    LSTPopStyleSmoothFromBottom,       // Bottom Smooth fade-in animation
+    LSTPopStyleSmoothFromRight,        // Smooth fade-in animation on the right side
+    LSTPopStyleSpringFromTop,          // Top Smooth fade-in animation with spring
+    LSTPopStyleSpringFromLeft,         // Left smooth fade-in animation with spring
+    LSTPopStyleSpringFromBottom,       // Bottom Smooth fade-in animation with spring
+    LSTPopStyleSpringFromRight,        // Right side smooth fade-in animation with spring
+    LSTPopStyleCardDropFromLeft,       // Drop animation on the left side of the top
+    LSTPopStyleCardDropFromRight,      // Drop animation on the right side of the top
 };
-/** 消失动画样式 */
+/** Disappearing animation style */
 typedef NS_ENUM(NSInteger, LSTDismissStyle) {
-    LSTDismissStyleFade = 0,             // 默认 渐变消失
-    LSTDismissStyleNO,                   // 无动画
-    LSTDismissStyleScale,                // 缩放
-    LSTDismissStyleSmoothToTop,          // 顶部 平滑淡出动画
-    LSTDismissStyleSmoothToLeft,         // 左侧 平滑淡出动画
-    LSTDismissStyleSmoothToBottom,       // 底部 平滑淡出动画
-    LSTDismissStyleSmoothToRight,        // 右侧 平滑淡出动画
-    LSTDismissStyleCardDropToLeft,       // 卡片从中间往左侧掉落
-    LSTDismissStyleCardDropToRight,      // 卡片从中间往右侧掉落
-    LSTDismissStyleCardDropToTop,        // 卡片从中间往顶部移动消失
+    LSTDismissStyleFade = 0,             // Default gradient disappears
+    LSTDismissStyleNO,                   // No animation
+    LSTDismissStyleScale,                // Zoom
+    LSTDismissStyleSmoothToTop,          // Top Smooth fade-out animation
+    LSTDismissStyleSmoothToLeft,         // Left smooth fade-out animation
+    LSTDismissStyleSmoothToBottom,       // Bottom Smooth fade-out animation
+    LSTDismissStyleSmoothToRight,        // Smooth fade-out animation on the right
+    LSTDismissStyleCardDropToLeft,       // The card fell from the middle to the left.
+    LSTDismissStyleCardDropToRight,      // The card fell from the middle to the right.
+    LSTDismissStyleCardDropToTop,        // The card disappears from the middle to the top.
 };
-/** 主动动画样式(开发中) */
+/** Active animation style (in development) */
 typedef NS_ENUM(NSInteger, LSTActivityStyle) {
-    LSTActivityStyleNO = 0,               /// 无动画
-    LSTActivityStyleScale,                /// 缩放
-    LSTActivityStyleShake,                /// 抖动
+    LSTActivityStyleNO = 0,               /// No animation
+    LSTActivityStyleScale,                /// Zoom
+    LSTActivityStyleShake,                /// Shake
 };
-/** 弹窗位置 */
+/** Pop-up window position */
 typedef NS_ENUM(NSInteger, LSTHemStyle) {
-    LSTHemStyleCenter = 0,   //居中
-    LSTHemStyleTop,          //贴顶
-    LSTHemStyleLeft,         //贴左
-    LSTHemStyleBottom,       //贴底
-    LSTHemStyleRight,        //贴右
-    LSTHemStyleTopLeft,      //贴顶和左
-    LSTHemStyleBottomLeft,   //贴底和左
-    LSTHemStyleBottomRight,  //贴底和右
-    LSTHemStyleTopRight      //贴顶和右
+    LSTHemStyleCenter = 0,   //Between two parties
+    LSTHemStyleTop,          //Stick to the top
+    LSTHemStyleLeft,         //Stick to the left
+    LSTHemStyleBottom,       //Stick to the bottom
+    LSTHemStyleRight,        //Stick to the right
+    LSTHemStyleTopLeft,      //Stick to the top and left
+    LSTHemStyleBottomLeft,   //Stick to the bottom and left
+    LSTHemStyleBottomRight,  //Stick to the bottom and right
+    LSTHemStyleTopRight      //Stick to the top and right
 };
-/** 拖拽方向 */
+/** Drag direction */
 typedef NS_ENUM(NSInteger, LSTDragStyle) {
-    LSTDragStyleNO = 0,  //默认 不能拖拽窗口
-    LSTDragStyleX_Positive = 1<<0,   //X轴正方向拖拽
-    LSTDragStyleX_Negative = 1<<1,   //X轴负方向拖拽
-    LSTDragStyleY_Positive = 1<<2,   //Y轴正方向拖拽
-    LSTDragStyleY_Negative = 1<<3,   //Y轴负方向拖拽
-    LSTDragStyleX = (LSTDragStyleX_Positive|LSTDragStyleX_Negative),   //X轴方向拖拽
-    LSTDragStyleY = (LSTDragStyleY_Positive|LSTDragStyleY_Negative),   //Y轴方向拖拽
-    LSTDragStyleAll = (LSTDragStyleX|LSTDragStyleY)   //全向拖拽
+    LSTDragStyleNO = 0,  //By default, the window cannot be dragged.
+    LSTDragStyleX_Positive = 1<<0,   //Drag in the positive direction of the X axis
+    LSTDragStyleX_Negative = 1<<1,   //Drag in the negative direction of the X axis
+    LSTDragStyleY_Positive = 1<<2,   //Y axis positive direction drag
+    LSTDragStyleY_Negative = 1<<3,   //Y axis negative direction drag
+    LSTDragStyleX = (LSTDragStyleX_Positive|LSTDragStyleX_Negative),   //Drag in the direction of the X axis
+    LSTDragStyleY = (LSTDragStyleY_Positive|LSTDragStyleY_Negative),   //Drag in the direction of the Y axis
+    LSTDragStyleAll = (LSTDragStyleX|LSTDragStyleY)   //All-round drag
 };
-///** 可轻扫消失的方向 */
+///** You can swipe in the direction that disappears. */
 typedef NS_ENUM(NSInteger, LSTSweepStyle) {
-    LSTSweepStyleNO = 0,  //默认 不能拖拽窗口
-    LSTSweepStyleX_Positive = 1<<0,   //X轴正方向拖拽
-    LSTSweepStyleX_Negative = 1<<1,   //X轴负方向拖拽
-    LSTSweepStyleY_Positive = 1<<2,   //Y轴正方向拖拽
-    LSTSweepStyleY_Negative = 1<<3,   //Y轴负方向拖拽
-    LSTSweepStyleX = (LSTSweepStyleX_Positive|LSTSweepStyleX_Negative),   //X轴方向拖拽
-    LSTSweepStyleY = (LSTSweepStyleY_Positive|LSTSweepStyleY_Negative),   //Y轴方向拖拽
-    LSTSweepStyleALL = (LSTSweepStyleX|LSTSweepStyleY)   //全向轻扫
+    LSTSweepStyleNO = 0,  //By default, the window cannot be dragged.
+    LSTSweepStyleX_Positive = 1<<0,   //Drag in the positive direction of the X axis
+    LSTSweepStyleX_Negative = 1<<1,   //Drag in the negative direction of the X axis
+    LSTSweepStyleY_Positive = 1<<2,   //Y axis positive direction drag
+    LSTSweepStyleY_Negative = 1<<3,   //Y axis negative direction drag
+    LSTSweepStyleX = (LSTSweepStyleX_Positive|LSTSweepStyleX_Negative),   //Drag in the direction of the X axis
+    LSTSweepStyleY = (LSTSweepStyleY_Positive|LSTSweepStyleY_Negative),   //Drag in the direction of the Y axis
+    LSTSweepStyleALL = (LSTSweepStyleX|LSTSweepStyleY)   //Swipe in all directions
 };
 
 /**
-   可轻扫消失动画类型 对单向横扫 设置有效
-   LSTSweepDismissStyleSmooth: 自动适应选择以下其一
+ The animation type can be swiped to disappear. The setting is effective for one-way sweeping.
+   LSTSweepDismissStyleSmooth: Automatic adaptation chooses one of the following
    LSTDismissStyleSmoothToTop,
    LSTDismissStyleSmoothToLeft,
    LSTDismissStyleSmoothToBottom ,
    LSTDismissStyleSmoothToRight
  */
 typedef NS_ENUM(NSInteger, LSTSweepDismissStyle) {
-    LSTSweepDismissStyleVelocity = 0,  //默认加速度 移除
-    LSTSweepDismissStyleSmooth = 1     //平顺移除
+    LSTSweepDismissStyleVelocity = 0,  //Default acceleration Remove
+    LSTSweepDismissStyleSmooth = 1     //Smooth removal
 };
 
 
@@ -112,26 +112,26 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol LSTPopViewProtocol <NSObject>
 
 
-/** 点击弹窗 回调 */
+/** Click the pop-up window to call back */
 - (void)lst_PopViewBgClickForPopView:(LSTPopView *)popView;
-/** 长按弹窗 回调 */
+/** Long press the pop-up window to call back */
 - (void)lst_PopViewBgLongPressForPopView:(LSTPopView *)popView;
 
 
 
 
-// ****** 生命周期 ******
-/** 将要显示 */
+// ****** Life cycle ******
+/** will be displayed */
 - (void)lst_PopViewWillPopForPopView:(LSTPopView *)popView;
-/** 已经显示完毕 */
+/** has been displayed */
 - (void)lst_PopViewDidPopForPopView:(LSTPopView *)popView;
-/** 倒计时进行中 timeInterval:时长  */
+/** Countdown in progress timeInterval: Duration */
 - (void)lst_PopViewCountDownForPopView:(LSTPopView *)popView forCountDown:(NSTimeInterval)timeInterval;
-/** 倒计时倒计时完成  */
+/** Countdown Countdown Completed */
 - (void)lst_PopViewCountDownFinishForPopView:(LSTPopView *)popView;
-/** 将要开始移除 */
+/** will start to remove */
 - (void)lst_PopViewWillDismissForPopView:(LSTPopView *)popView;
-/** 已经移除完毕 */
+/** It has been removed */
 - (void)lst_PopViewDidDismissForPopView:(LSTPopView *)popView;
 //***********************
 

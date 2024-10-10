@@ -23,8 +23,8 @@
 @property (nonatomic, assign) BOOL isRoomOwner;
 @property (nonatomic, assign) BOOL isProfessional;
 @property (nonatomic, assign) BOOL isDelay;
-@property (nonatomic, assign) BOOL aecState; //AIAEC开关
-@property (nonatomic, assign) NSInteger aecLevel; //AEC等级
+@property (nonatomic, assign) BOOL aecState; //AIAEC switch
+@property (nonatomic, assign) NSInteger aecLevel; //AEC level
 @end
 
 @implementation VLVoicePerShowView
@@ -176,45 +176,45 @@
     }
 }
 
-//初始化Segmented控件
+//Initialize Segmented controls
 - (void)initSegmentedControl
 {
     NSArray *segmentedData = [[NSArray alloc]initWithObjects:KTVLocalizedString(@"ktv_close_aec"),KTVLocalizedString(@"ktv_aec_mid"),KTVLocalizedString(@"ktv_aec_high"),nil];
     self.qualitySegment = [[UISegmentedControl alloc]initWithItems:segmentedData];
     self.qualitySegment.frame = CGRectMake(SCREEN_WIDTH - 209, 184, 189, 34);
-    //这个是设置按下按钮时的颜色
+    //This is the color when setting the button is pressed.
     self.qualitySegment.selectedSegmentTintColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.2];
-    //默认选中的按钮索引
+    //Default selected button index
     self.qualitySegment.selectedSegmentIndex = self.aecGrade;
     self.qualitySegment.backgroundColor = [UIColor colorWithRed:0.938 green:0.938 blue:0.938 alpha:0.08];
     NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:[UIFont systemFontOfSize:14],NSFontAttributeName,[UIColor whiteColor], NSForegroundColorAttributeName, nil];
     [self.qualitySegment setTitleTextAttributes:attributes forState:UIControlStateNormal];
     NSDictionary *selectedAttributes = [NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName];
     [self.qualitySegment setTitleTextAttributes:selectedAttributes forState:UIControlStateSelected];
-    //设置分段控件点击相应事件
+    //Set the segmented control and click the corresponding event
     [_qualitySegment addTarget:self action:@selector(segmentSelect:)forControlEvents:UIControlEventValueChanged];
-    //添加到视图
+    //Add to the view
     [self addSubview:self.qualitySegment];
 }
 
-//初始化音质Segmented控件
+// Initialize the sound quality Segmented control
 - (void)initVolSegmentedControl
 {
     NSArray *segmentedData = [[NSArray alloc]initWithObjects:KTVLocalizedString(@"ktv_normal_vol"),KTVLocalizedString(@"ktv_high_vol"),nil];
     self.volSegment = [[UISegmentedControl alloc]initWithItems:segmentedData];
     self.volSegment.frame = CGRectMake(SCREEN_WIDTH - 309, 121, 289, 34);
-    //这个是设置按下按钮时的颜色
+    //This is the color when setting the button is pressed.
     self.volSegment.selectedSegmentTintColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.2];
-    //默认选中的按钮索引
+    //Default selected button index
     self.volSegment.selectedSegmentIndex = self.volGrade;
     self.volSegment.backgroundColor = [UIColor colorWithRed:0.938 green:0.938 blue:0.938 alpha:0.08];
     NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:[UIFont systemFontOfSize:14],NSFontAttributeName,[UIColor whiteColor], NSForegroundColorAttributeName, nil];
     [self.volSegment setTitleTextAttributes:attributes forState:UIControlStateNormal];
     NSDictionary *selectedAttributes = [NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName];
     [self.volSegment setTitleTextAttributes:selectedAttributes forState:UIControlStateSelected];
-    //设置分段控件点击相应事件
+    //Set the segmented control and click the corresponding event
     [_volSegment addTarget:self action:@selector(volSegmentSelect:)forControlEvents:UIControlEventValueChanged];
-    //添加到视图
+    //Add to the view
     [self addSubview:self.volSegment];
 
 }

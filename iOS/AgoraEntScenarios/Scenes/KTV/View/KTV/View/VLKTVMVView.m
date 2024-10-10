@@ -17,23 +17,23 @@
 
 @property(nonatomic, weak) id <VLKTVMVViewDelegate>delegate;
 
-@property (nonatomic, strong) UIActivityIndicatorView* loadingView;  //加载中
-@property (nonatomic, strong) UILabel* loadingTipsLabel;  //加载结果提示
-@property (nonatomic, strong) UIButton* retryButton;   //重试按钮
+@property (nonatomic, strong) UIActivityIndicatorView* loadingView;  //Loading
+@property (nonatomic, strong) UILabel* loadingTipsLabel;  //Loading result prompt
+@property (nonatomic, strong) UIButton* retryButton;   //Retry button
 @property (nonatomic, strong) UIView* contentView;
 
 @property (nonatomic, strong) UILabel *musicTitleLabel;
 @property (nonatomic, strong) UILabel *scoreLabel;
-// 分数分开优化性能
+// Score separation to optimize performance
 @property (nonatomic, strong) UILabel *scoreUnitLabel;
 
-@property (nonatomic, strong) VLHotSpotBtn *pauseBtn; /// 暂停播放
-@property (nonatomic, strong) VLHotSpotBtn *nextButton; /// 下一首
+@property (nonatomic, strong) VLHotSpotBtn *pauseBtn; /// Pause playback
+@property (nonatomic, strong) VLHotSpotBtn *nextButton; /// The next song
 
-//@property (nonatomic, strong) UIButton *originBtn;  /// 原唱按钮
-@property (nonatomic, strong) UIButton *trackBtn;  /// track按钮
-//@property (nonatomic, strong) VLHotSpotBtn *settingBtn; /// 设置参数按钮
-@property (nonatomic, strong) VLKTVMVIdleView *idleView;//没有人演唱视图
+//@property (nonatomic, strong) UIButton *originBtn;  /// Original song button
+@property (nonatomic, strong) UIButton *trackBtn;  /// track Button
+//@property (nonatomic, strong) VLHotSpotBtn *settingBtn; /// Set the parameter button
+@property (nonatomic, strong) VLKTVMVIdleView *idleView;//No one sings the view
 
 
 //@property (nonatomic, strong) AgoraLrcScoreConfigModel *config;
@@ -45,7 +45,7 @@
 @property (nonatomic, strong) UIButton *leaveChorusBtn;
 @property (nonatomic, strong) UIView *BotView;
 @property (nonatomic, assign) VLKTVMVViewActionType actionType;
-//@property (nonatomic, strong) UIView *perShowView;//突出人声视图
+//@property (nonatomic, strong) UIView *perShowView;//Highlight the vocal view
 @property (nonatomic, strong) UIImageView *iconView;
 @property (nonatomic, strong) GradientProgressBar *progressView;
 @end
@@ -245,7 +245,7 @@
 }
 
 -(void)joinChorus:(UIButton *)btn{
-    //加入合唱
+    //Join the chorus
     if(btn.selected == true){
         return;
     }
@@ -256,7 +256,7 @@
 }
 
 -(void)leaveChorus{
-    //离开合唱
+    //Leave the chorus
     self.joinChorusBtn.selected = false;
     if([self.delegate respondsToSelector:@selector(didLeaveChours)]) {
         [self.delegate didLeaveChours];
@@ -297,7 +297,7 @@
 }
 
 - (void)buttonClick:(UIButton *)sender {
-    // 设置参数
+    // Set parameters
 //    if (sender == self.settingBtn) {
 //        if ([self.delegate respondsToSelector:@selector(onKTVMVView:btnTappedWithActionType:)]) {
 //            [self.delegate onKTVMVView:self btnTappedWithActionType:VLKTVMVViewActionTypeSetParam];
@@ -314,23 +314,23 @@
 }
 
 /***
- VLKTVMVViewStateNone = 0,  // 当前无人点歌
- VLKTVMVViewStateMusicLoading = 1,  // 当前歌曲加载中
- VLKTVMVViewStateAudience = 2, //观众
- VLKTVMVViewStateOwnerSing = 3, //房主点歌演唱
- VLKTVMVViewStateOwnerAudience = 4, //房主未加入合唱
- VLKTVMVViewStateOwnerChorus = 5, //房主合唱
- VLKTVMVViewStateNotOwnerChorus = 6, //非房主演唱
- VLKTVMVViewStateMusicOwnerLoadFailed = 7, //点歌人歌曲加载失败(房主或者点歌者 一样的)
- VLKTVMVViewStateMusicLoadFailed = 8, //观众歌曲加载失败
- VLKTVMVViewStateMusicOwnerLoadLrcFailed = 9, //点歌人歌曲加载失败(房主)
- VLKTVMVViewStateMusicLoadLrcFailed = 10, //观众歌词加载失败
+ VLKTVMVViewStateNone = 0,  // No one is ordering songs at present.
+ VLKTVMVViewStateMusicLoading = 1,  // The current song is loading
+ VLKTVMVViewStateAudience = 2, // Audience
+ VLKTVMVViewStateOwnerSing = 3, //The owner of the house ordered a song to sing.
+ VLKTVMVViewStateOwnerAudience = 4, //The landlord did not join the chorus.
+ VLKTVMVViewStateOwnerChorus = 5, //Homeowner's chorus
+ VLKTVMVViewStateNotOwnerChorus = 6, //Non-homeowner singing
+ VLKTVMVViewStateMusicOwnerLoadFailed = 7, //The song of the singer failed to load (the same as the landlord or the singer)
+ VLKTVMVViewStateMusicLoadFailed = 8, //The audience's song failed to load
+ VLKTVMVViewStateMusicOwnerLoadLrcFailed = 9, //The song of the singer failed to load (homeowner)
+ VLKTVMVViewStateMusicLoadLrcFailed = 10, //Audience lyrics failed to load
 */
 -(void)setMvState:(VLKTVMVViewState)mvState {
     _mvState = mvState;
     KTVLogInfo(@"setMvState: %ld", mvState);
     switch (mvState) {
-        case VLKTVMVViewStateNone://无人演唱
+        case VLKTVMVViewStateNone://No one sings.
             self.joinChorusBtn.hidden = YES;
             self.leaveChorusBtn.hidden = YES;
             self.pauseBtn.hidden = YES;
@@ -600,10 +600,10 @@
 
 #pragma mark - AgoraKaraokeScoreDelegate
 
-/// 评分回调
-/// @param score 当前行得分
-/// @param cumulativeScore 累计得分
-/// @param totalScore 当前歌曲总得分
+/// Score callback
+/// @param score Current line score
+/// @param cumulativeScore Cumulative score
+/// @param totalScore The total score of the current song
 -(void)agoraKaraokeScoreWithScore:(double)score cumulativeScore:(double)cumulativeScore totalScore:(double)totalScore {
     double scale = cumulativeScore / totalScore;
     double realScore = scale * 100;

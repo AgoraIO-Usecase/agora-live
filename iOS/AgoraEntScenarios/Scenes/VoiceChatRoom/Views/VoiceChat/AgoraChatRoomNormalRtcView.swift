@@ -116,8 +116,8 @@ extension AgoraChatRoomNormalRtcView: UICollectionViewDelegate, UICollectionView
                 block(cell.cellType, tag)
             }
             /*
-             0: 正常 1: 闭麦 2: 禁言 3: 锁麦 4: 锁麦和禁言 -1: 空闲
-             */
+            0: Normal 1: Close the microphone 2: Ban 3: Lock the microphone 4: Lock the microphone and ban -1: Free
+            */
             if let mic_info = micInfos?[safe:indexPath.row] {
                 DispatchQueue.main.async {
                     cell.refreshUser(with: mic_info)

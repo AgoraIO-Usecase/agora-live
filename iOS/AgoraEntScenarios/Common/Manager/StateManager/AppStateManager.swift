@@ -9,27 +9,27 @@ import Foundation
 import Network
 
 public class AppStateManager {
-    // 前后台切换通知
+    // Front background switching notification
     public var appStateChangeHandler: ((Bool) -> Void)?
     
-    // 锁屏解锁通知
+    // Lock screen unlock notification
     public var screenLockHandler: ((Bool) -> Void)?
     
-    // 网络通断状态回调
+    // Network on-off status callback
     public var networkStatusChangeHandler: ((Bool) -> Void)?
     
     private let monitor = NWPathMonitor()
     
     public init() {
-        // 注册应用状态改变通知
+        // Notification of change of registration application status
         NotificationCenter.default.addObserver(self, selector: #selector(appStateChanged), name: UIApplication.didEnterBackgroundNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(appStateChanged), name: UIApplication.didBecomeActiveNotification, object: nil)
         
-        // 注册锁屏解锁通知
+        // Registration lock screen unlock notification
         NotificationCenter.default.addObserver(self, selector: #selector(screenLocked), name: UIApplication.willResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(screenUnlocked), name: UIApplication.didBecomeActiveNotification, object: nil)
         
-        // 监听网络状态改变
+        // Monitor the change of network status
         monitor.pathUpdateHandler = { [weak self] path in
             let isNetworkAvailable = path.status == .satisfied
             agoraEnt_info("networkChange isNetworkAvailable: \(isNetworkAvailable)", tag: "AppStateManager")
@@ -46,20 +46,20 @@ public class AppStateManager {
         monitor.cancel()
     }
     
-    // 应用状态改变通知处理
+    // Application status change notification processing
     @objc private func appStateChanged() {
         let isInBackground = UIApplication.shared.applicationState == .background
         agoraEnt_info("appStateChanged isInBackground: \(isInBackground)", tag: "AppStateManager")
         appStateChangeHandler?(isInBackground)
     }
     
-    // 锁屏通知处理
+    // Lock screen notification processing
     @objc private func screenLocked() {
         agoraEnt_info("screenLocked", tag: "AppStateManager")
         screenLockHandler?(true)
     }
     
-    // 解锁通知处理
+    // Unlock notification processing
     @objc private func screenUnlocked() {
         agoraEnt_info("screenUnlocked", tag: "AppStateManager")
         screenLockHandler?(false)

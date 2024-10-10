@@ -137,7 +137,7 @@
     cell.videoView.hidden = !([seatModel.owner.userId length] > 0 && !seatModel.isVideoMuted);
     //avatar or camera will only be displayed 1 at atime
     cell.avatarImgView.hidden = !cell.videoView.isHidden;
-    if (!seatModel.isVideoMuted && seatModel.owner.userId.length > 0) { //开启了视频
+    if (!seatModel.isVideoMuted && seatModel.owner.userId.length > 0) { //Turn on the video
         [self.delegate onVLRoomPersonView:self onRenderVideo:seatModel inView:cell.videoView atIndex:indexPath.row];
     }
     
@@ -153,7 +153,7 @@
 
 - (void)updateVolumeForSpeakers:(NSArray<AgoraRtcAudioVolumeInfo *> *) speakers {
     for (AgoraRtcAudioVolumeInfo *speaker in speakers) {
-        // 0是自己在说话
+        // 0 is talking by yourself.
         NSInteger speakerUid = (speaker.uid == 0) ? VLUserCenter.user.id.integerValue : speaker.uid;
         for (VLRoomSeatModel *model in self.roomSeatsArray) {
             if (model.owner.userId.length == 0) {
@@ -190,7 +190,7 @@
                 seatModel.isSongOwner = isSongOwner;
                 [changeSet addObject:@(seatModel.seatIndex)];
             }
-            //检查麦上用户
+            //Check the users on the microphone
             BOOL needtoJoinChorus = [AppContext isKtvChorusingWithSeat:seatModel];//[seatModel.chorusSongCode isEqualToString:[songModel chorusSongId]];
 //            cell.joinsttus
             NSIndexPath *path = [NSIndexPath indexPathForRow:seatModel.seatIndex inSection:0];

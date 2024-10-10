@@ -15,20 +15,19 @@ static LSTPopViewLogStyle _logStyle;
 
 @interface LSTPopViewManager : NSObject
 
-/** 单例 */
 LSTPopViewManager *LSTPopViewM(void);
 
 @end
 
 @interface LSTPopViewManager ()
 
-/** 储存已经展示popView */
+/** Storage has displayed popView*/
 @property (nonatomic,strong) NSMutableArray *popViewMarr;
-/** 按顺序弹窗顺序存储已显示的 popview  */
+/** Store the displayed popview in order of pop-ups */
 @property (nonatomic,strong) NSPointerArray *showList;
-/** 储存待移除的popView  */
+/** Store popView to be removed */
 @property (nonatomic,strong) NSHashTable <LSTPopView *> *removeList;
-/** 内存信息View */
+/** Memory Information View */
 @property (nonatomic,strong) UILabel *infoView;
 
 @end
@@ -62,7 +61,7 @@ LSTPopViewManager *LSTPopViewM() {
 + (NSArray *)getAllPopView {
     return LSTPopViewM().popViewMarr;
 }
-/** 获取当前页面所有popView */
+/** Get all popView on the current page */
 + (NSArray *)getAllPopViewForParentView:(UIView *)parentView {
     NSMutableArray *mArr = LSTPopViewM().popViewMarr;
     NSMutableArray *resMarr = [NSMutableArray array];
@@ -75,7 +74,7 @@ LSTPopViewManager *LSTPopViewM() {
     return [NSArray arrayWithArray:resMarr];
 }
 
-/** 获取当前页面指定编队的所有popView */
+/** Get all popViews of the specified formation on the current page */
 + (NSArray *)getAllPopViewForPopView:(LSTPopView *)popView {
     NSArray *mArr = [self getAllPopViewForParentView:popView.parentView];
     NSMutableArray *resMarr = [NSMutableArray array];
@@ -94,7 +93,7 @@ LSTPopViewManager *LSTPopViewM() {
     return [NSArray arrayWithArray:resMarr];
 }
 
-/** 读取popView */
+/** Read popView */
 + (LSTPopView *)getPopViewForKey:(NSString *)key {
     if (key.length<=0) { return nil; }
     NSMutableArray *mArr = LSTPopViewM().popViewMarr;
@@ -110,7 +109,7 @@ LSTPopViewManager *LSTPopViewM() {
 + (void)savePopView:(LSTPopView *)popView {
     [LSTPopViewM().popViewMarr addObject:popView];
     
-    //优先级排序
+    //Prioritize
     [self sortingArr];
     
     if (_logStyle & LSTPopViewLogStyleWindow) {
@@ -121,7 +120,7 @@ LSTPopViewManager *LSTPopViewM() {
     }
 }
 
-/** 移除popView */
+/** Remove popView */
 + (void)removePopView:(LSTPopView *)popView {
     if (!popView) { return; }
     NSArray *arr = LSTPopViewM().popViewMarr;
@@ -143,7 +142,7 @@ LSTPopViewManager *LSTPopViewM() {
     }
 }
 
-/** 移除popView */
+/** Remove popView */
 + (void)removePopViewForKey:(NSString *)key {
     if (key.length<=0) { return; }
     NSArray *arr = LSTPopViewM().popViewMarr;
@@ -163,7 +162,7 @@ LSTPopViewManager *LSTPopViewM() {
         [self setConsoleLog];
     }
 }
-/** 移除所有popView */
+/** Remove all popView */
 + (void)removeAllPopView {
     NSMutableArray *arr = LSTPopViewM().popViewMarr;
     if (arr.count<=0) { return;  }
@@ -207,7 +206,7 @@ LSTPopViewManager *LSTPopViewM() {
     LSTPVLog(@"%@ S:%zd个 R:%zd个",LSTPopViewLogTitle,LSTPopViewM().popViewMarr.count,LSTPopViewM().removeList.allObjects.count);
 }
 
-//冒泡排序
+//Bubbling sorting
 + (void)sortingArr {
     NSMutableArray *arr = LSTPopViewM().popViewMarr;
     for (int i = 0; i < arr.count; i++) {
@@ -223,7 +222,7 @@ LSTPopViewManager *LSTPopViewM() {
     }
 }
 
-/** 转移popView到待移除队列 */
+/** Transfer popView to the queue to be removed */
 + (void)transferredToRemoveQueueWithPopView:(LSTPopView *)popView {
     NSArray *popViewMarr = LSTPopViewM().popViewMarr;
     
@@ -250,7 +249,7 @@ LSTPopViewManager *LSTPopViewM() {
     }
 }
 
-#pragma mark - ***** 懒加载 *****
+#pragma mark - ***** Lazy loading *****
 
 - (UILabel *)infoView {
     if(_infoView) return _infoView;
@@ -288,13 +287,13 @@ LSTPopViewManager *LSTPopViewM() {
 
 
 static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
-// 角度转弧度
+// Angle radians
 #define LST_DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)
 
 
 @interface LSTPopViewBgView : UIView
 
-/** 是否隐藏背景 默认NO */
+/** Whether to hide the background Default NO */
 @property (nonatomic, assign) BOOL isHideBg;
 
 @end
@@ -313,31 +312,31 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
 
 @interface LSTPopView () <UIGestureRecognizerDelegate>
 
-/** 弹窗容器 默认是app UIWindow 可指定view作为容器 */
+/** Pop-up container The default is app UIWindow. View can be specified as the container */
 @property (nonatomic, weak) UIView *container;
-/** 背景层 */
+/** Background layer */
 @property (nonatomic, strong) LSTPopViewBgView *backgroundView;
-/** 自定义视图 */
+/** Custom view */
 @property (nonatomic,strong) UIView *customView;
-/** 规避键盘偏移量 */
+/** Avoid keyboard offset */
 @property (nonatomic, assign) CGFloat avoidKeyboardOffset;
-/** 代理池 */
+/** Delegate Pool */
 @property (nonatomic, strong) NSHashTable <id<LSTPopViewProtocol>> *delegates;
-/** 背景点击手势 */
+/** Background click gesture */
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
-/** 自定义View滑动手势 */
+/** Custom View Sliding Gestures */
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
 //当前正在拖拽的是否是tableView
 @property (nonatomic, assign) BOOL isDragScrollView;
 /** 标记popView中是否有UIScrollView, UITableView, UICollectionView */
 @property (nonatomic, weak) UIScrollView *scrollerView;
-/** 记录自定义view原始Frame */
+/** Record custom view original Frame */
 @property (nonatomic, assign) CGRect originFrame;
-/** 标记dragDismissStyle是否被复制 */
+/** Mark whether dragDismissStyle is copied */
 @property (nonatomic, assign) BOOL isDragDismissStyle;
-/** 是否弹出键盘 */
+/** Whether to pop up the keyboard */
 @property (nonatomic,assign,readonly) BOOL isShowKeyboard;
-/** 弹出键盘的高度 */
+/** The height of the pop-up keyboard */
 @property (nonatomic, assign) CGFloat keyboardY;
 
 @end
@@ -355,7 +354,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
 }
 
 - (void)initSubViews {
-    //初始化配置
+    //Initialize the configuration
     _isClickBgDismiss = NO;
     _isObserverScreenRotation = YES;
     _bgAlpha = 0.25;
@@ -380,7 +379,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     
     _isSingle = NO;
     
-    //拖拽相关属性初始化
+    //Drag and drop related attributes to initialize
     _dragStyle = LSTDragStyleNO;
     _dragDismissStyle = LSTDismissStyleNO;
     _dragDistance = 0.0f;
@@ -410,7 +409,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
                                  parentView:(UIView *)parentView
                                    popStyle:(LSTPopStyle)popStyle
                                dismissStyle:(LSTDismissStyle)dismissStyle {
-    // 检测自定义视图是否存在(check customView is exist)
+    // Check customView is exist (check customView is exist)
     if (!customView) { return nil; }
     if (![parentView isKindOfClass:[UIView class]] && parentView != nil) {
         LSTPVLog(@"parentView is error !!!");
@@ -438,13 +437,13 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     [popView addSubview:popView.backgroundView];
     [popView.backgroundView addSubview:customView];
     
-    //背景添加手势
+    //Add gestures to the background
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:popView action:@selector(popViewBgViewTap:)];
     tap.delegate = popView;
     popView.tapGesture = tap;
     [popView.backgroundView addGestureRecognizer:tap];
     
-    //添加拖拽手势
+    //Add drag-and-drop gestures
     popView.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:popView action:@selector(pan:)];
     popView.panGesture.delegate = popView;
     [popView.customView addGestureRecognizer:popView.panGesture];
@@ -458,42 +457,42 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     //    UITapGestureRecognizer *customViewTap = [[UITapGestureRecognizer alloc] initWithTarget:popView action:@selector(customViewClickEvent:)];
     //    [popView.customView addGestureRecognizer:customViewTap];
     
-    //键盘将要显示
+    //The keyboard will display
     [[NSNotificationCenter defaultCenter] addObserver:popView
                                              selector:@selector(keyboardWillShow:)
                                                  name:UIKeyboardWillShowNotification
                                                object:nil];
-    //键盘显示完毕
+    //The keyboard display is finished.
     [[NSNotificationCenter defaultCenter] addObserver:popView
                                              selector:@selector(keyboardDidShow:)
                                                  name:UIKeyboardDidShowNotification
                                                object:nil];
-    //键盘frame将要改变
+    //The keyboard frame will be changed.
     [[NSNotificationCenter defaultCenter] addObserver:popView
                                              selector:@selector(keyboardWillChangeFrame:)
                                                  name:UIKeyboardWillChangeFrameNotification
                                                object:nil];
-    //键盘frame改变完毕
+    //The keyboard frame has been changed.
     [[NSNotificationCenter defaultCenter] addObserver:popView
                                              selector:@selector(keyboardDidChangeFrame:)
                                                  name:UIKeyboardDidChangeFrameNotification
                                                object:nil];
-    //键盘将要收起
+    //The keyboard will be put away.
     [[NSNotificationCenter defaultCenter] addObserver:popView
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
-    //键盘收起完毕
+    //The keyboard has been put away.
     [[NSNotificationCenter defaultCenter] addObserver:popView
                                              selector:@selector(keyboardDidHide:)
                                                  name:UIKeyboardDidHideNotification
                                                object:nil];
-    //屏幕旋转
+    //Screen rotation
     [[NSNotificationCenter defaultCenter] addObserver:popView
                                              selector:@selector(statusBarOrientationChange:)
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
                                                object:nil];
-    //监听customView frame
+    //Monitor customView frame
     [popView.customView addObserver:popView
                          forKeyPath:@"frame"
                             options:NSKeyValueObservingOptionOld
@@ -504,7 +503,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
 - (void)dealloc {
     [self.customView removeObserver:self forKeyPath:@"frame"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    //从待移除队列中销毁
+    //Destroy from the queue to be removed
     [LSTPopViewManager destroyInRemoveQueue:self];
     [self lst_PopViewDidDismissForPopView:self];
     self.popViewDidDismissBlock? self.popViewDidDismissBlock():nil;
@@ -525,7 +524,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     return hitView;
 }
 
-#pragma mark - ***** 代理方法 *****
+#pragma mark - ***** Delegate method*****
 - (void)lst_PopViewBgClickForPopView:(LSTPopView *)popView {
     for (id<LSTPopViewProtocol> delegate in _delegates.copy) {
         if ([delegate respondsToSelector:_cmd]) {
@@ -590,27 +589,27 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     }
 }
 
-#pragma mark - ***** 界面布局 *****
+#pragma mark - ***** Interface layout *****
 
 - (void)setCustomViewFrameWithHeight:(CGFloat)height {
     
     CGFloat changeY = 0;
     switch (self.hemStyle) {
-        case LSTHemStyleTop ://贴顶
+        case LSTHemStyleTop ://Stick to the top
         {
             self.customView.pv_X = _backgroundView.pv_CenterX - _customView.pv_Size.width*0.5 + _adjustX;
             self.customView.pv_Y = _adjustY;
             changeY = _adjustY;
         }
             break;
-        case LSTHemStyleLeft ://贴左
+        case LSTHemStyleLeft ://Stick to the left
         {
             self.customView.pv_X = _adjustX;
             self.customView.pv_Y = _backgroundView.pv_CenterY - _customView.pv_Size.height*0.5 + _adjustY;
             changeY = height*0.5;
         }
             break;
-        case LSTHemStyleBottom ://贴底
+        case LSTHemStyleBottom ://Stick to the bottom
         {
             self.customView.pv_X = _backgroundView.pv_CenterX - _customView.pv_Size.width*0.5 + _adjustX;
             [self.customView layoutIfNeeded];
@@ -618,21 +617,21 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
             changeY = height;
         }
             break;
-        case LSTHemStyleRight ://贴右
+        case LSTHemStyleRight ://Stick to the right
         {
             self.customView.pv_X = _backgroundView.pv_Width - _customView.pv_Width + _adjustX;
             self.customView.pv_Y = _backgroundView.pv_CenterY - _customView.pv_Size.height*0.5 + _adjustY;
             changeY = height*0.5;
         }
             break;
-        case LSTHemStyleTopLeft :///贴顶和左
+        case LSTHemStyleTopLeft :///Stick to the top and left
         {
             self.customView.pv_X = _adjustX;
             self.customView.pv_Y = _adjustY;
             changeY = _adjustY;
         }
             break;
-        case LSTHemStyleBottomLeft ://贴底和左
+        case LSTHemStyleBottomLeft ://Bottom and left
         {
             self.customView.pv_X = _adjustX;
             [self.customView layoutIfNeeded];
@@ -640,7 +639,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
             changeY = height;
         }
             break;
-        case LSTHemStyleBottomRight ://贴底和右
+        case LSTHemStyleBottomRight ://Stick to the bottom and right
         {
             self.customView.pv_X = _backgroundView.pv_Width - _customView.pv_Width + _adjustX;
             [self.customView layoutIfNeeded];
@@ -648,7 +647,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
             changeY = height;
         }
             break;
-        case LSTHemStyleTopRight ://贴顶和右
+        case LSTHemStyleTopRight ://Stick to the top and right
         {
             self.customView.pv_X = _backgroundView.pv_Width - _customView.pv_Width + _adjustX;
             self.customView.pv_Y = _adjustY;
@@ -665,14 +664,14 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     }
     
     CGFloat originBottom = _originFrame.origin.y + _originFrame.size.height + _avoidKeyboardSpace;
-    if (_isShowKeyboard && (originBottom > _keyboardY)) {//键盘已经显示
+    if (_isShowKeyboard && (originBottom > _keyboardY)) {//The keyboard has been displayed.
         CGFloat Y = _keyboardY - _customView.pv_Height - _avoidKeyboardSpace;
         _customView.pv_Y = Y;
         CGRect newFrame = _originFrame;
         newFrame.origin.y = newFrame.origin.y - changeY;
         newFrame.size = CGSizeMake(_originFrame.size.width, _customView.pv_Height);
         self.originFrame = newFrame;
-    }else {//没有键盘显示
+    }else {//There is no keyboard display.
         self.originFrame = _customView.frame;
     }
     
@@ -710,7 +709,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     
 }
 
-#pragma mark - ***** setter 设置器/数据处理 *****
+#pragma mark - ***** setter Setter/Data Processing *****
 
 - (void)setPopDuration:(NSTimeInterval)popDuration {
     if (popDuration <= 0.0) { return; }
@@ -773,7 +772,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     self.isDragDismissStyle = YES;
 }
 
-#pragma mark - ***** pop 弹出 *****
+#pragma mark - ***** pop *****
 - (void)pop {
     [self popWithStyle:self.popStyle duration:self.popDuration];
 }
@@ -798,28 +797,28 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     
     self.originFrame = self.customView.frame;
     
-    if (self.isSingle) {//单显
+    if (self.isSingle) {
         NSArray *popViewArr = [LSTPopViewManager getAllPopViewForPopView:self];
-        for (id obj  in popViewArr) {//移除所有popView和移除定a时器
+        for (id obj  in popViewArr) {//Remove all popView and remove fixed a timer
             LSTPopView *lastPopView = (LSTPopView *)obj;
             
             [lastPopView dismissWithDismissStyle:LSTDismissStyleNO duration:0.2 isRemove:YES];
         }
-    }else {//多显
-        if (!isOutStack) {//处理隐藏倒数第二个popView
+    }else {
+        if (!isOutStack) {//Dealing with hiding the penultimate popView
             NSArray *popViewArr = [LSTPopViewManager getAllPopViewForPopView:self];
             if (popViewArr.count >= 1) {
                 id obj = popViewArr[popViewArr.count - 1];
                 LSTPopView *lastPopView = (LSTPopView *)obj;
                 
-                if (self.isStack) {//堆叠显示
+                if (self.isStack) {//Stacked display
                 }else {
-                    if (self.priority >= lastPopView.priority) {//置顶显示
+                    if (self.priority >= lastPopView.priority) {//Pin the top display
                         if (lastPopView.isShowKeyboard) {
                             [lastPopView endEditing:YES];
                         }
                         [lastPopView dismissWithDismissStyle:LSTDismissStyleFade duration:0.2 isRemove:NO];
-                    } else {//隐藏显示
+                    } else {//Hide the display
                         if (!self.parentView) {
                             self.container = [UIApplication sharedApplication].keyWindow;
                         }
@@ -845,9 +844,9 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
         
         self.popViewWillPopBlock? self.popViewWillPopBlock():nil;
     }
-    //动画处理
+    //Animation processing
     [self popAnimationWithPopStyle:popStyle duration:resDuration];
-    //震动反馈
+    //Vibrating feedback
     [self beginImpactFeedback];
     
     LSTPopViewWK(self);;
@@ -859,32 +858,32 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
         }
     });
     
-    //保存popView
+    //save popView
     if (!isOutStack) { [LSTPopViewManager savePopView:self]; }
 }
 
 - (void)popAnimationWithPopStyle:(LSTPopStyle)popStyle duration:(NSTimeInterval)duration {
     
     LSTPopViewWK(self);
-    if (popStyle == LSTPopStyleFade) {//渐变出现
+    if (popStyle == LSTPopStyleFade) {
         self.backgroundView.backgroundColor = [self getNewColorWith:self.bgColor alpha:0.0];
         self.customView.alpha = 0.0f;
         [UIView animateWithDuration:0.2 animations:^{
             self.backgroundView.backgroundColor =[self getNewColorWith:self.bgColor alpha:self.bgAlpha];
             self.customView.alpha = 1.0f;
         }];
-    } else if (popStyle == LSTPopStyleNO){//无动画
+    } else if (popStyle == LSTPopStyleNO){
         self.backgroundView.backgroundColor = [self getNewColorWith:self.bgColor alpha:0.0];
         [UIView animateWithDuration:0.1 animations:^{
             self.backgroundView.backgroundColor =[self getNewColorWith:self.bgColor alpha:self.bgAlpha];
         }];
         self.customView.alpha = 1.0f;
-    } else {//有动画
+    } else {
         self.backgroundView.backgroundColor = [self getNewColorWith:self.bgColor alpha:0.0];
         [UIView animateWithDuration:duration animations:^{
             wk_self.backgroundView.backgroundColor = [self getNewColorWith:self.bgColor alpha:self.bgAlpha];
         }];
-        //自定义view过渡动画
+        //Custom view transition animation
         [self hanlePopAnimationWithDuration:duration popStyle:popStyle];
     }
 }
@@ -899,9 +898,9 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     
     LSTPopViewWK(self);
     switch (popStyle) {
-        case LSTPopStyleScale:// < 缩放动画，先放大，后恢复至原大小
+        case LSTPopStyleScale:// < Zoom animation, zoom in first, and then restore to the original size
         {
-            [self animationWithLayer:_customView.layer duration:((0.3*duration)/0.7) values:@[@0.0, @1.2, @1.0]]; // 另外一组动画值(the other animation values) @[@0.0, @1.2, @0.9, @1.0]
+            [self animationWithLayer:_customView.layer duration:((0.3*duration)/0.7) values:@[@0.0, @1.2, @1.0]]; // Another set of animation values (the other animation values) @[@0.0, @1.2, @0.9, @1.0]
         }
             break;
         case LSTPopStyleSmoothFromTop:
@@ -980,7 +979,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     }
 }
 
-#pragma mark - ***** dismiss 移除 *****
+#pragma mark - ***** dismiss *****
 
 - (void)dismiss {
     [self dismissWithStyle:self.dismissStyle duration:self.dismissDuration];
@@ -1005,7 +1004,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     NSTimeInterval resDuration = [self getDismissDuration:duration];
     
     if (isRemove) {
-        //把当前popView转移到待移除队列 避免线程安全问题
+        //Transfer the current popView to the queue to be removed to avoid thread security problems
         [LSTPopViewManager transferredToRemoveQueueWithPopView:self];
     }
     
@@ -1018,7 +1017,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     
     if (!self.isSingle && (isRemove && [LSTPopViewManager getAllPopViewForPopView:self].count >= 1)){//多显
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(resDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            //popView出栈
+            //popView out stack
             if (!self.isStack && [LSTPopViewManager getAllPopViewForPopView:self].count >= 1) {
                 NSArray *popViewArr = [LSTPopViewManager getAllPopViewForPopView:self];
                 id obj = popViewArr[popViewArr.count-1];
@@ -1133,7 +1132,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     }
 }
 
-#pragma mark - ***** other 其他 *****
+#pragma mark - ***** other *****
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if([keyPath isEqualToString:@"frame"]) {
@@ -1152,7 +1151,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     }
 }
 
-//按钮的压下事件 按钮缩小
+//Pressing down the button event Button shrinks
 - (void)bgLongPressEvent:(UIGestureRecognizer *)ges {
     
     //    [self.delegateMarr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -1299,7 +1298,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     KFAnimation.duration = duration;
     KFAnimation.removedOnCompletion = NO;
     KFAnimation.fillMode = kCAFillModeForwards;
-    //    KFAnimation.delegate = self;//造成强应用 popView释放不了
+    //    KFAnimation.delegate = self;//The strong application popView cannot be released
     NSMutableArray *valueArr = [NSMutableArray arrayWithCapacity:values.count];
     for (NSUInteger i = 0; i<values.count; i++) {
         CGFloat scaleValue = [values[i] floatValue];
@@ -1314,7 +1313,6 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     return [UIColor colorWithRed:0 green:0 blue:0 alpha:alpha];
 }
 
-// 改变UIColor的Alpha
 - (UIColor *)getNewColorWith:(UIColor *)color alpha:(CGFloat)alpha {
     
     if (self.isHideBg) {
@@ -1333,7 +1331,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     return newColor;
 }
 
-/** 删除指定代理 */
+/** Delete the designated agent */
 - (void)removeForDelegate:(id<LSTPopViewProtocol>)delegate {
     if (delegate) {
         if ([self.delegates containsObject:delegate]) {
@@ -1342,7 +1340,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     }
 }
 
-/** 删除代理池 删除所有代理 */
+/** Delete the proxy pool Delete all agents */
 - (void)removeAllDelegate {
     if (self.delegates.count > 0) {
         [self.delegates removeAllObjects];
@@ -1358,7 +1356,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     }
 }
 
-#pragma mark - ***** 横竖屏改变 *****
+#pragma mark - ***** Horizontal and vertical screen changes *****
 
 - (void)statusBarOrientationChange:(NSNotification *)notification {
     if (self.isObserverScreenRotation) {
@@ -1370,7 +1368,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     }
 }
 
-#pragma mark - ***** 键盘弹出/收回 *****
+#pragma mark - ***** Keyboard pop-up/retract *****
 
 - (void)keyboardWillShow:(NSNotification *)notification{
     //    LSTPVLog(@"keyboardWillShow");
@@ -1386,9 +1384,8 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     self.isAvoidKeyboard = YES;
     self.avoidKeyboardOffset = customViewMaxY - keyboardMaxY;
     self.keyboardY = keyboardEedFrame.origin.y;
-    //键盘遮挡到弹窗
+    //The keyboard blocks the pop-up window.
     if ((keyboardMaxY<customViewMaxY) || ((_originFrame.origin.y + _customView.pv_Height) > keyboardMaxY)) {
-        //执行动画
         [UIView animateWithDuration:duration animations:^{
             self.customView.pv_Y = self.customView.pv_Y - self.avoidKeyboardOffset;
         }];
@@ -1419,7 +1416,6 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
 }
 
 - (void)keyboardWillChangeFrame:(NSNotification *)notification{
-    //    LSTPVLog(@"键盘frame将要改变");
     if (self.keyboardFrameWillChangeBlock) {
         CGRect keyboardBeginFrame = [notification.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
         CGRect keyboardEedFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
@@ -1429,7 +1425,6 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
 }
 
 - (void)keyboardDidChangeFrame:(NSNotification *)notification{
-    //    LSTPVLog(@"键盘frame已经改变");
     if (self.keyboardFrameDidChangeBlock) {
         CGRect keyboardBeginFrame = [notification.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
         CGRect keyboardEedFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
@@ -1463,20 +1458,20 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if(gestureRecognizer == self.tapGesture) {
-        //如果是点击手势
+        //If it is a click gesture
         CGPoint point = [gestureRecognizer locationInView:self.customView];
         BOOL iscontain = [self.customView.layer containsPoint:point];
         if(iscontain) {
             return NO;
         }
     } else if(gestureRecognizer == self.panGesture){
-        //如果是自己加的拖拽手势
+        //If it is a drag gesture added by yourself
         //        LSTPVLog(@"gestureRecognizerShouldBegin");
     }
     return YES;
 }
 
-//3. 是否与其他手势共存，一般使用默认值(默认返回NO：不与任何手势共存)
+//3. Whether to coexist with other gestures, generally use the default value (default return NO: do not coexist with any gestures)
 - (BOOL)gestureRecognizer:(UIPanGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     if(gestureRecognizer == self.panGesture) {
         if ([otherGestureRecognizer isKindOfClass:NSClassFromString(@"UIScrollViewPanGestureRecognizer")] || [otherGestureRecognizer isKindOfClass:NSClassFromString(@"UIPanGestureRecognizer")] ) {
@@ -1488,36 +1483,36 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     return NO;
 }
 
-//拖拽手势
+//Drag and drop gestures
 - (void)pan:(UIPanGestureRecognizer *)panGestureRecognizer {
     
     self.panOffsetBlock?self.panOffsetBlock(CGPointMake(_customView.pv_X-_originFrame.origin.x, _customView.pv_Y-_originFrame.origin.y)):nil;
     
     if (self.dragStyle == LSTDragStyleNO) {return;}
-    // 获取手指的偏移量
+    // Get the offset of the finger
     CGPoint transP = [panGestureRecognizer translationInView:self.customView];
 
     CGPoint velocity = [panGestureRecognizer velocityInView:[UIApplication sharedApplication].keyWindow];
-    if(self.isDragScrollView) {//含有tableView,collectionView,scrollView
-        //如果当前拖拽的是tableView
+    if(self.isDragScrollView) {
+        //If the current drag is tableView
         if(self.scrollerView.contentOffset.y <= 0) {
-            //如果tableView置于顶端
+            //If tableView is placed at the top
             if(transP.y > 0) {
-                //如果向下拖拽
+                //If you drag down
                 self.scrollerView.contentOffset = CGPointMake(0, 0);
                 self.scrollerView.panGestureRecognizer.enabled = NO;
                 self.isDragScrollView = NO;
-                //向下拖
+                //Drag down
                 self.customView.frame = CGRectMake(_customView.pv_X, _customView.pv_Y + transP.y, _customView.pv_Width, _customView.pv_Height);
             } else {
-                //如果向上拖拽
+                //If you drag up
             }
         }
-    } else {//不含有tableView,collectionView,scrollView
+    } else {
         
         CGFloat customViewX = self.customView.pv_X;
         CGFloat customViewY = self.customView.pv_Y;
-        //X正方向移动
+        //X moves in the right direction
         if ((self.dragStyle & LSTDragStyleX_Positive) && (customViewX >= _originFrame.origin.x)) {
             if (transP.x > 0) {
                 customViewX = customViewX + transP.x;
@@ -1525,7 +1520,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
                 customViewX = (customViewX + transP.x) > _originFrame.origin.x? (customViewX + transP.x):(_originFrame.origin.x);
             }
         }
-        //X负方向移动
+        //X Negative direction movement
         if ((self.dragStyle & LSTDragStyleX_Negative) && (customViewX <= self.originFrame.origin.x)) {
             if (transP.x < 0) {
                 customViewX = customViewX + transP.x;
@@ -1533,7 +1528,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
                 customViewX = (customViewX + transP.x) < _originFrame.origin.x? (customViewX + transP.x):(_originFrame.origin.x);
             }
         }
-        //Y正方向移动
+        //Y moves in the right direction
         if (self.dragStyle & LSTDragStyleY_Positive && (customViewY >= _originFrame.origin.y)) {
             if (transP.y > 0) {
                 customViewY = customViewY + transP.y;
@@ -1541,7 +1536,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
                 customViewY = (customViewY + transP.y) > _originFrame.origin.y ?(customViewY + transP.y):(_originFrame.origin.y);
             }
         }
-        //Y负方向移动
+        //Y moves in the negative direction
         if (self.dragStyle & LSTDragStyleY_Negative&&(customViewY <= _originFrame.origin.y)) {
             if (transP.y < 0) {
                 customViewY = customViewY + transP.y;
@@ -1561,7 +1556,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
         }
 
         LSTPopViewWK(self)
-        //拖拽松开回位Block
+        //Drag and release the back Block
         void (^dragReboundBlock)(void) = ^ {
             [UIView animateWithDuration:wk_self.dragReboundTime
                                   delay:0.1f
@@ -1572,7 +1567,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
                 wk_self.customView.frame = wk_self.originFrame;
             } completion:^(BOOL finished) {}];
         };
-        //横扫移除Block
+        //Scan to remove Block
         void (^sweepBlock)(BOOL,BOOL,BOOL,BOOL) = ^(BOOL isX_P, BOOL isX_N, BOOL isY_P, BOOL isY_N) {
             
             if (isX_P==NO && isX_N==NO && isY_P==NO && isY_N==NO) {
@@ -1581,23 +1576,23 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
             }
             
             if (isY_P==NO && isY_N==NO && self.sweepDismissStyle == LSTSweepDismissStyleSmooth) {//X轴可轻扫
-                if (velocity.x>0) {//正向
+                if (velocity.x>0) {
                     [self dismissWithStyle:LSTDismissStyleSmoothToRight duration:self.dismissDuration];
-                } else {//负向
+                } else {
                     [self dismissWithStyle:LSTDismissStyleSmoothToLeft duration:self.dismissDuration];
                 }
                 return;
             }
             
             if (isX_P==NO && isX_N==NO && self.sweepDismissStyle == LSTSweepDismissStyleSmooth) {//Y轴可轻扫
-                if (velocity.y>0) {//正向
+                if (velocity.y>0) {
                     [self dismissWithStyle:LSTDismissStyleSmoothToBottom duration:self.dismissDuration];
-                } else {//负向
+                } else {
                     [self dismissWithStyle:LSTDismissStyleSmoothToTop duration:self.dismissDuration];
                 }
                 return;
             }
-            // 移除，以手势速度飞出
+            // Remove and fly out at gesture speed
             [UIView animateWithDuration:0.5 animations:^{
                 wk_self.backgroundView.backgroundColor = [self getNewColorWith:self.bgColor alpha:0.0];
                 self.customView.center = CGPointMake(isX_P || isX_N?velocity.x:self.customView.pv_CenterX, isY_P||isY_N?velocity.y:self.customView.pv_CenterY);
@@ -1614,7 +1609,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
                 return;
             }
             
-            //可轻扫移除的方向
+            //The direction that can be swiped to remove
             BOOL isX_P = NO;
             BOOL isX_N = NO;
             BOOL isY_P = NO;
@@ -1635,7 +1630,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
             }
             sweepBlock(isX_P,isX_N,isY_P,isY_N);
 //            LSTPVLog(@"isX=%@,isY=%@,velocityX=%lf,velocityY=%lf",isX?@"YES":@"NO",isY?@"YES":@"NO",velocityX,velocityY);
-        }else {//普通拖拽
+        }else {//Ordinary drag
             BOOL isCanDismiss = NO;
             if (self.dragStyle & LSTDragStyleAll) {
                 
@@ -1659,7 +1654,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     }
 }
 
-#pragma mark - ***** 懒加载 *****
+#pragma mark - ***** Lazy loading *****
 
 - (NSHashTable<id<LSTPopViewProtocol>> *)delegates {
     if (_delegates) return _delegates;
@@ -1675,60 +1670,60 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     return self.customView;
 }
 
-#pragma mark - ***** 以下是 窗口管理api *****
+#pragma mark - ***** The following is the window management api *****
 
-/** 保存popView */
+/** Save popView */
 + (void)savePopView:(LSTPopView *)popView {
     [LSTPopViewManager savePopView:popView];
 }
 
-/** 获取全局(整个app内)所有popView */
+/** Get all popView globally (in the whole app) */
 + (NSArray *)getAllPopView {
     return [LSTPopViewManager getAllPopView];
 }
 
-/** 获取当前页面所有popView */
+/** Get all popView on the current page */
 + (NSArray *)getAllPopViewForParentView:(UIView *)parentView {
     return [LSTPopViewManager getAllPopViewForParentView:parentView];
 }
 
-/** 获取当前页面指定编队的所有popView */
+/** Get all popViews of the specified formation on the current page */
 + (NSArray *)getAllPopViewForPopView:(LSTPopView *)popView {
     return [LSTPopViewManager getAllPopViewForPopView:popView];
 }
 
 /**
- 读取popView (有可能会跨编队读取弹窗)
- 建议使用getPopViewForGroupId:forkey: 方法进行精确读取
+ Read popView (may read pop-ups across formations)
+ It is recommended to use the getPopViewForGroupId:forkey: method for accurate reading.
  */
 + (LSTPopView *)getPopViewForKey:(NSString *)key {
     return [LSTPopViewManager getPopViewForKey:key];
 }
 
-/** 移除popView */
+/** Remove popView */
 + (void)removePopView:(LSTPopView *)popView {
     [LSTPopViewManager removePopView:popView];
 }
 
 /**
- 移除popView 通过唯一key (有可能会跨编队误删弹窗)
- 建议使用removePopViewForGroupId:forkey: 方法进行精确删除
+ Remove popView through the unique key (pop-up windows may be deleted by mistake across formations)
+ It is recommended to use the removePopViewForGroupId:forkey: method for precise deletion.
  */
 + (void)removePopViewForKey:(NSString *)key {
     [LSTPopViewManager removePopViewForKey:key];
 }
 
-/** 移除所有popView */
+/** Remove all popView */
 + (void)removeAllPopView {
     [LSTPopViewManager removeAllPopView];
 }
 
-/** 移除 最后一个弹出的 popView */
+/** Remove the last pop-up popView */
 + (void)removeLastPopView {
     return [LSTPopViewManager removeLastPopView];
 }
 
-/** 开启调试view  建议设置成 线上隐藏 测试打开 */
+/** Turn on the debugging view. It is recommended to set it to online hiding test opening */
 + (void)setLogStyle:(LSTPopViewLogStyle)logStyle {
     _logStyle = logStyle;
     

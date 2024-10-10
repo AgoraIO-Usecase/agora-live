@@ -14,7 +14,7 @@
 @implementation LSTPopView (KTVModal)
 
 #pragma mark private method
-//公共弹窗视图设置
+//Public pop-up window view settings
 + (LSTPopView*)_createKTVPopContainerWithContentView:(UIView*)contentView
                                       withParentView:(UIView*)parentView {
     LSTPopView *popView = [LSTPopView initWithCustomView:contentView
@@ -64,7 +64,7 @@
     return popView;
 }
 
-//弹出更多
+//Pop up more
 + (LSTPopView*)popSelMoreViewWithParentView:(UIView*)parentView
                                withDelegate:(id<VLPopMoreSelViewDelegate>)delegate {
     CGFloat popViewH = 190 + kSafeAreaBottomHeight;
@@ -78,7 +78,7 @@
     return popView;
 }
 
-//弹出下麦视图
+//Pop-up microphone view
 + (LSTPopView*)popDropLineViewWithParentView:(UIView*)parentView
                                withSeatModel:(VLRoomSeatModel *)seatModel
                                withDelegate:(id<VLDropOnLineViewDelegate>)delegate {
@@ -95,7 +95,7 @@
 }
 
 
-//弹出美声视图
+//Pop up the beautiful sound view
 + (LSTPopView*)popBelcantoViewWithParentView:(UIView*)parentView
                            withBelcantoModel:(VLBelcantoModel *)belcantoModel
                                 withDelegate:(id<VLAudioEffectPickerDelegate>)delegate {
@@ -110,7 +110,7 @@
     return popView;
 }
 
-//弹出点歌视图
+//Pop-up song order view
 + (LSTPopView*)popUpChooseSongViewWithParentView:(UIView*)parentView
                                          isOwner: (BOOL)isOwner
                                         isChorus:(BOOL)isChorus
@@ -133,7 +133,7 @@
     return popView;
 }
 
-//弹出音效
+//Pop-up sound effect
 + (LSTPopView*)popSetSoundEffectViewWithParentView:(UIView*)parentView
                                          soundView:(VLEffectView*)soundView
                                       withDelegate:(id<VLEffectViewDelegate>)delegate {
@@ -148,7 +148,7 @@
     return popView;
 }
 
-//弹出专业主播
+//Pop-up professional anchors
 + (LSTPopView*)popVoicePerViewWithParentView:(UIView*)parentView
                               isProfessional: (BOOL) isProfessional
                                     aecState:(BOOL)state
@@ -176,7 +176,7 @@
     return popView;
 }
 
-//弹出耳返视图
+//Pop-up ear back view
 + (LSTPopView*)popEarSettingViewWithParentView:(UIView*)parentView
                                    isEarOn:(BOOL)isEarOn
                                            vol:(CGFloat)vol
@@ -191,7 +191,7 @@
     return popView;
 }
 
-//弹出虚拟声卡视图
+//Pop-up virtual sound card view
 + (LSTPopView*)popSoundCardViewWithParentView:(UIView*)parentView
                                 soundCardView:(UIView *)soundCardView
                                     soundOpen:(BOOL)isOpen
@@ -223,7 +223,7 @@
     return popView;
 }
 
-//网络差视图
+//Network difference view
 + (LSTPopView*)popBadNetWrokTipViewWithParentView:(UIView*)parentView
                                      withDelegate:(id<VLBadNetWorkViewDelegate>)delegate {
     CGFloat popViewH = 276;
@@ -245,7 +245,7 @@
     return popView;
 }
 
-//控制台
+//Console
 + (LSTPopView*)popSettingViewWithParentView:(UIView*)parentView
                                     setting:(VLKTVSettingModel*)settingModel
                                settingView:(VLKTVSettingView*)settingView
@@ -264,7 +264,6 @@
     return popView;
 }
 
-//弹出DebugView
 + (LSTPopView*)popDebugViewWithParentView:(UIView*)parentView
                                     channelName:(NSString *)name
                                    sdkVer:(NSString *)ver

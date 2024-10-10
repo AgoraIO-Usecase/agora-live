@@ -15,9 +15,9 @@
 @property (nonatomic, strong) UIImageView *starImageView;
 @property (nonatomic, strong) UILabel *scoreLabel;
 @property (nonatomic, strong) UILabel *scoreTitleLabel;;
-/// 圆盘光
+/// Disc light
 @property (nonatomic, strong) UIImageView *circleLightImageView;
-/// 圆盘
+/// Disc
 @property (nonatomic, strong) UIImageView *circleImageView;
 @property (nonatomic, strong) UIButton *confirmButton;
 
@@ -87,7 +87,7 @@
 - (void)configScore:(int)score {
     self.scoreLabel.text = [NSString stringWithFormat:@"%d",score];
     NSString *imageNamed;
-    // 评分逻辑
+    // Scoring logic
     // ktv_score_A 、ktv_score_B 、ktv_score_C 、 ktv_score_S
     if (score >= 90) {
         imageNamed = @"ktv_score_S";

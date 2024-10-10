@@ -68,7 +68,7 @@
     }
     self.levels = array;
     
-    // withFixedItemLength 控件宽度或者高度固定，间距不固定
+    // withFixedItemLength The width or height of the control is fixed, and the spacing is not fixed.
     [array mas_distributeViewsAlongAxis:MASAxisTypeHorizontal withFixedItemLength:2 leadSpacing:117 tailSpacing:57];
     [array mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.mas_equalTo(self.addButton.mas_bottom);

@@ -13,11 +13,11 @@ import AgoraRtmKit
 
 private let kSceneId = "scene_ktv_1.3.0"
 
-/// 座位信息
+/// Seat information
 private let SYNC_MANAGER_SEAT_INFO = "seat_info"
-// 选歌
+// Song selection
 private let SYNC_MANAGER_CHOOSE_SONG_INFO = "choose_song"
-//合唱
+//Sing in chorus
 private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
 
 @objcMembers class KTVSyncManagerServiceImp: NSObject, KTVServiceProtocol {
@@ -926,7 +926,7 @@ extension KTVSyncManagerServiceImp {
             }
         }
         
-        // 立即执行一次检查到期的方法
+        // Immediately implement the method of checking the expiration
         _ = checkAndHandleRoomExpire(changedBlock: changedBlock)
     }
 
@@ -947,7 +947,7 @@ extension KTVSyncManagerServiceImp {
     }
     
     func unsubscribeAll() {
-        //取消所有的订阅
+        //Cancel all subscriptions
         guard let channelName = roomNo else {
             return
         }
@@ -1057,7 +1057,7 @@ extension KTVSyncManagerServiceImp: AUISceneRespDelegate {
 extension KTVSyncManagerServiceImp: AUIArbiterDelegate {
     func onArbiterDidChange(channelName: String, arbiterId: String) {
         guard arbiterId == currentUserId() else { return }
-        //如果仲裁者变成自己，检查麦位用户是否在线，防止麦上用户退出时前一个仲裁者掉线了
+        //If the arbitrator becomes himself, check whether the microphone user is online to prevent the previous arbitrator from disconnecting when the microphone user exits.
         let onlineUserList = getCurrentScene(with: channelName)?.userService.userList ?? []
         let onlineUserIds = onlineUserList.map { $0.userId }
         self.seatMap.values.forEach { seatInfo in
@@ -1201,7 +1201,7 @@ extension KTVSyncManagerServiceImp {
             return UInt64("\(value)") ?? 0
         }
         let songList = chooseSongList.sorted(by: { model1, model2 in
-            //歌曲播放中优先（只会有一个，多个目前没有，如果有需要修改排序策略）
+            //Priority is given in song playback (only one, and more are not available at present. If there is a need to modify the sorting strategy)
             if model1["status"] as? Int == VLSongPlayStatus.playing.rawValue {
                 return true
             }
@@ -1213,12 +1213,12 @@ extension KTVSyncManagerServiceImp {
             let pinAt2 = convert(model2["pinAt"])
             let createAt1 = convert(model1["createAt"])
             let createAt2 = convert(model2["createAt"])
-            //都没有置顶时间，比较创建时间，创建时间小的在前（即创建早的在前）
+            //There is no pinning time. Compared with the creation time, the creation time is small before (that is, the earlier creation is in the front)
             if pinAt1 < 1,  pinAt2 < 1 {
                 return createAt1 < createAt2 ? true : false
             }
             
-            //有一个有置顶时间，置顶时间大的在前（即后置顶的在前）
+            //There is a pin time, and the pin time is in front (that is, the back pin is in front)
             return pinAt1 > pinAt2 ? true : false
         })
         

@@ -96,7 +96,7 @@
     self.sliderView.value = value;
 }
 
-//处理
+//Handle
 - (void)onClickSwitcher:(UISwitch *)sender {
     if ([self.delegate respondsToSelector:@selector(aecSwitcherView:on:)]) {
         [self.delegate aecSwitcherView:self on:sender.isOn];

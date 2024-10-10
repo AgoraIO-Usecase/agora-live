@@ -557,7 +557,7 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
         if invitation.type == .inviting {
             isSendJointBroadcasting = true
             muteLocalVideo = true
-            //收到连麦邀请，先推流，加速出图
+            //Received the invitation of Lianmai, push the stream first, and accelerate the output of the picture.
             ShowAgoraKitManager.shared.prePublishOnseatVideo(isOn: true, channelId: roomId)
             //fix the issue where the inviteVC is presented before the dialog list's end animation completes, causing vc hierarchy to be disrupted
             AlertManager.hiddenView(animation: false) {
@@ -570,12 +570,12 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
                                                                  invitationId: invitation.id) { err in
                             guard let err = err else { return }
                             ToastView.show(text: "\("show_accept_invite_linking_fail".show_localized)\(err.code)")
-                            //失败，关闭推流
+                            //Failed, turn off the push flow
                             ShowAgoraKitManager.shared.prePublishOnseatVideo(isOn: false, channelId: self.roomId)
                         }
                     default:
                         self.isSendJointBroadcasting = false
-                        //拒绝邀请，关闭推流
+                        //Refuse the invitation and turn off the streaming
                         ShowAgoraKitManager.shared.prePublishOnseatVideo(isOn: false, channelId: self.roomId)
                         self.serviceImp?.rejectMicSeatInvitation(roomId: roomId,
                                                                  invitationId: invitation.id) { error in
@@ -724,11 +724,11 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
             liveView.canvasView.canvasType = .joint_broadcasting
             liveView.canvasView.setRemoteUserInfo(name: interaction.userName)
             
-            //TODO: 这个是不是需要真正的角色，放进switchRole里？
+            //TODO: Does this need a real role to be put into switchRole?
             if role == .audience {
                 ShowAgoraKitManager.shared.setSuperResolutionOn(false)
             }
-            //如果是连麦双方为broadcaster，观众不修改，因为观众可能已经申请上麦，申请时已经修改了角色并提前推流
+            //If Lianmai is a broadcaster, the audience will not modify it, because the audience may have applied for the microphone, and the role has been modified and pushed in advance at the time of application.
             let toRole: AgoraClientRole? = isPublishCameraStream ? .broadcaster : nil
             ShowAgoraKitManager.shared.updateLiveView(role: toRole,
                                                       channelId: roomId,
@@ -776,14 +776,14 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
             liveView.canvasView.canvasType = .none
             liveView.bottomBar.linkButton.isSelected = false
 //            currentInteraction?.ownerMuteAudio = false
-            //TODO: 这个是不是需要真正的角色，放进switchRole里？
+            //TODO: Does this need a real role to be put into switchRole?
             if role == .audience {
                 ShowAgoraKitManager.shared.setSuperResolutionOn(true)
             } else {
                 ShowAgoraKitManager.shared.updateVideoProfileForMode(.single)
             }
             
-            //停止连麦需要修改角色的只有连麦主播，其他用户保持原有角色，有可能观众已经申请连麦改变了角色并推流
+            //Only Lianmai anchors need to modify the role to stop Lianmai. Other users maintain the original roles. It is possible that the audience has applied for Lianmai to change the role and push the stream.
             let toRole: AgoraClientRole? = interaction.userId == VLUserCenter.user.id ? .audience : nil
             ShowAgoraKitManager.shared.switchRole(role: toRole,
                                                   channelId: roomId,
@@ -1022,7 +1022,7 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
                 guard self.role == .audience else { return }
                 self.isSendJointBroadcasting = true
                 
-                //点击连麦，预先变成连麦主播并推流
+                //Click Lianmai to become Lianmai anchor in advance and push the stream.
                 ShowAgoraKitManager.shared.prePublishOnseatVideo(isOn: true, channelId: self.roomId)
             }
         }

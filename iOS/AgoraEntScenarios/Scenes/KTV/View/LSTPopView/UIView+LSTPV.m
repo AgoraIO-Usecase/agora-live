@@ -121,7 +121,7 @@
     return self.frame.origin.x + self.frame.size.width;
 }
 
-/** 是否是苹果X系列(刘海屏系列) */
+/** Is it Apple X series (bangs screen series) */
 BOOL pv_IsIphoneX_ALL(void) {
     BOOL isPhoneX = NO;
     if (@available(iOS 11.0, *)) {

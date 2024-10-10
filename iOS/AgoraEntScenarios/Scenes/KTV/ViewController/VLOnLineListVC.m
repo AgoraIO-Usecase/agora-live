@@ -137,7 +137,7 @@
 //    for (int i=0; i<8; i++) {
 //        BOOL ifFind = NO;
 //        for (VLRoomSeatModel *model in modelArray) {
-//            if (model.onSeat == i) { //这个位置已经有人了
+//            if (model.onSeat == i) { 
 //                ifFind = YES;
 //                if(songArray != nil && [songArray count] >= 1) {
 //                    if([model.userNo isEqualToString:songArray[0][@"userNo"]]) {

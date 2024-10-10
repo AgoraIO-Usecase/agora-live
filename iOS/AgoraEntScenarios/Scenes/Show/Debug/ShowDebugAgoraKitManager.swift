@@ -8,7 +8,7 @@ import Foundation
 import AgoraRtcKit
 
 private let userDefaultKeyTag = "debug"
-// 存储编码配置的key
+// Store the key of coding configuration
 private let kEncodeWidth = "kEncodeWidth"
 private let kEncodeHeight = "kEncodeHeight"
 private let kEncodeFPS = "kEncodeFPS"
@@ -211,8 +211,8 @@ class ShowDebugAgoraKitManager {
         }
     }
     
-    /// 更新设置
-    /// - Parameter key: 要更新的key
+    /// Update settings
+    /// - Parameter key: key to be updated
     func updateSettingForDebugkey(_ key: ShowDebugSettingKey, currentChannelId:String? = nil) {
         let isOn = key.boolValue
         let indexValue = key.intValue
@@ -269,10 +269,10 @@ extension ShowDebugAgoraKitManager {
         }
     }
     
-    /// 设置超分 不保存数据
+    /// Set the excess score and do not save the data
     /// - Parameters:
-    ///   - isOn: 开关
-    ///   - srType: 默认1.5倍
+    /// - isOn: Switch
+    /// - srType: 1.5 times by default
     func setDebugSuperResolutionOn(_ isOn: Bool, srType:ShowSRType = .none) {
         if srType == .none {
             engine?.setParameters("{\"rtc.video.enable_sr\":{\"enabled\":\(false), \"mode\": 2}}")
@@ -280,7 +280,7 @@ extension ShowDebugAgoraKitManager {
             engine?.setParameters("{\"rtc.video.enable_sr\":{\"enabled\":\(false), \"mode\": 2}}")
             engine?.setParameters("{\"rtc.video.sr_type\":\(srType.rawValue)}")
             engine?.setParameters("{\"rtc.video.sr_max_wh\":\(921598)}")
-            // enabled要放在srType之后 否则修改超分倍数可能不会立即生效
+            // Enabled should be placed after srType, otherwise the modification of the excess multiple may not take effect immediately.
             engine?.setParameters("{\"rtc.video.enable_sr\":{\"enabled\":\(isOn), \"mode\": 2}}")
         }
     }
@@ -317,16 +317,16 @@ enum ShowDebugSettingKey: String, CaseIterable {
         case label
     }
     
-    case lowlightEnhance        // 暗光增强
-    case colorEnhance           // 色彩增强
-    case videoDenoiser          // 降噪
-    case focusFace              // 人脸对焦
-    case encode                 // 硬编/软编
-    case codeCType                // 编码器
-    case mirror                 // 镜像
-    case renderMode             // 模式
-    case debugSrType            // 超分倍数
-    case debugSR                // debug超分开关
+    case lowlightEnhance        // Dark light enhancement
+    case colorEnhance           // Color enhancement
+    case videoDenoiser          // Reduce the noise
+    case focusFace              // Face focus
+    case encode                 // Hard editing/soft editing
+    case codeCType                // Encoder
+    case mirror                 // Mirror image
+    case renderMode             // Model
+    case debugSrType            // Excess multiple
+    case debugSR                // debug Over-spart switch
     case debugPVC               // pvc
     
     var title: String {
@@ -356,7 +356,7 @@ enum ShowDebugSettingKey: String, CaseIterable {
         }
     }
     
-    // 类型
+    // Type
     var type: KeyType {
         switch self {
         case .lowlightEnhance:
@@ -384,7 +384,7 @@ enum ShowDebugSettingKey: String, CaseIterable {
         }
     }
     
-    // 弹窗提示文案
+    // Pop-up window prompt copywriting
     var tips: String {
         switch self {
         case .lowlightEnhance:
@@ -398,7 +398,7 @@ enum ShowDebugSettingKey: String, CaseIterable {
         }
     }
     
-    // 选项
+    // Be an option
     var items: [String] {
         switch self {
         case .encode:

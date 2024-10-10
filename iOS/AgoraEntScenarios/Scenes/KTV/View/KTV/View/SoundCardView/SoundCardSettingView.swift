@@ -85,25 +85,25 @@ import Foundation
 //        noSoundCardView = UIView()
 //        self.addSubview(noSoundCardView)
 //
-//        // 创建图片 attachment
+//        // Create a picture attachment
 //        let imageAttachment = NSTextAttachment()
 //        imageAttachment.image = UIImage.sceneImage(name: "candel")
 //
-//        // 设置图片的大小和位置
+//        // Set the size and position of the picture
 //        let imageSize = CGSize(width: 20, height: 20)
 //        imageAttachment.bounds = CGRect(origin: .zero, size: imageSize)
 //
-//        // 创建带有图片的富文本
+//        // Create rich text with pictures
 //        let attributedString = NSMutableAttributedString()
 //        let imageAttString = NSAttributedString(attachment: imageAttachment)
 //        attributedString.append(imageAttString)
 //
-//        // 添加文字部分
-//        let text = " 当前无法使用虚拟声卡，请连接优先输入设备！"
+//        // Add the text part
+//        let text = " Currently, the virtual sound card cannot be used. Please connect the priority input device.！"
 //        let textAttributes: [NSAttributedString.Key: Any] = [
 //            .font: UIFont.systemFont(ofSize: 12),
 //            .foregroundColor: UIColor.red,
-//            .baselineOffset: (imageSize.height - UIFont.systemFont(ofSize: 12).capHeight) / 2  // 调整图片位置以实现垂直居中
+//            .baselineOffset: (imageSize.height - UIFont.systemFont(ofSize: 12).capHeight) / 2  // Adjust the position of the picture to achieve vertical centering
 //        ]
 //        let textAttString = NSAttributedString(string: text, attributes: textAttributes)
 //        attributedString.append(textAttString)
@@ -121,12 +121,12 @@ import Foundation
 //        tipsView.layer.masksToBounds = true
 //
 //        headLabel = UILabel()
-//        headLabel.text = "目前支持以下设备:"
+//        headLabel.text = "Currently, the following devices are supported:"
 //        headLabel.font = UIFont.systemFont(ofSize: 13, weight: .bold)
 //        tipsView.addSubview(headLabel)
 //
 //        exLabel = UILabel()
-//        exLabel.text = "1.有线耳机 \n2.有线麦克风"
+//        exLabel.text = "1.Wired headphones \n2. Wired microphone"
 //        exLabel.numberOfLines = 0
 //        exLabel.font = UIFont.systemFont(ofSize: 12)
 //        exLabel.textColor = UIColor(red: 60/255.0, green: 66/255.0, blue: 103/255.0, alpha: 1)
@@ -234,7 +234,7 @@ extension SoundCardSettingView: UITableViewDataSource, UITableViewDelegate {
             return cell
         } else if indexPath.row == 0 {
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-            // 检查是否已经存在开关控件，如果不存在则创建并添加
+            // Check whether the switch control already exists. If not, create and add
            var switchControl: UISwitch? = cell.contentView.viewWithTag(100) as? UISwitch
            if switchControl == nil {
                switchControl = UISwitch()
@@ -280,10 +280,10 @@ extension SoundCardSettingView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let block = clicKBlock else {return}
         if indexPath.row == 1 {
-            //弹出音效选择
+            //Pop-up sound effect selection
             block(2)
         } else if indexPath.row == 3 {
-//            //弹出麦克风类型
+//            //Pop-up microphone type
 //            block(4)
         }
     }

@@ -112,12 +112,12 @@ class SoundCardSwitchCell: UITableViewCell {
 
 extension SoundCardSwitchCell: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
-            // 在此处执行输入结束后的操作
+            // Perform the operation after the input here.
             if let text = textField.text {
                 guard let num = Float(text) else {return}
                 if num > 400.0 || num < 0 {
                     textField.text = "400.0"
-                    //同时更新slider
+                    //Update at the same timeslider
                     slider.value = 1.0
                 } else {
                     slider.value = num / 400.0

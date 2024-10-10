@@ -7,11 +7,11 @@
 #import "VLHotSpotBtn.h"
 #import "AgoraEntScenarios-swift.h"
 typedef enum : NSUInteger {
-    VLKTVBottomBtnClickTypeAudio = 0,       // 声音
-    VLKTVBottomBtnClickTypeVideo,           // 视频
-    VLKTVBottomBtnClickTypeMore,            // 更多
-    VLKTVBottomBtnClickTypeJoinChorus,           // 合唱
-    VLKTVBottomBtnClickTypeChoose,          // 点歌
+    VLKTVBottomBtnClickTypeAudio = 0,       // Sound
+    VLKTVBottomBtnClickTypeVideo,           // Video frequency
+    VLKTVBottomBtnClickTypeMore,            // Even more
+    VLKTVBottomBtnClickTypeJoinChorus,           // Sing in chorus
+    VLKTVBottomBtnClickTypeChoose,          // Request a song to be played
     VLKTVBottomBtnClickTypeLeaveChorus,
 } VLKTVBottomBtnClickType;
 

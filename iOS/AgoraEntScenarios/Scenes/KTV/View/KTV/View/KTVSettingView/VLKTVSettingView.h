@@ -7,18 +7,18 @@
 @class VLKTVSettingModel;
 
 typedef enum : NSUInteger {
-    VLKTVValueDidChangedTypeEar = 0,      // 耳返
-    VLKTVValueDidChangedTypeSoundCard = 1,      // 声卡
+    VLKTVValueDidChangedTypeEar = 0,      // Ear return
+    VLKTVValueDidChangedTypeSoundCard = 1,      // Sound card
     VLKTVValueDidChangedTypeMV,           // MV
-    VLKTVValueDidChangedRiseFall,         // 升降调
-    VLKTVValueDidChangedTypeSound,        // 声音
-    VLKTVValueDidChangedTypeAcc,          // 伴奏
-    VLKTVValueDidChangedTypeRemoteValue,  //远端音量
-    VLKTVValueDidChangedTypeListItem,      // 列表
-    VLKTVValueDidChangedTypeLrc, //歌词等级
-    VLKTVValueDidChangedTypeVqs, //音质
-    VLKTVValueDidChangedTypeAns, //降噪
-    VLKTVValueDidChangedTypebro, //专业主播
+    VLKTVValueDidChangedRiseFall,         // Up and down tune
+    VLKTVValueDidChangedTypeSound,        // Sound
+    VLKTVValueDidChangedTypeAcc,          // Accompany
+    VLKTVValueDidChangedTypeRemoteValue,  //Remote volume
+    VLKTVValueDidChangedTypeListItem,      // List
+    VLKTVValueDidChangedTypeLrc, //Lyrics level
+    VLKTVValueDidChangedTypeVqs, //Acoustic fidelity
+    VLKTVValueDidChangedTypeAns, //Reduce the noise
+    VLKTVValueDidChangedTypebro, //Professional anchor
     VLKTVValueDidChangedTypeaiaec, //AIAec
     VLKTVValueDidChangedTypeDelay,
     VLKTVValueDidChangedTypeAecLevel,
@@ -51,7 +51,7 @@ typedef enum : NSUInteger {
 
 #define kKindUnSelectedIdentifier 10000
 
-/// 耳返
+///Ear return
 @property (nonatomic, assign) BOOL soundOn;
 @property (nonatomic, assign) BOOL mvOn;
 @property (nonatomic, assign) BOOL soundCardOn;
@@ -64,12 +64,12 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) NSInteger lrcLevel;
 @property (nonatomic, assign) NSInteger vqs;
 @property (nonatomic, assign) NSInteger ans;
-@property (nonatomic, assign) BOOL isPerBro;//专业主播
-@property (nonatomic, assign) BOOL isDelay;//低延迟
+@property (nonatomic, assign) BOOL isPerBro;//Professional anchor
+@property (nonatomic, assign) BOOL isDelay;//Low latency
 @property (nonatomic, assign) BOOL enableAec;
 @property (nonatomic, assign) NSInteger aecLevel;
 @property (nonatomic, assign) BOOL enableMultipath;
-/// list选项
+/// list option
 @property (nonatomic, assign) NSInteger kindIndex;
 
 - (void)setDefaultProperties;

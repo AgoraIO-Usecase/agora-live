@@ -13,7 +13,7 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        // （父类方法）此处如果子视图实现此方法，直接调到子视图中，不会加载自己的方法
+        // (Parent method) If the subview implements this method here, it will be directly transferred to the subview and its own method will not be loaded.
 //        [self initSubViews];
 //        [self addSubViewConstraints];
         

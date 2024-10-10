@@ -202,8 +202,8 @@
     }
 }
 - (void)createRandomNumber {
-    int titleValue = arc4random() % [self.titlesArray count]; //0...5的随机数
-    int bgValue = (arc4random() % 9) + 1; //1...9的随机数
+    int titleValue = arc4random() % [self.titlesArray count]; //The random number of 0...5
+    int bgValue = (arc4random() % 9) + 1; //Random numbers of 1...9
     self.addRoomModel.name = self.titlesArray[titleValue];
     self.addRoomModel.icon = [NSString stringWithFormat:@"%d",bgValue];
 }
@@ -227,9 +227,9 @@
     
 }
 
-// 实现 textFieldShouldReturn: 方法
+// Implement textFieldShouldReturn: Method
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    [textField resignFirstResponder];  // 收起键盘
+    [textField resignFirstResponder];  // Put away the keyboard
     if(self.delegate && [self.delegate respondsToSelector:@selector(didCreateRoomAction:)]){
         [self.delegate didCreateRoomAction:self.addRoomModel.isPrivate ? CreateRoomActionTypeEncrypt : CreateRoomActionTypeNormal];
     }

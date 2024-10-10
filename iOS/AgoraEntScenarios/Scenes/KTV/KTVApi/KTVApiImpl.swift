@@ -8,12 +8,12 @@
 import Foundation
 import AgoraRtcKit
 import SwiftProtobuf
-/// 加载歌曲状态
+/// Load the status of the song
 @objc fileprivate enum KTVLoadSongState: Int {
-    case idle = -1      //空闲
-    case ok = 0         //成功
-    case failed         //失败
-    case inProgress    //加载中
+    case idle = -1      //Free
+    case ok = 0         //Success
+    case failed         //Be defeated
+    case inProgress    //Loading
 }
 
 fileprivate enum KTVSongMode: Int {
@@ -128,7 +128,7 @@ fileprivate enum KTVSongMode: Int {
         
         songLoader = KTVSoundLoader()
         mediaPlayer = apiConfig?.engine?.createMediaPlayer(with: self)
-        // 音量最佳实践调整
+        // Best practice adjustment of volume
         mediaPlayer?.adjustPlayoutVolume(50)
         mediaPlayer?.adjustPublishSignalVolume(50)
         apiConfig?.engine?.addDelegate(apiDelegateHandler)
@@ -163,7 +163,7 @@ fileprivate enum KTVSongMode: Int {
         engine.setParameters("{\"rtc.path_scheduling_strategy\": 0}")
        // engine.setParameters("{\"rtc.enableMultipath\": true}")
         engine.setParameters("{\"rtc.log_external_input\":true}")
-        // 数据上报
+        // Data report
         engine.setParameters("{\"rtc.direct_send_custom_event\": true}")
        // engine.setParameters("{\"rtc.qos_for_test_purpose\": true}")
     }
@@ -196,7 +196,7 @@ extension KTVApiImpl {
         lrcControl = view
     }
     
-    //主要针对本地歌曲播放的主唱伴奏切换的 loadmusic MCC直接忽视这个方法
+    //Loadmusic MCC, which is mainly aimed at switching the vocal accompaniment of local songs, directly ignores this method.
     func load2Music(url1: String, url2: String, config: KTVSongConfiguration) {
         print("load2Music called: songUrl url1:(url1),url2:(url2)")
         self.songMode = .songUrl
@@ -206,7 +206,6 @@ extension KTVApiImpl {
         self.songUrl2 = url2
         
 //        if config.autoPlay {
-//            // 主唱自动播放歌曲
 //            if self.singerRole != .leadSinger {
 //                switchSingerRole(newRole: .soloSinger) { state, failRes in
 //                }
@@ -215,7 +214,7 @@ extension KTVApiImpl {
        // }
     }
     
-    //主要针对本地歌曲播放的主唱伴奏切换的 MCC直接忽视这个方法
+    //MCC, which mainly switches the lead singer accompaniment of local songs, directly ignores this method.
     func switchPlaySrc(url: String, syncPts: Bool) {
         print("switchPlaySrc called: (url)")
         
@@ -246,7 +245,6 @@ extension KTVApiImpl {
         self.songUrl = url
         self.songIdentifier = config.songIdentifier
 //        if config.autoPlay {
-//            // 主唱自动播放歌曲
 //            if singerRole != .leadSinger {
 //                switchSingerRole(newRole: .soloSinger) { _, _ in
 //                }
@@ -296,9 +294,9 @@ extension KTVApiImpl {
     
     func renewToken(rtmToken: String, chorusChannelRtcToken: String) {
         sendCustomMessage(with: "renewToken", label: "rtmToken:\(rtmToken), chorusChannelRtcToken:\(chorusChannelRtcToken)")
-        // 更新RtmToken
+        // Update RtmToken
         mcc?.renewToken(rtmToken)
-        // 更新合唱频道RtcToken
+        // Update the chorus channel RtcToken
         if let subChorusConnection = subChorusConnection {
             let channelMediaOption = AgoraRtcChannelMediaOptions()
             channelMediaOption.token = chorusChannelRtcToken
@@ -354,7 +352,7 @@ extension KTVApiImpl {
     }
 
     /**
-     * 恢复播放
+     * Resume playback
      */
     @objc public func resumeSing() {
         sendCustomMessage(with: "resumeSing", label: "")
@@ -368,7 +366,7 @@ extension KTVApiImpl {
     }
 
     /**
-     * 暂停播放
+     * Pause playback
      */
     @objc public func pauseSing() {
         sendCustomMessage(with: "pauseSing", label: "")
@@ -377,7 +375,7 @@ extension KTVApiImpl {
     }
 
     /**
-     * 调整进度
+     * Adjust the progress
      */
     @objc public func seekSing(time: NSInteger) {
         sendCustomMessage(with: "seekSing", label: "")
@@ -386,14 +384,14 @@ extension KTVApiImpl {
     }
 
     /**
-     * 选择音轨，原唱、伴唱
+     * Choose the audio track, original singer, backing singer
      */
 //    @objc public func selectPlayerTrackMode(mode: KTVPlayerTrackMode) {
 //        apiConfig?.engine.selectAudioTrack(mode == .original ? 0 : 1)
 //    }
 
     /**
-     * 设置当前mic开关状态
+     * Set the current mic switch status
      */
     @objc public func muteMic(muteStatus: Bool) {
         sendCustomMessage(with: "setMicStatus", label: "\(muteStatus)")
@@ -455,7 +453,7 @@ extension KTVApiImpl {
 }
 
 
-// 主要是角色切换，加入合唱，加入多频道，退出合唱，退出多频道
+// It is mainly role switching, joining the chorus, joining the multi-channel, exiting the chorus, exiting the multi-channel
 extension KTVApiImpl {
     private func switchSingerRole(oldRole: KTVSingRole, newRole: KTVSingRole, token: String, stateCallBack:@escaping ISwitchRoleStateListener) {
     //    agoraPrint("switchSingerRole oldRole: \(oldRole.rawValue), newRole: \(newRole.rawValue)")
@@ -472,7 +470,7 @@ extension KTVApiImpl {
             becomeSoloSinger()
             joinChorus(role: newRole, token: token, joinExChannelCallBack: {[weak self] flag, status in
                 guard let self = self else {return}
-                //还原临时变量为观众
+                //Restore temporary variables to the audience
                 self.joinChorusNewRole = .audience
 
                 if flag == true {
@@ -498,12 +496,12 @@ extension KTVApiImpl {
         } else if oldRole == .audience && newRole == .coSinger {
             joinChorus(role: newRole, token: token, joinExChannelCallBack: {[weak self] flag, status in
                 guard let self = self else {return}
-                //还原临时变量为观众
+                //Restore temporary variables to the audience
                 self.joinChorusNewRole = .audience
                 if flag == true {
                     self.singerRole = newRole
-                    //TODO(chenpan):如果观众变成伴唱，需要重置state，防止同步主唱state因为都是playing不会修改
-                    //后面建议改成remote state(通过data stream获取)和local state(通过player didChangedToState获取)
+                    //TODO(chenpan): If the audience becomes a backing singer, you need to reset the state to prevent the synchronization of the lead singer state because it is all playing will not be modified.
+                    // Later, it is suggested to change to remote state (obtained through data stream) and local state (obtained by player didChangedToState)
                     self.playerState = self.mediaPlayer?.getPlayerState() ?? .idle
                     self.getEventHander { delegate in
                         delegate.onSingerRoleChanged(oldRole: .audience, newRole: .coSinger)
@@ -525,7 +523,7 @@ extension KTVApiImpl {
         } else if oldRole == .soloSinger && newRole == .leadSinger {
             joinChorus(role: newRole, token: token, joinExChannelCallBack: {[weak self] flag, status in
                 guard let self = self else {return}
-                //还原临时变量为观众
+                //Restore temporary variables to the audience
                 self.joinChorusNewRole = .audience
                 if flag == true {
                     self.singerRole = newRole
@@ -607,7 +605,7 @@ extension KTVApiImpl {
     }
 
     /**
-     * 加入合唱
+     * Join the chorus
      */
     private func joinChorus(role: KTVSingRole, token: String, joinExChannelCallBack: @escaping JoinExChannelCallBack) {
         self.onJoinExChannelCallBack = joinExChannelCallBack
@@ -691,7 +689,7 @@ extension KTVApiImpl {
     }
 
     /**
-     * 离开合唱
+     * Leave the chorus
      */
 
     private func leaveChorus(role: KTVSingRole) {
@@ -838,7 +836,7 @@ extension KTVApiImpl {
     }
 
     /**
-     * 停止播放歌曲
+     * Stop playing songs
      */
     @objc public func stopSing() {
         agoraPrint("stopSing")
@@ -864,7 +862,7 @@ extension KTVApiImpl {
         if self.isPublishAudio == false {return}
         agoraPrint("enableProfessionalStreamerMode enable:\(enable)")
         self.enableProfessional = enable
-        //专业非专业还需要根据是否佩戴耳机来判断是否开启3A
+        //Professionals and non-professionals also need to judge whether to turn on 3A according to whether to wear headphones.
         apiConfig?.engine?.setAudioProfile(enable ? .musicHighQualityStereo : .musicStandardStereo)
         apiConfig?.engine?.setParameters("{\"che.audio.aec.enable\":\((enable && isWearingHeadPhones) ? false : true)}")
         apiConfig?.engine?.setParameters("{\"che.audio.agc.enable\":\((enable && isWearingHeadPhones) ? false : true)}")
@@ -884,7 +882,7 @@ extension KTVApiImpl {
     
 }
 
-// rtc的子频道代理回调
+// Rtc's sub-channel proxy callback
 extension KTVApiImpl: AgoraRtcEngineDelegate {
 
      public func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
@@ -915,7 +913,7 @@ extension KTVApiImpl: AgoraRtcEngineDelegate {
         }
     }
     
-    //合唱频道的声音回调
+    //The sound of the chorus channel is adjusted back
     public func rtcEngine(_ engine: AgoraRtcEngineKit, reportAudioVolumeIndicationOfSpeakers speakers: [AgoraRtcAudioVolumeInfo], totalVolume: Int) {
         getEventHander { delegate in
             delegate.onChorusChannelAudioVolumeIndication(speakers: speakers, totalVolume: totalVolume)
@@ -929,7 +927,7 @@ extension KTVApiImpl: AgoraRtcEngineDelegate {
     }
 }
 
-//需要外部转发的方法 主要是dataStream相关的
+//Methods that require external forwarding are mainly related to dataStream.
 extension KTVApiImpl {
     
     private func handleSetLrcTimeCommand(dict: [String: Any], role: KTVSingRole) {
@@ -950,7 +948,7 @@ extension KTVApiImpl {
             agoraPrint("[setLrcTime] recv state: \(self.playerState.rawValue)->\(state.rawValue) role: \(singerRole.rawValue) role: \(singerRole.rawValue)")
             
             if state == .playing, singerRole == .coSinger, playerState == .openCompleted {
-                //如果是伴唱等待主唱开始播放，seek 到指定位置开始播放保证歌词显示位置准确
+                //If it is an accompaniment singer and waits for the lead singer to start playing, seek to the designated position to start playing to ensure that the lyrics display position is accurate.
                 self.localPlayerPosition = self.lastMainSingerUpdateTime - Double(position)
                 mediaPlayer?.seek(toPosition: Int(position))
             }
@@ -1090,7 +1088,7 @@ extension KTVApiImpl {
                         time.ts = curTime
                         time.songID = songIdentifier
                         time.type = .lrcTime
-                        //大合唱的uid是musicuid
+                        // The uid of the grand chorus is musicuid.
                         time.uid = Int32(apiConfig?.localUid ?? 0)
                         sendMetaMsg(with: time)
                     }
@@ -1272,7 +1270,6 @@ extension KTVApiImpl {
     }
 }
 
-//主要是MPK的回调
 extension KTVApiImpl: AgoraRtcMediaPlayerDelegate {
 
     func AgoraRtcMediaPlayer(_ playerKit: AgoraRtcMediaPlayerProtocol, didChangedTo position_ms: Int, atTimestamp timestamp_ms: TimeInterval) {
@@ -1284,7 +1281,7 @@ extension KTVApiImpl: AgoraRtcMediaPlayerDelegate {
            let dict: [String: Any] = [ "cmd": "setLrcTime",
                                        "duration": self.playerDuration,
                                        "time": position_ms - audioPlayoutDelay,
-                                       //不同机型delay不同，需要发送同步的时候减去发送机型的delay，在接收同步加上接收机型的delay
+                                       //The delay of different models is different. When sending synchronization is required, subtract the delay of the sending model, and add the delay of the receiving model in the receiving synchronization.
                                        "realTime":position_ms,
                                        "ntp": timestamp_ms,
                                        "playerState": self.playerState.rawValue,
@@ -1316,7 +1313,7 @@ extension KTVApiImpl: AgoraRtcMediaPlayerDelegate {
             self.localPlayerPosition = Date().milListamp
             print("localPlayerPosition:playerKit:openCompleted \(localPlayerPosition)")
             self.playerDuration = TimeInterval(mediaPlayer?.getDuration() ?? 0)
-            if isMainSinger() { //主唱播放，通过同步消息“setLrcTime”通知伴唱play
+            if isMainSinger() { //The lead singer plays and notifies the backing singer play through the synchronization message "setLrcTime"
                 playerKit.play()
                 playerKit.selectMultiAudioTrack(1, publishTrackIndex: 1)
             } else {
@@ -1340,7 +1337,7 @@ extension KTVApiImpl: AgoraRtcMediaPlayerDelegate {
         }
         self.playerState = state
         agoraPrint("recv state with player callback : \(state.rawValue)")
-        if state == .playBackAllLoopsCompleted && singerRole == .coSinger {//可能存在伴唱不返回allloopbackComplete状态 这个状态通过主唱的playerState来同步
+        if state == .playBackAllLoopsCompleted && singerRole == .coSinger {//There may be a state in which the backup singer does not return allloopbackComplete. This state is synchronized by the lead singer's playerState.
             return
         }
         getEventHander { delegate in
@@ -1353,7 +1350,6 @@ extension KTVApiImpl: AgoraRtcMediaPlayerDelegate {
     }
 }
 
-//主要是MCC的回调
 extension KTVApiImpl: AgoraMusicContentCenterEventDelegate {
     
     func onSongSimpleInfoResult(_ requestId: String, songCode: Int, simpleInfo: String?, reason: AgoraMusicContentCenterStateReason) {
@@ -1442,13 +1438,13 @@ extension KTVApiImpl: AgoraMusicContentCenterEventDelegate {
 }
 
 extension Date {
-    /// 获取当前 秒级 时间戳 - 10位
+    /// Get the current second-level timestamp - 10 bits
     ///
     var timeStamp : TimeInterval {
         let timeInterval: TimeInterval = self.timeIntervalSince1970
         return timeInterval
     }
-    /// 获取当前 毫秒级 时间戳 - 13位
+    /// Get the current millisecond timestamp - 13 bits
     var milListamp : TimeInterval {
         let timeInterval: TimeInterval = self.timeIntervalSince1970
         let millisecond = CLongLong(round(timeInterval*1000))
@@ -1458,7 +1454,7 @@ extension Date {
 
 extension KTVApiImpl: KTVApiRTCDelegate {
     func didJoinChannel(channel: String, withUid uid: UInt, elapsed: Int) {
-        agoraPrint("ktvapi加入主频道成功")
+        agoraPrint("ktvapi Successfully joined the main channel")
     }
     
     func didJoinedOfUid(uid: UInt, elapsed: Int) {
@@ -1471,10 +1467,10 @@ extension KTVApiImpl: KTVApiRTCDelegate {
 
         guard var pitch: Double = speakers.first?.voicePitch else {return}
         pitch = isNowMicMuted ? 0 : pitch
-        //如果mpk不是playing状态 pitch = 0
+        //If mpk is not in the playing state pitch = 0
         if mediaPlayer?.getPlayerState() != .playing {pitch = 0}
         self.pitch = pitch
-        //将主唱的pitch同步到观众
+        //Synchronize the pitch of the lead singer to the audience
         if (apiConfig?.type == .singRelay ) {
             if ((singerRole == .coSinger || singerRole == .leadSinger || singerRole == .soloSinger) && !isNowMicMuted) {
                 let dict: [String: Any] = [ "cmd": "setVoicePitch",
@@ -1543,7 +1539,7 @@ extension KTVApiImpl: KTVApiRTCDelegate {
     }
 }
 
-/*----这一块的代码主要是用来处理主频道的RTC代理事件，外部不再需要手动转代理，😁---*/
+/*----This piece of code is mainly used to handle RTC proxy events of the main channel, and there is no need to manually transfer proxy externally, 😁---*/
 protocol KTVApiRTCDelegate: NSObjectProtocol  {
     func didJoinChannel(channel: String, withUid uid: UInt, elapsed: Int)
     func didJoinedOfUid(uid: UInt, elapsed: Int)

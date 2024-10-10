@@ -21,7 +21,7 @@
 - (void)setupSubviews {
     self.clipsToBounds = YES;
     
-    //初始化背景图片
+    //Initialize the background picture
     self.bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))];
     self.bgImageView.contentMode = UIViewContentModeScaleAspectFill;
     self.bgImageView.layer.cornerRadius = 6;
@@ -31,7 +31,7 @@
         make.left.right.top.bottom.mas_equalTo(0);
     }];
     
-    //初始化文本标签
+    //Initialize text labels
     self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, CGRectGetWidth(self.frame)-12, CGRectGetHeight(self.frame))];
     self.titleLabel.textColor = [UIColor whiteColor];
     self.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];

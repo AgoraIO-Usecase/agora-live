@@ -221,7 +221,7 @@ static NSString *const beautyAPIVersion = @"1.0.5";
                                                        options:0
                                                          error:&error];
     if (error) {
-        // 转换失败
+        // Conversion failed
         NSLog(@"Error: %@", error.localizedDescription);
         return nil;
     }
@@ -331,7 +331,7 @@ static NSString *const beautyAPIVersion = @"1.0.5";
                            [self getCurrentTime],
                            [self getLogPrefixForLevel:level],
                            message];
-    // 写入文件
+    // Write to the file
     NSString *logFile = [NSString stringWithFormat:@"%@/agora_beautyapi.log", NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject];
     [self checkLogFileSizeWithPath: logFile];
     NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:logFile];
@@ -355,7 +355,7 @@ static NSString *const beautyAPIVersion = @"1.0.5";
     if (fileAttributes) {
         NSNumber *fileSizeNumber = [fileAttributes objectForKey:NSFileSize];
         long long fileSize = [fileSizeNumber longLongValue];
-        if (fileSize > 1024 * 1024 * 2) { // 文件大于2M
+        if (fileSize > 1024 * 1024 * 2) { //The file is larger than 2M
             [fileManager removeItemAtPath:filePath error:&error];
         }
     }

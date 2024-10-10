@@ -35,7 +35,7 @@
     return true;
 }
 
-- (void)createBtnAction:(VLAddRoomModel *)roomModel {  //房主创建
+- (void)createBtnAction:(VLAddRoomModel *)roomModel {  //Created by the owner
     if (roomModel.isPrivate && roomModel.password.length != 4) {
         return;
     }

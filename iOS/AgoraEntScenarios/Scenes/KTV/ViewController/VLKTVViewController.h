@@ -12,7 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface VLKTVViewController : BaseViewController
 
 @property (nonatomic, strong) SyncRoomInfo *roomModel;
-//麦位数组
 @property (nonatomic, strong) NSArray <VLRoomSeatModel *> *seatsArray;
 
 @end

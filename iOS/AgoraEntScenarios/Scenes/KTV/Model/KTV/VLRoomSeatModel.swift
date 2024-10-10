@@ -10,17 +10,17 @@ import RTMSyncManager
 
 @objcMembers
 class VLRoomSeatModel: VLBaseModel {
-    /// 在哪个座位
+    /// In which seat?
     @objc var seatIndex: Int = 0
-    //上麦用户信息
+    //User information
     @objc var owner: AUIUserThumbnailInfo = AUIUserThumbnailInfo()
-    /// 麦位是否静音
+    /// Is the microphone muted?
     @objc var isAudioMuted: Bool = true
-    /// 麦位是否禁视频
+    /// Is video prohibited in the microphone?
     @objc var isVideoMuted: Bool = true
     
     
-    /// 新增, 判断当前歌曲是否是自己点的
+    /// New, judge whether the current song is your own order
     @objc var isSongOwner: Bool = false
     
     override init() {

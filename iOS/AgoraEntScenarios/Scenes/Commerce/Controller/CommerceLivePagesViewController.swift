@@ -155,7 +155,7 @@ extension CommerceLivePagesViewController {
 extension CommerceLivePagesViewController: CommerceLiveViewControllerDelegate {
     
     func interactionDidChange(roomInfo: CommerceRoomListModel) {
-        //连麦中一方有自己则不走api
+        //If one side of seat has his own, he will not go api.
         if roomInfo.anchorInfoList.count == 2,
            roomInfo.anchorInfoList.first?.channelName == roomInfo.anchorInfoList.last?.channelName,
             let _ = roomInfo.anchorInfoList.filter({ return UserInfo.userId == "\($0.uid)" && $0.channelName == roomInfo.channelName()}).first {
