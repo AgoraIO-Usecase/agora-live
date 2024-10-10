@@ -79,27 +79,27 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 @property (nonatomic, strong) VLKTVSelBgModel *choosedBgModel;
 @property (nonatomic, strong) VLKTVBottomToolbar *bottomView;
 @property (nonatomic, strong) VLBelcantoModel *selBelcantoModel;
-@property (nonatomic, strong) VLKTVMVIdleView *noBodyOnLineView; // mv空页面
+@property (nonatomic, strong) VLKTVMVIdleView *noBodyOnLineView; // mv Empty page
 @property (nonatomic, strong) VLKTVTopView *topView;
 @property (nonatomic, weak) VLKTVSettingView *settingView;
-@property (nonatomic, strong) VLMicSeatList *roomPersonView; //房间麦位视图
-@property (nonatomic, strong) VLAudienceIndicator *requestOnLineView;//空位上麦
-@property (nonatomic, strong) VLPopSongList *chooseSongView; //点歌视图
-@property (nonatomic, strong) VLVoicePerShowView *voicePerShowView; //专业主播
-@property (nonatomic, strong) VLEffectView *effectView; // 音效视图
+@property (nonatomic, strong) VLMicSeatList *roomPersonView; //Room microphone seat view
+@property (nonatomic, strong) VLAudienceIndicator *requestOnLineView;//Empty space on the microphone seat
+@property (nonatomic, strong) VLPopSongList *chooseSongView; //Song order view
+@property (nonatomic, strong) VLVoicePerShowView *voicePerShowView; //Professional anchor
+@property (nonatomic, strong) VLEffectView *effectView; // Sound effect view
 
-@property (nonatomic, strong) VLSongItmModel *choosedSongModel; //点的歌曲
+@property (nonatomic, strong) VLSongItmModel *choosedSongModel; //The song ordered
 @property (nonatomic, strong) AgoraRtcEngineKit *RTCkit;
 
 @property (nonatomic, assign) BOOL isNowMicMuted;
 @property (nonatomic, assign) BOOL isNowCameraMuted;
 @property (nonatomic, assign) BOOL isOnMicSeat;
-@property (nonatomic, assign) NSUInteger chorusNum;    //合唱人数
-@property (nonatomic, assign) KTVSingRole singRole;    //角色
+@property (nonatomic, assign) NSUInteger chorusNum;    //The number of people in the chorus
+@property (nonatomic, assign) KTVSingRole singRole;    //Role
 @property (nonatomic, assign) BOOL isEarOn;
 @property (nonatomic, assign) int playoutVolume;
 @property (nonatomic, assign) int soundVolume;
-@property (nonatomic, assign) KTVPlayerTrackMode trackMode;  //合唱/伴奏
+@property (nonatomic, assign) KTVPlayerTrackMode trackMode;  //Chorus/Accompaniment
 
 @property (nonatomic, strong) NSArray <VLRoomSelSongModel*>* selSongsArray;
 @property (nonatomic, strong) KTVApiImpl* ktvApi;
@@ -121,8 +121,8 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 //@property (nonatomic, assign) checkAuthType checkType;
 @property (nonatomic, assign) BOOL isDumpMode;
 @property (nonatomic, assign) BOOL voiceShowHasSeted;
-@property (nonatomic, assign) BOOL aecState; //AIAEC开关
-@property (nonatomic, assign) NSInteger aecLevel; //AEC等级
+@property (nonatomic, assign) BOOL aecState; //AIAEC Switch
+@property (nonatomic, assign) NSInteger aecLevel; //AEC Rank
 @property (nonatomic, assign) NSString *selectUserNo;
 @property (nonatomic, strong) SoundCardSettingView *soundSettingView;
 @property (nonatomic, strong) LSTPopView *popSoundSettingView;
@@ -177,34 +177,34 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 //    UIView *bgView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
 //    bgView.backgroundColor = UIColorMakeWithRGBA(0, 0, 0, 0.6);
 //    [self.view addSubview:bgView];
-    //头部视图
+    //Head view
     VLKTVTopView *topView = [[VLKTVTopView alloc]initWithFrame:CGRectMake(0, kStatusBarHeight, SCREEN_WIDTH, 60) withDelegate:self];
     [self.view addSubview:topView];
     self.topView = topView;
     topView.listModel = self.roomModel;
     
-    //底部按钮视图
+    //Bottom button view
     VLKTVBottomToolbar *bottomView = [[VLKTVBottomToolbar alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-64-kSafeAreaBottomHeight, SCREEN_WIDTH, 64) withDelegate:self withRoomNo:self.roomModel.roomNo withData:self.seatsArray];
     bottomView.backgroundColor = [UIColor clearColor];
     self.bottomView = bottomView;
     [self.view addSubview:bottomView];
     [bottomView setHidden:!self.requestOnLineView.isHidden];
     
-    //去掉首尾的高度
+    //Remove the height of the beginning and end
     CGFloat musicHeight = SCREEN_HEIGHT -64 - kSafeAreaBottomHeight - kStatusBarHeight - 60 - 20;
     
-    //MV视图(显示歌词...)
+    //MV view (show lyrics...)
     CGFloat mvViewTop = topView.bottom;
     self.MVView = [[VLKTVMVView alloc]initWithFrame:CGRectMake(0, mvViewTop, SCREEN_WIDTH, musicHeight * 0.5) withDelegate:self];
     [self.view addSubview:self.MVView];
     
-    //房间麦位视图
+    //Room microphone seat view
     VLMicSeatList *personView = [[VLMicSeatList alloc] initWithFrame:CGRectMake(0, self.MVView.bottom + 20, SCREEN_WIDTH, musicHeight * 0.5) withDelegate:self withRTCkit:self.RTCkit];
     self.roomPersonView = personView;
     self.roomPersonView.roomSeatsArray = self.seatsArray;
     [self.view addSubview:personView];
 
-    //空位上麦视图
+    //Empty space on microphone seat view
     [self.view addSubview:self.requestOnLineView];
     
     //start join
@@ -212,7 +212,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     
 //    self.isOnMicSeat = [self getCurrentUserSeatInfo] == nil ? NO : YES;
     
-    //处理背景
+    //Process the background
     [self prepareBgImage];
     [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
     
@@ -222,7 +222,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     self.earValue = 100;
     
     if(AppContext.shared.isDebugMode){
-        //如果开启了debug模式
+        //If the debug mode is turned on
         UIButton *debugBtn = [[UIButton alloc]initWithFrame:CGRectMake(SCREEN_WIDTH - 100, SCREEN_HEIGHT - 200, 80, 80)];
         [debugBtn setBackgroundColor:[UIColor blueColor]];
         debugBtn.layer.cornerRadius = 40;
@@ -235,7 +235,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     kWeakSelf(self);
     self.headeSet = [HeadSetManager initHeadsetObserverWithCallback:^(BOOL inserted) {
         if(!inserted){
-            //拔下耳机了 关闭耳返
+            //Unplug the headphones and turn off the ear return.
             if(weakself.isEarOn){
                 [weakself onVLKTVEarSettingViewSwitchChanged:false];
                 [VLToast toast:KTVLocalizedString(@"ktv_earback_micphone_pull")];
@@ -257,7 +257,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     [UIViewController popGestureClose:self];
     
     
-    //请求已点歌曲
+    //Request the song that has been clicked
     [self refreshChoosedSongList:nil];
 }
 
@@ -283,7 +283,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;
 }
-// 是否允许手动滑回 @return true 是、 false否
+// Is it allowed to manually slide back @return true yes, false no
 - (BOOL)forceEnableInteractivePopGestuzreRecognizer {
     return NO;
 }
@@ -330,34 +330,34 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     }
 }
 
-//更换MV背景
+//Change the background of MV
 - (void)popSelMVBgView {
     [LSTPopView popSelMVBgViewWithParentView:self.view
                                      bgModel:self.choosedBgModel
                                 withDelegate:self];
 }
 
-//弹出更多
+//Pop up more
 - (void)popSelMoreView {
     [LSTPopView popSelMoreViewWithParentView:self.view
                                 withDelegate:self];
 }
 
-//弹出下麦视图
+//Pop-up microphone seat view
 - (void)popDropLineViewWithSeatModel:(VLRoomSeatModel *)seatModel {
     [LSTPopView popDropLineViewWithParentView:self.view
                                 withSeatModel:seatModel
                                  withDelegate:self];
 }
 
-//弹出美声视图
+//Pop up the beautiful sound view
 - (void)popBelcantoView {
     [LSTPopView popBelcantoViewWithParentView:self.view
                             withBelcantoModel:self.selBelcantoModel
                                  withDelegate:self];
 }
 
-//弹出点歌视图
+//Pop-up song order view
 - (void)popUpChooseSongView:(BOOL)ifChorus {
     LSTPopView* popChooseSongView =
     [LSTPopView popUpChooseSongViewWithParentView:self.view
@@ -370,7 +370,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     self.chooseSongView = (VLPopSongList*)popChooseSongView.currCustomView;
 }
 
-//专业主播
+//Professional anchor
 - (void)popVoicePerView {
     LSTPopView* popView =
     [LSTPopView popVoicePerViewWithParentView:self.view isProfessional:self.isProfessional aecState: self.aecState aecLevel:self.aecLevel isDelay:self.isDelay volGrade: self.volGrade grade: self.aecGrade isRoomOwner:[self isRoomOwner] perView:self.voicePerShowView withDelegate:self];
@@ -378,7 +378,7 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
 }
 
 
-//弹出音效
+//Pop-up sound effect
 - (void)popSetSoundEffectView {
     LSTPopView* popView =
     [LSTPopView popSetSoundEffectViewWithParentView:self.view
@@ -388,13 +388,13 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     [self.effectView setSelectedIndex:self.selectedEffectIndex];
 }
 
-//网络差视图
+//Network difference view
 - (void)popBadNetWrokTipView {
     [LSTPopView popBadNetWrokTipViewWithParentView:self.view
                                       withDelegate:self];
 }
 
-//用户弹框离开房间
+//The user pops up to leave the room
 - (void)popForceLeaveRoom {
     VL(weakSelf);
     [[VLKTVAlert shared]showKTVToastWithFrame: UIScreen.mainScreen.bounds
@@ -512,12 +512,12 @@ reportAudioVolumeIndicationOfSpeakers:(NSArray<AgoraRtcAudioVolumeInfo *> *)spea
 - (void)rtcEngine:(AgoraRtcEngineKit * _Nonnull)engine
 receiveStreamMessageFromUid:(NSUInteger)uid
          streamId:(NSInteger)streamId
-             data:(NSData * _Nonnull)data {    //接收到对方的RTC消息
+             data:(NSData * _Nonnull)data {    //Receive the RTC message of the other party
     
     NSDictionary *dict = [VLGlobalHelper dictionaryForJsonData:data];
 //    KTVLogInfo(@"receiveStreamMessageFromUid:%@,streamID:%d,uid:%d",dict,(int)streamId,(int)uid);
     if ([dict[@"cmd"] isEqualToString:@"SingingScore"]) {
-        //伴唱显示自己的分数，观众显示主唱的分数
+        //The accompant shows his own score, and the audience shows the lead singer's score.
         int score = [dict[@"score"] intValue];
         dispatch_async(dispatch_get_main_queue(), ^{
             if(self.singRole == KTVSingRoleCoSinger){
@@ -530,12 +530,12 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         
         KTVLogInfo(@"score: %ds",score);
         return;
-    } else if([dict[@"cmd"] isEqualToString:@"singleLineScore"]) {//观众接收主唱的分数
+    } else if([dict[@"cmd"] isEqualToString:@"singleLineScore"]) {//The audience receives the score of the lead singer.
         KTVLogInfo(@"index: %li", [dict[@"index"] integerValue]);
         if(self.singRole != KTVSingRoleAudience){
             return;
         }
-        //观众使用主唱的分数来显示
+        //The audience uses the lead singer's score to show
         NSInteger index = [dict[@"index"] integerValue];
         NSInteger score = [dict[@"score"] integerValue];
         NSInteger cumulativeScore = [dict[@"cumulativeScore"] integerValue];
@@ -578,7 +578,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
                 break;
         }
     } else if([dict[@"cmd"] isEqualToString:@"cancelVoiceHighlight"]) {
-        //人生突出实效
+        //Life highlights practical effects.
         [self.RTCkit setAudioEffectPreset:AgoraAudioEffectPresetOff];
     }
 }
@@ -640,7 +640,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     }];
     self.aecLevel = 1;
     self.aecState = true;
-    // 歌曲播完关闭耳返状态
+    // Turn off the ear return state after the song is broadcast.
 //    if(self.isEarOn){
 //        self.isEarOn = false;
 //        [self.RTCkit enableInEarMonitoring:_isEarOn includeAudioFilters:AgoraEarMonitoringFilterNone];
@@ -815,7 +815,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         return;
     }
     
-    //没有上麦需要先上麦
+    //If you don't have a microphone seat, you need to have a microphone seat first.
     if ([self getCurrentUserSeatInfo] == nil) {
         VL(weakSelf);
         [self enterSeatWithIndex:nil completion:^(NSError *error) {
@@ -828,7 +828,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             [weakSelf _joinChorus];
         }];
         
-//        //TODO(chenpan):没有空麦位，show error
+//        //TODO(chenpan): show error
 //        [VLToast toast:KTVLocalizedString(@"ktv_mic_full")];
         return;
     }
@@ -882,7 +882,6 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             [[AppContext ktvServiceImp] joinChorusWithSongCode:selSongModel.songNo completion:^(NSError * error) {
             }];
             
-            //开麦
             [[AppContext ktvServiceImp] updateSeatAudioMuteStatusWithMuted:NO completion:^(NSError * error) {
             }];
             weakSelf.aecLevel = 0;
@@ -935,7 +934,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     config.modules = @[module];
     [self.RTCkit enableContentInspect:YES config:config];
     
-    //添加音频鉴黄接口
+    //Add audio identification interface
     [[NetworkManager shared] voiceIdentifyWithChannelName:self.roomModel.roomNo
                                               channelType:1
                                                 sceneType:SceneTypeKtv
@@ -962,13 +961,13 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     }
     [self.RTCkit setParameters: @"{\"che.audio.input_sample_rate\": 48000}"];
     [_soundcardPresenter setupEngine:self.RTCkit];
-    /// 开启唱歌评分功能
+    /// Turn on the singing scoring function
     int code = [self.RTCkit enableAudioVolumeIndication:50 smooth:10 reportVad:true];
     
     if (code == 0) {
-        KTVLogInfo(@"评分回调开启成功\n");
+        KTVLogInfo(@"Score callback turned on successfully\n");
     } else {
-        KTVLogInfo(@"评分回调开启失败：%d\n",code);
+        KTVLogInfo(@"Failed to turn on the scoring callback：%d\n",code);
     }
     
     [self.RTCkit enableVideo];
@@ -1110,7 +1109,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     NSInteger realScore = self.singRole == KTVSingRoleCoSinger ? self.coSingerDegree + lineScore : score;
     [self.MVView.lineScoreView showScoreViewWithScore:lineScore];
     [self.MVView.incentiveView showWithScore:lineScore];
-    //将主唱的分数同步给观众
+    //Synchronize the scores of the lead singer to the audience
     if(self.singRole == KTVSingRoleSoloSinger || self.singRole == KTVSingRoleLeadSinger){
         [self sendMainSingerLineScoreToAudienceWith:score totalScore:totalScore lineScore:lineScore lineIndex:lineIndex];
     } else {
@@ -1140,13 +1139,13 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 }
 
 - (void)didJoinChours {
-    //加入合唱
+    //Join the chorus
     [self.MVView setMvState:VLKTVMVViewStateJoinChorus];
     [self joinChorus];
 }
 
 -(void)didLeaveChours {
-    //退出合唱
+    //Quit the chorus
     [[AppContext ktvServiceImp] leaveChorusWithSongCode:self.selSongsArray.firstObject.songNo
                                              completion:^(NSError * error) {
         if (error == nil) {
@@ -1221,7 +1220,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
                 btnTapped:(id)sender
                withValues:(VLKTVBottomBtnClickType)typeValue {
     switch (typeValue) {
-        case VLKTVBottomBtnClickTypeMore:  //更多
+        case VLKTVBottomBtnClickTypeMore:  //More
 //            [self popSelMVBgView];
 //            [self popSelMoreView];
             [self showSettingView];
@@ -1265,7 +1264,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     } else {
         if (model.owner.userId.length > 0) {
             //occupied
-            if ([model.owner.userId isEqualToString:VLUserCenter.user.id]) {//点击的是自己
+            if ([model.owner.userId isEqualToString:VLUserCenter.user.id]) {//I clicked on myself.
                 return [self popDropLineViewWithSeatModel:model];
             }
         } else{
@@ -1355,24 +1354,24 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 }
 
 #pragma mark VLTouristOnLineViewDelegate
-//上麦方式
+//The way to go to the microphone seat
 - (void)requestOnlineAction {
 }
 #pragma mark - MVViewDelegate
-// 打分实时回调
+// Score real-time callback
 - (void)onKTVMVView:(VLKTVMVView *)view scoreDidUpdate:(int)score {
 }
 
 - (void)onKTVMVView:(VLKTVMVView *)view btnTappedWithActionType:(VLKTVMVViewActionType)type {
     if (type == VLKTVMVViewActionTypeSetParam) {
         [self showSettingView];
-    } else if (type == VLKTVMVViewActionTypeMVPlay) { //播放
+    } else if (type == VLKTVMVViewActionTypeMVPlay) { //Play
         [self.ktvApi resumeSing];
         self.isPause = false;
-    } else if (type == VLKTVMVViewActionTypeMVPause) { //暂停
+    } else if (type == VLKTVMVViewActionTypeMVPause) { //Suspend
         [self.ktvApi pauseSing];
         self.isPause = true;
-    } else if (type == VLKTVMVViewActionTypeMVNext) { //切换
+    } else if (type == VLKTVMVViewActionTypeMVNext) { //Cut
         
         if(self.RTCkit.getConnectionState != AgoraConnectionStateConnected){
             [VLToast toast:KTVLocalizedString(@"ktv_change_failed")];
@@ -1390,14 +1389,14 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             }
             [[VLAlert shared] dismiss];
         }];
-    } else if (type == VLKTVMVViewActionTypeSingOrigin) { // 原唱
+    } else if (type == VLKTVMVViewActionTypeSingOrigin) { // Original singer
         self.trackMode = KTVPlayerTrackModeOrigin;
-    } else if (type == VLKTVMVViewActionTypeSingAcc) { // 伴奏
+    } else if (type == VLKTVMVViewActionTypeSingAcc) { // Accompany
         self.trackMode = KTVPlayerTrackModeAcc;
-    } else if (type == VLKTVMVViewActionTypeRetryLrc) {  //歌词重试
+    } else if (type == VLKTVMVViewActionTypeRetryLrc) {  //Try the lyrics again
         [self reloadMusic];
     } else if (type == VLKTVMVViewActionTypeSingLead){
-        self.trackMode = KTVPlayerTrackModeLead; //导唱
+        self.trackMode = KTVPlayerTrackModeLead; //Director and singer
     }
 }
 
@@ -1434,33 +1433,25 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 - (void)settingViewSettingChanged:(VLKTVSettingModel *)setting
               valueDidChangedType:(VLKTVValueDidChangedType)type {
     self.settingModel = setting;
-    if (type == VLKTVValueDidChangedTypeEar) { // 耳返设置
-        // 用户必须使用有线耳机才能听到耳返效果
-        // 1、不在耳返中添加audiofilter
-        // AgoraEarMonitoringFilterNone
-        // 2: 在耳返中添加人声效果 audio filter。如果你实现了美声、音效等功能，用户可以在耳返中听到添加效果后的声音。
-        // AgoraEarMonitoringFilterBuiltInAudioFilters
-        // 4: 在耳返中添加降噪 audio filter。
-        // AgoraEarMonitoringFilterNoiseSuppression
-        // [self.RTCkit enableInEarMonitoring:setting.soundOn includeAudioFilters:AgoraEarMonitoringFilterBuiltInAudioFilters | AgoraEarMonitoringFilterNoiseSuppression];
+    if (type == VLKTVValueDidChangedTypeEar) { // Ear return settings
         [self showEarSettingView];
     } else if (type == VLKTVValueDidChangedTypeMV) { // MV
         
-    } else if (type == VLKTVValueDidChangedTypeSoundCard) { // 虚拟声卡
+    } else if (type == VLKTVValueDidChangedTypeSoundCard) { // Virtual sound card
         [self showSoundCardView];
-    } else if (type == VLKTVValueDidChangedRiseFall) { // 升降调
-        // 调整当前播放的媒体资源的音调
-        // 按半音音阶调整本地播放的音乐文件的音调，默认值为 0，即不调整音调。取值范围为 [-12,12]，每相邻两个值的音高距离相差半音。取值的绝对值越大，音调升高或降低得越多
+    } else if (type == VLKTVValueDidChangedRiseFall) { // Up and down tune
+        // Adjust the tone of the currently playing media resources
+        // Adjust the tone of the locally played music file according to the semitone scale. The default value is 0, that is, the tone is not adjusted. The value range is [-12,12], and the pitch distance of each adjacent two values is half a tone different. The higher the absolute value of the value, the more the tone rises or decreases.
         NSInteger value = setting.toneValue * 2 - 12;
         [[self.ktvApi getMusicPlayer] setAudioPitch:value];
-    } else if (type == VLKTVValueDidChangedTypeSound) { // 音量
-        // 调节音频采集信号音量、取值范围为 [0,400]impl
-        // 0、静音 100、默认原始音量 400、原始音量的4倍、自带溢出保护
+    } else if (type == VLKTVValueDidChangedTypeSound) { // Volume
+        // Adjust the volume of the audio acquisition signal, and the value range is [0,400]
+        // 0. Mute 100, default original volume 400, 4 times the original volume, with overflow protection
         if(self.soundVolume != setting.soundValue){
             [self.RTCkit adjustRecordingSignalVolume:setting.soundValue];
             self.soundVolume = setting.soundValue;
         }
-    } else if (type == VLKTVValueDidChangedTypeAcc) { // 伴奏
+    } else if (type == VLKTVValueDidChangedTypeAcc) { // Accompany
         int value = setting.accValue;
         if(self.playoutVolume != value){
             self.playoutVolume = value;
@@ -1470,7 +1461,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         [self.RTCkit setAudioEffectPreset:preset];
     } else if (type == VLKTVValueDidChangedTypeRemoteValue) {
         [self.RTCkit adjustPlaybackSignalVolume:setting.remoteVolume];
-    } else if (type == VLKTVValueDidChangedTypeLrc) {//歌词等级
+    } else if (type == VLKTVValueDidChangedTypeLrc) {//Lyrics level
         LRCLEVEL level = LRCLEVELMID;
         if(setting.lrcLevel == 0){
             level = LRCLEVELOW;
@@ -1480,13 +1471,13 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             level = LRCLEVELHIGH;
         }
         [self.MVView setLrcLevelWith:level];
-    } else if (type == VLKTVValueDidChangedTypeVqs) {//音质
+    } else if (type == VLKTVValueDidChangedTypeVqs) {//Acoustic fidelity
         [self didVolQualityGradeChangedWithIndex:setting.vqs];
-    } else if (type == VLKTVValueDidChangedTypeAns) {//降噪
+    } else if (type == VLKTVValueDidChangedTypeAns) {//Reduce the noise
         [self didAIAECGradeChangedWithIndex:setting.ans];
     } else if (type == VLKTVValueDidChangedTypeaiaec) {//AIAEC
         [self didAECStateChange:setting.enableAec];
-    } else if (type == VLKTVValueDidChangedTypebro) {//专业主播
+    } else if (type == VLKTVValueDidChangedTypebro) {//Professional anchor
         [self voicePerItemSelectedAction:setting.isPerBro];
     } else if (type == VLKTVValueDidChangedTypeAecLevel){
         [self didAECLevelSetWith:setting.aecLevel];
@@ -1513,10 +1504,10 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     kWeakSelf(self);
     self.soundSettingView.clicKBlock = ^(NSInteger index) {
         if(index == 2){
-            //音效设置
+            //Sound effect settings
             [weakself showSoundEffectView];
         } else if (index == 4) {
-            //麦克风设置
+            //Microphone settings
             [weakself showSoundMicTypeView];
         }
     };
@@ -1609,7 +1600,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     return [[audioEffectPresets objectAtIndex:index] integerValue];
 }
 
-//音效设置
+//Sound effect settings
 - (void)effectItemClickAction:(NSInteger)effect {
     self.selectedEffectIndex = effect;
     NSArray *effects = @[@(AgoraAudioEffectPresetOff),
@@ -1625,7 +1616,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     [self.RTCkit setAudioEffectPreset: [effects[effect] integerValue]];
 }
 
-//专业主播设置
+//Professional anchor setting
 - (void)voicePerItemSelectedAction:(BOOL)isSelected {
     self.isProfessional = isSelected;
     [self.ktvApi enableProfessionalStreamerMode:isSelected];
@@ -1658,7 +1649,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 
 - (void)onAINSModeChangedWithMode:(NSInteger)mode {
     if (mode == 0) {
-        // 关闭
+        // close
         [self.RTCkit setParameters:@"{\"che.audio.ains_mode\": 0}"];
         [self.RTCkit setParameters:@"{\"che.audio.nsng.lowerBound\": 80}"];
         [self.RTCkit setParameters:@"{\"che.audio.nsng.lowerMask\": 50}"];
@@ -1666,7 +1657,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         [self.RTCkit setParameters:@"{\"che.audio.nsng.finallowermask\": 30}"];
         [self.RTCkit setParameters:@"{\"che.audio.nsng.enhfactorstastical\": 200}"];
     } else if (mode == 1) {
-        // 中
+        // middle
         [self.RTCkit setParameters:@"{\"che.audio.ains_mode\": 2}"];
         [self.RTCkit setParameters:@"{\"che.audio.nsng.lowerBound\": 80}"];
         [self.RTCkit setParameters:@"{\"che.audio.nsng.lowerMask\": 50}"];
@@ -1674,7 +1665,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         [self.RTCkit setParameters:@"{\"che.audio.nsng.finallowermask\": 30}"];
         [self.RTCkit setParameters:@"{\"che.audio.nsng.enhfactorstastical\": 200}"];
     } else if (mode == 2) {
-        // 高
+        // high
         [self.RTCkit setParameters:@"{\"che.audio.ains_mode\": 2}"];
         [self.RTCkit setParameters:@"{\"che.audio.nsng.lowerBound\": 10}"];
         [self.RTCkit setParameters:@"{\"che.audio.nsng.lowerMask\": 10}"];
@@ -1714,10 +1705,10 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 
 #pragma mark --
 - (void)_fetchServiceAllData {
-    //请求已点歌曲
+    //Request the song that has been clicked
     VL(weakSelf);
     [self refreshChoosedSongList:^{
-        //请求歌词和歌曲
+        //Request lyrics and songs
         if(weakSelf.selSongsArray.count == 0){
             return;
         }
@@ -1751,7 +1742,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     return song;
 }
 
-/// 获取当前用户的麦位
+/// Get the microphone of the current user
 - (VLRoomSeatModel*)getCurrentUserSeatInfo {
     return [self getUserSeatInfoWithUserId:VLUserCenter.user.id];
 }
@@ -1771,7 +1762,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     return [AppContext isKtvChorusingWithSeat:model];
 }
 
-/// 根据麦位索引获取麦位
+/// Obtain the microphone according to the microphone index
 /// @param seatIndex <#seatIndex description#>
 - (VLRoomSeatModel*)getUserSeatInfoWithIndex:(NSUInteger)seatIndex {
     for (VLRoomSeatModel *model in self.seatsArray) {
@@ -1783,7 +1774,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     return nil;
 }
 
-/// 计算当前歌曲用户的演唱角色
+/// Calculate the singing role of the current song user
 - (KTVSingRole)getUserSingRole {
     BOOL currentSongIsJoinSing = [AppContext isKtvChorusingWithUserId:VLUserCenter.user.id];
     BOOL currentSongIsSongOwner = [AppContext isKtvSongOwnerWithUserId:VLUserCenter.user.id];
@@ -1798,7 +1789,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 }
 
 
-/// 计算合唱者数量
+/// Calculate the number of chorusists
 /// @param seatArray <#seatArray description#>
 - (NSUInteger)getChorusNumWithSeatArray:(NSArray*)seatArray {
     NSUInteger chorusNum = 0;
@@ -1813,14 +1804,14 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 }
 
 - (BOOL)getJoinChorusEnable {
-    //不是观众不允许加入
+    //It's not that the audience is not allowed to join.
     if ([self getUserSingRole] != KTVSingRoleAudience) {
         KTVLogInfo(@"getJoinChorusEnable fail role = %ld", [self getUserSingRole]);
         return NO;
     }
     
     VLRoomSelSongModel* topSong = [[self selSongsArray] firstObject];
-    //TODO: 不在播放不允许加入
+    //TODO: Not allowed to join if it is not playing.
     if (topSong.status != VLSongPlayStatusPlaying) {
         KTVLogInfo(@"getJoinChorusEnable fail status = %ld", topSong.status);
         return NO;
@@ -1829,7 +1820,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     return YES;
 }
 
-//获取已经非麦下观众的总数
+//Get the total number of viewers who have not been under the microphone seat
 -(NSInteger)getOnMicUserCount{
     NSInteger num = 0;
     if(self.seatsArray){
@@ -1906,7 +1897,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     NSUInteger origChorusNum = _chorusNum;
     _chorusNum = chorusNum;
     if (origChorusNum != chorusNum) {
-        //主唱<->独唱切换，非歌曲owner不需要调用
+        //Lead singer <-> solo switch, non-song owner does not need to be called
         if(![self isCurrentSongMainSinger:VLUserCenter.user.id]) {
             return;
         }
@@ -1992,14 +1983,14 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 - (void)setPlayoutVolume:(int)playoutVolume {
     _playoutVolume = playoutVolume;
     
-    // 官方文档是100 ？ SDK 是 400？？？？
-    // 调节本地播放音量 取值范围为 [0,100]
-    // 0、无声。 100、（默认）媒体文件的原始播放音量
+    // The official document is 100? SDK is 400????
+    // Adjust the local playback volume. The value range is [0,100]
+    // 0, silent. 100. (Default) Original playback volume of media files
     //    [self.ktvApi adjustPlayoutVolume:playoutVolume];
     [[self.ktvApi getMusicPlayer] adjustPlayoutVolume:playoutVolume];
     
-    // 调节远端用户听到的音量 取值范围[0、400]
-    // 100: （默认）媒体文件的原始音量。400: 原始音量的四倍（自带溢出保护）
+    // Adjust the volume heard by remote users and take the value range [0, 400]
+    // 100: (default) the original volume of the media file. 400: Four times the original volume (with overflow protection)
     [[self.ktvApi getMusicPlayer] adjustPublishSignalVolume:playoutVolume];
     
     //update ui
@@ -2012,7 +2003,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     //    } else {
     //        [self.RTCkit enableInEarMonitoring:NO includeAudioFilters:AgoraEarMonitoringFilterBuiltInAudioFilters];
     //    }
-    if(self.singRole != KTVSingRoleAudience){//主唱伴唱都能开启耳返
+    if(self.singRole != KTVSingRoleAudience){//The lead singer and the backing singer can open the ear back.
         [self.RTCkit enableInEarMonitoring:_isEarOn includeAudioFilters:AgoraEarMonitoringFilterNone];
     }
 }
@@ -2023,7 +2014,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     self.chorusNum = [self getChorusNumWithSeatArray:self.seatsArray];
     if (self.chooseSongView) {
         BOOL isOwner = [self.roomModel.creatorNo isEqualToString:VLUserCenter.user.id];
-        [self.chooseSongView setSelSongsArray:_selSongsArray isOwner:isOwner]; //刷新已点歌曲UI
+        [self.chooseSongView setSelSongsArray:_selSongsArray isOwner:isOwner]; //Refresh the UI of the ordered song
     }
     
     [self.roomPersonView updateSingBtnWithChoosedSongArray:_selSongsArray];
@@ -2091,7 +2082,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 - (void)onMusicPlayerStateChangedWithState:(AgoraMediaPlayerState)state reason:(AgoraMediaPlayerReason)reason isLocal:(BOOL)isLocal {
     dispatch_async(dispatch_get_main_queue(), ^{
         if(state == AgoraMediaPlayerStatePlaying) {
-            //显示跳过前奏
+            //Display skipping prelude
             if(self.singRole == KTVSingRoleSoloSinger || self.singRole == KTVSingRoleLeadSinger){
                 [self.lrcControl showPreludeEnd];
             }
@@ -2104,7 +2095,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             if(isLocal) {
                 KTVLogInfo(@"Playback all loop completed");
                 // if(self.singRole != KTVSingRoleAudience){
-                //伴唱和房主都用自己的分数
+                //Both the singer and the landlord use their own scores.
                 if(self.singRole == KTVSingRoleLeadSinger || self.singRole == KTVSingRoleSoloSinger){
                     [self syncChoruScore:[self.lrcControl getAvgScore]];
                     [self showScoreViewWithScore: [self.lrcControl getAvgScore]];
@@ -2113,7 +2104,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
             }
         }
         
-        //判断伴唱是否是暂停状态
+        //Judge whether the accompaniment is in a suspended state
         if(self.singRole == KTVSingRoleCoSinger){
             self.isPause = (isLocal && state == AgoraMediaPlayerStatePaused);
         }
@@ -2229,7 +2220,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     KTVLogInfo(@"onRoomDidDestroy");
     [self leaveRTCChannel];
     BOOL isOwner = [self.roomModel.creatorNo isEqualToString:VLUserCenter.user.id];
-    //房主关闭房间
+    //The owner closes the room.
     if (isOwner) {
         kWeakSelf(self);
         NSString *mes = KTVLocalizedString(@"ktv_room_exit");
@@ -2288,7 +2279,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         return;
     }
     
-    //上麦消息 / 是否打开视频 / 是否静音
+    //Message on the microphone / Whether to turn on the video / Whether to mute
     model.owner = user;
     [self setSeatsArray:self.seatsArray];
     
@@ -2308,8 +2299,8 @@ receiveStreamMessageFromUid:(NSUInteger)uid
         return;
     }
     
-    // 下麦消息
-    // 下麦重置占位模型
+    // Messages from the microphone
+    // Lower the microphone to reset the placement model
     model.owner = [SyncUserThumbnailInfo new];
     [self setSeatsArray:self.seatsArray];
     
@@ -2323,7 +2314,7 @@ receiveStreamMessageFromUid:(NSUInteger)uid
 
 - (void)updateNowMicMuted:(BOOL)isMute {
     self.isNowMicMuted = isMute;
-    // 开关麦克风会对耳返状态进行检查并临时关闭
+    // The switch microphone will check the ear return status and turn it off temporarily.
     if(self.isEarOn){
         [self.RTCkit enableInEarMonitoring:!self.isNowMicMuted includeAudioFilters:AgoraEarMonitoringFilterNone];
     }

@@ -74,11 +74,11 @@
         NSString *fullText = [NSString stringWithFormat:@"%@\n%@", subText, attrText];
         NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:fullText];
 
-        // 设置前面文字的样式
+        // Set the style of the previous text
         NSDictionary *firstTextAttributes = @{NSFontAttributeName: [UIFont boldSystemFontOfSize:15], NSForegroundColorAttributeName: [UIColor whiteColor]};
-        [attributedText setAttributes:firstTextAttributes range:NSMakeRange(0, subText.length + 1)]; // +1 是为了包含换行符
+        [attributedText setAttributes:firstTextAttributes range:NSMakeRange(0, subText.length + 1)]; // +1 It is to include line breaks.
 
-        // 设置后面文字的样式
+        // Set the style of the following text
         NSDictionary *secondTextAttributes = @{NSFontAttributeName: [UIFont italicSystemFontOfSize:12], NSForegroundColorAttributeName: [UIColor lightGrayColor]};
         [attributedText setAttributes:secondTextAttributes range:NSMakeRange(subText.length + 1, attrText.length)];
 
@@ -127,7 +127,7 @@
 
 -(UISegmentedControl *)segmentControl {
     if(!_segmentControl){
-        //这个是设置按下按钮时的颜色
+        //This is the color when setting the button is pressed.
         self.segmentControl = [[UISegmentedControl alloc]init];
         self.segmentControl.selectedSegmentTintColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.2];
         self.segmentControl.backgroundColor = [UIColor colorWithRed:0.938 green:0.938 blue:0.938 alpha:0.08];
@@ -135,7 +135,7 @@
         [self.segmentControl setTitleTextAttributes:attributes forState:UIControlStateNormal];
         NSDictionary *selectedAttributes = [NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName];
         [self.segmentControl setTitleTextAttributes:selectedAttributes forState:UIControlStateSelected];
-        //设置分段控件点击相应事件
+        //Set the segmented control and click the corresponding event
         [_segmentControl addTarget:self action:@selector(volSegmentSelect:)forControlEvents:UIControlEventValueChanged];
     }
     return _segmentControl;

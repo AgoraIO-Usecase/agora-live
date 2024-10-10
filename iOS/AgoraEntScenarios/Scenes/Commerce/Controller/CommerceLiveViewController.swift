@@ -353,13 +353,13 @@ class CommerceLiveViewController: UIViewController {
             self.auctionView.setGoodsData(model: model, isBroadcaster: isBroadcaster)
             var origGoodStatusValid = false
             if isBroadcaster {
-                //主播completion无条件显示
+                //Anchor completion is displayed unconditionally
                 origGoodStatusValid = true
             } else if origGoodStatus != nil, origGoodStatus != .completion {
-                //防止重新进入时再弹出(第一次为nil，第二次为completion)
+                //Prevent it from popping up when re-entering (the first time is nil, the second time is completion)
                 origGoodStatusValid = true
             }
-            //之前是start、现在是completion，才会显示完成弹窗
+            //It was start before, and now it's completion, and the completion pop-up window will be displayed.
             if model.status == .completion,
                origGoodStatusValid,
                model.bid > 1,

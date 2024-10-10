@@ -909,8 +909,8 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
                 let count = self.auiUserList.count + 2
                 self.roomServiceDelegate?.onMemberCountChanged(roomId: roomId, count: count)
             }
-            //添加鉴黄接口
-            NetworkManager.shared.voiceIdentify(channelName: room.channel_id ?? "", 
+            //Add the yellow identification interface
+            NetworkManager.shared.voiceIdentify(channelName: room.channel_id ?? "",
                                                 channelType: room.sound_effect == 3 ? 0 : 1,
                                                 sceneType: .voice) { msg in
                 VoiceChatLog.info("\(msg == nil ? "开启鉴黄成功" : "开启鉴黄失败")")
@@ -975,7 +975,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         if roomService.isRoomOwner(roomId: roomId) {
             VoiceRoomIMManager.shared?.userDestroyedChatroom()
         } else {
-            // 更新房间列表人数信息
+            // Update the number of people in the room list
             VoiceRoomIMManager.shared?.userQuitRoom(completion: nil)
         }
         completion(nil, true)
@@ -1036,24 +1036,24 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
 }
 
 extension ChatRoomServiceImp: AUISceneRespDelegate {
-    /// 房间过期的回调
+    /// The callback of the expired room
     /// - Parameter channelName: <#channelName description#>
     public func onSceneExpire(channelName: String) {
         
     }
     
-    /// 房间被销毁的回调
-    /// - Parameter channelName: 房间id
+    /// The callback of the destroyed room
+    /// - Parameter channelName: room id
     public func onSceneDestroy(channelName: String) {
         roomService.leaveRoom(roomId: channelName)
         self.roomServiceDelegate?.onRoomExpired()
     }
     
-    /// Description 房间异常，需要退出
+    /// Description The room is abnormal and needs to be exited.
     ///
     /// - Parameters:
-    ///   - channelName: 房间id
-    ///   - reason: 异常原因
+    ///   - channelName: Room id
+    ///   - reason: reason
     public func onSceneFailed(channelName: String, reason: String) {
         //login when occur error
         VoiceChatLog.info("onSceneFailed: \(channelName) reason: \(reason)")

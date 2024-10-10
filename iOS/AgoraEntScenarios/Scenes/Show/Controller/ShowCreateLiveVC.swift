@@ -82,14 +82,14 @@ class ShowCreateLiveVC: UIViewController {
             
             BeautyManager.shareManager.initBeautyRender()
             
-            // 创建默认美颜效果
+            // Create the default beauty effect
             ShowBeautyFaceVC.beautyData.forEach({
                 BeautyManager.shareManager.setBeauty(path: $0.path,
                                                      key: $0.key,
                                                      value: $0.value)
             })
             
-            // 美颜设置
+            // Beauty settings
             BeautyManager.shareManager.configBeautyAPI()
             ShowAgoraKitManager.shared.startPreview(canvasView: self.localView)
         }

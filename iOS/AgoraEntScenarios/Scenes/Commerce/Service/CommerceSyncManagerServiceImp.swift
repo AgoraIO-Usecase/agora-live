@@ -450,8 +450,8 @@ extension CommerceSyncManagerServiceImp {
             completion(CommerceServiceError.paramsInvalid.toError())
             return
         }
-        //结束只改状态，防止房主非仲裁者时，价格不是最终的导致回滚
-        RTMSyncUtil.updateMetaData(id: channelName, 
+        //End only change the status to prevent the price from being the final rollback when the homeowner is not an arbitrator.
+        RTMSyncUtil.updateMetaData(id: channelName,
                                    key: SYNC_MANAGER_BID_GOODS_COLLECTION,
                                    valueCmd: CommerceCmdKey.updateBidGoodsInfo,
                                    data: ["status": CommerceAuctionStatus.completion.rawValue],

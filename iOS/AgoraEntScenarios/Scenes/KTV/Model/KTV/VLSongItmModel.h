@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 //@property (nonatomic, strong) NSArray *lyricType;
 //@property (nonatomic, copy) NSString *releaseTime;
-///演唱
+///Perform a song
 @property (nonatomic, copy) NSString *singer;
 //@property (nonatomic, copy) NSString *vendorId;
 //@property (nonatomic, copy) NSString *mv;
@@ -24,12 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *imageUrl;
 //@property (nonatomic, copy) NSString *highPart;
 //@property (nonatomic, copy) NSString *status;
-///歌曲链接
+///Song link
 //@property (nonatomic, copy) NSString *songUrl;
-///歌词
+///Lyrics
 @property (nonatomic, copy) NSString *lyric;
 
-//是否被点过
+//Has it been ordered?
 @property (nonatomic, assign) BOOL ifChoosed;
 //@property (nonatomic, assign) BOOL ifChorus;
 

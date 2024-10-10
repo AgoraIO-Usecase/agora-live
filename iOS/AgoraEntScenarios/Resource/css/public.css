@@ -28,12 +28,12 @@ html
   word-break: break-word;
   -webkit-overflow-scrolling: touch;
   line-height: 1;
-  -moz-user-select:none; /* Firefox私有属性 */
-  -webkit-user-select:none; /* WebKit内核私有属性 */
-  -ms-user-select:none; /* IE私有属性(IE10及以后) */
-  -khtml-user-select:none; /* KHTML内核私有属性 */
-  -o-user-select:none; /* Opera私有属性 */
-  user-select:none; /* CSS3属性 */
+  -moz-user-select:none; /* Firefox private attributes */
+  -webkit-user-select:none; /* Private attributes of WebKit kernel*/
+  -ms-user-select:none; /* IE private attributes (IE10 and later) */
+  -khtml-user-select:none; /* KHTML kernel private attributes */
+  -o-user-select:none; /* Opera private attributes */
+  user-select:none; /* CSS3 attributes */
 }
 .container{
   padding: 32px 20px 50px 20px;

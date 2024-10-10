@@ -14,8 +14,8 @@ private let kEncodeFPS = "kEncodeFPS"
 private let kEncodeBitrate = "kEncodeBitrate"
 
 enum ShowMode {
-    case single // 单主播模式
-    case pk // pk模式
+    case single // Single anchor mode
+    case pk // Pk mode
 }
 
 private let fpsItems: [AgoraVideoFrameRate] = [
@@ -132,7 +132,7 @@ extension ShowAgoraKitManager {
         engine?.setVideoDenoiserOptions(isOn, options: option)
     }
     
-    /** 设置小流参数
+    /** Set the stream parameters
      */
     private func setSimulcastStream(isOn: Bool, dimensions: CGSize = CGSizeMake(360, 640), fps: Int32 = 5, bitrate: Int = 680, svc: Bool = false) {
         if isOn {

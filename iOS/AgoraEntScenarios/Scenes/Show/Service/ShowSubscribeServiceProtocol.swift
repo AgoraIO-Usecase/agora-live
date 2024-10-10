@@ -16,70 +16,70 @@ import Foundation
 
 @objc public protocol ShowSubscribeServiceProtocol: NSObjectProtocol {
     
-    /// 房间过期
+    /// The room is expired.
     func onRoomExpired(channelName: String)
     
-    /// 房间被销毁
+    /// The room was destroyed.
     /// - Parameter channelName: <#channelName description#>
     func onRoomDestroy(channelName: String)
     
-    /// 网络状态变化
+    /// Changes in network status
     /// - Parameter state: <#state description#>
     func onConnectStateChanged(channelName: String, state: ShowServiceConnectState)
     
-    /// 房间内用户数变化
+    /// Changes in the number of users in the room
     /// - Parameter userCount: <#userCount description#>
     func onUserCountChanged(channelName: String, userCount: Int)
     
-    /// 用户加入房间
+    /// Users join the room
     /// - Parameter user: <#user description#>
     func onUserJoinedRoom(channelName: String, user: ShowUser)
     
-    /// 用户离开房间
+    /// The user leaves the room.
     /// - Parameter user: <#user description#>
     func onUserLeftRoom(channelName: String, user: ShowUser)
     
     
     
-    /// 接收到新消息
+    /// Received new messages
     /// - Parameter message: <#message description#>
     func onMessageDidAdded(channelName: String, message: ShowMessage)
     
     
-    /// 连麦申请列表变化
+    /// Changes in the application list of Lianmai
     /// - Parameter apply: <#apply description#>
     func onMicSeatApplyUpdated(channelName: String, applies: [ShowMicSeatApply])
 
     
-    /// 收到连麦邀请/邀请被更新
+    /// Received on seat invitation/the invitation is updated
     /// - Parameter invitation: <#invitation description#>
     func onMicSeatInvitationUpdated(channelName: String, invitation: ShowMicSeatInvitation)
     
-    /// 同意连麦邀请
+    /// Agree to on seat invitation
     /// - Parameter invitation: <#invitation description#>
     func onMicSeatInvitationAccepted(channelName: String, invitation: ShowMicSeatInvitation)
     
-    /// 拒绝连麦邀请
+    /// Refuse on seat invitation
     /// - Parameter invitation: <#invitation description#>
     func onMicSeatInvitationRejected(channelName: String, invitation: ShowMicSeatInvitation)
     
     
     
-    /// 收到PK邀请/邀请被更新
+    /// Received PK invitation/the invitation was updated
     /// - Parameter invitation: <#invitation description#>
     func onPKInvitationUpdated(channelName: String, invitation: ShowPKInvitation)
 
-    /// 同意PK邀请
+    /// Agree to the PK invitation
     /// - Parameter invitation: <#invitation description#>
     func onPKInvitationAccepted(channelName: String, invitation: ShowPKInvitation)
     
-    /// 拒绝PK邀请
+    /// Refuse PK invitation
     /// - Parameter invitation: <#invitation description#>
     func onPKInvitationRejected(channelName: String, invitation: ShowPKInvitation)
     
     
     
-    /// pk/连麦互动变更
+    /// pk/Lianmai interactive change
     /// - Parameter interation: <#interation description#>
     func onInteractionUpdated(channelName: String, interactions: [ShowInteractionInfo])
 }

@@ -7,8 +7,8 @@
 #import <AgoraRtcKit/AgoraRtcKit.h>
 
 typedef enum : NSUInteger {
-    VLRoomSeatDropTypeSelfly = 0,//自己下麦
-    VLRoomSeatDropTypeForceByRoomer //被房主强制下麦
+    VLRoomSeatDropTypeSelfly = 0,//Down the wheat by yourself
+    VLRoomSeatDropTypeForceByRoomer //Forced to take the microphone by the landlord
     
 } VLRoomSeatDropType;
 #define viewTag 99999

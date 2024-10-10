@@ -17,16 +17,16 @@ func createError(code: Int = -1, msg: String) -> NSError {
 }
 
 public enum KTVServiceError {
-    case createRoomFail(Int)   //创建房间失败
-    case joinRoomFail(Int)     //加入房间失败
-    case enterSeatFail(Int)    //上麦失败
-    case leaveSeatFail(Int)    //下麦失败
-    case kickSeatFail(Int)     //踢下麦失败
-//    case getSongListFail(Int)  //获取歌曲失败失败
-    case chooseSongFail(Int)   //点歌失败
-    case removeSongFail(Int)   //删除歌曲失败
-    case pinSongFail(Int)      //置顶歌曲失败
-    case switchSongFail(Int)   //切歌失败
+    case createRoomFail(Int)   //Failed to create a room
+    case joinRoomFail(Int)     //Failed to join the room
+    case enterSeatFail(Int)    //Failed to go to the microphone
+    case leaveSeatFail(Int)    //Failed to lower the microphone
+    case kickSeatFail(Int)     //Failed to kick the microphone
+//    case getSongListFail(Int)  //Failed to get the song
+    case chooseSongFail(Int)   //Failed to order songs
+    case removeSongFail(Int)   //Failed to delete the song
+    case pinSongFail(Int)      //Failed to pin the top song
+    case switchSongFail(Int)   //Failed to cut the song
     
     public func toNSError() -> NSError {
         switch self {
@@ -53,17 +53,17 @@ public enum KTVServiceError {
 }
 
 public enum KTVCommonError {
-    case unknown      //未知错误
-    case micSeatNotIdle   //麦位不空闲
-    case micSeatAlreadyEnter   //已经上麦过了
-    case userNoEnterSeat   //观众未上麦
-    case chooseSongAlreadyExist   //歌曲已经选择过了
-    case chooseSongNotExist   //歌曲已经选择过了
-    case choristerAlreadyExist   //合唱用户已存在
-    case choristerNotExist    //合唱用户不存在
-    case noPermission   //无权限
-    case chooseSongIsFail   //选择歌曲失败
-    case currentSongNotFirst  //预期要变更为播放状态的歌曲不是第一首
+    case unknown      //Unknown error
+    case micSeatNotIdle   //The wheat seat is not free.
+    case micSeatAlreadyEnter   //It has been on the microphone.
+    case userNoEnterSeat   //The audience is not on the microphone.
+    case chooseSongAlreadyExist   //The song has been selected.
+    case chooseSongNotExist   //The song has been selected.
+    case choristerAlreadyExist   //The chorus user already exists
+    case choristerNotExist    //Chorus users do not exist.
+    case noPermission   //No permission
+    case chooseSongIsFail   //Failed to select the song
+    case currentSongNotFirst  //The song that is expected to be changed to playback is not the first one.
     
     public func toNSError() -> NSError {
         switch self {
@@ -103,26 +103,26 @@ extension NSError {
 
 
 enum AUIMicSeatCmd: String {
-    case leaveSeatCmd = "leaveSeatCmd"    //下麦
-    case enterSeatCmd = "enterSeatCmd"    //上麦
+    case leaveSeatCmd = "leaveSeatCmd"    //Off the line
+    case enterSeatCmd = "enterSeatCmd"    //On the line
     case muteAudioCmd = "muteAudioCmd"    //mute/unmute audio
     case muteVideoCmd = "muteVideoCmd"    //mute/unmute video
-    case kickSeatCmd = "kickSeatCmd"      //把某一个上麦用户踢下麦
+    case kickSeatCmd = "kickSeatCmd"      //Kick off a user on the line
 }
 
 enum AUIMusicCmd: String {
-    case chooseSongCmd = "chooseSongCmd"   //添加一首歌
-    case removeSongCmd = "removeSongCmd"   //移除一首歌
-    case pinSongCmd = "pinSongCmd"       //置顶一首歌
-    case updatePlayStatusCmd = "updatePlayStatusCmd"   //更新歌曲播放状态
-    case removedUserSongs = "removedUserSongsCmd"   //移除指定用户所有歌曲
+    case chooseSongCmd = "chooseSongCmd"   //Add a song
+    case removeSongCmd = "removeSongCmd"   //Remove a song
+    case pinSongCmd = "pinSongCmd"       //Pin a song to the top
+    case updatePlayStatusCmd = "updatePlayStatusCmd"   //Update the playing status of the song
+    case removedUserSongs = "removedUserSongsCmd"   //Remove all songs from the specified user
 }
 
 enum AUIChorusCmd: String {
-    case joinCmd = "joinChorusCmd" //加入合唱
-    case leaveCmd = "leaveChorusCmd" //退出合唱
-    case kickAllCmd = "kickAllOutOfChorusCmd"  //移除所有合唱
-    case kickUserCmd = "KickUserOutOfChorusCmd"   //踢出指定用户出合唱列表
+    case joinCmd = "joinChorusCmd" //Join the chorus
+    case leaveCmd = "leaveChorusCmd" //Quit the chorus
+    case kickAllCmd = "kickAllOutOfChorusCmd"  //Remove all chorus
+    case kickUserCmd = "KickUserOutOfChorusCmd"   //Kick out the designated user out of the chorus list
 }
 
 @objcMembers
@@ -155,11 +155,11 @@ extension AUIUserThumbnailInfo {
     }
 }
 
-/// 合唱者模型
-@objcMembers 
+/// Choir model
+@objcMembers
 open class KTVChoristerModel: NSObject {
     var userId: String = ""
-    var chorusSongNo: String?          //合唱者演唱歌曲
+    var chorusSongNo: String?          //The chorer sings a song
  
     open override func isEqual(_ object: Any?) -> Bool {
         if let other = object as? KTVChoristerModel {

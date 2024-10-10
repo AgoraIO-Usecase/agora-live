@@ -76,7 +76,6 @@
     self.backGroundImgView.image = UIImageMake(imageName) ? : [UIImage sceneImageWithName:imageName];
 }
 
-//背景图
 - (void)setBackgroundImage:(NSString *)imageName bundleName:(NSString *)name{
     [self.view addSubview:self.backGroundImgView];
     self.backGroundImgView.image = UIImageMake(imageName) ? : [UIImage sceneImageWithName:imageName bundleName:name];
