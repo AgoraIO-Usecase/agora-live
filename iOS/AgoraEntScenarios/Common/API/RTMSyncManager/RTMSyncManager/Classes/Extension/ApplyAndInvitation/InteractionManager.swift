@@ -97,13 +97,13 @@ private let inviteKey = ""
             let currentType = InteractionType(rawValue: currentItem?["type"] as? Int ?? 0) ?? .idle
             switch cmd {
             case .startLink, .startPk:
-                //开始互动需要保证连麦和pk请求时空闲
+                //To start the interaction, you need to make sure that Lianmai and pk are free when requesting.
                 guard currentType == .idle else {
                     return AUICommonError.unknown.toNSError()
                 }
                 return nil
             case .stop:
-                //停止互动需要保证互动用户是互动表里的双方
+                //To stop the interaction, you need to ensure that the interactive users are both parties in the interaction table.
                 guard let interactionUserId = currentItem?["userId"] as? String else {
                     return AUICommonError.unknown.toNSError()
                 }
@@ -120,7 +120,7 @@ private let inviteKey = ""
         
         let collection = self.getApplyService(channelName: channelName).applyCollection
 //        collection.subscribeWillAdd {[weak self] uid, valueCmd, newItem in
-//            //添加申请需要判断当前是否在互动
+//            //To add an application, you need to judge whether you are currently interacting.
 //            guard let valueCmd = valueCmd,
 //                  let cmd = ApplyCmd(rawValue: valueCmd),
 //                  cmd == .create else {
@@ -147,7 +147,7 @@ private let inviteKey = ""
                       interationMap["type"] as? Int ?? 0 == InteractionType.idle.rawValue else {
                     return AUICommonError.unknown.toNSError()
                 }
-                //accept必须保证当前不在互动
+                //Accept must ensure that there is no interaction at present.
                 guard interationMap["type"] as? Int ?? 0 == InteractionType.idle.rawValue else {
                     return AUICommonError.unknown.toNSError()
                 }

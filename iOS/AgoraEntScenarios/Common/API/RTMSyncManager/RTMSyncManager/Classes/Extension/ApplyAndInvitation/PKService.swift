@@ -158,7 +158,7 @@ extension PKService {
         aui_info("acceptPK pkId: \(pkId)", tag: "PKService")
         pkInfo.type = .accept
         let content = encodeModelToJsonStr(pkInfo) ?? ""
-        // 因为不管对方在不在线，更新presence总是会成功，这里被一个点对点消息用于判断对方是否在线
+        // Because regardless of whether the other party is online or not, updating presence will always be successful. Here, a point-to-point message is used to judge whether the other party is online.
         messageManager.sendMessage(content: content, userId: pkInfo.fromUserId) {[weak self] err in
             guard let self = self else {return}
             aui_info("send accept message completion: \(err?.localizedDescription ?? "")", tag: "PKService")
@@ -228,7 +228,7 @@ extension PKService: RoomPresenceProtocol {
     public func onUserUpdate(channelName: String, user: RoomPresenceInfo) {
         aui_info("onUserUpdate[\(user.roomId)] userId: \(user.ownerId), name: \(user.ownerName), status: \(user.status.rawValue)", tag: "PKService")
         let channelName = self.channelName
-        // 被PK方 -> 发起PK方
+        // PK Party -> Initiate PK Party
         if user.roomId != channelName {
             if let currInfo = roomPresenceService.getRoomPresenceInfo(roomId: channelName),
                user.status == .pk,
@@ -243,7 +243,7 @@ extension PKService: RoomPresenceProtocol {
             }
         }
         
-        // 发起PK方 -> 被PK方
+        // The PK party -> the PK party
         if user.roomId != channelName {
             if let currInfo = roomPresenceService.getRoomPresenceInfo(roomId: channelName),
                user.status == .pk,
@@ -262,7 +262,7 @@ extension PKService: RoomPresenceProtocol {
             }
         }
         
-        // 发起PK方
+        // Initiate PK party
         if user.roomId == channelName {
             if let pkRoomInfo = roomPresenceService.getRoomPresenceInfoByOwnerId(ownerId:  user.interactorId),
                user.status == .pk,
@@ -283,7 +283,7 @@ extension PKService: RoomPresenceProtocol {
         }
         
         
-        // 被PK方/发起PK方 有一方关闭即停止PK
+        // The PK party/the PK party that initiates PK. If one party closes, PK will stop.
         if user.roomId != channelName {
             if let currInfo = roomPresenceService.getRoomPresenceInfo(roomId: channelName),
                user.status == .idle,
@@ -305,7 +305,7 @@ extension PKService: RoomPresenceProtocol {
             }
         }
         
-        // 主播已经和其他人PK
+        // The anchor has PK with others.
         if user.roomId != channelName {
             if let currInfo = roomPresenceService.getRoomPresenceInfo(roomId: channelName),
                user.status == .pk,

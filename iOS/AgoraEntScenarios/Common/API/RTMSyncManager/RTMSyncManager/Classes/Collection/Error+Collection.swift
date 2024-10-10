@@ -9,7 +9,7 @@ import Foundation
 
 
 public enum AUICollectionOperationError: Int {
-    case unknown = 100      //未知错误
+    case unknown = 100      //Unknown error
     
     case updateTypeNotFound = 101
     case removeMetaDataFail = 102

@@ -9,14 +9,14 @@ import AgoraRtmKit
 
 private let kRoomPresenceServiceTag = "RoomPresenceService"
 @objcMembers public class RoomPresenceInfo: NSObject, Codable {
-    public var roomId: String = "" // 唯一房间ID
-    public var roomName: String = "" // 房间名
-    public var ownerId: String = "" // 房主用户ID
-    public var ownerName: String = "" // 房主名
-    public var ownerAvatar: String = "" // 房主头像
+    public var roomId: String = "" // The only room ID
+    public var roomName: String = "" // Room name
+    public var ownerId: String = "" // Homeowner user ID
+    public var ownerName: String = "" // Owner's name
+    public var ownerAvatar: String = "" // The avatar of the landlord
     public var status: InteractionType = .idle
-    public var interactorId: String = "" // 互动者ID
-    public var interactorName: String = ""  // 互动者名
+    public var interactorId: String = "" // Interactor ID
+    public var interactorName: String = ""  // Name of the interactor
     
     private enum CodingKeys: String, CodingKey {
         case roomId

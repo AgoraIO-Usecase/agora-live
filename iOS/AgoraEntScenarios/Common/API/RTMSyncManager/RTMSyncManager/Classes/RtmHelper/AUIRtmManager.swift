@@ -13,7 +13,7 @@ private let kReceiptTimeout: TimeInterval = 10.0
 
 private let unSubscribeInterval: Int64 = 2500
 
-/// 对RTM相关操作的封装类
+/// Encapsulation classes for RTM-related operations
 open class AUIRtmManager: NSObject {
     private var rtmChannelType: AgoraRtmChannelType!
     private var streamChannel: AgoraRtmStreamChannel?
@@ -562,7 +562,7 @@ extension AUIRtmManager {
                         channelName: String,
                         message: String,
                         completion: @escaping (NSError?)->()) {
-        //uid和
+        //uid
         let options = AgoraRtmPublishOptions()
         options.channelType = .user
         rtmClient.publish(channelName: userId, 
@@ -581,7 +581,7 @@ extension AUIRtmManager {
     public func publish(channelName: String, 
                         message: String,
                         completion: @escaping (NSError?)->()) {
-        //uid和
+        //uid
         let options = AgoraRtmPublishOptions()
         options.channelType = .message
         rtmClient.publish(channelName: channelName, 

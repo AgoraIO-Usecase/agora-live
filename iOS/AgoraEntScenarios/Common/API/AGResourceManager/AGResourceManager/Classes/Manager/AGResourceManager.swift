@@ -2,21 +2,21 @@
 import Foundation
 
 public enum AGResourceStatus: Int {
-    case invalid = 0      //本地不存在，远端资源异常
-    case needDownload     //本地不存在，需要下载
-    case needUpdate       //本地存在老版本，需要更新
-    case downloading      //下载中
-    case downloaded       //下载完成
+    case invalid = 0      //Local does not exist, and remote resources are abnormal.
+    case needDownload     //It does not exist locally and needs to be downloaded.
+    case needUpdate       //There is an old version locally and needs to be updated.
+    case downloading      //Downloading
+    case downloaded       //Download completed
 }
 
 public struct AGResource: Codable {
-    public var url: String = ""               //zip 文件的下载链接
-    public var uri: String = ""               //本地存放路径
-    public var md5: String = ""               //文件一致性校验 和 文件更新检测
-    public var size: Int64 = 0                //文件大小
-    public var autodownload: Bool = true      //是否sdk启动时预先下载 默认true
-    public var encrypt: Bool = false          //默认不加密，保证链路不能被第三方使用
-    public var group: String = ""             //资源逻辑分组名
+    public var url: String = ""               //Download link of zip file
+    public var uri: String = ""               //Local storage path
+    public var md5: String = ""               //File consistency check and file update detection
+    public var size: Int64 = 0                //File size
+    public var autodownload: Bool = true      //Whether to pre-download when sdk starts? Default true
+    public var encrypt: Bool = false          //The default is not encrypted to ensure that the link cannot be used by third parties.
+    public var group: String = ""             //Resource logical group name
     
     enum CodingKeys: String, CodingKey {
         case url, uri, md5, size, autodownload, encrypt, group
@@ -25,8 +25,8 @@ public struct AGResource: Codable {
 
 public struct AGManifest: Codable {
     public private(set) var files: [AGResource] = []
-    var customMsg: String = ""    //user 自定义 custom 字符串的格式
-    var timestamp: Int64 = 0      //配置文件生成时间
+    var customMsg: String = ""    //User custom the format of the custom string
+    var timestamp: Int64 = 0      //Configuration file generation time
     
     enum CodingKeys: String, CodingKey {
         case files, customMsg, timestamp
@@ -57,7 +57,7 @@ public class AGResourceManager: NSObject {
     }
     
     
-    /// 下载manifeste 列表文件
+    /// Download the manifeste list file
     /// - Parameters:
     ///   - url: <#url description#>
     ///   - md5: <#md5 description#>
@@ -93,7 +93,7 @@ public class AGResourceManager: NSObject {
             
             if let err = err {
                 aui_warn("downloadManifestList fail, err: \(err.localizedDescription)")
-                //如果失败，读取本地缓存
+                //If it fails, read the local cache.
                 if let list: [AGResource] = readManifestList(filePath: targetFilePath) {
                     aui_warn("downloadManifestList unsuccess, use cache")
                     self.manifestFileList = list
@@ -120,7 +120,7 @@ public class AGResourceManager: NSObject {
     }
     
     
-    /// 下载所有manifest文件
+    /// Download all manifest files
     /// - Parameters:
     ///   - fileList: <#fileList description#>
     ///   - completion: <#completion description#>
@@ -152,7 +152,7 @@ public class AGResourceManager: NSObject {
         }
     }
     
-    /// 下载menifest
+    /// Download menifest
     /// - Parameters:
     ///   - manifest: <#manifest description#>
     ///   - progressHandler: <#progressHandler description#>
@@ -206,7 +206,7 @@ public class AGResourceManager: NSObject {
                         self.checkResourceInvalid(resource: resource)
                         continue
                     }
-                    //TODO: 增加mime type
+                    //TODO: mime type
                     self.downloadResource(resource: resource) { _ in
                         
                     } completionHandler: { path, er in
@@ -272,7 +272,7 @@ public class AGResourceManager: NSObject {
         }
     }
     
-    /// 下载资源
+    /// Download resources
     /// - Parameters:
     ///   - resource: <#resource description#>
     ///   - progressHandler: <#progressHandler description#>
@@ -312,7 +312,7 @@ public class AGResourceManager: NSObject {
             self.resourceStatusMap[resource.url] = .downloaded
             completionHandler(path,  nil)
             
-            //下载完成，移除相同目录老的资源
+            //Download completed, remove the old resources of the same directory
             DispatchQueue.global(qos: .background).async {
                 let cleanFolderPath = self.getFolderPath(resource: resource, includeMd5Folder: false)
                 cleanDirectory(atPath: cleanFolderPath, excludeFiles: ["\(resource.md5)"])
@@ -321,7 +321,7 @@ public class AGResourceManager: NSObject {
     }
     
     
-    /// 根据uri获取manifest
+    /// Obtain manifest according to uri
     /// - Parameter uri: <#uri description#>
     /// - Returns: <#description#>
     public func getManifest(uri: String) -> AGManifest? {
@@ -330,8 +330,8 @@ public class AGResourceManager: NSObject {
     }
     
     
-    //TODO: 是否增加key
-    /// 根据uri获取资源对象
+    //TODO: Whether to add key
+    /// Obtain resource objects according to uri
     /// - Parameter uri: <#uri description#>
     /// - Returns: <#description#>
     public func getResource(uri: String) -> AGResource? {
@@ -347,7 +347,7 @@ public class AGResourceManager: NSObject {
     }
     
     
-    /// 根据资源查询当前资源状态
+    /// Query the current resource status according to the resource
     /// - Parameter resource: <#resource description#>
     /// - Returns: <#description#>
     public func getStatus(resource: AGResource) -> AGResourceStatus {
@@ -359,7 +359,7 @@ public class AGResourceManager: NSObject {
     }
     
     
-    /// 获取manifest的路径
+    /// Get the path of manifest
     /// - Parameter manifest: <#manifest description#>
     /// - Returns: <#description#>
     public func getPath(manifest: AGResource) -> String {
@@ -368,7 +368,7 @@ public class AGResourceManager: NSObject {
     }
     
     
-    /// 获取资源目录
+    /// Get the resource catalog
     /// - Parameter resource: <#resource description#>
     /// - Returns: <#description#>
     public func getFolderPath(resource: AGResource, includeMd5Folder: Bool = true) -> String {

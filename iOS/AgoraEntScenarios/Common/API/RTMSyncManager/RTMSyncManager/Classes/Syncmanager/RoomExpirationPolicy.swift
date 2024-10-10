@@ -7,15 +7,15 @@
 
 import Foundation
 
-// 房间过期策略模型
+// Room expiration strategy model
 public class RoomExpirationPolicy: NSObject {
-    // 房间过期时间，单位ms，0表示房间不过期
+    // Room expiration time, unit ms, 0 means that the room has not expired.
     public var expirationTime: UInt64 = 0
     
-    /// 房主离线最长时间，单位ms，超过该时间认为房间被销毁，0表示不处理
+    /// The landlord is offline for the longest time, the unit ms, after that time is considered that the room has been destroyed, 0 means not to deal with it.
     public var ownerReconnectMaxTime: UInt64 = 5 * 60 * 1000
     
-    // 是否和房主离线关联，true: 房主不在线则销毁房间，false: 房主不在线不销毁房间
+    // Whether to be offline with the landlord, true: If the owner is not online, the room will be destroyed, false: If the owner is not online, the room will not be destroyed.
     public var isAssociatedWithOwnerOffline: Bool = true
     
     public static func defaultPolicy() -> RoomExpirationPolicy {

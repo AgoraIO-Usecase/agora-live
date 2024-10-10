@@ -159,12 +159,12 @@ enum AUIMessageType: Int, Codable {
 }
 
 enum AUICollectionOprationType: Int, Codable {
-    case add = 0      //新增
-    case update = 1   //更新，对传递进来的map进行根节点上的替换
-    case merge = 2    //合并，对传递进来的map进行每个子节点的替换
-    case remove = 3   //删除
-    case clean = 4    //清理对应scene的key/value，相当于在rtm metadata里移除这个collection的所有信息
-    case calculate = 10 //计算属性，增加/减少
+    case add = 0      //Newly added
+    case update = 1   //Update, replace the passed map on the root node
+    case merge = 2    //Merge and replace each sub-node of the passed map
+    case remove = 3   //Cut out
+    case clean = 4    //Cleaning up the key/value of the corresponding scene is equivalent to removing all the information of this collection in rtm metadata.
+    case calculate = 10 //Calculate attributes, increase/decrease
 }
 
 struct AUICollectionError: Codable {
@@ -197,8 +197,8 @@ struct AUICollectionCalcData: Codable {
 
 struct AUICollectionMessagePayload: Codable {
     public var type: AUICollectionOprationType?
-    public var dataCmd: String?                    //[可选]基于这次改动的类型
-    public var filter: AUIAnyType?   //表示列表里对应item[filter.key] == filter.value 的数据都要按照data里修改
+    public var dataCmd: String?                    //[Optional] Based on the type of this change
+    public var filter: AUIAnyType?   //It means that the data corresponding to item[filter.key] == filter.value in the list should be modified according to the data.
     public var data: AUIAnyType?
 
     enum CodingKeys: String, CodingKey {
@@ -207,10 +207,10 @@ struct AUICollectionMessagePayload: Codable {
 }
 
 struct AUICollectionMessage: Codable {
-    public var channelName: String  //频道名，防止用户加入多个频道导致消息窜了
-    public var messageType: AUIMessageType  //消息类型，表示正常类型/回执
-    public var sceneKey: String   //表示修改的表字段，根据这个key每个collection自动和自己的observerKey判断是否匹配以进行下一步
-    public var uniqueId: String   //唯一表示，用于校验回执
+    public var channelName: String  //Channel name, to prevent users from joining multiple channels and causing messages to go away.
+    public var messageType: AUIMessageType  //Message type, indicating normal type/receipt
+    public var sceneKey: String   //It represents the modified table field. According to this key, each collection automatically determines whether it matches its own observerKey to proceed to the next step.
+    public var uniqueId: String   //The only indication is used to check the receipt.
     public var payload: AUICollectionMessagePayload
     
     enum CodingKeys: String, CodingKey {

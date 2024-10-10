@@ -63,7 +63,7 @@ public class AUIScene: NSObject {
                 obj.onSceneExpire?(channelName: channelName)
             }
             
-            //房主才移除
+            //The owner just removed it.
             guard AUIRoomContext.shared.isRoomOwner(channelName: channelName) else {return}
             self.cleanScene()
         }
@@ -87,8 +87,8 @@ public class AUIScene: NSObject {
                completion: completion)
     }
     
-    //TODO: 是否需要像UIKit一样传入一个房间信息对象，还是这个对象业务上自己创建map collection来写入
-    public func create(createTime: Int64, 
+    //TODO: Do you need to pass a room information object like UIKit, or create your own map collection on this object business to write?
+    public func create(createTime: Int64,
                        ownerId: String,
                        payload: [String: Any]?,
                        completion:@escaping (NSError?)->()) {
@@ -188,7 +188,7 @@ public class AUIScene: NSObject {
                       let ownerId = map[kRoomInfoRoomOwnerId],
                       let createTimestemp = UInt64(map[kRoomCreateTime] ?? "") else {
 //                    self.ownerId = "owner unknown"
-                    //如果没有获取到user信息，认为房间有问题
+                    //If the user information is not obtained, it is considered that there is something wrong with the room.
                     self.cleanScene()
                     self._notifyError(error: NSError(domain: "get room owner fatel!", code: -1))
                     self.onMsgRecvEmpty(channelName: self.channelName)
@@ -206,7 +206,7 @@ public class AUIScene: NSObject {
         }
 //        getArbiter().create()
         getArbiter().acquire {[weak self] err in
-            //fail 走onError(channelName: String, error: NSError)，这里不处理
+            //fail onError(channelName: String, error: NSError)，Don't deal with it here.
             if let _ = err {return}
             self?.enterCondition.lockOwnerAcquireSuccess = true
         }
@@ -228,7 +228,7 @@ public class AUIScene: NSObject {
         }
     }
     
-    /// 离开scene
+    /// Leave scene
     public func leave() {
         aui_info("leave[\(channelName)]", tag: kSceneTag)
         getArbiter().release()
@@ -237,7 +237,7 @@ public class AUIScene: NSObject {
         removeClosure()
     }
     
-    /// 销毁scene，清理所有缓存（包括rtm的所有metadata）
+    /// Destroy the scene and clean up all caches (including all metadata of rtm)
     public func delete() {
         aui_info("delete[\(channelName)]", tag: kSceneTag)
         cleanScene(forceClean: true)
@@ -247,7 +247,7 @@ public class AUIScene: NSObject {
         removeClosure()
     }
     
-    /// 获取一个collection，例如let collection: AUIMapCollection = scene.getCollection("musicList")
+    /// Get a collection, for examplelet collection: AUIMapCollection = scene.getCollection("musicList")
     /// - Parameter key: <#sceneKey description#>
     /// - Returns: <#description#>
     public func getCollection<T: IAUICollection>(key: String) -> T? {
@@ -284,7 +284,7 @@ extension AUIScene {
     }
     
     private func cleanUserInfo(userId: String) {
-        //TODO: 用户离开后，需要清理这个用户对应在collection里的信息，例如上麦信息、点歌信息等
+        //TODO: After the user leaves, it is necessary to clean up the information corresponding to the user in the collection, such as the information on the microphone, the information of ordering songs, etc.
     }
     
     private func cleanScene(forceClean: Bool = false) {
@@ -299,7 +299,7 @@ extension AUIScene {
     private func _cleanScene() {
         aui_info("_cleanScene[\(channelName)]", tag: kSceneTag)
         
-        //每个collection都清空，让所有人收到onMsgRecvEmpty
+        //Each collection is emptied so that everyone can receive onMsgRecvEmpty.
         rtmManager.cleanAllMedadata(channelName: channelName, lockName: "") { error in
             aui_info("cleanScene completion: \(error?.localizedDescription ?? "success")", tag: kSceneTag)
         }
@@ -311,7 +311,7 @@ extension AUIScene {
         rtmManager.unSubscribe(channelName: channelName)
         rtmManager.unsubscribeError(channelName: channelName, delegate: self)
         getArbiter().unSubscribeEvent(delegate: self)
-        //TODO: syncmanager 需要logout
+        //TODO: syncmanager Need to log out
 //        rtmManager.logout()
     }
 }
@@ -323,8 +323,8 @@ extension AUIScene: AUIArbiterDelegate {
         if arbiterId.isEmpty {return}
         self.enterCondition.lockOwnerRetrived = true
         
-        //TODO: 目前回调会多次造成syncLocalMetaData多次，需要定位问题
-        //网络恢复并获取到仲裁者(不确定锁是不是丢失了，所以需要获取)，同步本地metadata到远端
+        //TODO: At present, the callback will cause syncLocalMetaData many times, which requires positioning problems.
+        //The network is restored and obtained to the arbitrator (not sure whether the lock is lost, so it needs to be obtained), and synchronize the local metadata to the remote end.
         if self.getArbiter().isArbiter() {
             aui_info("retry syncLocalMetaData", tag: kSceneTag)
             self.collectionMap.values.forEach { collection in
@@ -335,7 +335,7 @@ extension AUIScene: AUIArbiterDelegate {
     
     public func onError(channelName: String, error: NSError) {
         aui_error("onError[\(channelName)]: \(error.localizedDescription)", tag: kSceneTag)
-        //如果锁不存在，也认为是房间被销毁的一种
+        //If the lock does not exist, it is also considered that the room has been destroyed.
         if error.code == AgoraRtmErrorCode.lockNotExist.rawValue {
             cleanScene()
 //            self.onMsgRecvEmpty(channelName: channelName)
@@ -406,7 +406,7 @@ extension AUIScene: AUIRtmErrorProxyDelegate {
     
     @objc public func onMsgRecvEmpty(channelName: String) {
         aui_info("onMsgRecvEmpty[\(channelName)]", tag: kSceneTag)
-        //TODO: 某个scene里拿到全空数据，定义为房间被销毁了
+        //TODO: Get full-empty data in a certain scene, which is defined as the destruction of the room.
         self.respDelegates.allObjects.forEach { obj in
             obj.onSceneDestroy?(channelName: channelName)
         }
@@ -417,7 +417,7 @@ extension AUIScene: AUIRtmErrorProxyDelegate {
         if event.currentState == .disconnected, event.previousState == .connected {
             expireCondition.offlineTimestamp = event.timestamp
         } else if event.currentState == .connected, event.operation == .reconnected {
-            //TODO: 推荐重连后lock的snapshot来获取
+            //TODO: It is recommended to get the snapshot of lock after reconnection.
             getArbiter().acquire()
             
             expireCondition.reconnectNow(timestamp: event.timestamp)
