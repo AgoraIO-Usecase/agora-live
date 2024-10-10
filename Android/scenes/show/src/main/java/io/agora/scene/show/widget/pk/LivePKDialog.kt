@@ -62,7 +62,6 @@ class LivePKDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 设置背景透明
         WindowCompat.setDecorFitsSystemWindows(requireDialog().window!!, false)
         requireDialog().setOnShowListener {
             (view.parent as ViewGroup).setBackgroundColor(

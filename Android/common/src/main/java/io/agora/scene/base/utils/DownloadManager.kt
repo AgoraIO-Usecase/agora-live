@@ -60,7 +60,6 @@ class DownloadManager private constructor() {
                         return@withContext
                     }
 
-                    // 支持断点重传
                     FileOutputStream(file, true).use { fos ->
                         try {
                             responseBody.source().use { source ->
@@ -140,7 +139,7 @@ class DownloadManager private constructor() {
     }
 
     fun cancelDownload(url: String) {
-        // TODO: 取消失败 
+        // TODO: cancel failed
         downCalls.remove(url)?.let {
             it.cancel()
             Log.d(TAG,"cancelDownload $url")

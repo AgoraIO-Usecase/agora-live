@@ -1142,7 +1142,7 @@ class ChatroomProtocolDelegate constructor(
     }
 
     /**
-     *  按麦位顺序查询空麦位
+     *  Query empty mic bits in the mic bit sequence
      */
     private fun getFirstFreeMic(): Int? {
         val indexList: MutableList<Int> = mutableListOf<Int>()
