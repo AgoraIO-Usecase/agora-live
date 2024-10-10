@@ -244,6 +244,7 @@ class ShowLiveViewController: UIViewController {
         
         dreamFlowService.creatWork(channelName: currentChannelId ?? "", stylizedConfig: stylizedConfig) { [weak self] error, res in
             if error != nil {
+                ToastView.show(text: "Failed to save the settings: \(error?.localizedDescription)")
                 return
             }
             
@@ -266,6 +267,7 @@ class ShowLiveViewController: UIViewController {
         
         dreamFlowService.deleteWorker(workerId: workId) { error, res in
             if let err = error {
+                ToastView.show(text: "Failed to save the settings: \(error?.localizedDescription)")
                 print("delete work failed, error: \(err.localizedDescription)")
                 return
             }
@@ -279,6 +281,7 @@ class ShowLiveViewController: UIViewController {
         
         dreamFlowService.updateWorker(workerId: workerId, stylizedConfig: stylizedConfig) { error, res in
             if error != nil {
+                ToastView.show(text: "Failed to save the settings: \(error?.localizedDescription)")
                 return
             }
             
