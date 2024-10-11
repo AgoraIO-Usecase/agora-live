@@ -361,12 +361,13 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
         override fun onChosenSongListDidChanged(chosenSongList: List<ChosenSongInfo>) {
             songPlayingLiveData.value?.let { currentSong ->
                 val firstSong = chosenSongList.firstOrNull()
-                if (currentSong.owner?.userId == KtvCenter.mUser.id.toString() && firstSong?.songNo != currentSong.songNo) {
+                if (/*currentSong.owner?.userId == KtvCenter.mUser.id.toString() && */firstSong?.songNo != currentSong.songNo) {
                     if (loadingMusic.get()) {
                         KTVLogger.d(TAG, "RoomLivingViewModel remove music: ${currentSong.songNo}")
                         getRestfulSongList {
                             songList.firstOrNull { it.songCode == currentSong.songNo }?.let { song ->
                                 DownloadManager.instance.cancelDownload(song.music)
+                                loadingMusic.set(false)
                             }
                         }
                     }
@@ -724,7 +725,7 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 }
                 ktvServiceProtocol.joinChorus(songModel.songNo) { e: Exception? ->
                     if (e == null) {
-                        innerRtmOnSelfJoinedChorus()
+//                        nothing
                     } else { // failure
                         // fix publish message 回调时间比 rtm onMetaData 提前
                         if (joinchorusStatusLiveData.value==JoinChorusStatus.ON_JOIN_CHORUS) return@joinChorus
