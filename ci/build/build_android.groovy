@@ -59,4 +59,4 @@ def doPublish(buildVariables) {
     sh "rm -rf *.apk || true"
 }
 
-pipelineLoad(this, "AGORA_LIVE", "build", "android", "agora_live_android")
+pipelineLoad(this, "AGORA_LIVE", "build", "android", "apiexample_linux")
