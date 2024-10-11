@@ -1,64 +1,42 @@
-# 在线K歌房
+# Online KTV
 
-> 本文档主要介绍如何快速跑通 <mark>在线K歌房</mark> 示例工程
+> This document mainly explains how to quickly run through the <mark> Online KTV </mark> sample project.
 >
-> Demo 效果:
+> Demo effect:
 > 
-> <img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ent-full/ktvRoom_1.png" width="300" height="640"><img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ent-full/ktvRoom_2.png" width="300" height="640">
+> <img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/ktv_130_1.png" width="300" height="640"><img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/ktv_130_2.png" width="300" height="640">
 ---
 
-## 1. 环境准备
+## 1. Prerequisites
 
-- <mark>最低兼容 Android 7.0</mark>（SDK API Level 24）
-- Android Studio 3.5及以上版本。
-- Android 7.0 及以上的手机设备。
+- <mark>Minimum compatibility with Android 7.0</mark>(SDK API Level 24).
+- Android SDK API Level 21 or higher.
+- A mobile device that runs Android 5.0 or higher.
 
 ---
 
-## 2. 运行示例
+## 2.Project Setup
 
-- 获取声网 App ID -------- [声网Agora - 文档中心 - 如何获取 App ID](https://docs.agora.io/cn/Agora%20Platform/get_appid_token?platform=All%20Platforms#%E8%8E%B7%E5%8F%96-app-id)
-  
-  > - 点击创建应用
-  >
-  >   ![xxx](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/create_app_1.jpg)
-  >
-  > - 选择你要创建的应用类型
-  >
-  >   ![xxx](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/create_app_2.jpg)
-  >
-  > - 得到 App ID 与 App 证书
-  >
-  >   ![xxx](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/get_app_id.jpg)
+1. Follow [The Account Document](https://docs.agora.io/en/video-calling/reference/manage-agora-account) to get the **App ID** and **App Certificate**.
+2. Open the `Android` project and fill in properties got above to the root [gradle.properties](../../gradle.properties) file.
 
-- 获取 App 证书 ----- [声网Agora - 文档中心 - 获取 App 证书](https://docs.agora.io/cn/Agora%20Platform/get_appid_token?platform=All%20Platforms#%E8%8E%B7%E5%8F%96-app-%E8%AF%81%E4%B9%A6)
-
-- 联系销售给 AppID 开通 K 歌权限(如果您没有销售人员的联系方式可通过智能客服联系销售人员 [Agora 支持](https://agora-ticket.agora.io/))
-
-  ```json
-  注: 拉取榜单、歌单、歌词等功能是需要开通权限的
+  ``` 
+    # RTC SDK key Config
+    AGORA_APP_ID=<Your Agora App ID>
+    AGORA_APP_CERTIFICATE=<Your Agora App Certificate>
   ```
 
-- 在项目的 [**gradle.properties**](../../gradle.properties) 里填写需要的声网 App ID 和 App 证书
-
-  ![xxx](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/config_app_id_android.png)
-
-  ```texag-0-1gpap96h0ag-1-1gpap96h0ag-0-1gpap96h0ag-1-1gpap96h0ag-0-1gpap96h0ag-1-1gpap96h0ag-0-1gpap96h0ag-1-1gpap96h0ag-0-1gpap96h0ag-1-1gpap96h0
-  AGORA_APP_ID：声网appid
-  AGORA_APP_CERTIFICATE：声网Certificate
-  ```
-
-- 用 Android Studio 运行项目即可开始您的体验
+3. Now you can run the project with android studio to experience the application.
 
 ---
 
-## 3. 项目介绍
+## 3. Project Introduction
 
-### 3.1 概述
+### 3.1 Overview
 
-> **在线K歌房**项目是声网在线K歌房场景的开源代码，开发者可以获取并添加到您的 APP 工程里，本源码会伴随声动互娱 Demo 同步更新，为了获取更多新的功能和更佳的音效，强烈推荐您下载最新代码集成。
+> The **Online KTV**project is the open-source code for Agora’s online karaoke room scenario. Developers can obtain and integrate it into their APP projects. This source code will be updated in sync with the Voice Entertainment Demo. To access more new features and better sound effects, we strongly recommend downloading the latest code for integration.
 
-### 3.2 项目文件结构简介
+### 3.2 Introduction to the Project File Structure
 
 ```
 ├── scene
@@ -66,14 +44,14 @@
 │   │   └── main
 │   │       ├── java
 │   │       │   └── io.agora.scene.ktv
-│   │       │                       ├── bean           #数据类
-│   │       │                       ├── create         #房间列表模块
-│   │       │                       ├── debugSettings  #debug页面模块
-│   │       │                       ├── live           #房间内业务逻辑模块
-│   │       │                       ├── service        #网络模块
-│   │       │                       ├── widget         #UI模块
-│   │       │                       └── KTVLogger.kt   #Log模块
-│   │       ├── res              #资源文件
+│   │       │                       ├── create         #Room list
+│   │       │                       ├── debugSettings  #Debug page
+|   |       |                       ├── ktvapi         #KTV api module
+│   │       │                       ├── live           #Living room detail
+│   │       │                       ├── service        #Service
+│   │       │                       ├── widget         #UI widget
+│   │       │                       └── KTVLogger.kt   #Log
+│   │       ├── res              #resource
 │   │       │   ├── drawable
 │   │       │   ├── layout
 │   │       │   ├── mipmap
@@ -87,268 +65,179 @@
 │           ├── gradle-wrapper.jar
 │           └── gradle-wrapper.properties
 ├── build.gradle     
-├── config.gradle       #共用的依赖配置
+├── config.gradle       #common dependency configuration
 ├── gradle
 │   └── wrapper
 │       ├── gradle-wrapper.jar
 │       └── gradle-wrapper.properties
 ├── gradlew
 ├── gradlew.bat
-├── gradle.properties  #项目的基础账号配置(appid、app证书)
+├── gradle.properties  #Project basic account configuration(appid、app certificate)
 └── settings.gradle
 ```
 
-### 3.3 功能介绍
+### 3.3 Function introduction
 
-> 在线K歌房场景目前已涵盖以下功能，您可以参考注释按需从代码中调用
+> The online KTV scenario currently includes the following functions, which you can refer to the comments and call from the code as needed
 >
-> 场景功能代码根目录 **Android/scenes/ktv**
+> Scene function code root directory **Android/scenes/ktv**
 >
 > ---
 >
-> #### K歌房场景化API
+> #### KTV scene API
 >
-> ![xxx](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/KTVSamplePicture5.png)
+> ![xxx](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/ktv_130_4.png)
 >
-> K歌房场景化API是一个帮助您快速集成声网K歌房能力的模块, 使用这个模块, 您可以非常便捷的获取歌单信息、加载歌曲、切换演唱角色、控制音乐播放, 通过 [**KTVApi**](src/main/java/io/agora/scene/ktv/live/KTVApi.kt) 来定义协议，通过 [**KTVApiImp**](src/main/java/io/agora/scene/ktv/live/KTVApiImp.kt) 来实现, 您可以直接将这两个文件拷贝到您的项目中使用, 快速集成声网K歌房能力
+> KTV scene API is a module that helps you quickly integrate the KTV capability of Agora, with which you can easily obtain song list information, load songs, switch singing roles, control music playback, etc. Through [**KTVApi**](src/main/java/io/agora/scene/ktv/live/KTVApi.kt), you can define the protocol, and through [**KTVApiImp**](src/main/java/io/agora/scene/ktv/live/KTVApiImp.kt) to implement, you can directly copy these two files to your project for use, quickly integrating the KTV capability of Agora
 >
-> * 拉取歌单
 >
->   包含了榜单、歌单、搜索歌曲的功能
+> * Load songs
 >
->   ~~~kotlin
+>   ```kotlin
 >   /**
->    * 获取歌曲榜单
->    * @param onMusicChartResultListener 榜单列表回调
->    */
->   fun fetchMusicCharts(
->     onMusicChartResultListener: (
->       requestId: String?,
->       status: Int,
->       list: Array<out MusicChartInfo>?
->     ) -> Unit
->   )
->   
->   /**
->    * 根据歌曲榜单类型获取歌单
->    * @param musicChartId 榜单id
->    * @param page 歌曲列表回调
->    * @param pageSize 歌曲列表回调
->    * @param jsonOption 自定义过滤模式
->    * @param onMusicCollectionResultListener 歌曲列表回调
->    */
->   fun searchMusicByMusicChartId(
->     musicChartId: Int,
->     page: Int,
->     pageSize: Int,
->     jsonOption: String,
->     onMusicCollectionResultListener: (
->       requestId: String?,
->       status: Int,
->       page: Int,
->       pageSize: Int,
->       total: Int,
->       list: Array<out Music>?
->     ) -> Unit
->   )
->   
->   /**
->    * 根据关键字搜索歌曲
->    * @param keyword 关键字
->    * @param page 歌曲列表回调
->    * @param jsonOption 自定义过滤模式
->    * @param onMusicCollectionResultListener 歌曲列表回调
->    */
->   fun searchMusicByKeyword(
->     keyword: String,
->     page: Int, pageSize: Int,
->     jsonOption: String,
->     onMusicCollectionResultListener: (
->       requestId: String?,
->       status: Int,
->       page: Int,
->       pageSize: Int,
->       total: Int,
->       list: Array<out Music>?
->     ) -> Unit
->   )
->   ~~~
->
-> * 加载歌曲
->
->   通过这个接口, 您可以完成音乐和歌词的加载, 加载歌曲的进度、状态会通过回调通知您
->
->   ~~~kotlin
->   /**
->    * 异步加载歌曲，同时只能为一首歌loadSong，loadSong结果会通过回调通知业务层
->    * @param config 加载歌曲配置
->    * @param onMusicLoadStateListener 加载歌曲结果回调
+>    * Synchronously load the song URI; only one song can be loaded at a time using loadSong
+>    * @param url music url
+>    * @param config load song configuration
 >    *
->    * 推荐调用：
->    * 歌曲开始时：
->    * 主唱 loadMusic(songCode, KTVLoadMusicConfiguration(songId, autoPlay=true, mode=LOAD_MUSIC_AND_LRC, mainSingerUid)) switchSingerRole(SoloSinger)
->    * 观众 loadMusic(songCode, KTVLoadMusicConfiguration(songId, autoPlay=false, mode=LOAD_LRC_ONLY, mainSingerUid))
->    * 加入合唱时：
->    * 准备加入合唱者：loadMusic(KTVLoadMusicConfiguration(autoPlay=false, mode=LOAD_MUSIC_ONLY, songCode, mainSingerUid))
->    * loadMusic成功后switchSingerRole(CoSinger)
+>    * Recommended call：
+>    * When the song begins：
+>    * SoloSinger switchSingerRole(SoloSinger)-->loadMusic(musicUri, KTVLoadMusicConfiguration(songIdentifier, mainSingerUid, mode=LOAD_MUSIC_AND_LRC, needPrelude=false))---> startSing(musicUri,0)
+>    * Audience loadMusic(musicUri, KTVLoadMusicConfiguration(songIdentifier, mainSingerUid, mode=LOAD_LRC_ONLY, needPrelude=false))
+>    * When joining the chorus：
+>    * Preparing to join as a co-singer：loadMusic(musicUri,KTVLoadMusicConfiguration(autoPlay=false, mode=LOAD_MUSIC_ONLY, songCode, mainSingerUid))
+>    * loadMusic and rtm joinChorus callback success then switchSingerRole(CoSinger)
 >    */
 >   fun loadMusic(
->     songCode: Long,
+>     url: String,
 >     config: KTVLoadMusicConfiguration,
->     onMusicLoadStateListener: OnMusicLoadStateListener
->   )
->   ~~~
+>   ){}
+>   ```
 >
-> * 切换角色
+> * Switch the singing role
 >
->   通过这个接口, 您可以完成演唱过程中不同角色的切换, 切换角色的结果会通过回调通知您
+>   Through this interface, you can switch between different roles during the singing process, and the result of the role switch will be notified to you via callback.
 >
->   ~~~kotlin
+>   ```kotlin
 >   /**
->    * 异步切换演唱身份，结果会通过回调通知业务层
->    * @param newRole 新演唱身份
->    * @param onSwitchRoleState 切换演唱身份结果
+>    * Asynchronously switch singing roles, and the result will be notified to the business layer via callback.
+>    * @param newRole The new singing role.
+>    * @param onSwitchRoleState The result of switching the singing role.
 >    *
->    * 允许的调用路径：
->    * 1、Audience -》SoloSinger 自己点的歌播放时
->    * 2、Audience -》LeadSinger 自己点的歌播放时， 且歌曲开始时就有合唱者加入
->    * 3、SoloSinger -》Audience 独唱结束时
->    * 4、Audience -》CoSinger   加入合唱时
->    * 5、CoSinger -》Audience   退出合唱时
->    * 6、SoloSinger -》LeadSinger 当前第一个合唱者加入合唱时，主唱由独唱切换成领唱
->    * 7、LeadSinger -》SoloSinger 最后一个合唱者退出合唱时，主唱由领唱切换成独唱
->    * 8、LeadSinger -》Audience 以领唱的身份结束歌曲时
+>    * Allowed call paths:
+>    * 1、Audience -》SoloSinger   When the song you selected is playing.
+>    * 2、Audience -》LeadSinger   When the song you selected is playing and a co-singer has joined at the start of the song.
+>    * 3、SoloSinger -》Audience   When the solo performance ends.
+>    * 4、Audience -》CoSinger     When joining a chorus.
+>    * 5、CoSinger -》Audience     When leaving the chorus.
+>    * 6、SoloSinger -》LeadSinger When the first co-singer joins the chorus, the lead singer switches from solo to lead singer.
+>    * 7、LeadSinger -》SoloSinger When the last co-singer leaves the chorus, the lead singer switches from lead singer to solo singer.
+>    * 8、LeadSinger -》Audience   When the song ends with the lead singer role.
 >    */
 >   fun switchSingerRole(
 >     newRole: KTVSingRole,
 >     onSwitchRoleStateListener: OnSwitchRoleStateListener?
->   )
->   ~~~
+>   ){}
+>   ```
 >
-> * 控制歌曲
+> * Control the song
 >
->   ~~~kotlin
+>   ```kotlin
 >   /**
->   * 开始播放
+>   * Start sing
 >   */
->   fun startSing(songCode: Long, startPos: Long)
+>   fun startSing(songCode: Long, startPos: Long){}
 >   
 >   /**
->   * 恢复播放
+>   * Resume sing
 >   */
->   fun resumeSing()
+>   fun resumeSing(){}
 >   
 >   /**
->   * 暂停播放
+>   * Pause sing
 >   */
->   fun pauseSing()
+>   fun pauseSing(){}
 >   
 >   /**
->   * 调整进度
+>   * Seek to a specific position
 >   */
->   fun seekSing(time: Long)
->   ~~~
+>   fun seekSing(time: Long){}
+>   ```
 >
-> * 与歌词组件配合使用
+> * Work together with the lyrics component
 >
->   支持您传入您自定义的歌词组件与 KTVApi 模块配合使用, 您需要让您的歌词组件继承 **ILrcView** 类并实现以下三个接口, KTVApi 模块回通过下列三个回调将演唱 pitch、歌曲播放进度、歌词url 发送给您的歌词组件
+>   You can pass in your custom lyrics component to work with the KTVApi module. Your lyrics component needs to extend the **ILrcView** class and implement the following three interfaces. The KTVApi module will send the singing pitch, song playback progress, and lyrics URL to your lyrics component through the following three callbacks.
 >
->   ~~~kotlin
+>   ```kotlin
 >   interface ILrcView {
 >       /**
->        * ktvApi内部更新音高pitch时会主动调用此方法将pitch值传给你的歌词组件
->        * @param pitch 音高值
+>        * When the KTVApi updates the pitch, it will call this method to pass the pitch value to your lyrics component
+>        * @param pitch pitch value
 >        */
 >       fun onUpdatePitch(pitch: Float?)
 >       
 >       /**
->        * ktvApi内部更新音乐播放进度progress时会主动调用此方法将进度值progress传给你的歌词组件，50ms回调一次
->        * @param progress 歌曲播放的真实进度 50ms回调一次
+>        * When the KTVApi updates the music playback progress, it will call this method to pass the progress value to your lyrics component, and the progress value will be updated every 50ms
+>        * @param progress song playback real progress, updated every 50ms
 >        */
 >       fun onUpdateProgress(progress: Long?)
 >       
 >       /**
->        * ktvApi获取到歌词地址时会主动调用此方法将歌词地址url传给你的歌词组件，您需要在这个回调内完成歌词的下载
+>        * When the KTVApi gets the lyrics address, it will actively call this method to pass the lyrics address url to your lyrics component, and you need to download the lyrics in this callback
 >        */
 >       fun onDownloadLrcData(url: String?)
 >   }
 >       
 >   /**
->    * 设置歌词组件，在任意时机设置都可以生效
->    * @param view 传入的歌词组件view， 需要继承ILrcView并实现ILrcView的三个接口
+>    * Set the lyrics component; it can take effect at any time when set.
+>    * @param view The lyrics component view that is passed in needs to extend ILrcView and implement the three interfaces of ILrcView.
 >    */
->   fun setLrcView(view: ILrcView)
->   ~~~
->
->   
->
-> #### 业务服务器交互模块
->
-> ![xxx](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/KTVSamplePicture6.png)
->
-> 场景内和业务服务器的交互主要是场景内基本交互请求和响应，例如房间的变化、用户的变化、麦位的变化、已点歌曲列表的变化，通过 [**KTVServiceProtocol**](src/main/java/io/agora/scene/ktv/service/KTVServiceProtocol.kt) 来定义协议，通过 [**KTVSyncManagerServiceImp**](src/main/java/io/agora/scene/ktv/service/KTVSyncManagerServiceImp.kt) 来实现，您可以通过自己实现的其他ServiceImp来一键替换，无需改动业务代码。
->
-> - 房间管理
->
->   包含了房间的创建和房间列表的获取
->
->   相关代码请参考：[**RoomCreateViewModel**](src/main/java/io/agora/scene/ktv/create/RoomCreateViewModel.java)，分别依赖 [**KTVServiceProtocol**](src/main/java/io/agora/scene/ktv/service/KTVServiceProtocol.kt) 的下列方法去交互
->
->   ```kotlin
->   fun getRoomList(completion: (error: Exception?, list: List<RoomListModel>?) -> Unit)
->   fun createRoom(
->     inputModel: CreateRoomInputModel,
->     completion: (error: Exception?, out: CreateRoomOutputModel?) -> Unit
->   )
->   fun joinRoom(
->     inputModel: JoinRoomInputModel,
->     completion: (error: Exception?, out: JoinRoomOutputModel?) -> Unit
->   )
+>   fun setLrcView(view: ILrcView){}
 >   ```
 >
-> - 麦位管理
->
->   包含上麦、下麦、开关麦、开关摄像头等状态的同步
->
-> - 歌曲管理
->
->   点歌、已点歌曲删除、已点歌曲置顶、切歌等状态的同步
->
->   歌曲列表菜单：请参考 [**RoomLivingActivity#showChooseSongDialog**]((src/main/java/io/agora/scene/ktv/live/RoomLivingViewModel.java))
->
 >   
 >
-> #### 其他功能
+> #### Business server interaction module
 >
-> * 音效、美声
+> ![xxx](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/ktv_130_3.png)
 >
->   声网最佳美声
+> The interaction between the scenario and the business server mainly involves room changes, such as creating, joining, or leaving a room.，[**RoomService**](../../RTMSyncManager/src/main/java/io/agora/rtmsyncmanager/RoomService.kt) 
 >
->    实现参考 [**MusicSettingDialog#Callback**](src/main/java/io/agora/scene/ktv/widget/MusicSettingDialog.java)里的**onEffectChanged**实现
+>   ```kotlin
+>   fun getRoomList(
+>         appId: String,
+>         sceneId: String,
+>         lastCreateTime: Long,
+>         pageSize: Int,
+>         cleanClosure: ((AUIRoomInfo) -> Boolean)? = null,
+>         completion: (AUIException?, Long?, List<AUIRoomInfo>?) -> Unit
+>     ){}
+>   fun createRoom(appId: String, sceneId: String, room: AUIRoomInfo, completion: (AUIRtmException?, AUIRoomInfo?) 
+> -> Unit){}
+>   fun enterRoom(appId: String, sceneId: String, roomId: String, completion: (AUIRtmException?) -> Unit){}
+>   fun leaveRoom(appId: String, sceneId: String, roomId: String){}
+>   ```
+>
+> #### Other Features
+>
+> * Sound effects, voice beautification
+>
+>   Agora’s best voice beautification
+>
+>   Implementation reference [**MusicSettingDialog#Callback**](src/main/java/io/agora/scene/ktv/live/fragmentdialog/MusicSettingDialog.kt) **onEffectChanged**
 
 ---
+## Feedback
 
-## 4. FAQ
+If you have any problems or suggestions regarding the sample projects, feel free to file an issue.
 
-### 程序运行后，歌曲列表为空
+## Related resources
 
-> 需要联系销售给 APPID 开通 K 歌权限
+- Check our [FAQ](https://docs.agora.io/en/faq) to see if your issue has been recorded.
+- Dive into [Agora SDK Samples](https://github.com/AgoraIO) to see more tutorials.
+- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated real use case.
+- Repositories managed by developer communities can be found at [Agora Community](https://github.com/AgoraIO-Community).
+- If you encounter problems during integration, feel free to ask questions in [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io).
 
-### K歌房中的歌曲资源使用的是哪家？是否可以自己选择供应商？
+## License
 
-> K歌房的歌曲资源使用的是Agora内容中心服务，暂不支持自行切换供应商，详情请查看 [版权音乐 - 在线 K 歌房 - 文档中心 - 声网Agora](https://docs.agora.io/cn/online-ktv/API%20Reference/ios_ng/API/toc_drm.html)
-
-### 想体验更多场景
-
-> 详情请查看 [声动互娱](../../../README.md)
-
-### 集成遇到困难，该如何联系声网获取协助
-
-> 方案1：如果您已经在使用声网服务或者在对接中，可以直接联系对接的销售或服务；
->
-> 方案2：发送邮件给 [support@agora.io](mailto:support@agora.io) 咨询
->
-> 方案3：扫码加入我们的微信交流群提问
->
-> <img src="https://download.agora.io/demo/release/SDHY_QA.jpg" width="360" height="360">
----
+The sample projects are under the MIT license.

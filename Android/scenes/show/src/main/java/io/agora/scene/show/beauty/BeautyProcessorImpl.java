@@ -152,9 +152,9 @@ public class BeautyProcessorImpl extends IBeautyProcessor {
         byte[] auth;
         if (useLocalBeautyResource) {
             try {
-                auth = getAuth(); // 假设 getAuth() 是一个已定义的方法，返回 byte 数组
+                auth = getAuth();
             } catch (Exception e) {
-                ShowLogger.e(TAG, e, "Error getting auth"); // Log.w 需要三个参数：标签，消息，异常
+                ShowLogger.e(TAG, e, "Error getting auth");
                 return;
             }
         } else {

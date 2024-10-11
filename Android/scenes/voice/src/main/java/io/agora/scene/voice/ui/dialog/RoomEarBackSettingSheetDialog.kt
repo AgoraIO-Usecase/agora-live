@@ -116,8 +116,8 @@ class RoomEarBackSettingSheetDialog : BaseFixedHeightSheetDialog<VoiceDialogChat
         val c = context ?: return
         val f = mAlertFragmentManager ?: return
         val content = when (mode) {
-            AgoraEarBackMode.OpenSL -> "切换后将强制使用OpenSL模式，确认？"
-            AgoraEarBackMode.Oboe -> "切换后将强制使用Oboe模式，确认？"
+            AgoraEarBackMode.OpenSL -> "After switching, OpenSL mode will be mandatory. Confirm?"
+            AgoraEarBackMode.Oboe -> "After switching, Oboe mode will be mandatory. Confirm?"
             else -> ""
         }
         CommonFragmentAlertDialog().titleText(c.getString(R.string.voice_chatroom_prompt))
@@ -163,14 +163,11 @@ class RoomEarBackSettingSheetDialog : BaseFixedHeightSheetDialog<VoiceDialogChat
 
     private fun setTips(tips: String) {
         binding?.apply {
-            // 创建一个 Drawable 对象并设置它的大小
             val icon = ContextCompat.getDrawable(root.context, R.drawable.voice_icon_room_setting_introduce)
             icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
-            // 创建一个 SpannableString 并将图标设置在字符串的开始位置
             val spannableString = SpannableString("  $tips")
             val imageSpan = ImageSpan(icon!!, ImageSpan.ALIGN_BASELINE)
             spannableString.setSpan(imageSpan, 0, 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
-            // 设置 SpannableString 到 TextView
             tvTips.text = spannableString
         }
     }
@@ -198,7 +195,6 @@ class RoomEarBackSettingSheetDialog : BaseFixedHeightSheetDialog<VoiceDialogChat
             cvPing.visibility = if (isOn) View.VISIBLE else View.GONE
             clSetting.alpha = if (isOn) 1f else 0.3f
             enableDisableView(clSetting, isOn)
-            // TODO: 隐藏延迟
             cvPing.visibility = View.GONE
         }
     }
@@ -229,11 +225,9 @@ class RoomEarBackSettingSheetDialog : BaseFixedHeightSheetDialog<VoiceDialogChat
             val state = intent.getIntExtra("state", -1)
             if (state == 1) {
                 setHeadPhonePlugin(true)
-                //耳机插入
                 Log.d("HeadphoneReceiver", "headphone plugged in")
             } else if (state == 0) {
                 setHeadPhonePlugin(false)
-                //耳机拔出
                 Log.d("HeadphoneReceiver", "headphone removed")
             }
         }

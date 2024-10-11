@@ -12,7 +12,6 @@ object OverallLayoutController {
 
     const val REQUEST_FLOAT_CODE = 1001
 
-    // 应用浮窗显示状态，退后后台回到前台需要重新展示
     var isReceptionShow = false
         private set(value) {
             field = value
@@ -23,16 +22,14 @@ object OverallLayoutController {
         if (commonROMPermissionCheck(context)) {
             completion()
         } else {
-            Toast.makeText(context, "请开启悬浮窗权限", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Please enable floating window permission.", Toast.LENGTH_SHORT).show()
             context.startActivityForResult(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
                 data = Uri.parse("package:${context.packageName}")
             }, REQUEST_FLOAT_CODE)
         }
     }
 
-    /**
-     * 判断悬浮窗权限权限
-     */
+
     @JvmStatic
     fun commonROMPermissionCheck(context: Context): Boolean {
         var result = true
@@ -49,55 +46,36 @@ object OverallLayoutController {
 
     private var floatCallback: FloatCallBack? = null
 
-    /**
-     * 开启悬浮窗
-     *
-     * @param context
-     */
+
     @JvmStatic
     fun startMonkServer(context: Context) {
         val intent = Intent(context, FloatMonkService::class.java)
         context.startService(intent)
     }
 
-    /**
-     * 关闭悬浮窗
-     */
     @JvmStatic
     fun stopMonkServer(context: Context) {
         val intent = Intent(context, FloatMonkService::class.java)
         context.stopService(intent)
     }
 
-    /**
-     * 注册监听
-     */
     @JvmStatic
     fun registerCallLittleMonk(callLittleMonk: FloatCallBack?) {
         floatCallback = callLittleMonk
     }
 
-    /**
-     * 悬浮窗的显示
-     */
     @JvmStatic
     fun show() {
         floatCallback?.show()
         isReceptionShow = true
     }
 
-    /**
-     * 悬浮窗的隐藏
-     */
     @JvmStatic
     fun hide() {
         floatCallback?.hide()
         isReceptionShow = false
     }
 
-    /**
-     * 进入app 悬浮窗显示
-     */
     @JvmStatic
     fun showBackHome() {
         if (isReceptionShow) {
@@ -105,9 +83,6 @@ object OverallLayoutController {
         }
     }
 
-    /**
-     * 退到桌面悬浮窗隐藏
-     */
     @JvmStatic
     fun hideBackHome() {
         if (isReceptionShow) {

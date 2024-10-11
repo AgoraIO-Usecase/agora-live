@@ -157,7 +157,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
     }
 
     override fun initListener() {
-        // 房间详情
+        // room detail
         roomLivingViewModel.roomDetailsObservable().observe(this) { response: Resource<VoiceRoomInfo> ->
             parseResource(response, object : OnResourceParseCallback<VoiceRoomInfo>() {
 
@@ -284,7 +284,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
             override fun onReceiveSeatRequestRejected(chatUid: String) {
                 "onReceiveSeatRequestRejected $chatUid".logD(TAG)
                 ThreadManager.getInstance().runOnMainThread {
-                    //刷新 owner 申请列表
+                    // refresh owner apply list
                     roomObservableDelegate.handsUpdate(0)
                 }
             }
@@ -609,7 +609,6 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                 }
                 if (f is BottomSheetDialogFragment) {
                     if (f is BaseSheetDialog<*> && f.onCancel) {
-                        // 手动取消则关闭所有弹框
                         val iterator = dialogFragments.iterator()
                         while (iterator.hasNext()) {
                             iterator.next().dismiss()
@@ -628,7 +627,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                 }
             }
         }, true)
-        // debug 模式
+        // debug mode
         if (AgoraApplication.the().isDebugModeOpen) {
             binding.btnDebug.isVisible = true
             VoiceRoomDebugOptionsDialog.debugMode()

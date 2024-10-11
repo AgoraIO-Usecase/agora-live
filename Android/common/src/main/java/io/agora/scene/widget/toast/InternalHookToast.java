@@ -23,10 +23,8 @@ public final class InternalHookToast {
     static {
         try {
             Class<?> clazz = Toast.class;
-            //通过反射拿到，获取class对象的指定属性，拿到tn对象
             sFieldTN = clazz.getDeclaredField("mTN");
             sFieldTN.setAccessible(true);
-            //然后通过反射拿到Toast中内部类TN的mHandler
             sFieldTNHandler = sFieldTN.getType().getDeclaredField("mHandler");
             sFieldTNHandler.setAccessible(true);
         } catch (Exception e) {
@@ -68,7 +66,6 @@ public final class InternalHookToast {
         @Override
         public void dispatchMessage(Message msg) {
             try {
-                // 捕获这个异常，避免程序崩溃
                 super.dispatchMessage(msg);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -77,7 +74,6 @@ public final class InternalHookToast {
 
         @Override
         public void handleMessage(Message msg) {
-            //需要委托给原Handler执行
             impl.handleMessage(msg);
         }
     }

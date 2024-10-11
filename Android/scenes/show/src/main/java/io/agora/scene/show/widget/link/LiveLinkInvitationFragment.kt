@@ -43,7 +43,6 @@ class LiveLinkInvitationFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         linkInvitationViewAdapter.setClickListener(object : LiveLinkInvitationViewAdapter.OnClickListener {
             override fun onClick(view: View, userItem: ShowUser, position: Int) {
-                // 主播发起邀请
                 mListener?.onInviteMicSeatItemChosen(view, userItem)
             }
         })

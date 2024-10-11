@@ -38,7 +38,6 @@ class PKService(
         onUpdate = { info: RoomPresenceInfo ->
             AUILogger.logger().d(tag, "onRoomPresenceUpdated: $info")
 
-            // 被PK方 -> 发起PK方
             if (info.roomId != channelName) {
                 val currInfo = roomPresenceService.getRoomPresenceInfo(channelName)
                 if (info.status == RoomPresenceStatus.INTERACTING_PK
@@ -55,7 +54,6 @@ class PKService(
                 }
             }
 
-            // 发起PK方 -> 被PK方
             if (info.roomId != channelName) {
                 val currInfo = roomPresenceService.getRoomPresenceInfo(channelName)
                 if (
@@ -86,7 +84,6 @@ class PKService(
                 }
             }
 
-            // 发起PK方
             if (info.roomId == channelName) {
                 val pkRoomInfo = roomPresenceService.getRoomPresenceInfoByOwnerId(info.interactorId)
                 if (
@@ -117,7 +114,6 @@ class PKService(
                 }
             }
 
-            // 被PK方/发起PK方 有一方关闭即停止PK
             if (info.roomId != channelName) {
                 val currInfo = roomPresenceService.getRoomPresenceInfo(channelName)
                 if (
@@ -150,7 +146,6 @@ class PKService(
                 }
             }
 
-            // 主播已经和其他人PK
             if (info.roomId != channelName) {
                 val currInfo = roomPresenceService.getRoomPresenceInfo(channelName)
                 if (info.status == RoomPresenceStatus.INTERACTING_PK
@@ -269,7 +264,6 @@ class PKService(
             error?.invoke(RuntimeException("room presence status is not idle"))
             return
         }
-        // 因为不管对方在不在线，更新presence总是会成功，这里被一个点对点消息用于判断对方是否在线
         messageRetainer.sendMessage(
             GsonTools.beanToString(pkInfo.copy(type = PKType.ACCEPT)) ?: "",
             pkInfo.fromUserId,

@@ -2,10 +2,7 @@
 
 > This document introduces how to quickly run through <mark>E-Commerce</mark> sample project.
 
-<figure class="third">
-  <img src="https://download.agora.io/demo/release/CommerceShot01.png" width="300" height="640" />
-  <img src="https://download.agora.io/demo/release/CommerceShot02.png" width="300" height="640" />
-</figure>
+> <img src="https://download.agora.io/demo/release/CommerceShot01.png" width="300" height="640" /><img src="https://download.agora.io/demo/release/CommerceShot02.png" width="300" height="640" />
 
 ## Prerequisites
 
@@ -21,7 +18,7 @@
 * User attribute callback
 * Channel attribute callback
 * Distributed lock
-3. Open the `Android` project and fill in properties got above to the root [gradle.properties](../gradle.properties) file.
+3. Open the `Android` project and fill in the properties obtained above to the root [gradle.properties](../gradle.properties) file.
 
 ```
 # RTM RTC SDK key Config
@@ -29,14 +26,14 @@ AGORA_APP_ID=<Your Agora App ID>
 AGORA_APP_CERTIFICATE=<Your Agora App Certificate(if enable token)>
 ```
 
-4. Now you can run the project with android studio to experience the application.
+4. Now you can run the project with Android Studio to experience the application.
 
 ## Source Code sitemap
 
 | Path(Android/scenes/eCommmerce/src/main/java/io/agora) | Description                                                                          |
 |--------------------------------------------------|--------------------------------------------------------------------------------------|
 | scene/eCommmerce/videoLoaderAPI/                       | Agora Video Loader Scenario API.                                                     |
-| scene/eCommmerce/service/                              | Living streaming service protocol and implement.                                     |
+| scene/eCommmerce/service/                              | Living streaming service protocol and implementation.                                     |
 | scene/eCommmerce/RoomListActivity.kt                   | Living room list view.                                                               |
 | scene/eCommmerce/LivePrepareActivity.kt                | Living prepare view.                                                                 |
 | scene/eCommmerce/LiveDetailActivity.kt                 | Living room detail scroll page view.                                                 |

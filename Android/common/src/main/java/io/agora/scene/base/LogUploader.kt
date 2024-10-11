@@ -35,11 +35,9 @@ object LogUploader {
     ): Job {
         return scope.launch(Dispatchers.Main) {
             runCatching {
-                //请求体
                 block()
             }.onSuccess { response ->
                 runCatching {
-                    //校验请求结果码是否正确，不正确会抛出异常走下面的onFailure
                     if (response.isSuccess) {
                         response.data?.let {
                             onSuccess(it)
@@ -84,7 +82,6 @@ object LogUploader {
         val paths = mutableListOf<String>()
         File(entLogFolder).listFiles()?.forEach { file ->
             if (file.isFile) {
-                // 不需要传 common
                 if (!file.name.contains(AgoraScenes.CommonBase.name) &&
                     file.name.contains(type.name,true)
                 ) {

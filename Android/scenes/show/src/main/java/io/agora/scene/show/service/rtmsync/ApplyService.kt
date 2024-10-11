@@ -12,10 +12,6 @@ import io.agora.rtmsyncmanager.utils.AUILogger
 import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.rtmsyncmanager.utils.ObservableHelper
 
-/**
- * 申请服务
- *
- */
 class ApplyService(
     private val channelName: String,
     private val syncManager: SyncManager,

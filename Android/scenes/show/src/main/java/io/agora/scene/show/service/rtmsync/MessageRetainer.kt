@@ -10,15 +10,7 @@ import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.rtmsyncmanager.utils.ObservableHelper
 import java.util.UUID
 
-/**
- * 消息持有者。用于管理消息的发送和接收，以及消息的缓存。消息结构如下：
- * {"id":"","content":"{\"id\":\"123\",\"content\":\"hello\"}","key":"xxx","publisherId":"xxx"}
- *
- * @param T 消息类型
- * @property rtmManager RTM管理器
- * @property channelName 频道名称
- * @property type 消息类型
- */
+
 class MessageRetainer(
     private val rtmManager: AUIRtmManager,
     private val channelName: String,

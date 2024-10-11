@@ -98,7 +98,7 @@ public class RoomEncryptionInputView extends TextInputEditText {
      * init.
      */
     private void init() {
-        setTextColor(0X00ffffff); //把用户输入的内容设置为透明
+        setTextColor(0X00ffffff);
         setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);
         mSidePaint = new Paint();
         mBackPaint = new Paint();
@@ -128,14 +128,11 @@ public class RoomEncryptionInputView extends TextInputEditText {
         if (mText == null) {
             return;
         }
-        //如果字数不超过用户设置的总字数，就赋值给成员变量mText；
-        // 如果字数大于用户设置的总字数，就只保留用户设置的几位数字，并把光标制动到最后，让用户可以删除；
         if (text.toString().length() <= mTextLength) {
             mText = text.toString();
         } else {
             setText(mText);
-            setSelection(getText().toString().length());  //光标制动到最后
-            //调用setText(mText)之后键盘会还原，再次把键盘设置为数字键盘；
+            setSelection(getText().toString().length());
             setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);
         }
         if (onTextChangeListener != null) {
@@ -176,41 +173,33 @@ public class RoomEncryptionInputView extends TextInputEditText {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //边框画笔
-        mSidePaint.setAntiAlias(true); //消除锯齿
-        mSidePaint.setStrokeWidth(mStrokeWidth); //设置画笔的宽度
-        mSidePaint.setStyle(Paint.Style.STROKE); //设置绘制轮廓
+        mSidePaint.setAntiAlias(true);
+        mSidePaint.setStrokeWidth(mStrokeWidth);
+        mSidePaint.setStyle(Paint.Style.STROKE);
         mSidePaint.setColor(mDefaultColor);
-        //背景色画笔
         mBackPaint.setStyle(Paint.Style.FILL);
         mBackPaint.setColor(mBackColor);
-        //文字的画笔
         mTextPaint.setTextSize(mTextSize);
         mTextPaint.setStyle(Paint.Style.FILL);
         mTextPaint.setColor(mTextColor);
 
-        // 方型大小
         int singleSize = getMeasuredHeight();
-        // 左右间距
         mSpaceX = (getMeasuredWidth() - singleSize * mTextLength) / (mTextLength - 1);
         RectF rectBg = null;
         for (int i = 0; i < mTextLength; i++) {
-            //区分已输入和未输入的边框颜色
             if (mText.length() >= i) {
                 mSidePaint.setColor(mCheckedColor);
             } else {
                 mSidePaint.setColor(mDefaultColor);
             }
-            //RectF的参数(left,  top,  right,  bottom); 画出每个矩形框并设置间距，间距其实是增加左边框距离，缩小上下右边框距离；
             rectBg = new RectF(i * singleSize + mSpaceX * i + mStrokeWidth, mStrokeWidth,
                     (i + 1) * singleSize + mSpaceX * i - mStrokeWidth,
                     singleSize - mStrokeWidth);
-            //四个值，分别代表4条线，距离起点位置的线
-            canvas.drawRoundRect(rectBg, mRound, mRound, mBackPaint); //绘制背景色
-            canvas.drawRoundRect(rectBg, mRound, mRound, mSidePaint); //绘制边框
+            canvas.drawRoundRect(rectBg, mRound, mRound, mBackPaint);
+            canvas.drawRoundRect(rectBg, mRound, mRound, mSidePaint);
             mRectFS.add(rectBg);
 
-            if (mIsWaitInput && i == mText.length()) {  //显示待输入的线
+            if (mIsWaitInput && i == mText.length()) {
                 l = new Paint();
                 l.setStrokeWidth(3);
                 l.setStyle(Paint.Style.FILL);
@@ -221,7 +210,6 @@ public class RoomEncryptionInputView extends TextInputEditText {
                         singleSize / 2 + singleSize / 5, l);
             }
         }
-        //画密码圆点
         for (int j = 0; j < mText.length(); j++) {
             if (mIsPwd) {
                 canvas.drawCircle(mRectFS.get(j).centerX(), mRectFS.get(j).centerY(), mCircle, mTextPaint);

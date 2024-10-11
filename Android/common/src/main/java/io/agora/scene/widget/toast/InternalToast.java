@@ -209,11 +209,6 @@ public final class InternalToast {
             return this;
         }
 
-        /**
-         * 采用软引用管理toast对象
-         * 如果一个对象只具有软引用，那么如果内存空间足够，垃圾回收器就不会回收它；
-         * 如果内存空间不足了，就会回收这些对象的内存。只要垃圾回收器没有回收它，该对象就可以被程序使用。
-         */
         private SoftReference<Toast> mToast;
 
         /**
@@ -227,7 +222,6 @@ public final class InternalToast {
             }
             Toast toast = new Toast(context);
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.N_MR1) {
-                //android 7.1.1 版本
                 InternalHookToast.hook(toast);
             }
 
@@ -293,7 +287,7 @@ public final class InternalToast {
      */
     public static void checkMainThread() {
         if (!isMainThread()) {
-            throw new IllegalStateException("请不要在子线程中做弹窗操作");
+            throw new IllegalStateException("Please do not perform popup operations in a background thread.");
         }
     }
 
