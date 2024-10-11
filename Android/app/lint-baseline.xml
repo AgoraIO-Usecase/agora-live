@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 7.1.2" type="baseline" client="gradle" dependencies="false" name="AGP (7.1.2)" variant="fatal" version="7.1.2">
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher`&apos; ?">
+        <location
+            file="src/main/res/mipmap-hdpi/ic_launcher.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher`&apos; ?">
+        <location
+            file="src/main/res/mipmap-mdpi/ic_launcher.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher`&apos; ?">
+        <location
+            file="src/main/res/mipmap-xhdpi/ic_launcher.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher`&apos; ?">
+        <location
+            file="src/main/res/mipmap-xxhdpi/ic_launcher.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher`&apos; ?">
+        <location
+            file="src/main/res/mipmap-xxxhdpi/ic_launcher.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher`&apos; ?"
+        errorLine1="&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2=" ~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/mipmap-anydpi-v26/ic_launcher.xml"
+            line="2"
+            column="2"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher_background`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher_background`&apos; ?"
+        errorLine1="    &lt;color name=&quot;ic_launcher_background&quot;>#FFFFFF&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/ic_launcher_background.xml"
+            line="3"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher_foreground`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher_foreground`&apos; ?">
+        <location
+            file="src/main/res/mipmap-hdpi/ic_launcher_foreground.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher_foreground`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher_foreground`&apos; ?">
+        <location
+            file="src/main/res/mipmap-mdpi/ic_launcher_foreground.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher_foreground`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher_foreground`&apos; ?">
+        <location
+            file="src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher_foreground`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher_foreground`&apos; ?">
+        <location
+            file="src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher_foreground`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher_foreground`&apos; ?">
+        <location
+            file="src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher_round`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher_round`&apos; ?">
+        <location
+            file="src/main/res/mipmap-hdpi/ic_launcher_round.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher_round`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher_round`&apos; ?">
+        <location
+            file="src/main/res/mipmap-mdpi/ic_launcher_round.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher_round`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher_round`&apos; ?">
+        <location
+            file="src/main/res/mipmap-xhdpi/ic_launcher_round.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher_round`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher_round`&apos; ?">
+        <location
+            file="src/main/res/mipmap-xxhdpi/ic_launcher_round.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher_round`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher_round`&apos; ?">
+        <location
+            file="src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp"/>
+    </issue>
+
+    <issue
+        id="ResourceName"
+        message="Resource named &apos;`ic_launcher_round`&apos; does not start with the project&apos;s resource prefix &apos;`app`&apos;; rename to &apos;`appIc_launcher_round`&apos; ?"
+        errorLine1="&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2=" ~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml"
+            line="2"
+            column="2"/>
+    </issue>
+
+    <issue
+        id="Instantiatable"
+        message="`AboutUsActivity` must extend android.app.Activity"
+        errorLine1="            android:name=&quot;com.agora.entfulldemo.home.mine.AboutUsActivity&quot;"
+        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="55"
+            column="27"/>
+    </issue>
+
+</issues>
