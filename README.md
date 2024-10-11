@@ -1,7 +1,7 @@
 # Agora Live
 
 ## Overview
-**AgoraLive** is an entertainment open source project containing multi scenario. The project includes the following scenario solutions:
+**AgoraLive** is an open-source entertainment project containing multiple scenarios. The project includes the following scenario solutions:
 
 * Scenes
 	
@@ -10,16 +10,17 @@
 | LiveStreaming   | iOS      | [AgoraEntScenarios/Scenes/Show](iOS/AgoraEntScenarios/Scenes/Show/README.md)             |
 | VoiceChatRoom   | iOS      | [AgoraEntScenarios/Scenes/VoiceChatRoom](iOS/AgoraEntScenarios/Scenes/VoiceChatRoom/README.md) |
 | E-Commerce      | iOS      | [AgoraEntScenarios/Scenes/Commerce](iOS/AgoraEntScenarios/Scenes/Commerce/README.md)     |
+| Karaoke         | iOS      | [AgoraEntScenarios/Scenes/Commerce](iOS/AgoraEntScenarios/Scenes/KTV/README.md)     |
 | LiveStreaming   | Android  | [Android/scenes/show](Android/scenes/show/README.md)                               |
 | VoiceChatRoom   | Android  | [Android/scenes/voice](Android/scenes/voice/README.md)                               |
 | E-Commerce      | Android  | [Android/scenes/eCommerce](Android/scenes/eCommerce/README.md)                               |
+| Karaoke         | Android  | [Android/scenes/eCommerce](Android/scenes/ktv/README.md)                               |
 
 
-Demo screenshots:
-<figure class="third">
-  <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/agora-live/readme/images/common/AgoraLive_Home.png" width="300" height="640" />
-  <img src="https://download.agora.io/demo/release/AgoraLiveShot02.png" width="300" height="640" />
-</figure>
+* Demo screenshots:
+
+<img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/agora-live/home_page_1.png" width="320" height="640" /><img src="https://download.agora.io/demo/release/AgoraLiveShot02.png" width="320" height="640" />
+
 
 
 ## Feedback
