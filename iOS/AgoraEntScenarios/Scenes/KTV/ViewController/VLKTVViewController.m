@@ -1149,16 +1149,9 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     [[AppContext ktvServiceImp] leaveChorusWithSongCode:self.selSongsArray.firstObject.songNo
                                              completion:^(NSError * error) {
         if (error == nil) {
-            [self stopPlaySong];
-            self.isNowMicMuted = true;
-            [self.MVView.incentiveView reset];
-            [self.MVView setOriginBtnState: VLKTVMVViewActionTypeSingAcc];
-            [[AppContext ktvServiceImp] updateSeatAudioMuteStatusWithMuted:YES
-                                                                completion:^(NSError * error) {
-            }];
-        } else {
-            [VLToast toast:error.localizedDescription];
+            return;
         }
+        [VLToast toast:error.localizedDescription];
     }];
 }
 
@@ -2398,6 +2391,16 @@ receiveStreamMessageFromUid:(NSUInteger)uid
     }
     [self.roomPersonView reloadSeatIndex:model.seatIndex];
     self.chorusNum = [self getChorusNumWithSeatArray:self.seatsArray];
+    
+    if ([chorister.userId isEqualToString:VLUserCenter.user.id]) {
+        [self stopPlaySong];
+        self.isNowMicMuted = true;
+        [self.MVView.incentiveView reset];
+        [self.MVView setOriginBtnState: VLKTVMVViewActionTypeSingAcc];
+        [[AppContext ktvServiceImp] updateSeatAudioMuteStatusWithMuted:YES
+                                                            completion:^(NSError * error) {
+        }];
+    }
 }
 
 @end
