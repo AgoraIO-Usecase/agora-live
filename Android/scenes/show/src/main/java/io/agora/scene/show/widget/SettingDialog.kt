@@ -132,37 +132,38 @@ class SettingDialog(context: Context) : BottomDarkDialog(context) {
     /**
      * M host item list
      */
-    private val mHostItemList = listOf(
-        SettingItem(
-            ITEM_ID_CAMERA,
-            R.mipmap.show_setting_ic_camera,
-            R.mipmap.show_setting_ic_camera,
-            R.string.show_setting_switch_camera,
-            R.string.show_setting_switch_camera
-        ),
-        SettingItem(
-            ITEM_ID_VIDEO,
-            R.mipmap.show_setting_ic_video_off,
-            R.mipmap.show_setting_ic_video_on,
-            R.string.show_setting_video_off,
-            R.string.show_setting_video_on,
-            isVideoActivated
-        ),
-        SettingItem(
-            ITEM_ID_MIC,
-            R.mipmap.show_setting_ic_mic_off,
-            R.mipmap.show_setting_ic_mic_on,
-            R.string.show_setting_mic_off,
-            R.string.show_setting_mic_on,
-            isVoiceActivated
-        ),
-        SettingItem(
-            ITEM_ID_STATISTIC,
-            R.mipmap.show_setting_ic_statistic,
-            R.mipmap.show_setting_ic_statistic,
-            R.string.show_setting_statistic,
-            R.string.show_setting_statistic
-        ),
+    private fun hostItemList(): List<SettingItem> {
+        return listOf(
+            SettingItem(
+                ITEM_ID_CAMERA,
+                R.mipmap.show_setting_ic_camera,
+                R.mipmap.show_setting_ic_camera,
+                R.string.show_setting_switch_camera,
+                R.string.show_setting_switch_camera
+            ),
+            SettingItem(
+                ITEM_ID_VIDEO,
+                R.mipmap.show_setting_ic_video_off,
+                R.mipmap.show_setting_ic_video_on,
+                R.string.show_setting_video_off,
+                R.string.show_setting_video_on,
+                isVideoActivated
+            ),
+            SettingItem(
+                ITEM_ID_MIC,
+                R.mipmap.show_setting_ic_mic_off,
+                R.mipmap.show_setting_ic_mic_on,
+                R.string.show_setting_mic_off,
+                R.string.show_setting_mic_on,
+                isVoiceActivated
+            ),
+            SettingItem(
+                ITEM_ID_STATISTIC,
+                R.mipmap.show_setting_ic_statistic,
+                R.mipmap.show_setting_ic_statistic,
+                R.string.show_setting_statistic,
+                R.string.show_setting_statistic
+            ),
 //        SettingItem(
 //            ITEM_ID_QUALITY,
 //            R.mipmap.show_setting_ic_quality,
@@ -170,14 +171,15 @@ class SettingDialog(context: Context) : BottomDarkDialog(context) {
 //            R.string.show_setting_quality,
 //            R.string.show_setting_quality
 //        ),
-        SettingItem(
-            ITEM_ID_SETTING,
-            R.mipmap.show_setting_ic_setting,
-            R.mipmap.show_setting_ic_setting,
-            R.string.show_setting_advance_setting,
-            R.string.show_setting_advance_setting
+            SettingItem(
+                ITEM_ID_SETTING,
+                R.mipmap.show_setting_ic_setting,
+                R.mipmap.show_setting_ic_setting,
+                R.string.show_setting_advance_setting,
+                R.string.show_setting_advance_setting
+            )
         )
-    )
+    }
 
     /**
      * On item activated change listener
@@ -250,7 +252,12 @@ class SettingDialog(context: Context) : BottomDarkDialog(context) {
     init {
         setBottomView(mBinding.root)
         mBinding.recycleView.adapter = mAdapter
-        mAdapter.resetAll(if (isHostView) mHostItemList else mAudienceItemList)
+        mAdapter.resetAll(if (isHostView) hostItemList() else mAudienceItemList)
+    }
+
+    override fun show() {
+        super.show()
+        mAdapter.notifyDataSetChanged()
     }
 
     /**
@@ -305,7 +312,7 @@ class SettingDialog(context: Context) : BottomDarkDialog(context) {
             return
         }
         isHostView = isHost
-        mAdapter.resetAll(if (isHost) mHostItemList else mAudienceItemList)
+        mAdapter.resetAll(if (isHost) hostItemList() else mAudienceItemList)
     }
 
     /**
@@ -329,45 +336,7 @@ class SettingDialog(context: Context) : BottomDarkDialog(context) {
      *
      * @param mute
      */
-    fun resetSettingsItem(mute: Boolean) {
-        isVoiceActivated = !mute
-        val itemList = listOf(SettingItem(
-            ITEM_ID_CAMERA,
-            R.mipmap.show_setting_ic_camera,
-            R.mipmap.show_setting_ic_camera,
-            R.string.show_setting_switch_camera,
-            R.string.show_setting_switch_camera
-        ),
-        SettingItem(
-            ITEM_ID_VIDEO,
-            R.mipmap.show_setting_ic_video_off,
-            R.mipmap.show_setting_ic_video_on,
-            R.string.show_setting_video_off,
-            R.string.show_setting_video_on,
-            isVideoActivated
-        ),
-        SettingItem(
-            ITEM_ID_MIC,
-            R.mipmap.show_setting_ic_mic_off,
-            R.mipmap.show_setting_ic_mic_on,
-            R.string.show_setting_mic_off,
-            R.string.show_setting_mic_on,
-            isVoiceActivated
-        ),
-        SettingItem(
-            ITEM_ID_STATISTIC,
-            R.mipmap.show_setting_ic_statistic,
-            R.mipmap.show_setting_ic_statistic,
-            R.string.show_setting_statistic,
-            R.string.show_setting_statistic
-        ),
-        SettingItem(
-            ITEM_ID_SETTING,
-            R.mipmap.show_setting_ic_setting,
-            R.mipmap.show_setting_ic_setting,
-            R.string.show_setting_advance_setting,
-            R.string.show_setting_advance_setting
-        ))
-        mAdapter.resetAll(itemList)
+    fun resetSettingsItem() {
+        mAdapter.resetAll(hostItemList())
     }
 }

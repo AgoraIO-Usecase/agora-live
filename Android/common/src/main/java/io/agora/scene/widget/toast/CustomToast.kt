@@ -50,7 +50,6 @@ object CustomToast {
         show(msg, InternalToast.ERROR, duration)
     }
 
-    // 指定位置显示 toast
     @JvmStatic
     fun showByPosition(
         msg: String, gravity: Int = Gravity.BOTTOM, offsetY: Int = 200.dp.toInt(),
@@ -59,7 +58,6 @@ object CustomToast {
         show(msg = msg, duration = duration, gravity = gravity, offsetY = offsetY)
     }
 
-    // 指定位置显示 toast
     @JvmStatic
     fun showByPosition(
         @StringRes resId: Int, gravity: Int = Gravity.BOTTOM, offsetY: Int = 200.dp.toInt(),

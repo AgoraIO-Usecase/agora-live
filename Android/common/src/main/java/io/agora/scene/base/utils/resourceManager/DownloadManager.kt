@@ -54,7 +54,6 @@ class DownloadManager private constructor() {
                         return@withContext
                     }
 
-                    // 支持断点重传
                     FileOutputStream(file, true).use { fos ->
                         try {
                             responseBody.source().use { source ->

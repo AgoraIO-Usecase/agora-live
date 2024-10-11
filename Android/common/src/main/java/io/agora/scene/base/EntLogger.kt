@@ -12,7 +12,7 @@ import java.util.*
 class EntLogger constructor(private val config: Config) {
 
     companion object {
-        private val MAX_FILE_COUNT = 2 // 默认最大文件个数 2
+        private val MAX_FILE_COUNT = 2
         val mLogFolder = AgoraApplication.the().getExternalFilesDir("")!!.absolutePath + File.separator + "ent"
         private val mLogFileWriteThread by lazy {
             HandlerThread("AndroidFileLogger.$mLogFolder").apply {
@@ -22,10 +22,10 @@ class EntLogger constructor(private val config: Config) {
     }
 
     data class Config constructor(
-        val sceneName: String, // 场景名
-        val fileSize: Long = 1 * 1024 * 1024, // 1M，单位Byte
-        val fileName: String = "agora_ent_${sceneName}_log".lowercase(), // 文件名
-        val maxFileCount: Int = MAX_FILE_COUNT, // 该场景最大文件数
+        val sceneName: String,
+        val fileSize: Long = 1 * 1024 * 1024,
+        val fileName: String = "agora_ent_${sceneName}_log".lowercase(),
+        val maxFileCount: Int = MAX_FILE_COUNT,
     )
 
     private val dataFormat:SimpleDateFormat = SimpleDateFormat("yy/MM/dd HH:mm:ss.SSS", Locale.getDefault())
@@ -84,7 +84,6 @@ class EntLogger constructor(private val config: Config) {
     }
 
     private fun formatMessage(level: String, tag: String?, message: String): String {
-        // [AgoraEnt] 标记截取，orhanobut logger 有默认前缀需要截取掉
         val sb = StringBuilder("[****]")
         sb.append("[${dataFormat.format(Date(System.currentTimeMillis()))}]")
         sb.append("[Agora][${level}][${config.sceneName}]")
@@ -132,7 +131,6 @@ class EntLogger constructor(private val config: Config) {
         private fun getLogFile(logDirectory: File, fileName: String, content: String): File {
             if (!logDirectory.exists()) logDirectory.mkdirs()
 
-            // 获取场景日志文件列表
             var logFiles = mutableListOf<File>().apply {
                 logDirectory.listFiles()?.forEach { file ->
                     if (file.isFile() && file.getName().startsWith(fileName)) {
@@ -201,7 +199,6 @@ class EntLogger constructor(private val config: Config) {
                     try {
                         var name1 = file1.getName()
                         var name2 = file2.getName()
-                        // 去掉文件名最后的后缀
                         name1 = name1.substring(0, name1.lastIndexOf('.'))
                         name2 = name2.substring(0, name2.lastIndexOf('.'))
                         name1 = if (name1.length > fileName.length) {

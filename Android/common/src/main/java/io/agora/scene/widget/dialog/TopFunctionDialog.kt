@@ -35,7 +35,6 @@ class TopFunctionDialog constructor(context: Context, val showReportUser: Boolea
     override fun setContentView(view: View) {
         super.setContentView(view)
         window?.let { window ->
-            // fix 小米部分机型不能占用状态栏
             StatusBarUtil.hideStatusBar(window, 0xF2151325.toInt(), true)
             window.setBackgroundDrawableResource(android.R.color.transparent)
             window.setDimAmount(0f)

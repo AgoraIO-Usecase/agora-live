@@ -64,7 +64,6 @@ class FloatMonkService : Service(), FloatCallBack {
     override fun onDestroy() {
         super.onDestroy()
         OverallLayoutController.registerCallLittleMonk(null)
-        //移除悬浮窗
         removeFloatWindowManager()
     }
 
@@ -84,17 +83,13 @@ class FloatMonkService : Service(), FloatCallBack {
                 } else {
                     WindowManager.LayoutParams.TYPE_PHONE
                 }
-                //设置图片格式，效果为背景透明
                 format = PixelFormat.RGBA_8888
-                //系统会将当前Window区域以外的点击事件传递给底层的Window，当前Window区域以内的点击事件则自己处理
                 flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 
-                //设置悬浮窗口长宽数据
                 width = ViewGroup.LayoutParams.WRAP_CONTENT
                 height = ViewGroup.LayoutParams.WRAP_CONTENT
                 gravity = Gravity.START or Gravity.TOP
 
-                //设置剧中屏幕显示
                 x = outMetrics.widthPixels / 2 - 150.dp.toInt()
                 y = outMetrics.heightPixels / 2 - 100.dp.toInt()
 

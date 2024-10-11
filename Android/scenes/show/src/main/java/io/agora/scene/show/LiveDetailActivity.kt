@@ -296,7 +296,6 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
         }
         onPageScrollEventHandler?.updateRoomList(list)
 
-        // 设置vp当前页面外的页面数
         binding.viewPager2.offscreenPageLimit = 1
         val fragmentAdapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = if (mScrollable) Int.MAX_VALUE else 1
@@ -329,7 +328,6 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
                                 anchorList
                             ),position == binding.viewPager2.currentItem)
                     } else {
-                        // 主播
                         startLoadPageSafely()
                     }
                 }

@@ -212,14 +212,13 @@ class LiveDetailFragment : Fragment() {
 
     /**
      * Interaction info
-     */// 当前互动状态
+     */
     private var interactionInfo: ShowInteractionInfo? = null
 
     /**
      * Is p k competition
      */
     private var isPKCompetition: Boolean = false
-//    private var deletedPKInvitation: ShowPKInvitation? = null
 
     /**
      * M link invitation count down latch
@@ -836,7 +835,7 @@ class LiveDetailFragment : Fragment() {
                 bottomLayout.flLinking.isVisible = true
                 bottomLayout.ivLinking.imageTintList = null
                 mSettingDialog.apply {
-                    resetSettingsItem(false)
+                    resetSettingsItem()
                 }
             } else {
                 bottomLayout.flPK.isEnabled = true
@@ -846,7 +845,7 @@ class LiveDetailFragment : Fragment() {
                 bottomLayout.ivLinking.imageTintList =
                     ColorStateList.valueOf(context.resources.getColor(R.color.grey_7e))
                 mSettingDialog.apply {
-                    resetSettingsItem(false)
+                    resetSettingsItem()
                 }
             }
 
@@ -1776,8 +1775,7 @@ class LiveDetailFragment : Fragment() {
                 error = {
                     runOnUiThread {
                         destroy(false)
-                        // 进房Error
-                        showLivingEndLayout(true) // 进房Error
+                        showLivingEndLayout(true)
                         ShowLogger.d("showLivingEndLayout", "create room error!:${it.message}")
                     }
                 })
@@ -1789,8 +1787,7 @@ class LiveDetailFragment : Fragment() {
                 error = {
                     runOnUiThread {
                         destroy(false)
-                        // 进房Error
-                        showLivingEndLayout(true) // 进房Error
+                        showLivingEndLayout(true)
                         ShowLogger.d("showLivingEndLayout", "join room error!:${it.message}")
                     }
                 })
@@ -2841,10 +2838,8 @@ class LiveDetailFragment : Fragment() {
     private fun stopAudioMixing() {
         mAudioMixing = false
 
-        // 停止播放，拿到connection对应的MediaPlayer并停止释放
         mMediaPlayer?.stop()
 
-        // 停止推流，使用updateChannelMediaOptionEx
         mAudioMxingChannel?.let {
             val options = LeaveChannelOptions()
             options.stopMicrophoneRecording = false

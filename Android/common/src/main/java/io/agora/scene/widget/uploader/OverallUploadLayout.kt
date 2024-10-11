@@ -63,7 +63,7 @@ class OverallUploadLayout : ConstraintLayout {
             val cm: ClipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             //设置内容到剪切板
             cm.setPrimaryClip(ClipData.newPlainText(null, binding.tvTaskUuid.text?.toString()))
-            ToastUtils.showToast("复制成功")
+            ToastUtils.showToast("Copy successful.")
         }
     }
 
@@ -125,7 +125,6 @@ class ItemViewTouchListener(val wl: WindowManager.LayoutParams, val windowManage
                     y += movedY
                 }
                 Log.d("FloatMonkService", "x:$x, y: $y")
-                //更新悬浮球控件位置
                 windowManager?.updateViewLayout(view, wl)
             }
 

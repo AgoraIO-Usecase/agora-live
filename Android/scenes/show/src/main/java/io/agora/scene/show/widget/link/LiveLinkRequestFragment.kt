@@ -47,7 +47,6 @@ class LiveLinkRequestFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         linkRequestViewAdapter.setClickListener(object : LiveLinkRequestViewAdapter.OnClickListener {
             override fun onClick(view: View, seatApply: ShowMicSeatApply, position: Int) {
-                // 主播接受连麦
                 mListener?.onAcceptMicSeatItemChosen(view, seatApply, position)
             }
         })
@@ -76,7 +75,6 @@ class LiveLinkRequestFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.linkRequestList.adapter = linkRequestViewAdapter
         binding.iBtnStopLink.setOnClickListener {
-            // 主播停止连麦
             mListener?.onStopLinkingChosen(it)
         }
         binding.smartRefreshLayout.setOnRefreshListener {
