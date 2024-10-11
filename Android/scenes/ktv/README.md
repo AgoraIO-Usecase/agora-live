@@ -23,7 +23,7 @@
   ``` 
     # RTC SDK key Config
     AGORA_APP_ID=<Your Agora App ID>
-    AGORA_APP_CERTIFICATE=<Your Agora App Certificate(if enable token)>
+    AGORA_APP_CERTIFICATE=<Your Agora App Certificate>
   ```
 
 3. Now you can run the project with android studio to experience the application.
@@ -226,14 +226,18 @@
 >   Implementation reference [**MusicSettingDialog#Callback**](src/main/java/io/agora/scene/ktv/live/fragmentdialog/MusicSettingDialog.kt) **onEffectChanged**
 
 ---
+## Feedback
 
-### Want to experience more scenarios
+If you have any problems or suggestions regarding the sample projects, feel free to file an issue.
 
-> For more information, please see [AgoraLive](../../../README.md)
+## Related resources
 
-### What should I do if I encounter difficulties during integration, and how can I contact Agora for assistance?
+- Check our [FAQ](https://docs.agora.io/en/faq) to see if your issue has been recorded.
+- Dive into [Agora SDK Samples](https://github.com/AgoraIO) to see more tutorials.
+- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated real use case.
+- Repositories managed by developer communities can be found at [Agora Community](https://github.com/AgoraIO-Community).
+- If you encounter problems during integration, feel free to ask questions in [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io).
 
-> Option 1: If you are already using Agora services or in the process of integration, you can directly contact your sales or service representative.
->
-> Option 2: Send an email to [support@agora.io](mailto:support@agora.io)
----
+## License
+
+The sample projects are under the MIT license.
