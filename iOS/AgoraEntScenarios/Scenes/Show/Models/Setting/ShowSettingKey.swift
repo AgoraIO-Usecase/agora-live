@@ -257,7 +257,7 @@ enum ShowSettingKey: String, CaseIterable {
             return [
                 AgoraVideoCodecType.H264.name(),
                 AgoraVideoCodecType.H265.name(),
-                AgoraVideoCodecType.AV1.name(),
+//                AgoraVideoCodecType.AV1.name(),
             ]
         default:
             return []

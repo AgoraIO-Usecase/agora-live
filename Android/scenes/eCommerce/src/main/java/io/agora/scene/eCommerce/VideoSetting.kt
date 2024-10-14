@@ -124,7 +124,7 @@ object VideoSetting {
     val EncoderList = listOf(
         VIDEO_CODEC_TYPE.VIDEO_CODEC_H264,
         VIDEO_CODEC_TYPE.VIDEO_CODEC_H265,
-        VIDEO_CODEC_TYPE.VIDEO_CODEC_AV1,
+//        VIDEO_CODEC_TYPE.VIDEO_CODEC_AV1,
     )
 
     fun VIDEO_CODEC_TYPE.toIndex() = EncoderList.indexOf(this)
