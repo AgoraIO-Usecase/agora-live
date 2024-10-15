@@ -1,76 +1,53 @@
 //
-//  HorizontalScrollTableViewCell.swift
+//  DFScrollContentView.swift
 //  DreamFlow
 //
-//  Created by qinhui on 2024/8/30.
+//  Created by qinhui on 2024/10/14.
 //
 
-import UIKit
+import Foundation
 
-class DFHorizontalScrollTableViewCell: DFStylizedCell {
+class DFScrollContentView: UIView {
     let scrollView = UIScrollView()
-    let titleLabel = UILabel()
     let stackView = UIStackView()
-    var selectedItem: DFStylizedSettingItem!
-    var items: [DFStylizedSettingItem]!
+    var selectHandler: ((Int) -> Void)?
     
-    var styleHandler: ((DFStylizedSettingItem) -> Void)?
-    var effectHandler: ((DFStylizedSettingItem) -> Void)?
+    private var cardViews: [UIView] = []
+    private var selectedIndex = 0
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        stackView.axis = .horizontal
-        stackView.spacing = 10
-        
-        scrollView.addSubview(stackView)
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(scrollView)
-
-        configSubViews()
-        setUserInteractionEnabled(enabled: true)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configSubviews()
     }
     
-    func configSubViews() {
-        titleLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(20)
-            make.top.equalToSuperview().offset(8)
-        }
-        
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func configSubviews() {
+        stackView.axis = .horizontal
+        stackView.spacing = 10
+        scrollView.addSubview(stackView)
+        self.addSubview(scrollView)
+
         scrollView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(20)
-            make.trailing.equalToSuperview().offset(-20)
-            make.top.equalTo(titleLabel.snp.bottom).offset(8)
-            make.bottom.equalToSuperview().offset(-8)
-            make.height.equalTo(100)
+            make.edges.equalToSuperview()
         }
         
         stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.height.equalToSuperview()
-        }
-        
-        darkView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
         }
     }
     
-    func setData(with title: String, items: [DFStylizedSettingItem], selectedItem: DFStylizedSettingItem) {
-        self.items = items
-        
-        titleLabel.text = title
-        titleLabel.font = UIFont.show_R_14
-        
-        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        var selectedIndex = 0
-        for (index, item) in items.enumerated() {
-            if (item.title == selectedItem.title) {
-                selectedIndex = index
+    func setData(items: [DFStylizedSettingItem], selectedItem: DFStylizedSettingItem) {
+        var selectedIndex = items.firstIndex(where: {$0.title == selectedItem.title}) ?? 0
+        if cardViews.isEmpty || cardViews.count != items.count {
+            stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+            for (index, item) in items.enumerated() {
+                let cardView = createCardView(with: item, index: index)
+                stackView.addArrangedSubview(cardView)
+                cardViews.append(cardView)
             }
-            
-            let cardView = createCardView(with: item, index: index)
-            stackView.addArrangedSubview(cardView)
         }
         
         setSelectedIndex(selectedIndex)
@@ -122,17 +99,13 @@ class DFHorizontalScrollTableViewCell: DFStylizedCell {
     }
     
     func execHandler() {
-        if let styleHandler = styleHandler {
-            styleHandler(selectedItem)
-        }
-        
-        if let effectHandler = effectHandler {
-            effectHandler(selectedItem)
+        if let selectHandler = selectHandler {
+            selectHandler(selectedIndex)
         }
     }
     
     private func setSelectedIndex(_ index: Int) {
-        selectedItem = items[index]
+        selectedIndex = index
         
         // 取消其他图片的选中状态
         stackView.arrangedSubviews.forEach { view in
@@ -155,7 +128,4 @@ class DFHorizontalScrollTableViewCell: DFStylizedCell {
         }
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }

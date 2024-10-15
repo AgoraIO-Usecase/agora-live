@@ -40,7 +40,7 @@ open class AUINetworking: NSObject {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = model.method.getAfMethod()
         urlRequest.allHTTPHeaderFields = model.getHeaders()
-        if model.method == .post || model.method == .delete {
+        if model.method == .post || model.method == .delete || model.method == .patch {
             urlRequest.httpBody = model.getHttpBody()
         }
         

@@ -57,7 +57,6 @@ open class AUINetworkModel: NSObject {
         AUINetworking.shared.request(model: self, completion: completion)
     }
     
-    
     public func parse(data: Data?) throws -> Any?  {
         guard let data = data,
               let dic = try? JSONSerialization.jsonObject(with: data) else {

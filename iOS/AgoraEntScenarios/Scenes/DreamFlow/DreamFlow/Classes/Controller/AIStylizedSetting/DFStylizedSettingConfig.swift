@@ -9,9 +9,13 @@ import Foundation
 
 class DFStylizedSettingConfig: Codable {
     var prompt: String = ""
-    var effect: String = ""
+    var preset: String = ""
     var style: String = ""
     var strength: Float = 0.1
+    var superFrameFactor: Int = 1
     var face_mode: Bool = false
     var style_effect: Bool = false
+    var server: String = ""
+    var videoWidth: Int = 0
+    var videHeight: Int = 0
 }

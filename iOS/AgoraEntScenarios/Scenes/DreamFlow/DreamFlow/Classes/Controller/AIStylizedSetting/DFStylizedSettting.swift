@@ -15,16 +15,26 @@ class DFStylizedSettting: UIViewController {
     var workerState: DreamFlowWorkState = .unload
     
     let switchCellIdentifier = "SwitchCell"
-    let strengthCellIdentifier = "StrengthCell"
-    let horizontalScrollCellIdentifier = "HorizontalScrollCell"
-    let textViewCellIdentifier = "TextViewCell"
+    let presetsScrollCellIdentifier = "PresetsScrollCell"
+    let arrowCellIdentifier = "ArrowCell"
+    let presestInfoCellIdentifier = "PresetsInfoCell"
+    
     var stylizedSettingConfig = DFStylizedSettingConfig()
     weak var delegate: DFStylizedSetttingDelegate?
     
     let tableView = UITableView()
     
-    private var defaultStyle: DFStylizedSettingItem!
-    private var defaultEffect: DFStylizedSettingItem!
+    private lazy var currentStyle: DFStylizedSettingItem = {
+        dataService.styles[0]
+    }()
+    
+    private lazy var currentPreset: DFPresetSettingItem = {
+        dataService.Presets[0]
+    }()
+    
+    private lazy var currentServer: DreamFlowServer = {
+        dataService.servers[0]
+    }()
     
     private lazy var dataService: DFStylizedDataService = {
         let service = DFStylizedDataService()
@@ -53,36 +63,51 @@ class DFStylizedSettting: UIViewController {
     }
     
     private func loadData() {
-        guard let configData = dataService.loadStylizedSettingConfig() else {
-            defaultStyle = dataService.styles[0]
-            defaultEffect = dataService.effects[0]
+        guard let configData = DFStylizedDataService.loadStylizedSettingConfig() else {
+            updateStylizedSettingConfig()
             return
         }
         
-        self.stylizedSettingConfig = configData
-        
+        let state = workerState == .initialize || workerState == .running
+
+        stylizedSettingConfig = configData
+        stylizedSettingConfig.style_effect = state
+
         for item in dataService.styles {
             if item.title == configData.style {
-                defaultStyle = item
+                currentStyle = item
                 break
             }
         }
         
-        for item in dataService.effects {
-            if item.title == configData.effect {
-                defaultEffect = item
+        for item in dataService.servers {
+            if item.server == configData.server {
+                currentServer = item
                 break
             }
         }
         
-        if defaultStyle == nil {
-            defaultStyle = dataService.styles[0]
+        for item in dataService.Presets {
+            if item.title == configData.preset {
+                currentPreset = item
+                if item.title == "Customized" {
+                    synchronizeCustomPresetsData()
+                }
+                break
+            }
         }
         
-        if defaultEffect == nil {
-            defaultEffect = dataService.effects[0]
+        if currentStyle == nil {
+            currentStyle = dataService.styles[0]
         }
         
+        if currentPreset == nil {
+            currentPreset = dataService.Presets[0]
+        }
+        
+        if currentServer == nil {
+            currentServer = dataService.servers[0]
+        }
     }
     
     @objc func dismissKeyboard() {
@@ -94,12 +119,19 @@ class DFStylizedSettting: UIViewController {
             let contentInsets = UIEdgeInsets(top: 10, left: 0, bottom: keyboardFrame.height, right: 0)
             tableView.contentInset = contentInsets
             tableView.scrollIndicatorInsets = contentInsets
+            
+            let lastRowIndex = self.tableView.numberOfRows(inSection: self.tableView.numberOfSections - 1) - 1
+            if lastRowIndex >= 0 {
+                let indexPath = IndexPath(row: lastRowIndex, section: self.tableView.numberOfSections - 1)
+                self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+            }
         }
     }
     
     @objc func keyboardWillHide(notification: NSNotification) {
         tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
         tableView.scrollIndicatorInsets = .zero
+        tableView.layoutIfNeeded()
     }
     
     private func addGestureAndObserver() {
@@ -121,16 +153,16 @@ class DFStylizedSettting: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(DFSwitchTableViewCell.self, forCellReuseIdentifier: switchCellIdentifier)
-        tableView.register(DFStrengthTableViewCell.self, forCellReuseIdentifier: strengthCellIdentifier)
-        tableView.register(DFHorizontalScrollTableViewCell.self, forCellReuseIdentifier: horizontalScrollCellIdentifier)
-        tableView.register(DFTextViewTableViewCell.self, forCellReuseIdentifier: textViewCellIdentifier)
-        
+        tableView.register(DFArrowTableViewCell.self, forCellReuseIdentifier: arrowCellIdentifier)
+        tableView.register(DFPresetsScrollTableViewCell.self, forCellReuseIdentifier: presetsScrollCellIdentifier)
+        tableView.register(DFPresetsInfoTableViewCell.self, forCellReuseIdentifier: presestInfoCellIdentifier)
+
         tableView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(tableView)
         
         let contentInsets = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
         tableView.contentInset = contentInsets
-        
+
         tableView.snp.makeConstraints { make in
             make.top.equalTo(navigationBar.snp.bottom)
             make.left.right.bottom.equalTo(0)
@@ -138,9 +170,54 @@ class DFStylizedSettting: UIViewController {
     }
     
     @objc private func rightAction() {
-        dataService.saveStylizedSettingConfig(self.stylizedSettingConfig)
+        updateStylizedSettingConfig()
+        saveStylizedSettingConfig()
+        
         self.delegate?.saveStylizedSetting(setting: self)
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    private func updateStylizedSettingConfig() {
+        stylizedSettingConfig.preset = currentPreset.title
+        stylizedSettingConfig.style = currentStyle.title
+        stylizedSettingConfig.prompt = currentPreset.content
+        stylizedSettingConfig.strength = currentPreset.strengthDefaultValue
+        stylizedSettingConfig.superFrameFactor = currentPreset.superFrameDefaultValue
+        stylizedSettingConfig.face_mode = currentPreset.faceMode
+        stylizedSettingConfig.server = currentServer.server
+    }
+    
+    private func synchronizeCustomPresetsData() {
+        currentPreset.content = stylizedSettingConfig.prompt
+        currentStyle.title = stylizedSettingConfig.style
+        currentPreset.strengthDefaultValue = stylizedSettingConfig.strength
+        currentPreset.superFrameDefaultValue = stylizedSettingConfig.superFrameFactor
+        currentPreset.faceMode = stylizedSettingConfig.face_mode
+        currentPreset.defaultStyleIndex = dataService.styles.firstIndex(where: { $0.title == stylizedSettingConfig.style }) ?? 0
+    }
+    
+    private func saveStylizedSettingConfig() {
+        DFStylizedDataService.saveStylizedSettingConfig(stylizedSettingConfig)
+    }
+    
+    private func showServerAlert() {
+        let alertController = UIAlertController(title: "", message: nil, preferredStyle: .actionSheet)
+        let selectionHandler: ((DreamFlowServer) -> Void) = { [weak self] item in
+            self?.currentServer = item
+            self?.tableView.reloadData()
+        }
+        
+        for option in dataService.servers {
+            let action = UIAlertAction(title: option.name, style: .default) { _ in
+                selectionHandler(option)
+            }
+            alertController.addAction(action)
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true)
     }
 }
 
@@ -150,72 +227,69 @@ extension DFStylizedSettting: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return 4
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = indexPath.row
         switch row {
-        case 0, 1:
+        case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: switchCellIdentifier, for: indexPath) as! DFSwitchTableViewCell
-            if row == 0 {
-                cell.setData(title: dataService.titles[row], state: self.stylizedSettingConfig.style_effect)
-                cell.switchHandler = { [weak self] state in
-                    self?.stylizedSettingConfig.style_effect = state
-                }
-            } else {
-                cell.setData(title: dataService.titles[row], state: self.stylizedSettingConfig.face_mode)
-                cell.switchHandler = { [weak self] state in
-                    self?.stylizedSettingConfig.face_mode = state
-                }
-                
-                if workerState == .loaded {
-                    cell.setUserInteractionEnabled(enabled: false)
-                }
-            }
+            cell.setData(title: dataService.titles[row], state: stylizedSettingConfig.style_effect)
             cell.selectionStyle = .none
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+            cell.switchHandler = { [weak self] state in
+                self?.stylizedSettingConfig.style_effect = state
+            }
+          
             return cell
-        case 2:
-            let cell = tableView.dequeueReusableCell(withIdentifier: strengthCellIdentifier, for: indexPath) as! DFStrengthTableViewCell
-            cell.setData(title: dataService.titles[row], sliderValue: self.stylizedSettingConfig.strength)
+            
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: arrowCellIdentifier, for: indexPath) as! DFArrowTableViewCell
             cell.selectionStyle = .none
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-            cell.sliderHandler = { [weak self] value in
-                self?.stylizedSettingConfig.strength = value
-            }
-            if workerState == .loaded {
-                cell.setUserInteractionEnabled(enabled: false)
-            }
-            return cell
-        case 3:
-            let cell = tableView.dequeueReusableCell(withIdentifier: horizontalScrollCellIdentifier, for: indexPath) as! DFHorizontalScrollTableViewCell
-            cell.setData(with: dataService.titles[row], items: dataService.styles, selectedItem: defaultStyle)
-            cell.selectionStyle = .none
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-            cell.styleHandler = { [weak self] selItem in
-                self?.stylizedSettingConfig.style = selItem.title
-                self?.defaultStyle = selItem
-            }
-            if workerState == .loaded {
-                cell.setUserInteractionEnabled(enabled: false)
-            }
-            return cell
-        case 4:
-            let cell = tableView.dequeueReusableCell(withIdentifier: textViewCellIdentifier, for: indexPath) as! DFTextViewTableViewCell
-            cell.setData(with: dataService.titles[row], items: dataService.effects, selectedItem: defaultEffect)
-            cell.selectionStyle = .none
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-            cell.effectHandler = { [weak self] selItem in
-                self?.stylizedSettingConfig.effect = selItem.title
-                self?.stylizedSettingConfig.prompt = selItem.content
-                self?.defaultEffect = selItem
-            }
-            cell.inputHandler = { [weak self] content in
-                self?.stylizedSettingConfig.prompt = content
+            cell.setData(title: "df_server_title".show_localized, content: currentServer.name)
+            cell.serverHandler = { [weak self] in
+                self?.showServerAlert()
             }
             
             return cell
+            
+        case 2:
+            let cell = tableView.dequeueReusableCell(withIdentifier: presetsScrollCellIdentifier, for: indexPath) as! DFPresetsScrollTableViewCell
+            cell.setData(with: dataService.titles[row], items: dataService.Presets, selectedItem: currentPreset)
+            cell.selectionStyle = .none
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+            cell.effectSelectHandler = { [weak self] selItem in
+                self?.currentPreset = selItem
+                self?.tableView.reloadData()
+            }
+            
+            return cell
+            
+        case 3:
+            let cell = tableView.dequeueReusableCell(withIdentifier: presestInfoCellIdentifier, for: indexPath) as! DFPresetsInfoTableViewCell
+            cell.setData(preset: self.currentPreset, styles: dataService.styles)
+            cell.selectionStyle = .none
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+            cell.strengthSliderHandler = { [weak self] value in
+                self?.currentPreset.strengthDefaultValue = value
+            }
+            cell.superFrameSliderHandler = { [weak self] value in
+                self?.currentPreset.superFrameDefaultValue = Int(value)
+            }
+            cell.styleSelectHandler = { [weak self] selItem in
+                self?.currentStyle = selItem
+            }
+            cell.switchHandler = { [weak self] state in
+                self?.currentPreset.faceMode = state
+            }
+            cell.inputHandler = { [weak self] customPrompts in
+                self?.currentPreset.content = customPrompts
+            }
+            
+            return cell
+            
         default:
             return UITableViewCell()
         }

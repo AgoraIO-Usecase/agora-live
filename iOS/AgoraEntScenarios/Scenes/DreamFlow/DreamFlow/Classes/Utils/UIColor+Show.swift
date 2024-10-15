@@ -124,4 +124,12 @@ extension UIColor {
     @objc static var show_end_bg: UIColor {
         return UIColor(hex: "141650", alpha: 1)
     }
+    
+    @objc static var dream_flow_border: UIColor {
+        return UIColor(hex: "F2F4F7", alpha: 1)
+    }
+    
+    @objc static var dream_flow_line: UIColor {
+        return UIColor(hex: "F6F6F6", alpha: 1)
+    }
 }

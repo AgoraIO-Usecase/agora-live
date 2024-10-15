@@ -10,14 +10,19 @@ import Foundation
 class DFStylizedDataService {
     let titles = [
         "Stylized Effect",
-        "Face Mode",
-        "Strength",
-        "Style",
-        "Effect"
+        "Server",
+        "Presets"
+    ]
+    
+    let servers = [
+        DreamFlowServer(name: "Server 1", server: "http://175.121.93.70:40743"),
+        DreamFlowServer(name: "Server 2", server: "http://175.121.93.70:50249"),
+        DreamFlowServer(name: "Server 3", server: "http://104.15.30.249:49327"),
+        DreamFlowServer(name: "Server 4", server: "http://66.114.112.70:55587")
     ]
     
     let styles: [DFStylizedSettingItem] = [
-        DFStylizedSettingItem(title: "Toonyou",
+        DFStylizedSettingItem(title: "toonyou",
                               imageName: "dream_flow_toonyou",
                               content: "Toonyou"),
         DFStylizedSettingItem(title: "Miyazaki",
@@ -27,37 +32,57 @@ class DFStylizedDataService {
                               imageName: "dream_flow_sexytoon",
                               content: "Sexytoon"),
         DFStylizedSettingItem(title: "Clay",
-                              imageName: "show_flow_clay",
-                              content: "Clay")
+                              imageName: "dream_flow_caly",
+                              content: "Clay"),
+        DFStylizedSettingItem(title: "Fantasy",
+                              imageName: "dream_flow_fantasy",
+                              content: "Fantasy")
     ]
     
-    let effects: [DFStylizedSettingItem] = [
-        DFStylizedSettingItem(title: "Cartoon",
-                              imageName: "dream_flow_cartoon",
-                              content: "WesternAnimeLike, ((1boy, solo, male focus)), ((cowboy shot)), military uniform, black eyes, closed mouth, grey hair, grey jacket, grey shirt, hair between eyes, jacket, looking at viewer, multicolored hair, red pupils, short hair, simple background, smile, solo, two-tone hair, white background, [CHAR-M Genshin Impact Alhaitham] ((perfect face)), very deep eyes, (cinematic lighting), detailed eyes, best quality, bishoujo, sidelight, highres, (intricate details)"),
-        DFStylizedSettingItem(title: "Joker",
-                              imageName: "dream_flow_joker",
-                              content: "upper body,((glossy eyes)),(masterpiece, best quality:1.4)best quality, high detail, (detailed face), detailed eyes, (beautiful, aesthetic, perfect, delicate, intricate:1.0), joker painting of a man with green hair and a yellow jacket, digital art by Nicholas Marsicano, reddit, digital art, portrait of joker, portrait of the joker, portrait of a joker, the joker, joker, from joker (2019),  film still of the joker,"),
-        DFStylizedSettingItem(title: "Elf",
-                              imageName: "dream_flow_elf",
-                              content: "(masterpiece, best quality), 1girl, solo, elf, green curvy hairs, mist, sundress, forest, sitting, in water, waterfall, looking at viewer, blurry foreground, dappled sunlight, moss, (intricate, lotus, mushroom)"),
-        DFStylizedSettingItem(title: "Cyberpunk",
-                              imageName: "dream_flow_cybe",
-                              content: "cyberpunk, skyscraper, (bokeh, best quality, masterpiece, highres_1) 1girl, purple hair, ((purple eyeshadow)), emo_hairstyle"),
-        DFStylizedSettingItem(title: "Art",
-                              imageName: "dream_flow_art",
-                              content: "bare shoulders, close-up shot, 35mm, masterpiece, best quality, highly detailed, 1girl, white hair, long hair, long white-haired female wearing a white hoodie, digital art"),
-        DFStylizedSettingItem(title: "Customized",
-                              imageName: "dream_flow_custom",
-                              content: "bare shoulders, close-up shot, 35mm, masterpiece, best quality, highly detailed, 1girl, white hair, long hair, long white-haired female wearing a white hoodie, digital art")
+    let Presets: [DFPresetSettingItem] = [
+        DFPresetSettingItem(title: "Cartoons Full",
+                            imageName: "dream_flow_cartoons_full",
+                            content: "best quality",
+                            faceMode: false,
+                            strengthDefaultValue: 0.4),
+        DFPresetSettingItem(title: "Clay Full",
+                            imageName: "dream_flow_clay_full",
+                            content: "Claymation, best quality",
+                            faceMode: false,
+                            strengthDefaultValue: 0.5,
+                            styleIndex: 3),
+        DFPresetSettingItem(title: "Anime",
+                            imageName: "dream_flow_anime",
+                            content: "anime, cute",
+                            faceMode: true,
+                            strengthDefaultValue: 0.5,
+                            styleIndex: 1),
+        DFPresetSettingItem(title: "3D",
+                            imageName: "dream_flow_3D",
+                            content: "elf, green hair",
+                            faceMode: true,
+                            strengthDefaultValue: 0.6,
+                            styleIndex: 2),
+        DFPresetSettingItem(title: "Joker",
+                            imageName: "dream_flow_joker",
+                            content: "Joker, pale face",
+                            faceMode: true,
+                            strengthDefaultValue: 0.8,
+                            styleIndex: 4),
+        DFPresetSettingItem(title: "Customized",
+                            imageName: "dream_flow_custom",
+                            content: "best quality",
+                            faceMode: false,
+                            strengthDefaultValue: 0.4,
+                            isCustom: true)
     ]
     
     
-    func saveStylizedSettingConfig(_ config: DFStylizedSettingConfig) {
+    static func saveStylizedSettingConfig(_ config: DFStylizedSettingConfig) {
         UserDefaults.standard.saveStylizedSettingConfig(config)
     }
     
-    func loadStylizedSettingConfig() -> DFStylizedSettingConfig? {
+    static func loadStylizedSettingConfig() -> DFStylizedSettingConfig? {
         return UserDefaults.standard.loadStylizedSettingConfig()
     }
 }

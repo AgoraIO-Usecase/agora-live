@@ -23,9 +23,9 @@ protocol ShowLiveViewControllerDelegate: NSObjectProtocol {
 
 class ShowLiveViewController: UIViewController {
     private var timer: Timer?
-    private var countDownNumber = 120
     private var isJoined = false
-    
+    private var videoWidth = 720
+    private var videoHeight = 1280
     weak var delegate: ShowLiveViewControllerDelegate?
     let dreamFlowService: DreamFlowService = DreamFlowService()
     var onClickDislikeClosure: (() -> Void)?
@@ -163,6 +163,8 @@ class ShowLiveViewController: UIViewController {
             setupLocalView()
             AgoraEntAuthorizedManager.checkMediaAuthorized(parent: self)
         }
+        
+        joinChannel()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -200,51 +202,66 @@ class ShowLiveViewController: UIViewController {
     }
     
     private func startTimer() {
-        if isJoined {
-            return
-        }
-        
         if timer == nil {
-            timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateCountdown), userInfo: nil, repeats: true)
+            timer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(updateCountdown), userInfo: nil, repeats: true)
         }
     }
     
     private func showProgressView() {
-        var currentProgress = 0.0
-        var totalProgress = 120.0
-        progressView = DFProgressView.show(in: self.view, totalProgress: totalProgress)
+        progressView = DFProgressView.show(in: self.view)
     }
     
     private func hideProgressView() {
         DFProgressView.hide(from: self.view)
     }
     
+    private func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    private func updateViewState() {
+        stopTimer()
+        self.updateStylizedButton()
+        self.hideProgressView()
+    }
+    
     @objc private func updateCountdown() {
-        if countDownNumber > 0 {
-            print("-----count down: \(countDownNumber)")
-            countDownNumber -= 1
-            if let progressView = progressView {
-                let total = progressView.totalProgress
-                progressView.currentProgress = total - CGFloat(countDownNumber);
+        guard let workId = dreamFlowService.responseModel?.id else {
+            stopTimer()
+            return
+        }
+        
+        dreamFlowService.queryWorker(workerId: workId) { [weak self] error, res in
+            if error != nil {
+                ToastView.showWait(text: "\(error?.localizedDescription)")
+                self?.updateViewState()
+                return
             }
-        } else {
-            timer?.invalidate()
-            timer = nil
-            countDownNumber = 120
-            dreamFlowService.workState = .loaded
-            updateStylizedButton()
-            hideProgressView()
-            joinChannel()
+            
+            if let state = res, state == "start_success" {
+                self?.dreamFlowService.workState = .running
+                self?.updateViewState()
+            }
         }
     }
     
     private func createWorker(stylizedConfig: DFStylizedSettingConfig) {
         guard let channelId = room?.roomId else { return }
         currentChannelId = channelId
-        
         dreamFlowService.creatWork(channelName: currentChannelId ?? "", stylizedConfig: stylizedConfig) { [weak self] error, res in
             if error != nil {
                 ToastView.show(text: "Failed to save the settings: \(error?.localizedDescription)")
+                return
+            }
+            
+            guard let state = res else {
+                ToastView.show(text: "Failed to save the settings: \(error?.localizedDescription)")
+                return
+            }
+            
+            if state == .failed {
+                ToastView.show(text: "Failed to initialize: \(error?.localizedDescription)")
                 return
             }
             
@@ -253,9 +270,9 @@ class ShowLiveViewController: UIViewController {
             
             self?.liveView.blurGusetCanvas = false
             if res == .initialize {
-                self?.startTimer()
-            } else {
-                self?.joinChannel()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                    self?.startTimer()
+                }
             }
             
             self?.updateStylizedButton()
@@ -290,6 +307,10 @@ class ShowLiveViewController: UIViewController {
     }
     
     private func deleteAllWork() {
+        if let settingConfig = DFStylizedDataService.loadStylizedSettingConfig() {
+            dreamFlowService.server = settingConfig.server
+        }
+        
         dreamFlowService.deleteAllWorker { error, res in
             print("")
         }
@@ -301,14 +322,16 @@ class ShowLiveViewController: UIViewController {
         case .initialize:
             self.liveView.bottomBar.beautyButton.isHidden = true
             break
-        case .loaded, .unload:
+        case .running, .unload, .failed:
             self.liveView.bottomBar.beautyButton.isHidden = false
             break
         }
     }
     
     func leaveRoom(){
+        stopTimer()
         deleteWorker()
+        
         AgoraEntLog.autoUploadLog(scene: ShowLogger.kLogKey)
         ShowAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
         ShowAgoraKitManager.shared.cleanCapture()
@@ -326,7 +349,7 @@ class ShowLiveViewController: UIViewController {
             return
         }
         currentChannelId = channelId
-        
+        ShowAgoraKitManager.shared.setVideoDimensions(CGSize(width: videoWidth, height: videoHeight))
         ShowAgoraKitManager.shared.joinChannelEx(currentChannelId: currentChannelId ?? "",
                                                  targetChannelId: currentChannelId ?? "",
                                                  ownerId: uid,
@@ -537,10 +560,12 @@ extension ShowLiveViewController: AgoraRtcEngineDelegate {
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
         isJoined = true
+        print("--------join channel success")
         ShowLogger.info("rtcEngine didJoinChannel \(channel) with uid \(uid) elapsed \(elapsed)ms")
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
+        print("--------worker joined")
         ShowLogger.info("rtcEngine didJoinedOfUid \(uid) channelId: \(roomId)", context: kShowLogBaseContext)
     }
 
@@ -700,6 +725,11 @@ extension ShowLiveViewController: ShowReceiveFinishViewDelegate {
 extension ShowLiveViewController: DFStylizedSetttingDelegate {
     func saveStylizedSetting(setting: DFStylizedSettting) {
         let config = setting.stylizedSettingConfig
+        config.videHeight = videoHeight
+        config.videoWidth = videoWidth
+        
+        dreamFlowService.server = config.server
+
         let workerState = setting.workerState
 
         //初始化worker
@@ -709,7 +739,7 @@ extension ShowLiveViewController: DFStylizedSetttingDelegate {
         }
         
         //检查更新worker
-        if config.style_effect, workerState == .loaded {
+        if config.style_effect, workerState == .running {
             guard let currentConfig = dreamFlowService.currentConfig else { return }
             let currentPrompt = currentConfig.prompt
             
@@ -720,7 +750,7 @@ extension ShowLiveViewController: DFStylizedSetttingDelegate {
         }
         
         //删除worker
-        if !config.style_effect, workerState == .loaded {
+        if !config.style_effect, workerState == .running {
             deleteWorker()
         }
     }
