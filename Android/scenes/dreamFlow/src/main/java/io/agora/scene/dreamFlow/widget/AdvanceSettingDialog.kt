@@ -414,7 +414,7 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
     ) {
         binding.root.isVisible = itemInVisibleMap[itemId]?.not() ?: true
         binding.tvTitle.text = context.getString(title)
-        binding.ivTip.setOnClickListener {
+        binding.ivTips.setOnClickListener {
             ToastDialog(context).showTip(context.getString(tip))
         }
         if (itemShowTextMap[itemId] == true) {

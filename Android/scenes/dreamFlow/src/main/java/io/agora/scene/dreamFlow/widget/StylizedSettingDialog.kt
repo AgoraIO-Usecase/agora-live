@@ -12,7 +12,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
@@ -23,11 +22,10 @@ import io.agora.scene.base.utils.dp
 import io.agora.scene.dreamFlow.R
 import io.agora.scene.dreamFlow.VideoSetting
 import io.agora.scene.dreamFlow.databinding.DreamFlowItemAiEffectBinding
-import io.agora.scene.dreamFlow.databinding.DreamFlowSettingAdvanceItemSwitchBinding
 import io.agora.scene.dreamFlow.databinding.DreamFlowSettingDialogBinding
 import io.agora.scene.dreamFlow.service.DreamFlowService
 
-data class StyleBean constructor(
+data class ItemBean constructor(
     var id: Int,
     var audioEffect: Int,
     @field:DrawableRes var resId: Int,
@@ -36,8 +34,8 @@ data class StyleBean constructor(
 )
 
 class StyleHolder constructor(mBinding: DreamFlowItemAiEffectBinding) :
-    BaseRecyclerViewAdapter.BaseViewHolder<DreamFlowItemAiEffectBinding, StyleBean>(mBinding) {
-    override fun binding(data: StyleBean?, selectedIndex: Int) {
+    BaseRecyclerViewAdapter.BaseViewHolder<DreamFlowItemAiEffectBinding, ItemBean>(mBinding) {
+    override fun binding(data: ItemBean?, selectedIndex: Int) {
         data ?: return
         mBinding.ivBg.setImageResource(data.resId)
         mBinding.tvTitle.text = data.title
@@ -50,60 +48,175 @@ class StylizedSettingDialog constructor(
     private val service: DreamFlowService
 ) : BottomFullDialog(context) {
 
-    companion object {
+    private val mBinding by lazy { DreamFlowSettingDialogBinding.inflate(LayoutInflater.from(context)) }
 
-        private const val ITEM_ID_SWITCH_BASE = 0x00000001
-
-        const val ITEM_ID_SWITCH_STYLIZED = ITEM_ID_SWITCH_BASE + 1
-
-        const val ITEM_ID_SWITCH_FACE_MODE = ITEM_ID_SWITCH_BASE + 2
-
-        const val ITEM_ID_SELECTOR_STYLE = ITEM_ID_SWITCH_BASE + 3
-
-        const val ITEM_ID_SELECTOR_EFFECT = ITEM_ID_SWITCH_BASE + 4
-
-    }
-
-    /**
-     * M binding
-     */
-    private val mBinding by lazy {
-        DreamFlowSettingDialogBinding.inflate(
-            LayoutInflater.from(
-                context
-            )
-        )
-    }
-
-    /**
-     * Default item values
-     */
-    private val defaultItemValues = mutableMapOf<Int, Int>().apply {
-        put(
-            ITEM_ID_SWITCH_STYLIZED,
-            VideoSetting.getCurrAudienceSetting().video.SR.value
-        )
-    }
-
-    private var mStyleAdapter: BaseRecyclerViewAdapter<DreamFlowItemAiEffectBinding, StyleBean, StyleHolder>? =
+    private var mStyleAdapter: BaseRecyclerViewAdapter<DreamFlowItemAiEffectBinding, ItemBean, StyleHolder>? =
         null
 
-    private var mEffectAdapter: BaseRecyclerViewAdapter<DreamFlowItemAiEffectBinding, StyleBean, StyleHolder>? =
+    private var mEffectAdapter: BaseRecyclerViewAdapter<DreamFlowItemAiEffectBinding, ItemBean, StyleHolder>? =
         null
-
 
     init {
         setContentView(mBinding.root)
+        if (service.currentSetting == null) {
+            service.selectedPreset = 0
+            service.currentSetting = getPresets().firstOrNull()?.getPreset()
+        }
+        setupView()
+        setupPresetAdapter()
+        setupStyleAdapter()
+        // setup data
+        mBinding.stylizedEffect.switchCompat.isChecked = service.isEffectOn
+        service.currentSetting?.let {
+            setupWithSetting(it)
+        }
+    }
 
+    private fun setupWithSetting(bean: DreamFlowService.SettingBean) {
+        mBinding.FaceMode.switchCompat.isChecked = bean.isFaceModeOn
+        mBinding.Strength.apply {
+            val value = bean.strength
+            sbProgress.progress = (value * 100).toInt()
+            tvSeekBarValue.text = String.format("%.1f", value)
+        }
+        mBinding.superFrame.apply {
+            val value = bean.superFrame
+            sbProgress.progress = value * 100
+            tvSeekBarValue.text = String.format("%.1f", value.toFloat())
+        }
+        val styleIndex = getStyles().indexOfFirst { it == bean.style }
+        mStyleAdapter?.let { adapter ->
+            val list = adapter.dataList
+            for (i in adapter.dataList.indices) {
+                val selected = i == styleIndex
+                if (list[i].isSelect != selected) {
+                    list[i].isSelect = selected
+                    adapter.notifyItemChanged(i)
+                }
+            }
+        }
+        mBinding.etDreamFlowPrompt.setText(bean.prompt)
+        if (getPresets()[service.selectedPreset] == PresetTypes.Customized) {
+            mBinding.vCustomMask.visibility = View.GONE
+        } else {
+            mBinding.vCustomMask.visibility = View.VISIBLE
+        }
+        if (service.isEffectOn) {
+            mBinding.vOnMask.visibility = View.VISIBLE
+        } else {
+            mBinding.vOnMask.visibility = View.GONE
+        }
+    }
+
+    private fun onClickSave() {
+        val styleIndex = mStyleAdapter?.dataList?.indexOfFirst { it.isSelect } ?: 0
+        val style = getStyles()[styleIndex]
+        val bean = DreamFlowService.SettingBean(
+            mBinding.FaceMode.switchCompat.isChecked,
+            mBinding.Strength.sbProgress.progress * 0.01f,
+            (mBinding.superFrame.sbProgress.progress * 0.01f).toInt(),
+            style,
+            mBinding.etDreamFlowPrompt.text.toString()
+        )
+        addLoadingView()
+        service.save(
+            mBinding.stylizedEffect.switchCompat.isChecked,
+            bean, {
+            // succeed
+            hideLoadingView()
+            dismiss()
+        }, { e ->
+            // failure
+            hideLoadingView()
+            ToastUtils.showToast(e?.message ?: "error")
+        })
+    }
+
+    private fun onClickServer() {
+        val serverList = DreamFlowService.ServerType.values()
+        val titles = serverList.map { it.title() }
+        BottomLightListDialog(context).apply {
+            setTitle(context.getString(R.string.dream_flow_setting_service))
+            setListData(titles)
+            setOnSelectedChangedListener { dialog, index ->
+                service.server = serverList[index]
+                mBinding.itemService.tvDetailInfo.text = service.server.title()
+                dialog.dismiss()
+            }
+            show()
+        }
+    }
+
+    private fun setupView() {
         mBinding.ivBack.setOnClickListener {
             dismiss()
         }
-        setupSwitchItem(ITEM_ID_SWITCH_STYLIZED, mBinding.stylizedEffect, R.string.dream_flow_setting_stylized, R.string.dream_flow_setting_stylized)
-        setupSwitchItem(ITEM_ID_SWITCH_FACE_MODE, mBinding.FaceMode, R.string.dream_flow_setting_effect, R.string.dream_flow_setting_effect)
-        setupStrength()
-        setupVoiceEffectAdapter()
-        setupStyleAdapter()
-        mBinding.etDreamFlowDescribe.setOnFocusChangeListener { v, hasFocus ->
+        mBinding.tvDreamFlowSave.setOnClickListener {
+            onClickSave()
+        }
+        mBinding.vCustomMask.setOnClickListener {
+        }
+        mBinding.vOnMask.setOnClickListener {
+        }
+        mBinding.stylizedEffect.apply {
+            tvTitle.text = context.getString(R.string.dream_flow_setting_stylized)
+            ivTips.isVisible = false
+            switchCompat.setOnCheckedChangeListener(null)
+            switchCompat.isChecked = VideoSetting.getCurrAudienceEnhanceSwitch()
+            switchCompat.setOnCheckedChangeListener { btn, isChecked ->
+            }
+        }
+        mBinding.itemService.apply {
+            tvTitle.text = context.getString(R.string.dream_flow_setting_service)
+            tvDetailInfo.text = service.server.title()
+            root.setOnClickListener {
+                onClickServer()
+            }
+        }
+        mBinding.FaceMode.apply {
+            tvTitle.text = context.getString(R.string.dream_flow_setting_effect)
+            ivTips.isVisible = false
+            switchCompat.setOnCheckedChangeListener(null)
+            switchCompat.isChecked = VideoSetting.getCurrAudienceEnhanceSwitch()
+            switchCompat.setOnCheckedChangeListener { btn, isChecked ->
+            }
+        }
+        // Strength
+        mBinding.Strength.apply {
+            tvTitle.text = context.resources.getString(R.string.dream_flow_setting_strength_title)
+            val value = 0.2
+            tvSeekBarValue.text = String.format("%.1f", value)
+            sbProgress.max = 1 * 100
+            tvSeekBarMax.text = "1.0"
+            sbProgress.progress = (value * 100).toInt()
+            sbProgress.setOnSeekBarChangeListener(object: OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    tvSeekBarValue.text = String.format("%.1f", (progress * 0.01))
+                }
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                }
+            })
+        }
+        // superFrame
+        mBinding.superFrame.apply {
+            tvTitle.text = context.resources.getString(R.string.dream_flow_setting_frame_title)
+            val value = 1
+            tvSeekBarValue.text = String.format("%d.0", value)
+            sbProgress.max = 2 * 100
+            tvSeekBarMax.text = "2.0"
+            sbProgress.progress = value * 200
+            sbProgress.setOnSeekBarChangeListener(object: OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    tvSeekBarValue.text = String.format("%d.0", (progress * 0.01).toInt())
+                }
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                }
+            })
+        }
+        // prompt
+        mBinding.etDreamFlowPrompt.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 val layoutParams = mBinding.vDreamFlowSettingBottom.layoutParams
                 layoutParams?.height = 300.dp.toInt()
@@ -135,147 +248,30 @@ class StylizedSettingDialog constructor(
                     val currentWindowHeight = Rect().apply { window.decorView.getWindowVisibleDisplayFrame(this) }.height()
                     if (currentWindowHeight < initialWindowHeight) {
                     } else {
-                        mBinding.etDreamFlowDescribe.clearFocus()
+                        mBinding.etDreamFlowPrompt.clearFocus()
                     }
                 }, 300)
-            }
-        }
-        mBinding.tvDreamFlowSave.setOnClickListener {
-            onClickSave()
-        }
-        setupWithSetting()
-        // setting mask view
-        mBinding.vDreamFlowMask.setOnClickListener {  }
-        if (service.status == DreamFlowService.ServiceStatus.IDLE) {
-            mBinding.vDreamFlowMask.visibility = View.INVISIBLE
-        } else {
-            mBinding.vDreamFlowMask.visibility = View.VISIBLE
-        }
-    }
-
-    private fun setupWithSetting() {
-        val bean = service.currentSetting
-        mBinding.stylizedEffect.switchCompat.isChecked = bean.isEffectOn
-        mBinding.FaceMode.switchCompat.isChecked = bean.isFaceModeOn
-        mBinding.Strength.sbProgress.progress = (bean.strength * 100).toInt()
-        mStyleAdapter?.let { adapter ->
-            val list = adapter.dataList
-            for (i in adapter.dataList.indices) {
-                if (list[i].title == bean.style) {
-                    list[i].isSelect = true
-                    adapter.notifyItemChanged(i)
-                }
-            }
-        }
-        mEffectAdapter?.let { adapter ->
-            var i = 0
-            if (bean.effect != null) {
-                i = bean.effect ?: 0
-            }
-            adapter.dataList[i].isSelect = true
-            adapter.notifyItemChanged(i)
-            val effectPrompts = context.resources.getStringArray(R.array.dream_flow_effect)
-            mBinding.etDreamFlowDescribe.setText(effectPrompts[i])
-        }
-    }
-
-    private fun onClickSave() {
-        val bean = DreamFlowService.SettingBean(
-            mBinding.stylizedEffect.switchCompat.isChecked,
-            mBinding.FaceMode.switchCompat.isChecked,
-            mBinding.Strength.sbProgress.progress * 0.01f,
-            mStyleAdapter?.dataList?.firstOrNull { it.isSelect }?.title ?: "",
-            mEffectAdapter?.dataList?.indexOfFirst { it.isSelect },
-            mBinding.etDreamFlowDescribe.text.toString()
-        )
-        addLoadingView()
-        service.save(bean, {
-            // succeed
-            hideLoadingView()
-            dismiss()
-        }, { e ->
-            // failure
-            hideLoadingView()
-            ToastUtils.showToast(e?.message ?: "error")
-        })
-    }
-
-    /**
-     * Setup switch item
-     *
-     * @param itemId
-     * @param binding
-     * @param title
-     * @param tip
-     */
-    private fun setupSwitchItem(
-        itemId: Int,
-        binding: DreamFlowSettingAdvanceItemSwitchBinding,
-        @StringRes title: Int,
-        @StringRes tip: Int
-    ) {
-        binding.tvTitle.text = context.getString(title)
-        binding.ivTip.isVisible = tip != View.NO_ID
-        binding.ivTip.setOnClickListener {
-            ToastDialog(context).showTip(context.getString(tip))
-        }
-        binding.switchCompat.setOnCheckedChangeListener(null)
-        binding.switchCompat.isChecked = VideoSetting.getCurrAudienceEnhanceSwitch()
-        onSwitchChanged(itemId, binding.switchCompat.isChecked)
-        binding.switchCompat.setOnCheckedChangeListener { btn, isChecked ->
-            defaultItemValues[itemId] = if (isChecked) 1 else 0
-            onSwitchChanged(itemId, isChecked)
-        }
-    }
-
-
-    /**
-     * On switch changed
-     *
-     * @param itemId
-     * @param isChecked
-     */
-    private fun onSwitchChanged(itemId: Int, isChecked: Boolean) {
-        when (itemId) {
-            ITEM_ID_SWITCH_STYLIZED -> {
-
-            }
-            ITEM_ID_SWITCH_FACE_MODE -> {
-
             }
         }
     }
 
     private fun setupStyleAdapter() {
-        val stringArray = context.resources.getStringArray(R.array.dream_flow_style)
-        val list: MutableList<StyleBean> = ArrayList()
-        for (i in stringArray.indices) {
-            val drawable: Int = if (i == 0) {
-                R.drawable.dream_flow_style_0
-            } else if (i == 1) {
-                R.drawable.dream_flow_style_1
-            } else if (i == 2) {
-                R.drawable.dream_flow_style_2
-            } else {
-                R.drawable.dream_flow_style_3
-            }
-            list.add(StyleBean(i, 0, drawable, stringArray[i]))
+        val styles = getStyles()
+        val list: MutableList<ItemBean> = ArrayList()
+        for (i in styles.indices) {
+            val style = styles[i]
+            list.add(ItemBean(i, 0, style.getRes(), styles[i].getString()))
         }
-//        for (item in list) {
-//            item.isSelect = (mSetting.mAudioEffect == item.audioEffect)
-//        }
         mStyleAdapter =
             BaseRecyclerViewAdapter(
-                list, object : OnItemClickListener<StyleBean> {
-                    override fun onItemClick(data: StyleBean, view: View?, position: Int, viewType: Long) {
+                list, object : OnItemClickListener<ItemBean> {
+                    override fun onItemClick(data: ItemBean, view: View?, position: Int, viewType: Long) {
                         super.onItemClick(data, view, position, viewType)
-                        //Log.d(TAG, "onItemClick audio effect  $position")
                         mStyleAdapter?.apply {
                             for (i in list.indices) {
                                 list[i].isSelect = i == position
                                 notifyItemChanged(i)
                             }
-                            //mSetting.mAudioEffect = data.audioEffect
                         }
                     }
                 },
@@ -284,20 +280,17 @@ class StylizedSettingDialog constructor(
 
         mBinding.Style.recyclerView.adapter = mStyleAdapter
         mBinding.Style.tvTitle.text = context.resources.getString(R.string.dream_flow_setting_style_title)
-        val context = context ?: return
+        val context = context
         val itemDecoration = object : DividerItemDecoration(context, HORIZONTAL) {
             override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
                 val itemCount = state.itemCount
                 when (parent.getChildAdapterPosition(view)) {
                     0 -> { // first
-                        //outRect.left = 20.dp.toInt()
                         outRect.right = 10.dp.toInt()
                     }
-
                     itemCount - 1 -> { // last
                         outRect.right = 20.dp.toInt()
                     }
-
                     else -> {
                         outRect.right = 10.dp.toInt()
                     }
@@ -307,65 +300,30 @@ class StylizedSettingDialog constructor(
         mBinding.Style.recyclerView.addItemDecoration(itemDecoration)
     }
 
-
-    private fun setupStrength() {
-        mBinding.Strength.apply {
-            tvTitle.text = context.resources.getString(R.string.dream_flow_setting_strength_title)
-            val value = 0.2
-            tvSeekBarValue.text = String.format("%.1f", value)
-            sbProgress.max = 1 * 100
-            sbProgress.progress = (value * 100).toInt()
-            sbProgress.setOnSeekBarChangeListener(object: OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    tvSeekBarValue.text = String.format("%.1f", (progress * 0.01))
-                }
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
-                }
-            })
+    private fun setupPresetAdapter() {
+        val presets = getPresets()
+        val list: MutableList<ItemBean> = ArrayList()
+        for (i in presets.indices) {
+            val style = presets[i]
+            list.add(ItemBean(i, 0, style.getRes(), presets[i].getString()))
         }
-    }
-
-    // 音效
-    private fun setupVoiceEffectAdapter() {
-        val stringArray = context.resources.getStringArray(R.array.dream_flow_effect_title)
-        val list: MutableList<StyleBean> = ArrayList()
-        for (i in stringArray.indices) {
-            val drawable: Int = if (i == 0) {
-                R.drawable.dream_flow_effect_0
-            } else if (i == 1) {
-                R.drawable.dream_flow_effect_1
-            } else if (i == 2) {
-                R.drawable.dream_flow_effect_2
-            } else if (i == 3) {
-                R.drawable.dream_flow_effect_3
-            } else if (i == 4) {
-                R.drawable.dream_flow_effect_4
-            } else {
-                R.drawable.dream_flow_effect_5
-            }
-            //val audioEffect = mSetting.getEffectIndex(i)
-            list.add(StyleBean(i, 0, drawable, stringArray[i]))
-        }
-//        for (item in list) {
-//            item.isSelect = (mSetting.mAudioEffect == item.audioEffect)
-//        }
-
-        mEffectAdapter =
-            BaseRecyclerViewAdapter(
-                list, object : OnItemClickListener<StyleBean> {
-                    override fun onItemClick(data: StyleBean, view: View?, position: Int, viewType: Long) {
+        list[service.selectedPreset].isSelect = true
+        mEffectAdapter = BaseRecyclerViewAdapter(
+                list, object : OnItemClickListener<ItemBean> {
+                    override fun onItemClick(data: ItemBean, view: View?, position: Int, viewType: Long) {
                         super.onItemClick(data, view, position, viewType)
-                        //Log.d(TAG, "onItemClick audio effect  $position")
                         mEffectAdapter?.apply {
                             for (i in list.indices) {
-                                list[i].isSelect = i == position
-                                notifyItemChanged(i)
+                                val selected = (i == position)
+                                if (list[i].isSelect != selected) {
+                                    list[i].isSelect = selected
+                                    notifyItemChanged(i)
+                                }
                             }
                         }
-                        val effectPrompts = context.resources.getStringArray(R.array.dream_flow_effect)
-                        mBinding.etDreamFlowDescribe.setText(effectPrompts[position])
+                        service.selectedPreset = position
+                        val bean = getPresets()[position].getPreset()
+                        setupWithSetting(bean)
                     }
                 },
                 StyleHolder::class.java
@@ -421,6 +379,125 @@ class StylizedSettingDialog constructor(
         window?.apply {
             decorView.post {
                 loadingView?.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun getStyles(): List<DreamFlowService.Style> {
+        return listOf(
+            DreamFlowService.Style.Toonyou,
+            DreamFlowService.Style.Miyazaki,
+            DreamFlowService.Style.Sexytoon,
+            DreamFlowService.Style.Clay,
+            DreamFlowService.Style.Fantasy
+        )
+    }
+
+    private fun DreamFlowService.Style.getString(): String {
+        return when (this) {
+            DreamFlowService.Style.Toonyou -> "Toonyou"
+            DreamFlowService.Style.Miyazaki -> "Miyazaki"
+            DreamFlowService.Style.Sexytoon -> "Sexytoon"
+            DreamFlowService.Style.Clay -> "Clay"
+            DreamFlowService.Style.Fantasy -> "Fantasy"
+        }
+    }
+
+    private fun DreamFlowService.Style.getRes(): Int {
+        return when (this) {
+            DreamFlowService.Style.Toonyou -> R.drawable.dream_flow_style_toonyou
+            DreamFlowService.Style.Miyazaki -> R.drawable.dream_flow_style_miyazaki
+            DreamFlowService.Style.Sexytoon -> R.drawable.dream_flow_style_sexytoon
+            DreamFlowService.Style.Clay -> R.drawable.dream_flow_style_clay
+            DreamFlowService.Style.Fantasy -> R.drawable.dream_flow_style_fantasy
+        }
+    }
+
+    private fun getPresets(): List<PresetTypes> {
+        return listOf(
+            PresetTypes.CartoonsFull,
+            PresetTypes.ClayFull,
+            PresetTypes.Anime,
+            PresetTypes.Anime3D,
+            PresetTypes.Joker,
+            PresetTypes.Customized
+        )
+    }
+
+    enum class PresetTypes {
+        CartoonsFull,
+        ClayFull,
+        Anime,
+        Anime3D,
+        Joker,
+        Customized;
+
+        fun getString(): String {
+            return when (this) {
+                CartoonsFull -> "CartoonsFull"
+                ClayFull -> "ClayFull"
+                Anime -> "Anime"
+                Anime3D -> "3D"
+                Joker -> "Joker"
+                Customized -> "Customized"
+            }
+        }
+
+        fun getRes(): Int {
+            return when (this) {
+                CartoonsFull -> R.drawable.dream_flow_preset_cartoonsfull
+                ClayFull -> R.drawable.dream_flow_preset_clayfull
+                Anime -> R.drawable.dream_flow_preset_anime
+                Anime3D -> R.drawable.dream_flow_preset_3d
+                Joker -> R.drawable.dream_flow_preset_joker
+                Customized -> R.drawable.dream_flow_preset_customized
+            }
+        }
+
+        fun getPreset(): DreamFlowService.SettingBean {
+            return when (this) {
+                CartoonsFull -> DreamFlowService.SettingBean(
+                    false,
+                    0.4f,
+                    1,
+                    DreamFlowService.Style.Toonyou,
+                    "best quality"
+                )
+                ClayFull -> DreamFlowService.SettingBean(
+                    false,
+                    0.5f,
+                    1,
+                    DreamFlowService.Style.Miyazaki,
+                    "Claymation, best quality"
+                )
+                Anime -> DreamFlowService.SettingBean(
+                    true,
+                    0.5f,
+                    1,
+                    DreamFlowService.Style.Miyazaki,
+                    "anime, cute"
+                )
+                Anime3D -> DreamFlowService.SettingBean(
+                    true,
+                    0.6f,
+                    1,
+                    DreamFlowService.Style.Sexytoon,
+                    "3D, big eyes"
+                )
+                Joker -> DreamFlowService.SettingBean(
+                    true,
+                    0.8f,
+                    1,
+                    DreamFlowService.Style.Fantasy,
+                    "Joker, pale face"
+                )
+                Customized -> DreamFlowService.SettingBean(
+                    true,
+                    0.6f,
+                    1,
+                    DreamFlowService.Style.Toonyou,
+                    ""
+                )
             }
         }
     }

@@ -1,7 +1,10 @@
 package io.agora.scene.dreamFlow.service
 
 import android.util.Log
+import com.bumptech.glide.load.HttpException
 import io.agora.scene.base.BuildConfig
+import io.agora.scene.base.EntLogger
+import io.agora.scene.dreamFlow.DreamFlowLogger
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -9,9 +12,9 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.IOException
 
-class DreamFlowService(
-    private val domain: String,
+class DreamFlowService constructor(
     private val region: String,
     private val appId: String,
     private val channelName: String,
@@ -24,35 +27,80 @@ class DreamFlowService(
 
     private val tag = "DreamFlowServiceAPI"
 
+    var isEffectOn: Boolean = false
+
+    enum class ServerType {
+        Server1,
+        Server2,
+        Server3,
+        Server4;
+
+        fun host(): String {
+            return when(this) {
+                Server1 -> "http://175.121.93.70:40743"
+                Server2 -> "http://175.121.93.70:50249"
+                Server3 -> "http://104.15.30.249:49327"
+                Server4 -> "http://66.114.112.70:55587"
+            }
+        }
+
+        fun title(): String {
+            return when(this) {
+                Server1 -> "Server1"
+                Server2 -> "Server2"
+                Server3 -> "Server3"
+                Server4 -> "Server4"
+            }
+        }
+    }
+
+    enum class Style {
+        Toonyou,
+        Miyazaki,
+        Sexytoon,
+        Clay,
+        Fantasy;
+
+        fun serverString(): String {
+            return when(this) {
+                Toonyou -> "toonyou"
+                Miyazaki -> "Miyazaki"
+                Sexytoon -> "sexytoon"
+                Clay -> "Clay"
+                Fantasy -> "Fantasy"
+            }
+        }
+    }
+
     data class SettingBean constructor(
-        var isEffectOn: Boolean = false,
         var isFaceModeOn: Boolean = false,
         var strength: Float = 0.2f,
-        var style: String? = null,
-        var effect: Int? = null,
-        var prmopt: String = ""
+        var superFrame: Int = 1,
+        var style: Style? = Style.Toonyou,
+        var prompt: String = ""
     )
 
     enum class ServiceStatus(val value: String) {
         STARTING("starting"),
-        STARTED("started"),
-        IDLE("idle");
+        START_SUCCESS("start_success"),
+        STOPPED("stopped");
 
         companion object {
             private val map = values().associateBy { it.value }
 
             fun fromString(value: String): ServiceStatus {
-                return map[value] ?: IDLE
+                return map[value] ?: STOPPED
             }
         }
     }
 
-    var inRole: Int = 0
+    var server: ServerType = ServerType.Server2
 
-    var currentSetting: SettingBean = SettingBean()
-        private set
+    var selectedPreset: Int = 0
 
-    var status: ServiceStatus = ServiceStatus.IDLE
+    var currentSetting: SettingBean? = null
+
+    var status: ServiceStatus = ServiceStatus.STOPPED
         private set
 
     private var workerId: String = "b3a21856-88a8-4523-b553-cfaf14af5784"
@@ -75,15 +123,46 @@ class DreamFlowService(
         listener = null
     }
 
+    private var job: Job? = null
+    private fun startStateTimer() {
+        job?.cancel()
+        job = scope.launch(Dispatchers.Main) {
+            repeat(100) {
+
+                try {
+                    getStatus()
+                } catch (_: Exception) {
+                }
+                delay(2000)
+            }
+        }
+    }
+
+    private fun endStateTimer() {
+        job?.cancel()
+        job = null
+    }
+
     fun updateStarted() {
         updateProgress(100)
-        updateStatus(ServiceStatus.STARTED)
+        updateStatus(ServiceStatus.START_SUCCESS)
     }
 
     private fun updateStatus(s: ServiceStatus) {
         if (status != s) {
             status = s
-            listener?.onStatusChanged(status)
+            when (status) {
+                ServiceStatus.STARTING -> {
+                    startStateTimer()
+                }
+                ServiceStatus.START_SUCCESS,
+                ServiceStatus.STOPPED -> {
+                    endStateTimer()
+                }
+            }
+            scope.launch(Dispatchers.Main) {
+                listener?.onStatusChanged(status)
+            }
         }
     }
 
@@ -93,41 +172,47 @@ class DreamFlowService(
         }
     }
 
-    fun save(settingBean: SettingBean,
+    fun save(effectOn: Boolean,
+             settingBean: SettingBean,
              success: () -> Unit,
              failure: ((Exception?) -> Unit)? = null) {
         scope.launch(Dispatchers.Main) {
+            isEffectOn = effectOn
             try {
-                if (settingBean.isEffectOn) {
+                if (isEffectOn) {
                     // turn effect on
                     if (status == ServiceStatus.STARTING ||
-                        status == ServiceStatus.STARTED) {
-                        update(settingBean)
+                        status == ServiceStatus.START_SUCCESS) {
                         currentSetting = settingBean
+                        update(settingBean)
                         success.invoke()
                     } else {
-                        val code = create(settingBean)
                         currentSetting = settingBean
+                        val code = create(settingBean)
                         success.invoke()
                         if (code == 0) {
                             updateStatus(ServiceStatus.STARTING)
                         } else {
-                            updateStatus(ServiceStatus.STARTED)
+                            updateStatus(ServiceStatus.START_SUCCESS)
                         }
                     }
                 } else {
                     // turn effect off
-                    if (status == ServiceStatus.STARTING ||
-                        status == ServiceStatus.STARTED) {
-                        delete(false)
-                        currentSetting = settingBean
-                        success.invoke()
-                        updateStatus(ServiceStatus.IDLE)
-                    } else {
-                        currentSetting = settingBean
-                        success.invoke()
-                        updateStatus(ServiceStatus.IDLE)
-                    }
+                    delete(false)
+                    currentSetting = settingBean
+                    success.invoke()
+                    updateStatus(ServiceStatus.STOPPED)
+//                    if (status == ServiceStatus.STARTING ||
+//                        status == ServiceStatus.STARTED) {
+//                        delete(false)
+//                        currentSetting = settingBean
+//                        success.invoke()
+//                        updateStatus(ServiceStatus.IDLE)
+//                    } else {
+//                        currentSetting = settingBean
+//                        success.invoke()
+//                        updateStatus(ServiceStatus.IDLE)
+//                    }
                 }
             } catch (e: Exception) {
                 failure?.invoke(e)
@@ -164,62 +249,29 @@ class DreamFlowService(
         }
     }
 
-    private fun update(
-        settingBean: SettingBean,
-        success: () -> Unit,
-        failure: ((Exception?) -> Unit)? = null
-    ) {
-        scope.launch(Dispatchers.Main) {
-            try {
-                update(settingBean)
-                success.invoke()
-            } catch (e: Exception) {
-                failure?.invoke(e)
-            }
-        }
-    }
-
-    fun getStatus(
-        success: () -> Unit,
-        failure: ((Exception?) -> Unit)? = null
-    ) {
-        scope.launch(Dispatchers.Main) {
-            try {
-                getStatus()
-                success.invoke()
-            } catch (e: Exception) {
-                failure?.invoke(e)
-            }
-        }
-    }
-
     private suspend fun create(settingBean: SettingBean) = withContext(Dispatchers.IO) {
         val postBody = JSONObject().apply {
             put("name", "agoralive")
+            put("style", settingBean.style?.serverString())
+            put("strength", settingBean.strength)
+            put("faceMode", settingBean.isFaceModeOn)
+            put("superFrameFactor", settingBean.superFrame)
             put("rtcConfigure", JSONObject().apply {
                 put("userids", JSONArray().apply {
                     put(JSONObject().apply {
                         put("inUid", inUid)
-                        put("inToken", appId)
                         put("inChannelName", channelName)
-                        put("inRole", inRole)
-                        put("inVideo", "")
                         put("genaiUid", genaiUid)
                         put("genaiToken", "")
-                        put("genaiChannelName", "")
-                        put("genaiRole", 0)
-                        put("genaiVideo", "")
-                        put("prompt", settingBean.prmopt)
+                        put("genaiVideoWidth", 720)
+                        put("genaiVideoHeight", 1280)
+                        put("prompt", settingBean.prompt)
                     })
                 })
             })
-            put("prompt", settingBean.prmopt)
-            put("style", settingBean.style)
-            put("strength", settingBean.strength)
-            put("face_mode", settingBean.isFaceModeOn)
         }
-
-        val request = Request.Builder().url("$domain/$region/v1/projects/$appId/stylize").
+        DreamFlowLogger.d(tag, "create, $postBody")
+        val request = Request.Builder().url("${server.host()}/$region/v1/projects/$appId/stylize").
         addHeader("Content-Type", "application/json").post(postBody.toString().toRequestBody()).build()
         val execute = okHttpClient.newCall(request).execute()
         if (execute.isSuccessful) {
@@ -245,10 +297,11 @@ class DreamFlowService(
     }
 
     private suspend fun delete(admin: Boolean) = withContext(Dispatchers.IO) {
+        DreamFlowLogger.d(tag, "delete, $workerId")
         val postBody = JSONObject().apply {
             put("admin", admin)
         }
-        val request = Request.Builder().url("$domain/$region/v1/projects/$appId/stylize/$workerId").
+        val request = Request.Builder().url("${server.host()}/$region/v1/projects/$appId/stylize/$workerId").
         addHeader("Content-Type", "application/json").delete(postBody.toString().toRequestBody()).build()
         val execute = okHttpClient.newCall(request).execute()
         if (execute.isSuccessful) {
@@ -269,29 +322,26 @@ class DreamFlowService(
     private suspend fun update(settingBean: SettingBean) = withContext(Dispatchers.IO) {
         val postBody = JSONObject().apply {
             put("name", "agoralive")
+            put("style", settingBean.style?.serverString())
+            put("strength", settingBean.strength)
+            put("faceMode", settingBean.isFaceModeOn)
+            put("superFrameFactor", settingBean.superFrame)
             put("rtcConfigure", JSONObject().apply {
                 put("userids", JSONArray().apply {
                     put(JSONObject().apply {
                         put("inUid", inUid)
-                        put("inToken", appId)
                         put("inChannelName", channelName)
-                        put("inRole", inRole)
-                        put("inVideo", "")
                         put("genaiUid", genaiUid)
                         put("genaiToken", "")
-                        put("genaiChannelName", "")
-                        put("genaiRole", 0)
-                        put("genaiVideo", "")
-                        put("prompt", settingBean.prmopt)
+                        put("genaiVideoWidth", 720)
+                        put("genaiVideoHeight", 1280)
+                        put("prompt", settingBean.prompt)
                     })
                 })
             })
-            put("prompt", settingBean.prmopt)
-            put("style", settingBean.style)
-            put("strength", settingBean.strength)
-            put("face_mode", settingBean.isFaceModeOn)
         }
-        val request = Request.Builder().url("$domain/$region/v1/projects/$appId/stylize/$workerId").
+        DreamFlowLogger.d(tag, "update, worker: $workerId, body: $postBody")
+        val request = Request.Builder().url("${server.host()}/$region/v1/projects/$appId/stylize/$workerId").
         addHeader("Content-Type", "application/json").patch(postBody.toString().toRequestBody()).build()
         val execute = okHttpClient.newCall(request).execute()
         if (execute.isSuccessful) {
@@ -309,7 +359,8 @@ class DreamFlowService(
     }
 
     private suspend fun getStatus() = withContext(Dispatchers.IO) {
-        val request = Request.Builder().url("$domain/$region/v1/projects/$appId/stylize/$workerId").
+        DreamFlowLogger.d(tag, "getStatus, worker: $workerId")
+        val request = Request.Builder().url("${server.host()}/$region/v1/projects/$appId/stylize/$workerId").
         addHeader("Content-Type", "application/json").get().build()
         val execute = okHttpClient.newCall(request).execute()
         if (execute.isSuccessful) {
@@ -319,7 +370,14 @@ class DreamFlowService(
             if (bodyJobj["code"] != 0) {
                 throw RuntimeException("error: ${execute.code} message: ${execute.message}")
             } else {
-                // TODO: Analysis status
+                val data = bodyJobj["data"] as JSONObject
+                val workerInfo = data.optJSONObject("workerInfo")
+                val stylize_ai = workerInfo?.optJSONObject("stylize_ai")
+                val stateStr = stylize_ai?.optString("state")
+                if (stateStr != null) {
+                    val status = ServiceStatus.fromString(stateStr)
+                    updateStatus(status)
+                }
             }
         } else {
             throw RuntimeException("error: ${execute.code} message: ${execute.message}")

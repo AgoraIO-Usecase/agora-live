@@ -120,7 +120,6 @@ class LiveDetailFragment : Fragment() {
 
     private val mDreamFlowService by lazy {
         DreamFlowService(
-            "http://104.15.30.249:49327",//BuildConfig.TOOLBOX_SERVER_HOST,
             "cn",
             BuildConfig.AGORA_APP_ID,
             mRoomId,
@@ -719,20 +718,13 @@ class LiveDetailFragment : Fragment() {
                         // show progress
                         mBinding.rlProgressContainer.visibility = View.VISIBLE
                         mBinding.bottomLayout.ivStylized.visibility = View.INVISIBLE
-                        val runnable = Runnable {
-                            mDreamFlowService.updateStarted()
-                        }
-                        handler.postDelayed(runnable, 2 * 60 * 1000)
-                        dreamFlowStartRunnable = runnable
                     }
-                    DreamFlowService.ServiceStatus.STARTED -> {
+                    DreamFlowService.ServiceStatus.START_SUCCESS -> {
                         // hide progress
                         mBinding.rlProgressContainer.visibility = View.GONE
                         mBinding.bottomLayout.ivStylized.visibility = View.VISIBLE
-                        // started: join channel
-                        joinChannelAndShowDreamFlow()
                     }
-                    DreamFlowService.ServiceStatus.IDLE -> {
+                    DreamFlowService.ServiceStatus.STOPPED -> {
                         // show empty
                         mBinding.rlProgressContainer.visibility = View.INVISIBLE
                         mBinding.bottomLayout.ivStylized.visibility = View.VISIBLE
@@ -749,9 +741,8 @@ class LiveDetailFragment : Fragment() {
             }
         })
     }
-    private val handler = Handler(Looper.getMainLooper())
-    private var dreamFlowStartRunnable: Runnable? = null
-    fun joinChannelAndShowDreamFlow() {
+
+    private fun joinChannelAndRenderDreamFlow() {
         eventListener?.let { joinChannel(it) }
 
         val textureView = TextureView(requireContext())
@@ -1007,13 +998,18 @@ class LiveDetailFragment : Fragment() {
                     )
                 }
             }
+
+//            override fun onFirstRemoteVideoFrame(uid: Int, width: Int, height: Int, elapsed: Int) {
+//                super.onFirstRemoteVideoFrame(uid, width, height, elapsed)
+//                if (uid == DreamFlowService.genaiUid) {
+//                    mDreamFlowService.updateStarted()
+//                }
+//            }
         }
 
         if (activity is LiveDetailActivity) {
             (activity as LiveDetailActivity).toggleSelfVideo(isRoomOwner, callback = {
-                if (!isRoomOwner) {
-                    eventListener?.let { joinChannel(it) }
-                }
+                joinChannelAndRenderDreamFlow()
                 initVideoView()
             })
             (activity as LiveDetailActivity).toggleSelfAudio(isRoomOwner, callback = {
@@ -1181,7 +1177,6 @@ class LiveDetailFragment : Fragment() {
             view = null
             mRtcEngine.setupLocalVideo(this)
             localVideoCanvas = null
-            dreamFlowStartRunnable?.let { handler.removeCallbacks(it) }
         }
     }
 }
