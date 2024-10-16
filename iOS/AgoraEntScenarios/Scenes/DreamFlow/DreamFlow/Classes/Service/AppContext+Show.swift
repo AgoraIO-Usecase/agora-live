@@ -19,7 +19,7 @@ private let kDebugModeKey = "kDebugModeKey"
 
 public class ShowLogger: NSObject {
     
-    public static let kLogKey = "Show"
+    public static let kLogKey = "Dream"
     
     public static func info(_ text: String, context: String? = nil) {
         agoraDoMainThreadTask {

@@ -33,7 +33,7 @@ class DFStylizedSettting: UIViewController {
     }()
     
     private lazy var currentServer: DreamFlowServer = {
-        dataService.servers[0]
+        dataService.servers[1]
     }()
     
     private lazy var dataService: DFStylizedDataService = {
@@ -106,7 +106,7 @@ class DFStylizedSettting: UIViewController {
         }
         
         if currentServer == nil {
-            currentServer = dataService.servers[0]
+            currentServer = dataService.servers[1]
         }
     }
     

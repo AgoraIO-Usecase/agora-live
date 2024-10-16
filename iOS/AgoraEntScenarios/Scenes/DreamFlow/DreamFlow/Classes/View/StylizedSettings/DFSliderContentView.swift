@@ -88,7 +88,7 @@ class DFSliderContentView: UIView {
         slider.maximumValue = max
         slider.value = sliderValue
         sliderValueLabel.text = "\(sliderValue)"
-        sliderMaxValueLable.text = "\(max)"
+        sliderMaxValueLable.text = "\(round(max * spacing) / spacing)"
         self.spacing = spacing
     }
     
@@ -96,13 +96,12 @@ class DFSliderContentView: UIView {
         if sender.value < 0.1 {
             sender.value = 0.1
         }
-        
         let roundedValue = round(sender.value * spacing) / spacing
         sliderValueLabel.text = "\(roundedValue)"
         sender.value = roundedValue
-        
+        print("----slider: \(sender.value)")
         if let handler = sliderHandler {
-            handler(roundedValue)
+            handler(sender.value)
         }
     }
 }

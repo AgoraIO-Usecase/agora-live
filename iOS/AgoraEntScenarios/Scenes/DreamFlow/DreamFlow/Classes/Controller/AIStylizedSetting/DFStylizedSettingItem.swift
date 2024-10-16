@@ -23,7 +23,7 @@ class DFPresetSettingItem: DFStylizedSettingItem {
     var faceMode: Bool
     var strengthDefaultValue: Float
     var strengthMinValue: Float = 0.1
-    var strengthMaxValue: Float = 1
+    var strengthMaxValue: Float = 0.99
     var superFrameMinValue: Float = 0.1
     var superFrameMaxvalue: Float = 2
     var superFrameDefaultValue: Int = 1

@@ -50,8 +50,15 @@ class DreamFlowService {
         requestModel.superFrameFactor = stylizedConfig.superFrameFactor
         requestModel.host = server
         requestModel.request { error, res in
+            if error != nil {
+                completion(error, .unload)
+                ShowLogger.error("create worker error :\(error?.localizedDescription)")
+                return
+            }
+            
             if let response = VLResponseData.yy_model(withJSON: res), let responseData = response.data {
                 guard let model = DreamFlowResponseModel.yy_model(withJSON: responseData) else {
+                    ShowLogger.error("create worker analysis json error")
                     completion(error, nil)
                     return
                 }
@@ -60,6 +67,7 @@ class DreamFlowService {
                 
                 guard let stat = model.stat else {
                     self.workState = .failed
+                    ShowLogger.error("work start failed")
                     completion(nil, self.workState)
                     return
                 }
@@ -72,10 +80,12 @@ class DreamFlowService {
                     self.workState = .failed
                 }
                 
+                ShowLogger.info("work create success")
                 completion(nil, self.workState)
                 return
             }
             
+            ShowLogger.error("Analysis json error")
             completion(error, nil)
         }
     }
@@ -85,8 +95,10 @@ class DreamFlowService {
         requestModel.host = server
         requestModel.request { error, res in
             if error != nil {
+                ShowLogger.error("delete worker: \(workerId) failed error: \(error?.localizedDescription)")
                 print("delete worker: \(workerId) failed error: \(error?.localizedDescription)")
             } else {
+                ShowLogger.info("delete worker success, work Id: \(workerId)")
                 self.workState = .unload
             }
             
@@ -100,9 +112,17 @@ class DreamFlowService {
         requestModel.strength = stylizedConfig.strength
         requestModel.superFrameFactor = stylizedConfig.superFrameFactor
         requestModel.style = stylizedConfig.style
-        requestModel.faceMode = stylizedConfig.face_mode
         requestModel.host = server
-        requestModel.request(completion: completion)
+        requestModel.request { err, res in
+            if let error = err {
+                ShowLogger.error("request update worker failed: \(error.localizedDescription)")
+                completion(err, nil)
+                return
+            }
+            
+            ShowLogger.info("update worker success")
+            completion(nil, res)
+        }
     }
     
     func deleteAllWorker(completion: @escaping ((Error?, Any?) -> Void)) {
@@ -110,7 +130,10 @@ class DreamFlowService {
         requestModel.host = server
         requestModel.request { error, res in
             if error != nil {
-                print("delete worker failed error: \(error?.localizedDescription)")
+                ShowLogger.error("delete worker failed error: \(error?.localizedDescription)")
+                print("delete all worker failed error: \(error?.localizedDescription)")
+            } else {
+                ShowLogger.info("delete all worker success")
             }
             
             completion(error, res)
@@ -121,13 +144,22 @@ class DreamFlowService {
         let requestModel = DreamFlowQueryWorkModel(region: region, appId: AppContext.shared.appId, workerId: workerId)
         requestModel.host = server
         requestModel.request { error, res in
-            if let response = VLResponseData.yy_model(withJSON: res), 
+            if let err = error {
+                ShowLogger.error("request query worker failed error: \(err.localizedDescription)")
+                completion(err, nil)
+                return
+            }
+            
+            if let response = VLResponseData.yy_model(withJSON: res),
                 let responseData = response.data as? [String: Any],
                 let workerInfo = responseData["workerInfo"] as? [String: Any],
                 let stylizeAi = workerInfo["stylize_ai"] as? [String: Any],
                 let state = stylizeAi["state"] as? String {
+                ShowLogger.info("query worker success")
                 completion(nil, state)
             } else {
+                ShowLogger.error("query worker json failed error: \(error?.localizedDescription)")
+
                 completion(error, nil)
             }
         }

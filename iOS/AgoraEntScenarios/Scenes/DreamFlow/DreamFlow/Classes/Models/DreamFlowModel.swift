@@ -93,7 +93,6 @@ class DreamFlowUpdateWorkModel: DreamFlowNetworkModel {
     var strength: Float = 0.1
     var superFrameFactor: Int = 1
     var prompt: String?
-    var faceMode: Bool = false
 
     init(region: String, appId: String, workerId: String) {
         super.init(region: region, appId: appId)
