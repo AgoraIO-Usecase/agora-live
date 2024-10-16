@@ -743,7 +743,7 @@ extension ShowLiveViewController: DFStylizedSetttingDelegate {
             guard let currentConfig = dreamFlowService.currentConfig else { return }
             let currentPrompt = currentConfig.prompt
             
-            if currentPrompt == config.prompt { return }
+//            if currentPrompt == config.prompt { return }
             
             updateWorker(stylizedConfig: config)
             return
