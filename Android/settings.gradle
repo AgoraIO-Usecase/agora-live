@@ -22,11 +22,13 @@ include ':app'
 include ':common'
 
 include ':scenes:show'
-
+//
 include ':RTMSyncManager'
 include ':scenes:eCommerce'
+//
+//include ':scenes:voice'
+//include ':scenes:voice:common'
+//
+//include ':scenes:ktv'
 
-include ':scenes:voice'
-include ':scenes:voice:common'
-
-include ':scenes:ktv'
+include ':scenes:dreamFlow'

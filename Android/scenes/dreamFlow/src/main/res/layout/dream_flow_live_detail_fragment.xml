@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/videoLinkingLayout"
+        layout="@layout/dream_flow_live_detail_video_link"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/rl_progress_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#303553"
+        android:visibility="gone"
+        tools:visibility="visible" >
+
+        <ProgressBar
+            android:id="@+id/pb_dream_flow_progress"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:progress="80"
+            android:max="100"
+            android:layout_centerInParent="true"
+            android:indeterminate="false" />
+
+        <TextView
+            android:id="@+id/tv_dream_flow_progress_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:layout_alignTop="@+id/pb_dream_flow_progress"
+            android:layout_centerHorizontal="true"
+            android:textColor="#D9FFFFFF"
+            android:textSize="12sp"
+            android:text="@string/dream_flow_setting_initializing" />
+
+        <TextView
+            android:id="@+id/tv_dream_flow_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_dream_flow_progress_title"
+            android:layout_centerHorizontal="true"
+            android:textColor="#D9FFFFFF"
+            android:textSize="24sp"
+            tools:text="75%" />
+
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/topLayout"
+        layout="@layout/dream_flow_live_detail_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        tools:layout_editor_absoluteX="13dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <FrameLayout
+        android:id="@+id/flAuction"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/commerce_auction_bg_user"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent">
+    </FrameLayout>
+
+    <include
+        android:id="@+id/bottomLayout"
+        layout="@layout/dream_flow_live_detail_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/flAuction" />
+
+    <include
+        android:id="@+id/livingEndLayout"
+        layout="@layout/dream_flow_live_detail_living_end"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+    <FrameLayout
+        android:id="@+id/v_drag_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <io.agora.scene.dreamFlow.widget.DraggableView
+            android:id="@+id/v_drag_window"
+            android:layout_gravity="start|bottom"
+            android:layout_width="109dp"
+            android:layout_height="163dp"
+            android:layout_marginBottom="76dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:visibility="visible"/>
+    </FrameLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_dream_flow_window_show"
+        android:layout_width="30dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="76dp"
+        android:layout_marginStart="-10dp"
+        android:visibility="gone"
+        app:cardCornerRadius="6dp"
+        android:backgroundTint="#151325D9"
+        app:cardElevation="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_gravity="center_vertical|end"
+            android:src="@drawable/dream_flow_window_show"
+            />
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

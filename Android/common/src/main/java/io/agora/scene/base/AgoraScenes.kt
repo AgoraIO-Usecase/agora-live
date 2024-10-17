@@ -40,4 +40,6 @@ enum class AgoraScenes {
      * @constructor Create empty Spatial audio chat room
      */
     ECommerce,
+
+    DreamFlow
 }

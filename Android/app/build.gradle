@@ -110,6 +110,11 @@ dependencies {
         runtimeOnly project(ktvModule)
     }
 
+    def dreamFlowModule = ':scenes:dreamFlow'
+    if (findProject(dreamFlowModule) != null) {
+        runtimeOnly project(dreamFlowModule)
+    }
+
     //glide 图片加载
     api rootProject.ext.deps.glide
     kapt rootProject.ext.deps.glide_compiler
