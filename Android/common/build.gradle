@@ -5,7 +5,7 @@ plugins {
 }
 
 if (project.property("AGORA_APP_ID").toString().isEmpty()) {
-    println("Please config AGORA_APP_ID in gradle.properties")
+    throw new GradleException("Please config AGORA_APP_ID in gradle.properties")
 }
 
 def baseProps = new File(rootProject.projectDir.absolutePath + File.separator + "gradle.properties")
