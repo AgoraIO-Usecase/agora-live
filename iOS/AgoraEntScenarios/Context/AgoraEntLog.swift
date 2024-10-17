@@ -109,9 +109,9 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
         guard let directoryContents = try? FileManager.default.contentsOfDirectory(at: dirUrl, includingPropertiesForKeys: nil, options: []) else {
             return urls
         }
-        //查找dir里所有文件名包含'agoraapi'、'agorartmsdk'、'agorasdk'的三类文件
+        //Find three types of files containing 'agoraapi', 'agorartmsdk' and 'agorasdk' with all file names in dir
         for fileURL in directoryContents {
-            // 过滤出文件名包含'agoraapi'、'agorartmsdk'、'agorasdk'的文件
+            // Filter out files whose file names include 'agoraapi', 'agorartmsdk' and 'agorasdk'
             let fileName = fileURL.lastPathComponent.lowercased()
             if fileName.contains("agoraapi") || fileName.contains("agorartmsdk") || fileName.contains("agorasdk") {
                 urls.append(fileURL)
@@ -135,7 +135,7 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
         let cacheDir = cacheDir()
         if let dirs = try? FileManager.default.contentsOfDirectory(atPath: cacheDir) {
             for file in dirs {
-                // 过滤出文件名包含'agoraapi'、'agorartmsdk'、'agorasdk'的文件
+                // Filter out files whose file names include 'agoraapi', 'agorartmsdk' and 'agorasdk'
                 if file.contains("agoraapi") || file.contains("agorartmsdk") || file.contains("agorasdk") {
                     let filePath = "\(cacheDir)/\(file)"
                     logFiles.append(filePath)
@@ -151,7 +151,7 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
             SSZipArchive.createZipFile(atPath: zipFile, withFilesAtPaths: logFiles)
             completion(zipFile, nil)
         } catch {
-            // 异常处理，回调错误闭包
+            // Abnormal handling, callback error closure
             completion(nil, error)
         }
     }

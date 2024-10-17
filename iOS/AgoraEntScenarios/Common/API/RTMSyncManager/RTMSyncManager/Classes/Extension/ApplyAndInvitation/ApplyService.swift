@@ -101,7 +101,7 @@ extension ApplyService {
         }
         
         aui_info("[\(roomId)]addApply userId: \(userId) start", tag: "ApplyService")
-        //TODO: 保证该次申请没有在互动中，互动时不可发起申请
+        //TODO: Ensure that the application is not in the interaction, and the application cannot be initiated during the interaction.
         applyCollection.addMetaData(valueCmd: ApplyCmd.create.rawValue,
                                     value: value,
                                     filter: [["userId": userId]]) { err in
@@ -111,22 +111,22 @@ extension ApplyService {
     }
     
     public func acceptApply(userId: String, completion: ((NSError?)->())?) {
-        //TODO: 观众不可以remove apply和interaction add一起调，万一一个失败了就数据错乱了
+        //TODO: The audience can't remove apply and interaction add together. If one fails, the data will be confused.
         /*
-         1.仲裁者观众A发起连麦
-         2.房主B收到连麦
-         3.A取消连麦
-         4.B没有收到取消的metadata，本地认为还是有A的申请的，这时候点击accept，就会出现这个问题
+         1. Arbitrator audience A initiates mic seat
+         2. Homeowner B received to seat.
+         3. A cancels Lianmai
+         4. B has not received the canceled metadata, and it is believed that there is still A's application locally. At this time, click accept, and this problem will occur.
          
-         点击acceptApply从
-         1.查询本地状态
-         2.removeApply
-         3.startLinkingInteraction
-
-         改为
-         1.startLinkingInteraction
-         2.仲裁者通过interaction请求，通过subscribeWillAdd回调去查apply表，看下对应的互动用户是不是在apply里
-         3.如果确认可以插入interaction，顺便把apply里的这个用户移除
+         Click acceptApply from
+         1. Check the local status
+         2.RemoveApply
+         3. StartLinkingInteraction
+         
+         Change it to
+         1. StartLinkingInteraction
+         2. The arbitrator requests through interaction and checks the apply form through the subscribeWillAdd callback to see if the corresponding interactive user is in apply.
+         3. If it is confirmed that interaction can be inserted, remove the user in the apply by the way.
          */
         removeApply(applyCmd: .accept, userId: userId, completion: completion)
     }

@@ -15,8 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
                     withRooNo:(NSString *)roomNo;
 
 - (void)loadDatasWithIfRefresh:(BOOL)ifRefresh;
-//更新别人点的歌曲状态
-- (void)setSelSongArrayWith:(NSArray *)array;//更新别人点的歌曲状态
+//Update the status of the songs ordered by others
+- (void)setSelSongArrayWith:(NSArray *)array;//Update the status of the songs ordered by others
 @end
 
 NS_ASSUME_NONNULL_END

@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UILabel *roomerLabel;
 @property (nonatomic, strong) UILabel *nickNameLabel;
 @property (nonatomic, strong) UIButton *singingBtn;
-@property (nonatomic, strong) UIView *videoView; //显示视频
+@property (nonatomic, strong) UIView *videoView; //Display the video
 @property (nonatomic, strong) UIButton *joinChorusBtn;
 
 @property (nonatomic, assign) NSInteger volume;

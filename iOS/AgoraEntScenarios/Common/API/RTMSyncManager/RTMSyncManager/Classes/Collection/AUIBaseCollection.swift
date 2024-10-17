@@ -64,7 +64,7 @@ public class AUIBaseCollection: NSObject {
 
 extension AUIBaseCollection: IAUICollection {
     
-    /// 当收到远端需要修改
+    /// When receiving the remote, it needs to be modified.
     /// - Parameter callback: <#callback description#>
     public func subsceibeValueWillChange(callback: AUICollectionValueWillChangeClosure?) {
         self.valueWillChangeClosure = callback

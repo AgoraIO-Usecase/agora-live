@@ -26,7 +26,7 @@ import RTMSyncManager
 //    @objc var roomPeopleNum: String?
 //    @objc var icon: String?
 //    
-//    ///新加字段 当前房间的创建者
+//    ///New field The creator of the current room
 //    @objc var creatorNo: String?
 //    @objc var creatorAvatar: String?
 //    @objc var creatorName: String?

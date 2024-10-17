@@ -9,7 +9,6 @@ import UIKit
 
 class ShowDebugPrivateParamsVC: UIViewController {
     
-    // 自定义导航栏
     private let naviBar = ShowNavigationBar()
     
     private let textView = UITextView()
@@ -36,7 +35,6 @@ class ShowDebugPrivateParamsVC: UIViewController {
     }
     
     private func configCustomNaviBar(){
-        // 标题
         naviBar.title = "设置私参"
         naviBar.backgroundColor = .white
         view.addSubview(naviBar)

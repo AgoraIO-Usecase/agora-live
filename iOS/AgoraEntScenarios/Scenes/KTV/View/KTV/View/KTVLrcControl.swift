@@ -67,7 +67,7 @@ private func agoraPrint(_ message: String) {
 
     @objc public func showPreludeEnd() {
         if hasShowOnce {return}
-        //显示跳过前奏
+        //Display skipping prelude
         skipBtn.setSkipType(.prelude)
         skipBtn.isHidden = false
         hasShowEndPosition = false
@@ -159,7 +159,7 @@ extension KTVLrcControl: KTVLrcViewDelegate {
     }
 
     func onDownloadLrcData(url: String) {
-        //开始歌词下载
+        //Start downloading lyrics
 //        startDownloadLrc(with: url) {[weak self] url in
 //            guard let self = self, let url = url else {return}
 //            self.resetLrcData(with: url)
@@ -190,7 +190,7 @@ extension KTVLrcControl: KTVLrcViewDelegate {
 //            path = lrcurl
 //        } failure: {
 //            callBack(nil)
-//            agoraPrint("歌词解析失败")
+//            agoraPrint("Lyrics analysis failed")
 //        }
 //    }
 //    

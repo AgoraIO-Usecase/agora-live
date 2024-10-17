@@ -13,23 +13,23 @@ private let kAUIRtmMsgProxyKey = "AUIRtmMsgProxy"
 //TODO: change protocol name
 @objc public protocol AUIRtmErrorProxyDelegate: NSObjectProtocol {
     
-    /// 系统时间戳更新
+    /// System timestamp update
     /// - Parameters:
     ///   - timeStamp: <#timeStamp description#>
     @objc optional func onTimeStampsDidUpdate(timeStamp: UInt64)
     
-    /// token过期
+    /// Token expires
     /// - Parameter channelName: <#channelName description#>
     @objc optional func onTokenPrivilegeWillExpire(channelName: String?)
     
-    /// 网络状态变化
+    /// Changes in network status
     /// - Parameters:
     ///   - channelName: <#channelName description#>
     ///   - state: <#state description#>
     ///   - reason: <#reason description#>
     @objc optional func didReceiveLinkStateEvent(event: AgoraRtmLinkStateEvent)
     
-    /// 收到的KV为空
+    /// The KV received is empty.
     /// - Parameter channelName: <#channelName description#>
     @objc optional func onMsgRecvEmpty(channelName: String)
 }
@@ -60,7 +60,7 @@ private let kAUIRtmMsgProxyKey = "AUIRtmMsgProxy"
     func onReleaseLockDetail(channelName: String, lockDetail: AgoraRtmLockDetail, eventType: AgoraRtmLockEventType)
 }
 
-/// RTM消息转发器
+/// RTM message forwarder
 open class AUIRtmMsgProxy: NSObject {
     private var rtmChannelType: AgoraRtmChannelType!
     private var attributesDelegates:[String: NSHashTable<AUIRtmAttributesProxyDelegate>] = [:]
@@ -198,7 +198,7 @@ open class AUIRtmMsgProxy: NSObject {
         var existKeys: [String] = []
         items.forEach { item in
 //            aui_info("\(item.key): \(item.value)", tag: kAUIRtmMsgProxyKey)
-            //判断value和缓存里是否一致，这里用string可能会不准，例如不同终端序列化的时候json obj不同kv的位置不一样会造成生成的json string不同
+            //To judge whether the value is consistent with the cache, the use of string here may not be accurate. For example, when serializing different terminals, different positions of json obj different kv will cause the generated json string to be different.
             existKeys.append(item.key)
             if cache[item.key] == item.value {
                 aui_info("processMetaData[\(channelName)] there are no changes of [\(item.key)]", tag: kAUIRtmMsgProxyKey)
@@ -221,7 +221,7 @@ open class AUIRtmMsgProxy: NSObject {
         let cacheKeys = cache.keys
         cacheKeys.forEach { key in
             if existKeys.contains(key) {return}
-            //远端已经不存在对应的key了，需要通知所有的delegate
+            //The corresponding key no longer exists in the remote end, and all delegates need to be notified.
             cache.removeValue(forKey: key)
             let delegateKey = "\(channelName)__\(key)"
             guard let value = self.attributesDelegates[delegateKey] else { return }
@@ -286,7 +286,7 @@ extension AUIRtmMsgProxy: AgoraRtmClientDelegate {
         
         aui_info("didReceiveStorageEvent event: [\(event.target)] channelType: [\(event.channelType.rawValue)] eventType: [\(event.eventType.rawValue)] =======", tag: kAUIRtmMsgProxyKey)
         
-        //key使用channelType__eventType，保证message channel/stream channel, user storage event/channel storage event共存
+        //Key uses channelType__eventType to ensure the coexistence of message channels/flow channels and user storage events/channel storage events.
         let channelName = event.target
         
         processTimeStampsDidUpdate(channelName: channelName, timeStamp: event.timestamp)

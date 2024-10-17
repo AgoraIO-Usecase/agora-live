@@ -78,7 +78,7 @@
     self.sliderView.value = value;
 }
 
-//处理
+//Handle
 - (void)sliderValurChanged:(UISlider*)slider {
     [self sliderClick:slider];
 }

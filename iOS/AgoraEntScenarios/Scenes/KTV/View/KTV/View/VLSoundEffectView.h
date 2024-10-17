@@ -6,9 +6,9 @@
 #import <UIKit/UIKit.h>
 
 typedef enum : NSUInteger {
-    VLKTVSoundEffectTypeHeFeng = 0, // 和风
-    VLKTVSoundEffectTypeXiaoDiao,   // 小调
-    VLKTVSoundEffectTypeDaDiao,      // 大调
+    VLKTVSoundEffectTypeHeFeng = 0,
+    VLKTVSoundEffectTypeXiaoDiao,
+    VLKTVSoundEffectTypeDaDiao,
     VLKTVSoundEffectTypeNone
 } VLKTVSoundEffectType;
 

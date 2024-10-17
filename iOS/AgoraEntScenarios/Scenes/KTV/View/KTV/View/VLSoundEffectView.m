@@ -257,9 +257,9 @@
     basicAnimation.toValue = @(toValue);
     basicAnimation.repeatCount = 1;
     basicAnimation.duration = 0.25;
-    //若要将removedOnCompletion设置为NO,fillMode必须设置为kCAFillModeForwards
+    //To set removedOnCompletion to NO, fillMode must be set to kCAFillModeForwards
     basicAnimation.fillMode = kCAFillModeForwards;
-    //若要将removedOnCompletion设置为NO表示动画结束后图形不会回到初始状态
+    //If you want to set removedOnCompletion to NO, it means that the graphics will not return to the initial state after the animation ends.
     basicAnimation.removedOnCompletion = NO;
     [self.rotateImgView.layer addAnimation:basicAnimation forKey:nil];
     self.beforeValue = toValue;

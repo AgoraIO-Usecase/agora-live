@@ -8,23 +8,18 @@
 import Foundation
 
 public enum AUICommonError {
-    case unknown      //未知错误
-    case rtcError(Int32)    //rtc错误
-    case rtmError(Int32)    //rtm错误
-    case rtmNotPresence   //rtm presence错误
-    case httpError(Int, String)  //http错误
-    case networkParseFail   //http响应解析错误
-    case missmatchRoomConfig  //找不到对应房间token信息
-    case micSeatNotIdle   //麦位不空闲
-    case micSeatAlreadyEnter   //已经上麦过了
-    case userNoEnterSeat   //观众未上麦
-//    case chooseSongAlreadyExist   //歌曲已经选择过了
-//    case chooseSongNotExist   //歌曲已经选择过了
-//    case choristerAlreadyExist   //合唱用户已存在
-//    case choristerNotExist    //合唱用户不存在
-    case noPermission   //无权限
-//    case chooseSongIsFail   //选择歌曲失败
-    case noResponse    //无响应
+    case unknown      //Unknown error
+    case rtcError(Int32)    //Rtc error
+    case rtmError(Int32)    //Rtm error
+    case rtmNotPresence   //rtm presence error
+    case httpError(Int, String)  //http error
+    case networkParseFail   //Http response parsing error
+    case missmatchRoomConfig  //Can't find the corresponding room token information
+    case micSeatNotIdle   //The mic seat is not free.
+    case micSeatAlreadyEnter   //It has been on the mic seat.
+    case userNoEnterSeat   //The audience is not enter seat.
+    case noPermission   //No permission
+    case noResponse    //No response
     
     public func toNSError() -> NSError {
         func createError(code: Int = -1, msg: String) -> NSError {

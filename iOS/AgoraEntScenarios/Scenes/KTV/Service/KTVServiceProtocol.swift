@@ -10,58 +10,58 @@ import RTMSyncManager
 
 @objc protocol KTVServiceListenerProtocol: NSObjectProtocol {
     
-    /// 房间过期
+    /// The room is expired.
     func onRoomDidExpire()
     
-    /// 房间被销毁
+    /// The room was destroyed.
     func onRoomDidDestroy()
     
-    /// 房间用户数量变更
-    /// - Parameter userCount: 用户数
+    /// Change in the number of room users
+    /// - Parameter userCount: Number of users
     func onUserCountUpdate(userCount: UInt)
     
-    /// 麦位更新
-    /// - Parameter seat: 麦位对象
+    /// Update of the seat
+    /// - Parameter seat: Seat object
     func onMicSeatSnapshot(seat: [String: VLRoomSeatModel])
     
-    /// 麦位更新
-    /// - Parameter seat: 麦位对象
+    /// Update of the seat
+    /// - Parameter seat: Seat object
     func onUserSeatUpdate(seat: VLRoomSeatModel)
     
-    /// 有成员上麦（主动上麦/房主抱人上麦）
+    /// There are members on the Seat (take the initiative to go to the seat/the landlord hugs people to the seat)
     /// - Parameters:
-    ///   - seatIndex: 麦位索引
-    ///   - user: 用户信息
+    ///   - seatIndex: Seat index
+    ///   - user: User information
     func onUserEnterSeat(seatIndex: Int, user: AUIUserThumbnailInfo)
     
-    /// 有成员下麦（主动下麦/房主踢人下麦）
+    /// Some members go down the seat (take the initiative to go down the seat/homeowner kicks people down the seat)
     /// - Parameters:
-    ///   - seatIndex: 麦位索引
-    ///   - user: 用户信息
+    ///   - seatIndex: Seat index
+    ///   - user: User information
     func onUserLeaveSeat(seatIndex: Int, user: AUIUserThumbnailInfo)
     
-    /// 房主对麦位进行了静音/解禁
+    /// The owner muted/lifted the ban on the seat.
     /// - Parameters:
-    ///   - seatIndex: 麦位索引
-    ///   - isMute:麦克风开关状态
+    ///   - seatIndex: Seat index
+    ///   - isMute:Microphone switch status
     func onSeatAudioMute(seatIndex: Int, isMute: Bool)
 
-    /// 房主对麦位摄像头进行禁用/启用
+    /// The owner disables/enables/enables the seat camera
     /// - Parameters:
-    ///   - seatIndex: 麦位索引
-    ///   - isMute: 摄像头开关状态
+    ///   - seatIndex: Seat index
+    ///   - isMute: Camera switch status
     func onSeatVideoMute(seatIndex: Int, isMute: Bool)
     
-    /// 更新所有歌曲回调（例如pin）
-    /// - Parameter song: 歌曲列表
+    /// Update all song callbacks (such as pin)
+    /// - Parameter song: List of songs
     func onChosenSongListDidChanged(songs: [VLRoomSelSongModel])
     
-    /// 合唱者加入
-    /// - Parameter chorus: 加入的合唱者信息
+    /// The chorus joins
+    /// - Parameter chorus: Joined chorus information
     func onChoristerDidEnter(chorister: KTVChoristerModel)
     
-    /// 合唱者离开
-    /// - Parameter chorister: 离开的合唱者
+    /// The chorus left.
+    /// - Parameter chorister: The chorus who left
     func onChoristerDidLeave(chorister: KTVChoristerModel)
     
 }
@@ -69,108 +69,108 @@ import RTMSyncManager
 @objc protocol KTVServiceProtocol: NSObjectProtocol {
     // room info
     
-    /// 获取房间列表
+    /// Get the list of rooms
     /// - Parameters:
-    ///   - page: 页码
-    ///   - completion: 完成回调
+    ///   - page: Page number
+    ///   - completion: Complete the callback
     func getRoomList(page: UInt, completion: @escaping (Error?, [AUIRoomInfo]?) -> Void)
     
-    /// 创建房间
+    /// Create a room
     /// - Parameters:
-    ///   - inputModel: 输入模型
-    ///   - completion: 完成回调
+    /// - inputModel: Input Model
+    /// - completion: Complete the callback
     func createRoom(inputModel: KTVCreateRoomInfo, completion: @escaping (Error?, AUIRoomInfo?) -> Void)
     
-    /// 加入房间
+    /// Join the room
     /// - Parameters:
-    ///   - roomId: 房间id
-    ///   - password: 密码
-    ///   - completion: 完成回调
+    /// - roomId: room id
+    /// - password: password
+    /// - completion: Complete the callback
     func joinRoom(roomId: String, password: String, completion: @escaping (Error?) -> Void)
     
-    /// 离开房间
-    /// - Parameter completion: 完成回调
+    /// Leave the room
+    /// - Parameter completion: Complete the callback
     func leaveRoom(completion: @escaping (Error?) -> Void)
     
     // mic seat
     
-    /// 上麦
+    /// Enter Seat
     /// - Parameters:
-    ///   - seatIndex: 麦位索引
-    ///   - completion: 完成回调
+    ///   - seatIndex: Seat Index
+    ///   - completion: Complete the callback
     func enterSeat(seatIndex: NSNumber?, completion: @escaping (Error?) -> Void)
     
-    /// 下麦
+    /// Leave Seat
     /// - Parameters:
-    ///   - completion: 完成回调
+    ///   - completion: Complete the callback
     func leaveSeat(completion: @escaping (Error?) -> Void)
     
-    /// 踢人下麦
+    /// Kick seat
     /// - Parameters:
-    ///   - seatIndex: 麦位index
-    ///   - completion: 完成回调
+    ///   - seatIndex: Seat index
+    ///   - completion: Complete the callback
     func kickSeat(seatIndex: Int, completion: @escaping (NSError?) -> ())
     
-    /// 设置麦位声音
+    /// Set seat voice
     /// - Parameters:
-    ///   - muted: 是否关闭声音，YES: 关闭声音，NO: 开启声音
-    ///   - completion: 完成回调
+    ///   - muted: Whether to turn off the sound, YES: turn off the sound, NO: turn on the sound
+    ///   - completion: Complete the callback
     func updateSeatAudioMuteStatus(muted: Bool, completion: @escaping (Error?) -> Void)
     
-    /// 打开麦位摄像头
+    /// Set seat camera state
     /// - Parameters:
-    ///   - muted: 是否关闭摄像头，YES: 关闭摄像头，NO: 开启摄像头
-    ///   - completion: 完成回调
+    ///   - muted: Whether to turn off the camera, YES: turn off the camera, NO: turn on the camera
+    ///   - completion: Complete the callback
     func updateSeatVideoMuteStatus(muted: Bool, completion: @escaping (Error?) -> Void)
     
     // choose songs
     
-    /// 删除选中歌曲
+    /// Delete the selected song
     /// - Parameters:
-    ///   - songCode: 歌曲id
-    ///   - completion: 完成回调
+    /// - songCode: Song id
+    /// - completion: Complete the callback
     func removeSong(songCode: String, completion: @escaping (Error?) -> Void)
     
-    /// 获取选择歌曲列表
-    /// - Parameter completion: 完成回调
+    /// Get the list of selected songs
+    /// - Parameter completion: Complete the callback
     func getChoosedSongsList(completion: @escaping (Error?, [VLRoomSelSongModel]?) -> Void)
     
-    /// 主唱告诉后台当前播放的歌曲
+    /// The lead singer tells the songs currently playing in the background
     /// - Parameters:
-    ///   - songCode: 房间id
-    ///   - completion: 完成回调
+    /// - songCode: room id
+    /// - completion: Complete the callback
     func markSongDidPlay(songCode: String, completion: @escaping (Error?) -> Void)
     
-    /// 点歌
+    /// order a song
     /// - Parameters:
-    ///   - inputModel: 输入模型
-    ///   - completion: 完成回调
+    /// - inputModel: Input Model
+    /// - completion: Complete the callback
     func chooseSong(inputModel: KTVChooseSongInputModel, completion: @escaping (Error?) -> Void)
     
-    /// 置顶歌曲
+    /// Pin the top song
     /// - Parameters:
-    ///   - songCode: 歌曲id
-    ///   - completion: 完成回调
+    /// - songCode: Song id
+    /// - completion: Complete the callback
     func pinSong(songCode: String, completion: @escaping (Error?) -> Void)
     
-    /// 加入合唱
+    /// Join the chorus
     /// - Parameters:
-    ///   - songCode: 歌曲id
-    ///   - completion: 完成回调
+    /// - songCode: Song id
+    /// - completion: Complete the callback
     func joinChorus(songCode: String, completion: @escaping (Error?) -> Void)
     
-    /// 伴唱取消合唱
+    /// Cancel the chorus of the accompaniment
     /// - Parameters:
-    ///   - songCode: 歌曲id
-    ///   - completion: 完成回调
+    /// - songCode: Song id
+    /// - completion: Complete the callback
     func leaveChorus(songCode: String, completion: @escaping (Error?) -> Void)
     
-    /// 订阅监听者
-    /// - Parameter listener: 监听者对象
+    /// Subscribe to the listener
+    /// - Parameter listener: Monitor object
     func subscribe(listener: KTVServiceListenerProtocol?)
     
-    /// 获取当前房间使用时长
-    /// - Parameter channelName: 频道名
-    /// - Returns: 使用时长，单位ms
+    /// Get the current room usage time
+    /// - Parameter channelName: Channel Name
+    /// - Returns: Duration of use, unit ms
     func getCurrentDuration(channelName: String) -> UInt64
 }

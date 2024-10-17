@@ -17,12 +17,12 @@ typedef NS_ENUM(NSUInteger, LRCLEVEL) {
     LRCLEVELHIGH = 2,
 };
 
-//加入为伴唱状态
+//Join the state of accompaniment
 typedef enum : NSUInteger {
-    KTVJoinCoSingerStateIdle = 0,         //无按钮
-    KTVJoinCoSingerStateWaitingForJoin,   //按钮显示:加入合唱
-    KTVJoinCoSingerStateJoinNow,          //按钮显示:加入中
-    KTVJoinCoSingerStateWaitingForLeave,   //按钮显示:退出合唱
+    KTVJoinCoSingerStateIdle = 0,         //No button
+    KTVJoinCoSingerStateWaitingForJoin,   //Button display: Join the chorus
+    KTVJoinCoSingerStateJoinNow,          //Button display: joining
+    KTVJoinCoSingerStateWaitingForLeave,   //Button display: exit the chorus
 } KTVJoinCoSingerState;
 
 typedef enum : NSUInteger {
@@ -32,38 +32,37 @@ typedef enum : NSUInteger {
 } VLKTVMVLoadingState;
 
 typedef enum : NSUInteger {
-    VLKTVMVViewActionTypeSetParam = 0,  // 设置参数
+    VLKTVMVViewActionTypeSetParam = 0,  // Set parameters
     VLKTVMVViewActionTypeMVPlay,     // play
     VLKTVMVViewActionTypeMVPause,    // parse
-    VLKTVMVViewActionTypeMVNext,     // 播放下一首
-    VLKTVMVViewActionTypeSingOrigin, // 原唱
-    VLKTVMVViewActionTypeSingAcc,    // 伴奏
-    VLKTVMVViewActionTypeSingLead,   //导唱
-    VLKTVMVViewActionTypeRetryLrc    // 歌曲重试
+    VLKTVMVViewActionTypeMVNext,     // Play the next song
+    VLKTVMVViewActionTypeSingOrigin, // Original singer
+    VLKTVMVViewActionTypeSingAcc,    // Accompany
+    VLKTVMVViewActionTypeSingLead,   //Director and singer
+    VLKTVMVViewActionTypeRetryLrc    // Retry the song
 } VLKTVMVViewActionType;
 
 typedef enum : NSUInteger {
-    VLKTVMVViewStateNone = 0,  // 当前无人点歌
-    VLKTVMVViewStateMusicLoading = 1,  // 当前歌曲加载中
-    VLKTVMVViewStateAudience = 2, //观众
-    VLKTVMVViewStateOwnerSing = 3, //房主点歌演唱
-    VLKTVMVViewStateOwnerAudience = 4, //房主未加入合唱
-    VLKTVMVViewStateJoinChorus = 5,//加入合唱中
-    VLKTVMVViewStateOwnerChorus = 6, //房主合唱
-    VLKTVMVViewStateNotOwnerChorus = 7, //非房主演唱
-    VLKTVMVViewStateMusicOwnerLoadFailed = 8, //点歌人歌曲加载失败(房主或者点歌者 一样的)
-    VLKTVMVViewStateMusicLoadFailed = 9, //观众歌曲加载失败
-    VLKTVMVViewStateMusicOwnerLoadLrcFailed = 10, //点歌人歌曲加载失败(房主)
-    VLKTVMVViewStateMusicLoadLrcFailed = 11, //观众歌词加载失败
-} VLKTVMVViewState; //主要用来记录各种情况下的显示状态
+    VLKTVMVViewStateNone = 0,  // No one is ordering songs at present.
+    VLKTVMVViewStateMusicLoading = 1,  // The current song is loading
+    VLKTVMVViewStateAudience = 2, //Audience
+    VLKTVMVViewStateOwnerSing = 3, //The owner of the house ordered a song to sing.
+    VLKTVMVViewStateOwnerAudience = 4, //The landlord did not join the chorus.
+    VLKTVMVViewStateJoinChorus = 5,//Join the chorus
+    VLKTVMVViewStateOwnerChorus = 6, //Homeowner's chorus
+    VLKTVMVViewStateNotOwnerChorus = 7, //Non-homeowner singing
+    VLKTVMVViewStateMusicOwnerLoadFailed = 8, //The song of the singer failed to load (the same as the landlord or the singer)
+    VLKTVMVViewStateMusicLoadFailed = 9, //The audience's song failed to load
+    VLKTVMVViewStateMusicOwnerLoadLrcFailed = 10, //The song of the singer failed to load (homeowner)
+    VLKTVMVViewStateMusicLoadLrcFailed = 11, //Audience lyrics failed to load
+} VLKTVMVViewState; //It is mainly used to record the display status in various situations.
 
 @class VLKTVMVView;
 @protocol VLKTVMVViewDelegate <NSObject>
 
 - (void)onKTVMVView:(VLKTVMVView*)view btnTappedWithActionType:(VLKTVMVViewActionType)type;
 
-/// 打分实时回调
-/// @param score 分数
+/// Score real-time callback
 - (void)onKTVMVView:(VLKTVMVView*)view scoreDidUpdate:(int)score;
 
 - (void)didJoinChours;
@@ -83,11 +82,11 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) BOOL isOriginLeader;
 - (instancetype)initWithFrame:(CGRect)frame withDelegate:(id<VLKTVMVViewDelegate>)delegate;
 
-//更改背景
+//Change the background
 - (void)changeBgViewByModel:(VLKTVSelBgModel *)selBgModel;
 @property (nonatomic, strong) UIImageView *bgImgView;
 
-@property (nonatomic, assign) VLKTVMVViewState mvState;//记录各种情况下的按钮状态
+@property (nonatomic, assign) VLKTVMVViewState mvState;//Record the status of buttons in various situations
 
 //- (void)cleanMusicText;
 - (int)getSongScore;
@@ -97,9 +96,9 @@ typedef enum : NSUInteger {
 - (void)setOriginBtnState:(VLKTVMVViewActionType)type;
 - (void)setJoinChorusFailedLoadingWith:(NSString *)msg;
 
-#pragma mark - 歌词相关
+#pragma mark - Lyrics related
 
-/// 重置分数
+/// Reset the score
 - (void)reset;
 
 -(void)setPerViewAvatar:(NSString *)url;

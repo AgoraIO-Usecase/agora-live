@@ -160,7 +160,7 @@ UITableViewDelegate
             [VLToast toast:KTVLocalizedString(@"ktv_choose_fail") duration:2];
             return;
         }
-        //点歌完成发送通知
+        //Send notification after ordering the song
         [self dianGeSuccessWithModel:model];
     }];
 }
@@ -184,7 +184,7 @@ UITableViewDelegate
     [self.tableView reloadData];
 }
 
-//更新别人点的歌曲状态
+//Update the status of the songs ordered by others
 - (void)setSelSongArrayWith:(NSArray *)array {
     self.selSongsArray = array;
     [self updateData];

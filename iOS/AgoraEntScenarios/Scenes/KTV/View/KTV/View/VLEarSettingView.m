@@ -50,7 +50,7 @@
                 weakself.earSwitch.on = false;
                 weakself.earSwitch.userInteractionEnabled = false;
                 weakself.earSlider.alpha =  0.6;
-                //如果已经开启了 但是拔下耳机了 强制关闭
+                //If it has been turned on but the headphones are unplugged, it will be forcibly turned off.
                 if(weakself.isEarOn){
                     if([weakself.delegate respondsToSelector:@selector(onVLKTVEarSettingViewSwitchChanged:)]){
                         [weakself.delegate onVLKTVEarSettingViewSwitchChanged:false];
@@ -109,31 +109,31 @@
     [_earWarningBtn setImage:[UIImage ktv_sceneImageWithName:@"ktv_add_circle_in" ] forState:UIControlStateSelected];
     _earWarningBtn.selected = [self.headeSet hasHeadset];
 
-    // 创建一个 NSMutableAttributedString 对象
+    // Create an NSMutableAttributedString object
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:KTVLocalizedString(@"ktv_ear_warning2")];
 
-    // 添加图片到富文本中
+    // Add pictures to rich text
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     textAttachment.image = [UIImage ktv_sceneImageWithName:@"ktv_add_circle_in" ];
-    textAttachment.bounds = CGRectMake(0, -3, 15, 15); // 调整图片位置和大小，向上偏移3个像素
+    textAttachment.bounds = CGRectMake(0, -3, 15, 15); // Adjust the position and size of the picture, and shift 3 pixels upwards.
     NSAttributedString *imageString = [NSAttributedString attributedStringWithAttachment:textAttachment];
-    [attributedText insertAttributedString:imageString atIndex:0]; // 将图片插入到富文本的开头
+    [attributedText insertAttributedString:imageString atIndex:0]; // Insert the picture into the beginning of the rich text
 
-    // 设置文字可以自动换行，并设置段落样式让文字和图片从左上角开始
+    // Set the text to automatically overline, and set the paragraph style to make the text and pictures start from the upper left corner.
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-    paragraphStyle.alignment = NSTextAlignmentLeft; // 文字左对齐
-  //  paragraphStyle.firstLineHeadIndent = textAttachment.bounds.size.width; // 第一行缩进图片的宽度，使得文字从左上角开始
+    paragraphStyle.alignment = NSTextAlignmentLeft; // Left alignment of text
+  //  paragraphStyle.firstLineHeadIndent = textAttachment.bounds.size.width; // The first line indents the width of the picture, so that the text starts from the upper left corner.
     [attributedText addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, attributedText.length)];
 
-    // 创建一个 UILabel 并设置富文本
+    // Create a UILabel and set rich text
     UILabel *earWarningLabel = [[UILabel alloc] init];
     earWarningLabel.attributedText = attributedText;
-    earWarningLabel.numberOfLines = 0; // 设置为 0 表示自动换行
+    earWarningLabel.numberOfLines = 0; // Set to 0 to indicate automatic line wrapping
   //  earWarningLabel.backgroundColor = [UIColor whiteColor];
     earWarningLabel.font = [UIFont systemFontOfSize:12];
     earWarningLabel.textColor = [UIColor whiteColor];
-    [earWarningLabel sizeToFit]; // 自适应内容尺寸
+    [earWarningLabel sizeToFit]; // Adaptive content size
     [self addSubview:earWarningLabel];
     self.earWarningLabel = earWarningLabel;
     self.earWarningLabel.hidden = ![self.headeSet hasHeadset];

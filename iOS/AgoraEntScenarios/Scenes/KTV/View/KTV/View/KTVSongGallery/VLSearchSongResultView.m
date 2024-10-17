@@ -201,7 +201,7 @@ UITableViewDelegate
         }
         
         if (error.code == 0) {
-            //点歌完成发送通知
+            //Send notification after ordering the song
             [self dianGeSuccessWithModel:model];
         }
         else {

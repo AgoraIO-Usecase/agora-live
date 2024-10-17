@@ -25,7 +25,7 @@ import YYModel
         super.init()
         aui_info("init AUIUserServiceImpl[\(channelName)]", tag: "AUIUserServiceImpl")
         self.rtmManager.subscribeUser(channelName: channelName, delegate: self)
-        //rtm2.2 支持预设置，在subscribe成功之后会更新
+        //Rtm2.2 supports pre-setting and will be updated after successful subscription.
         if autoSetUserAttr {
             setUserAttr { _ in
                 //TODO: retry
@@ -181,7 +181,7 @@ extension AUIUserServiceImpl: AUIUserServiceDelegate {
             
             callback(nil)
             
-            //自己状态不会更新，在这里手动回调
+            //Your status will not be updated. You can call back manually here.
             self.respDelegates.allObjects.forEach { obj in
                 obj.onUserAudioMute(userId: currentUserId, mute: isMute)
             }
@@ -204,7 +204,7 @@ extension AUIUserServiceImpl: AUIUserServiceDelegate {
             
             callback(nil)
             
-            //自己状态不会更新，在这里手动回调
+            //Your status will not be updated. You can call back manually here.
             self.respDelegates.allObjects.forEach { obj in
                 obj.onUserVideoMute(userId: currentUserId, mute: isMute)
             }
@@ -235,12 +235,12 @@ extension AUIUserServiceImpl {
                 return
             }
             
-            //rtm不会返回自己更新的数据，需要手动处理
+            //Rtm will not return its updated data and needs to be processed manually.
             self.onUserDidUpdated(channelName: roomId, userId: userId, userInfo: userAttr)
         }
     }
     
-    //设置用户属性到presence
+    //Set user attributes to presence
     func setUserAttr(completion: ((Error?) -> ())?) {
         let roomId = channelName
         let userId = AUIRoomContext.shared.currentUserInfo.userId
@@ -261,7 +261,7 @@ extension AUIUserServiceImpl {
                 return
             }
             
-            //rtm不会返回自己更新的数据，需要手动处理
+            //Rtm will not return its updated data and needs to be processed manually.
             self.onUserDidUpdated(channelName: roomId, userId: userId, userInfo: userAttr)
         }
     }

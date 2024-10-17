@@ -456,7 +456,7 @@ extension VoiceRoomViewController {
             view.addSubViews([chatView, giftList(), chatBar, inputBar])
             inputBar.isHidden = true
         }
-        //安卓无提示信息，和安卓对齐
+        //Android has no prompt message, and it is aligned with Android.
 //        chatView.messages?.append(startMessage())
         
         view.addSubview(debugButton)
@@ -514,9 +514,9 @@ extension VoiceRoomViewController {
                 }
             } else {
                 /*
-                 1.如果当前麦位有用户，普通人只能操作自己
-                 2.如果麦位没人 需要先判端是否是换麦还是申请上卖
-                 */
+                1. If there are users in the current microphone, ordinary people can only operate themselves.
+                Two. If there is no one in the microphone, you need to first judge whether to change the microphone or apply for sale.
+                */
                 if let _ = mic.member {
                     if local_index == index {
                         showMuteView(with: index)

@@ -102,7 +102,7 @@ extension VideoLoaderApiImpl {
         mediaOptions.autoSubscribeAudio = subscribeStatus
         mediaOptions.autoSubscribeVideo = subscribeStatus
         mediaOptions.clientRoleType = .audience
-        // 极速直播?
+        // Fast live broadcast?
         mediaOptions.audienceLatencyLevel = .lowLatency
     
         let connection = AgoraRtcConnection()
@@ -292,7 +292,7 @@ extension VideoLoaderApiImpl: IVideoLoaderApi {
         videoCanvas.setupMode = container.setupMode
         let ret = engine.setupRemoteVideoEx(videoCanvas, connection: connection)
         debugLoaderPrint("renderVideo[\(connection.channelId)] ret = \(ret), uid:\(anchorInfo.uid)")
-        //查找缓存这个view是不是被其他connection用了，如果有则remove
+        //Find out whether the cache view has been used by other connections. If so, remove it.
         let ptrString = String(format: "%p", videoCanvas.view ?? 0)
         if container.setupMode == .add {
             if anchorInfo.channelName != renderViewMap[ptrString]?.channelName {

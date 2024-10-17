@@ -60,7 +60,7 @@ class URLSessionDownloader: NSObject {
     func write(_ data: Data, countOfBytesExpectedToReceive: Int64) {
         fileHandle.write(data)
         
-        // 更新进度等操作
+        // Update progress and other operations
         let totolDownloaded = Double(fileHandle.offsetInFile)
         let resumeRangeDouble = Double(resumeRange)
         let totalExpected = Double(countOfBytesExpectedToReceive)
@@ -100,9 +100,9 @@ public class DownloadManager: NSObject {
         configuration.httpMaximumConnectionsPerHost = 3
         self.session = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
         if let urlCache = URLSession.shared.configuration.urlCache {
-            // 删除所有缓存
+            // Delete all caches
             urlCache.removeAllCachedResponses()
-            // 或者根据特定的 URL 请求删除缓存
+            // Or delete the cache according to the specific URL request
             // urlCache.removeCachedResponse(for: URLRequest(url: yourURL))
         }
     }
@@ -136,15 +136,6 @@ extension DownloadManager: URLSessionDataDelegate {
         }
         
         downloader.markCompletion(error: error)
-//        if error == nil {
-//            print("----下载完成-----")
-//        }
-        // if task.state == .completed {
-        //     NSURLSessionTask.State.running = 0,
-        //     NSURLSessionTask.State.suspended = 1,
-        //     NSURLSessionTask.State.canceling = 2,
-        //     NSURLSessionTask.State.completed = 3,
-        // }
     }
 }
 
@@ -155,7 +146,7 @@ extension DownloadManager: IAGDownloadManager {
                               completionHandler: @escaping (NSError?) -> Void) {
         let fm = FileManager.default
         
-        //如果是文件夹，文件夹存在且zip不存在，暂时用来表示该md5文件解压正确且完成了
+        //If it is a folder, the folder exists and the zip does not exist. It is temporarily used to indicate that the md5 file is decompressed correctly and completed.
         if calculateTotalSize(destinationPath) > 0 {
             asyncToMainThread {
                 completionHandler(nil)
@@ -163,7 +154,7 @@ extension DownloadManager: IAGDownloadManager {
             return
         }
         
-        //再检查是不是文件，是文件先查是不是存在
+        //Then check whether it is a file. If it is a file, check whether it exists first.
         if !fm.fileExists(atPath: destinationPath) {
             asyncToMainThread {
                 completionHandler(ResourceError.resourceNotFoundError(url: destinationPath))
@@ -171,7 +162,7 @@ extension DownloadManager: IAGDownloadManager {
             return
         }
         
-        //文件存在，检查md5
+        //The file exists, check md5
         guard let md5 = md5 else {
             aui_info("startDownload completion, file exist & without md5")
             asyncToMainThread {
@@ -184,19 +175,12 @@ extension DownloadManager: IAGDownloadManager {
             let tempFileMD5 = calculateMD5(forFileAt: URL(fileURLWithPath: destinationPath)) ?? ""
             aui_info("check md5: '\(tempFileMD5)'-'\(md5)' \(destinationPath)")
             if md5 == tempFileMD5 {
-                //md5一致，直接完成
+                //Md5 is consistent, complete directly
                 asyncToMainThread {
                     completionHandler(nil)
                 }
                 return
             }
-//            do {
-                //文件md5不同，移除（是否等下载完成再移除）
-//                try fm.removeItem(atPath: destinationPath)
-//                    try fm.removeItem(atPath: temporaryPath)
-//            } catch {
-//                aui_error("remove exist file fail: \(destinationPath)")
-//            }
             
             asyncToMainThread {
                 completionHandler(ResourceError.md5MismatchError(msg: destinationPath))
@@ -214,7 +198,7 @@ extension DownloadManager: IAGDownloadManager {
                                   destinationPath: String,
                                   progressHandler: @escaping (Double) -> Void,
                                   completionHandler: @escaping (URL?, NSError?) -> Void) {
-        //如果正在下载，返回错误，后续是否支持一个task多个progressHandler/completionHandler
+        //If it is being downloaded, an error will be returned. Will one task support multiple progressHandler/completionHandler in the future?
         if let _ = self.downloaderMap[url] {
             completionHandler(nil, ResourceError.resourceDownloadingAlreadyError(url: url.absoluteString))
             return
@@ -231,7 +215,7 @@ extension DownloadManager: IAGDownloadManager {
                 
                 if abs(err.code) == ResourceError.md5Mismatch.rawValue {
                     do {
-//                        文件md5不同，移除（是否等下载完成再移除）
+//                        The file md5 is different, remove it (whether to wait for the download to be completed before removing it)
                         try fm.removeItem(atPath: destinationPath)
                     } catch {
                         aui_error("remove exist file fail: \(destinationPath)")
@@ -251,7 +235,7 @@ extension DownloadManager: IAGDownloadManager {
         let currentLength = fileSize(atPath: temporaryPath)
         
         var request = URLRequest(url: url)
-        //临时文件存在，计算range断点续传
+        //Temporary file exists, calculate range breakpoint continuation
         if currentLength > 0 {
             let range = "bytes=\(currentLength)-"
             request.setValue(range, forHTTPHeaderField: "Range")
@@ -277,7 +261,7 @@ extension DownloadManager: IAGDownloadManager {
                 return
             }
             
-            //后处理，比对md5，移动临时目录到正确目录
+            //Post-processing, compare with md5, move the temporary directory to the correct directory
             self.postDownloadProcessing(tempFilePath: temporaryPath,
                                         targetFilePath: destinationPath,
                                         md5: md5) { err in
@@ -302,7 +286,7 @@ extension DownloadManager: IAGDownloadManager {
         let temporaryDirectoryURL = FileManager.default.temporaryDirectory
         let destinationZipPath = "\(temporaryDirectoryURL.path)/\(md5).zip"
         
-        //文件夹存在且zip不存在，暂时用来表示该md5文件解压正确且完成了
+        //The folder exists and the zip does not exist, which is temporarily used to indicate that the md5 file is decompressed correctly and completed.
         if calculateTotalSize(destinationFolderPath) > 0,
            !FileManager.default.fileExists(atPath: destinationZipPath) {
             
@@ -310,7 +294,7 @@ extension DownloadManager: IAGDownloadManager {
             return
         }
         
-        //TODO: 进度暂时按照下载80%，解压20%分配
+        //TODO: The progress is temporarily distributed according to 80% download and 20% decompression.
         startDownloadFile(withURL: url,
                           md5: md5,
                           destinationPath: destinationZipPath) { percent in
@@ -326,9 +310,9 @@ extension DownloadManager: IAGDownloadManager {
             self.unzipOpMap[url] = manager
             let queue = DispatchQueue.global(qos: .default)
             queue.async {
-                //先清理目标目录内容
+                //Clean up the content of the target directory first.
                 cleanDirectory(atPath: destinationFolderPath)
-                //先解压到目标路径，防止解压中途crash等异常中断
+                //Decompress to the target path first to prevent abnormal interruptions such as crash in the middle of decompression.
                 let tempFolderPath = "\(destinationFolderPath)_temp"
                 try? FileManager.default.removeItem(atPath: tempFolderPath)
                 try? FileManager.default.moveItem(atPath: destinationFolderPath, toPath: tempFolderPath)
@@ -345,7 +329,7 @@ extension DownloadManager: IAGDownloadManager {
                 let err = ret ? nil : NSError(domain: "unzip fail", code: -1)
                 if ret {
                     try? FileManager.default.moveItem(atPath: tempFolderPath, toPath: destinationFolderPath)
-                    //解压完成移除zip文件
+                    //Unzip and remove the zip file
                     try? FileManager.default.removeItem(atPath: destinationZipPath)
                 }
                 asyncToMainThread {
@@ -383,7 +367,7 @@ extension DownloadManager {
             let fileManager = FileManager.default
             
             do {
-                // 计算临时文件的MD5
+                // Calculate the MD5 of temporary files
                 var isValideFile = true
                 if let md5 = md5 {
                     let tempFileMD5 = calculateMD5(forFileAt: URL(fileURLWithPath: tempFilePath)) ?? ""
@@ -391,33 +375,33 @@ extension DownloadManager {
                     isValideFile = tempFileMD5 == md5 ? true : false
                 }
                 
-                // 检查MD5是否正确
+                // Check whether MD5 is correct
                 if isValideFile {
-                    //临时路径和目标路径不一致
+                    //The temporary path and the target path are inconsistent.
                     if tempFilePath != targetFilePath {
-                        // 删除目标路径上已存在的文件
+                        // Delete the existing files on the target path
                         if fileManager.fileExists(atPath: targetFilePath) {
                             try fileManager.removeItem(atPath: targetFilePath)
                         }
                         
-                        // 将临时文件移动到目标路径
+                        // Move temporary files to the target path
                         try fileManager.moveItem(atPath: tempFilePath, toPath: targetFilePath)
                     }
                     
-                    // 文件处理完成，返回成功结果
+                    // The file processing is completed and the successful result is returned.
                     asyncToMainThread {
                         completion(nil)
                     }
                 } else {
                     try fileManager.removeItem(atPath: tempFilePath)
-                    // MD5 不匹配，返回错误结果
+                    // MD5 mismatches and returns an error result
                     asyncToMainThread {
                         completion(ResourceError.md5MismatchError(msg: targetFilePath))
                     }
                 }
             } catch {
                 try? fileManager.removeItem(atPath: tempFilePath)
-                // 文件处理过程中出现错误，返回错误结果
+                // An error occurred during the file processing process, and the error result was returned.
                 asyncToMainThread {
                     completion(error)
                 }

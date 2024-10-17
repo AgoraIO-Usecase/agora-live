@@ -25,7 +25,7 @@ class ShowAgoraKitManager: NSObject {
         }
     }
         
-    // 是否开启绿幕功能
+    // Whether to turn on the green screen function
     static var isOpenGreen: Bool = false
     static var isBlur: Bool = false
     
@@ -86,7 +86,7 @@ class ShowAgoraKitManager: NSObject {
         ShowAgoraKitManager._sharedManager = nil
         ShowLogger.info("deinit-- ShowAgoraKitManager")
     }
-    // 退出已加入的频道和子频道
+    // Exit the joined channels and sub-channels
     func leaveAllRoom() {
         VideoLoaderApiImpl.shared.cleanCache()
         if let p = player {
@@ -129,7 +129,7 @@ class ShowAgoraKitManager: NSObject {
 //        ShowLogger.info("setupContentInspectConfig: \(ret ?? -1)")
     }
     
-    /// 语音审核
+    /// Voice audit
     private func moderationAudio(channelName: String, role: AgoraClientRole) {
         guard role == .broadcaster else { return }
         let userInfo = ["id": VLUserCenter.user.id,
@@ -269,8 +269,8 @@ class ShowAgoraKitManager: NSObject {
     }
     
     //MARK: public sdk method
-    /// 初始化并预览
-    /// - Parameter canvasView: 画布
+    /// Initialize and preview
+    /// - Parameter canvasView: Canvas
     func startPreview(canvasView: UIView) {
         guard let engine = engine else {
             assert(true, "rtc engine not initlized")
@@ -286,7 +286,7 @@ class ShowAgoraKitManager: NSObject {
         engine.startPreview()
     }
     
-    /// 切换摄像头
+    /// Switch the camera
     func switchCamera(enableBeauty: Bool) {
         if enableBeauty {
             BeautyManager.shareManager.beautyAPI.switchCamera()
@@ -295,7 +295,7 @@ class ShowAgoraKitManager: NSObject {
         }
     }
     
-    /// 开启虚化背景
+    /// Turn on the blur background
     func enableVirtualBackground(isOn: Bool, greenCapacity: Float = 0) {
         guard let engine = engine else {
             assert(true, "rtc engine not initlized")
@@ -314,7 +314,7 @@ class ShowAgoraKitManager: NSObject {
         ShowLogger.info("isOn = \(isOn), enableVirtualBackground ret = \(ret)")
     }
     
-    /// 设置虚拟背景
+    /// Set up a virtual background
     func seVirtualtBackgoundImage(imagePath: String?, isOn: Bool, greenCapacity: Float = 0) {
         guard let bundlePath = Bundle.main.path(forResource: "showResource", ofType: "bundle"),
               let bundle = Bundle(path: bundlePath) else { return }
@@ -345,13 +345,13 @@ class ShowAgoraKitManager: NSObject {
         _updateChannelEx(options: options, connection: connection)
     }
     
-    /// 切换连麦角色
+    /// Switch the role of Lianmai
     /// - Parameters:
-    ///   - role: 角色，连麦双方为broadcaster，观众为audience，连麦主播结束连麦也为audience，无需修改则为nil
-    ///   - channelId: 频道号
+    ///   - role: Role, Lianmai both sides are broadcaster, the audience is the audience, Lianmai anchor is also the audience at the end, and it is nil without modification.
+    ///   - channelId: Channel number
     ///   - options: <#options description#>
-    ///   - uid: 连麦窗口的uid
-    ///   - canvasView: 画布，nil表示需要移除
+    ///   - uid: The uid of Lianmai window
+    ///   - canvasView: Canvas, nil means that it needs to be removed
     func switchRole(role: AgoraClientRole? = nil,
                     channelId: String,
                     options:AgoraRtcChannelMediaOptions,
@@ -382,23 +382,23 @@ class ShowAgoraKitManager: NSObject {
         }
         
         if role == .audience {
-            //观众先清理本地画面，然后设置远端画面
+            //The audience cleans up the local screen first, and then sets up the remote screen.
             setupLocalVideo(canvasView: nil)
             cleanCapture()
         }
         
         
         if "\(uid)" == VLUserCenter.user.id {
-            //自己是连麦主播，渲染本地画面
+            //I am a Lianmai anchor, rendering the local picture.
             setupLocalVideo(canvasView: canvasView)
         } else {
-            //自己不是连麦主播，渲染连麦主播远端画面
+            //I'm not a Lianmai anchor, rendering the remote picture of Lianmai anchor.
             setupRemoteVideo(channelId: channelId, uid: uid, canvasView: canvasView)
         }
     }
     
     
-    /// 预加载连麦
+    /// Preload seat
     /// - Parameters:
     ///   - isOn: <#isOn description#>
     ///   - channelId: <#channelId description#>
@@ -424,8 +424,8 @@ class ShowAgoraKitManager: NSObject {
         _updateChannelEx(options: mediaOptions, connection: connection)
     }
     
-    /// 设置编码分辨率
-    /// - Parameter size: 分辨率
+    /// Set the encoding resolution
+    /// - Parameter size: Resolution
     func setVideoDimensions(_ size: CGSize){
         guard let engine = engine else {
             assert(true, "rtc engine not initlized")
@@ -495,7 +495,7 @@ class ShowAgoraKitManager: NSObject {
     
     private func setupRemoteVideo(channelId: String, uid: UInt, canvasView: UIView?) {
         let connection = AgoraRtcConnection(channelId: channelId, localUid: Int(VLUserCenter.user.id) ?? 0)
-        //先清理老的view
+        //Clean up the old view first.
         if let uid = channelIdUidCanvasMap[channelId] {
             let videoCanvas = AgoraRtcVideoCanvas()
             videoCanvas.uid = uid

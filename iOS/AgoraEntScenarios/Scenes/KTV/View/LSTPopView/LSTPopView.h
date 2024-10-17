@@ -5,15 +5,6 @@
 //  Created by LoSenTrad on 2020/2/22.
 //
 
-/**
- 联系方式--->  QQ群: 1045568246 微信: a_LSTKit , 邮箱: losentrad@163.com 欢迎反馈建议和问题
- 
- 博客地址 如果觉得好用 伸出你的小指头 点Star 点赞 点收藏! 就是给予我最大的支持!
- github: https://github.com/LoSenTrad/LSTPopView
- 简书: https://www.jianshu.com/p/8023a85dc2a2
- cocoachina: http://www.cocoachina.com/articles/899060
- */
-
 #import <UIKit/UIKit.h>
 #import "LSTPopViewProtocol.h"
 #import "UIView+LSTPV.h"
@@ -28,129 +19,129 @@ NS_ASSUME_NONNULL_BEGIN
 @interface LSTPopView : UIView
 
 
-/** 代理 支持多代理 */
+/** Agent Support multi-agent */
 @property (nonatomic, weak) id<LSTPopViewProtocol> _Nullable delegate;
-/** 标识 默认为空 */
+/** Logo is empty by default */
 @property (nonatomic, copy) NSString *_Nullable identifier;
-/** 弹窗容器 */
+/** Pop-up window container */
 @property (nonatomic, readonly) UIView *parentView;
-/** 自定义view */
+/** custom view */
 @property (nonatomic, readonly) UIView *currCustomView;
-/** 弹窗位置 默认LSTHemStyleCenter */
+/** Pop-up window position Default LSTHemStyleCenter */
 @property (nonatomic, assign) LSTHemStyle hemStyle;
-/** 显示时动画弹窗样式 默认LSTPopStyleNO */
+/** Animation pop-up window style when displayed DefaultLSTPopStyleNO */
 @property (nonatomic, assign) LSTPopStyle popStyle;
-/** 移除时动画弹窗样式 默认LSTDismissStyleNO */
+/** Animation pop-up window style when removed Default LSTDismissStyleNO */
 @property (nonatomic, assign) LSTDismissStyle dismissStyle;
-/** 显示时动画时长，> 0。不设置则使用默认的动画时长 设置成LSTPopStyleNO, 该属性无效 */
+/** Animation duration when displaying, > 0. If it is not set, use the default animation duration and set it to LSTPopStyleNO, this attribute is invalid */
 @property (nonatomic, assign) NSTimeInterval popDuration;
-/** 隐藏时动画时长，>0。不设置则使用默认的动画时长  设置成LSTDismissStyleNO, 该属性无效 */
+/** Animation duration when hidden, >0. If it is not set, use the default animation duration and set it to LSTDismissStyleNO. This attribute is invalid */
 @property (nonatomic, assign) NSTimeInterval dismissDuration;
-/** 弹窗水平方向(X)偏移量校准 默认0 */
+/** Pop-up horizontal direction (X) offset calibration Default 0 */
 @property (nonatomic, assign) CGFloat adjustX;
-/** 弹窗垂直方向(Y)偏移量校准 默认0 */
+/** Pop-up window vertical direction (Y) offset calibration Default 0 */
 @property (nonatomic, assign) CGFloat adjustY;
-/** 背景颜色 默认rgb(0,0,0) 透明度0.3 */
+/** Background color Default rgb(0,0,0) Transparency 0.3 */
 @property (nullable,nonatomic,strong) UIColor *bgColor;
-/** 显示时背景的透明度，取值(0.0~1.0)，默认为0.3 */
+/** The transparency of the background when displaying, take the value (0.0~1.0), the default is 0.3 */
 @property (nonatomic, assign) CGFloat bgAlpha;
-/** 是否隐藏背景 默认NO */
+/** Whether to hide the background Default NO */
 @property (nonatomic, assign) BOOL isHideBg;
-/** 显示时点击背景是否移除弹窗，默认为NO。 */
+/** When displayed, click the background to remove the pop-up window, and the default is NO. */
 @property (nonatomic, assign) BOOL isClickBgDismiss;
-/** 是否监听屏幕旋转，默认为YES */
+/** Whether to monitor the screen rotation, the default is YES */
 @property (nonatomic, assign) BOOL isObserverScreenRotation;
-/** 是否支持点击回馈 默认NO (暂时关闭) */
+/** Whether to support click feedback Default NO (temporarily closed) */
 @property (nonatomic, assign) BOOL isClickFeedback;
-/** 是否规避键盘 默认YES */
+/** Whether to avoid the keyboard Default YES */
 @property (nonatomic, assign) BOOL isAvoidKeyboard;
-/** 弹窗和键盘的距离 默认10 */
+/** The distance between the pop-up window and the keyboard Default 10 */
 @property (nonatomic, assign) CGFloat avoidKeyboardSpace;
-/** 自定view圆角方向设置  默认UIRectCornerAllCorners  当cornerRadius>0时生效*/
+/** The custom view rounded corner direction setting Default UIRectCornerAllCorners takes effect when cornerRadius>0*/
 @property (nonatomic, assign) UIRectCorner rectCorners;
-/** 自定义view圆角大小 */
+/** Custom view rounded corner size */
 @property (nonatomic, assign) CGFloat cornerRadius;
-/** 弹出震动反馈 默认NO iOS10+ 系统才有此效果 */
+/** Pop-up vibration feedback Default NO iOS10+ system only has this effect */
 @property (nonatomic, assign) BOOL isImpactFeedback;
 
-//************ 群组相关属性 ****************
-/** 群组标识 统一给弹窗编队 方便独立管理 默认为nil,统一全局处理 */
+//************ Group-related attributes ****************
+/** Group identification, unified to pop-up window formation, convenient for independent management, default to nil, unified global processing */
 @property (nullable,nonatomic,strong) NSString *groupId;
-/** 是否堆叠 默认NO  如果是YES  priority优先级不生效*/
+/** Whether to stack default NO If YES priority priority is not effective*/
 @property (nonatomic,assign) BOOL isStack;
-/** 单显示 默认NO  只会显示优先级最高的popView   */
+/** Single display default NO will only display the highest priority popView   */
 @property (nonatomic, assign) BOOL isSingle;
-/** 优先级 范围0~1000 (默认0,遵循先进先出) isStack和isSingle为NO的时候生效 */
+/** Priority range 0~1000 (default 0, follow first-in-first-out) takes effect when isStack and isSingle are NO*/
 @property (nonatomic, assign) CGFloat priority;
 //****************************************
 
-//************ 拖拽手势相关属性 ****************
-/** 拖拽方向 默认 不可拖拽  */
+//************ Drag-and-drop gesture-related attributes ****************
+/** Drag direction Default No drag  */
 @property (nonatomic, assign) LSTDragStyle dragStyle;
-/** X轴或者Y轴拖拽移除临界距离 范围(0 ~ +∞)  默认0 不拖拽移除  基使用于dragStyle  */
+/** X-axis or Y-axis drag to remove the critical distance range (0 ~ +∞) Default 0 does not drag to remove The base is used in dragStyle  */
 @property (nonatomic, assign) CGFloat dragDistance;
-/** 拖拽移除动画类型 默认同dismissStyle  */
+/** Drag and drop to remove the animation type. The default is the same as dismissStyle.  */
 @property (nonatomic, assign) LSTDismissStyle dragDismissStyle;
-/** 拖拽消失动画时间 默认同 dismissDuration  */
+/** Drag and drop to disappear the animation time. The default is the same as dismissDuration. */
 @property (nonatomic, assign) NSTimeInterval dragDismissDuration;
-/** 拖拽复原动画时间 默认0.25s */
+/** Drag and drop to restore animation time Default 0.25s */
 @property (nonatomic, assign) NSTimeInterval dragReboundTime;
 
-/** 轻扫方向 默认 不可轻扫  前提开启dragStyle */
+/** Swipe direction Default No swipe The premise is to turn on dragStyle */
 @property (nonatomic, assign) LSTSweepStyle sweepStyle;
-/** 轻扫速率 控制轻扫移除 默认1000  基于使用sweepStyle */
+/** Swipe rate Control swipe removal Default 1000 based on the use of sweepStyle */
 @property (nonatomic, assign) CGFloat swipeVelocity;
-/** 轻扫移除的动画 默认LSTSweepDismissStyleVelocity  */
+/** Swipe to remove the animation Default LSTSweepDismissStyleVelocity */
 @property (nonatomic, assign) LSTSweepDismissStyle sweepDismissStyle;
 
-//@property (nonatomic, strong) NSArray *xDragDistances;//待计划
-//@property (nonatomic, strong) NSArray *yDragDistances;//待计划
+//@property (nonatomic, strong) NSArray *xDragDistances;
+//@property (nonatomic, strong) NSArray *yDragDistances;
 
 //****************************************
 
-/** 点击背景 */
+/** Click on the background */
 @property (nullable, nonatomic, copy) void(^bgClickBlock)(void);
-/** 长按背景 */
+/** Long press the background */
 @property (nullable, nonatomic, copy) void(^bgLongPressBlock)(void);
 
-/** 弹窗pan手势偏移量  */
+/** Pop-up pan gesture offset  */
 @property (nullable, nonatomic, copy) void(^panOffsetBlock)(CGPoint offset);
 
 
-//以下键盘弹出/收起 第三方键盘会多次回调(百度,搜狗测试得出), 原生键盘回调一次
-/** 键盘将要弹出 */
+//The following keyboard pops up/closes. The third-party keyboard will call back many times (Baidu and Sogou tests), and the native keyboard will call back once.
+/** The keyboard is about to pop up. */
 @property (nullable, nonatomic, copy) void(^keyboardWillShowBlock)(void);
-/** 键盘弹出完毕 */
+/** The keyboard has been popped up. */
 @property (nullable, nonatomic, copy) void(^keyboardDidShowBlock)(void);
-/** 键盘frame将要改变 */
+/** The keyboard frame will be changed. */
 @property (nullable, nonatomic, copy) void(^keyboardFrameWillChangeBlock)(CGRect beginFrame,CGRect endFrame,CGFloat duration);
-/** 键盘frame改变完毕 */
+/** The keyboard frame has been changed. */
 @property (nullable, nonatomic, copy) void(^keyboardFrameDidChangeBlock)(CGRect beginFrame,CGRect endFrame,CGFloat duration);
-/** 键盘将要收起 */
+/** The keyboard will be put away. */
 @property (nullable, nonatomic, copy) void(^keyboardWillHideBlock)(void);
-/** 键盘收起完毕 */
+/** The keyboard has been put away. */
 @property (nullable, nonatomic, copy) void(^keyboardDidHideBlock)(void);
 
-//************ 生命周期回调(Block) ************
-/** 将要显示 回调 */
+//************ Life cycle callback(Block) ************
+/** The callback will be displayed. */
 @property (nullable, nonatomic, copy) void(^popViewWillPopBlock)(void);
-/** 已经显示完毕 回调 */
+/** It has been displayed. Ca call back. */
 @property (nullable, nonatomic, copy) void(^popViewDidPopBlock)(void);
-/** 将要开始移除 回调 */
+/** will start removing the callback. */
 @property (nullable, nonatomic, copy) void(^popViewWillDismissBlock)(void);
-/** 已经移除完毕 回调 */
+/** It has been removed. Ca call back. */
 @property (nullable, nonatomic, copy) void(^popViewDidDismissBlock)(void);
-/** 倒计时 回调 */
+/** Countdown callback */
 @property (nullable, nonatomic, copy) void(^popViewCountDownBlock)(LSTPopView *popView,NSTimeInterval timeInterval);
 //********************************************
 
 
 /*
- 以下是构建方法
- customView: 已定义view
- popStyle: 弹出动画
- dismissStyle: 移除动画
- parentView: 弹窗父容器
+ The following is the construction method.
+ customView: custom view
+ popStyle: Pop-up animation
+ dismissStyle: Remove the animation
+ parentView: Pop-up window parent container
  */
 + (nullable instancetype)initWithCustomView:(UIView *_Nonnull)customView;
 
@@ -163,9 +154,9 @@ NS_ASSUME_NONNULL_BEGIN
                                    popStyle:(LSTPopStyle)popStyle
                                dismissStyle:(LSTDismissStyle)dismissStyle;
 /*
-  以下是弹出方法
-  popStyle: 弹出动画 优先级大于全局的popStyle 局部起作用
-  duration: 弹出时间 优先级大于全局的popDuration 局部起作用
+ The following is the pop-up method.
+  popStyle: Pop-up animation. The priority is higher than the global popStyle. It works locally.
+  duration: Pop-up time, the priority is greater than the global popDuration, which plays a local role.
 */
 - (void)pop;
 - (void)popWithStyle:(LSTPopStyle)popStyle;
@@ -174,9 +165,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /*
-  以下是弹出方法
-  dismissStyle: 弹出动画 优先级大于全局的dismissStyle 局部起作用
-  duration: 弹出时间 优先级大于全局的dismissDuration 局部起作用
+ The following is the pop-up method.
+  dismissStyle: Pop-up animation, priority greater than global dismissStyle, partially works
+  duration: Pop-up time, priority greater than global dismissDuration, local effect
 */
 - (void)dismiss;
 - (void)dismissWithStyle:(LSTDismissStyle)dismissStyle;
@@ -184,40 +175,40 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)dismissWithStyle:(LSTDismissStyle)dismissStyle duration:(NSTimeInterval)duration;
 
 
-/** 删除指定代理 */
+/** Delete the designated agent */
 - (void)removeForDelegate:(id<LSTPopViewProtocol>)delegate;
-/** 删除代理池 删除所有代理 */
+/** Delete the proxy pool Delete all agents */
 - (void)removeAllDelegate;
 
 
 
 #pragma mark - ***** 以下是 窗口管理api *****
 
-/** 获取全局(整个app内)所有popView */
+/** Get all popView globally (in the whole app) */
 + (NSArray *)getAllPopView;
-/** 获取当前页面所有popView */
+/** Get all popViews on the current page*/
 + (NSArray *)getAllPopViewForParentView:(UIView *)parentView;
-/** 获取当前页面指定编队的所有popView */
+/** Get all popViews of the specified formation on the current page */
 + (NSArray *)getAllPopViewForPopView:(UIView *)popView;
 /**
-    读取popView (有可能会跨编队读取弹窗)
-    建议使用getPopViewForGroupId:forkey: 方法进行精确读取
+   Read popView (may read pop-ups across formations)
+   It is recommended to use the getPopViewForGroupId:forkey: method for accurate reading.
  */
 + (LSTPopView *)getPopViewForKey:(NSString *)key;
-/** 移除popView */
+/** Remove popView */
 + (void)removePopView:(LSTPopView *)popView;
 /**
-   移除popView 通过唯一key (有可能会跨编队误删弹窗)
-   建议使用removePopViewForGroupId:forkey: 方法进行精确删除
+   Remove popView through the unique key (pop-up windows may be deleted by mistake across formations)
+   It is recommended to use the removePopViewForGroupId:forkey: method for precise deletion.
 */
 + (void)removePopViewForKey:(NSString *)key;
-/** 移除所有popView */
+/** Remove all popView */
 + (void)removeAllPopView;
-/** 移除 最后一个弹出的 popView */
+/** Remove the last pop-up popView */
 + (void)removeLastPopView;
 
 
-/** 开启调试view  建议设置成 线上隐藏 测试打开 */
+/** Open the debugging view. It is recommended to set it to hide online and open the test */
 + (void)setLogStyle:(LSTPopViewLogStyle)logStyle;
 
 

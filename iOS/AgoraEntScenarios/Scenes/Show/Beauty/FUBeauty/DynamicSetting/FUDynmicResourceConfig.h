@@ -13,10 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)shareInstance;
 
-/// 相芯美颜资源目录
+/// Xiangxin Beauty Resource Catalogue
 @property (nonatomic, copy, nullable) NSString* resourceFolderPath;
 
-/// 相芯美颜lic路径
+/// Phase core beauty lic path
 @property (nonatomic, copy, nullable) NSString* licFilePath;
 
 @end

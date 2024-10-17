@@ -67,7 +67,7 @@ func calculateTotalSize(_ folderPath: String) -> UInt64 {
 
 @available(iOS 13.0, *)
 func calculateMD5(forFileAt url: URL) -> String? {
-    let bufferSize = 4096 // 定义缓冲区大小为4KB
+    let bufferSize = 4096 // Define the buffer size as 4KB
     var fileHash = Insecure.MD5()
 
     do {
@@ -112,8 +112,8 @@ func folderSize(atPath path: String) -> UInt64 {
     let fileManager = FileManager.default
     var totalSize: UInt64 = 0
     
-    // 使用fileManager来枚举指定路径下的所有内容
-    if let enumerator = fileManager.enumerator(at: URL(fileURLWithPath: path), 
+    // Use fileManager to enumerate all the contents under the specified path
+    if let enumerator = fileManager.enumerator(at: URL(fileURLWithPath: path),
                                                includingPropertiesForKeys: [.fileSizeKey],
                                                options: [.skipsHiddenFiles],
                                                errorHandler: { (url, error) -> Bool in
@@ -122,7 +122,7 @@ func folderSize(atPath path: String) -> UInt64 {
     }) {
         for case let fileURL as URL in enumerator {
             do {
-                // 获取每个文件的属性，并累加文件大小
+                // Get the attributes of each file and increase the file size.
                 let fileAttributes = try fileURL.resourceValues(forKeys: [.fileSizeKey])
                 if let fileSize = fileAttributes.fileSize {
                     totalSize += UInt64(fileSize)

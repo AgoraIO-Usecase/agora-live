@@ -6,8 +6,8 @@
 #import <UIKit/UIKit.h>
 
 typedef enum : NSUInteger {
-   // VLKTVMoreBtnClickTypeBelcanto = 0,      //美声
-    VLKTVMoreBtnClickTypeSetting,           //配置
+   // VLKTVMoreBtnClickTypeBelcanto = 0,      //Beautiful voice
+    VLKTVMoreBtnClickTypeSetting,           //Deploy
     VLKTVMoreBtnClickTypeMV                 //MV
 } VLKTVMoreBtnClickType;
 

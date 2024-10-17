@@ -10,11 +10,11 @@ import Foundation
 public protocol IAGDownloadManager: NSObjectProtocol {
     
     
-    /// 取消下载
+    /// Cancel the download
     /// - Parameter url: <#url description#>
     func cancelDownloadFile(withURL url: URL)
     
-    /// 下载文件，并校验md5
+    /// Download the file and check md5
     /// - Parameters:
     ///   - url: <#url description#>
     ///   - md5: <#md5 description#>
@@ -28,7 +28,7 @@ public protocol IAGDownloadManager: NSObjectProtocol {
                            completionHandler: @escaping (URL?, NSError?) -> Void)
     
     
-    /// 下载zip文件，下载完成解压到指定目录
+    /// Download the zip file and unzip it to the specified directory after downloading.
     /// - Parameters:
     ///   - url: <#url description#>
     ///   - md5: <#md5 description#>
@@ -43,7 +43,7 @@ public protocol IAGDownloadManager: NSObjectProtocol {
     
     
     
-    /// 检查资源是否需要下载
+    /// Check whether the resources need to be downloaded
     /// - Parameters:
     ///   - url: <#url description#>
     ///   - completionHandler: <#completionHandler description#>
@@ -51,12 +51,12 @@ public protocol IAGDownloadManager: NSObjectProtocol {
                        md5: String?,
                        completionHandler: @escaping (NSError?) -> Void)
     
-    /// 取消下载任务
+    /// Cancel the download task
     /// - Parameter url: <#url description#>
     func cancelDownload(forURL url: URL)
     
     
-    /// 是否正在下载
+    /// Is it being downloaded?
     /// - Parameter url: <#url description#>
     /// - Returns: <#description#>
     func isDownloading(forUrl url: URL) -> Bool

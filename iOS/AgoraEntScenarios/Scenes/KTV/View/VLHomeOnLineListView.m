@@ -53,7 +53,7 @@
 
 -(void)loadData {
     MJRefreshHeader* header = self.listCollectionView.mj_header;
-    // 模拟下拉刷新的操作
+    // Simulate the operation of drop-down refresh
     [self.listCollectionView setContentOffset:CGPointMake(0, -header.frame.size.height) animated:YES];
     [header beginRefreshing];
 }
@@ -119,12 +119,12 @@
 }
 
 static long lastClickTime = 0;
-static const int INTERVAL = 1000; // 时间间隔为1秒
+static const int INTERVAL = 1000; // The time interval is 1 second.
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     VLRoomListModel *listModel = self.roomListModeArray[indexPath.row];
     if (self.delegate && [self.delegate respondsToSelector:@selector(listItemClickAction:)]) {
         long currentTime = [[NSDate date] timeIntervalSince1970] * 1000;
-        if (currentTime - lastClickTime > INTERVAL) { // 执行点击事件
+        if (currentTime - lastClickTime > INTERVAL) { // Execute the click event
             [self.delegate listItemClickAction:listModel];
             lastClickTime = currentTime;
         }

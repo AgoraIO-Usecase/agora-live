@@ -25,7 +25,7 @@ char* parse_fu_auth_pack(const char *file_path, int *length) {
     fread(fileContent, 1, fileSize, file);
     fileContent[fileSize] = '\0';
 
-    // 寻找大括号内的整数数组
+    // Find the integer array in brackets
     char* start = strchr(fileContent, '{');
     if (!start) {
         printf("未找到'{'\n");

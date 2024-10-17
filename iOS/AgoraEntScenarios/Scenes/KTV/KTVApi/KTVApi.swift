@@ -8,13 +8,12 @@
 import Foundation
 import AgoraRtcKit
 
-/// 用户角色
+/// User role
 @objc public enum KTVSingRole: Int {
-    case soloSinger = 0     //独唱者
-    case coSinger           //伴唱
-    case leadSinger         //主唱
-    case audience           //观众
-//    case followSinger       //跟唱
+    case soloSinger = 0     //Soloist
+    case coSinger           //Sing an accompaniment to
+    case leadSinger         //Lead singer
+    case audience           //Audience
 }
 
 @objc public enum loadMusicType: Int {
@@ -22,14 +21,14 @@ import AgoraRtcKit
     case local
 }
 
-/// 歌曲状态
+/// The status of the song
 @objc public enum KTVPlayerTrackMode: Int {
-    case origin = 0    //原唱
-    case lead          //导唱
-    case acc           //伴奏
+    case origin = 0    //Original singer
+    case lead          //Director and singer
+    case acc           //Accompany
 }
 
-/// 加载歌曲失败原因
+/// Reasons for the failure of loading songs
 @objc public enum KTVLoadMusicMode: Int {
     case loadNone
     case loadMusicOnly
@@ -37,11 +36,11 @@ import AgoraRtcKit
     case loadMusicAndLrc
 }
 
-/// 加载歌曲失败原因
+/// Reasons for the failure of loading songs
 @objc public enum KTVLoadSongFailReason: Int {
-    case noLyricUrl = 0         //无歌词
-    case musicPreloadFail   //歌曲预加载失败
-    case cancled // 本次加载取消/停止
+    case noLyricUrl = 0         //No lyrics
+    case musicPreloadFail   //Song preload failed
+    case cancled // This loading is canceled/stopped
 }
 
 @objc public enum KTVSwitchRoleState: Int {
@@ -56,17 +55,17 @@ import AgoraRtcKit
 }
 
 
-/// 加入合唱结果状态
+/// Join the chorus result state
 @objc public enum KTVJoinChorusState: Int {
-    case success = 0    //加入合唱成功
-    case fail           //加入合唱失败
+    case success = 0    //Join the chorus successfully
+    case fail           //Failed to join the chorus
 }
 
 
-/// 加入合唱失败原因
+/// Reasons for failure to join the chorus
 @objc public enum KTVJoinChorusFailReason: Int {
-    case musicOpenFail     //歌曲打开失败
-    case joinChannelFail   //加入ex频道失败
+    case musicOpenFail     //Failed to open the song
+    case joinChannelFail   //Failed to join the ex channel
 }
 
 @objc public enum KTVType: Int {
@@ -78,27 +77,26 @@ import AgoraRtcKit
 @objc public protocol IMusicLoadStateListener: NSObjectProtocol {
     
     
-    /// 歌曲进度
+    /// Song progress
     /// - Parameters:
     ///   - songCode: <#songCode description#>
-    ///   - percent: 歌曲加载进度 范围： 0-100
+    ///   - percent: Song loading progress Range: 0-100
     ///   - status: <#status description#>
     ///   - msg: <#msg description#>
     ///   - lyricUrl: <#lyricUrl description#>
     func onMusicLoadProgress(songCode: Int, percent: Int, state: AgoraMusicContentCenterPreloadState, msg: String?, lyricUrl: String?)
     
-    /// 歌曲加载成功
+    /// The song is loaded successfully
     /// - Parameters:
-    ///   - songCode: 歌曲code
-    ///   - lyricUrl: 歌词远端url
+    /// - songCode: Song code
+    /// - lyricUrl: Lyrics remote url
     func onMusicLoadSuccess(songCode: Int, lyricUrl: String)
 
-    
-    /// 歌曲加载失败
+    /// Song loading failed
     /// - Parameters:
-    ///   - songCode: 歌曲code
-    ///   - lyricUrl: 歌曲远端url
-    ///   - reason: 错误原因
+    /// - songCode: Song code
+    /// - lyricUrl: Song remote url
+    /// - reason: Reason for error
     func onMusicLoadFail(songCode: Int, reason: KTVLoadSongFailReason)
 }
 
@@ -111,7 +109,7 @@ import AgoraRtcKit
 
 @objc public protocol KTVApiEventHandlerDelegate: NSObjectProtocol {
     
-    /// 歌曲播放状态变化
+    /// Change of song playback status
     /// - Parameters:
     ///   - state: <#state description#>
     ///   - error: <#error description#>
@@ -121,11 +119,11 @@ import AgoraRtcKit
                                    isLocal: Bool)
     
     
-    /// 歌曲得分回调
+    /// Song score back
     /// - Parameter score: <#score description#>
     func onSingingScoreResult(score: Float)
      
-    /// 角色切换回调
+    /// Role switching callback
     /// - Parameters:
     ///   - oldRole: <#oldRole description#>
     ///   - newRole: <#newRole description#>
@@ -134,30 +132,30 @@ import AgoraRtcKit
     func onTokenPrivilegeWillExpire()
     
     /**
-         * 合唱频道人声音量提示
-         * @param speakers 不同用户音量信息
-         * @param totalVolume 总音量
-         */
+    * Chorus channel voice volume prompt
+    * @param speakers Volume information of different users
+    * @param totalVolume Total Volume
+    */
     func onChorusChannelAudioVolumeIndication(
         speakers: [AgoraRtcAudioVolumeInfo],
         totalVolume: Int)
     
-    //MPK时间回调 只给房主用 仅适合接唱
+    //MPK time callback is only for homeowners. It is only suitable for singing.
     func onMusicPlayerProgressChanged(with progress: Int)
 }
 
-// 大合唱中演唱者互相收听对方音频流的选路策略
+// The path selection strategy for singers to listen to each other's audio streams in the chorus
 enum GiantChorusRouteSelectionType: Int {
-    case random = 0 // 随机选取几条流
-    case byDelay = 1 // 根据延迟选择最低的几条流
-    case topN = 2 // 根据音强选流
-    case byDelayAndTopN = 3 // 同时开始延迟选路和音强选流
+    case random = 0 // Randomly select several streams
+    case byDelay = 1 // Select the lowest stream according to the delay
+    case topN = 2 // Select the flow according to the tone strength
+    case byDelayAndTopN = 3 // At the same time, start to delay the route selection and tone strong flow selection.
 }
 
-// 大合唱中演唱者互相收听对方音频流的选路配置
+// In the chorus, the singers listen to each other's audio stream.
 @objc public class GiantChorusRouteSelectionConfig: NSObject {
-    let type: GiantChorusRouteSelectionType // 选路策略
-    let streamNum: Int // 最大选取的流个数（推荐6）
+    let type: GiantChorusRouteSelectionType // Path selection strategy
+    let streamNum: Int // The maximum number of selected streams (recommended 6)
 
     init(type: GiantChorusRouteSelectionType, streamNum: Int) {
         self.type = type
@@ -254,10 +252,10 @@ enum GiantChorusRouteSelectionType: Int {
     
 }
 
-/// 歌曲加载配置信息
+/// Song loading configuration information
 @objcMembers open class KTVSongConfiguration: NSObject {
     public var songIdentifier: String = ""
-    public var mainSingerUid: Int = 0     //主唱uid
+    public var mainSingerUid: Int = 0     //The lead singer uid
     public var mode: KTVLoadMusicMode = .loadMusicAndLrc
     public var songCutter: Bool = false
     func printObjectContent() -> String {
@@ -288,46 +286,47 @@ public typealias JoinExChannelCallBack = ((Bool, KTVJoinChorusFailReason?)-> Voi
 
 @objc public protocol KTVApiDelegate: NSObjectProtocol {
     
-    @objc optional func createKtvApi(config: KTVApiConfig) //小合唱必选
+    @objc optional func createKtvApi(config: KTVApiConfig) //Small chorus is a must
     
-    @objc optional func createKTVGiantChorusApi(config: GiantChorusConfiguration) //大合唱必选
+    @objc optional func createKTVGiantChorusApi(config: GiantChorusConfiguration) //Chorus is a must
     
-    /// 订阅KTVApi事件
+    /// Subscribe to KTVApi events
     /// - Parameter ktvApiEventHandler: <#ktvApiEventHandler description#>
     func addEventHandler(ktvApiEventHandler: KTVApiEventHandlerDelegate)
     
     
-    /// 取消订阅KTVApi事件
+    /// Unsubscribe from KTVApi event
     /// - Parameter ktvApiEventHandler: <#ktvApiEventHandler description#>
     func removeEventHandler(ktvApiEventHandler: KTVApiEventHandlerDelegate)
     
     
-    /// 清空内部变量/缓存，取消在initWithRtcEngine时的监听，以及取消网络请求等
+    /// Empty internal variables/caches, cancel listening when initWithRtcEngine, and cancel network requests, etc.
     func cleanCache()
     
     /**
-     * 收到 IKTVApiEventHandler.onTokenPrivilegeWillExpire 回调时需要主动调用方法更新Token
-     * @param rtmToken musicContentCenter模块需要的rtm token
-     * @param chorusChannelRtcToken 合唱需要的频道rtc token
-     */
+     * When receiving an IKTVApiEventHandler.onTokenPrivilegeWillExpire callback, you need to actively call the method to update Token
+     * @param rtmToken rtm token required by musicContentCenter module
+     * @param chorusChannelRtcToken The channel needed for chorus rtc token
+    */
     func renewToken(
         rtmToken: String,
         chorusChannelRtcToken: String)
     
     /**
-     * 获取歌曲榜单
-     * Parameter completion: 榜单列表回调
+     * Get the song list
+     * Parameter completion: The list of the list is adjusted back
      */
     func fetchMusicCharts(completion:@escaping MusicChartCallBacks)
     
     /**
-    * 根据歌曲榜单类型搜索歌单
-    *  Parameters:
-    *  musicChartId: 榜单id
-    *  page: 榜单的查询页数
-    *  pageSize: 查询每页的数据长度
-    *  jsonOption: 自定义过滤模式
-    *  completion: 歌曲列表回调
+
+    * Search for song lists according to the type of song list
+    * Parameters:
+    * musicChartId: List id
+    * page: The number of query pages of the list
+    * pageSize: Query the data length of each page
+    * jsonOption: Custom filter mode
+    * completion: Song list callback
     */
     func searchMusic(musicChartId: Int,
                      page: Int,
@@ -336,13 +335,14 @@ public typealias JoinExChannelCallBack = ((Bool, KTVJoinChorusFailReason?)-> Voi
                      completion:@escaping MusicResultCallBacks)
     
     /**
-    * 根据关键字搜索歌曲
-    *  Parameters:
-    *  keyword: 搜索关键字
-    *  page: 榜单的查询页数
-    *  pageSize: 查询每页的数据长度
-    *  jsonOption: 自定义过滤模式
-    *  completion: 歌曲列表回调
+
+    * Search for songs by keywords
+    * Parameters:
+    * keyword: search keyword
+    * page: The number of query pages of the list
+    * pageSize: Query the data length of each page
+    * jsonOption: Custom filter mode
+    * completion: Song list callback
     */
     func searchMusic(keyword: String,
                      page: Int, pageSize: Int,
@@ -351,20 +351,20 @@ public typealias JoinExChannelCallBack = ((Bool, KTVJoinChorusFailReason?)-> Voi
             
     
     
-    /// 加载歌曲
+    /// Load songs
     /// - Parameters:
     ///   - config: <#config description#>
     ///   - onMusicLoadStateListener: <#onMusicLoadStateListener description#>
     func loadMusic(songCode: Int, config: KTVSongConfiguration, onMusicLoadStateListener: IMusicLoadStateListener)
     
-    /// 通过url加载歌曲
+    /// Load songs through url
     /// - Parameters:
     ///   - config: <#config description#>
     ///   - onMusicLoadStateListener: <#onMusicLoadStateListener description#>
     func loadMusic(config: KTVSongConfiguration, url: String)
     
     
-    /// 切换角色
+    /// Switch roles
     /// - Parameters:
     ///   - newRole: <#newRole description#>
     ///   - token: <#token description#>
@@ -372,82 +372,80 @@ public typealias JoinExChannelCallBack = ((Bool, KTVJoinChorusFailReason?)-> Voi
     func switchSingerRole(newRole: KTVSingRole, onSwitchRoleState:@escaping ISwitchRoleStateListener)
     
     
-    /// 播放
+    /// Play
     /// - Parameter startPos: <#startPos description#>
     func startSing(songCode: Int, startPos: Int)
     
     /**
-     * 播放歌曲
-     * @param url 歌曲地址
-     * @param startPos 开始播放的位置
-     * 对于主唱：
-     * 如果loadMusic时你选择了autoPlay = true 则不需要主动调用startSing
-     * 如果loadMusic时你选择了autoPlay = false 则需要在loadMusic成功后调用startSing
-     */
+     * Play the song
+     * @param url Song address
+     * @param startPos Where to start playing
+     * For the lead singer:
+     * If you select autoPlay = true when loadingMusic, you don't need to actively call startSing.
+     * If you select autoPlay = false when loadingMusic, you need to call startSing after loadMusic is successful.
+    */
     func startSing(url: String, startPos: Int)
     
-    /// 恢复播放
+    /// Resume playback
     func resumeSing()
     
     
-    /// 暂停播放
+    /// Pause playback
     func pauseSing()
     
     
-    /// 调整进度
-    /// - Parameter time: 进度，单位ms
+    /// Adjust the progress
+    /// - Parameter time: progress, unit ms
     func seekSing(time: Int)
     
     /**
-     * 设置当前音频播放delay， 适用于音频自采集的情况
-     * @param audioPlayoutDelay 音频帧处理和播放的时间差
-     */
+     * Set the current audio playback delay, which is suitable for audio self-acquisition
+     * @param audioPlayoutDelay Time difference between audio frame processing and playback
+    */
     func setAudioPlayoutDelay(audioPlayoutDelay: Int)
     
-    /// 设置歌词组件，在任意时机设置都可以生效
+    /// Set up the lyrics component, and the settings can take effect at any time.
     /// - Parameter view: <#view description#>
     func setLrcView(view: KTVLrcViewDelegate)
     
     
-    /// 设置当前mic开关状态目前关麦调用
-    /// 目前关麦调用 adjustRecordSignalVolume(0) 后 onAudioVolumeIndication 仍然会执行， ktvApi需要增加一个变量判断当前是否关麦， 如果关麦把设置给歌词组件的pitch改为0
+    /// Set the current mic switch status and turn off the microphone call.
+    /// At present, onAudioVolumeIndication will still be executed after the microphone is called adjustRecordSignalVolume(0). ktvApi needs to add a variable to determine whether the microphone is currently closed. If the microphone is turned off, the pitch set to the lyrics component is changed to 0
     /// - Parameter muteStatus: mute mic status
     func muteMic(muteStatus: Bool)
     
     func getMusicPlayer() -> AgoraRtcMediaPlayerProtocol?
     
-    /// 获取MCC实例
+    /// Get the MCC instance
     /// - Returns: description
     func getMusicContentCenter() -> AgoraMusicContentCenter?
     
     
-    /// 拉取歌曲列表
+    /// Pull the list of songs
     func fetchSongList(complete: ((_ list: NSArray) -> Void)?)
     
-    // 开启专业主播模式
+    // Turn on the professional anchor mode
     func enableProfessionalStreamerMode(_ enable: Bool)
     
     /**
-     创建dataStreamID
+     Create dataStreamID
      */
     func renewInnerDataStreamId()
     
     
-  /**
-   * 加载歌曲，同时只能为一首歌loadSong，同步调用， 一般使用此loadSong是歌曲已经preload成功（url为本地文件地址）
-   * @param config 加载歌曲配置，config.autoPlay = true，默认播放url1
-   * @param url1 歌曲地址1
-   * @param url2 歌曲地址2
-   *
-   *
-   * 推荐调用：
-   * 歌曲开始时：
-   * 主唱 loadMusic(KTVSongConfiguration(autoPlay=true, mode=LOAD_MUSIC_AND_LRC, url, mainSingerUid)) switchSingerRole(SoloSinger)
-   * 观众 loadMusic(KTVSongConfiguration(autoPlay=false, mode=LOAD_LRC_ONLY, url, mainSingerUid))
-   * 加入合唱时：
-   * 准备加入合唱者：loadMusic(KTVSongConfiguration(autoPlay=false, mode=LOAD_MUSIC_ONLY, url, mainSingerUid))
-   * loadMusic成功后switchSingerRole(CoSinger)
-   */
+    /**
+     * Load the song, and only loadSong for a song at the same time can be called synchronously. Generally, using this loadSong means that the song has been successfully preloaded (url is the local file address)
+     * @param config Load song configuration, config.autoPlay = true, default playback url1
+     * @param url1 Song Address 1
+     * @param url2 Song Address 2
+     * Recommended call:
+     * At the beginning of the song:
+     * Lead singer loadMusic(KTVSongConfiguration(autoPlay=true, mode=LOAD_MUSIC_AND_LRC, url, mainSingerUid)) swi TchSingerRole (SoloSinger)
+     * Audience loadMusic(KTVSongConfiguration(autoPlay=false, mode=LOAD_LRC_ONLY, url, mainSingerUid))
+     * When joining the chorus:
+     * Prepare to join the chorus: loadMusic(KTVSongConfiguration(autoPlay=false, mode=LOAD_MUSIC_ONLY, url, mainSingerUid))
+     * After loadMusic is successful, switchSingerRole(CoSinger)
+    */
   func load2Music(
       url1: String,
       url2: String,
@@ -455,15 +453,15 @@ public typealias JoinExChannelCallBack = ((Bool, KTVJoinChorusFailReason?)-> Voi
   )
   
   /**
-   * 多文件切换播放资源
-   * @param url 需要切换的播放资源，需要为 load2Music 中 参数 url1，url2 中的一个
-   * @param syncPts 是否同步切换前后的起始播放位置: true 同步，false 不同步，从 0 开始
+   * Multi-file switching playback resources
+   * @param url The playback resources that need to be switched need to be one of the parameters url1 and url2 in load2Music.
+   * @param syncPts Whether to synchronize the starting playback position before and after switching: true synchronization, false asynchronous, starting from 0
    */
   func switchPlaySrc(url: String, syncPts: Bool)
     
   /**
-   * 取消歌曲下载，会打断加载歌曲的进程并移除歌曲缓存
-   * @param songCode 歌曲唯一编码
+   * Canceling the song download will interrupt the process of loading the song and remove the song cache.
+   * @param songCode The unique encoding of the song
    */
       
    func removeMusic(songCode: Int)
