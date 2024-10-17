@@ -156,7 +156,7 @@ class ShowLiveViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        deleteAllWork()
+//        deleteAllWork()
         guard let room = room else {return}
         setupUI()
         if room.ownerId == VLUserCenter.user.id {
@@ -344,7 +344,7 @@ class ShowLiveViewController: UIViewController {
     
     //broadcaster join channel
     private func joinChannel() {
-        assert(role == .broadcaster, "role invalid")
+//        assert(role == .broadcaster, "role invalid")
         guard let channelId = room?.roomId, let ownerId = room?.ownerId,  let uid: UInt = UInt(ownerId) else {
             return
         }
@@ -359,7 +359,6 @@ class ShowLiveViewController: UIViewController {
         self.muteLocalVideo = false
         self.muteLocalAudio = false
         ShowAgoraKitManager.shared.setupRemoteVideo(channelId: currentChannelId ?? "", uid: UInt(dreamFlowService.genaiUid), canvasView: liveView.canvasView.remoteView)
-        
     }
 }
 

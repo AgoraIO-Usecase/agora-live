@@ -197,14 +197,14 @@ extension ShowRoomListVC: UICollectionViewDataSource, UICollectionViewDelegateFl
                        count: room.roomUserCount,
                        pureMode: false)
         cell.ag_addPreloadTap(roomInfo: room, localUid: delegateHandler.localUid) {[weak self] state in
-            if AppContext.shared.rtcToken?.count ?? 0 == 0 {
-                if state == .began {
-                    self?.preGenerateToken()
-                } else if state == .ended {
-                    ToastView.show(text: "Token is not exit, try again!")
-                }
-                return false
-            }
+//            if AppContext.shared.rtcToken?.count ?? 0 == 0 {
+//                if state == .began {
+//                    self?.preGenerateToken()
+//                } else if state == .ended {
+//                    ToastView.show(text: "Token is not exit, try again!")
+//                }
+//                return false
+//            }
             
             return true
         } onRequireRenderVideo: { info, canvas in
