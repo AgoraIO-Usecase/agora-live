@@ -256,9 +256,10 @@ class ShowLiveViewController: UIViewController {
     
     private var muteLocalAudio: Bool = false {
         didSet {
-            ShowLogger.info("muteLocalAudio: \(muteLocalVideo)")
             channelOptions.publishMicrophoneTrack = !muteLocalAudio
             ShowAgoraKitManager.shared.updateChannelEx(channelId: self.room?.roomId ?? "", options: channelOptions)
+            
+            liveView.canvasView.isLocalMuteMic = muteLocalAudio
         }
     }
     
@@ -1138,6 +1139,7 @@ extension ShowLiveViewController: ShowToolMenuViewControllerDelegate {
     
     // Microphone switch
     func onClickMicButtonSelected(_ menu:ShowToolMenuViewController, _ selected: Bool) {
+        print("onClickMicButtonSelected: \(selected)")
         AgoraEntAuthorizedManager.checkAudioAuthorized(parent: self) {[weak self] granted in
             guard let self = self, granted else { return }
             self.serviceImp?.muteAudio(roomId: self.roomId, mute: selected) { err in
