@@ -106,7 +106,7 @@ if [[ ! -z ${sdk_url} && "${sdk_url}" != 'none' ]]; then
 
     echo source sdk path: "${unzip_name}rtc/sdk/"
     cp -a ${unzip_name}rtc/sdk/. common/base/agora-sdk/
-    ls common/base/agora-sdk/
+    ls -la common/base/agora-sdk/
 
     # config app global properties
     sed -ie "s#$(sed -n '/USE_LOCAL_SDK/p' gradle.properties)#USE_LOCAL_SDK=true#g" gradle.properties

@@ -5,9 +5,18 @@ plugins {
 }
 
 if (project.property("AGORA_APP_ID").toString().isEmpty()) {
-    println("Please config AGORA_APP_ID in gradle.properties")
+    throw new GradleException("Please config AGORA_APP_ID in gradle.properties")
 }
-//def localsdkPath = "rtm"
+
+def baseProps = new File(rootProject.projectDir.absolutePath + File.separator + "gradle.properties")
+def properties = new Properties()
+if (baseProps.exists()) {
+    baseProps.withReader('UTF-8') { reader ->
+        properties.load(reader)
+    }
+}
+final def USE_LOCAL_SDK = properties.getProperty("USE_LOCAL_SDK").toBoolean()
+def localsdkPath = "agora-sdk"
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -43,11 +52,13 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-//    sourceSets {
-//        main {
-//            jniLibs.srcDirs += "${localsdkPath}"
-//        }
-//    }
+    if (USE_LOCAL_SDK) {
+        sourceSets {
+            main {
+                jniLibs.srcDirs += "${localsdkPath}"
+            }
+        }
+    }
 }
 
 dependencies {
@@ -80,7 +91,11 @@ dependencies {
     implementation rootProject.ext.deps.glide
     api rootProject.ext.deps.ok2curl
 
-    api rootProject.ext.deps.rtc
-    //api fileTree(dir: "${localsdkPath}", include: ['*.jar'])
+    if (USE_LOCAL_SDK) {
+        api fileTree(dir: "${localsdkPath}", include: ['*.jar'])
+    } else {
+        api rootProject.ext.deps.rtc
+    }
+
     api rootProject.ext.deps.lifecycle_extensions
 }
