@@ -6,4 +6,5 @@ interface IDreamFlowStateListener {
 
     fun onLoadingProgressChanged(progress: Int)
 
+    fun onOccurError(e: Exception)
 }
