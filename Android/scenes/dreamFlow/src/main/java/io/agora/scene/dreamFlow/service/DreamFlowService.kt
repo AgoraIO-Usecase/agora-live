@@ -120,6 +120,7 @@ class DreamFlowService constructor(
     }
 
     fun clean() {
+        endStateTimer()
         listener = null
     }
 
@@ -128,12 +129,12 @@ class DreamFlowService constructor(
         job?.cancel()
         job = scope.launch(Dispatchers.Main) {
             repeat(100) {
-
+                delay(3000)
                 try {
                     getStatus()
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    listener?.onOccurError(e)
                 }
-                delay(2000)
             }
         }
     }
@@ -308,11 +309,13 @@ class DreamFlowService constructor(
             val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
             val bodyJobj = JSONObject(body.string())
             Log.d(tag, "delete result body obj: $bodyJobj")
-            if (bodyJobj["code"] != 0) {
+            val code = bodyJobj["code"]
+            if (code != 0) {
                 throw RuntimeException("error: ${execute.code} message: ${execute.message}")
             } else {
                 // update state
                 workerId = ""
+                code
             }
         } else {
             throw RuntimeException("error: ${execute.code} message: ${execute.message}")
@@ -366,10 +369,9 @@ class DreamFlowService constructor(
         if (execute.isSuccessful) {
             val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
             val bodyJobj = JSONObject(body.string())
+            val code = bodyJobj["code"]
             Log.d(tag, "status result body obj: $bodyJobj")
-            if (bodyJobj["code"] != 0) {
-                throw RuntimeException("error: ${execute.code} message: ${execute.message}")
-            } else {
+            if (code == 0) {
                 val data = bodyJobj["data"] as JSONObject
                 val workerInfo = data.optJSONObject("workerInfo")
                 val stylize_ai = workerInfo?.optJSONObject("stylize_ai")
@@ -378,6 +380,13 @@ class DreamFlowService constructor(
                     val status = ServiceStatus.fromString(stateStr)
                     updateStatus(status)
                 }
+                code
+            } else if (code == 10003) {
+                updateStatus(ServiceStatus.STOPPED)
+                val message = bodyJobj["message"]
+                throw RuntimeException("error: $code $message")
+            } else {
+                throw RuntimeException("error: ${execute.code} message: ${execute.message}")
             }
         } else {
             throw RuntimeException("error: ${execute.code} message: ${execute.message}")

@@ -244,7 +244,7 @@ class LiveDetailFragment : Fragment() {
         } else {
             val roomLeftTime = ShowServiceProtocol.ROOM_AVAILABLE_DURATION - mService.getCurrentRoomDuration(mRoomId)
             if (roomLeftTime > 0) {
-                mBinding.root.postDelayed(timerRoomEndRun, roomLeftTime)
+//                mBinding.root.postDelayed(timerRoomEndRun, roomLeftTime)
                 initRtcEngine()
                 initServiceWithJoinRoom()
             }
@@ -275,6 +275,7 @@ class LiveDetailFragment : Fragment() {
         mBinding.root.removeCallbacks(timerRoomEndRun)
         mService.leaveRoom(mRoomInfo.roomId)
         DreamFlowLogger.d(TAG, "[commerce]$this $mRoomId destroy")
+        mDreamFlowService.clean()
         return destroyRtcEngine(isScrolling)
     }
 
@@ -345,7 +346,6 @@ class LiveDetailFragment : Fragment() {
                 )
             )
         }
-        mDreamFlowService.delete({})
     }
 
     /**
@@ -738,6 +738,10 @@ class LiveDetailFragment : Fragment() {
                 val percent = "$progress%"
                 mBinding.tvDreamFlowProgress.text = percent
                 mBinding.pbDreamFlowProgress.setProgress(progress, true)
+            }
+
+            override fun onOccurError(e: Exception) {
+                ToastUtils.showToast("Error:${e.message}")
             }
         })
     }
