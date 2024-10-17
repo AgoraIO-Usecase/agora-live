@@ -128,8 +128,4 @@ open class BottomLightListDialog(context: Context) : BottomLightDialog(context) 
         onItemSelectedListener?.invoke(this, selectedItem)
     }
 
-
-
-
-
 }

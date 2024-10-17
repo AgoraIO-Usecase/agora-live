@@ -77,8 +77,8 @@ class AdvanceSettingAudienceDialog constructor(context: Context) : BottomFullDia
         @StringRes tip: Int
     ) {
         binding.tvTitle.text = context.getString(title)
-        binding.ivTip.isVisible = tip != View.NO_ID
-        binding.ivTip.setOnClickListener {
+        binding.ivTips.isVisible = tip != View.NO_ID
+        binding.ivTips.setOnClickListener {
             ToastDialog(context).showTip(context.getString(tip))
         }
         binding.switchCompat.setOnCheckedChangeListener(null)

@@ -19,7 +19,7 @@
         tools:text="@string/dream_flow_setting_advance_quality_enhance" />
 
     <ImageView
-        android:id="@+id/ivTip"
+        android:id="@+id/iv_tips"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="4dp"

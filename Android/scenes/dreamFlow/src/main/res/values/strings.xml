@@ -192,10 +192,12 @@
     <string name="dream_flow_local_uid">Local UID：%s</string>
 
     <string name="dream_flow_setting_stylized">Stylized Effect</string>
+    <string name="dream_flow_setting_service">Server</string>
     <string name="dream_flow_setting_effect">Face Mode</string>
     <string name="dream_flow_setting_style_title">Style</string>
     <string name="dream_flow_setting_effect_title">Effect</string>
     <string name="dream_flow_setting_strength_title">Strength</string>
+    <string name="dream_flow_setting_frame_title">Super Frame</string>
     <string name="dream_flow_setting_desc_hint">Customized Prompt</string>
     <string name="dream_flow_window_origin">Origin</string>
     <string name="dream_flow_setting_initializing">Initializing</string>
@@ -220,22 +222,6 @@
         <item>1.33x SR</item>
         <item>1.5x SR</item>
         <item>2x SR</item>
-    </string-array>
-
-    <string-array name="dream_flow_style">
-        <item>Miyazaki</item>
-        <item>toonyou</item>
-        <item>sexytoon</item>
-        <item>Clay</item>
-    </string-array>
-
-    <string-array name="dream_flow_effect">
-        <item>Sandstorm</item>
-        <item>Vibrant</item>
-        <item>Fantasy</item>
-        <item>Cinematic</item>
-        <item>Cartoon</item>
-        <item>Customized</item>
     </string-array>
 
 </resources>
