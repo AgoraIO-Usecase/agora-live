@@ -2,11 +2,8 @@
 
 > This document introduces how to quickly run through <mark>Audio Chatroom</mark> sample project.
 
-<figure class="third">
-  <img src="https://download.agora.io/demo/release/VoiceChatShot01.png" width="300" height="640" />
-  <img src="https://download.agora.io/demo/release/VoiceChatShot02.png" width="300" height="640" />
-</figure>
-
+>  <img src="https://download.agora.io/demo/release/VoiceChatShot01.png" width="300" height="640" /><img src="https://download.agora.io/demo/release/VoiceChatShot02.png" width="300" height="640" />
+  
 ## Prerequisites
 
 - Android Studio 3.5 or higher.
@@ -22,7 +19,7 @@
 ``` 
 # RTC SDK key Config
 AGORA_APP_ID=<Your Agora App ID>
-AGORA_APP_CERTIFICATE=<Your Agora App Certificate(if enable token)>
+AGORA_APP_CERTIFICATE=<Your Agora App Certificate>
   
 # IM SDK key Config
 IM_APP_KEY=

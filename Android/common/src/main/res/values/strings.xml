@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="room_has_close">The host has disbanded the room. Please confirm your departure from the room.</string>
+    <string name="room_has_close">The host has disbanded the room. </string>
+    <string name="room_iknow">Got it</string>
     <string name="confirm_to_dismiss_room">Are you sure you want to disband this room?</string>
     <string name="confirm_to_exit_room">Are you sure you want to leave this room?</string>
     <string name="exit_room">Leave the room</string>
@@ -60,5 +61,12 @@
     <string name="permission_leak_tip">The required permissions need to be granted.</string>
 
     <string name="id_is_" translatable="false">ID: %s</string>
+
+    <string name="comm_cancel">Cancel</string>
+    <string name="comm_i_know">OK</string>
+    <string name="comm_upload_logging">Log uploading</string>
+    <string name="comm_upload_logging_error">Log upload error</string>
+    <string name="comm_upload_logging_complete">Log upload success</string>
+    <string name="comm_upload_repeat">Retry</string>
 
 </resources>

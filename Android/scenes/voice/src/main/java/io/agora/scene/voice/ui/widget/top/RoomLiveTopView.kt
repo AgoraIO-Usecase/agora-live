@@ -3,17 +3,14 @@ package io.agora.scene.voice.ui.widget.top
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import io.agora.voice.common.constant.ConfigConstants
-import io.agora.voice.common.utils.DeviceTools.dp
 import io.agora.voice.common.utils.DeviceTools.number2K
 import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceViewRoomLiveTopBinding
 import io.agora.scene.voice.model.VoiceRankUserModel
 import io.agora.scene.voice.model.VoiceRoomModel
-import io.agora.voice.common.utils.DeviceTools
 import io.agora.voice.common.utils.ImageTools
 
 class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView {
@@ -49,8 +46,6 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
         binding.tvRoomType.setOnClickListener(this)
         binding.tvClickCount.setOnClickListener(this)
         binding.ivChatroomMore.setOnClickListener(this)
-        binding.tvBGM.setOnClickListener(this)
-        binding.ivBGM.setOnClickListener(this)
     }
 
     override fun onChatroomInfo(voiceRoomModel: VoiceRoomModel) {
@@ -60,16 +55,12 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
             tvOnLineCount.text = resources.getString(R.string.voice_room_online_count, roomDetailInfo.memberCount)
             mtChatroomGifts.text = roomDetailInfo.giftAmount.toString()
             tvClickCount.text = resources.getString(R.string.voice_room_click_count, roomDetailInfo.clickCount)
-            if (roomDetailInfo.roomType == ConfigConstants.RoomType.Common_Chatroom) {
-                tvRoomType.isVisible = true
-                tvRoomType.text = when (roomDetailInfo.soundEffect) {
-                    ConfigConstants.SoundSelection.Karaoke -> root.context.getString(R.string.voice_chatroom_karaoke)
-                    ConfigConstants.SoundSelection.Gaming_Buddy -> root.context.getString(R.string.voice_chatroom_gaming_buddy)
-                    ConfigConstants.SoundSelection.Professional_Broadcaster -> root.context.getString(R.string.voice_chatroom_professional_broadcaster)
-                    else -> root.context.getString(R.string.voice_chatroom_social_chat)
-                }
-            } else {
-                tvRoomType.isVisible = false
+            tvRoomType.isVisible = true
+            tvRoomType.text = when (roomDetailInfo.soundEffect) {
+                ConfigConstants.SoundSelection.Karaoke -> root.context.getString(R.string.voice_chatroom_karaoke)
+                ConfigConstants.SoundSelection.Gaming_Buddy -> root.context.getString(R.string.voice_chatroom_gaming_buddy)
+                ConfigConstants.SoundSelection.Professional_Broadcaster -> root.context.getString(R.string.voice_chatroom_professional_broadcaster)
+                else -> root.context.getString(R.string.voice_chatroom_social_chat)
             }
 
             ImageTools.loadImage(binding.ivChatroomOwner, roomDetailInfo.owner?.getAvatarUrl())
@@ -84,14 +75,17 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
                             ivChatroomMember1.isVisible = true
                             ImageTools.loadImage(ivChatroomMember1, audienceBean.getAvatarUrl())
                         }
+
                         1 -> {
                             ivChatroomMember2.isVisible = true
                             ImageTools.loadImage(ivChatroomMember2, audienceBean.getAvatarUrl())
                         }
+
                         2 -> {
                             ivChatroomMember3.isVisible = true
                             ImageTools.loadImage(ivChatroomMember3, audienceBean.getAvatarUrl())
                         }
+
                         else -> {
                             return
                         }
@@ -113,14 +107,17 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
                             ivChatroomMember1.isVisible = true
                             ImageTools.loadImage(ivChatroomMember1, audienceBean.getAvatarUrl())
                         }
+
                         1 -> {
                             ivChatroomMember2.isVisible = true
                             ImageTools.loadImage(ivChatroomMember2, audienceBean.getAvatarUrl())
                         }
+
                         2 -> {
                             ivChatroomMember3.isVisible = true
                             ImageTools.loadImage(ivChatroomMember3, audienceBean.getAvatarUrl())
                         }
+
                         else -> {
                             return
                         }
@@ -135,7 +132,8 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
         if (count < 0) return
         if (this::roomDetailInfo.isInitialized) {
             roomDetailInfo.memberCount = count
-            binding.tvOnLineCount.text = resources.getString(R.string.voice_room_online_count, roomDetailInfo.memberCount)
+            binding.tvOnLineCount.text =
+                resources.getString(R.string.voice_room_online_count, roomDetailInfo.memberCount)
         }
     }
 
@@ -158,23 +156,6 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
         }
     }
 
-    override fun updateBGMContent(content: String?, isSingerOn: Boolean) {
-        if (content != null) {
-            binding.ivBGM.visibility = View.VISIBLE
-            binding.tvBGM.visibility = View.VISIBLE
-            binding.tvBGM.text = content
-            if (isSingerOn) {
-                binding.ivBGM.setImageResource(R.drawable.voice_icon_room_bgm_on)
-            } else {
-                binding.ivBGM.setImageResource(R.drawable.voice_icon_room_bgm_off)
-            }
-        } else {
-            binding.ivBGM.visibility = View.INVISIBLE
-            binding.tvBGM.visibility = View.INVISIBLE
-            binding.tvBGM.text = ""
-        }
-    }
-
     override fun onClick(v: View?) {
         when (v?.id) {
             binding.ivChatroomBack.id -> onLiveTopClickListener?.onClickBack(v)
@@ -183,8 +164,6 @@ class RoomLiveTopView : ConstraintLayout, View.OnClickListener, IRoomLiveTopView
             binding.llChatroomMemberRank.id -> onLiveTopClickListener?.onClickRank(v, 0)
             binding.vRoomInfo.id -> onLiveTopClickListener?.onClickRank(v, 1)
             binding.ivChatroomMore.id -> onLiveTopClickListener?.onClickMore(v)
-            binding.tvBGM.id -> onLiveTopClickListener?.onClickBGM(v)
-            binding.ivBGM.id -> onLiveTopClickListener?.onClickBGMSinger(v)
         }
     }
 }

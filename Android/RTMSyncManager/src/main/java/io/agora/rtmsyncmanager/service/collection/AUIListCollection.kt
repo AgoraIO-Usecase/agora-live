@@ -20,7 +20,7 @@ class AUIListCollection(
             channelName = channelName,
             completion = { error, metaData ->
                 if (error != null) {
-                    callback?.invoke(AUICollectionException.ErrorCode.unknown.toException(null, "rtm getMetadata error: $error"), null)
+                    callback?.invoke(AUICollectionException.ErrorCode.rtm.toException(error.code, "rtm getMetadata error: ${error.reason}"), null)
                     return@getMetadata
                 }
                 val data = metaData?.items?.find { it.key == observeKey }
@@ -81,7 +81,10 @@ class AUIListCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.recvErrorReceipt.toException()
+                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(
+                        code = error.code,
+                        msg = error.message
+                    )
                 )
             } else {
                 callback?.invoke(null)
@@ -125,7 +128,10 @@ class AUIListCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.recvErrorReceipt.toException()
+                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(
+                        code = error.code,
+                        msg = error.message
+                    )
                 )
             } else {
                 callback?.invoke(null)
@@ -169,7 +175,10 @@ class AUIListCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.recvErrorReceipt.toException()
+                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(
+                        code = error.code,
+                        msg = error.message
+                    )
                 )
             } else {
                 callback?.invoke(null)
@@ -212,7 +221,10 @@ class AUIListCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.recvErrorReceipt.toException()
+                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(
+                        code = error.code,
+                        msg = error.message
+                    )
                 )
             } else {
                 callback?.invoke(null)
@@ -271,7 +283,10 @@ class AUIListCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(null, error.message)
+                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(
+                        code = error.code,
+                        msg = error.message
+                    )
                 )
             } else {
                 callback?.invoke(null)
@@ -309,7 +324,10 @@ class AUIListCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.removeMetaDataFail.toException()
+                    AUICollectionException.ErrorCode.removeMetaDataFail.toException(
+                        code = error.code,
+                        msg = error.message
+                    )
                 )
             } else {
                 callback?.invoke(null)
@@ -330,7 +348,7 @@ class AUIListCollection(
             filter.isNotEmpty() &&
             AUICollectionUtils.getItemIndexes(currentList, filter)?.isNotEmpty() == true) {
             callback?.invoke(
-                AUICollectionException.ErrorCode.encodeToJsonStringFail.toException()
+                AUICollectionException.ErrorCode.filterFoundSame.toException()
             )
             return
         }
@@ -360,13 +378,10 @@ class AUIListCollection(
             return
         }
 
-        rtmManager.setBatchMetadata(
-            channelName,
-            metadata = mapOf(Pair(observeKey, data)),
-        ) { e ->
+        setBatchMetadata(data) { e ->
             if (e != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: $e")
+                    AUICollectionException.ErrorCode.rtm.toException(e.code, "rtm setBatchMetadata error: ${e.reason}")
                 )
             } else {
                 callback?.invoke(null)
@@ -422,13 +437,10 @@ class AUIListCollection(
             return
         }
 
-        rtmManager.setBatchMetadata(
-            channelName,
-            metadata = mapOf(Pair(observeKey, data)),
-        ) { e ->
+        setBatchMetadata(data) { e ->
             if (e != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: $e")
+                    AUICollectionException.ErrorCode.rtm.toException(e.code, "rtm setBatchMetadata error: ${e.reason}")
                 )
             } else {
                 callback?.invoke(null)
@@ -480,13 +492,10 @@ class AUIListCollection(
             return
         }
 
-        rtmManager.setBatchMetadata(
-            channelName,
-            metadata = mapOf(Pair(observeKey, data)),
-        ) { e ->
+        setBatchMetadata(data) { e ->
             if (e != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: $e")
+                    AUICollectionException.ErrorCode.rtm.toException(e.code, "rtm setBatchMetadata error: ${e.reason}")
                 )
             } else {
                 callback?.invoke(null)
@@ -535,13 +544,10 @@ class AUIListCollection(
             return
         }
 
-        rtmManager.setBatchMetadata(
-            channelName,
-            metadata = mapOf(Pair(observeKey, data)),
-        ) { e ->
+        setBatchMetadata(data) { e ->
             if (e != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: $e")
+                    AUICollectionException.ErrorCode.rtm.toException(e.code, "rtm setBatchMetadata error: ${e.reason}")
                 )
             } else {
                 callback?.invoke(null)
@@ -620,12 +626,9 @@ class AUIListCollection(
             return
         }
 
-        rtmManager.setBatchMetadata(
-            channelName,
-            metadata = mapOf(Pair(observeKey, data)),
-        ) { e ->
+        setBatchMetadata(data) { e ->
             if (e != null) {
-                callback?.invoke(AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: ${e.message}"))
+                callback?.invoke(AUICollectionException.ErrorCode.rtm.toException(e.code, "rtm setBatchMetadata error: ${e.reason}"))
             } else {
                 callback?.invoke(null)
             }
@@ -645,6 +648,15 @@ class AUIListCollection(
                 }
             }
         )
+    }
+
+    override fun syncLocalMetaData() {
+        val data = GsonTools.beanToString(currentList) ?: return
+        if (retryMetadata) {
+            setBatchMetadata(data) { e ->
+                Log.d("ListCollection", "syncLocalMetaData error:$e")
+            }
+        }
     }
 
     override fun onAttributeChanged(value: Any) {
@@ -672,7 +684,7 @@ class AUIListCollection(
         }
 
         if (messageModel.messageType == AUICollectionMessageTypeReceipt) {
-            Log.d("huit", "message:$message")
+            Log.d("onMessageReceive", "message:$message")
             // receipt message from arbiter
             val collectionError = GsonTools.toBean(
                 GsonTools.beanToString(messageModel.payload?.data),
@@ -696,7 +708,11 @@ class AUIListCollection(
                 rtmManager.markReceiptFinished(
                     uniqueId, AUIRtmException(
                         code,
-                        fromValue(code)!!.message,
+                        if (fromValue(code)?.value != AUICollectionException.ErrorCode.unknown.value) {
+                            fromValue(code)?.message ?: reason
+                        } else {
+                            reason
+                        },
                         "receipt message from arbiter"
                     )
                 )

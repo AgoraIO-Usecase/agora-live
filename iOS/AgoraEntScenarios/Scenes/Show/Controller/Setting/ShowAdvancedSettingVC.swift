@@ -103,7 +103,7 @@ class ShowAdvancedSettingVC: UIViewController, UIGestureRecognizerDelegate {
                 ]
             } else if (isBroadcaster && !isPureMode) {
                 setting = [
-                    .H265,
+                    .CodecType,
                     .colorEnhance,
                     .lowlightEnhance,
                     .videoDenoiser,

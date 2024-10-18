@@ -23,7 +23,6 @@ import io.agora.voice.common.utils.LogTools;
  */
 class VRHttpClientController {
    private static final String TAG = VRHttpClientController.class.getSimpleName();
-   private final Context mContext;
    private URL mURL;
    private HttpURLConnection mConn;
    private static int EM_DEFAULT_TIMEOUT = 60 * 1000;
@@ -35,10 +34,8 @@ class VRHttpClientController {
    /**
     * Instantiates a new Vr http client controller.
     *
-    * @param mContext the m context
     */
-   public VRHttpClientController(Context mContext) {
-      this.mContext = mContext;
+   public VRHttpClientController() {
    }
 
 
@@ -200,7 +197,7 @@ class VRHttpClientController {
     * @throws IOException the io exception
     */
    public void addParams(String params, OutputStream out) throws IOException {
-      LogTools.d(TAG, "request String params = "+params);
+      //LogTools.d(TAG, "request String params = "+params);
       if(TextUtils.isEmpty(params)) {
          return;
       }
@@ -257,7 +254,7 @@ class VRHttpClientController {
       }
       if(showInfo) {//展示详细信息
          LogTools.d(TAG, "response ==========================start =================");
-         LogTools.d(TAG, "content: "+response.content);
+         //LogTools.d(TAG, "content: "+response.content);
          LogTools.d(TAG, "url: "+mConn.getURL().toString());
          LogTools.d(TAG, "headers: "+mConn.getHeaderFields().toString());
          LogTools.d(TAG, "response ==========================end =================");
@@ -333,7 +330,6 @@ class VRHttpClientController {
    }
 
    public static class HttpParams {
-      public final Context mContext;
       public String mRequestMethod;
       public int mPort = -1;//https默认443，http默认80
       public int mConnectTimeout;
@@ -350,10 +346,9 @@ class VRHttpClientController {
       /**
        * Instantiates a new Http params.
        *
-       * @param mContext the m context
        */
-      public HttpParams(Context mContext) {
-         this.mContext = mContext;
+      public HttpParams() {
+
       }
 
       /**

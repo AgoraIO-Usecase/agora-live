@@ -13,21 +13,6 @@ interface BaseRoomBean : IKeepProguard, Serializable {
 }
 
 /**
- * This data class represents the initial properties of a room in the VR application.
- * These properties will not change.
- */
-data class RoomKitBean constructor(
-    var roomId: String = "",
-    var channelId: String = "",
-    var chatroomId: String = "",
-    var ownerId: String = "",
-    var ownerChatUid: String = "",
-    var roomType: Int = ConfigConstants.RoomType.Common_Chatroom,
-    var isOwner: Boolean = false,
-    var soundEffect: Int = ConfigConstants.SoundSelection.Social_Chat
-) : Serializable
-
-/**
  * This data class represents a bot mic info bean in the VR application.
  * It includes two VoiceMicInfoModel objects, one for the blue bot and one for the red bot.
  */

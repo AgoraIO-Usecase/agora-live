@@ -44,13 +44,13 @@ protocol CommerceServiceProtocol: NSObjectProtocol {
     func leaveRoom(completion: @escaping (NSError?) -> Void)
     
     
-    /// 获取当前房间使用时长
+    /// Get the current room usage time
     /// - Parameter roomId: <#roomId description#>
     /// - Returns: <#description#>
     func getRoomDuration(roomId: String) -> UInt64
     
     
-    /// 获取当前时间戳
+    /// Get the current timestamp
     /// - Parameter roomId: <#roomId description#>
     /// - Returns: <#description#>
     func getCurrentTs(roomId: String) -> UInt64

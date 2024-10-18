@@ -11,6 +11,10 @@ extension NSString {
     @objc func toSceneLocalization() -> NSString {
         return sceneLocalized(self as String, bundleName: nil) as NSString
     }
+    
+    @objc public func toSceneLocalization(with bundleName: String) -> NSString {
+        return sceneLocalized(self as String, bundleName: bundleName) as NSString
+    }
 }
 
 ///

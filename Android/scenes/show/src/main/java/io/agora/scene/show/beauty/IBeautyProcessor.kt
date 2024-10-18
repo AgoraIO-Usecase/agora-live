@@ -66,7 +66,7 @@ abstract class IBeautyProcessor {
      *
      * @return
      */
-    abstract fun getSenseTimeBeautyAPI(): FaceUnityBeautyAPI
+    abstract fun getBeautyAPI(): FaceUnityBeautyAPI
 
     /**
      * Restore

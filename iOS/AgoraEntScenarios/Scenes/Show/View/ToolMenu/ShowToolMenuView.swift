@@ -43,15 +43,15 @@ enum ShowToolMenuType: CaseIterable {
         case .mic: return "show_setting_mic_on".show_localized
         case .real_time_data: return "show_setting_statistic".show_localized
         case .setting: return "show_setting_advance_setting".show_localized
-        case .mute_mic: return "show_setting_mic_off".show_localized
+        case .mute_mic: return "show_setting_mic_on".show_localized
         case .end_pk: return "show_setting_end_mic_seat".show_localized
         }
     }
     var selectedTitle: String? {
         switch self {
         case .camera: return "show_setting_video_off".show_localized
-        case .mic: return "show_setting_mic_off".show_localized
-        case .mute_mic: return "show_setting_mic_on".show_localized
+        case .mic: return "show_setting_mic_on".show_localized
+        case .mute_mic: return "show_setting_mic_off".show_localized
         default: return title
         }
     }

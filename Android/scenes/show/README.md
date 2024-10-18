@@ -2,37 +2,42 @@
 
 > This document introduces how to quickly run through <mark>Live Streaming</mark> sample project.
 
-<figure class="third">
-  <img src="https://download.agora.io/demo/release/LiveStreamingShot01.png" width="300" height="640" />
-  <img src="https://download.agora.io/demo/release/LiveStreamingShot02.png" width="300" height="640" />
-</figure>
+>  <img src="https://download.agora.io/demo/release/LiveStreamingShot01.png" width="300" height="640" /><img src="https://download.agora.io/demo/release/LiveStreamingShot02.png" width="300" height="640" />
 
 ## Prerequisites
 
 - Android Studio 3.5 or higher.
 - Android SDK API Level 21 or higher.
 - A mobile device that runs Android 5.0 or higher.
-- FU beauty authpack file.
+- FaceUnity beauty authpack file.
 
 ## Project Setup
 
-1. Follow [The Account Document](https://docs.agora.io/en/video-calling/reference/manage-agora-account) to get the **App ID** and **App Certificate(if enable token)**.
+1. Follow [The Account Document](https://docs.agora.io/en/video-calling/reference/manage-agora-account) to get the **App ID** and **App Certificate**.
 2. Follow [The Restfull Document](https://docs.agora.io/en/video-calling/reference/restful-authentication) to get the **Customer ID** and **Customer Secret**.
 3. Follow [The Media Pull Document](https://docs.agora.io/en/media-pull/get-started/enable-media-pull) to enable media pull for cloud player.
-4. Open the `Android` project and fill in properties got above to the root [gradle.properties](../gradle.properties) file.
+4. Follow Signaling Beginner's guide to enable signaling in Agora Console. You should enable the following:
+* Using storage
+* User attribute callback
+* Channel attribute callback
+* Distributed lock
+5. Open the `Android` project and fill in properties got above to the root [gradle.properties](../gradle.properties) file.
 
 ```
 # RTM RTC SDK key Config
 AGORA_APP_ID=<Your Agora App ID>
-AGORA_APP_CERTIFICATE=<Your Agora App Certificate(if enable token)>
+AGORA_APP_CERTIFICATE=<Your Agora App Certificate>
 
 # Cloud Player Config
 CLOUD_PLAYER_KEY=<Your Agora Customer ID>
 CLOUD_PLAYER_SECRET=<Your Agora Customer Secret>
 ```
 
-5. Copy FU beauty `authpack.java` file to `scenes/show/src/main/java/io/agora/scene/show/beauty` direction.
-6. Now you can run the project with android studio to experience the application.
+6. Obtain the beauty authpack file from FaceUnity, and then copy the beauty authpack file `authpack.java` to `scenes/show/src/main/java/io/agora/scene/show/beauty` direction.
+```json
+If this step is not executed, you will not be able to experience the beauty feature.
+```
+7. Now you can run the project with android studio to experience the application.
 
 ## Source Code sitemap
 

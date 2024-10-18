@@ -26,12 +26,22 @@ open class VLResponseData: NSObject, Convertible {
 @objcMembers
 open class VLSceneConfigsModel: NSObject,Convertible {
     
-    var chat: Int = 0
-    var ktv: Int = 0
-    var show: Int = 0
-    var showpk: Int = 0
+    public var chat: Int = 1200
+    public var ktv: Int = 1200
+    public var show: Int = 1200
+    public var showpk: Int = 1200
+    public var joy: Int = 1200
+    public var logUpload: Int = 0
+    public var oneToOne: Int = 1200
     
     override public required init() {}
+    
+    public func kj_modelKey(from property: Property) -> ModelPropertyKey {
+        switch property.name{
+        case "oneToOne": return "1v1"
+        default:return property.name
+        }
+    }
 }
 
 @objcMembers

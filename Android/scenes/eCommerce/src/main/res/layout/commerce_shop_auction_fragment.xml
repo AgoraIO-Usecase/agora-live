@@ -32,7 +32,7 @@
         android:ellipsize="end"
         android:lines="1"
         android:textStyle="bold"
-        android:text="@string/commerce_shop_auction_item_0"
+        android:text="@string/commerce_shop_auction_item"
         android:textColor="@color/white"
         android:textSize="16sp"
         />

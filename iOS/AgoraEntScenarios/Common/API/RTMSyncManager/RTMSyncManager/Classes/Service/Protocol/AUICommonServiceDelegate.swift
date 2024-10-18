@@ -29,7 +29,7 @@ import Foundation
     ///   - completion: completion
     @objc optional func cleanUserInfo(userId: String, completion:  @escaping  ((NSError?) -> ()))
     
-    /// 获取当前房间上下文
+    /// Get the current room context
     /// - Returns: <#description#>
     func getRoomContext() -> AUIRoomContext
 }

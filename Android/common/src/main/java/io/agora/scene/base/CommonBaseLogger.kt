@@ -2,7 +2,7 @@ package io.agora.scene.base
 
 internal object CommonBaseLogger {
 
-    private val entLogger = EntLogger(EntLogger.Config("CommonBase"))
+    private val entLogger = EntLogger(EntLogger.Config(AgoraScenes.CommonBase.name))
 
     @JvmStatic
     fun d(tag: String, message: String, vararg args: Any) {

@@ -17,7 +17,6 @@ import org.json.JSONObject
 /**
  * @author create by zhangwei03
  *
- * 打点api
  */
 object ReportApi {
 

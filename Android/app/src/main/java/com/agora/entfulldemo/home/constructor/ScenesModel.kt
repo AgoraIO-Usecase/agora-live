@@ -1,6 +1,7 @@
 package com.agora.entfulldemo.home.constructor
 
 import androidx.annotation.DrawableRes
+import io.agora.scene.base.AgoraScenes
 
 /**
  * Scenes model

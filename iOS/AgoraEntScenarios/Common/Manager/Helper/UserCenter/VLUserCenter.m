@@ -57,7 +57,7 @@ static NSString *kLocalLoginKey = @"kLocalLoginKey";
 }
 
 + (void)clearUserRoomInfo {
-    VLUserCenter.user.ifMaster = NO;
+//    VLUserCenter.user.ifMaster = NO;
     [VLUserCenter.center storeUserInfo:VLUserCenter.user];
 }
 

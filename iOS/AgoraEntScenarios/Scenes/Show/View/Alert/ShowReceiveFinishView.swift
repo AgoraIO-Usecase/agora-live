@@ -21,6 +21,12 @@ class ShowReceiveFinishView: UIView {
             headLabel.text = headName
         }
     }
+    
+    var title: String? {
+        didSet {
+            titleLabel.text = title ?? "show_alert_live_finish_title".show_localized
+        }
+    }
 
     var headImg: String? {
         didSet {
@@ -34,12 +40,14 @@ class ShowReceiveFinishView: UIView {
     
     weak var delegate: ShowReceiveFinishViewDelegate?
     
+    // Background picture
     private lazy var bgView: UIView = {
         let view = UIView()
         view.backgroundColor = .show_end_bg
         return view
     }()
     
+    // Anchor's avatar
     private lazy var headImgView: UIImageView =  {
         let imgeView =  UIImageView()
         imgeView.layer.cornerRadius = HeadImgViewHeight * 0.5
@@ -47,7 +55,8 @@ class ShowReceiveFinishView: UIView {
         imgeView.layer.masksToBounds = true
         return imgeView
     }()
-
+    
+    // The name of the anchor
     private lazy var headLabel: UILabel = {
         let label = UILabel()
         label.textColor = .show_Ellipse2
@@ -55,6 +64,7 @@ class ShowReceiveFinishView: UIView {
         return label
     }()
     
+    // Title
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .show_slider_tint
@@ -63,6 +73,7 @@ class ShowReceiveFinishView: UIView {
         return label
     }()
     
+    // Subtitle
     lazy var subTitleLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(hex: "C6C4DD")
@@ -71,6 +82,7 @@ class ShowReceiveFinishView: UIView {
         return label
     }()
     
+    // Return to the list of rooms
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage.show_sceneImage(name: "show_live_close"), for: .normal)

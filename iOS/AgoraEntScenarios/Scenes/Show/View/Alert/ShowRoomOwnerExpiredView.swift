@@ -24,7 +24,7 @@ class ShowRoomOwnerExpiredView: UIView {
     
     var clickBackButtonAction: (()->())?
     
-    // 背景图
+    // Background picture
     private lazy var bgView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -33,7 +33,7 @@ class ShowRoomOwnerExpiredView: UIView {
         return view
     }()
     
-    // 主播头像
+    // Anchor's avatar
     private lazy var headImgView: UIImageView =  {
         let imgeView =  UIImageView()
         imgeView.layer.cornerRadius = HeadImgViewHeight * 0.5
@@ -42,7 +42,6 @@ class ShowRoomOwnerExpiredView: UIView {
         return imgeView
     }()
     
-    // 标题
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -51,7 +50,7 @@ class ShowRoomOwnerExpiredView: UIView {
         return label
     }()
     
-    // 返回房间列表
+    // Return to the list of rooms
     private lazy var backButton: GradientButton = {
         let button = GradientButton(type: .custom)
         button.titleLabel?.font = .show_M_15
@@ -131,7 +130,7 @@ class GradientButton: UIButton {
     }
     
     private func setupButton() {
-        // 设置渐变层
+        // Set the gradient layer
         gradientLayer.frame = bounds
         gradientLayer.colors = [UIColor(hex: "#DD7BFF").cgColor, UIColor(hex: "#5E5BFF").cgColor]
         gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)

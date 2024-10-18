@@ -30,8 +30,9 @@ extension UIImage {
             compressionQualityArr.append(value)
         }
         /*
-         调整大小
-         说明：压缩系数数组compressionQualityArr是从大到小存储。
+         Adjust the size
+         
+         Description: The compression coefficient array compressionQualityArr is stored from large to small.。
          */
         // Approach: Use binary search
         guard let imageData = halfFunction(compressionQualityArr, image: newImage, finalImageData: finalImageData, maxSize: maxSize) else {

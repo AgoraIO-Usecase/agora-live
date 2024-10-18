@@ -26,61 +26,28 @@ package io.agora.beautyapi.faceunity.utils
 
 import io.agora.base.internal.Logging
 
-/**
- * Log utils
- *
- * @constructor Create empty Log utils
- */
 object LogUtils {
     private const val beautyType = "FaceUnity"
 
 
-    /**
-     * I
-     *
-     * @param tag
-     * @param content
-     * @param args
-     */
     @JvmStatic
     fun i(tag: String, content: String, vararg args: Any) {
         val consoleMessage = "[BeautyAPI][$beautyType] : ${String.format(content, args)}"
         Logging.log(Logging.Severity.LS_INFO, tag, consoleMessage)
     }
 
-    /**
-     * D
-     *
-     * @param tag
-     * @param content
-     * @param args
-     */
     @JvmStatic
     fun d(tag: String, content: String, vararg args: Any) {
         val consoleMessage = "[BeautyAPI][$beautyType] : ${String.format(content, args)}"
         Logging.d(tag, consoleMessage)
     }
 
-    /**
-     * W
-     *
-     * @param tag
-     * @param content
-     * @param args
-     */
     @JvmStatic
     fun w(tag: String, content: String, vararg args: Any){
         val consoleMessage = "[BeautyAPI][$beautyType] : ${String.format(content, args)}"
         Logging.w(tag, consoleMessage)
     }
 
-    /**
-     * E
-     *
-     * @param tag
-     * @param content
-     * @param args
-     */
     @JvmStatic
     fun e(tag: String, content: String, vararg args: Any){
         val consoleMessage = "[BeautyAPI][$beautyType] : ${String.format(content, args)}"

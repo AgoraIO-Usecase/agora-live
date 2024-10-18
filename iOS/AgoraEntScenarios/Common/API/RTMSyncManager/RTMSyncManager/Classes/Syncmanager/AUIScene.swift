@@ -17,16 +17,16 @@ let kRoomInfoPayloadId = "room_payload_id"
 public class AUIScene: NSObject {
     private var channelName: String
     public let userService: AUIUserServiceImpl
+    public let arbiter: AUIArbiter
     private var removeClosure: ()->()
     private var rtmManager: AUIRtmManager
-    private var arbiter: AUIArbiter
     private var enterCondition: AUISceneEnterCondition
     private var expireCondition: AUISceneExpiredCondition
     private var collectionMap: [String: IAUICollection] = [:]
     private lazy var roomCollection: AUIMapCollection = getCollection(key: kRoomInfoKey)!
     private var roomPayload: [String: Any]?
     private var enterRoomCompletion: (([String: Any]?, NSError?)-> ())?
-    private var respDelegates: NSHashTable<AUISceneRespDelegate> = NSHashTable<AUISceneRespDelegate>.weakObjects()
+    private var respDelegates = NSHashTable<AUISceneRespDelegate>.weakObjects()
     private var subscribeDate: Date?
     
     deinit {
@@ -63,7 +63,7 @@ public class AUIScene: NSObject {
                 obj.onSceneExpire?(channelName: channelName)
             }
             
-            //房主才移除
+            //The owner just removed it.
             guard AUIRoomContext.shared.isRoomOwner(channelName: channelName) else {return}
             self.cleanScene()
         }
@@ -77,8 +77,21 @@ public class AUIScene: NSObject {
         respDelegates.remove(delegate)
     }
     
-    //TODO: 是否需要像UIKit一样传入一个房间信息对象，还是这个对象业务上自己创建map collection来写入
-    public func create(createTime: Int64, payload: [String: Any]?, completion:@escaping (NSError?)->()) {
+    
+    public func create(createTime: Int64, 
+                       payload: [String: Any]?,
+                       completion:@escaping (NSError?)->()) {
+        create(createTime: createTime,
+               ownerId: AUIRoomContext.shared.currentUserInfo.userId,
+               payload: payload,
+               completion: completion)
+    }
+    
+    //TODO: Do you need to pass a room information object like UIKit, or create your own map collection on this object business to write?
+    public func create(createTime: Int64,
+                       ownerId: String,
+                       payload: [String: Any]?,
+                       completion:@escaping (NSError?)->()) {
         aui_info("create[\(channelName)] with payload \(payload ?? [:])", tag: kSceneTag)
         
         guard rtmManager.isLogin else {
@@ -86,7 +99,7 @@ public class AUIScene: NSObject {
             completion(NSError.auiError("create fail! not login"))
             return
         }
-        let ownerId = AUIRoomContext.shared.currentUserInfo.userId
+        
         var roomInfo = [
             kRoomInfoRoomId: channelName,
             kRoomInfoRoomOwnerId: ownerId,
@@ -116,18 +129,31 @@ public class AUIScene: NSObject {
             })
         }
         
+        let group = DispatchGroup()
+        group.enter()
+        var error: NSError? = nil
         roomCollection.initMetaData(channelName: channelName,
                                     metadata: roomInfo,
                                     fetchImmediately: true) { err in
-            aui_benchmark("rtm initMetaData", cost: -date.timeIntervalSinceNow, tag: kSceneTag)
+            aui_benchmark("create room: rtm initMetaData", cost: -date.timeIntervalSinceNow, tag: kSceneTag)
             if let err = err {
-                completion(err)
-                return
+                error = err
             }
-            completion(nil)
+            group.leave()
         }
         userService.setUserPayload(payload: UUID().uuidString)
-        getArbiter().create()
+        group.enter()
+        getArbiter().create { err in
+            aui_benchmark("create room: rtm create lock", cost: -date.timeIntervalSinceNow, tag: kSceneTag)
+            if let err = err {
+                error = err
+            }
+            group.leave()
+        }
+        
+        group.notify(queue: .main) {
+            completion(error)
+        }
     }
     
     public func enter(completion:@escaping ([String: Any]?, NSError?)->()) {
@@ -162,11 +188,11 @@ public class AUIScene: NSObject {
                       let ownerId = map[kRoomInfoRoomOwnerId],
                       let createTimestemp = UInt64(map[kRoomCreateTime] ?? "") else {
 //                    self.ownerId = "owner unknown"
-                    //如果没有获取到user信息，认为房间有问题
+                    //If the user information is not obtained, it is considered that there is something wrong with the room.
                     self.cleanScene()
                     self._notifyError(error: NSError(domain: "get room owner fatel!", code: -1))
                     self.onMsgRecvEmpty(channelName: self.channelName)
-                    aui_error("get room owner fatel!")
+                    aui_error("get room owner fatel!", tag: kSceneTag)
                     return
                 }
                 aui_info("getMetaData[\(ownerId)] in enter success")
@@ -180,7 +206,7 @@ public class AUIScene: NSObject {
         }
 //        getArbiter().create()
         getArbiter().acquire {[weak self] err in
-            //fail 走onError(channelName: String, error: NSError)，这里不处理
+            //fail onError(channelName: String, error: NSError)，Don't deal with it here.
             if let _ = err {return}
             self?.enterCondition.lockOwnerAcquireSuccess = true
         }
@@ -189,12 +215,12 @@ public class AUIScene: NSObject {
         rtmManager.subscribe(channelName: channelName) {[weak self] error in
             guard let self = self else { return }
             if let error = error, error.code != AgoraRtmErrorCode.duplicateOperation.rawValue {
-                aui_error("enterRoom subscribe fail: \(error.localizedDescription)")
+                aui_error("enterRoom subscribe fail: \(error.localizedDescription)", tag: kSceneTag)
                 self._notifyError(error: error)
                 return
             }
             aui_benchmark("[Benchmark]rtm manager subscribe", cost: -(date.timeIntervalSinceNow), tag: kSceneTag)
-            aui_info("enterRoom subscribe finished \(channelName) \(error?.localizedDescription ?? "")", tag: kSceneTag)
+            aui_info("enterRoom subscribe finished \(self.channelName) \(error?.localizedDescription ?? "")", tag: kSceneTag)
             self.enterCondition.subscribeSuccess = true
             self.userService.setUserAttr { _ in
                 //TODO: error to retry?
@@ -202,7 +228,7 @@ public class AUIScene: NSObject {
         }
     }
     
-    /// 离开scene
+    /// Leave scene
     public func leave() {
         aui_info("leave[\(channelName)]", tag: kSceneTag)
         getArbiter().release()
@@ -211,7 +237,7 @@ public class AUIScene: NSObject {
         removeClosure()
     }
     
-    /// 销毁scene，清理所有缓存（包括rtm的所有metadata）
+    /// Destroy the scene and clean up all caches (including all metadata of rtm)
     public func delete() {
         aui_info("delete[\(channelName)]", tag: kSceneTag)
         cleanScene(forceClean: true)
@@ -221,7 +247,7 @@ public class AUIScene: NSObject {
         removeClosure()
     }
     
-    /// 获取一个collection，例如let collection: AUIMapCollection = scene.getCollection("musicList")
+    /// Get a collection, for examplelet collection: AUIMapCollection = scene.getCollection("musicList")
     /// - Parameter key: <#sceneKey description#>
     /// - Returns: <#description#>
     public func getCollection<T: IAUICollection>(key: String) -> T? {
@@ -246,7 +272,7 @@ public class AUIScene: NSObject {
 //MARK: private
 extension AUIScene {
     private func _notifyError(error: NSError) {
-        aui_error("join[\(channelName)] fail: \(error.localizedDescription)")
+        aui_error("_notifyError[\(channelName)] fail: \(error.localizedDescription)", tag: kSceneTag)
         if let completion = self.enterRoomCompletion {
             completion(nil, error)
             self.enterRoomCompletion = nil
@@ -258,7 +284,7 @@ extension AUIScene {
     }
     
     private func cleanUserInfo(userId: String) {
-        //TODO: 用户离开后，需要清理这个用户对应在collection里的信息，例如上麦信息、点歌信息等
+        //TODO: After the user leaves, it is necessary to clean up the information corresponding to the user in the collection, such as the information on the microphone, the information of ordering songs, etc.
     }
     
     private func cleanScene(forceClean: Bool = false) {
@@ -273,7 +299,7 @@ extension AUIScene {
     private func _cleanScene() {
         aui_info("_cleanScene[\(channelName)]", tag: kSceneTag)
         
-        //每个collection都清空，让所有人收到onMsgRecvEmpty
+        //Each collection is emptied so that everyone can receive onMsgRecvEmpty.
         rtmManager.cleanAllMedadata(channelName: channelName, lockName: "") { error in
             aui_info("cleanScene completion: \(error?.localizedDescription ?? "success")", tag: kSceneTag)
         }
@@ -285,7 +311,7 @@ extension AUIScene {
         rtmManager.unSubscribe(channelName: channelName)
         rtmManager.unsubscribeError(channelName: channelName, delegate: self)
         getArbiter().unSubscribeEvent(delegate: self)
-        //TODO: syncmanager 需要logout
+        //TODO: syncmanager Need to log out
 //        rtmManager.logout()
     }
 }
@@ -293,14 +319,23 @@ extension AUIScene {
 //MARK: AUIRtmLockProxyDelegate
 extension AUIScene: AUIArbiterDelegate {
     public func onArbiterDidChange(channelName: String, arbiterId: String) {
-        aui_benchmark("onArbiterDidChange[\(channelName)] arbiterId: \(arbiterId)", cost: -(subscribeDate?.timeIntervalSinceNow ?? 0), tag: kSceneTag)
+        aui_benchmark("onArbiterDidChange[\(channelName)] arbiterId: [\(arbiterId)] cost", cost: -(subscribeDate?.timeIntervalSinceNow ?? 0), tag: kSceneTag)
         if arbiterId.isEmpty {return}
         self.enterCondition.lockOwnerRetrived = true
+        
+        //TODO: At present, the callback will cause syncLocalMetaData many times, which requires positioning problems.
+        //The network is restored and obtained to the arbitrator (not sure whether the lock is lost, so it needs to be obtained), and synchronize the local metadata to the remote end.
+        if self.getArbiter().isArbiter() {
+            aui_info("retry syncLocalMetaData", tag: kSceneTag)
+            self.collectionMap.values.forEach { collection in
+                collection.syncLocalMetaData()
+            }
+        }
     }
     
     public func onError(channelName: String, error: NSError) {
-        aui_info("onError[\(channelName)]: \(error.localizedDescription)", tag: kSceneTag)
-        //如果锁不存在，也认为是房间被销毁的一种
+        aui_error("onError[\(channelName)]: \(error.localizedDescription)", tag: kSceneTag)
+        //If the lock does not exist, it is also considered that the room has been destroyed.
         if error.code == AgoraRtmErrorCode.lockNotExist.rawValue {
             cleanScene()
 //            self.onMsgRecvEmpty(channelName: channelName)
@@ -331,13 +366,16 @@ extension AUIScene: AUIUserRespDelegate {
         aui_info("onRoomUserEnter[\(roomId)] userId: \(userInfo.userId)", tag: kSceneTag)
     }
     
-    public func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
+    public func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo, reason: AUIRtmUserLeaveReason) {
         aui_info("onRoomUserLeave[\(roomId)] userId: \(userInfo.userId)", tag: kSceneTag)
         guard AUIRoomContext.shared.isRoomOwner(channelName: roomId, userId: userInfo.userId) else {
             cleanUserInfo(userId: userInfo.userId)
             return
         }
-        cleanScene()
+        cleanUserInfo(userId: userInfo.userId)
+        for obj in self.respDelegates.allObjects {
+            obj.onSceneDestroy?(channelName: roomId)
+        }
     }
     
     public func onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {
@@ -368,25 +406,27 @@ extension AUIScene: AUIRtmErrorProxyDelegate {
     
     @objc public func onMsgRecvEmpty(channelName: String) {
         aui_info("onMsgRecvEmpty[\(channelName)]", tag: kSceneTag)
-        //TODO: 某个scene里拿到全空数据，定义为房间被销毁了
+        //TODO: Get full-empty data in a certain scene, which is defined as the destruction of the room.
         self.respDelegates.allObjects.forEach { obj in
             obj.onSceneDestroy?(channelName: channelName)
         }
     }
     
-    @objc public func onConnectionStateChanged(channelName: String,
-                                               connectionStateChanged state: AgoraRtmClientConnectionState,
-                                               result reason: AgoraRtmClientConnectionChangeReason) {
-        aui_info("onConnectionStateChanged[\(channelName)] state: \(state.rawValue), reason: \(reason.rawValue)", tag: kSceneTag)
-        if reason == .changedRejoinSuccess {
+    @objc public func didReceiveLinkStateEvent(event: AgoraRtmLinkStateEvent) {
+        aui_info("didReceiveLinkStateEvent state: \(event.currentState.rawValue), reason: \(event.reason ?? "")", tag: kSceneTag)
+        if event.currentState == .disconnected, event.previousState == .connected {
+            expireCondition.offlineTimestamp = event.timestamp
+        } else if event.currentState == .connected, event.operation == .reconnected {
+            //TODO: It is recommended to get the snapshot of lock after reconnection.
             getArbiter().acquire()
+            
+            expireCondition.reconnectNow(timestamp: event.timestamp)
         }
-        guard state == .failed, reason == .changedBannedByServer else {
-            return
-        }
-        
-        for obj in self.respDelegates.allObjects {
-            obj.onSceneUserBeKicked?(channelName: channelName, userId: AUIRoomContext.shared.currentUserInfo.userId)
+
+        if event.currentState == .failed {
+            for obj in self.respDelegates.allObjects {
+                obj.onSceneFailed?(channelName: channelName, reason: event.reason ?? "")
+            }
         }
     }
 }

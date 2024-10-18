@@ -9,7 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import io.agora.scene.base.SceneAliveTime
+import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.ToastUtils
@@ -75,31 +75,10 @@ class RoomListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         StatusBarUtil.hideStatusBar(window, true)
         setContentView(mBinding.root)
-        fetchUniversalToken ({
-            val roomList = arrayListOf<VideoLoader.RoomInfo>( )
-            mRoomList.forEach { room ->
-                roomList.add(
-                    VideoLoader.RoomInfo(
-                        room.roomId,
-                        arrayListOf(
-                            VideoLoader.AnchorInfo(
-                                room.roomId,
-                                room.ownerId.toInt(),
-                                RtcEngineInstance.generalRtcToken()
-                            )
-                        )
-                    )
-                )
-            }
-            onRoomListScrollEventHandler?.updateRoomList(roomList)
-        })
         initView()
         initVideoSettings()
 
-        SceneAliveTime.fetchShowAliveTime ({ show, pk ->
-            //CommerceLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
-            ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
-        })
+        ShowServiceProtocol.ROOM_AVAILABLE_DURATION = SceneConfigManager.ecommerce * 1000L
     }
 
     /**
@@ -108,7 +87,7 @@ class RoomListActivity : AppCompatActivity() {
     private fun initView() {
         onRoomListScrollEventHandler = object: OnRoomListScrollEventHandler(mRtcEngine, UserManager.getInstance().user.id.toInt()) {}
         mBinding.titleView.setLeftClick {
-            mService.destroy()
+            ShowServiceProtocol.destroy()
             RtcEngineInstance.destroy()
             RtcEngineInstance.setupGeneralRtcToken("")
             RtcEngineInstance.setupGeneralRtmToken("")
@@ -128,36 +107,40 @@ class RoomListActivity : AppCompatActivity() {
         mBinding.smartRefreshLayout.setEnableLoadMore(false)
         mBinding.smartRefreshLayout.setEnableRefresh(true)
         mBinding.smartRefreshLayout.setOnRefreshListener {
-            mService.fetchRoomList(
-                success = {
-                    val filterRoom = it.filter { it.ownerId != UserManager.getInstance().user.id.toString() }
-                    mRoomList.clear()
-                    mRoomList.addAll(filterRoom)
-                    if (isFirstLoad) {
-                        val roomList = arrayListOf<VideoLoader.RoomInfo>( )
-                        it.forEach { room ->
-                            roomList.add(
-                                VideoLoader.RoomInfo(
-                                    room.roomId,
-                                    arrayListOf(
-                                        VideoLoader.AnchorInfo(
-                                            room.roomId,
-                                            room.ownerId.toInt(),
-                                            RtcEngineInstance.generalRtcToken()
+            fetchUniversalToken ({
+                mService.fetchRoomList(
+                    success = {
+                        val filterRoom = it.filter { it.ownerId != UserManager.getInstance().user.id.toString() }
+                        mRoomList.clear()
+                        mRoomList.addAll(filterRoom)
+                        if (isFirstLoad) {
+                            val roomList = arrayListOf<VideoLoader.RoomInfo>( )
+                            it.forEach { room ->
+                                roomList.add(
+                                    VideoLoader.RoomInfo(
+                                        room.roomId,
+                                        arrayListOf(
+                                            VideoLoader.AnchorInfo(
+                                                room.roomId,
+                                                room.ownerId.toInt(),
+                                                RtcEngineInstance.generalRtcToken()
+                                            )
                                         )
                                     )
                                 )
-                            )
+                            }
+                            onRoomListScrollEventHandler?.updateRoomList(roomList)
+                            isFirstLoad = false
                         }
-                        onRoomListScrollEventHandler?.updateRoomList(roomList)
-                        isFirstLoad = false
+                        updateList(it)
+                    },
+                    error = {
+                        updateList(emptyList())
                     }
-                    updateList(it)
-                },
-                error = {
-                    updateList(emptyList())
-                }
-            )
+                )
+            }) {
+                updateList(emptyList())
+            }
         }
         mBinding.smartRefreshLayout.autoRefresh()
         mBinding.btnCreateRoom.setOnClickListener { goLivePrepareActivity() }
@@ -177,8 +160,8 @@ class RoomListActivity : AppCompatActivity() {
     private fun updateList(data: List<RoomDetailModel>) {
         mBinding.tvTips1.isVisible = data.isEmpty()
         mBinding.ivBgMobile.isVisible = data.isEmpty()
-        mBinding.btnCreateRoom2.isVisible = data.isEmpty()
-        mBinding.btnCreateRoom.isVisible = data.isNotEmpty()
+        mBinding.btnCreateRoom2.isVisible = false
+        mBinding.btnCreateRoom.isVisible = true
         mBinding.rvRooms.isVisible = data.isNotEmpty()
         mRoomAdapter.resetAll(data)
 
@@ -289,7 +272,7 @@ class RoomListActivity : AppCompatActivity() {
      */
     override fun onBackPressed() {
         super.onBackPressed()
-        mService.destroy()
+        ShowServiceProtocol.destroy()
         RtcEngineInstance.destroy()
         RtcEngineInstance.setupGeneralRtcToken("")
         RtcEngineInstance.setupGeneralRtmToken("")
@@ -306,6 +289,10 @@ class RoomListActivity : AppCompatActivity() {
         success: () -> Unit,
         error: ((Exception?) -> Unit)? = null
     ) {
+        if (RtcEngineInstance.generalRtcToken() != "") {
+            success.invoke()
+            return
+        }
         val localUId = UserManager.getInstance().user.id
         TokenGenerator.generateTokens("", localUId.toString(),
             TokenGenerator.TokenGeneratorType.Token007,
@@ -315,10 +302,8 @@ class RoomListActivity : AppCompatActivity() {
             ),
             success = {
                 //ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
-                val rtcToken = it[TokenGenerator.AgoraTokenType.Rtc] ?: return@generateTokens
-                val rtmToken = it[TokenGenerator.AgoraTokenType.Rtm] ?: return@generateTokens
-                RtcEngineInstance.setupGeneralRtcToken(rtcToken)
-                RtcEngineInstance.setupGeneralRtmToken(rtmToken)
+                RtcEngineInstance.setupGeneralRtcToken(it)
+                RtcEngineInstance.setupGeneralRtmToken(it)
                 success.invoke()
             },
             failure = {
@@ -335,11 +320,11 @@ class RoomListActivity : AppCompatActivity() {
     private fun initVideoSettings() {
         val deviceScore = RtcEngineInstance.rtcEngine.queryDeviceScore()
         val deviceLevel = if (deviceScore >= 90) {
-            VideoSetting.updateAudioSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
+            VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
             VideoSetting.setCurrAudienceEnhanceSwitch(true)
             VideoSetting.DeviceLevel.High
         } else if (deviceScore >= 75) {
-            VideoSetting.updateAudioSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
+            VideoSetting.updateSRSetting(SR = VideoSetting.SuperResolution.SR_AUTO)
             VideoSetting.setCurrAudienceEnhanceSwitch(true)
             VideoSetting.DeviceLevel.Medium
         } else {

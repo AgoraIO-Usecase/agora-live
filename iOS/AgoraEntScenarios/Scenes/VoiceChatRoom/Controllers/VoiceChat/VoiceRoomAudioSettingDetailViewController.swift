@@ -54,7 +54,7 @@ class VoiceRoomAudioSettingDetailViewController: UIViewController {
             let ktvH: CGFloat = textHeight(text: "voice_chatroom_karaoke_introduce".voice_localized, fontSize: 13, width: self.view.bounds.size.width - 80)
             let gameH: CGFloat = textHeight(text: "voice_chatroom_gaming_buddy_introduce".voice_localized, fontSize: 13, width: self.view.bounds.size.width - 80)
             let anchorH: CGFloat = textHeight(text: "voice_chatroom_professional_broadcaster_introduce".voice_localized, fontSize: 13, width: self.view.bounds.size.width - 80)
-            voiceLogger.info("\(soundEffect)-----")
+            VoiceChatLog.info("\(soundEffect)-----")
             switch soundEffect {
             case 1:
                 effectHeight = [socialH, ktvH, gameH, anchorH]
@@ -120,7 +120,7 @@ class VoiceRoomAudioSettingDetailViewController: UIViewController {
                 titleLabel.text = "voice_AGC".voice_localized
                 backBtn.accessibilityIdentifier = "voice_chat_room_audio_setting_back_AGC"
             }
-            voiceLogger.info("\(titleLabel.text!)  \(backBtn.accessibilityIdentifier!)")
+            VoiceChatLog.info("\(titleLabel.text!)  \(backBtn.accessibilityIdentifier!)")
             if tableView.tableFooterView == nil {
                 switch settingType {
                 case .AGC,.AIAEC:
@@ -135,7 +135,7 @@ class VoiceRoomAudioSettingDetailViewController: UIViewController {
     
     var tableViewHeight: CGFloat = 0 {
         didSet {
-//            voiceLogger.info("===")
+//            VoiceChatLog.info("===")
         }
     }
 
@@ -591,7 +591,7 @@ extension VoiceRoomAudioSettingDetailViewController: UITableViewDelegate, UITabl
         } else if settingType == .AGC {
             
         } else {
-            voiceLogger.info("other settingType")
+            VoiceChatLog.info("other settingType")
         }
     }
 

@@ -8,6 +8,7 @@
 import Foundation
 import AgoraRtcKit
 
+@objcMembers
 public class VideoLoaderApiImpl: NSObject {
     public static let shared = VideoLoaderApiImpl()
     public var printClosure: ((String)->())?
@@ -101,7 +102,7 @@ extension VideoLoaderApiImpl {
         mediaOptions.autoSubscribeAudio = subscribeStatus
         mediaOptions.autoSubscribeVideo = subscribeStatus
         mediaOptions.clientRoleType = .audience
-        // 极速直播?
+        // Fast live broadcast?
         mediaOptions.audienceLatencyLevel = .lowLatency
     
         let connection = AgoraRtcConnection()
@@ -183,7 +184,7 @@ extension VideoLoaderApiImpl: IVideoLoaderApi {
                                   localUid: UInt,
                                   anchorInfo: AnchorInfo,
                                   tagId: String?) {
-        _reportMethod(event: "\(#function)", label: "newState=\(newState.rawValue)&localUid=\(localUid)&tagId=\(tagId ?? "")&anchorChannelName=\(anchorInfo.channelName)&anchorUid\(anchorInfo.uid)")
+        _reportMethod(event: "\(#function)", label: "newState=\(newState.rawValue)&localUid=\(localUid)&tagId=\(tagId ?? "")&anchorChannelName=\(anchorInfo.channelName)&anchorUid=\(anchorInfo.uid)")
         if localUid == 0 {
             warningLoaderPrint("\(anchorInfo.channelName) localUid invalidate")
             return
@@ -238,15 +239,6 @@ extension VideoLoaderApiImpl: IVideoLoaderApi {
             mediaOptions.autoSubscribeVideo = true
             
             isMuteAllRemoteAudioStreamsEx = true
-            if let engine = config?.rtcEngine,
-               let connection = exConnectionMap[anchorInfo.channelName]  {
-                DispatchQueue.main.async {
-                    engine.muteAllRemoteAudioStreamsEx(true, connection: connection)
-                }
-                
-            } else {
-                warningLoaderPrint("[\(anchorInfo.channelName)] muteAllRemoteAudioStreamsEx(true) fail")
-            }
         } else {
             mediaOptions.autoSubscribeAudio = false
             mediaOptions.autoSubscribeVideo = false
@@ -276,7 +268,7 @@ extension VideoLoaderApiImpl: IVideoLoaderApi {
     }
     
     public func getAnchorState(anchorInfo: AnchorInfo) -> AnchorState {
-        _reportMethod(event: "\(#function)", label: "anchorChannelName=\(anchorInfo.channelName)&anchorUid\(anchorInfo.uid)")
+        _reportMethod(event: "\(#function)", label: "anchorChannelName=\(anchorInfo.channelName)&anchorUid=\(anchorInfo.uid)")
         return _getAnchorState(anchorInfo: anchorInfo)
     }
     
@@ -285,7 +277,7 @@ extension VideoLoaderApiImpl: IVideoLoaderApi {
     }
     
     public func renderVideo(anchorInfo: AnchorInfo, container: VideoCanvasContainer) {
-        _reportMethod(event: "\(#function)", label: "anchorChannelName=\(anchorInfo.channelName)&anchorUid\(anchorInfo.uid)")
+        _reportMethod(event: "\(#function)", label: "anchorChannelName=\(anchorInfo.channelName)&anchorUid=\(anchorInfo.uid)")
         guard let engine = config?.rtcEngine,
               let connection = exConnectionMap[anchorInfo.channelName] else {
             errorLoaderPrint("renderVideo fail: connection is empty")
@@ -300,7 +292,7 @@ extension VideoLoaderApiImpl: IVideoLoaderApi {
         videoCanvas.setupMode = container.setupMode
         let ret = engine.setupRemoteVideoEx(videoCanvas, connection: connection)
         debugLoaderPrint("renderVideo[\(connection.channelId)] ret = \(ret), uid:\(anchorInfo.uid)")
-        //查找缓存这个view是不是被其他connection用了，如果有则remove
+        //Find out whether the cache view has been used by other connections. If so, remove it.
         let ptrString = String(format: "%p", videoCanvas.view ?? 0)
         if container.setupMode == .add {
             if anchorInfo.channelName != renderViewMap[ptrString]?.channelName {

@@ -17,19 +17,16 @@ class ShowCreateLiveVC: UIViewController {
     private lazy var beautyVC = ShowBeautySettingVC()
     
     deinit {
-        showLogger.info("deinit-- ShowCreateLiveVC")
+        ShowLogger.info("deinit-- ShowCreateLiveVC")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpUI()
         configNaviBar()
-        
+
         ShowAgoraKitManager.shared.resetBroadcasterProfile()
-        if let e = ShowAgoraKitManager.shared.engine {
-            BeautyManager.shareManager.configBeautyAPIWithRtcEngine(engine: e)
-        }
-        ShowAgoraKitManager.shared.startPreview(canvasView: self.localView)
+        ShowAgoraKitManager.shared.setupLocalVideo(canvasView: self.localView)
     }
     
     func configNaviBar() {
@@ -73,11 +70,29 @@ class ShowCreateLiveVC: UIViewController {
             self?.createView.hideBottomViews = false
         }
         
-        ShowBeautyFaceVC.beautyData.forEach({
-            BeautyManager.shareManager.setBeauty(path: $0.path,
+        if let engine = ShowAgoraKitManager.shared.engine {
+            BeautyManager.shareManager.setup(engine: engine)
+        } else {
+            assert(false, "rtc engine == nil")
+        }
+        
+        self.checkAndSetupBeautyPath() {[weak self] err in
+            guard let self = self else {return}
+            if let _ = err {return}
+            
+            BeautyManager.shareManager.initBeautyRender()
+            
+            // Create the default beauty effect
+            ShowBeautyFaceVC.beautyData.forEach({
+                BeautyManager.shareManager.setBeauty(path: $0.path,
                                                      key: $0.key,
                                                      value: $0.value)
-        })
+            })
+            
+            // Beauty settings
+            BeautyManager.shareManager.configBeautyAPI()
+            ShowAgoraKitManager.shared.startPreview(canvasView: self.localView)
+        }
     }
     
     private func showPreset() {
@@ -95,7 +110,6 @@ class ShowCreateLiveVC: UIViewController {
         BeautyManager.shareManager.destroy()
         ShowAgoraKitManager.shared.cleanCapture()
         ShowBeautyFaceVC.resetData()
-        AppContext.showServiceImp(createView.roomNo)?.leaveRoom(completion: { _ in })
         dismiss(animated: true)
     }
 }
@@ -103,19 +117,24 @@ class ShowCreateLiveVC: UIViewController {
 extension ShowCreateLiveVC: ShowCreateLiveViewDelegate {
     
     func onClickSettingBtnAction() {
+        guard isBeautyDownloaded() else { return }
         showPreset()
     }
     
     func onClickCameraBtnAction() {
-        ShowAgoraKitManager.shared.switchCamera()
+        guard isBeautyDownloaded() else { return }
+        ShowAgoraKitManager.shared.switchCamera(enableBeauty: true)
     }
     
     func onClickBeautyBtnAction() {
+        guard isBeautyDownloaded() else { return }
         createView.hideBottomViews = true
         present(beautyVC, animated: true)
     }
     
     func onClickStartBtnAction() {
+        guard isBeautyDownloaded() else { return }
+
         guard let roomName = createView.roomName, roomName.count > 0 else {
             ToastView.show(text: "create_room_name_can_not_empty".show_localized)
             return
@@ -125,17 +144,20 @@ extension ShowCreateLiveVC: ShowCreateLiveViewDelegate {
             ToastView.show(text: "create_room_name_too_long".show_localized)
             return
         }
-        
+        ShowLogger.info("onClickStartBtnAction[\(createView.roomNo)]")
         let roomId = createView.roomNo
         SVProgressHUD.show()
-        AppContext.showServiceImp(createView.roomNo)?.createRoom(roomName: roomName,
-                                                                roomId: roomId,
-                                                                thumbnailId: createView.roomBg) { [weak self] err, detailModel in
+        self.view.isUserInteractionEnabled = false
+        AppContext.showServiceImp()?.createRoom(roomId: createView.roomNo,
+                                                roomName: roomName) { [weak self] err, detailModel in
+            guard let wSelf = self else { return }
             SVProgressHUD.dismiss()
-            if err != nil {
-                ToastView.show(text: err!.localizedDescription)
+            wSelf.view.isUserInteractionEnabled = true
+            if let _ = err {
+                ToastView.show(text: "show_create_room_fail".show_localized)
+                return
             }
-            guard let wSelf = self, let detailModel = detailModel else { return }
+            guard let detailModel = detailModel else { return }
             let liveVC = ShowLivePagesViewController()
             liveVC.roomList = [detailModel]
             liveVC.focusIndex = liveVC.roomList?.firstIndex(where: { $0.roomId == roomId }) ?? 0

@@ -9,7 +9,7 @@ import Foundation
 
 public extension String {
     var voice_localized: String {
-        let resource = AppContext.shared.sceneImageBundleName
+        let resource = "VoiceChatRoomResource"
         guard let bundlePath = Bundle.main.path(forResource: resource, ofType: "bundle"),
               let bundle = Bundle(path: bundlePath)
         else {

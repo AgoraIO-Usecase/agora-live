@@ -15,15 +15,15 @@ class CommerceCreateLiveVC: UIViewController {
     private var localView: UIView!
     
     deinit {
-        commerceLogger.info("deinit-- ShowCreateLiveVC")
+        CommerceLogger.info("deinit-- ShowCreateLiveVC")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpUI()
         configNaviBar()
-        
-        CommerceAgoraKitManager.shared.resetBroadcasterProfile()
+
+//        CommerceAgoraKitManager.shared.resetBroadcasterProfile()
         CommerceAgoraKitManager.shared.startPreview(canvasView: self.localView)
     }
     

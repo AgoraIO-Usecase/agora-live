@@ -9,21 +9,21 @@ import Foundation
 
 @objcMembers
 open class AUICommonConfig: NSObject {
-    /// 声网AppId
+    /// Agora AppId
     public var appId: String = ""
-    /// 声网App证书(可选，如果没有用到后端token生成服务可以不设置)
+    /// Agora App Certificate (optional, if you don't need the back-end token generation service, you can not set it)
     public var appCert: String = ""
     
-    /// 环信AppKey(可选，如果没有用到后端IM服务可以不设置)
+    /// Huanxin AppKey(Optional, if you don't need the back-end IM service, you can not set it)
     public var imAppKey: String = ""
-    /// 环信ClientId(可选，如果没有用到后端IM服务可以不设置)
+    /// Huanxin ClientId (optional, if you don't need the back-end IM service, you can not set it)
     public var imClientId: String = ""
-    /// 环信ClientSecret(可选，如果没有用到后端IM服务可以不设置)
+    /// Huanxin ClientSecret (optional, if you don't use the back-end IM service, you can not set it)
     public var imClientSecret: String = ""
     
-    /// 域名(可选，如果没有用到后端服务可以不设置)
+    /// Domain name (optional, if you don't need the back-end service, you can not set it)
     public var host: String = "" //(optional)
-    /// 用户信息
+    /// User information
     public var owner: AUIUserThumbnailInfo?
     
     public func isValidate() -> Bool {

@@ -47,6 +47,7 @@ class VRSoundCardMicCell: UITableViewCell {
         
         slider.addTarget(self, action: #selector(gain), for: .valueChanged)
         slider.addTarget(self, action: #selector(gainSend), for: .touchUpInside)
+        slider.addTarget(self, action: #selector(gainSend), for: .touchUpOutside)
     }
     
     @objc func gain() {
@@ -78,7 +79,7 @@ class VRSoundCardMicCell: UITableViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        let numWidth = 30.0
+        let numWidth = 40.0
         let sliderWidth = 70.0
         titleLabel.frame = CGRect(x: 20, y: 5, width: width - 20 - numWidth - sliderWidth, height: 18)
         detailLabel.frame = CGRect(x: 20, y: 25, width: width - 20 - numWidth - sliderWidth, height: 18)

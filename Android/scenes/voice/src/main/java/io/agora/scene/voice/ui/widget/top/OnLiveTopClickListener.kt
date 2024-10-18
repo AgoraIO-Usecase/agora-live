@@ -13,8 +13,4 @@ interface OnLiveTopClickListener {
     fun onClickNotice(view: View)
 
     fun onClickSoundSocial(view: View)
-
-    fun onClickBGM(view: View)
-
-    fun onClickBGMSinger(view: View)
 }

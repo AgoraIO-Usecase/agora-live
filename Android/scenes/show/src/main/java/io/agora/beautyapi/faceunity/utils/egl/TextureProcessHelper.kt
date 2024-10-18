@@ -33,94 +33,27 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import javax.microedition.khronos.egl.EGLContext
 
-/**
- * Texture process helper
- *
- * @property cacheCount
- * @constructor Create empty Texture process helper
- */
 class TextureProcessHelper(
     private val cacheCount: Int = 2
 ) {
-    /**
-     * Tag
-     */
     private val TAG = "TextureProcessHelper"
-
-    /**
-     * Gl texture buffer queue in
-     */
-    private val glTextureBufferQueueIn = GLTextureBufferQueue(cacheCount = cacheCount)
-
-    /**
-     * Gl texture buffer queue out
-     */
-    private val glTextureBufferQueueOut = GLTextureBufferQueue(cacheCount = cacheCount)
-
-    /**
-     * Future queue
-     */
+    private val glTextureBufferQueueIn = GLTextureBufferQueue(cacheCount = cacheCount, loggable = true)
+    private val glTextureBufferQueueOut = GLTextureBufferQueue(cacheCount = cacheCount, loggable = false)
+    private val glFrameBuffer = GLFrameBuffer()
     private val futureQueue = ConcurrentLinkedQueue<Future<Int>>()
-
-    /**
-     * Worker thread
-     */
     private val workerThread = Executors.newSingleThreadExecutor()
-
-    /**
-     * Egl context helper
-     */
     private val eglContextHelper =
         EGLContextHelper()
-
-    /**
-     * Egl context base
-     */
     private var eglContextBase: EGLContext? = null
-
-    /**
-     * Is released
-     */
     private var isReleased = false
-
-    /**
-     * Filter
-     */
     private var filter: ((GLTextureBufferQueue.TextureOut) -> Int)? = null
-
-    /**
-     * Is begin
-     */
     private var isBegin = false
-
-    /**
-     * Frame index
-     */
     private var frameIndex = 0
 
-    /**
-     * Set filter
-     *
-     * @param filter
-     * @receiver
-     */
     fun setFilter(filter: (GLTextureBufferQueue.TextureOut) -> Int) {
         this.filter = filter
     }
 
-    /**
-     * Process
-     *
-     * @param texId
-     * @param texType
-     * @param width
-     * @param height
-     * @param rotation
-     * @param transform
-     * @param isFrontCamera
-     * @param isMirror
-     * @return
-     */
     fun process(
         texId: Int, texType: Int,
         width: Int, height: Int, rotation: Int,
@@ -155,7 +88,7 @@ class TextureProcessHelper(
                 width,
                 height,
                 rotation,
-                true,
+                false,
                 isFrontCamera,
                 isMirror,
                 transform,
@@ -173,7 +106,7 @@ class TextureProcessHelper(
                 return@Callable -2
             }
 
-            val frame = glTextureBufferQueueIn.dequeue() ?: return@Callable -2
+            val frame = glTextureBufferQueueIn.dequeue(false) ?: return@Callable -2
             val filterTexId =  filter?.invoke(frame) ?: -1
             if (filterTexId >= 0) {
                 glTextureBufferQueueOut.enqueue(
@@ -206,7 +139,7 @@ class TextureProcessHelper(
                     )
                 )
             }
-
+            glTextureBufferQueueIn.dequeue(true)
             return@Callable 0
         }))
 
@@ -216,8 +149,9 @@ class TextureProcessHelper(
             try {
                 val get =  futureQueue.poll()?.get() ?: -1
                 if (get == 0) {
-                    val dequeue = glTextureBufferQueueOut.dequeue()
-                    ret = dequeue?.textureId ?: -1
+                    val dequeue = glTextureBufferQueueOut.dequeue() ?: return -1
+                    glFrameBuffer.setSize(dequeue.width, dequeue.height)
+                    ret = glFrameBuffer.process(dequeue.textureId, dequeue.textureType)
                 }
             }catch (e: Exception){
                 LogUtils.e(TAG, "process end with exception: $e")
@@ -227,10 +161,6 @@ class TextureProcessHelper(
         return ret
     }
 
-    /**
-     * Reset
-     *
-     */
     fun reset(){
         if(frameIndex == 0){
             return
@@ -242,22 +172,15 @@ class TextureProcessHelper(
             future.cancel(true)
             future = futureQueue.poll()
         }
+        glTextureBufferQueueIn.reset()
+        glFrameBuffer.resetTexture()
         executeSync {
-            glTextureBufferQueueIn.reset()
             glTextureBufferQueueOut.reset()
         }
     }
 
-    /**
-     * Size
-     *
-     */
     fun size() = futureQueue.size
 
-    /**
-     * Release
-     *
-     */
     fun release() {
         isReleased = true
         filter = null
@@ -268,23 +191,18 @@ class TextureProcessHelper(
             future.cancel(true)
             future = futureQueue.poll()
         }
+        glTextureBufferQueueIn.release()
+        glFrameBuffer.release()
         executeSync {
+            glTextureBufferQueueOut.release()
             if (eglContextBase != null) {
                 eglContextHelper.release()
                 eglContextBase = null
             }
-            glTextureBufferQueueIn.release()
-            glTextureBufferQueueOut.release()
         }
         workerThread.shutdown()
     }
 
-    /**
-     * Execute sync
-     *
-     * @param run
-     * @receiver
-     */
     fun executeSync(run: () -> Unit) {
         val latch = CountDownLatch(1)
         workerThread.execute {
