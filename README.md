@@ -14,7 +14,7 @@
 | LiveStreaming   | Android  | [Android/scenes/show](Android/scenes/show/README.md)                               |
 | VoiceChatRoom   | Android  | [Android/scenes/voice](Android/scenes/voice/README.md)                               |
 | E-Commerce      | Android  | [Android/scenes/eCommerce](Android/scenes/eCommerce/README.md)                               |
-| Karaoke         | Android  | [Android/scenes/eCommerce](Android/scenes/ktv/README.md)                               |
+| Karaoke         | Android  | [Android/scenes/ktv](Android/scenes/ktv/README.md)                               |
 
 
 * Demo screenshots:
