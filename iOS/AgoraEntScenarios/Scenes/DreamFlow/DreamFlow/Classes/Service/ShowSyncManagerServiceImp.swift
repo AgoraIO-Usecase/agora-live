@@ -38,7 +38,6 @@ public class ShowSyncManagerServiceImp: NSObject {
         logConfig.fileSizeInKB = 1024
         logConfig.level = .info
         let manager = AUISyncManager(rtmClient: nil, commonConfig: config, logConfig: logConfig)
-        
         return manager
     }()
     
@@ -71,7 +70,6 @@ public class ShowSyncManagerServiceImp: NSObject {
         }
         super.init()
         syncManager.rtmManager.subscribeError(channelName: "", delegate: self)
-        
         AppContext.shared.agoraRTCToken = ""
         AppContext.shared.agoraRTMToken = ""
     }
@@ -234,16 +232,16 @@ extension ShowSyncManagerServiceImp {
 extension ShowSyncManagerServiceImp: ShowServiceProtocol {
     func getRoomList(page: Int, 
                      completion: @escaping (NSError?, [ShowRoomListModel]?) -> Void) {
-//        if isLogined == false {
-//            login {[weak self] err in
-//                if let err = err {
-//                    completion(err, nil)
-//                    return
-//                }
-//                self?.getRoomList(page: page, completion: completion)
-//            }
-//            return
-//        }
+        if isLogined == false {
+            login {[weak self] err in
+                if let err = err {
+                    completion(err, nil)
+                    return
+                }
+                self?.getRoomList(page: page, completion: completion)
+            }
+            return
+        }
         
         let currentUserId = user.userId
         roomService.getRoomList(lastCreateTime: 0,
@@ -251,8 +249,8 @@ extension ShowSyncManagerServiceImp: ShowServiceProtocol {
             return info.owner?.userId == currentUserId
         } completion: { err, ts, list in
             let roomList = list?.map({ $0.createShowServiceModel()}) ?? []
-            
-            completion(err, roomList)
+            let dataArray = ShowRobotService.shared.generateRobotRoomsAppend(rooms: roomList)
+            completion(err, dataArray)
         }
     }
     
