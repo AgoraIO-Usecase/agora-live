@@ -123,7 +123,7 @@ class LiveDetailFragment : Fragment() {
             "cn",
             BuildConfig.AGORA_APP_ID,
             mRoomId,
-            mRoomInfo.ownerId.toInt()
+            mRoomInfo.ownerId.toInt(),
         )
     }
 

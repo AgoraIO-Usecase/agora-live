@@ -4,7 +4,11 @@ import android.util.Log
 import com.bumptech.glide.load.HttpException
 import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.EntLogger
+import io.agora.scene.base.TokenGenerator
+import io.agora.scene.base.manager.UserManager
+import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.dreamFlow.DreamFlowLogger
+import io.agora.scene.dreamFlow.RtcEngineInstance
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -18,7 +22,7 @@ class DreamFlowService constructor(
     private val region: String,
     private val appId: String,
     private val channelName: String,
-    private val inUid: Int,
+    private val inUid: Int
 ) {
 
     companion object {
@@ -105,6 +109,8 @@ class DreamFlowService constructor(
 
     private var workerId: String = "b3a21856-88a8-4523-b553-cfaf14af5784"
 
+    private var genaiToken: String = ""
+
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
     private val okHttpClient by lazy {
         val builder = OkHttpClient.Builder()
@@ -132,8 +138,9 @@ class DreamFlowService constructor(
                 delay(3000)
                 try {
                     getStatus()
-                } catch (e: Exception) {
+                } catch (e: HttpException) {
                     listener?.onOccurError(e)
+                } catch (_: Exception) {
                 }
             }
         }
@@ -177,32 +184,34 @@ class DreamFlowService constructor(
              settingBean: SettingBean,
              success: () -> Unit,
              failure: ((Exception?) -> Unit)? = null) {
-        scope.launch(Dispatchers.Main) {
-            isEffectOn = effectOn
-            try {
-                if (isEffectOn) {
-                    // turn effect on
-                    if (status == ServiceStatus.STARTING ||
-                        status == ServiceStatus.START_SUCCESS) {
-                        currentSetting = settingBean
-                        update(settingBean)
-                        success.invoke()
-                    } else {
-                        currentSetting = settingBean
-                        val code = create(settingBean)
-                        success.invoke()
-                        if (code == 0) {
-                            updateStatus(ServiceStatus.STARTING)
+        getGenaiToken { tokenSuccess ->
+            if (tokenSuccess) {
+                scope.launch(Dispatchers.Main) {
+                    isEffectOn = effectOn
+                    try {
+                        if (isEffectOn) {
+                            // turn effect on
+                            if (status == ServiceStatus.STARTING ||
+                                status == ServiceStatus.START_SUCCESS) {
+                                currentSetting = settingBean
+                                update(settingBean)
+                                success.invoke()
+                            } else {
+                                currentSetting = settingBean
+                                val code = create(settingBean)
+                                success.invoke()
+                                if (code == 0) {
+                                    updateStatus(ServiceStatus.STARTING)
+                                } else {
+                                    updateStatus(ServiceStatus.START_SUCCESS)
+                                }
+                            }
                         } else {
-                            updateStatus(ServiceStatus.START_SUCCESS)
-                        }
-                    }
-                } else {
-                    // turn effect off
-                    delete(false)
-                    currentSetting = settingBean
-                    success.invoke()
-                    updateStatus(ServiceStatus.STOPPED)
+                            // turn effect off
+                            delete(false)
+                            currentSetting = settingBean
+                            success.invoke()
+                            updateStatus(ServiceStatus.STOPPED)
 //                    if (status == ServiceStatus.STARTING ||
 //                        status == ServiceStatus.STARTED) {
 //                        delete(false)
@@ -214,9 +223,13 @@ class DreamFlowService constructor(
 //                        success.invoke()
 //                        updateStatus(ServiceStatus.IDLE)
 //                    }
+                        }
+                    } catch (e: Exception) {
+                        failure?.invoke(e)
+                    }
                 }
-            } catch (e: Exception) {
-                failure?.invoke(e)
+            } else {
+                failure?.invoke(HttpException("Generate token failed", -1))
             }
         }
     }
@@ -250,6 +263,21 @@ class DreamFlowService constructor(
         }
     }
 
+    private fun getGenaiToken(callback: (Boolean)-> Unit) {
+        TokenGenerator.generateToken(
+            channelName = "",
+            uid = genaiUid.toString(),
+            genType = TokenGenerator.TokenGeneratorType.Token007,
+            tokenType = TokenGenerator.AgoraTokenType.Rtc,
+            success = { rtcToken ->
+                genaiToken = rtcToken
+                callback.invoke(true)
+            },
+            failure = { exception ->
+                callback.invoke(false)
+            })
+    }
+
     private suspend fun create(settingBean: SettingBean) = withContext(Dispatchers.IO) {
         val postBody = JSONObject().apply {
             put("name", "agoralive")
@@ -263,7 +291,7 @@ class DreamFlowService constructor(
                         put("inUid", inUid)
                         put("inChannelName", channelName)
                         put("genaiUid", genaiUid)
-                        put("genaiToken", "")
+                        put("genaiToken", genaiToken)
                         put("genaiVideoWidth", 720)
                         put("genaiVideoHeight", 1280)
                         put("prompt", settingBean.prompt)
@@ -280,8 +308,10 @@ class DreamFlowService constructor(
             Log.d(tag, "create result body: $body")
             val bodyJobj = JSONObject(body.string())
             Log.d(tag, "create result body obj: $bodyJobj")
-            if (bodyJobj["code"] != 0 && bodyJobj["code"] != 1) {
-                throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            val code = bodyJobj["code"]
+            if (code != 0 && code != 1) {
+                val message = bodyJobj["message"]
+                throw RuntimeException("code: $code message: $message")
             } else {
                 val data = bodyJobj["data"] as JSONObject
                 workerId = data["id"] as String
@@ -311,14 +341,19 @@ class DreamFlowService constructor(
             Log.d(tag, "delete result body obj: $bodyJobj")
             val code = bodyJobj["code"]
             if (code != 0) {
-                throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+                val msg = bodyJobj["message"] as String
+                throw RuntimeException("error: $code message: $msg")
             } else {
                 // update state
                 workerId = ""
                 code
             }
         } else {
-            throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            val obj = JSONObject(body.string())
+            val code = obj["code"] as Int
+            val msg = obj["message"] as String
+            throw RuntimeException("error: $code message: $msg")
         }
     }
 
@@ -335,7 +370,7 @@ class DreamFlowService constructor(
                         put("inUid", inUid)
                         put("inChannelName", channelName)
                         put("genaiUid", genaiUid)
-                        put("genaiToken", "")
+                        put("genaiToken", genaiToken)
                         put("genaiVideoWidth", 720)
                         put("genaiVideoHeight", 1280)
                         put("prompt", settingBean.prompt)
@@ -351,13 +386,19 @@ class DreamFlowService constructor(
             val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
             val bodyJobj = JSONObject(body.string())
             Log.d(tag, "update result body obj: $bodyJobj")
-            if (bodyJobj["code"] != 0) {
-                throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            val code = bodyJobj["code"]
+            if (code != 0) {
+                val msg = bodyJobj["message"] as String
+                throw RuntimeException("error: $code message: $msg")
             } else {
                 // do noting
             }
         } else {
-            throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            val obj = JSONObject(body.string())
+            val code = obj["code"] as Int
+            val msg = obj["message"] as String
+            throw RuntimeException("error: $code message: $msg")
         }
     }
 
@@ -383,13 +424,18 @@ class DreamFlowService constructor(
                 code
             } else if (code == 10003) {
                 updateStatus(ServiceStatus.STOPPED)
-                val message = bodyJobj["message"]
-                throw RuntimeException("error: $code $message")
+                val msg = bodyJobj["message"] as String
+                throw RuntimeException("error: $code message: $msg")
             } else {
-                throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+                val msg = bodyJobj["message"] as String
+                throw RuntimeException("error: $code message: $msg")
             }
         } else {
-            throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
+            val obj = JSONObject(body.string())
+            val code = obj["code"] as Int
+            val msg = obj["message"] as String
+            throw RuntimeException("error: $code message: $msg")
         }
     }
 }
