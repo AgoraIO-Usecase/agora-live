@@ -115,7 +115,7 @@ extension ShowSyncManagerServiceImp {
             
             agoraPrint("[Timing]preGenerateToken rtc & rtm cost: \(Int64(-date.timeIntervalSinceNow * 1000)) ms")
             AppContext.shared.agoraRTCToken = rtcToken
-            AppContext.shared.agoraRTMToken = AppContext.shared.appId
+            AppContext.shared.agoraRTMToken = rtmToken
             completion(nil)
         }
     }
