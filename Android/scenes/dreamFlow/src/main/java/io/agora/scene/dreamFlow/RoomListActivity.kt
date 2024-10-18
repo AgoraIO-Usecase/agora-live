@@ -309,11 +309,8 @@ class RoomListActivity : AppCompatActivity() {
             },
             failure = {
                 //ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
-//                ToastUtils.showToast(it?.message ?: "generate token failure")
-//                error?.invoke(it)
-                RtcEngineInstance.setupGeneralRtcToken(BuildConfig.AGORA_APP_ID)
-                RtcEngineInstance.setupGeneralRtmToken(BuildConfig.AGORA_APP_ID)
-                success.invoke()
+                ToastUtils.showToast(it?.message ?: "generate token failure")
+                error?.invoke(it)
             })
     }
 
