@@ -321,9 +321,8 @@ class DreamFlowService constructor(
         } else {
             val body = execute.body ?: throw RuntimeException("error: ${execute.code} message: ${execute.message}")
             val obj = JSONObject(body.string())
-            val code = obj["code"] as Int
             val msg = obj["message"] as String
-            throw RuntimeException("error: $code message: $msg")
+            throw RuntimeException("Failed to save the settings: $msg")
         }
     }
 

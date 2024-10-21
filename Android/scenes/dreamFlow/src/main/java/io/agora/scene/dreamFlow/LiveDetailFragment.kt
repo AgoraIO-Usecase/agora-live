@@ -118,6 +118,8 @@ class LiveDetailFragment : Fragment() {
      */
     private val mRtcVideoLoaderApi by lazy { VideoLoader.getImplInstance(mRtcEngine) }
 
+    private val genaiCanvas by lazy { TextureView(requireContext()) }
+
     private val mDreamFlowService by lazy {
         DreamFlowService(
             "cn",
@@ -718,16 +720,19 @@ class LiveDetailFragment : Fragment() {
                         // show progress
                         mBinding.rlProgressContainer.visibility = View.VISIBLE
                         mBinding.bottomLayout.ivStylized.visibility = View.INVISIBLE
+                        genaiCanvas.isVisible = false
                     }
                     DreamFlowService.ServiceStatus.START_SUCCESS -> {
                         // hide progress
                         mBinding.rlProgressContainer.visibility = View.GONE
                         mBinding.bottomLayout.ivStylized.visibility = View.VISIBLE
+                        genaiCanvas.isVisible = true
                     }
                     DreamFlowService.ServiceStatus.STOPPED -> {
                         // show empty
                         mBinding.rlProgressContainer.visibility = View.INVISIBLE
                         mBinding.bottomLayout.ivStylized.visibility = View.VISIBLE
+                        genaiCanvas.isVisible = false
                         // leave channel
                         mRtcEngine.leaveChannelEx(mMainRtcConnection)
                     }
@@ -749,11 +754,10 @@ class LiveDetailFragment : Fragment() {
     private fun joinChannelAndRenderDreamFlow() {
         eventListener?.let { joinChannel(it) }
 
-        val textureView = TextureView(requireContext())
-        mBinding.videoLinkingLayout.videoContainer.addView(textureView)
-        textureView.bringToFront()
+        mBinding.videoLinkingLayout.videoContainer.addView(genaiCanvas)
+        genaiCanvas.bringToFront()
         val canvas = VideoCanvas(
-            textureView,
+            genaiCanvas,
             Constants.RENDER_MODE_HIDDEN,
             DreamFlowService.genaiUid
         )
