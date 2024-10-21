@@ -913,7 +913,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
             NetworkManager.shared.voiceIdentify(channelName: room.channel_id ?? "",
                                                 channelType: room.sound_effect == 3 ? 0 : 1,
                                                 sceneType: .voice) { msg in
-                VoiceChatLog.info("\(msg == nil ? "开启鉴黄成功" : "开启鉴黄失败")")
+                VoiceChatLog.info("\(msg == nil ? "Open the success of porn identification": "Failure of opening the identification of pornography")")
             }
             
             VoiceChatLog.info("[Token] create room token room:\(roomInfo.roomId)")

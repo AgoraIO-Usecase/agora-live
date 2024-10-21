@@ -113,7 +113,7 @@ extension DownloadManager: URLSessionDataDelegate {
                            dataTask: URLSessionDataTask,
                            didReceive response: URLResponse,
                            completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-        aui_info("----开始----\(response.expectedContentLength)---\(response.mimeType ?? "")")
+        aui_info("----Begin----\(response.expectedContentLength)---\(response.mimeType ?? "")")
 //        totalLength = Int(response.expectedContentLength) + currentLength
         completionHandler(.allow)
         //completionHandler(.cancel)

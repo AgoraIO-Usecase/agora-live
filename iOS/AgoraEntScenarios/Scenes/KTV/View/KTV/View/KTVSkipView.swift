@@ -44,7 +44,7 @@ class KTVSkipView: UIView {
         
         skipBtn = UIButton()
         skipBtn.titleLabel?.font = UIFont.systemFont(ofSize: 15)
-        skipBtn.setTitle("  跳过前奏", for: .normal)
+        skipBtn.setTitle("  Skip the prelude", for: .normal)
         skipBtn.setTitleColor(.white, for: .normal)
         skipBtn.addTarget(self, action: #selector(skip(_:)), for: .touchUpInside)
         skipBtn.tag = 200
