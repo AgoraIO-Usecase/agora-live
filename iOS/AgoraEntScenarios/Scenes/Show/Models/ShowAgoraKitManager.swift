@@ -579,7 +579,7 @@ extension ShowAgoraKitManager {
     
     func setOffMediaOptionsVideo(roomid: String) {
         guard let connection = VideoLoaderApiImpl.shared.getConnectionMap()[roomid] else {
-            ShowLogger.info("setOffMediaOptionsVideo  connection 不存在 \(roomid)")
+            ShowLogger.info("setOffMediaOptionsVideo  connection Does not exist \(roomid)")
             return
         }
         ShowLogger.info("setOffMediaOptionsVideo with roomid = \(roomid)")

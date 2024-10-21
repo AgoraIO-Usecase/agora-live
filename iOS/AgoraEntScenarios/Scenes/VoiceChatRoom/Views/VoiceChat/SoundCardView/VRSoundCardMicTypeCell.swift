@@ -26,7 +26,7 @@ class VRSoundCardMicTypeCell: UITableViewCell {
     private func layoutUI() {
         
         titleLabel = UILabel()
-        titleLabel.text = "麦克风类型1"
+        titleLabel.text = "Microphone type 1"
         titleLabel.font = UIFont.systemFont(ofSize: 13)
         titleLabel.textAlignment = .center
         titleLabel.textColor = UIColor(red: 48/255.0, green: 53/255.0, blue: 83/255.0, alpha: 1)

@@ -158,7 +158,7 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
             
         } else {
             if shakeAnimation {shakeAnimationFunc()}
-            print("数量不能小于\(_minValue)");
+            print("The quantity cannot be less than\(_minValue)");
         }
         currentValue = number
     }
@@ -177,7 +177,7 @@ public protocol CommerceNumberButtonDelegate: NSObjectProtocol {
             
         } else {
             if shakeAnimation {shakeAnimationFunc()}
-            print("已超过最大数量\(_maxValue)");
+            print("The maximum quantity has been exceeded \(_maxValue)");
         }
         currentValue = number
     }

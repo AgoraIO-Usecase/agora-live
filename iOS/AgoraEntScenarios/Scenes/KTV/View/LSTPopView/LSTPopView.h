@@ -182,7 +182,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 
-#pragma mark - ***** 以下是 窗口管理api *****
+#pragma mark - ***** The following is the window management api *****
 
 /** Get all popView globally (in the whole app) */
 + (NSArray *)getAllPopView;

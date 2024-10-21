@@ -35,7 +35,7 @@
         if ([self.dataSource respondsToSelector:@selector(listContainerView:viewControllerForIndex:)]) {
             vc = [self.dataSource listContainerView:self viewControllerForIndex:index];
         }
-        NSAssert(vc, @"listContainerView:viewControllerForIndex:方法中 index = %d 的控制器返回了 nil",index);
+        NSAssert(vc, @"listContainerView:viewControllerForIndex:In the method index = %d the controller has returned. nil",index);
         [self.childVCDic setObject:vc forKey:@(index)];
     }
     

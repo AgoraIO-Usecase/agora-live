@@ -2,7 +2,6 @@
 //  AUIKickUserReqModel.swift
 //  AUIKit
 //
-//  Created by 朱继超 on 2023/5/26.
 //
 
 import UIKit

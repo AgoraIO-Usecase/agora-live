@@ -545,7 +545,7 @@
     });
 }
 
-#pragma mark - 合唱代理
+#pragma mark - Chorus agent
 - (void)setOriginBtnState:(VLKTVMVViewActionType)type
 {
     switch (type) {
