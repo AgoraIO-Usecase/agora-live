@@ -249,8 +249,7 @@ extension ShowSyncManagerServiceImp: ShowServiceProtocol {
             return info.owner?.userId == currentUserId
         } completion: { err, ts, list in
             let roomList = list?.map({ $0.createShowServiceModel()}) ?? []
-            let dataArray = ShowRobotService.shared.generateRobotRoomsAppend(rooms: roomList)
-            completion(err, dataArray)
+            completion(err, roomList)
         }
     }
     
