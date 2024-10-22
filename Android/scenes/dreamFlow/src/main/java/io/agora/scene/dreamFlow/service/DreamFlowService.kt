@@ -98,7 +98,7 @@ class DreamFlowService constructor(
         }
     }
 
-    var server: ServerType = ServerType.Server2
+    var server: ServerType = ServerType.Server1
 
     var selectedPreset: Int = 0
 
@@ -310,8 +310,8 @@ class DreamFlowService constructor(
             Log.d(tag, "create result body obj: $bodyJobj")
             val code = bodyJobj["code"]
             if (code != 0 && code != 1) {
-                val message = bodyJobj["message"]
-                throw RuntimeException("code: $code message: $message")
+                val msg = bodyJobj["message"]
+                throw RuntimeException("Failed to save the settings: $msg")
             } else {
                 val data = bodyJobj["data"] as JSONObject
                 workerId = data["id"] as String
@@ -388,7 +388,7 @@ class DreamFlowService constructor(
             val code = bodyJobj["code"]
             if (code != 0) {
                 val msg = bodyJobj["message"] as String
-                throw RuntimeException("error: $code message: $msg")
+                throw RuntimeException("Failed to save the settings: $msg")
             } else {
                 // do noting
             }
@@ -397,7 +397,7 @@ class DreamFlowService constructor(
             val obj = JSONObject(body.string())
             val code = obj["code"] as Int
             val msg = obj["message"] as String
-            throw RuntimeException("error: $code message: $msg")
+            throw RuntimeException("Failed to save the settings: $msg")
         }
     }
 

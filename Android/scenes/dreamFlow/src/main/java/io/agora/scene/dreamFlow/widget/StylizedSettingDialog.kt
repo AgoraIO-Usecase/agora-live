@@ -467,7 +467,7 @@ class StylizedSettingDialog constructor(
                     false,
                     0.5f,
                     1,
-                    DreamFlowService.Style.Miyazaki,
+                    DreamFlowService.Style.Clay,
                     "Claymation, best quality"
                 )
                 Anime -> DreamFlowService.SettingBean(
