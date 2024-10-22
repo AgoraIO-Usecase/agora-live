@@ -18,4 +18,5 @@ class DFStylizedSettingConfig: Codable {
     var server: String = ""
     var videoWidth: Int = 0
     var videHeight: Int = 0
+    var aiToken: String = ""
 }

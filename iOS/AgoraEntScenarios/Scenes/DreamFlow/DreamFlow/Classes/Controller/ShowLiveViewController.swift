@@ -241,24 +241,22 @@ class ShowLiveViewController: UIViewController {
             }
             
             guard let state = res else {
-                ToastView.show(text: "worker state is empty")
-                self?.dreamFlowService.workState = .failed
-                self?.updateViewState()
                 return
             }
             
             if state == "start_success" {
                 self?.dreamFlowService.workState = .running
+                self?.updateViewState()
             } else if state == "start_failed" {
                 self?.dreamFlowService.workState = .failed
+                self?.updateViewState()
             }
-            
-            self?.updateViewState()
         }
     }
     
     private func createWorker(stylizedConfig: DFStylizedSettingConfig) {
         guard let channelId = room?.roomId else { return }
+        
         currentChannelId = channelId
         dreamFlowService.creatWork(channelName: currentChannelId ?? "", stylizedConfig: stylizedConfig) { [weak self] error, res in
             if error != nil {
@@ -744,7 +742,15 @@ extension ShowLiveViewController: DFStylizedSetttingDelegate {
 
         //初始化worker
         if config.style_effect, workerState == .unload || workerState == .failed {
-            createWorker(stylizedConfig: config)
+            NetworkManager.shared.generateToken(channelName: "",
+                                                uid: "\(dreamFlowService.genaiUid)",
+                                                tokenTypes: [.rtc]) { [weak self] token in
+                guard let rtcToken = token, let self = self else {
+                    return
+                }
+                config.aiToken = rtcToken
+                self.createWorker(stylizedConfig: config)
+            }
             return
         }
         

@@ -31,10 +31,10 @@ class DreamFlowService {
         var requestModel = DreamFlowCreatWorkModel(region: region, appId: AppContext.shared.appId)
         let rtcConfigure = DreamFlowUidConfig()
         let config = DreamFlowRtcConfig()
-        config.inUid = inUid
+        config.inUid = Int(UserInfo.userId) ?? 0
 //        config.inToken = AppContext.shared.appId
         config.inChannelName = channelName
-        config.genaiToken = ""
+        config.genaiToken = stylizedConfig.aiToken
 //        config.inRole = inRole
         config.genaiUid = genaiUid
         config.prompt = stylizedConfig.prompt
@@ -42,7 +42,7 @@ class DreamFlowService {
         config.genaiVideoHeight = stylizedConfig.videHeight
         
         rtcConfigure.userids = [config]
-        requestModel.name = AppContext.shared.appId + channelName
+        requestModel.name = "agoralive"
         requestModel.rtcConfigure = rtcConfigure
         requestModel.style = stylizedConfig.style
         requestModel.strength = stylizedConfig.strength
