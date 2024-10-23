@@ -162,6 +162,9 @@ class ShowLiveViewController: UIViewController {
         if room.ownerId == VLUserCenter.user.id {
             setupLocalView()
             AgoraEntAuthorizedManager.checkMediaAuthorized(parent: self)
+        } else {
+            self.liveView.canvasView.localBackgroundView.isHidden = true
+            self.liveView.bottomBar.beautyButton.isHidden = true
         }
         
         joinChannel()
@@ -391,6 +394,7 @@ class ShowLiveViewController: UIViewController {
     }
 }
 
+//MARK: private
 //MARK: private
 extension ShowLiveViewController {
     private func _updateApplyMenu() {

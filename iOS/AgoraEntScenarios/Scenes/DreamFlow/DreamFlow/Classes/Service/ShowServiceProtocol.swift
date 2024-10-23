@@ -31,9 +31,11 @@ protocol ShowServiceProtocol: NSObjectProtocol {
     /// - Parameters:
     ///   - roomId: 房间Id 
     ///   - roomName: 房间名
+    ///   - payload: 自定义参数
     ///   - completion: 完成回调
     func createRoom(roomId: String,
                     roomName: String,
+                    payload: [String : Any],
                     completion: @escaping (NSError?, ShowRoomDetailModel?) -> Void)
     
     /// 加入房间

@@ -28,15 +28,17 @@ class ShowLivePagesViewController: UIViewController {
                 return nil
             }
             ShowLogger.info("[\(room.roomId)]onRequireRenderVideo: \(info.channelName)  \(vc.liveView.canvasView.localBackgroundView.contentView)", context: kPagesVCTag)
-            if room.channelName() == info.channelName, room.userId() == "\(info.uid)" {
-                return vc.liveView.canvasView.localBackgroundView.contentView
-            } else {
-                if let _ = room.interactionAnchorInfoList.filter({ $0.uid == info.uid && $0.channelName == info.channelName }).first {
-                    return vc.liveView.canvasView.remoteView
-                }
-                ShowLogger.info("onRequireRenderVideo fail: \(info.channelName)/\(room.roomId)", context: kPagesVCTag)
-                return nil
-            }
+            return vc.liveView.canvasView.remoteView
+
+//            if room.channelName() == info.channelName, room.userId() == "\(info.uid)" {
+//                return vc.liveView.canvasView.localBackgroundView.contentView
+//            } else {
+//                if let _ = room.interactionAnchorInfoList.filter({ $0.uid == info.uid && $0.channelName == info.channelName }).first {
+//                    return vc.liveView.canvasView.remoteView
+//                }
+//                ShowLogger.info("onRequireRenderVideo fail: \(info.channelName)/\(room.roomId)", context: kPagesVCTag)
+//                return nil
+//            }
         }
         return handler
     }()

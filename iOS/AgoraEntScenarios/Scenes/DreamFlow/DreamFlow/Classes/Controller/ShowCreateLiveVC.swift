@@ -110,8 +110,17 @@ extension ShowCreateLiveVC: ShowCreateLiveViewDelegate {
         let roomId = createView.roomNo
         SVProgressHUD.show()
         self.view.isUserInteractionEnabled = false
+        let room = ShowRoomDetailModel()
+        room.roomName = roomName
+        room.roomId = roomId
+        room.thumbnailId = "\(Int.random(in: 1...3))"
+        room.ownerId = VLUserCenter.user.id
+        room.ownerName = VLUserCenter.user.name
+        room.ownerAvatar = VLUserCenter.user.headUrl
+        room.createdAt = Date().millionsecondSince1970()
+        let params = (room.yy_modelToJSONObject() as? [String: Any]) ?? [:]
         AppContext.showServiceImp()?.createRoom(roomId: createView.roomNo,
-                                                roomName: roomName) { [weak self] err, detailModel in
+                                                roomName: roomName, payload: params) { [weak self] err, detailModel in
             guard let wSelf = self else { return }
             SVProgressHUD.dismiss()
             wSelf.view.isUserInteractionEnabled = true

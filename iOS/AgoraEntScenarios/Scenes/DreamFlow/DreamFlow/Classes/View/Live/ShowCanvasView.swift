@@ -9,6 +9,23 @@ import UIKit
 import SnapKit
 
 class DFLocalView: UIView {
+    var tapCallback: (() -> Void)?
+    lazy var arrowButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage.show_sceneImage(name: "drame_flow_arrow"), for: .normal)
+        button.addTarget(self, action: #selector(toggleLocalView), for: .touchUpInside)
+    
+        return button
+    }()
+    
+    lazy var originTitle: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.show_R_12
+        label.textColor = UIColor.show_slider_tint
+        label.text = "Origin"
+        return label
+    }()
+    
     lazy var contentView: UIView = {
         let view = UIView()
         return view
@@ -18,17 +35,39 @@ class DFLocalView: UIView {
         super.init(frame: frame)
         setupUI()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     func setupUI() {
         self.addSubview(contentView)
+        self.addSubview(originTitle)
+        self.addSubview(arrowButton)
         contentView.snp.makeConstraints { make in
             make.left.top.right.bottom.equalTo(0)
         }
+        
+        arrowButton.snp.makeConstraints { make in
+            make.right.equalTo(-12)
+            make.bottom.equalTo(-10)
+            make.height.equalTo(12)
+            make.width.equalTo(25)
+        }
+        
+        originTitle.snp.makeConstraints { make in
+            make.right.equalTo(arrowButton.snp.left)
+            make.centerY.equalTo(arrowButton.snp.centerY)
+            make.height.equalTo(17)
+        }
     }
+    
+    @objc private func toggleLocalView() {
+        if let tapCallback = tapCallback {
+            tapCallback()
+        }
+    }
+    
 }
 
 class ShowCanvasView: UIView {
@@ -72,22 +111,6 @@ class ShowCanvasView: UIView {
         return button
     }()
     
-    lazy var originTitle: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.show_R_12
-        label.textColor = UIColor.show_slider_tint
-        label.text = "Origin"
-        return label
-    }()
-    
-    lazy var arrowButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage.show_sceneImage(name: "drame_flow_arrow"), for: .normal)
-        button.addTarget(self, action: #selector(toggleLocalView), for: .touchUpInside)
-    
-        return button
-    }()
-    
     var localViewHidden = false
     
     override init(frame: CGRect) {
@@ -105,8 +128,6 @@ class ShowCanvasView: UIView {
         addSubview(remoteView)
         addSubview(localBackgroundView)
         addSubview(indicatorButton)
-        localBackgroundView.addSubview(originTitle)
-        localBackgroundView.addSubview(arrowButton)
         contentView.addSubview(thumnbnailCanvasView)
         
         contentView.snp.makeConstraints { make in
@@ -128,19 +149,6 @@ class ShowCanvasView: UIView {
             make.bottom.equalToSuperview().offset(-75)
         }
         
-        arrowButton.snp.makeConstraints { make in
-            make.right.equalTo(-12)
-            make.bottom.equalTo(-10)
-            make.height.equalTo(12)
-            make.width.equalTo(25)
-        }
-        
-        originTitle.snp.makeConstraints { make in
-            make.right.equalTo(arrowButton.snp.left)
-            make.centerY.equalTo(arrowButton.snp.centerY)
-            make.height.equalTo(17)
-        }
-        
         indicatorButton.snp.makeConstraints { make in
             make.width.equalTo(20)
             make.height.equalTo(52)
@@ -149,6 +157,9 @@ class ShowCanvasView: UIView {
         }
         
         indicatorButton.isHidden = true
+        localBackgroundView.tapCallback = { [weak self] in
+            self?.toggleLocalView()
+        }
     }
     
     private func setupGestures() {

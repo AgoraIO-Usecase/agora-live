@@ -255,6 +255,7 @@ extension ShowSyncManagerServiceImp: ShowServiceProtocol {
     
     func createRoom(roomId: String,
                     roomName: String,
+                    payload: [String: Any],
                     completion: @escaping (NSError?, ShowRoomDetailModel?) -> Void) {
         if isLogined == false {
             login {[weak self] err in
@@ -264,6 +265,7 @@ extension ShowSyncManagerServiceImp: ShowServiceProtocol {
                 }
                 self?.createRoom(roomId: roomId, 
                                  roomName: roomName,
+                                 payload: payload,
                                  completion: completion)
             }
             return
@@ -272,6 +274,11 @@ extension ShowSyncManagerServiceImp: ShowServiceProtocol {
         let roomInfo = AUIRoomInfo()
         roomInfo.roomId = roomId
         roomInfo.roomName = roomName
+        roomInfo.customPayload = payload
+        let userInfo = AUIUserThumbnailInfo()
+        userInfo.userId = VLUserCenter.user.id
+        userInfo.userAvatar = VLUserCenter.user.headUrl
+        userInfo.userName = VLUserCenter.user.name
         roomInfo.owner = user
         roomService.createRoom(room: roomInfo, enterEnable: false) {[weak self] err, info in
             if err == nil {

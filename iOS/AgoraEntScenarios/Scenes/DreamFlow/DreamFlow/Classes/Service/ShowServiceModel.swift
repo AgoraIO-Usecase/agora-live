@@ -71,14 +71,24 @@ public class ShowRoomListModel: NSObject, IVideoLoaderRoomInfo {
     
     public var anchorInfoList: [AnchorInfo] {
         get {
-            let anchorInfo = AnchorInfo()
-            anchorInfo.channelName = roomId
-            if !ownerId.isEmpty {
-                anchorInfo.uid = UInt(ownerId)!
+            if ownerId != VLUserCenter.user.id {
+                let anchorInfo = AnchorInfo()
+                anchorInfo.channelName = roomId
+                anchorInfo.uid = 999
+                anchorInfo.token = AppContext.shared.rtcToken ?? ""
+                
+                return [anchorInfo] + interactionAnchorInfoList
+            } else {
+                let anchorInfo = AnchorInfo()
+                anchorInfo.channelName = roomId
+                if !ownerId.isEmpty {
+                    anchorInfo.uid = UInt(ownerId)!
+                }
+                anchorInfo.token = AppContext.shared.rtcToken ?? ""
+                
+                return [anchorInfo] + interactionAnchorInfoList
             }
-            anchorInfo.token = AppContext.shared.rtcToken ?? ""
             
-            return [anchorInfo] + interactionAnchorInfoList
         }
     }
     
@@ -87,7 +97,7 @@ public class ShowRoomListModel: NSObject, IVideoLoaderRoomInfo {
     public var roomId: String = ""                                //房间号
     public var roomName: String?                              //房间名
     public var roomUserCount: Int = 1                         //房间人数
-//    public var thumbnailId: String?                           //缩略图id
+    public var thumbnailId: String?                           //缩略图id
     public var ownerId: String = ""                               //房主user id (rtc uid)
     public var ownerAvatar: String?                           //房主头像
     public var ownerName: String?                             //房主名
