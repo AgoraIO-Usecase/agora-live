@@ -790,6 +790,12 @@ extension ShowLiveViewController: DFStylizedSetttingDelegate {
         //删除worker
         if !config.style_effect, workerState == .running {
             deleteWorker(completion: state)
+            return
+        }
+        
+        //啥都没变
+        if !config.style_effect {
+            state(true)
         }
     }
 }
