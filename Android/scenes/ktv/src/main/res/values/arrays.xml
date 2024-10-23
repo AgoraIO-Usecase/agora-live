@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ktv_roomName">
+        <item>Moonlight Serenade</item>
+        <item>Healing Harmony</item>
+        <item>One Hit Wonder</item>
+        <item>Got Wine</item>
+        <item>Morning Melody</item>
+        <item>Charming Karaoke</item>
+        <item>Far and Near</item>
+        <item>Windy Poems</item>
+        <item>Memories of Yesteryear</item>
+        <item>Eternal Melody</item>
+        <item>Seventy-Two Street</item>
+        <item>Poetic Emotions</item>
+        <item>Simple Joy</item>
+        <item>Melodic Miles</item>
+        <item>Snow Dance</item>
+        <item>Dream Awakening</item>
+        <item>All is Well</item>
+        <item>Breezy Tunes</item>
+        <item>Rainy Days</item>
+        <item>Clear Skies</item>
+        <item>Gentle Breeze</item>
+    </string-array>
+
+    <string-array name="ktv_audioPreset">
+        <item>KTV</item>
+        <item>Origin</item>
+        <item>Concert</item>
+        <item>Studio</item>
+        <item>Phonograph</item>
+        <item>Vast</item>
+        <item>Ethereal</item>
+        <item>Pop</item>
+        <item>R&amp;B</item>
+    </string-array>
+</resources>

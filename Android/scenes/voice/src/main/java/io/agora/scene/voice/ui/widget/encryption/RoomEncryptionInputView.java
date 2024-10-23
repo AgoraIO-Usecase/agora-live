@@ -201,9 +201,6 @@ public class RoomEncryptionInputView extends AppCompatEditText {
       this.OnTextChangeListener = OnTextChangeListener;
    }
 
-   /**
-    * 清空所有输入的内容
-    */
    public void clearText() {
       setText("");
       setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);

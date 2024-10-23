@@ -72,14 +72,14 @@ class LiveLinkAudienceSettingsDialog constructor(context: Context) : BottomDarkD
      * M host item list
      */
     private val mHostItemList = listOf(
-        SettingItem(
-            ITEM_ID_MIC,
-            R.mipmap.show_setting_ic_mic_off,
-            R.mipmap.show_setting_ic_mic_on,
-            R.string.show_setting_mic_off,
-            R.string.show_setting_mic_on,
-            true
-        ),
+//        SettingItem(
+//            ITEM_ID_MIC,
+//            R.mipmap.show_setting_ic_mic_off,
+//            R.mipmap.show_setting_ic_mic_on,
+//            R.string.show_setting_mic_off,
+//            R.string.show_setting_mic_on,
+//            true
+//        ),
         SettingItem(
             ITEM_ID_STOP_LINK,
             R.mipmap.show_stop_link,
@@ -165,14 +165,14 @@ class LiveLinkAudienceSettingsDialog constructor(context: Context) : BottomDarkD
      */
     fun resetSettingsItem(mute: Boolean) {
         val itemList = listOf(
-            SettingItem(
-                ITEM_ID_MIC,
-                R.mipmap.show_setting_ic_mic_off,
-                R.mipmap.show_setting_ic_mic_on,
-                R.string.show_setting_mic_off,
-                R.string.show_setting_mic_on,
-                !mute
-            ),
+//            SettingItem(
+//                ITEM_ID_MIC,
+//                R.mipmap.show_setting_ic_mic_off,
+//                R.mipmap.show_setting_ic_mic_on,
+//                R.string.show_setting_mic_off,
+//                R.string.show_setting_mic_on,
+//                !mute
+//            ),
             SettingItem(
                 ITEM_ID_STOP_LINK,
                 R.mipmap.show_stop_link,

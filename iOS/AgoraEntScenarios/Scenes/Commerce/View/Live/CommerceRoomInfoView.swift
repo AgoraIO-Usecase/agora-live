@@ -129,7 +129,7 @@ class CommerceRoomInfoView: UIView {
             headImgView.image = UIImage(named: avatar ?? "")
         }
         nameLabel.text = name
-        idLabel.text = id
+        idLabel.text = id ?? ""
         updateTime()
         timer.fire()
     }

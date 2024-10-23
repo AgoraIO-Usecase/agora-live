@@ -15,6 +15,7 @@ android {
 
         buildConfigField "String", "CLOUD_PLAYER_KEY", "\"${CLOUD_PLAYER_KEY}\""
         buildConfigField "String", "CLOUD_PLAYER_SECRET", "\"${CLOUD_PLAYER_SECRET}\""
+        buildConfigField "String", "BEAUTY_RESOURCE", "\"${BEAUTY_RESOURCE}\""
     }
 
     resourcePrefix "show"
@@ -37,6 +38,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation project(":common")
+    implementation project(":RTMSyncManager")
 
     implementation rootProject.ext.deps.appcompat
     implementation rootProject.ext.deps.annotation
@@ -53,8 +55,10 @@ dependencies {
     implementation rootProject.ext.deps.lifecycle
     implementation rootProject.ext.deps.fragment_ktx
 
-    implementation rootProject.ext.deps.syncManager
+    implementation rootProject.ext.deps.rtm
 
+    if (BEAUTY_RESOURCE = "") {
+        implementation 'com.faceunity:model:8.7.0'
+    }
     implementation 'com.faceunity:core:8.7.0'
-    implementation 'com.faceunity:model:8.7.0'
 }

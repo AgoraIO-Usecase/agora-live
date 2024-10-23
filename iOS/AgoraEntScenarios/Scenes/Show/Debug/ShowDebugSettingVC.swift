@@ -16,7 +16,7 @@ private let Debug2TFCellID = "Debug2TFCellID"
 
 class ShowDebugSettingVC: UIViewController {
     
-    var isBroadcastor = true // 频道外
+    var isBroadcastor = true // Outside the channel
     var engine: AgoraRtcEngineKit! {
         didSet{
             ShowDebugAgoraKitManager.shared.engine = engine
@@ -28,7 +28,7 @@ class ShowDebugSettingVC: UIViewController {
         isBroadcastor ? createBroadcastorDataArray() : createAudienceDataArray()
     }()
     
-    // 自定义导航栏
+    // Custom navigation bar
     private let naviBar = ShowNavigationBar()
     
     private lazy var tableView: UITableView = {
@@ -61,8 +61,7 @@ class ShowDebugSettingVC: UIViewController {
     }
     
     private func configCustomNaviBar(){
-        // 标题
-        naviBar.title = "开发者模式设置"
+        naviBar.title = "Developer mode settings"
         naviBar.backgroundColor = .white
         view.addSubview(naviBar)
         
@@ -91,9 +90,9 @@ class ShowDebugSettingVC: UIViewController {
             settingManager.debug2TFModelForKey(.encodeVideoSize),
             settingManager.debug1TFModelForKey(.bitRate),
             ShowDebugSettingKey.debugPVC,
-            ShowDebugSettingKey.focusFace,  // 人脸对焦
-            settingManager.debug2TFModelForKey(.exposureRange),// 曝光区域
-            settingManager.debug2TFModelForKey(.colorSpace), // 颜色空间
+            ShowDebugSettingKey.focusFace,  // Face focus
+            settingManager.debug2TFModelForKey(.exposureRange),// Exposure area
+            settingManager.debug2TFModelForKey(.colorSpace), // Color space
             ShowDebugSettingKey.encode,
             ShowDebugSettingKey.codeCType,
             ShowDebugSettingKey.mirror,

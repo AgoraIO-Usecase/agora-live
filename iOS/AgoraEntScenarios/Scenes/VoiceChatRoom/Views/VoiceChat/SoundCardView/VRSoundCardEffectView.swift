@@ -66,23 +66,6 @@ class VRSoundCardEffectView: UIView {
         tableView.delegate = self
         tableView.registerCell(VRSoundCardEffectCell.self, forCellReuseIdentifier: "cell")
         self.addSubview(tableView)
-        
-//        sepView = UIView()
-//        sepView.backgroundColor = UIColor(red: 245/255.0, green: 244/255.0, blue: 246/255.0, alpha: 1)
-//        self.addSubview(sepView)
-        
-//        cancleView = UIButton()
-//        cancleView.titleLabel?.font = UIFont.systemFont(ofSize: 15)
-//        cancleView.setTitleColor(.black, for: .normal)
-//        cancleView.setTitle("取消", for: .normal)
-//        cancleView.backgroundColor = .white
-//        cancleView.addTarget(self, action: #selector(cancel), for: .touchUpInside)
-//        self.addSubview(cancleView)
-        
-//        KTVHeadSetUtil.addSoundCardObserver {[weak self] flag in
-//            guard let block = self?.clickBlock else {return}
-//            block(-2)
-//        }
     }
     
     override func layoutSubviews() {

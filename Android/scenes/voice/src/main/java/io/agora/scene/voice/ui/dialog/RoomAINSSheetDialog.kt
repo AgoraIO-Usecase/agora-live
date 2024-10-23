@@ -7,9 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.agora.voice.common.ui.adapter.BaseRecyclerViewAdapter
-import io.agora.voice.common.ui.adapter.listener.OnItemChildClickListener
-import io.agora.voice.common.ui.dialog.BaseFixedHeightSheetDialog
+import io.agora.scene.base.component.BaseRecyclerViewAdapter
+import io.agora.scene.base.component.OnItemChildClickListener
 import io.agora.voice.common.utils.ToastTools
 import io.agora.voice.common.constant.ConfigConstants
 import io.agora.scene.voice.R
@@ -20,6 +19,7 @@ import io.agora.scene.voice.databinding.VoiceItemRoomAgoraAinsBinding
 import io.agora.scene.voice.databinding.VoiceItemRoomAinsAuditionBinding
 import io.agora.scene.voice.model.constructor.RoomAINSConstructor
 import io.agora.scene.voice.ui.adapter.viewholder.*
+import io.agora.voice.common.ui.dialog.BaseFixedHeightSheetDialog
 
 class RoomAINSSheetDialog constructor() : BaseFixedHeightSheetDialog<VoiceDialogChatroomAinsBinding>() {
 
@@ -59,7 +59,7 @@ class RoomAINSSheetDialog constructor() : BaseFixedHeightSheetDialog<VoiceDialog
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.attributes?.windowAnimations = R.style.voice_BottomSheetDialogAnimation
-        dialog?.setCanceledOnTouchOutside(false)
+
         anisModeList.addAll(RoomAINSConstructor.builderDefaultAINSList(view.context, anisMode))
         anisSoundsList.addAll(RoomAINSConstructor.builderDefaultSoundList(view.context))
         binding?.apply {
@@ -79,8 +79,7 @@ class RoomAINSSheetDialog constructor() : BaseFixedHeightSheetDialog<VoiceDialog
         anisModeAdapter = BaseRecyclerViewAdapter(
             anisModeList,
             null,
-            object :
-                OnItemChildClickListener<AINSModeBean> {
+            object : OnItemChildClickListener<AINSModeBean> {
 
                 override fun onItemChildClick(
                     data: AINSModeBean?,

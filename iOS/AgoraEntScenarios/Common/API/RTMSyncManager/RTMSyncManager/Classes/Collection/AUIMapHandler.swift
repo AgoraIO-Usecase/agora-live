@@ -62,7 +62,7 @@ func calculateMap(origMap: [String: Any],
 }
 
 
-/// 根据filter条件过滤出array命中的索引，如果filter为空，则默认选中所有
+/// Filter out the index hit by array according to the filter condition. If the filter is empty, all will be selected by default.
 /// - Parameters:
 ///   - array: <#array description#>
 ///   - filter: <#filter description#>
@@ -101,15 +101,15 @@ func getItemIndexes(array: [[String: Any]], filter: [[String: Any]]?) -> [Int]? 
     
     var indexes: [Int] = []
     for (i, value) in array.enumerated() {
+        //For filter, as long as any filterItem is satisfied, all conditions need to be met.
         for filterItem in filter {
-            var match = false
+            var matchCount = 0
             for (k, v) in filterItem {
                 if isMatchFilter(key: k, itemValue: value, filterValue: v) {
-                    match = true
-                    break
+                    matchCount += 1
                 }
             }
-            if match {
+            if matchCount == filterItem.keys.count {
                 indexes.append(i)
                 break
             }

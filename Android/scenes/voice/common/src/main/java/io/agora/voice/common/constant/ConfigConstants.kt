@@ -7,6 +7,11 @@ package io.agora.voice.common.constant
 object ConfigConstants {
 
     /**
+     * Robot Count
+     */
+    const val ROBOT_COUNT = 2
+
+    /**
      * Alpha value when enabled.
      */
     const val ENABLE_ALPHA = 1.0f

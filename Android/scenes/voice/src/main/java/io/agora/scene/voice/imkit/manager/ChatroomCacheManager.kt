@@ -11,6 +11,7 @@ import io.agora.scene.voice.model.VoiceMemberModel
 import io.agora.scene.voice.model.VoiceMicInfoModel
 import io.agora.scene.voice.model.VoiceRankUserModel
 import io.agora.voice.common.utils.GsonTools
+import io.agora.voice.common.utils.LogTools
 import io.agora.voice.common.utils.LogTools.logD
 import java.io.*
 
@@ -61,6 +62,16 @@ class ChatroomCacheManager {
         return giftAmount
     }
 
+    var clickCountCache: Int = 0
+        set(value) {
+            field = value
+            LogTools.d(TAG, "updateClickCountCache($field) ")
+        }
+        get() {
+            LogTools.d(TAG, "getClickCache($field) ")
+            return field
+        }
+
     fun setKvInfo(kvMap: Map<String,String>){
         for (entry in kvMap.entries) {
             allInfoMap[entry.key] = entry.value
@@ -78,6 +89,7 @@ class ChatroomCacheManager {
         clearSubmitList()
         clearRankList()
         giftAmount = 0
+        clickCountCache = 0
     }
 
     fun setMicInfo(kvMap: Map<String,String>){

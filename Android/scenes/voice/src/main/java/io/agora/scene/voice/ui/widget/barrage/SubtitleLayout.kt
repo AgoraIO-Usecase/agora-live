@@ -102,7 +102,6 @@ class SubtitleLayout : RelativeLayout, StatusChangeListener {
     private fun startTask() {
         if (!isRunning){
             handler.postDelayed(Runnable {
-                // 在这里执行具体的任务
                 if (contentList.size > 0){
                     content = contentList[0]
                     setSubtitle(content)

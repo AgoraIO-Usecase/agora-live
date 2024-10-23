@@ -137,20 +137,20 @@ extension CommerceAgoraKitManager {
         switch key {
         case .encodeFrameRate:
             guard let value = Int(text), let fps = AgoraVideoFrameRate(rawValue: value) else {
-                commerceLogger.info("***Debug*** The encoding frame rate parameter is null ")
+                CommerceLogger.info("***Debug*** The encoding frame rate parameter is null ")
                 return
             }
             encoderConfig.frameRate = fps
             engine?.setVideoEncoderConfiguration(encoderConfig)
-            commerceLogger.info("***Debug*** setVideoEncoderConfiguration.encodeFrameRate = \(encoderConfig.frameRate) ")
+            CommerceLogger.info("***Debug*** setVideoEncoderConfiguration.encodeFrameRate = \(encoderConfig.frameRate) ")
         case .bitRate:
             guard let value = Int(text) else {
-                commerceLogger.info("***Debug*** The rate parameter is null")
+                CommerceLogger.info("***Debug*** The rate parameter is null")
                 return
             }
             encoderConfig.bitrate = value
             engine?.setVideoEncoderConfiguration(encoderConfig)
-            commerceLogger.info("***Debug*** setVideoEncoderConfiguration.bitrate = \(encoderConfig.bitrate) ")
+            CommerceLogger.info("***Debug*** setVideoEncoderConfiguration.bitrate = \(encoderConfig.bitrate) ")
         }
     }
     
@@ -163,7 +163,7 @@ extension CommerceAgoraKitManager {
         case .encodeVideoSize:
             encoderConfig.dimensions = CGSize(width: value1, height: value2)
             engine?.setVideoEncoderConfiguration(encoderConfig)
-            commerceLogger.info("***Debug*** setVideoEncoderConfiguration.encodeVideoSize = \(encoderConfig.dimensions) ")
+            CommerceLogger.info("***Debug*** setVideoEncoderConfiguration.encodeVideoSize = \(encoderConfig.dimensions) ")
         case .exposureRange:
             exposureRangeX = value1
             exposureRangeY = value2
@@ -192,28 +192,28 @@ extension CommerceAgoraKitManager {
             engine?.setParameters("{\"rtc.video.enable_pvc\":\(isOn)}")
         case .focusFace:
             engine?.setCameraAutoFocusFaceModeEnabled(isOn)
-            commerceLogger.info("***Debug*** setCameraAutoFocusFaceModeEnabled  \(isOn)")
+            CommerceLogger.info("***Debug*** setCameraAutoFocusFaceModeEnabled  \(isOn)")
         case .encode:
             let index = indexValue % debugEncodeItems.count
             engine?.setParameters("{\"engine.video.enable_hw_encoder\":\"\(debugEncodeItems[index])\"}")
-            commerceLogger.info("***Debug*** engine.video.enable_hw_encoder  \(debugEncodeItems[index])")
+            CommerceLogger.info("***Debug*** engine.video.enable_hw_encoder  \(debugEncodeItems[index])")
         case .codeCType:
             let index = indexValue % debugCodeCTypeItems.count
             engine?.setParameters("{\"engine.video.codec_type\":\"\(debugCodeCTypeItems[index])\"}")
-            commerceLogger.info("***Debug*** engine.video.codec_type  \(debugCodeCTypeItems[index])")
+            CommerceLogger.info("***Debug*** engine.video.codec_type  \(debugCodeCTypeItems[index])")
 
         case .mirror, .renderMode:
             let index = ShowDebugSettingKey.renderMode.intValue % debugRenderModeItems.count
             let mirrorIsOn = ShowDebugSettingKey.mirror.boolValue
             engine?.setLocalRenderMode(debugRenderModeItems[index], mirror: mirrorIsOn ? .enabled : .disabled)
-            commerceLogger.info("***Debug*** setLocalRenderMode  mirror = \(mirrorIsOn ? AgoraVideoMirrorMode.enabled : AgoraVideoMirrorMode.disabled), rendermode = \(debugRenderModeItems[index])")
+            CommerceLogger.info("***Debug*** setLocalRenderMode  mirror = \(mirrorIsOn ? AgoraVideoMirrorMode.enabled : AgoraVideoMirrorMode.disabled), rendermode = \(debugRenderModeItems[index])")
         case .debugSR, .debugSrType:
             let srIsOn = ShowDebugSettingKey.debugSR.boolValue
             let index = ShowDebugSettingKey.debugSrType.intValue % debugSrTypeItems.count
             setDebugSuperResolutionOn(srIsOn, srType: debugSrTypeItems[index])
         case .debugPVC:
             engine?.setParameters("{\"rtc.video.enable_pvc\":\(isOn)}")
-            commerceLogger.info("***Debug*** rtc.video.enable_pvc \(isOn)")
+            CommerceLogger.info("***Debug*** rtc.video.enable_pvc \(isOn)")
         }
     }
 }
@@ -223,7 +223,7 @@ extension CommerceAgoraKitManager {
     private func setExposureRange() {
         if let x = exposureRangeX, let y = exposureRangeY {
             engine?.setCameraExposurePosition(CGPoint(x: x, y: y))
-            commerceLogger.info("***Debug*** setCameraExposurePosition = \(CGPoint(x: x, y: y)) ")
+            CommerceLogger.info("***Debug*** setCameraExposurePosition = \(CGPoint(x: x, y: y)) ")
         }
     }
     
@@ -231,7 +231,7 @@ extension CommerceAgoraKitManager {
         if let v1 = videoFullrangeExt, let v2 = matrixCoefficientsExt {
             engine?.setParameters("{\"che.video.videoFullrangeExt\":\(v1)}")
             engine?.setParameters("{\"che.video.matrixCoefficientsExt\":\(v2)}")
-            commerceLogger.info("***Debug*** {\"che.video.videoFullrangeExt\":\(v1)} {\"che.video.matrixCoefficientsExt\":\(v2)} ")
+            CommerceLogger.info("***Debug*** {\"che.video.videoFullrangeExt\":\(v1)} {\"che.video.matrixCoefficientsExt\":\(v2)} ")
         }
     }
 }
@@ -275,7 +275,7 @@ enum CommerceDebugSettingKey: String, CaseIterable {
         case .encode:
             return "Hard/soft"
         case .codeCType:
-            return "encoder"
+            return "Encoder"
         case .mirror:
             return "Mirror image"
         case .renderMode:

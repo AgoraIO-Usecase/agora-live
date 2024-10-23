@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import RTMSyncManager
 
-let kEcommerceSceneId = "scene_ecommerce_0_2_0"
+let kEcommerceSceneId = "scene_ecommerce_1.3.0"
 
 private let SYNC_MANAGER_MESSAGE_COLLECTION = "commerce_message_collection"
 private let SYNC_MANAGER_SEAT_APPLY_COLLECTION = "commerce_seat_apply_collection"
@@ -73,15 +73,15 @@ private func agoraAssert(_ condition: Bool, _ message: String) {
 }
 
 func commercePrintLog(_ message: String, tag: String? = "UI") {
-    commerceLogger.info(message, context: tag)
+    CommerceLogger.info(message, context: tag)
 }
 
 func commerceWarnLog(_ message: String, tag: String? = "UI") {
-    commerceLogger.warning(message, context: tag)
+    CommerceLogger.warning(message, context: tag)
 }
 
 func commerceErrorLog(_ message: String, tag: String? = "UI") {
-    commerceLogger.error(message, context: tag)
+    CommerceLogger.error(message, context: tag)
 }
 
 private func agoraPrint(_ message: String) {
@@ -108,7 +108,6 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     
     deinit {
         agoraPrint("deinit-- ShowSyncManagerServiceImp")
-        SyncUtilsWrapper.cleanScene(uniqueId: uniqueId)
     }
     
     // MARK: Private
@@ -131,7 +130,7 @@ class CommerceSyncManagerServiceImp: NSObject, CommerceServiceProtocol {
     fileprivate func _checkRoomExpire() {
         guard let room = self.room else { return }
         
-        let expiredDuration = 20 * 60 * 1000
+        let expiredDuration = 10 * 60 * 1000
         guard RTMSyncUtil.getRoomDuration(roomId: room.roomId) > expiredDuration else { return }
         
         subscribeDelegate?.onRoomExpired()
@@ -377,6 +376,7 @@ extension CommerceSyncManagerServiceImp {
                 roomModel.roomName = info.roomName
                 roomModel.thumbnailId = info.customPayload["thumbnailId"] as? String
                 roomModel.createdAt = info.createTime
+                roomModel.roomUserCount = (info.customPayload["roomUserCount"] as? Int) ?? 0
                 return roomModel
             })
             completion(nil, dataArray)
@@ -450,8 +450,8 @@ extension CommerceSyncManagerServiceImp {
             completion(CommerceServiceError.paramsInvalid.toError())
             return
         }
-        //结束只改状态，防止房主非仲裁者时，价格不是最终的导致回滚
-        RTMSyncUtil.updateMetaData(id: channelName, 
+        //End only change the status to prevent the price from being the final rollback when the homeowner is not an arbitrator.
+        RTMSyncUtil.updateMetaData(id: channelName,
                                    key: SYNC_MANAGER_BID_GOODS_COLLECTION,
                                    valueCmd: CommerceCmdKey.updateBidGoodsInfo,
                                    data: ["status": CommerceAuctionStatus.completion.rawValue],
@@ -760,7 +760,7 @@ extension CommerceSyncManagerServiceImp: AUIUserRespDelegate {
         _sendJoinOrLeaveText(user: userInfo, isJoin: true)
     }
     
-    func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
+    func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo, reason: AUIRtmUserLeaveReason) {
         agoraPrint("userLeave == \(roomId)  object == \(userInfo)")
         _userLeave(userId: userInfo.userId)
         _sendJoinOrLeaveText(user: userInfo, isJoin: false)

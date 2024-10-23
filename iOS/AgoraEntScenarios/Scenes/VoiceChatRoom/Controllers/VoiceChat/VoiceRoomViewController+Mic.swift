@@ -69,7 +69,7 @@ extension VoiceRoomViewController {
                 self.rtcView.updateUser(mic)
                 self.local_index = nil
                 self.chatBar.refresh(event: .handsUp, state: .unSelected, asCreator: self.isOwner)
-                self.chatBar.refresh(event: .mic, state: .unSelected, asCreator: self.isOwner)
+                self.chatBar.refresh(event: .mic, state: .disable, asCreator: self.isOwner)
             }
         }
         
@@ -158,6 +158,7 @@ extension VoiceRoomViewController {
     }
 
     @objc func leaveRoom() {
+        AgoraEntLog.autoUploadLog(scene: VoiceLogger.kLogKey)
         ChatRoomServiceImp.getSharedInstance().leaveRoom(self.roomInfo?.room?.room_id ?? "") { _, _ in
         }
     }

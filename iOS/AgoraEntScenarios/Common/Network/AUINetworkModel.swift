@@ -95,7 +95,13 @@ open class AUIUploadNetworkModel: AUINetworkModel {
     public var name: String!
     public var fileName: String?
     public var mimeType: String?
+    public var appId: String?
     
+    public override init() {
+        super.init()
+        host = KeyCenter.debugBaseServerUrl!
+    }
+
     
     public lazy var  boundary: String = {
         UUID().uuidString

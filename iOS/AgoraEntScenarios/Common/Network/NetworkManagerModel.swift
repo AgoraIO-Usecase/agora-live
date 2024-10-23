@@ -13,7 +13,7 @@ open class NMCommonNetworkModel: AUINetworkModel {
     public var userId: String?
     public override init() {
         super.init()
-        host = KeyCenter.baseServerUrl!
+        host = KeyCenter.releaseBaseServerUrl!
         method = .post
     }
     

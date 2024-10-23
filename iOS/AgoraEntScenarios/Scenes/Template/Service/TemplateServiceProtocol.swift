@@ -6,14 +6,13 @@
 //
 
 import Foundation
-import AgoraSyncManager_overseas
 
 protocol TemplateServiceProtocol: NSObjectProtocol {
     /// Join the room
     /// - Parameters:
     /// -roomName: indicates the room name
     ///   - completion: <#completion description#>
-    func join(roomName: String, completion: @escaping (SyncError?, TemplateScene.JoinResponse?) -> Void)
+    func join(roomName: String, completion: @escaping (Error?, TemplateScene.JoinResponse?) -> Void)
 
     /// Leave the room (Audience)
     func leave()
@@ -25,23 +24,23 @@ protocol TemplateServiceProtocol: NSObjectProtocol {
     /// - Parameters:
     ///   - user: <#user description#>
     ///   - completion: <#completion description#>
-    func addUser(user: TemplateScene.UsersModel, completion: @escaping (SyncError?, TemplateScene.UsersModel?) -> Void)
+    func addUser(user: TemplateScene.UsersModel, completion: @escaping (Error?, TemplateScene.UsersModel?) -> Void)
 
     /// Delete a user
     /// - Parameters:
     ///   - user: <#user description#>
     ///   - completion: <#completion description#>
-    func removeUser(user: TemplateScene.UsersModel, completion: @escaping (SyncError?, [TemplateScene.UsersModel]?) -> Void)
+    func removeUser(user: TemplateScene.UsersModel, completion: @escaping (Error?, [TemplateScene.UsersModel]?) -> Void)
 
     /// Modifying User Information
     /// - Parameters:
     ///   - user: <#user description#>
     ///   - completion: <#completion description#>
-    func updateUser(user: TemplateScene.UsersModel, completion: @escaping (SyncError?, TemplateScene.UsersModel?) -> Void)
+    func updateUser(user: TemplateScene.UsersModel, completion: @escaping (Error?, TemplateScene.UsersModel?) -> Void)
 
     /// Get all users
     /// - Parameter completion: <#completion description#>
-    func getUserStatus(completion: @escaping (SyncError?, [TemplateScene.UsersModel]?) -> Void)
+    func getUserStatus(completion: @escaping (Error?, [TemplateScene.UsersModel]?) -> Void)
 
     /// Monitor room changes
     /// - Parameters:
@@ -50,7 +49,7 @@ protocol TemplateServiceProtocol: NSObjectProtocol {
     ///   - fail: <#fail description#>
     func subscribeRoom(subscribeClosure: @escaping (TemplateScene.SubscribeStatus, TemplateScene.LiveRoomInfo?) -> Void,
                        onSubscribed: (() -> Void)?,
-                       fail: ((SyncError) -> Void)?)
+                       fail: ((Error) -> Void)?)
 
     /// Monitor user changes
     /// - Parameters:
@@ -59,7 +58,7 @@ protocol TemplateServiceProtocol: NSObjectProtocol {
     ///   - fail: <#fail description#>
     func subscribeUser(subscribeClosure: @escaping (TemplateScene.SubscribeStatus, TemplateScene.UsersModel?) -> Void,
                        onSubscribed: (() -> Void)?,
-                       fail: ((SyncError) -> Void)?)
+                       fail: ((Error) -> Void)?)
 
     /// unlisten
     func unsubscribe()

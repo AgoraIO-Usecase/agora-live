@@ -33,7 +33,7 @@ public class VoiceRoomChatBar: UIView, UICollectionViewDelegate, UICollectionVie
 
     var handsState: VoiceRoomChatBarState = .unSelected
 
-    var micState = false
+    var micState: VoiceRoomChatBarState = .disable
 
     public var raiseKeyboard: (() -> Void)?
 
@@ -139,7 +139,7 @@ extension VoiceRoomChatBar {
     }
 
     private func refreshMicState(state: VoiceRoomChatBarState) {
-        micState = state == .selected ? true : false
+        micState = state
         switch state {
         case .unSelected:
             datas[0] = "mic"
@@ -167,7 +167,11 @@ extension VoiceRoomChatBar {
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VoiceRoomChatBarCell", for: indexPath) as? VoiceRoomChatBarCell
+        cell?.isHidden = false
         cell?.icon.image = UIImage.voice_image(datas[indexPath.row])
+        if indexPath.row == 0 {
+            cell?.isHidden = (micState == .disable)
+        }
         if indexPath.row == 1, creator, handsState != .selected {
             cell?.redDot.isHidden = false
         } else {

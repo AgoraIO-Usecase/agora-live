@@ -175,15 +175,11 @@ class VoiceRoomAudioSettingViewController: VRBaseViewController {
     var backgroundMusicPlaying: ((VoiceMusicModel) -> Void)?
     var onClickAccompanyButtonClosure: ((Bool) -> Void)?
     
-    //Virtual sound card related
-    @objc var clicKBlock:((Int) -> Void)?
-    @objc var gainBlock:((Float) -> Void)?
-    @objc var typeBlock:((Int) -> Void)?
-    @objc var soundCardBlock:((Bool) -> Void)?
+    //about virtual sound card
     public var soundOpen: Bool?
-    public var gainValue: String?
-    public var typeValue: Int?
-    public var effectType: Int?
+    deinit {
+        soundcardPresenter?.removeDelegate(self)
+    }
     
     init(rtcKit: VoiceRoomRTCManager?) {
         super.init(nibName: nil, bundle: nil)
@@ -253,6 +249,20 @@ class VoiceRoomAudioSettingViewController: VRBaseViewController {
         HeadSetUtil.addHeadsetObserver { hasHeadset in
             self.roomInfo?.room?.turn_InEar = hasHeadset == false ? false : self.roomInfo?.room?.turn_InEar
         }
+    }
+    
+    private var soundcardPresenter: VirtualSoundcardPresenter? = nil
+    public func setSoundCardPresenter(_ p: VirtualSoundcardPresenter) {
+        soundcardPresenter = p
+        soundOpen = p.getSoundCardEnable()
+        p.addDelegate(self)
+    }
+}
+
+extension VoiceRoomAudioSettingViewController: VirtualSoundcardPresenterDelegate {
+    func onSoundcardPresenterValueChanged(isEnabled: Bool, presetValue: Int, gainValue: Int, presetSoundType: Int) {
+        soundOpen = isEnabled
+        tableView.reloadData()
     }
 }
 
@@ -421,7 +431,7 @@ extension VoiceRoomAudioSettingViewController: UITableViewDelegate, UITableViewD
             cell.swith.isUserInteractionEnabled = !isAudience
             cell.selectionStyle = .none
             cell.swith.isOn = roomInfo?.room?.use_robot ?? false
-            cell.swith.accessibilityIdentifier = "voice_chat_room_audio_setting_agora_blue_red_bot_switch".voice_localized
+            cell.swith.accessibilityIdentifier = "voice_chat_room_audio_setting_agora_blue_red_bot_switch"
             cell.useRobotBlock = { [weak self] flag in
                 guard let useRobotBlock = self?.useRobotBlock else { return }
                 self?.isTouchAble = flag
@@ -445,7 +455,7 @@ extension VoiceRoomAudioSettingViewController: UITableViewDelegate, UITableViewD
             let volume = roomInfo?.room?.robot_volume ?? 50
             cell.slider.value = Float(volume) / 100.0
             cell.countLabel.text = "\(volume)"
-            cell.slider.accessibilityIdentifier = "voice_chat_room_audio_setting_robot_volume_slider".voice_localized
+            cell.slider.accessibilityIdentifier = "voice_chat_room_audio_setting_robot_volume_slider"
             return cell
         } else if (type == .BesetSoundEffect) {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: nIdentifier) as? VMNorSetTableViewCell else {
@@ -537,38 +547,7 @@ extension VoiceRoomAudioSettingViewController: UITableViewDelegate, UITableViewD
             }
             
             let soundCardVC = VRSoundCardViewController()
-            soundCardVC.effectType = self.effectType ?? 0
-            soundCardVC.soundOpen = self.soundOpen ?? false
-            soundCardVC.gainValue = self.gainValue ?? ""
-            soundCardVC.typeValue = self.typeValue ?? 0
-            soundCardVC.clicKBlock = {[weak self] effect in
-                guard let clicKBlock = self?.clicKBlock else {return}
-                self?.effectType = effect
-                self?.gainValue = "1.0"
-                clicKBlock(effect)
-            }
-            soundCardVC.gainBlock = {[weak self] gain in
-                guard let gainBlock = self?.gainBlock else {return}
-                self?.gainValue = "\(gain)"
-                gainBlock(gain)
-            }
-            
-            soundCardVC.typeBlock = {[weak self] type in
-                guard let typeBlock = self?.typeBlock else {return}
-                self?.typeValue = type
-                typeBlock(type)
-            }
-            
-            soundCardVC.soundCardBlock = {[weak self] flag in
-                guard let soundCardBlock = self?.soundCardBlock else {return}
-                self?.soundOpen = flag
-                if flag == true {
-                    self?.gainValue = "1.0"
-                    self?.effectType = 4
-                }
-                self?.tableView.reloadData()
-                soundCardBlock(flag)
-            }
+            soundCardVC.soundcardPresenter = self.soundcardPresenter
             DispatchQueue.main.async {[weak self] in
                 self?.presentView.push(with: soundCardVC, frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 400), maxHeight: 400)
             }

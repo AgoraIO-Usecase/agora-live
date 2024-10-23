@@ -37,6 +37,7 @@ abstract class OnLiveRoomItemTouchEventHandler constructor(
                     onRequireRenderVideo(anchorInfo)?.let { canvas ->
                         videoLoader.renderVideo(anchorInfo, localUid, canvas)
                     }
+                    (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId, anchorInfo.anchorUid).perceivedStartTime = System.currentTimeMillis()
                 }
             }
             MotionEvent.ACTION_CANCEL -> {
@@ -51,7 +52,7 @@ abstract class OnLiveRoomItemTouchEventHandler constructor(
                 roomInfo.anchorList.forEach { anchorInfo ->
                     videoLoader.switchAnchorState(AnchorState.JOINED, anchorInfo, localUid)
                     mRtcEngine.startMediaRenderingTracingEx(RtcConnection(anchorInfo.channelId, localUid))
-                    (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId).perceivedStartTime = System.currentTimeMillis()
+                    (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId, anchorInfo.anchorUid).perceivedStartTime = System.currentTimeMillis()
                 }
             }
         }

@@ -23,6 +23,12 @@ private let fpsItems: [AgoraVideoFrameRate] = [
     .fps60
 ]
 
+private let codecItems: [AgoraVideoCodecType] = [
+    .H264,
+    .H265,
+    .AV1
+]
+
 // overfraction
 enum CommerceSRType: Int {
     case none = -1
@@ -52,8 +58,7 @@ extension CommerceAgoraKitManager {
     
     func setupAudienceProfile() {
         setSuperResolutionOn(true)
-        setPVCon(false)
-        _presetValuesWith(encodeSize: ._360x640, fps: .fps15, bitRate: 0, h265On: true)
+        _presetValuesWith(encodeSize: ._360x640, fps: .fps15, bitRate: 0)
     }
     
     func resetBroadcasterProfile() {
@@ -65,7 +70,6 @@ extension CommerceAgoraKitManager {
     
     func setupBroadcasterProfile() {
         setSuperResolutionOn(false)
-        setPVCon(false)
         updateVideoProfileForMode(.single)
     }
     
@@ -99,13 +103,7 @@ extension CommerceAgoraKitManager {
         engine?.setParameters("{\"rtc.video.sr_max_wh\":\(921598)}")
         engine?.setParameters("{\"rtc.video.enable_sr\":{\"enabled\":\(isOn), \"mode\": 2}}")
     }
-    /// Set PVC
-    /// - Parameters:
-    /// -isOn: switch
-    func setPVCon(_ isOn: Bool) {
-        self.rtcParam.pvc = isOn
-        engine?.setParameters("{\"rtc.video.enable_pvc\":\(isOn)}")
-    }
+
     /// Set up noise reduction
     /// - Parameters:
     /// -isOn: switch
@@ -164,11 +162,11 @@ extension CommerceAgoraKitManager {
     }
     
     // Default mode
-    private func _presetValuesWith(encodeSize: CommerceAgoraVideoDimensions, fps: AgoraVideoFrameRate, bitRate: Float, h265On: Bool) {
+    private func _presetValuesWith(encodeSize: CommerceAgoraVideoDimensions, fps: AgoraVideoFrameRate, bitRate: Float) {
         CommerceSettingKey.videoEncodeSize.writeValue(CommerceAgoraVideoDimensions.values().firstIndex(of: encodeSize.sizeValue))
         CommerceSettingKey.FPS.writeValue(fpsItems.firstIndex(of: fps))
         CommerceSettingKey.videoBitRate.writeValue(bitRate)
-        CommerceSettingKey.H265.writeValue(h265On)
+        CommerceSettingKey.CodecType.writeValue(1)
         CommerceSettingKey.lowlightEnhance.writeValue(false)
         CommerceSettingKey.colorEnhance.writeValue(false)
         CommerceSettingKey.videoDenoiser.writeValue(false)
@@ -176,7 +174,7 @@ extension CommerceAgoraKitManager {
         updateSettingForkey(.videoEncodeSize)
         updateSettingForkey(.videoBitRate)
         updateSettingForkey(.FPS)
-        updateSettingForkey(.H265)
+        updateSettingForkey(.CodecType)
         updateSettingForkey(.lowlightEnhance)
         updateSettingForkey(.colorEnhance)
         updateSettingForkey(.videoDenoiser)
@@ -190,105 +188,113 @@ extension CommerceAgoraKitManager {
         let machine = deviceLevel
         let net = netCondition
         let performance = performanceMode
-        
+        rtcParam.suggested = true
+        if ([.fluent].contains(performance)) {
+            CommerceSettingKey.PVC.writeValue(true)
+            rtcParam.pvc = true
+        } else {
+            CommerceSettingKey.PVC.writeValue(false)
+            rtcParam.pvc = false
+        }
+        updateSettingForkey(.PVC)
         rtcParam.suggested = true
         if (machine == .high && net == .good && performance == .smooth && showMode == .single) {
             // High-end machine, good network, clear, unicast
-            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0)
             setSimulcastStream(isOn: false)
         } else if (machine == .high && net == .good && performance == .fluent && showMode == .single) {
             // High-end machine, good network, smooth, unicast
-            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(540, 960), fps: 15, bitrate: 1100, svc: false)
         } else if (machine == .high && net == .bad && performance == .smooth && showMode == .single) {
             // High-end machine, weak network, clear, unicast
-            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0)
             setSimulcastStream(isOn: false)
         } else if (machine == .high && net == .bad && performance == .fluent && showMode == .single) {
             // High-end machine, weak network, smooth, unicast
-            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._1080x1920, fps: .fps24, bitRate: 0)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 748, svc: true)
         } else if (machine == .medium && net == .good && performance == .smooth && showMode == .single) {
             // Mid-range machine, good network, clear, unicast
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0)
             setSimulcastStream(isOn: false)
         } else if (machine == .medium && net == .good && performance == .fluent && showMode == .single) {
             // Mid-range machine, good network, smooth, unicast
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
         } else if (machine == .medium && net == .bad && performance == .smooth && showMode == .single) {
             // Mid-range machine, weak network, clear, unicast
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0)
             setSimulcastStream(isOn: false)
         } else if (machine == .medium && net == .bad && performance == .fluent && showMode == .single) {
             // Mid-range machine, weak network, smooth, unicast
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps24, bitRate: 0)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 748, svc: true)
         } else if (machine == .low && net == .good && performance == .smooth && showMode == .single) {
             // Low-end machine, good network, clear, unicast
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: false)
         } else if (machine == .low && net == .good && performance == .fluent && showMode == .single) {
             // Low-end machine, good network, smooth, unicast
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
         } else if (machine == .low && net == .bad && performance == .smooth && showMode == .single) {
             // Low end machine, weak network, clear, unicast
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: false)
         } else if (machine == .low && net == .bad && performance == .fluent && showMode == .single) {
             // Low end machine, weak network, smooth, unicast
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 748, svc: true)
         }
         // pk
         else if (machine == .high && net == .good && performance == .smooth && showMode == .pk) {
             // High-end machine, good network, clear, pk
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: false)
         } else if (machine == .high && net == .good && performance == .fluent && showMode == .pk) {
             // High-end machine, good network, smooth, pk
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
         } else if (machine == .high && net == .bad && performance == .smooth && showMode == .pk) {
             // High-end machine, weak net, clear, pk
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: false)
         } else if (machine == .high && net == .bad && performance == .fluent && showMode == .pk) {
             // High-end machine, weak net, smooth, pk
-            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._720x1280, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
         } else if (machine == .medium && net == .good && performance == .smooth && showMode == .pk) {
             // Mid-end machine, good net, clear, pk
-            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: false)
         } else if (machine == .medium && net == .good && performance == .fluent && showMode == .pk) {
             // Mid-end machine, good net, smooth, pk
-            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
         } else if (machine == .medium && net == .bad && performance == .smooth && showMode == .pk) {
             // Mid-end machine, weak net, clear, pk
-            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: false)
         } else if (machine == .medium && net == .bad && performance == .fluent && showMode == .pk) {
             // Mid-end machine, weak net, smooth, pk
-            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
         } else if (machine == .low && net == .good && performance == .smooth && showMode == .pk) {
             // Low-end machine, good network, clear, pk
-            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: false)
         } else if (machine == .low && net == .good && performance == .fluent && showMode == .pk) {
             // Low-end machine, good network, smooth, pk
-            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
         } else if (machine == .low && net == .bad && performance == .smooth && showMode == .pk) {
             // Low end machine, weak net, clear, pk
-            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: false)
         } else if (machine == .low && net == .bad && performance == .fluent && showMode == .pk) {
             // Low-end machine, weak net, smooth, pk
-            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0, h265On: true)
+            _presetValuesWith(encodeSize: ._540x960, fps: .fps15, bitRate: 0)
             setSimulcastStream(isOn: true, dimensions: CGSizeMake(360, 640), fps: 15, bitrate: 680, svc: false)
         }
     }
@@ -310,7 +316,8 @@ extension CommerceAgoraKitManager {
             let isOn = key.boolValue
             engine?.setBeautyEffectOptions(isOn, options: AgoraBeautyOptions())
         case .PVC:
-            break
+            let isOn = key.boolValue
+            engine?.setParameters("{\"rtc.video.enable_pvc\":\(isOn)}")
         case .SR:
             break
         case .BFrame:
@@ -355,6 +362,15 @@ extension CommerceAgoraKitManager {
             if let channelId = currentChannelId {
                 updateVideoEncoderConfigurationForConnenction(currentChannelId: channelId)
             }
+        case .CodecType:
+            let indexValue = key.intValue
+            let index = indexValue % codecItems.count
+            encoderConfig.codecType = codecItems[index]
+            if let currentChannelId = currentChannelId {
+                updateVideoEncoderConfigurationForConnenction(currentChannelId: currentChannelId)
+            }else{
+                engine?.setVideoEncoderConfiguration(encoderConfig)
+            }
         case .earmonitoring:
             let isOn = key.boolValue
             engine?.enable(inEarMonitoring: isOn)
@@ -368,7 +384,6 @@ extension CommerceAgoraKitManager {
             break
         }
     }
-
 }
 // MARK: - Presetting options
 extension CommerceAgoraKitManager {

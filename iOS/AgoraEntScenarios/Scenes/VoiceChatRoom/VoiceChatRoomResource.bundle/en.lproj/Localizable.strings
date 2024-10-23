@@ -10,7 +10,7 @@
 "voice_spatial_audio_mode_room"="Spatial Audio Room";
 "voice_private"="Private";
 "voice_enter"="Enter";
-"voice_create_room"="CREATE ROOM";
+"voice_create_room"="CREATE";
 "voice_karaoke"="Karaoke";
 "voice_no_chat_room_yet"="No Rooms Yet";
 "voice_room_name"="Room Name";
@@ -46,7 +46,7 @@
 "voice_audience"="Audience List";
 "voice_request_to_speak?"="Request to co-host?";
 "voice_cancel_request"="Withdraw request";
-"voice_off_stage"="Quit co-host";
+"voice_off_stage"="Remove";
 "voice_anchor_invited_you_on_stage"="The host invites you to co-host";
 "voice_decline"="Decline";
 "voice_gifts"="Gift";
@@ -67,6 +67,7 @@
 "voice_rocket"="Rocket";
 "voice_4_digit_password_required"="Enter 4-digit password";
 "voice_incorrect_password"="Incorrect password. Please retry";
+"voice_room_created"="Created";
 "voice_room_created"="Created";
 "voice_notice_posted"="Notice Published";
 "voice_post_failed" = "Post Failed";

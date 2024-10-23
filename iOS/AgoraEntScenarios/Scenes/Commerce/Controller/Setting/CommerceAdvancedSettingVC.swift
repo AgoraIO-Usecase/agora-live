@@ -93,7 +93,7 @@ class CommerceAdvancedSettingVC: UIViewController, UIGestureRecognizerDelegate {
     
     private func createSettingVCForIndex(_ index: Int) -> CommerceVideoSettingVC? {
         let insideSettings: [CommerceSettingKey] = [
-            .H265,
+            .CodecType,
             .colorEnhance,
             .lowlightEnhance,
             .videoDenoiser,

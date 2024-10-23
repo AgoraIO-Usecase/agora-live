@@ -27,7 +27,7 @@ class KeyCenter: NSObject {
      then the APP Certificate can be found in the project detail page.
      PS: If the project does not have certificates enabled, leave this field blank.
      */
-    static let Certificate: String? = <#YOUR CERTIFICATE#>
+    static let Certificate: String? = <#Your Certificate#>
     
     /**
      Token.
@@ -65,8 +65,10 @@ class KeyCenter: NSObject {
     static let CloudPlayerKey: String? = nil
     static let CloudPlayerSecret: String? = nil
     
+    static var DynamicResourceUrl: String? = "https://fullapp.oss-cn-beijing.aliyuncs.com/ent-scenarios/resource/manifest/5_0_0/manifestList"
     static var HostUrl: String = "https://gateway-fulldemo.agoralab.co"
-    static var baseServerUrl: String? = "https://service.agora.io/toolbox-overseas/v1/"
-    static var onlineBaseServerUrl: String? = baseServerUrl
+    static var releaseBaseServerUrl: String? = "https://service.agora.io/toolbox-overseas/v1/"
+    static var debugBaseServerUrl: String? = "https://service-staging.agora.io/toolbox-overseas/v1/"
+    static var onlineBaseServerUrl: String? = releaseBaseServerUrl
     static var RTMHostUrl: String = "https://service.agora.io/room-manager-overseas"
 }

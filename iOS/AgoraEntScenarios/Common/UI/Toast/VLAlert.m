@@ -102,7 +102,7 @@ static VLAlert *_alert = nil;
     self.mesLabel = [[UILabel alloc]init];
     self.mesLabel.numberOfLines = 0;
     self.mesLabel.font = [UIFont systemFontOfSize:15];
-    self.mesLabel.lineBreakMode = NSLineBreakByCharWrapping;
+    self.mesLabel.lineBreakMode = NSLineBreakByWordWrapping;
     self.mesLabel.textAlignment = NSTextAlignmentCenter;
     [self.alertView addSubview:self.mesLabel];
 

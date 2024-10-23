@@ -81,6 +81,7 @@ class LiveAuctionFragment: Fragment() {
     }
 
     fun release() {
+        hasStart = false
         countDownTimer?.cancel()
         countDownTimer = null
     }

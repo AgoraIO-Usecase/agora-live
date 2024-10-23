@@ -1,5 +1,7 @@
 package io.agora.scene.show.widget.pk
 
+import android.view.View
+
 /**
  * On p k dialog action listener
  *
@@ -19,12 +21,12 @@ interface OnPKDialogActionListener {
      * @param dialog
      * @param roomItem
      */
-    fun onInviteButtonChosen(dialog: LivePKDialog, roomItem: LiveRoomConfig)
+    fun onInviteButtonChosen(dialog: LivePKDialog, roomItem: LiveRoomConfig, view: View)
 
     /**
      * On stop p king chosen
      *
      * @param dialog
      */
-    fun onStopPKingChosen(dialog: LivePKDialog)
+    fun onStopPKingChosen(dialog: LivePKDialog, view: View)
 }

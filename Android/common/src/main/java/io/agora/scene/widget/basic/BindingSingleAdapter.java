@@ -170,6 +170,10 @@ public abstract class BindingSingleAdapter<Data, Binding extends ViewBinding> ex
         return mDataList.size();
     }
 
+    public final List<Data> getDataList() {
+        return mDataList;
+    }
+
     /**
      * Create binding view holder binding view holder.
      *

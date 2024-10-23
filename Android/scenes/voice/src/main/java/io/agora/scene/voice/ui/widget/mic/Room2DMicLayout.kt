@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.divider.MaterialDividerItemDecoration
+import io.agora.scene.base.component.OnItemChildClickListener
+import io.agora.scene.base.component.OnItemClickListener
 import io.agora.scene.voice.model.BotMicInfoBean
-import io.agora.voice.common.ui.adapter.listener.OnItemChildClickListener
-import io.agora.voice.common.ui.adapter.listener.OnItemClickListener
 import io.agora.voice.common.utils.DeviceTools.dp
 import io.agora.voice.common.utils.ResourcesTools
 import io.agora.scene.voice.R
@@ -70,8 +70,7 @@ class Room2DMicLayout : ConstraintLayout, IRoomMicView {
             Room2DBotMicAdapter(
                 RoomMicConstructor.builderDefault2dBotMicList(context, false),
                 null,
-                object :
-                    OnItemChildClickListener<BotMicInfoBean> {
+                object : OnItemChildClickListener<BotMicInfoBean> {
 
                     // convert
                     override fun onItemChildClick(
@@ -109,7 +108,7 @@ class Room2DMicLayout : ConstraintLayout, IRoomMicView {
     }
 
     override fun onInitMic(micInfoList: List<VoiceMicInfoModel>, isBotActive: Boolean) {
-        room2DMicAdapter?.submitListAndPurge(micInfoList)
+        room2DMicAdapter?.replaceItems(micInfoList)
         room2DMicBotAdapter?.activeBot(isBotActive)
     }
 

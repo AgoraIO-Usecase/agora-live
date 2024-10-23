@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center"
-        android:textColor="@color/black"
+        android:textColor="@color/commerce_bottom_list_item_text"
         android:textSize="14sp"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="112234" />
@@ -18,7 +18,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/show_deliver"
+        android:background="@color/commerce_deliver"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,7 +33,7 @@ class VMANISSUPTableViewCell: UITableViewCell {
             noneBtn.accessibilityIdentifier = "voice_chat_ains_setting_none_\(noneBtn.tag)"
             anisBtn.accessibilityIdentifier = "voice_chat_ains_setting_ains_\(anisBtn.tag)"
             
-            print("\(titleLabel.text ?? "") 无降噪: \(noneBtn.accessibilityIdentifier ?? "") 有降噪: \(anisBtn.accessibilityIdentifier ?? "")")
+            print("\(titleLabel.text ?? "") No noise reduction: \(noneBtn.accessibilityIdentifier ?? "") There is noise reduction.: \(anisBtn.accessibilityIdentifier ?? "")")
         }
     }
     

@@ -1,9 +1,10 @@
 package io.agora.voice.common.utils
 
+import io.agora.scene.base.AgoraScenes
 import io.agora.scene.base.EntLogger
 
 object LogTools {
-    private val entLogger = EntLogger(EntLogger.Config("Voice"))
+    private val entLogger = EntLogger(EntLogger.Config(AgoraScenes.ChatRoom.name))
 
      @JvmStatic
     fun String.logD(tag: String = "Agora_VoiceChat") {
@@ -23,6 +24,11 @@ object LogTools {
     @JvmStatic
     fun d(tag: String, message: String) {
         entLogger.d(tag, message)
+    }
+
+    @JvmStatic
+    fun w(tag: String, message: String, vararg args: Any) {
+        entLogger.w(tag, message, args)
     }
 
     @JvmStatic

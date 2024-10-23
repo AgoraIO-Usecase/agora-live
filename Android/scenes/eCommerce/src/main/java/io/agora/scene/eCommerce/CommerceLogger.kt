@@ -1,5 +1,6 @@
 package io.agora.scene.eCommerce
 
+import io.agora.scene.base.AgoraScenes
 import io.agora.scene.base.EntLogger
 
 /**
@@ -9,7 +10,7 @@ import io.agora.scene.base.EntLogger
  */
 object CommerceLogger {
 
-    private val entLogger = EntLogger(EntLogger.Config("eCommerce"))
+    private val entLogger = EntLogger(EntLogger.Config(AgoraScenes.ECommerce.name))
 
     /**
      * D

@@ -10,6 +10,7 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.agora.scene.base.component.BaseBindingFragment
 import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceFragmentHandsListLayoutBinding
 import io.agora.scene.voice.imkit.manager.ChatroomIMManager
@@ -18,15 +19,15 @@ import io.agora.scene.voice.model.VoiceMemberModel
 import io.agora.scene.voice.model.VoiceMicInfoModel
 import io.agora.scene.voice.ui.adapter.ChatroomRaisedAdapter
 import io.agora.scene.voice.ui.dialog.ChatroomHandsDialog
-import io.agora.voice.common.ui.BaseUiFragment
 import io.agora.voice.common.ui.adapter.RoomBaseRecyclerViewAdapter
 import io.agora.voice.common.net.OnResourceParseCallback
 import io.agora.voice.common.net.Resource
+import io.agora.voice.common.ui.IParserSource
 import io.agora.voice.common.utils.LogTools.logD
 import io.agora.voice.common.utils.ThreadManager
 
-class ChatroomRaisedHandsFragment : BaseUiFragment<VoiceFragmentHandsListLayoutBinding>(),
-    ChatroomRaisedAdapter.onActionListener {
+class ChatroomRaisedHandsFragment : BaseBindingFragment<VoiceFragmentHandsListLayoutBinding>(),
+    ChatroomRaisedAdapter.onActionListener, IParserSource {
     private lateinit var userListViewModel: VoiceUserListViewModel
     private var baseAdapter: RoomBaseRecyclerViewAdapter<VoiceMemberModel>? = null
     private var adapter: ChatroomRaisedAdapter? = null
@@ -36,7 +37,7 @@ class ChatroomRaisedHandsFragment : BaseUiFragment<VoiceFragmentHandsListLayoutB
     private var isRefreshing = false
     private var isLoadingNextPage = false
     private var emptyView: View? = null
-    private var currentIndex:Int = 0
+    private var currentIndex: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         emptyView = layoutInflater.inflate(R.layout.voice_no_data_layout, container, false)
@@ -61,7 +62,7 @@ class ChatroomRaisedHandsFragment : BaseUiFragment<VoiceFragmentHandsListLayoutB
         initViewModel()
     }
 
-    private fun initView() {
+    override fun initView() {
         baseAdapter = ChatroomRaisedAdapter()
         adapter = baseAdapter as ChatroomRaisedAdapter
         binding.let {
@@ -89,8 +90,8 @@ class ChatroomRaisedHandsFragment : BaseUiFragment<VoiceFragmentHandsListLayoutB
                 parseResource(response, object : OnResourceParseCallback<List<VoiceMemberModel>>() {
                     override fun onSuccess(data: List<VoiceMemberModel>?) {
                         finishRefresh()
-                        val total = data?.size?:0
-                        adapter?.data = data?: mutableListOf()
+                        val total = data?.size ?: 0
+                        adapter?.data = data ?: mutableListOf()
                         onFragmentListener?.getItemCount(total)
                         isRefreshing = false
                         adapter?.data?.let {
@@ -131,7 +132,7 @@ class ChatroomRaisedHandsFragment : BaseUiFragment<VoiceFragmentHandsListLayoutB
             }
     }
 
-    private fun initListener() {
+    override fun initListener() {
         adapter?.setOnActionListener(this)
         binding?.swipeLayout?.setOnRefreshListener { reset() }
         binding?.list?.addOnScrollListener(object : RecyclerView.OnScrollListener() {

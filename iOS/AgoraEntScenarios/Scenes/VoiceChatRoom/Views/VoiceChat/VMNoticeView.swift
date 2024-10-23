@@ -99,7 +99,7 @@ class VMNoticeView: UIView {
         subBtn.addTargetFor(self, action: #selector(sub), for: .touchUpInside)
         addSubview(subBtn)
 
-        titleLabel.frame = CGRect(x: ScreenWidth / 2.0 - 40, y: 22, width: 80, height: 22)
+        titleLabel.frame = CGRect(x: ScreenWidth / 2.0 - 90, y: 22, width: 180, height: 22)
         titleLabel.textAlignment = .center
         titleLabel.text = "voice_notice".voice_localized
         titleLabel.textColor = .black

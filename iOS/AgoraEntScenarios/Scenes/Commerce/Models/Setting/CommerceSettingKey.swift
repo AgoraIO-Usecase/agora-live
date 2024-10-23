@@ -57,8 +57,9 @@ enum CommerceAgoraEncode: String, CaseIterable {
 }
 
 enum CommerceAgoraCodeCType: String, CaseIterable {
-    case h265 = "h265"
-    case h264 = "h264"
+    case h265 = "H265"
+    case h264 = "H264"
+    case av1 = "AV1"
     
     var typeValue: Int {
         switch self {
@@ -66,6 +67,8 @@ enum CommerceAgoraCodeCType: String, CaseIterable {
             return 3
         case .h264:
             return 2
+        case .av1:
+            return 1
         }
     }
 }
@@ -109,6 +112,7 @@ enum CommerceSettingKey: String, CaseIterable {
     case videoEncodeSize
     case FPS
     case H265
+    case CodecType
     case videoBitRate
     case earmonitoring
     case recordingSignalVolume
@@ -139,6 +143,8 @@ enum CommerceSettingKey: String, CaseIterable {
             return "show_advance_setting_bitRate_title".commerce_localized
         case .H265:
             return "show_advance_setting_H265_title".commerce_localized
+        case .CodecType:
+            return "show_advance_setting_codec_title".commerce_localized
         case .earmonitoring:
             return "show_advance_setting_earmonitoring_title".commerce_localized
         case .recordingSignalVolume:
@@ -172,6 +178,8 @@ enum CommerceSettingKey: String, CaseIterable {
             return .label
         case .H265:
             return .aSwitch
+        case .CodecType:
+            return .label
         case .videoBitRate:
             return .custom
         case .earmonitoring:
@@ -223,6 +231,12 @@ enum CommerceSettingKey: String, CaseIterable {
             ]
         case .audioBitRate:
             return ["2","3","5"]
+        case .CodecType:
+            return [
+                AgoraVideoCodecType.H264.name(),
+                AgoraVideoCodecType.H265.name(),
+//                AgoraVideoCodecType.AV1.name(),
+            ]
         default:
             return []
         }

@@ -98,7 +98,7 @@ class CommerceAgoraKitManager: NSObject {
         ]
         
         guard let jsonData = try? JSONSerialization.data(withJSONObject: dic, options: .prettyPrinted) else {
-            commerceLogger.error("setupContentInspectConfig fail")
+            CommerceLogger.error("setupContentInspectConfig fail")
             return
         }
         let jsonStr = String(data: jsonData, encoding: .utf8)
@@ -108,7 +108,7 @@ class CommerceAgoraKitManager: NSObject {
         module.type = .imageModeration
         config.modules = [module]
         let ret = engine?.enableContentInspectEx(enable, config: config, connection: connection)
-        commerceLogger.info("setupContentInspectConfig: \(ret ?? -1)")
+        CommerceLogger.info("setupContentInspectConfig: \(ret ?? -1)")
     }
     
     private func _joinChannelEx(currentChannelId: String,
@@ -149,14 +149,14 @@ class CommerceAgoraKitManager: NSObject {
 
         let proxy = VideoLoaderApiImpl.shared.getRTCListener(anchorId: currentChannelId)
         let date = Date()
-        commerceLogger.info("try to join room[\(connection.channelId)] ex uid: \(connection.localUid)", context: kCommerceLogBaseContext)
+        CommerceLogger.info("try to join room[\(connection.channelId)] ex uid: \(connection.localUid)", context: kCommerceLogBaseContext)
         let ret =
         engine.joinChannelEx(byToken: token,
                                connection: connection,
                                delegate: proxy,
                                mediaOptions: mediaOptions) {[weak self] channelName, uid, elapsed in
             let cost = Int(-date.timeIntervalSinceNow * 1000)
-            commerceLogger.info("join room[\(channelName)] ex success uid: \(uid) cost \(cost) ms", context: kCommerceLogBaseContext)
+            CommerceLogger.info("join room[\(channelName)] ex success uid: \(uid) cost \(cost) ms", context: kCommerceLogBaseContext)
             self?.setupContentInspectConfig(true, connection: connection)
 
 //            self?.moderationAudio(channelName: targetChannelId, role: role)
@@ -166,10 +166,10 @@ class CommerceAgoraKitManager: NSObject {
         broadcasterConnection = connection
 
         if ret == 0 {
-            commerceLogger.info("join room ex: channelId: \(targetChannelId) ownerId: \(ownerId)",
+            CommerceLogger.info("join room ex: channelId: \(targetChannelId) ownerId: \(ownerId)",
                             context: "AgoraKitManager")
         }else{
-            commerceLogger.error("join room ex fail: channelId: \(targetChannelId) ownerId: \(ownerId) token = \(token), \(ret)",
+            CommerceLogger.error("join room ex fail: channelId: \(targetChannelId) ownerId: \(ownerId) token = \(token), \(ret)",
                              context: kCommerceLogBaseContext)
         }
     }
@@ -183,7 +183,7 @@ class CommerceAgoraKitManager: NSObject {
         connection.channelId = currentChannelId
         connection.localUid = UInt(VLUserCenter.user.id) ?? 0
         let encoderRet = engine.setVideoEncoderConfigurationEx(encoderConfig, connection: connection)
-        commerceLogger.info("setVideoEncoderConfigurationEx  dimensions = \(encoderConfig.dimensions), bitrate = \(encoderConfig.bitrate), fps = \(encoderConfig.frameRate),  encoderRet = \(encoderRet)", context: kCommerceLogBaseContext)
+        CommerceLogger.info("setVideoEncoderConfigurationEx  dimensions = \(encoderConfig.dimensions), bitrate = \(encoderConfig.bitrate), fps = \(encoderConfig.frameRate),  encoderRet = \(encoderRet)", context: kCommerceLogBaseContext)
     }
     
     //MARK: public method
@@ -196,7 +196,7 @@ class CommerceAgoraKitManager: NSObject {
     }
     
     func renewToken(channelId: String, rtcToken: String) {
-        commerceLogger.info("renewToken with channelId: \(channelId)",
+        CommerceLogger.info("renewToken with channelId: \(channelId)",
                         context: kCommerceLogBaseContext)
         let option = AgoraRtcChannelMediaOptions()
         option.token = rtcToken
@@ -253,10 +253,10 @@ class CommerceAgoraKitManager: NSObject {
     func updateChannelEx(channelId: String, options: AgoraRtcChannelMediaOptions) {
         guard let engine = engine,
               let connection = (broadcasterConnection?.channelId == channelId ? broadcasterConnection : nil) ?? VideoLoaderApiImpl.shared.getConnectionMap()[channelId] else {
-            commerceLogger.error("updateChannelEx[\(channelId)] fail: connection is empty")
+            CommerceLogger.error("updateChannelEx[\(channelId)] fail: connection is empty")
             return
         }
-        commerceLogger.info("updateChannelEx[\(channelId)]: \(options.publishMicrophoneTrack) \(options.publishCameraTrack)")
+        CommerceLogger.info("updateChannelEx[\(channelId)]: \(options.publishMicrophoneTrack) \(options.publishCameraTrack)")
         engine.updateChannelEx(with: options, connection: connection)
     }
     
@@ -266,7 +266,7 @@ class CommerceAgoraKitManager: NSObject {
                     uid: String?,
                     canvasView: UIView?) {
         guard let uid = UInt(uid ?? ""), let canvasView = canvasView else {
-            commerceLogger.error("switchRole fatel")
+            CommerceLogger.error("switchRole fatel")
             return
         }
         options.clientRoleType = role
@@ -355,7 +355,7 @@ class CommerceAgoraKitManager: NSObject {
             }
             
             guard let token = AppContext.shared.commerceRtcToken else {
-                commerceLogger.error("joinChannelEx fail: token is empty")
+                CommerceLogger.error("joinChannelEx fail: token is empty")
                 return
             }
             
@@ -383,7 +383,7 @@ class CommerceAgoraKitManager: NSObject {
         engine.enableLocalAudio(true)
         engine.enableLocalVideo(true)
         setMirrorMode(mode: isFrontCamera ? .enabled : .disabled)
-        commerceLogger.info("setupLocalVideo target uid:\(uid), user uid\(UserInfo.userId)", context: kCommerceLogBaseContext)
+        CommerceLogger.info("setupLocalVideo target uid:\(uid), user uid\(UserInfo.userId)", context: kCommerceLogBaseContext)
     }
     
     func setupRemoteVideo(channelId: String, uid: UInt, canvasView: UIView?) {
@@ -394,7 +394,7 @@ class CommerceAgoraKitManager: NSObject {
             videoCanvas.renderMode = .hidden
             let ret = engine?.setupRemoteVideoEx(videoCanvas, connection: connection)
                     
-            commerceLogger.info("setupRemoteVideoEx ret = \(ret ?? -1), uid:\(uid) localuid: \(UserInfo.userId) channelId: \(channelId)", context: kCommerceLogBaseContext)
+            CommerceLogger.info("setupRemoteVideoEx ret = \(ret ?? -1), uid:\(uid) localuid: \(UserInfo.userId) channelId: \(channelId)", context: kCommerceLogBaseContext)
             return
         }
         let anchorInfo = getAnchorInfo(channelId: channelId, uid: uid)
@@ -475,10 +475,10 @@ extension CommerceAgoraKitManager {
     
     func setOffMediaOptionsVideo(roomid: String) {
         guard let connection = VideoLoaderApiImpl.shared.getConnectionMap()[roomid] else {
-            commerceLogger.info("setOffMediaOptionsVideo  connection 不存在 \(roomid)")
+            CommerceLogger.info("setOffMediaOptionsVideo  connection does not exist\(roomid)")
             return
         }
-        commerceLogger.info("setOffMediaOptionsVideo with roomid = \(roomid)")
+        CommerceLogger.info("setOffMediaOptionsVideo with roomid = \(roomid)")
         let mediaOptions = AgoraRtcChannelMediaOptions()
         mediaOptions.autoSubscribeVideo = false
         engine?.updateChannelEx(with: mediaOptions, connection: connection)
@@ -496,19 +496,19 @@ extension CommerceAgoraKitManager {
 // MARK: - IVideoLoaderApiListener
 extension CommerceAgoraKitManager: IVideoLoaderApiListener {
     public func debugInfo(_ message: String) {
-        commerceLogger.info(message, context: "VideoLoaderApi")
+        CommerceLogger.info(message, context: "VideoLoaderApi")
     }
     public func debugWarning(_ message: String) {
-        commerceLogger.warning(message, context: "VideoLoaderApi")
+        CommerceLogger.warning(message, context: "VideoLoaderApi")
     }
     public func debugError(_ message: String) {
-        commerceLogger.error(message, context: "VideoLoaderApi")
+        CommerceLogger.error(message, context: "VideoLoaderApi")
     }
 }
 // MARK: - AgoraRtcMediaPlayerDelegate
 extension CommerceAgoraKitManager: AgoraRtcMediaPlayerDelegate {
     
-    func AgoraRtcMediaPlayer(_ playerKit: AgoraRtcMediaPlayerProtocol, didChangedTo state: AgoraMediaPlayerState, error: AgoraMediaPlayerError) {
+    func AgoraRtcMediaPlayer(_ playerKit: AgoraRtcMediaPlayerProtocol, didChangedTo state: AgoraMediaPlayerState, reason: AgoraMediaPlayerReason) {
         if state == .openCompleted {
             playerKit.play()
         }
@@ -518,25 +518,21 @@ extension CommerceAgoraKitManager: AgoraRtcMediaPlayerDelegate {
 // MARK: token handler
 extension CommerceAgoraKitManager {
     func preGenerateToken(completion:@escaping ()->()) {
-        commerceLogger.error("preGenerateToken start")
+        CommerceLogger.error("preGenerateToken start")
         AppContext.shared.commerceRtcToken = nil
         AppContext.shared.commerceRtmToken = nil
         let date = Date()
-        NetworkManager.shared.generateTokens(channelName: "",
-                                             uid: "\(UserInfo.userId)",
-                                             tokenGeneratorType: .token007,
-                                             tokenTypes: [.rtc, .rtm],
-                                             expire: 24 * 60 * 60) {  tokenMap in
-            guard let rtcToken = tokenMap[NetworkManager.AgoraTokenType.rtc.rawValue],
-                  rtcToken.count > 0,
-                  let rtmToken = tokenMap[NetworkManager.AgoraTokenType.rtm.rawValue],
-                  rtmToken.count > 0 else {
-                commerceLogger.error("preGenerateToken fail: \(tokenMap)")
+        NetworkManager.shared.generateToken(channelName: "",
+                                            uid: "\(UserInfo.userId)",
+                                            tokenTypes: [.rtc, .rtm],
+                                            expire: 24 * 60 * 60) {  token in
+            guard let rtcToken = token, let rtmToken = token else {
+                CommerceLogger.error("preGenerateToken fail")
                 completion()
                 return
             }
             
-            commerceLogger.info("[Timing]preGenerateToken cost: \(Int64(-date.timeIntervalSinceNow * 1000)) ms")
+            CommerceLogger.info("[Timing]preGenerateToken cost: \(Int64(-date.timeIntervalSinceNow * 1000)) ms")
             AppContext.shared.commerceRtcToken = rtcToken
             AppContext.shared.commerceRtmToken = rtmToken
             completion()

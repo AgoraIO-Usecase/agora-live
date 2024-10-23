@@ -32,7 +32,7 @@ class CommerceAuctionShoppingView: UIView {
         return view
     }()
     private lazy var coverImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage.sceneImage(name: ""))
+        let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 6
         imageView.layer.masksToBounds = true
@@ -41,7 +41,7 @@ class CommerceAuctionShoppingView: UIView {
     }()
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
+        label.text = "Diamond Ring"
         label.textColor = UIColor(hex: "#FFFFFF", alpha: 1.0)
         label.font = .systemFont(ofSize: 16, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -146,9 +146,9 @@ class CommerceAuctionShoppingView: UIView {
     
     func setGoodsData(model: CommerceGoodsAuctionModel, isBroadcaster: Bool) {
         currentAuctionModel = model
-        coverImageView.sd_setImage(with: URL(string: model.goods?.imageName ?? ""),
-                                   placeholderImage: UIImage.commerce_sceneImage(name: model.goods?.imageName ?? ""))
-        titleLabel.text = model.goods?.title
+        let imageName = kDefaultAuctionGoodsName
+        coverImageView.image = UIImage.commerce_sceneImage(name: imageName)
+//        titleLabel.text = model.goods?.title
         descLabel.text = (model.bidUser == nil || model.bidUser?.id == "") ? "Start from" : "Current Bid:"
         let bidPrint = model.status == .completion ? (model.goods?.price ?? 1) : model.bid
         priceLabel.text = "$\(bidPrint)"

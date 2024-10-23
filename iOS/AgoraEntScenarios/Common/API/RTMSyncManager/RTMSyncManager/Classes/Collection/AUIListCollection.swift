@@ -19,20 +19,23 @@ extension AUIListCollection {
                                 value: [String: Any],
                                 filter: [[String: Any]]?,
                                 callback: ((NSError?)->())?) {
-        //如果filter空，默认无条件写入，如果有filter，判断条件
+        //If the filter is empty, it will be written unconditionally by default. If there is a filter, the judgment condition
         if let filter = filter,
            filter.isEmpty == false,
            let _ = getItemIndexes(array: currentList, filter: filter) {
-            callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmAddMetaData: '\(filter)'"))
+            callback?(AUICollectionOperationError.filterFoundSame.toNSError("list rtmAddMetaData: '\(filter)'"))
             return
         }
-        if let err = self.metadataWillAddClosure?(publisherId, valueCmd, value) {
+        
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
+        if let err = self.metadataWillAddClosure?(publisherId, valueCmd, newValue) {
             callback?(err)
             return
         }
         var list = currentList
-        list.append(value)
-        if let attr = self.attributesWillSetClosure?(channelName, 
+        list.append(newValue)
+        if let attr = self.attributesWillSetClosure?(channelName,
                                                      observeKey,
                                                      valueCmd,
                                                      AUIAttributesModel(list: list)),
@@ -45,9 +48,7 @@ extension AUIListCollection {
         }
         
         aui_collection_log("rtmAddMetaData valueCmd: \(valueCmd ?? "") value: \(value), \nfilter: \(filter ?? [])")
-        self.rtmManager.setBatchMetadata(channelName: channelName,
-                                         lockName: kRTM_Referee_LockName,
-                                         metadata: [observeKey: value]) { error in
+        setBatchMetadata(value) { error in
             aui_collection_log("rtmAddMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
@@ -60,22 +61,25 @@ extension AUIListCollection {
                                 value: [String: Any],
                                 filter: [[String: Any]]?,
                                 callback: ((NSError?)->())?) {
-        //如果没有filter，默认每条记录都修改
+        //If there is no filter, each record will be modified by default.
         guard let itemIndexes = getItemIndexes(array: currentList, filter: filter) else {
             callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmSetMetaData: '\(filter ?? [])'"))
             return
         }
+        
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
         var list = currentList
         for itemIdx in itemIndexes {
             let item = list[itemIdx]
             //once break, always break
-            if let err = self.metadataWillUpdateClosure?(publisherId, valueCmd, value, item) {
+            if let err = self.metadataWillUpdateClosure?(publisherId, valueCmd, newValue, item) {
                 callback?(err)
                 return
             }
             
             var tempItem = item
-            value.forEach { (key, value) in
+            newValue.forEach { (key, value) in
                 tempItem[key] = value
             }
             list[itemIdx] = tempItem
@@ -93,9 +97,7 @@ extension AUIListCollection {
         }
         
         aui_collection_log("rtmSetMetaData valueCmd: \(valueCmd ?? ""), filter: \(filter ?? []), value: \(value)")
-        self.rtmManager.setBatchMetadata(channelName: channelName,
-                                         lockName: kRTM_Referee_LockName,
-                                         metadata: [observeKey: value]) { error in
+        setBatchMetadata(value) { error in
             aui_collection_log("rtmSetMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
@@ -108,22 +110,24 @@ extension AUIListCollection {
                                   value: [String: Any],
                                   filter: [[String: Any]]?,
                                   callback: ((NSError?)->())?) {
-        //如果没有filter，默认每条记录都修改
+        //If there is no filter, each record will be modified by default.
         guard let itemIndexes = getItemIndexes(array: currentList, filter: filter) else {
             callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmMergeMetaData: '\(filter ?? [])'"))
             return
         }
         
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
         var list = currentList
         for itemIdx in itemIndexes {
             let item = list[itemIdx]
             //once break, always break
-            if let err = self.metadataWillMergeClosure?(publisherId, valueCmd, value, item) {
+            if let err = self.metadataWillMergeClosure?(publisherId, valueCmd, newValue, item) {
                 callback?(err)
                 return
             }
             
-            let tempItem = mergeMap(origMap: item, newMap: value)
+            let tempItem = mergeMap(origMap: item, newMap: newValue)
             list[itemIdx] = tempItem
         }
         if let attr = self.attributesWillSetClosure?(channelName,
@@ -139,9 +143,7 @@ extension AUIListCollection {
         }
         
         aui_collection_log("rtmMergeMetaData valueCmd: \(valueCmd ?? ""), filter: \(filter ?? []), value: \(value)")
-        self.rtmManager.setBatchMetadata(channelName: channelName,
-                                         lockName: kRTM_Referee_LockName,
-                                         metadata: [observeKey: value]) { error in
+        setBatchMetadata(value) { error in
             aui_collection_log("rtmMergeMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
@@ -153,7 +155,7 @@ extension AUIListCollection {
                                    valueCmd: String?,
                                    filter: [[String: Any]]?,
                                    callback: ((NSError?)->())?) {
-        //如果没有filter，默认删除所有
+        //If there is no filter, delete all by default.
         guard let itemIndexes = getItemIndexes(array: currentList, filter: filter) else {
             callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmRemoveMetaData: '\(filter ?? [])'"))
             return
@@ -182,9 +184,7 @@ extension AUIListCollection {
         }
         
         aui_collection_log("rtmRemoveMetaData valueCmd: \(valueCmd ?? ""), filter: \(filter ?? []), value: \(value)")
-        self.rtmManager.setBatchMetadata(channelName: channelName,
-                                         lockName: kRTM_Referee_LockName,
-                                         metadata: [observeKey: value]) { error in
+        setBatchMetadata(value) { error in
             aui_collection_log("rtmRemoveMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
@@ -200,7 +200,7 @@ extension AUIListCollection {
                                       callback: ((NSError?)->())?) {
         //TODO: will calculate?
         
-        //如果没有filter，默认每条记录都修改
+        //If there is no filter, each record will be modified by default.
         guard let itemIndexes = getItemIndexes(array: currentList, filter: filter) else {
             callback?(AUICollectionOperationError.filterNotFound.toNSError("list rtmCalculateMetaData: '\(filter ?? [])'"))
             return
@@ -250,9 +250,7 @@ extension AUIListCollection {
             return
         }
         aui_collection_log("rtmCalculateMetaData valueCmd: \(valueCmd ?? "") key: \(key), value: \(value) filter: \(filter)")
-        self.rtmManager.setBatchMetadata(channelName: channelName,
-                                         lockName: kRTM_Referee_LockName,
-                                         metadata: [observeKey: value]) { error in
+        setBatchMetadata(value) { error in
             aui_collection_log("rtmCalculateMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
@@ -487,6 +485,21 @@ extension AUIListCollection: IAUIListCollection {
                                          uniqueId: message.uniqueId,
                                          completion: callback)
     }
+    
+    public override func getLocalMetaData() -> AUIAttributesModel? {
+        return AUIAttributesModel(list: currentList)
+    }
+    
+    public override func syncLocalMetaData() {
+        guard retryMetadata, let value = encodeToJsonStr(currentList) else {
+            return
+        }
+        let observeKey = observeKey
+        aui_collection_log("syncLocalMetaData[\(observeKey)] start")
+        setBatchMetadata(value) { error in
+            aui_collection_log("syncLocalMetaData[\(observeKey)] completion: \(error?.localizedDescription ?? "success")")
+        }
+    }
 }
 
 //MARK: override AUIRtmAttributesProxyDelegate
@@ -494,7 +507,7 @@ extension AUIListCollection {
     public override func onAttributesDidChanged(channelName: String, key: String, value: Any) {
         guard channelName == self.channelName, key == self.observeKey else {return}
         guard let list = value as? [[String: Any]] else {return}
-        //如果是仲裁者，不更新，因为本地已经修改了，否则这里收到的消息可能是老的数据，例如update1->update2->resp1->resp2，那么resp1的数据比update2要老，会造成ui上短暂的回滚
+        //If it is an arbitrator, do not update it, because it has been modified locally, otherwise the message received here may be old data, such as update1->update2->resp1->resp2, then the data of resp1 is older than update2, which will cause a short rollback on ui.
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() != true {
             currentList = list
         }
@@ -505,12 +518,11 @@ extension AUIListCollection {
 //MARK: override AUIRtmMessageProxyDelegate
 extension AUIListCollection {
     public override func onMessageReceive(publisher: String, channelName: String, message: String) {
-        guard let map = decodeToJsonObj(message) as? [String: Any],
-              let collectionMessage: AUICollectionMessage = decodeModel(map),
+        guard let collectionMessage: AUICollectionMessage = decodeModel(jsonStr: message),
               collectionMessage.sceneKey == observeKey else {
             return
         }
-        aui_collection_log("onMessageReceive: \(map)")
+        aui_collection_log("onMessageReceive: \(message)")
         let uniqueId = collectionMessage.uniqueId
         let channelName = collectionMessage.channelName
         guard channelName == self.channelName else {return}

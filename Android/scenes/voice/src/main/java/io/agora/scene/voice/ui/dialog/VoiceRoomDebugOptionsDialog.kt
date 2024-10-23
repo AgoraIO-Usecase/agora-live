@@ -25,6 +25,9 @@ class VoiceRoomDebugOptionsDialog: BaseSheetDialog<VoiceSpatialDialogDebugOption
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding?.apply {
+            setOnApplyWindowInsets(root)
+        }
         binding?.accbAPM?.setOnCheckedChangeListener { _, b ->
             AgoraRtcEngineController.get().setApmOn(b)
         }

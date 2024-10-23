@@ -22,6 +22,12 @@ protocol CommerceCanvasViewDelegate: NSObjectProtocol {
 class CommerceCanvasView: UIView {
     weak var delegate: CommerceCanvasViewDelegate?
     
+    lazy var thumnbnailCanvasView: CommerceThumnbnailCanvasView = {
+        let view = CommerceThumnbnailCanvasView(frame: self.bounds)
+        view.isHidden = true
+        return view
+    }()
+    
     lazy var localView = UIView()
     lazy var remoteView: UIView = {
         let view = UIView()
@@ -248,6 +254,12 @@ class CommerceCanvasView: UIView {
     
     private func setupUI() {
         addSubview(localView)
+        
+        addSubview(thumnbnailCanvasView)
+        thumnbnailCanvasView.snp.makeConstraints { make in
+            make.edges.equalTo(localView)
+        }
+        
         addSubview(remoteView)
         addSubview(timerView)
         addSubview(pkView)

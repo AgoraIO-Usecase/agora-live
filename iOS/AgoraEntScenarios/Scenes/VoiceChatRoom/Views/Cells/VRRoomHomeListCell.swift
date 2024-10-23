@@ -67,7 +67,7 @@ class VRRoomHomeListCell: UICollectionViewCell {
         bgImgView.addSubview(titleLabel)
         
         onListIconView = UIImageView(frame: CGRect(x: self.bounds.width - 55, y: self.bounds.height - 16 - 11, width: 11, height: 11))
-        onListIconView.image = UIImage(named: "online_list_countIcon")
+        onListIconView.image = UIImage.sceneImage(name: "online_list_countIcon", bundleName: "VoiceChatRoomResource")
         contentView.addSubview(onListIconView)
         
         countLabel = UILabel(frame: CGRect(x: onListIconView.frame.maxX + 2, y: onListIconView.center.y - 7, width: 40, height: 14))
