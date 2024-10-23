@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import SVProgressHUD
 
 protocol DFStylizedSetttingDelegate: AnyObject {
-    func saveStylizedSetting(setting: DFStylizedSettting)
+    func saveStylizedSetting(setting: DFStylizedSettting, state:@escaping ((Bool) -> Void))
 }
 
 class DFStylizedSettting: UIViewController {
@@ -173,8 +174,13 @@ class DFStylizedSettting: UIViewController {
         updateStylizedSettingConfig()
         saveStylizedSettingConfig()
         
-        self.delegate?.saveStylizedSetting(setting: self)
-        self.navigationController?.popViewController(animated: true)
+        SVProgressHUD.show()
+        self.delegate?.saveStylizedSetting(setting: self, state: { state in
+            SVProgressHUD.dismiss()
+            if state {
+                self.navigationController?.popViewController(animated: true)
+            }
+        })
     }
     
     private func updateStylizedSettingConfig() {

@@ -226,6 +226,11 @@ class ShowLiveViewController: UIViewController {
         self.hideProgressView()
     }
     
+    private func updateRemoteViewHiddenState(state: Bool) {
+        liveView.canvasView.remoteView.isHidden = state
+        liveView.blurGusetCanvas = state
+    }
+    
     @objc private func updateCountdown() {
         guard let workId = dreamFlowService.responseModel?.id else {
             stopTimer()
@@ -246,6 +251,7 @@ class ShowLiveViewController: UIViewController {
             
             if state == "start_success" {
                 self?.dreamFlowService.workState = .running
+                self?.updateRemoteViewHiddenState(state: false)
                 self?.updateViewState()
             } else if state == "start_failed" {
                 self?.dreamFlowService.workState = .failed
@@ -254,27 +260,33 @@ class ShowLiveViewController: UIViewController {
         }
     }
     
-    private func createWorker(stylizedConfig: DFStylizedSettingConfig) {
+    private func createWorker(stylizedConfig: DFStylizedSettingConfig, completion:@escaping ((Bool) -> Void)) {
         guard let channelId = room?.roomId else { return }
         
         currentChannelId = channelId
         dreamFlowService.creatWork(channelName: currentChannelId ?? "", stylizedConfig: stylizedConfig) { [weak self] error, res in
             if error != nil {
                 ToastView.show(text: "Failed to save the settings: \(error?.localizedDescription ?? "")")
+                completion(false)
                 return
             }
             
             guard let state = res else {
                 ToastView.show(text: "Failed to save the settings: \(error?.localizedDescription ?? "")")
+                completion(false)
                 return
             }
             
             if state == .failed {
                 ToastView.show(text: "Failed to initialize: \(error?.localizedDescription ?? "")")
+                completion(false)
                 return
             }
             
-            guard let res = res else { return }
+            guard let res = res else {
+                completion(false)
+                return
+            }
             self?.showProgressView()
             
             self?.liveView.blurGusetCanvas = false
@@ -283,34 +295,42 @@ class ShowLiveViewController: UIViewController {
                     self?.startTimer()
                 }
             }
-            
+            completion(true)
             self?.updateStylizedButton()
         }
     }
     
-    private func deleteWorker() {
+    private func deleteWorker(completion: ((Bool) -> Void)?) {
         guard let workId = dreamFlowService.responseModel?.id else { return }
         
-        dreamFlowService.deleteWorker(workerId: workId) { error, res in
+        dreamFlowService.deleteWorker(workerId: workId) { [weak self] error, res in
             if let err = error {
                 ToastView.show(text: "Failed to save the settings: \(err.localizedDescription)")
                 print("delete work failed, error: \(err.localizedDescription)")
+                completion?(false)
                 return
             }
+            
+            completion?(true)
+            self?.updateRemoteViewHiddenState(state: true)
         }
     }
     
-    private func updateWorker(stylizedConfig:DFStylizedSettingConfig) {
+    private func updateWorker(stylizedConfig:DFStylizedSettingConfig, completion: @escaping ((Bool) -> Void)) {
         guard let workerId = dreamFlowService.responseModel?.id else {
+            ToastView.show(text: "work id is empty")
+            completion(false)
             return
         }
         
         dreamFlowService.updateWorker(workerId: workerId, stylizedConfig: stylizedConfig) { error, res in
             if let err = error {
                 ToastView.show(text: "Failed to save the settings: \(err.localizedDescription)")
+                completion(false)
                 return
             }
             
+            completion(true)
             print("update worker success!")
         }
     }
@@ -339,7 +359,7 @@ class ShowLiveViewController: UIViewController {
     
     func leaveRoom(){
         stopTimer()
-        deleteWorker()
+        deleteWorker(completion: nil)
         
         AgoraEntLog.autoUploadLog(scene: ShowLogger.kLogKey)
         ShowAgoraKitManager.shared.removeRtcDelegate(delegate: self, roomId: roomId)
@@ -731,7 +751,7 @@ extension ShowLiveViewController: ShowReceiveFinishViewDelegate {
 }
 
 extension ShowLiveViewController: DFStylizedSetttingDelegate {
-    func saveStylizedSetting(setting: DFStylizedSettting) {
+    func saveStylizedSetting(setting: DFStylizedSettting, state:@escaping ((Bool) -> Void)) {
         let config = setting.stylizedSettingConfig
         config.videHeight = videoHeight
         config.videoWidth = videoWidth
@@ -746,10 +766,12 @@ extension ShowLiveViewController: DFStylizedSetttingDelegate {
                                                 uid: "\(dreamFlowService.genaiUid)",
                                                 tokenTypes: [.rtc]) { [weak self] token in
                 guard let rtcToken = token, let self = self else {
+                    ToastView.show(text: "token is empty")
+                    state(false)
                     return
                 }
                 config.aiToken = rtcToken
-                self.createWorker(stylizedConfig: config)
+                self.createWorker(stylizedConfig: config, completion: state)
             }
             return
         }
@@ -761,13 +783,13 @@ extension ShowLiveViewController: DFStylizedSetttingDelegate {
             
 //            if currentPrompt == config.prompt { return }
             
-            updateWorker(stylizedConfig: config)
+            updateWorker(stylizedConfig: config, completion: state)
             return
         }
         
         //删除worker
         if !config.style_effect, workerState == .running {
-            deleteWorker()
+            deleteWorker(completion: state)
         }
     }
 }
