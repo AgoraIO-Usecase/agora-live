@@ -10,7 +10,7 @@ import RTMSyncManager
 import AgoraRtmKit
 import AgoraCommon
 
-private let kSceneId = "overseas_show_1.3.0"
+private let kSceneId = "scene_dreamflow_1.3.100"
 private let kRoomPresenceChannelName = "overseas_show_1_3_0_9999999999"
 
 private let expiredDuration: UInt64 = 10 * 60 * 1000
