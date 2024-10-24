@@ -237,13 +237,13 @@ class ShowAgoraKitManager: NSObject {
     func addRtcDelegate(delegate: AgoraRtcEngineDelegate, roomId: String) {
         ShowLogger.info("addRtcDelegate[\(roomId)]")
         
-//        if let _ = VideoLoaderApiImpl.shared.getConnectionMap()[roomId] {
+        if let _ = VideoLoaderApiImpl.shared.getConnectionMap()[roomId] {
             VideoLoaderApiImpl.shared.addRTCListener(anchorId: roomId, listener: delegate)
-//        } else {
-//            let localUid = Int(VLUserCenter.user.id)!
-//            let connection = AgoraRtcConnection(channelId: roomId, localUid: localUid)
-//            engine?.addDelegateEx(delegate, connection: connection)
-//        }
+        } else {
+            let localUid = Int(VLUserCenter.user.id)!
+            let connection = AgoraRtcConnection(channelId: roomId, localUid: localUid)
+            engine?.addDelegateEx(delegate, connection: connection)
+        }
     }
     
     func removeRtcDelegate(delegate: AgoraRtcEngineDelegate, roomId: String) {

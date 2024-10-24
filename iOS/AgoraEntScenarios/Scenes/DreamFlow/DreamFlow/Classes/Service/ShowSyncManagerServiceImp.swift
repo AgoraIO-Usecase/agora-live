@@ -13,7 +13,7 @@ import AgoraCommon
 private let kSceneId = "scene_dreamflow_1.3.100"
 private let kRoomPresenceChannelName = "overseas_show_1_3_0_9999999999"
 
-private let expiredDuration: UInt64 = 10 * 60 * 1000
+private let expiredDuration: UInt64 = 72 * 60 * 60 * 1000
 
 private func agoraPrint(_ message: String) {
     ShowLogger.info(message, context: "Service")

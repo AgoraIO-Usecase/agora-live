@@ -35,14 +35,14 @@ class ShowLiveViewController: UIViewController {
             if oldValue?.roomId == room?.roomId { return }
             oldValue?.interactionAnchorInfoList.removeAll()
             liveView.room = room
-//            if let oldRoom = oldValue {
-//                _leavRoom(oldRoom)
-//            }
-//            if let room = room {
-//                serviceImp = AppContext.showServiceImp()
-//                _joinRoom(room)
-//            }
-//            loadingType = .prejoined
+            if let oldRoom = oldValue {
+                _leavRoom(oldRoom)
+            }
+            if let room = room {
+                serviceImp = AppContext.showServiceImp()
+                _joinRoom(room)
+            }
+            loadingType = .prejoined
         }
     }
     
@@ -532,8 +532,7 @@ extension ShowLiveViewController: ShowSubscribeServiceProtocol {
         self.liveView.roomUserCount = userCount
     }
     
-    func onUserJoinedRoom(channelName: String, user: ShowUser) {
-    }
+    func onUserJoinedRoom(channelName: String, user: ShowUser) { }
     
     func onUserLeftRoom(channelName: String, user: ShowUser) {
         if user.userId == room?.ownerId {
