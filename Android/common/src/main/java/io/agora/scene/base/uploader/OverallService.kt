@@ -16,9 +16,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import io.agora.scene.base.LogUploader
 import io.agora.scene.base.utils.dp
-
 
 interface FloatCallBack {
 

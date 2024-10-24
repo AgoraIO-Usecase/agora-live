@@ -90,12 +90,12 @@ public final class ZipUtils {
         InputStream iStream = null;
         OutputStream oStream = null;
         if (entry.isDirectory()) {
-            // 如果条目是目录，创建目录及其所有父目录
+            // If the entry is a directory, create the directory and all its parent directories.
             File newDir = new File(targetDir, entry.getName());
             if (!newDir.exists()) {
                 boolean result = newDir.mkdirs();
                 if (!result && reserve) {
-                    // 如果无法创建目录，记录错误
+                    // If the directory cannot be created, log the error.
                     CommonBaseLogger.e(TAG, "Failed to create directory: " + newDir.getAbsolutePath());
                 }
             }
@@ -167,46 +167,46 @@ public final class ZipUtils {
         void onError(Exception e);
     }
 
-    //压缩多个文件
+    // compress multiple files
     public static void compressFiles(List<String> sourceFilePaths, String destinationFilePath, ZipCallback zipCallback) {
         wokeExecutor.execute(() -> {
             FileUtils.deleteFile(destinationFilePath);
             try {
-                // 创建目标压缩文件
+                // create the target compressed file
                 FileOutputStream fos = new FileOutputStream(destinationFilePath);
                 ZipOutputStream zipOut = new ZipOutputStream(fos);
 
-                // 逐个将源文件添加到压缩文件中
+                // Add the source files to the compressed file one by one.
                 for (String sourceFilePath : sourceFilePaths) {
                     File sourceFile = new File(sourceFilePath);
                     if (!sourceFile.exists()) {
-                        Log.d("zhangw", "需要压缩的文件不存在：" + sourceFilePath);
+                        Log.d("zhangw", "The file to be compressed does not exist：" + sourceFilePath);
                         continue;
                     }
-                    // 创建源文件输入流
+                    // create a source file input stream
                     FileInputStream fis = new FileInputStream(sourceFilePath);
 
-                    // 将源文件添加到压缩文件中
+                    // add the source file to the compressed file
                     ZipEntry zipEntry = new ZipEntry(new File(sourceFilePath).getName());
                     zipOut.putNextEntry(zipEntry);
 
-                    // 从源文件输入流读取数据，并写入压缩文件输出流
+                    // Read data from the source file input stream and write it to the compressed file output stream.
                     byte[] buffer = new byte[1024];
                     int length;
                     while ((length = fis.read(buffer)) > 0) {
                         zipOut.write(buffer, 0, length);
                     }
 
-                    // 关闭流
+                    // close the stream
                     fis.close();
                 }
 
-                // 关闭流
+                // close the stream
                 zipOut.close();
                 fos.close();
 
                 zipCallback.onFileZipped(destinationFilePath);
-                Log.d("zhangw", "文件压缩完成");
+                Log.d("zhangw", "File compression completed");
             } catch (Exception e) {
                 e.printStackTrace();
                 zipCallback.onError(e);

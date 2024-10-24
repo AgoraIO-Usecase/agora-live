@@ -68,7 +68,7 @@ class DownloadManager private constructor() {
                                 while (true) {
                                     bytesRead = source.read(buffer)
                                     if (bytesRead > 0) {
-                                        fos.write(buffer, 0, bytesRead) // 追加写入文件末尾
+                                        fos.write(buffer, 0, bytesRead) // append to the end of the file
                                         downloadedBytes += bytesRead
 
                                         val progress = ((downloadedBytes * 100) / fileTotal).toInt()
@@ -112,7 +112,7 @@ class DownloadManager private constructor() {
     suspend fun unzipFile(inputFile: String, destDirPath: String) = withContext(Dispatchers.IO) {
         val srcFile = File(inputFile)
         if (!srcFile.exists()) {
-            throw Exception("所指文件不存在: $inputFile")
+            throw Exception("The specified file does not exist: $inputFile")
         }
 
         val zIn = ZipInputStream(FileInputStream(srcFile))

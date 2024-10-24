@@ -110,7 +110,7 @@ dependencies {
         runtimeOnly project(ktvModule)
     }
 
-    //glide 图片加载
+    //glide
     api rootProject.ext.deps.glide
     kapt rootProject.ext.deps.glide_compiler
 

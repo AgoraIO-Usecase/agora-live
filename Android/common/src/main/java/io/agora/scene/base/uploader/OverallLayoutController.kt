@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
-import android.widget.Toast
 
 object OverallLayoutController {
 
