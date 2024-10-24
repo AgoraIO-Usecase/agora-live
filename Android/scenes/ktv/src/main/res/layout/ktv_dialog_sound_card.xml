@@ -49,7 +49,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivBottomSheetTitle" />
 
-    <!--虚拟声卡开关  -->
+    <!--virtual sound card switch  -->
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/mtSoundCardSwitch"
         android:layout_width="wrap_content"
@@ -91,7 +91,7 @@
         app:layout_constraintTop_toBottomOf="@id/dvSoundCardSwitch"
         tools:visibility="invisible">
 
-        <!--  预设音效  -->
+        <!--  preset sound effects  -->
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvSoundType"
             android:layout_width="wrap_content"
@@ -134,7 +134,7 @@
             app:dividerColor="#F2F2F6"
             app:layout_constraintTop_toBottomOf="@+id/tvSoundType" />
 
-        <!--  增益调节  -->
+        <!--  gain adjustment  -->
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/mtGainAdjust"
             android:layout_width="wrap_content"
@@ -206,7 +206,7 @@
             app:dividerColor="#F2F2F6"
             app:layout_constraintTop_toBottomOf="@+id/mtGainAdjustTips" />
 
-        <!--  麦克风类型  -->
+        <!--  microphone type  -->
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/mtMicType"
             android:layout_width="wrap_content"

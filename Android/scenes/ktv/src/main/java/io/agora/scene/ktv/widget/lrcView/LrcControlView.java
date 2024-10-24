@@ -49,7 +49,7 @@ import io.agora.scene.widget.utils.OutlineSpan;
 import io.agora.scene.widget.utils.UiUtils;
 
 /**
- * 歌词控制View
+ * lyric control view
  */
 public class LrcControlView extends FrameLayout implements View.OnClickListener, ILrcView {
 
@@ -555,7 +555,7 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
         }
 
         private void checkAndShowCombos(KtvLayoutLrcControlViewBinding binding, int score, int cumulativeScore) {
-            // TODO: 2024/6/6 隐藏他
+            // TODO: 2024/6/6 hide combo
 //            binding.comboView.getRoot().setVisibility(VISIBLE);
 //
 //            showComboAnimation(binding.comboView.getRoot(), score);

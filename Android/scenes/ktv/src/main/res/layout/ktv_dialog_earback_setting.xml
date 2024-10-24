@@ -32,7 +32,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--   耳返开关 -->
+    <!--   ear monitoring switch -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutEarBackSwitch"
         android:layout_width="match_parent"
@@ -64,7 +64,7 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!--   耳返提示 -->
+    <!--   ear monitoring prompt -->
     <LinearLayout
         android:id="@+id/layoutEarBackTips"
         android:layout_width="match_parent"
@@ -114,7 +114,7 @@
             tools:visibility="gone" />
     </LinearLayout>
 
-    <!--   耳返设置 -->
+    <!--   ear monitoring settings -->
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvSetting"
         android:layout_width="0dp"
@@ -132,7 +132,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layoutEarBackTips" />
 
-    <!--   耳返音量 -->
+    <!--   ear monitoring volume -->
     <LinearLayout
         android:id="@+id/layoutEarBackVol"
         android:layout_width="0dp"
@@ -188,7 +188,7 @@
             android:src="@drawable/ic_tone_up" />
     </LinearLayout>
 
-    <!--   耳返模式 -->
+    <!--   ear monitoring mode -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutEarBackMode"
         android:layout_width="match_parent"
@@ -263,7 +263,7 @@
         </RadioGroup>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!--    耳返延时    -->
+    <!--    ear monitoring delay    -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cvEarBackdelay"
         android:layout_width="match_parent"

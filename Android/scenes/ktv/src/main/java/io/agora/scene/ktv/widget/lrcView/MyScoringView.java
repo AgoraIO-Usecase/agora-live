@@ -12,7 +12,7 @@ import io.agora.karaoke_view_ex.ScoringView;
 import io.agora.scene.ktv.R;
 
 /**
- * 音高展示
+ * pitch display
  */
 public class MyScoringView extends ScoringView {
     private LinearGradient mStartLineLinearGradient;

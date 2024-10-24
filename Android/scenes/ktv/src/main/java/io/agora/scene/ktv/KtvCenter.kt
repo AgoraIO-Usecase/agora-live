@@ -8,7 +8,7 @@ import io.agora.scene.base.manager.UserManager
 
 /**
  * Ktv center
- * ktv 场景全局
+ * ktv scene global data
  */
 object KtvCenter {
 
@@ -31,7 +31,7 @@ object KtvCenter {
 
     private const val TAG = "KtvCenter"
 
-    // 显示在线用户需要多加
+    // To display online users, additional
     const val userAddMore: Int = 1
 
     /**
@@ -42,7 +42,7 @@ object KtvCenter {
      */
     fun generateRtmToken(callback: (rtmToken: String?, exception: Exception?) -> Unit) {
         TokenGenerator.generateToken(
-            channelName = "", // 万能 token
+            channelName = "", // universal token, no need channel name
             uid = UserManager.getInstance().user.id.toString(),
             genType = TokenGenerator.TokenGeneratorType.Token007,
             tokenType = TokenGenerator.AgoraTokenType.Rtm,

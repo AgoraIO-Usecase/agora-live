@@ -23,7 +23,7 @@ import io.agora.scene.ktv.live.listener.SongActionListenerImpl;
 import io.agora.scene.widget.utils.UiUtils;
 
 /**
- * 点歌菜单
+ * song selection menu
  */
 public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSongBinding> {
 
@@ -123,9 +123,8 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
     }
 
     /**
-     * 设置事件监听
-     *
-     * @param chooseSongListener the choose song listener
+     *  set event listener
+     * @param chooseSongListener
      */
     public void setChooseSongListener(SongActionListenerImpl chooseSongListener) {
         this.chooseSongListener = chooseSongListener;
@@ -133,7 +132,7 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
 
 
     /**
-     * 点歌-更新item选中状态
+     * Order - update item selected state.
      *
      * @param songItem the song item
      * @param isChosen the is chosen
@@ -143,7 +142,7 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
     }
 
     /**
-     * 点歌-下拉刷新重置列表
+     * Order - pull down to refresh and reset the list.
      *
      * @param list  the list
      */
@@ -152,7 +151,7 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
     }
 
     /**
-     * 已点歌单-设置是否可以做删除置顶等操作
+     * Queued song list - set whether actions like delete or pin to top are allowed.
      *
      * @param controllable the controllable
      */
@@ -161,7 +160,7 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
     }
 
     /**
-     * 已点歌单-重置列表
+     * Queued song list - reset the list.
      *
      * @param songs the songs
      */
@@ -173,7 +172,7 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
     }
 
     /**
-     * 已点歌单-添加歌曲
+     *  Queued song list -add song item.
      *
      * @param song the song
      */
@@ -183,7 +182,7 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
     }
 
     /**
-     * 已点歌单-删除歌曲
+     *  Queued song list - delete song item.
      *
      * @param song the song
      */
@@ -193,7 +192,7 @@ public class SongDialog extends BaseBottomSheetDialogFragment<KtvDialogChooseSon
     }
 
     /**
-     * 已点歌单-置顶歌曲
+     *  Queued song list - pin song item.
      *
      * @param song the song
      */
