@@ -358,14 +358,14 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
             R.string.commerce_setting_advance_video_noise_reduce,
             R.string.commerce_setting_advance_video_noise_reduce_tip
         )
-        // 码率节省
+        // Bitrate Saving
         setupSwitchItem(
             ITEM_ID_SWITCH_BITRATE_SAVE,
             binding.bitrateSave,
             R.string.commerce_setting_advance_bitrate_save,
             R.string.commerce_setting_advance_bitrate_save_tip
         )
-        // 编码分辨率
+        // Encoding Resolution
         setupSelectorItem(
             ITEM_ID_SELECTOR_RESOLUTION,
             binding.resolution,
@@ -373,7 +373,7 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
             R.string.commerce_setting_advance_encode_resolution_tip,
             VideoSetting.ResolutionList.map { "${it.width}x${it.height}" }
         )
-        // 编码帧率
+        // Encoding Frame Rate
         setupSelectorItem(
             ITEM_ID_SELECTOR_FRAME_RATE,
             binding.frameRate,
@@ -579,7 +579,7 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
                 onSwitchChanged(itemIdSwitch, isChecked)
                 binding.slider.visibility = if (isChecked) View.GONE else View.VISIBLE
                 binding.tvValue.visibility = if (isChecked) View.GONE else View.VISIBLE
-                if (!isChecked) { // 关闭时候设置推荐默认值
+                if (!isChecked) { // Set recommended default values when closing
                     if (VideoSetting.getCurrBroadcastSetting().video.bitRate == 0) {
                         binding.slider.value =
                             VideoSetting.getCurrBroadcastSetting().video.bitRateRecommend.toFloat()

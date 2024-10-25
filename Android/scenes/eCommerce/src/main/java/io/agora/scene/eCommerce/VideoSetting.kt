@@ -227,7 +227,7 @@ object VideoSetting {
          * @constructor Create empty Video
          */
         data class Video constructor(
-            val SR: SuperResolution // 超分
+            val SR: SuperResolution // super resolution
         )
     }
 
