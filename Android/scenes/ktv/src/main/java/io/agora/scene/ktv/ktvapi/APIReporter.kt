@@ -108,7 +108,7 @@ class APIReporter(
     // ---------------------- private ----------------------
 
     private fun configParameters() {
-        //rtcEngine.setParameters("{\"rtc.qos_for_test_purpose\": true}") // text env
+        //rtcEngine.setParameters("{\"rtc.qos_for_test_purpose\": true}") // test env
         // Data Reporting.
         rtcEngine.setParameters("{\"rtc.direct_send_custom_event\": true}")
         // Log Writing.

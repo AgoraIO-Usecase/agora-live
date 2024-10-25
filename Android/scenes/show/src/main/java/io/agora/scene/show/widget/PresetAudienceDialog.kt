@@ -173,7 +173,7 @@ interface OnPresetAudienceDialogCallBack {
     /**
      * On click confirm
      *
-     */// 用户点击了确认按钮(并且有选择配置)
+     */
     fun onClickConfirm()
 
 }

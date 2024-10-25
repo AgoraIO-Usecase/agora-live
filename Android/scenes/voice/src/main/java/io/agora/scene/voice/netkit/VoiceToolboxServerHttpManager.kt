@@ -24,7 +24,7 @@ object VoiceToolboxServerHttpManager {
     private val TAG = "VoiceToolboxServerHttpManager"
 
     /**
-     * 生成RTC/RTM/Chat等Token007
+     * RTC/RTM/Chat Token007
      *
      * @param callback
      * @receiver

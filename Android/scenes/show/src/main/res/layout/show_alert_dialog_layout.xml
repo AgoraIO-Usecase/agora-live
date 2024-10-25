@@ -101,7 +101,7 @@
                     android:gravity="center"
                     android:textColor="#303553"
                     android:textSize="14sp"
-                    tools:text="当前处于“秀场模式”最佳效果配置 修改参数后，视频体验将改变" />
+                    tools:text="message" />
 
                 <android.widget.Space
                     android:id="@+id/textSpacerNoButtons"

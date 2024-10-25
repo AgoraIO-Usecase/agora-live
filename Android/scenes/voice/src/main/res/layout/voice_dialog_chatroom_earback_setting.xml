@@ -146,12 +146,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvVolumeTitle" />
 
-            <!--        注掉的代码是耳返模式，等sdk支持完善后添加上 -->
+            <!--        ear -->
 <!--        <androidx.appcompat.widget.AppCompatTextView-->
 <!--            android:id="@+id/tvMode"-->
 <!--            style="@style/voice_bottom_sheet_text_style"-->
 <!--            android:layout_marginStart="20dp"-->
-<!--            android:text="耳返模式"-->
+<!--            android:text="Ear Monitoring"-->
 <!--            app:layout_constraintStart_toStartOf="parent"-->
 <!--            app:layout_constraintTop_toBottomOf="@+id/tvVolumeTitle" />-->
 
@@ -179,7 +179,7 @@
 <!--                android:gravity="center"-->
 <!--                android:button="@null"-->
 <!--                android:checked="true"-->
-<!--                android:text="自动"-->
+<!--                android:text="Auto"-->
 <!--                app:layout_constraintTop_toTopOf="@+id/tvModeOboe"-->
 <!--                app:layout_constraintBottom_toBottomOf="@+id/tvModeOboe"-->
 <!--                app:layout_constraintEnd_toStartOf="@+id/tvModeOboe"-->
@@ -195,7 +195,7 @@
 <!--                android:gravity="center"-->
 <!--                android:button="@null"-->
 <!--                android:checked="false"-->
-<!--                android:text="强制OpenSL"-->
+<!--                android:text="Force OpenSL"-->
 <!--                app:layout_constraintTop_toTopOf="@+id/tvModeOboe"-->
 <!--                app:layout_constraintBottom_toBottomOf="@+id/tvModeOboe"-->
 <!--                app:layout_constraintEnd_toStartOf="@+id/tvModeOboe"-->
@@ -211,7 +211,7 @@
 <!--                android:gravity="center"-->
 <!--                android:button="@null"-->
 <!--                android:checked="false"-->
-<!--                android:text="强制Oboe"-->
+<!--                android:text="Force Oboe"-->
 <!--                app:layout_constraintTop_toTopOf="@+id/tvMode"-->
 <!--                app:layout_constraintBottom_toBottomOf="@+id/tvMode"-->
 <!--                app:layout_constraintEnd_toEndOf="parent"-->

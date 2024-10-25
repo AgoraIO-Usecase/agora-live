@@ -85,7 +85,7 @@ public class RomUtils {
         if (!TextUtils.isEmpty(displayId) && displayId.contains("Flyme")) {
             String[] displayIdArray = displayId.split(" ");
             for (String temp : displayIdArray) {
-                //版本号4以上，形如4.x.
+                // Version number 4 or above, in the format of 4.x.
                 if (temp.matches("^[4-9]\\.(\\d+\\.)+\\S*")) {
                     return true;
                 }
