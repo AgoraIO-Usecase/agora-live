@@ -42,14 +42,11 @@ class CreateRoomDialog constructor(
 
     private fun setTips(tips: String) {
         mBinding.apply {
-            // 创建一个 Drawable 对象并设置它的大小
             val icon = ContextCompat.getDrawable(root.context, R.mipmap.ic_tip_error)
             icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
-            // 创建一个 SpannableString 并将图标设置在字符串的开始位置
             val spannableString = SpannableString("  $tips")
             val imageSpan = ImageSpan(icon!!, ImageSpan.ALIGN_BASELINE)
             spannableString.setSpan(imageSpan, 0, 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
-            // 设置 SpannableString 到 TextView
             tvTips.text = spannableString
         }
     }
@@ -58,7 +55,7 @@ class CreateRoomDialog constructor(
         super.onViewCreated(view, savedInstanceState)
         roomCreateViewModel = ViewModelProvider(this)[RoomCreateViewModel::class.java]
         setTips(getString(R.string.ktv_create_room_tips))
-        // 随机名称
+        // random name
         randomName()
         mBinding.btnRandom.setOnClickListener {
             randomName()
@@ -107,7 +104,7 @@ class CreateRoomDialog constructor(
                 dismiss()
                 RoomLivingActivity.launch(context, roomInfo)
             } else {
-                // 加入房间失败
+                // join room failed
             }
         }
     }

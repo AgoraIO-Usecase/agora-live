@@ -2770,7 +2770,7 @@ class LiveDetailFragment : Fragment() {
         }
     }
 
-    // 播放音乐相关接口
+    // interface for audio mixing
     private var mAudioMxingChannel: RtcConnection? = null
     private var mMediaPlayer: IMediaPlayer? = null
     private var mAudioMixing = false

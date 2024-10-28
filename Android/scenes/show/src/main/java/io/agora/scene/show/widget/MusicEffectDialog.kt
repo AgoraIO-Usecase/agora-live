@@ -26,7 +26,7 @@ class MusicEffectDialog(context: Context) : BottomDarkDialog(context) {
         /**
          * Group Id Back Music
          */
-        const val GROUP_ID_BACK_MUSIC = 0x00000001 // 背景音乐
+        const val GROUP_ID_BACK_MUSIC = 0x00000001 // background music
 
         /**
          * Item Id Back Music None
@@ -36,53 +36,53 @@ class MusicEffectDialog(context: Context) : BottomDarkDialog(context) {
         /**
          * Item Id Back Music Joy
          */
-        const val ITEM_ID_BACK_MUSIC_JOY = GROUP_ID_BACK_MUSIC + 1 // 欢乐
+        const val ITEM_ID_BACK_MUSIC_JOY = GROUP_ID_BACK_MUSIC + 1 // joy
 
         /**
          * Item Id Back Music Romantic
          */
-        const val ITEM_ID_BACK_MUSIC_ROMANTIC = GROUP_ID_BACK_MUSIC + 2 // 浪漫
+        const val ITEM_ID_BACK_MUSIC_ROMANTIC = GROUP_ID_BACK_MUSIC + 2 // romantic
 
         /**
          * Item Id Back Music Joy2
          */
-        const val ITEM_ID_BACK_MUSIC_JOY2 = GROUP_ID_BACK_MUSIC + 3 // 欢乐2
+        const val ITEM_ID_BACK_MUSIC_JOY2 = GROUP_ID_BACK_MUSIC + 3 // joy 2
 
 
         /**
          * Group Id Beauty Voice
          */
-        const val GROUP_ID_BEAUTY_VOICE = GROUP_ID_BACK_MUSIC shl 8 // 美声
+        const val GROUP_ID_BEAUTY_VOICE = GROUP_ID_BACK_MUSIC shl 8 // beauty voice
 
         /**
          * Item Id Beauty Voice Original
          */
-        const val ITEM_ID_BEAUTY_VOICE_ORIGINAL = GROUP_ID_BEAUTY_VOICE + 1 // 原声
+        const val ITEM_ID_BEAUTY_VOICE_ORIGINAL = GROUP_ID_BEAUTY_VOICE + 1 // original
 
         /**
          * Item Id Beauty Voice Sweet
          */
-        const val ITEM_ID_BEAUTY_VOICE_SWEET = GROUP_ID_BEAUTY_VOICE + 2 // 甜美
+        const val ITEM_ID_BEAUTY_VOICE_SWEET = GROUP_ID_BEAUTY_VOICE + 2 // sweet
 
         /**
          * Item Id Beauty Voice Zhongxin
          */
-        const val ITEM_ID_BEAUTY_VOICE_ZHONGXIN = GROUP_ID_BEAUTY_VOICE + 3 // 中性
+        const val ITEM_ID_BEAUTY_VOICE_ZHONGXIN = GROUP_ID_BEAUTY_VOICE + 3 // neutral
 
         /**
          * Item Id Beauty Voice Wenzhong
          */
-        const val ITEM_ID_BEAUTY_VOICE_WENZHONG = GROUP_ID_BEAUTY_VOICE + 4 // 稳重
+        const val ITEM_ID_BEAUTY_VOICE_WENZHONG = GROUP_ID_BEAUTY_VOICE + 4 // mature
 
         /**
          * Item Id Beauty Voice Mohuan
          */
-        const val ITEM_ID_BEAUTY_VOICE_MOHUAN = GROUP_ID_BEAUTY_VOICE + 5 // 魔幻
+        const val ITEM_ID_BEAUTY_VOICE_MOHUAN = GROUP_ID_BEAUTY_VOICE + 5 // magical
 
         /**
          * Ground Id Mixing
          */
-        const val GROUND_ID_MIXING = GROUP_ID_BEAUTY_VOICE shl 8 // 混响
+        const val GROUND_ID_MIXING = GROUP_ID_BEAUTY_VOICE shl 8 // reverb
 
         /**
          * Item Id Mixing None
@@ -97,17 +97,17 @@ class MusicEffectDialog(context: Context) : BottomDarkDialog(context) {
         /**
          * Item Id Mixing Concert
          */
-        const val ITEM_ID_MIXING_CONCERT = GROUND_ID_MIXING + 2 // 演唱会
+        const val ITEM_ID_MIXING_CONCERT = GROUND_ID_MIXING + 2 // concert
 
         /**
          * Item Id Mixing Luyinpen
          */
-        const val ITEM_ID_MIXING_LUYINPEN = GROUND_ID_MIXING + 3 // 录音棚
+        const val ITEM_ID_MIXING_LUYINPEN = GROUND_ID_MIXING + 3 // recording studio
 
         /**
          * Item Id Mixing Kongkuang
          */
-        const val ITEM_ID_MIXING_KONGKUANG = GROUND_ID_MIXING + 4 // 空旷
+        const val ITEM_ID_MIXING_KONGKUANG = GROUND_ID_MIXING + 4 // spacious
     }
 
     /**

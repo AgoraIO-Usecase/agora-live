@@ -20,7 +20,7 @@ annotation class ShowInteractionStatus {
     }
 }
 
-// 房间详情信息
+// Room details information.
 data class ShowRoomDetailModel constructor(
     val roomId: String,
     val roomName: String,

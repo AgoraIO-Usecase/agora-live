@@ -28,7 +28,7 @@ abstract class BaseFixedHeightSheetDialog<B : ViewBinding?> : BaseSheetDialog<B>
             layoutParams.height = h
         }
 
-        var bottomSheetBehavior = BottomSheetBehavior.from(view?.parent as View) //dialog的高度
+        var bottomSheetBehavior = BottomSheetBehavior.from(view?.parent as View)
         bottomSheetBehavior.isHideable = false
         bottomSheetBehavior.peekHeight = h
     }

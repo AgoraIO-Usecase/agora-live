@@ -42,7 +42,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvAppName" />
 
-    <!-- 联系客服 -->
+    <!-- contact customer service -->
     <View
         android:id="@+id/vServicePhone"
         android:layout_width="match_parent"
@@ -84,7 +84,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vServicePhone" />
 
-    <!-- 官网地址 -->
+    <!-- official website address -->
     <View
         android:id="@+id/vHomeWebPage"
         android:layout_width="match_parent"

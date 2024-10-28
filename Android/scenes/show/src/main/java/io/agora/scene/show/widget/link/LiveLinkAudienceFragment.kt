@@ -73,11 +73,11 @@ class LiveLinkAudienceFragment : BaseFragment() {
         binding.textLinking.setText(R.string.show_can_apply)
         binding.linkRequestList.adapter = linkRequestViewAdapter
         binding.iBtnStopLink.setOnClickListener {
-            // 观众停止连麦
+            // Audience stops linking
             mListener?.onStopLinkingChosen(it)
         }
         binding.iBtnCancelApply.setOnClickListener {
-            // 观众撤回申请
+            // Audience withdraws application
             mListener?.onStopApplyingChosen(it)
         }
         binding.smartRefreshLayout.setOnRefreshListener {

@@ -104,7 +104,7 @@ class APIReporter(
     // ---------------------- private ----------------------
 
     private fun configParameters() {
-        //rtcEngine.setParameters("{\"rtc.qos_for_test_purpose\": true}") //测试环境使用
+        //rtcEngine.setParameters("{\"rtc.qos_for_test_purpose\": true}") // test env
         rtcEngine.setParameters("{\"rtc.direct_send_custom_event\": true}")
         rtcEngine.setParameters("{\"rtc.log_external_input\": true}")
     }

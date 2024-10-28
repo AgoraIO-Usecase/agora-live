@@ -274,17 +274,17 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
         if (preset == BeautyPreset.DEFAULT) {
             recommendFaceBeauty.filterName = FaceBeautyFilterEnum.FENNEN_1
             recommendFaceBeauty.filterIntensity = 0.7
-            // 美牙
+            // Teeth whitening
             recommendFaceBeauty.toothIntensity = 0.3
-            // 亮眼
+            // Eye brightening
             recommendFaceBeauty.eyeBrightIntensity = 0.3
-            // 大眼
+            // Eye enlarging
             recommendFaceBeauty.eyeEnlargingIntensity = 0.5
-            // 红润
+            // Rosy skin
             recommendFaceBeauty.redIntensity = 0.5 * 2
-            // 美白
+            // Skin whitening
             recommendFaceBeauty.colorIntensity = 0.75 * 2
-            // 磨皮
+            // Skin smoothing
             recommendFaceBeauty.blurIntensity = 0.75 * 6
             if (deviceLevel > FuDeviceUtils.DEVICE_LEVEL_MID) {
                 val score = FUAIKit.getInstance().getFaceProcessorGetConfidenceScore(0)
@@ -299,21 +299,21 @@ class FaceUnityBeautyAPIImpl : FaceUnityBeautyAPI, IVideoFrameObserver {
                 recommendFaceBeauty.blurType = 2
                 recommendFaceBeauty.enableBlurUseMask = false
             }
-            // 嘴型
+            // Mouth shape
             recommendFaceBeauty.mouthIntensity = 0.3
-            // 瘦鼻
+            // Nose slimming
             recommendFaceBeauty.noseIntensity = 0.1
-            // 额头
+            // Forehead
             recommendFaceBeauty.forHeadIntensity = 0.3
-            // 下巴
+            // Chin
             recommendFaceBeauty.chinIntensity = 0.0
-            // 瘦脸
+            // Face slimming
             recommendFaceBeauty.cheekThinningIntensity = 0.3
-            // 窄脸
+            // Narrow face
             recommendFaceBeauty.cheekNarrowIntensity = 0.0
-            // 小脸
+            // Small face
             recommendFaceBeauty.cheekSmallIntensity = 0.0
-            // v脸
+            // V-shaped face
             recommendFaceBeauty.cheekVIntensity = 0.0
         }
         conf.fuRenderKit.faceBeauty = recommendFaceBeauty

@@ -40,7 +40,7 @@
         android:textSize="@dimen/voice_sp_16"
         android:maxLines="1"
         android:ellipsize="end"
-        tools:text="标题"/>
+        tools:text="title"/>
 
     <RelativeLayout
         android:id="@+id/right_layout"

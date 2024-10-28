@@ -69,15 +69,15 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
     public void init(String chatroomId, boolean isOwner) {
         this.chatroomId = chatroomId;
         this.isOwner = isOwner;
-        //设置消息监听
+        // Set message listener
         setCustomMsgListener();
-        //设置聊天室状态变化监听
+        // Set chat room status change listener
         setChatRoomChangeListener();
-        //设置连接监听
+        // Set connection listener
         setConnectionListener();
-        //设置相关的房间信息
+        // Set related room information
         CustomMsgHelper.getInstance().setChatRoomInfo(chatroomId);
-        //设置语聊房协议代理
+        // Set voice chat room protocol delegate
         delegate = new ChatroomProtocolDelegate(chatroomId);
         clearCache();
     }
@@ -540,7 +540,6 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
     }
 
     public void fetchRoomDetail(VoiceRoomModel voiceRoomModel, ValueCallBack<VoiceRoomInfo> callBack) {
-        // 麦位信息
         VoiceMemberModel owner = voiceRoomModel.getOwner();
         if (owner != null && TextUtils.equals(owner.getUserId(), VoiceBuddyFactory.get().getVoiceBuddy().userId())) {
             initMicInfo(new CallBack() {

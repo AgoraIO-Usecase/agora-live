@@ -10,26 +10,25 @@ enum class SongLoadFailReason(val value: Int) {
 
 interface SongLoadStateListener {
     /**
-     * 音乐加载成功
-     * @param songCode 歌曲编码，和loadMusic传入的songCode一致
-     * @param lyricUrl 歌词地址
+     * song load success
+     * @param songCode Song code, which is consistent with the songCode passed to loadMusic.
+     * @param lyricUrl Lyrics url.
      */
     fun onMusicLoadSuccess(songCode: String,musicUri:String, lyricUrl: String)
 
     /**
-     * 音乐加载失败
-     * @param songCode 加载失败的歌曲编码
-     * @param reason 歌曲加载失败的原因
+     * song load fail
+     * @param songCode Song code of failed load.
+     * @param reason Reason for song load failure.
      */
     fun onMusicLoadFail(songCode: String, reason: SongLoadFailReason)
 
     /**
-     * 音乐加载进度
-     * @param songCode 歌曲编码
-     * @param percent 歌曲加载进度
-     * @param status 歌曲加载的状态
-     * @param msg 相关信息
-     * @param lyricUrl 歌词地址
+     * song load progress
+     * @param songCode song code
+     * @param percent song load progress
+     * @param status status of song loading
+     * @param lyricUrl lyric url
      */
     fun onMusicLoadProgress(songCode: String, percent: Int, status: MusicLoadStatus, lyricUrl: String?)
 }

@@ -43,8 +43,8 @@ import io.agora.scene.widget.utils.doOnProgressChanged
 class MusicSettingDialog constructor(
     private var mSetting: MusicSettingBean,
     private var mSoundCardSetting: SoundCardSettingBean,
-    private var isListener: Boolean, // 是否是观众
-    private var currentSong: ChosenSongInfo?, // 当前歌曲
+    private var isListener: Boolean,
+    private var currentSong: ChosenSongInfo?,
 ) :
     BaseBottomSheetDialogFragment<KtvDialogMusicSettingBinding>() {
 
@@ -76,7 +76,7 @@ class MusicSettingDialog constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding.ivBackIcon.setOnClickListener { view -> (requireActivity() as RoomLivingActivity).closeMusicSettingsDialog() }
-        // 耳返
+        // ear monitoring
         if (mSetting.mEarBackEnable) {
             mBinding.switchEar.text = getString(R.string.ktv_open)
         } else {
@@ -84,7 +84,7 @@ class MusicSettingDialog constructor(
         }
         mBinding.switchEar.setOnClickListener { v: View -> this.showEarBackPage(v) }
 
-        // 虚拟声卡
+        // virtual sound card
         if (mSoundCardSetting.isEnable()) {
             mBinding.switchSoundCard.text = getString(R.string.ktv_open)
         } else {
@@ -92,7 +92,7 @@ class MusicSettingDialog constructor(
         }
         mBinding.switchSoundCard.setOnClickListener { v: View -> this.showSoundCardPage(v) }
 
-        // 人声音量
+        // vocal volume
         mBinding.sbMicVol.progress = mSetting.mMicVolume
         mBinding.btMicVolDown.setOnClickListener { v -> tuningMicVolume(false) }
         mBinding.btnMicVolUp.setOnClickListener { v -> tuningMicVolume(true) }
@@ -102,7 +102,7 @@ class MusicSettingDialog constructor(
             }
         }
 
-        // 伴奏音量
+        // accompaniment volume
         mBinding.sbAccVol.progress = mSetting.mAccVolume
         mBinding.btAccVolDown.setOnClickListener { v -> tuningMusicVolume(false) }
         mBinding.btAccVolUp.setOnClickListener { v -> tuningMusicVolume(true) }
@@ -112,7 +112,7 @@ class MusicSettingDialog constructor(
             }
         }
 
-        // 远端音量
+        // remote volume
         mBinding.sbRemoteVol.progress = mSetting.mRemoteVolume
         mBinding.btRemoteVolDown.setOnClickListener { v -> tuningRemoteVolume(false) }
         mBinding.btRemoteVolUp.setOnClickListener { v -> tuningRemoteVolume(true) }
@@ -134,11 +134,11 @@ class MusicSettingDialog constructor(
             mBinding.layoutRemoteVol.alpha = 1.0f
         }
 
-        // 音效
+        // sound effects
         setupVoiceEffectAdapter()
 
         // TODO: hide score
-        // 打分难度设置
+        // Scoring difficulty settings.
 //        when (mSetting.mScoringDifficultyMode) {
 //            ScoringDifficultyMode.Low -> mBinding.rgVoiceScoringDifficulty.check(R.id.tvScoringDifficultyLow)
 //            ScoringDifficultyMode.High -> mBinding.rgVoiceScoringDifficulty.check(R.id.tvScoringDifficultyHigh)
@@ -160,7 +160,7 @@ class MusicSettingDialog constructor(
 //            mBinding.layoutVoiceScoringDifficulty.alpha = 0.3f
 //        }
 
-        // 专业模式
+        // professional mode
         mBinding.cbStartProfessionalMode.setOnCheckedChangeListener { buttonView, isChecked ->
             mSetting.mProfessionalModeEnable = isChecked
         }
@@ -172,7 +172,7 @@ class MusicSettingDialog constructor(
         }
         mBinding.cbMultipath.isChecked = mSetting.mMultiPathEnable
 
-        // 音质
+        // sound quality
         when (mSetting.mAecLevel) {
             AECLevel.High -> mBinding.rgVoiceMode.check(R.id.tvVoiceHigh)
             else -> mBinding.rgVoiceMode.check(R.id.tvVoiceStandard)
@@ -184,7 +184,7 @@ class MusicSettingDialog constructor(
             }
         }
 
-        // 降低背景噪音
+        // Reduce background noise.
         when (mSetting.mAinsMode) {
             AINSMode.Medium -> mBinding.rgAINSMode.check(R.id.tvAINSMiddle)
             AINSMode.High -> mBinding.rgAINSMode.check(R.id.tvAINSHigh)
@@ -209,7 +209,7 @@ class MusicSettingDialog constructor(
             }
         }
 
-        // 低延迟模式
+        // Low latency mode.
         mBinding.cbLowLatency.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isPressed && isChecked && mSetting.mAinsMode != AINSMode.Close) {
                 mBinding.rgAINSMode.check(R.id.tvAINSClose)
@@ -218,7 +218,7 @@ class MusicSettingDialog constructor(
         }
         mBinding.cbLowLatency.isChecked = mSetting.mLowLatencyMode
 
-        // AIAEC 开关
+        // AIAEC switch
         mBinding.cbAIAECSwitcher.setOnCheckedChangeListener { buttonView, isChecked ->
             mBinding.layoutAIACStrength.isVisible = isChecked
             mSetting.mAIAECEnable = isChecked
@@ -249,7 +249,7 @@ class MusicSettingDialog constructor(
     }
 
     /**
-     * 耳返设置
+     * Ear monitoring settings
      */
     private fun showEarBackPage(v: View) {
         mBinding.root.removeAllViews()
@@ -260,7 +260,7 @@ class MusicSettingDialog constructor(
     }
 
     /**
-     * 虚拟声卡
+     * Virtual sound card
      */
     private fun showSoundCardPage(v: View) {
         mBinding.root.removeAllViews()
@@ -275,7 +275,7 @@ class MusicSettingDialog constructor(
     }
 
     /**
-     * 预设音效
+     * Preset sound effects.
      */
     private fun showSoundTypeSelectPage() {
         mBinding.root.removeAllViews()
@@ -285,7 +285,7 @@ class MusicSettingDialog constructor(
         ft.commit()
     }
 
-    // 人声音量
+    // Vocal volume.
     private fun tuningMicVolume(volumeUp: Boolean) {
         var newVocalVolume: Int = this.mSetting.mMicVolume
         if (volumeUp) {
@@ -299,7 +299,7 @@ class MusicSettingDialog constructor(
         mBinding.sbMicVol.progress = newVocalVolume
     }
 
-    // 伴奏音量
+    // Accompaniment volume.
     private fun tuningMusicVolume(volumeUp: Boolean) {
         var newMusicVolume: Int = this.mSetting.mAccVolume
         if (volumeUp) {
@@ -313,7 +313,7 @@ class MusicSettingDialog constructor(
         mBinding.sbAccVol.progress = newMusicVolume
     }
 
-    // 远端音量
+    // Remote volume.
     private fun tuningRemoteVolume(volumeUp: Boolean) {
         var newRemoteVolume: Int = this.mSetting.mRemoteVolume
         if (volumeUp) {
@@ -327,7 +327,7 @@ class MusicSettingDialog constructor(
         mBinding.sbRemoteVol.progress = newRemoteVolume
     }
 
-    // AIAEC 强度
+    // AIAEC Strength
     private fun tuningAIAECStrength(strengthUp: Boolean) {
         var newAIAECStrength: Int = this.mSetting.mAIAECStrength
         if (strengthUp) {
@@ -341,7 +341,7 @@ class MusicSettingDialog constructor(
         mBinding.sbAIAEStrength.progress = newAIAECStrength
     }
 
-    // 音效
+    // effects
     private fun setupVoiceEffectAdapter() {
         val stringArray = resources.getStringArray(R.array.ktv_audioPreset)
         val list: MutableList<EffectVoiceBean> = ArrayList()

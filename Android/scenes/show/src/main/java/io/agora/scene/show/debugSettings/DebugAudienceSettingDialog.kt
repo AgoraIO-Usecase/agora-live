@@ -43,7 +43,6 @@ class DebugAudienceSettingDialog constructor(context: Context) : BottomFullDialo
             dismiss()
         }
 
-        // 镜像
         setEnable(mBinding.srSwitchCompat, RtcEngineInstance.debugSettingModel.srEnabled)
         // hit / hidden
         when (RtcEngineInstance.debugSettingModel.srType) {

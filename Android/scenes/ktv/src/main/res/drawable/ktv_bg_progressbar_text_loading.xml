@@ -4,7 +4,6 @@
         <shape>
             <corners android:radius="5dp"/>
         </shape>
-        <!--    背景颜色-->
         <color android:color="@android:color/transparent"/>
     </item>
 
@@ -14,7 +13,6 @@
             android:gravity="start">
             <shape>
                 <corners android:radius="5dp"/>
-                <!--  开始颜色，中途颜色，最后颜色-->
                 <gradient
                     android:startColor="#99F5FF"
                     android:endColor="#1B6FFF"/>

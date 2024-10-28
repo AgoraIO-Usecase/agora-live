@@ -42,9 +42,9 @@ data class CreateRoomInfo constructor(
 @Target(AnnotationTarget.FIELD)
 annotation class RoomMicSeatStatus {
     companion object {
-        const val idle = 0 // 空闲
-        const val used = 1 // 使用中
-        const val locked = 2 // 锁定
+        const val idle = 0
+        const val used = 1
+        const val locked = 2
     }
 }
 
@@ -64,15 +64,15 @@ enum class RoomSeatCmd {
 data class RoomMicSeatInfo constructor(
     var owner: AUIUserThumbnailInfo? = null,
     var seatIndex: Int = 0,
-    var isAudioMuted: Boolean = false, // 麦位禁用声音
-    var isVideoMuted: Boolean = true, // 麦位禁用视频
+    var isAudioMuted: Boolean = false,
+    var isVideoMuted: Boolean = true,
 ) : Serializable
 
 enum class RoomChorusCmd {
     joinChorusCmd,
     leaveChorusCmd,
-    kickAllOutOfChorusCmd, //移除所有合唱
-    KickUserOutOfChorusCmd, //踢出指定用户出合唱列表
+    kickAllOutOfChorusCmd,
+    KickUserOutOfChorusCmd,
 }
 
 /**
@@ -84,7 +84,7 @@ enum class RoomChorusCmd {
  */
 data class RoomChoristerInfo constructor(
     var userId: String = "",
-    var chorusSongNo: String = ""  //合唱演唱歌曲
+    var chorusSongNo: String = ""
 ) : Serializable
 
 @IntDef(PlayStatus.idle, PlayStatus.playing)
@@ -92,17 +92,17 @@ data class RoomChoristerInfo constructor(
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD)
 annotation class PlayStatus {
     companion object {
-        const val idle = 0 // 未播放
-        const val playing = 1 // 播放中
+        const val idle = 0
+        const val playing = 1
     }
 }
 
 enum class RoomSongCmd {
-    chooseSongCmd, //添加一首歌
-    removeSongCmd, //移除一首歌
-    pingSongCmd,  //置顶一首歌
-    updatePlayStatusCmd, //更新歌曲播放状态
-    removedUserSongsCmd,  //移除指定用户所有歌曲
+    chooseSongCmd,
+    removeSongCmd,
+    pingSongCmd,
+    updatePlayStatusCmd,
+    removedUserSongsCmd,
 }
 
 data class ChooseSongInputModel constructor(
@@ -126,19 +126,18 @@ data class ChooseSongInputModel constructor(
  * @constructor Create empty Room sel song model
  */
 data class ChosenSongInfo constructor(
-    // 获取歌词列表返回的歌词信息
-    val songName: String,// 歌曲名
-    val songNo: String, // 歌词唯一标识
-    val singer: String, // 演唱者
-    val imageUrl: String,// 歌曲封面
+    val songName: String,
+    val songNo: String,
+    val singer: String,
+    val imageUrl: String,
 
-    var owner: AUIUserThumbnailInfo? = null, // 点歌人
+    var owner: AUIUserThumbnailInfo? = null,
 
-    // 排序字段
+    // Sorting Field.
     @PlayStatus
-    val status: Int = PlayStatus.idle, // 0 未开始 1.播放中
+    val status: Int = PlayStatus.idle,
     val createAt: Long = 0,
-    val pinAt: Long = 0, // 置顶时间
+    val pinAt: Long = 0,
 )
 
 /**

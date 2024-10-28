@@ -10,7 +10,7 @@ import java.util.List;
 import io.agora.scene.voice.model.GiftBean;
 
 /**
- * 用于获取本地礼物信息
+ * gift
  */
 public class GiftRepository {
     static int SIZE = 9;

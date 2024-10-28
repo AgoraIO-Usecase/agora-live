@@ -88,7 +88,7 @@ class AboutUsActivity : BaseViewBindingActivity<AppActivityAboutUsBinding>() {
     /**
      * Setup app info
      *
-     */// 设置语聊App的信息
+     */
     private fun setupAppInfo() {
         adapter.scenes = mutableListOf<SceneInfo>()
         if (BuildConfig.VERSION_NAME.isNotEmpty()) {

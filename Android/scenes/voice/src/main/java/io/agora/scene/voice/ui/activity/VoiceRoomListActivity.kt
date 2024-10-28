@@ -65,7 +65,7 @@ class VoiceRoomListActivity : BaseBindingActivity<VoiceAgoraRoomListLayoutBindin
         super.onCreate(savedInstanceState)
          if (BuildConfig.IM_APP_KEY.isEmpty()) {
              finish()
-             ToastTools.show(this, "IM_APP_KEY / IM_APP_CLIENT_ID / IM_APP_CLIENT_SECRET 未配置")
+             ToastTools.show(this, "IM_APP_KEY / IM_APP_CLIENT_ID / IM_APP_CLIENT_SECRET not set")
              return
          }
         binding.titleBar.title.typeface = Typeface.defaultFromStyle(Typeface.BOLD)

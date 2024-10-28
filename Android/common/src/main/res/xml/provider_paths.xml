@@ -21,13 +21,11 @@
     <external-path
         name="files"
         path="Android/data/com.xxx/file/" />
-    <!--报名底下的file-->
 
     <external-path
         name="external_image_files_path"
         path="DCIM/" />
 
-    <!-- 代表cache目录下的所有文件-->
     <cache-path
         name="cache_path"
         path="." />

@@ -251,7 +251,7 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
                     ViewPager2.SCROLL_STATE_SETTLING -> binding.viewPager2.isUserInputEnabled = false
                     ViewPager2.SCROLL_STATE_IDLE -> binding.viewPager2.isUserInputEnabled = true
                     ViewPager2.SCROLL_STATE_DRAGGING -> {
-                        // TODO 暂不支持
+                        // TODO Not supported for now
                     }
                 }
                 super.onPageScrollStateChanged(state)

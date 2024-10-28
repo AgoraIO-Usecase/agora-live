@@ -298,6 +298,7 @@
     <string name="show_beauty_loading">%s resource downloading: %s</string>
     <string name="show_beauty_loading_failed">Download failed. Please ensure your network is functioning properly, exit and re-enter the preview page, and then restart the download.</string>
 
+    <string name="show_developer_mode_settings">Developer mode settings</string>
 
     <string-array name="show_encoder">
         <item>Hardware Encoder</item>
