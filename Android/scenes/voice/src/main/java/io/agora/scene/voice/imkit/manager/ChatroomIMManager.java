@@ -452,6 +452,7 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
     }
 
     public void logout(boolean unbind) {
+        if (!ChatClient.getInstance().isSdkInited()) return;
         ChatClient.getInstance().logout(unbind, new CallBack() {
             @Override
             public void onSuccess() {
