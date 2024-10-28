@@ -118,12 +118,14 @@ class LiveDetailFragment : Fragment() {
      */
     private val mRtcVideoLoaderApi by lazy { VideoLoader.getImplInstance(mRtcEngine) }
 
+    private val genaiCanvas by lazy { TextureView(requireContext()) }
+
     private val mDreamFlowService by lazy {
         DreamFlowService(
             "cn",
             BuildConfig.AGORA_APP_ID,
             mRoomId,
-            mRoomInfo.ownerId.toInt()
+            mRoomInfo.ownerId.toInt(),
         )
     }
 
@@ -445,11 +447,15 @@ class LiveDetailFragment : Fragment() {
      */
     private fun initBottomLayout() {
         val bottomLayout = mBinding.bottomLayout
+        if (isRoomOwner) {
+            bottomLayout.ivStylized.setOnClickListener {
+                showStylizedDialog()
+            }
+        } else {
+            bottomLayout.ivStylized.visibility = View.GONE
+        }
         bottomLayout.ivSetting.setOnClickListener {
             showSettingDialog()
-        }
-        bottomLayout.ivStylized.setOnClickListener {
-            showStylizedDialog()
         }
         refreshBottomLayout()
     }
@@ -718,18 +724,19 @@ class LiveDetailFragment : Fragment() {
                         // show progress
                         mBinding.rlProgressContainer.visibility = View.VISIBLE
                         mBinding.bottomLayout.ivStylized.visibility = View.INVISIBLE
+                        genaiCanvas.isVisible = false
                     }
                     DreamFlowService.ServiceStatus.START_SUCCESS -> {
                         // hide progress
                         mBinding.rlProgressContainer.visibility = View.GONE
                         mBinding.bottomLayout.ivStylized.visibility = View.VISIBLE
+                        genaiCanvas.isVisible = true
                     }
                     DreamFlowService.ServiceStatus.STOPPED -> {
                         // show empty
                         mBinding.rlProgressContainer.visibility = View.INVISIBLE
                         mBinding.bottomLayout.ivStylized.visibility = View.VISIBLE
-                        // leave channel
-                        mRtcEngine.leaveChannelEx(mMainRtcConnection)
+                        genaiCanvas.isVisible = false
                     }
                 }
             }
@@ -749,11 +756,10 @@ class LiveDetailFragment : Fragment() {
     private fun joinChannelAndRenderDreamFlow() {
         eventListener?.let { joinChannel(it) }
 
-        val textureView = TextureView(requireContext())
-        mBinding.videoLinkingLayout.videoContainer.addView(textureView)
-        textureView.bringToFront()
+        mBinding.videoLinkingLayout.videoContainer.addView(genaiCanvas)
+        genaiCanvas.bringToFront()
         val canvas = VideoCanvas(
-            textureView,
+            genaiCanvas,
             Constants.RENDER_MODE_HIDDEN,
             DreamFlowService.genaiUid
         )
@@ -1001,6 +1007,14 @@ class LiveDetailFragment : Fragment() {
                         downLinkBps = info.bandwidth_estimation_bps
                     )
                 }
+            }
+
+            override fun onUserJoined(uid: Int, elapsed: Int) {
+                Log.d(TAG, "onUserJoined uid: $uid")
+            }
+
+            override fun onUserOffline(uid: Int, reason: Int) {
+                Log.d(TAG, "onUserOffline uid: $uid")
             }
 
 //            override fun onFirstRemoteVideoFrame(uid: Int, width: Int, height: Int, elapsed: Int) {

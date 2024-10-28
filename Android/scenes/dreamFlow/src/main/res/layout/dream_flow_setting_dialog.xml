@@ -76,7 +76,7 @@
                     layout="@layout/dream_flow_setting_advance_item_goto" />
 
                 <View
-                    android:id="@+id/v_on_mask"
+                    android:id="@+id/v_server_mask"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     />

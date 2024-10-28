@@ -54,7 +54,7 @@ object ScenesConstructor {
             ScenesModel(
                 AgoraScenes.DreamFlow,
                 "io.agora.scene.dreamFlow.RoomListActivity",
-                "DreamFlow",
+                "Stylize",
                 R.mipmap.bg_btn_home3,
                 R.mipmap.bg_btn_home_dream_flow,
                 true
