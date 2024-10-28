@@ -78,8 +78,6 @@ class RoomListActivity : AppCompatActivity() {
         setContentView(mBinding.root)
         initView()
         initVideoSettings()
-
-        ShowServiceProtocol.ROOM_AVAILABLE_DURATION = SceneConfigManager.ecommerce * 1000L
     }
 
     /**

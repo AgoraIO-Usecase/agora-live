@@ -15,7 +15,7 @@ interface ShowServiceProtocol {
         /**
          * Room Available Duration
          */
-        var ROOM_AVAILABLE_DURATION: Long = 10 * 60 * 1000
+        val ROOM_AVAILABLE_DURATION: Long = 72 * 60 * 60 * 1000
 
         private var instance : ShowServiceProtocol? = null
             get() {

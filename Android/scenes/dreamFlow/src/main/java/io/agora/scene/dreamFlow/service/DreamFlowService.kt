@@ -189,6 +189,7 @@ class DreamFlowService constructor(
                 scope.launch(Dispatchers.Main) {
                     isEffectOn = effectOn
                     try {
+
                         if (isEffectOn) {
                             // turn effect on
                             if (status == ServiceStatus.STARTING ||
@@ -208,21 +209,18 @@ class DreamFlowService constructor(
                             }
                         } else {
                             // turn effect off
-                            delete(false)
-                            currentSetting = settingBean
-                            success.invoke()
-                            updateStatus(ServiceStatus.STOPPED)
-//                    if (status == ServiceStatus.STARTING ||
-//                        status == ServiceStatus.STARTED) {
-//                        delete(false)
-//                        currentSetting = settingBean
-//                        success.invoke()
-//                        updateStatus(ServiceStatus.IDLE)
-//                    } else {
-//                        currentSetting = settingBean
-//                        success.invoke()
-//                        updateStatus(ServiceStatus.IDLE)
-//                    }
+                            if (status == ServiceStatus.STARTING ||
+                                status == ServiceStatus.START_SUCCESS
+                            ) {
+                                delete(false)
+                                currentSetting = settingBean
+                                success.invoke()
+                                updateStatus(ServiceStatus.STOPPED)
+                            } else {
+                                currentSetting = settingBean
+                                success.invoke()
+                                updateStatus(ServiceStatus.STOPPED)
+                            }
                         }
                     } catch (e: Exception) {
                         failure?.invoke(e)

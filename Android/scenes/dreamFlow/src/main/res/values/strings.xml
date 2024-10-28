@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="dream_flow_create_room">Create</string>
-    <string name="dream_flow_create_tips1">Welcome to DreamFlow!</string>
+    <string name="dream_flow_create_tips1">Welcome to Stylize!</string>
     <string name="dream_flow_living">LIVE</string>
     <string name="dream_flow_room_id">%s</string>
     <string name="dream_flow_user_count">%d</string>

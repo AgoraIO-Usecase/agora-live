@@ -101,10 +101,10 @@ class StylizedSettingDialog constructor(
         } else {
             mBinding.vCustomMask.visibility = View.VISIBLE
         }
-        if (service.isEffectOn) {
-            mBinding.vOnMask.visibility = View.VISIBLE
+        if (service.status == DreamFlowService.ServiceStatus.STOPPED) {
+            mBinding.vServerMask.visibility = View.GONE
         } else {
-            mBinding.vOnMask.visibility = View.GONE
+            mBinding.vServerMask.visibility = View.VISIBLE
         }
     }
 
@@ -156,7 +156,7 @@ class StylizedSettingDialog constructor(
         }
         mBinding.vCustomMask.setOnClickListener {
         }
-        mBinding.vOnMask.setOnClickListener {
+        mBinding.vServerMask.setOnClickListener {
         }
         mBinding.stylizedEffect.apply {
             tvTitle.text = context.getString(R.string.dream_flow_setting_stylized)

@@ -447,11 +447,15 @@ class LiveDetailFragment : Fragment() {
      */
     private fun initBottomLayout() {
         val bottomLayout = mBinding.bottomLayout
+        if (isRoomOwner) {
+            bottomLayout.ivStylized.setOnClickListener {
+                showStylizedDialog()
+            }
+        } else {
+            bottomLayout.ivStylized.visibility = View.GONE
+        }
         bottomLayout.ivSetting.setOnClickListener {
             showSettingDialog()
-        }
-        bottomLayout.ivStylized.setOnClickListener {
-            showStylizedDialog()
         }
         refreshBottomLayout()
     }
@@ -733,8 +737,6 @@ class LiveDetailFragment : Fragment() {
                         mBinding.rlProgressContainer.visibility = View.INVISIBLE
                         mBinding.bottomLayout.ivStylized.visibility = View.VISIBLE
                         genaiCanvas.isVisible = false
-                        // leave channel
-                        mRtcEngine.leaveChannelEx(mMainRtcConnection)
                     }
                 }
             }
@@ -1005,6 +1007,14 @@ class LiveDetailFragment : Fragment() {
                         downLinkBps = info.bandwidth_estimation_bps
                     )
                 }
+            }
+
+            override fun onUserJoined(uid: Int, elapsed: Int) {
+                Log.d(TAG, "onUserJoined uid: $uid")
+            }
+
+            override fun onUserOffline(uid: Int, reason: Int) {
+                Log.d(TAG, "onUserOffline uid: $uid")
             }
 
 //            override fun onFirstRemoteVideoFrame(uid: Int, width: Int, height: Int, elapsed: Int) {
