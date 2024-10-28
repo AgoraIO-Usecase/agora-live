@@ -462,10 +462,10 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
             }
 
             val arch = System.getProperty("os.arch")
-            if (arch == "armv7") {
+            if (arch.contains("armv7") || arch.contains("arm32") || arch.contains("aarch32") || arch.contains("armv8l")) {
                 DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/armeabi-v7a/", "libfuai")
                 DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/armeabi-v7a/", "libCNamaSDK")
-            } else if (arch == "aarch64") {
+            } else if (arch.contains("aarch64") || arch.contains("armv8")) {
                 DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/arm64-v8a/", "libfuai")
                 DynamicLoadUtil.loadSoFile(this@LivePrepareActivity, "${this@LivePrepareActivity.getExternalFilesDir("")?.absolutePath}/assets/beauty_faceunity/lib/arm64-v8a/", "libCNamaSDK")
             }
