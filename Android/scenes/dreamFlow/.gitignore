@@ -1,0 +1,5 @@
+*.aar
+*.so
+src/main/assets/resource
+\build
+common/src/main/java/io/agora/scene/base/AgoraScenes.kt

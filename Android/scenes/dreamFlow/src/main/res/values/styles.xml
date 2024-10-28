@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="dream_flow_LikeLayout">
+        <attr name="dream_flow_initX" format="dimension" />
+        <attr name="dream_flow_initY" format="dimension" />
+        <attr name="dream_flow_xRand" format="dimension" />
+        <attr name="dream_flow_animLengthRand" format="dimension" />
+        <attr name="dream_flow_xPointFactor" format="dimension" />
+        <attr name="dream_flow_animLength" format="dimension" />
+        <attr name="dream_flow_heart_width" format="dimension" />
+        <attr name="dream_flow_heart_height" format="dimension" />
+        <attr name="dream_flow_bezierFactor" format="integer" />
+        <attr name="dream_flow_anim_duration" format="integer" />
+    </declare-styleable>
+
+</resources>

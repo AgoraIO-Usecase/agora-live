@@ -1,0 +1,58 @@
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode 1
+        versionName "2.4.0"
+
+        consumerProguardFiles "consumer-rules.pro"
+
+        buildConfigField "String", "CLOUD_PLAYER_KEY", "\"${CLOUD_PLAYER_KEY}\""
+        buildConfigField "String", "CLOUD_PLAYER_SECRET", "\"${CLOUD_PLAYER_SECRET}\""
+    }
+
+    resourcePrefix "dream_flow"
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(":common")
+    implementation project(":RTMSyncManager")
+
+    implementation rootProject.ext.deps.appcompat
+    implementation rootProject.ext.deps.annotation
+    api rootProject.ext.deps.material
+    implementation rootProject.ext.deps.palette_ktx
+    implementation rootProject.ext.deps.layout_kernel
+    implementation rootProject.ext.deps.header_classics
+
+    implementation rootProject.ext.deps.xlog
+
+    kapt rootProject.ext.deps.glide_compiler
+    implementation rootProject.ext.deps.glide
+
+    implementation rootProject.ext.deps.lifecycle
+    implementation rootProject.ext.deps.fragment_ktx
+
+    implementation rootProject.ext.deps.rtm
+}
