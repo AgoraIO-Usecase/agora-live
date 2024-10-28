@@ -846,20 +846,26 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
                     LyricModel lyricsModel = KaraokeView.parseLyricData(fileData, null);
                     if (lyricsModel == null) {
                         CustomToast.show("Unexpected parseLyricsData", Toast.LENGTH_SHORT);
-                        mBinding.ilActive.downloadLrcFailedView.setVisibility(View.VISIBLE);
-                        mBinding.ilActive.downloadLrcFailedBtn.setVisibility(View.VISIBLE);
+                        if (mBinding != null) {
+                            mBinding.ilActive.downloadLrcFailedView.setVisibility(View.VISIBLE);
+                            mBinding.ilActive.downloadLrcFailedBtn.setVisibility(View.VISIBLE);
+                        }
                         return;
                     }
                     if (mKaraokeView != null) {
-                        mBinding.ilActive.downloadLrcFailedView.setVisibility(View.INVISIBLE);
+                        if (mBinding != null) {
+                            mBinding.ilActive.downloadLrcFailedView.setVisibility(View.INVISIBLE);
+                        }
                         mKaraokeView.setLyricData(lyricsModel, false);
                     }
                 } else {
                     if (error.getMessage() != null) {
                         CustomToast.show(error.getMessage(), Toast.LENGTH_SHORT);
                     }
-                    mBinding.ilActive.downloadLrcFailedView.setVisibility(View.VISIBLE);
-                    mBinding.ilActive.downloadLrcFailedBtn.setVisibility(View.VISIBLE);
+                    if (mBinding != null) {
+                        mBinding.ilActive.downloadLrcFailedView.setVisibility(View.VISIBLE);
+                        mBinding.ilActive.downloadLrcFailedBtn.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
