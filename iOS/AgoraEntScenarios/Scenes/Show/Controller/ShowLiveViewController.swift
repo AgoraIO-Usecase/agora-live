@@ -259,7 +259,11 @@ class ShowLiveViewController: UIViewController {
             channelOptions.publishMicrophoneTrack = !muteLocalAudio
             ShowAgoraKitManager.shared.updateChannelEx(channelId: self.room?.roomId ?? "", options: channelOptions)
             
-            liveView.canvasView.isLocalMuteMic = muteLocalAudio
+            if "\(roomOwnerId)" == VLUserCenter.user.id {
+                liveView.canvasView.isLocalMuteMic = muteLocalAudio
+            } else {
+                liveView.canvasView.isRemoteMuteMic = muteLocalAudio
+            }
         }
     }
     
@@ -945,7 +949,7 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
         guard let info = currentInteraction else { return }
         guard isPublishCameraStream else { return }
         
-        let toolView = ShowToolMenuView(type: info.type == .linking ? .joint_broadcasting : .end)
+        let toolView = ShowToolMenuView(type: .end)
         toolView.title = "To audience \(info.userName)"
         toolView.heightAnchor.constraint(equalToConstant: 150 + Screen.safeAreaBottomHeight()).isActive = true
         toolView.onTapItemClosure = { [weak self] type, _ in
@@ -955,7 +959,7 @@ extension ShowLiveViewController: ShowRoomLiveViewDelegate {
             case .end_pk:
                 self.serviceImp?.stopInteraction(roomId: self.roomId) { _ in
                 }
-                
+            
             default: break
             }
         }
