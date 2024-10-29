@@ -19,7 +19,7 @@ final def USE_LOCAL_SDK = properties.getProperty("USE_LOCAL_SDK").toBoolean()
 def localsdkPath = "agora-sdk"
 
 android {
-    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    compileSdk rootProject.ext.android.compileSdkVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.android.minSdkVersion
