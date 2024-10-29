@@ -174,10 +174,10 @@ class ApplyService(
             return
         }
 
-        // 修改为以下逻辑：
-        // 1.startLinkingInteraction
-        // 2.仲裁者通过interaction请求，通过subscribeWillAdd回调去查apply表，看下对应的互动用户是不是在apply里
-        // 3.如果确认可以插入interaction，顺便把apply里的这个用户移除
+        // Change to the following logic:
+        // 1. startLinkingInteraction
+        // 2. The arbitrator requests interaction, checking the apply table via the subscribeWillAdd callback to see if the corresponding interactive user is in the apply list
+        // 3. If it is confirmed that interaction can be inserted, also remove this user from the apply list
         removeApply(ApplyCmd.ACCEPT, userId, success, failure)
     }
 

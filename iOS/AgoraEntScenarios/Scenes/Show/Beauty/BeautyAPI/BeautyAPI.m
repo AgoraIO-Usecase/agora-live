@@ -62,11 +62,11 @@ static NSString *const beautyAPIVersion = @"1.0.5";
         self.config.statsDuration = 1;
     }
     if (config == nil) {
-        [LogUtil log:@"缺少配置信息" level:(LogLevelError)];
+        [LogUtil log:@"Lack of configuration information" level:(LogLevelError)];
         return -1;
     }
     if (config.beautyRender == nil) {
-        [LogUtil log:@"beautyRender 为空" level:(LogLevelError)];
+        [LogUtil log:@"beautyRender For empty" level:(LogLevelError)];
         return -1;
     }
     [LogUtil log:[NSString stringWithFormat:@"beautyRender == %@", config.beautyRender.description]];
@@ -87,7 +87,7 @@ static NSString *const beautyAPIVersion = @"1.0.5";
         [self rtcReportWithEvent:@"initialize" label:dict];
         [self setupMirror];
 #else
-        [LogUtil log:@"rtc 未导入" level:(LogLevelError)];
+        [LogUtil log:@"rtc not imported" level:(LogLevelError)];
         return -1;
 #endif
     } else {
@@ -204,7 +204,7 @@ static NSString *const beautyAPIVersion = @"1.0.5";
 
 - (void)rtcReportWithEvent: (NSString *)event label: (NSDictionary *)label {
     if (self.config.rtcEngine == nil) {
-        [LogUtil log:@"rtc 不能为空" level:(LogLevelError)];
+        [LogUtil log:@"Rtc cannot be empty" level:(LogLevelError)];
         return;
     }
     NSString *jsonString = [self convertToJson:label];

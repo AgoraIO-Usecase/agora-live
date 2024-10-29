@@ -81,7 +81,7 @@ import Foundation
         attributedString.append(imageAttString)
 
         //Add Text Section
-        let text = " 当前无法使用虚拟声卡，请连接优先输入设备！"
+        let text = " Currently, the virtual sound card cannot be used. Please connect the priority input device.！"
         let textAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: 12),
             .foregroundColor: UIColor.red,

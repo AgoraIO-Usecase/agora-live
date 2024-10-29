@@ -475,7 +475,7 @@ extension CommerceAgoraKitManager {
     
     func setOffMediaOptionsVideo(roomid: String) {
         guard let connection = VideoLoaderApiImpl.shared.getConnectionMap()[roomid] else {
-            CommerceLogger.info("setOffMediaOptionsVideo  connection 不存在 \(roomid)")
+            CommerceLogger.info("setOffMediaOptionsVideo  connection does not exist\(roomid)")
             return
         }
         CommerceLogger.info("setOffMediaOptionsVideo with roomid = \(roomid)")

@@ -369,7 +369,7 @@ abstract class OnPageScrollEventHandler constructor(
         }
 
         VideoLoader.videoLoaderApiLog(tag, "switchRoomState, connPreLoaded: $roomPreLoaded")
-        // 非preJoin房间需要退出频道
+        // Non-preJoin rooms need to exit the channel.
         roomsForPreloading.forEach { room ->
             if (needPreJoin && videoLoader.getAnchorState(room.roomId, localUid) == AnchorState.PRE_JOINED && roomPreLoaded.none {room.roomId == it.roomId}) {
                 VideoLoader.videoLoaderApiLog(tag, "switchRoomState, remove: $room")

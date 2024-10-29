@@ -58,7 +58,6 @@ object ApiManager {
         builder.build()
     }
 
-    // TODO: 切换 host
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("https://service-staging.agora.io/")

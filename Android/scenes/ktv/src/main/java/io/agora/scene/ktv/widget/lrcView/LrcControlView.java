@@ -49,7 +49,7 @@ import io.agora.scene.widget.utils.OutlineSpan;
 import io.agora.scene.widget.utils.UiUtils;
 
 /**
- * 歌词控制View
+ * lyric control view
  */
 public class LrcControlView extends FrameLayout implements View.OnClickListener, ILrcView {
 
@@ -555,7 +555,7 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
         }
 
         private void checkAndShowCombos(KtvLayoutLrcControlViewBinding binding, int score, int cumulativeScore) {
-            // TODO: 2024/6/6 隐藏他
+            // TODO: 2024/6/6 hide combo
 //            binding.comboView.getRoot().setVisibility(VISIBLE);
 //
 //            showComboAnimation(binding.comboView.getRoot(), score);
@@ -846,20 +846,26 @@ public class LrcControlView extends FrameLayout implements View.OnClickListener,
                     LyricModel lyricsModel = KaraokeView.parseLyricData(fileData, null);
                     if (lyricsModel == null) {
                         CustomToast.show("Unexpected parseLyricsData", Toast.LENGTH_SHORT);
-                        mBinding.ilActive.downloadLrcFailedView.setVisibility(View.VISIBLE);
-                        mBinding.ilActive.downloadLrcFailedBtn.setVisibility(View.VISIBLE);
+                        if (mBinding != null) {
+                            mBinding.ilActive.downloadLrcFailedView.setVisibility(View.VISIBLE);
+                            mBinding.ilActive.downloadLrcFailedBtn.setVisibility(View.VISIBLE);
+                        }
                         return;
                     }
                     if (mKaraokeView != null) {
-                        mBinding.ilActive.downloadLrcFailedView.setVisibility(View.INVISIBLE);
+                        if (mBinding != null) {
+                            mBinding.ilActive.downloadLrcFailedView.setVisibility(View.INVISIBLE);
+                        }
                         mKaraokeView.setLyricData(lyricsModel, false);
                     }
                 } else {
                     if (error.getMessage() != null) {
                         CustomToast.show(error.getMessage(), Toast.LENGTH_SHORT);
                     }
-                    mBinding.ilActive.downloadLrcFailedView.setVisibility(View.VISIBLE);
-                    mBinding.ilActive.downloadLrcFailedBtn.setVisibility(View.VISIBLE);
+                    if (mBinding != null) {
+                        mBinding.ilActive.downloadLrcFailedView.setVisibility(View.VISIBLE);
+                        mBinding.ilActive.downloadLrcFailedBtn.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });

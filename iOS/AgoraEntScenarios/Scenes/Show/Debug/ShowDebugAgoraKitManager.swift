@@ -17,8 +17,8 @@ private let kEncodeBitrate = "kEncodeBitrate"
 
 enum ShowDebug1TFSettingKey: String {
     
-    case encodeFrameRate = "编码帧率"
-    case bitRate = "码率"
+    case encodeFrameRate = "Encoded frame rate"
+    case bitRate = "Bit rate"
     
     var unit: String {
         switch self {
@@ -31,9 +31,9 @@ enum ShowDebug1TFSettingKey: String {
 }
 
 enum ShowDebug2TFSettingKey: String {
-    case encodeVideoSize = "编码分辨率"
-    case exposureRange = "曝光区域"
-    case colorSpace = "颜色空间"
+    case encodeVideoSize = "Encoding resolution"
+    case exposureRange = "Exposure area"
+    case colorSpace = "Color space"
     
     var separator: String {
         switch self {
@@ -170,7 +170,7 @@ class ShowDebugAgoraKitManager {
         switch key {
         case .encodeFrameRate:
             guard let value = Int(text), let fps = AgoraVideoFrameRate(rawValue: value) else {
-                ShowLogger.info("***Debug*** 编码帧率参数为空 ")
+                ShowLogger.info("***Debug*** The encoding frame rate parameter is empty. ")
                 return
             }
             encoderConfig.frameRate = fps
@@ -179,7 +179,7 @@ class ShowDebugAgoraKitManager {
             ShowLogger.info("***Debug*** setVideoEncoderConfiguration.encodeFrameRate = \(encoderConfig.frameRate) ")
         case .bitRate:
             guard let value = Int(text) else {
-                ShowLogger.info("***Debug*** 码率参数为空")
+                ShowLogger.info("***Debug*** The bit rate parameter is empty.")
                 return
             }
             encoderConfig.bitrate = value
@@ -338,19 +338,19 @@ enum ShowDebugSettingKey: String, CaseIterable {
         case .videoDenoiser:
             return "show_advance_setting_videoDenoiser_title".show_localized
         case .focusFace:
-            return "人脸对焦"
+            return "Face focus"
         case .encode:
-            return "硬编/软编"
+            return "Hard editing/soft editing"
         case .codeCType:
             return "Encoder"
         case .mirror:
-            return "镜像"
+            return "Mirror image"
         case .renderMode:
             return "fit/hidden"
         case .debugSrType:
-            return "超分倍数"
+            return "Excess multiple"
         case .debugSR:
-            return "超分开关"
+            return "Over-spart switch"
         case .debugPVC:
             return "PVC"
         }

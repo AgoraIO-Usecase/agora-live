@@ -506,7 +506,7 @@ class LiveDetailFragment : Fragment() {
         messageLayout.rvMessage.adapter = mMessageAdapter
     }
 
-    /** 拍卖 */
+    /** Auction */
     private fun initAuctionLayout() {
         auctionFragment = LiveAuctionFragment.newInstance(mRoomId)
         val transaction = childFragmentManager.beginTransaction()

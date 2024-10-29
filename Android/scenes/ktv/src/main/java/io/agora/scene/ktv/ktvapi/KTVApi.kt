@@ -9,21 +9,21 @@ import io.agora.rtc2.IRtcEngineEventHandler
 import io.agora.rtc2.RtcEngine
 
 /**
- * KTV场景类型
- * @param Normal 普通独唱或多人合唱
- * @param SingBattle 嗨歌抢唱
- * @param SingRelay 抢麦接唱
+ * KTV scene types
+ * @param Normal Regular solo or group singing.
+ * @param SingBattle Sing battle
+ * @param SingRelay Sing relay
  */
-enum class KTVType(val value: Int)  {
+enum class KTVType(val value: Int) {
     Normal(0),
     SingBattle(1),
     SingRelay(2)
 }
 
 /**
- * KTV歌曲类型
- * @param SONG_CODE mcc版权歌单songCode
- * @param SONG_URL 本地歌曲地址url
+ * KTV song type
+ * @param SONG_CODE mcc songCode
+ * @param SONG_URL local song url
  */
 enum class KTVMusicType(val value: Int) {
     SONG_CODE(0),
@@ -31,11 +31,11 @@ enum class KTVMusicType(val value: Int) {
 }
 
 /**
- * 在KTVApi中的身份
- * @param SoloSinger 独唱者: 当前只有自己在唱歌
- * @param CoSinger 伴唱: 加入合唱需要通过调用switchSingerRole将切换身份成合唱
- * @param LeadSinger 主唱: 有合唱者加入后，需要通过调用switchSingerRole切换身份成主唱
- * @param Audience 听众: 默认状态
+ * Identity in KTVApi.
+ * @param SoloSinger The solo singer; currently, only the user is singing.
+ * @param CoSinger The co-singer; to join the chorus, you need to switch roles to “CoSinger” by calling switchSingerRole.
+ * @param LeadSinger The lead singer; after chorus members join, you need to switch roles to “LeadSinger” by calling switchSingerRole.
+ * @param Audience The audience; default status.
  */
 enum class KTVSingRole(val value: Int) {
     SoloSinger(0),
@@ -45,10 +45,11 @@ enum class KTVSingRole(val value: Int) {
 }
 
 /**
- * loadMusic失败的原因
- * @param NO_LYRIC_URL 没有歌词，不影响音乐正常播放
- * @param MUSIC_PRELOAD_FAIL 音乐加载失败
- * @param CANCELED 本次加载已终止
+ * Reasons for loadMusic failure
+ * @param NO_LYRIC_URL No lyrics available; does not affect normal music playback.
+ * @param MUSIC_PRELOAD_FAIL Music loading failed.
+ * @param CANCELED This loading has been canceled.
+ * @param GET_SIMPLE_INFO_FAIL
  */
 enum class KTVLoadMusicFailReason(val value: Int) {
     NO_LYRIC_URL(0),
@@ -58,9 +59,9 @@ enum class KTVLoadMusicFailReason(val value: Int) {
 }
 
 /**
- * switchSingerRole的失败的原因
- * @param JOIN_CHANNEL_FAIL 加入channel2失败
- * @param NO_PERMISSION switchSingerRole传入了错误的目标角色（不能从当前角色切换到目标角色）
+ * Reasons for switchSingerRole failure
+ * @param JOIN_CHANNEL_FAIL Failed to join channel2.
+ * @param NO_PERMISSION An incorrect target role was passed to switchSingerRole (cannot switch from the current role to the target role).
  */
 enum class SwitchRoleFailReason(val value: Int) {
     JOIN_CHANNEL_FAIL(0),
@@ -68,21 +69,20 @@ enum class SwitchRoleFailReason(val value: Int) {
 }
 
 /**
- * 加入合唱错误原因
- * @param JOIN_CHANNEL_FAIL 加入合唱子频道失败
- * @param MUSIC_OPEN_FAIL 歌曲open失败
+ * Reasons for joining the chorus failure
+ * @param JOIN_CHANNEL_FAIL Failed to join the chorus sub-channel.
+ * @param MUSIC_OPEN_FAIL Failed to open the song.
  */
 enum class KTVJoinChorusFailReason(val value: Int) {
     JOIN_CHANNEL_FAIL(0),
     MUSIC_OPEN_FAIL(1)
 }
 
-
 /**
- * 加载音乐的模式
- * @param LOAD_MUSIC_ONLY 只加载音乐（通常加入合唱前使用此模式）
- * @param LOAD_LRC_ONLY 只加载歌词（通常歌曲开始播放时观众使用此模式）
- * @param LOAD_MUSIC_AND_LRC 默认模式，加载歌词和音乐（通常歌曲开始播放时主唱使用此模式）
+ * Music loading modes
+ * @param LOAD_MUSIC_ONLY Only load music (typically used before joining a chorus).
+ * @param LOAD_LRC_ONLY Only load lyrics (typically used by the audience when a song starts playing).
+ * @param LOAD_MUSIC_AND_LRC Default mode, load both lyrics and music (typically used by the lead singer when a song starts playing).
  */
 enum class KTVLoadMusicMode(val value: Int) {
     LOAD_NONE(-1),
@@ -92,10 +92,10 @@ enum class KTVLoadMusicMode(val value: Int) {
 }
 
 /**
- * 加载音乐的状态
- * @param COMPLETED 加载完成, 进度为100
- * @param FAILED 加载失败
- * @param INPROGRESS 加载中
+ * Music loading status
+ * @param COMPLETED Loading completed, progress is 100.
+ * @param FAILED Loading failed.
+ * @param INPROGRESS Loading in progress.
  */
 enum class MusicLoadStatus(val value: Int) {
     COMPLETED(0),
@@ -104,10 +104,10 @@ enum class MusicLoadStatus(val value: Int) {
 }
 
 /**
- * 音乐音轨模式
- * @param YUAN_CHANG 原唱：主唱开启原唱后，自己听到原唱，听众听到原唱
- * @param BAN_ZOU 伴奏：主唱开启伴奏后，自己听到伴奏，听众听到伴奏
- * @param DAO_CHANG 导唱：主唱开启导唱后，自己听到原唱，听众听到伴奏
+ * Music track mode
+ * @param YUAN_CHANG Original: When the lead singer activates the original track, they hear the original track, and the audience hears the original track.
+ * @param BAN_ZOU Accompaniment: When the lead singer activates the accompaniment, they hear the accompaniment, and the audience hears the accompaniment.
+ * @param DAO_CHANG Guide: When the lead singer activates the guide track, they hear the original track, and the audience hears the accompaniment.
  */
 enum class AudioTrackMode(val value: Int) {
     YUAN_CHANG(0),
@@ -116,11 +116,11 @@ enum class AudioTrackMode(val value: Int) {
 }
 
 /**
- * 大合唱中演唱者互相收听对方音频流的选路策略
- * @param RANDOM 随机选取几条流
- * @param BY_DELAY 根据延迟选择最低的几条流
- * @param TOP_N 根据音强选流
- * @param BY_DELAY_AND_TOP_N 同时开始延迟选路和音强选流
+ * Audio stream selection strategy for singers to listen to each other's audio streams in a large chorus
+ * @param RANDOM Randomly select a few streams.
+ * @param BY_DELAY Select the streams with the lowest delay.
+ * @param TOP_N Select streams based on audio strength.
+ * @param BY_DELAY_AND_TOP_N Simultaneously start delay-based selection and audio strength selection.
  */
 enum class GiantChorusRouteSelectionType(val value: Int) {
     RANDOM(0),
@@ -130,9 +130,9 @@ enum class GiantChorusRouteSelectionType(val value: Int) {
 }
 
 /**
- * 大合唱中演唱者互相收听对方音频流的选路配置
- * @param type 选路策略
- * @param streamNum 最大选取的流个数（推荐6）
+ * Configuration for singers to listen to each other's audio streams in a large chorus
+ * @param type Selection strategy
+ * @param streamNum Maximum number of streams to select (recommended: 6)
  */
 data class GiantChorusRouteSelectionConfig constructor(
     val type: GiantChorusRouteSelectionType,
@@ -140,94 +140,110 @@ data class GiantChorusRouteSelectionConfig constructor(
 )
 
 /**
- * 歌词组件接口，您setLrcView传入的歌词组件需要继承此接口类，并实现以下几个方法
+ * Lyric component interface. The lyric component you pass to setLrcView must inherit from this interface and implement the following methods.
  */
 interface ILrcView {
     /**
-     * ktvApi内部更新音高pitch时会主动调用此方法将pitch值传给你的歌词组件
-     * @param pitch 音高值
+     * The ktvApi will actively call this method to pass the pitch value to your lyric component when updating the pitch internally.
+     * @param pitch The pitch value
      */
     fun onUpdatePitch(pitch: Float?)
 
     /**
-     * ktvApi内部更新音乐播放进度progress时会主动调用此方法将进度值progress传给你的歌词组件，50ms回调一次
-     * @param progress 歌曲播放的真实进度 20ms回调一次
+     * The ktvApi will actively call this method to pass the progress value to your lyric component when updating the music playback progress internally, with a callback every 50ms.
+     * @param progress The actual playback progress of the song, with a callback every 20ms.
      */
     fun onUpdateProgress(progress: Long?)
 
     /**
-     * ktvApi获取到歌词地址时会主动调用此方法将歌词地址url传给你的歌词组件，您需要在这个回调内完成歌词的下载
-     * @param url 歌词地址
+     * The ktvApi will actively call this method to pass the lyric address (URL) to your lyric component when it retrieves the lyric address. You need to complete the lyric download within this callback.
+     * @param url The lyric address.
      */
     fun onDownloadLrcData(url: String?)
 
     /**
-     * ktvApi获取到抢唱切片歌曲副歌片段时间时，会调用此方法回调给歌词组件
-     * @param highStartTime 副歌片段起始时间
-     * @param highEndTime 副歌片段终止时间
+     * The ktvApi will call this method to callback the chorus segment start and end time to the lyric component when
+     * it retrieves the singbattle
+     * @param highStartTime The start time of the chorus segment.
+     * @param highEndTime The end time of the chorus segment.
      */
     fun onHighPartTime(highStartTime: Long, highEndTime: Long)
 }
 
 /**
- * 音乐加载状态接口
+ * Music loading status interface
  */
 interface IMusicLoadStateListener {
     /**
-     * 音乐加载成功
-     * @param songCode 歌曲编码，和loadMusic传入的songCode一致
-     * @param lyricUrl 歌词地址
+     * Music loading succeeded
+     * @param songCode The song code, which is consistent with the songCode passed in loadMusic
+     * @param lyricUrl The URL of the lyrics
      */
     fun onMusicLoadSuccess(songCode: Long, lyricUrl: String)
 
     /**
-     * 音乐加载失败
-     * @param songCode 加载失败的歌曲编码
-     * @param reason 歌曲加载失败的原因
+     * Music loading failed
+     * @param songCode The song code of the failed loading
+     * @param reason The reason for the music loading failure
      */
     fun onMusicLoadFail(songCode: Long, reason: KTVLoadMusicFailReason)
 
     /**
-     * 音乐加载进度
-     * @param songCode 歌曲编码
-     * @param percent 歌曲加载进度
-     * @param status 歌曲加载的状态
-     * @param msg 相关信息
-     * @param lyricUrl 歌词地址
+     * Music loading progress
+     * @param songCode The song code
+     * @param percent The loading progress of the song
+     * @param status The loading status of the song
+     * @param msg Related information
+     * @param lyricUrl The URL of the lyrics
      */
     fun onMusicLoadProgress(songCode: Long, percent: Int, status: MusicLoadStatus, msg: String?, lyricUrl: String?)
 }
 
 /**
- * 切换演唱角色状态接口
+ * Interface for switching singing role status
  */
 interface ISwitchRoleStateListener {
     /**
-     * 切换演唱角色成功
+     * Successfully switched singing role
      */
     fun onSwitchRoleSuccess()
 
     /**
-     * 切换演唱角色失败
-     * @param reason 切换演唱角色失败的原因
+     * Failed to switch singing role
+     * @param reason The reason for the failure to switch singing role
      */
     fun onSwitchRoleFail(reason: SwitchRoleFailReason)
 }
 
+/**
+ * Interface On join chorus state listener
+ *
+ * @constructor Create empty On join chorus state listener
+ */
 interface OnJoinChorusStateListener {
+    /**
+     * Successfully join the chorus
+     *
+     */
     fun onJoinChorusSuccess()
+
+    /**
+     * Failed to join the chorus
+     *
+     * @param reason
+     */
     fun onJoinChorusFail(reason: KTVJoinChorusFailReason)
 }
 
 /**
- * KTVApi事件回调
+ * KTVApi Event Callbacks
  */
 abstract class IKTVApiEventHandler {
     /**
-     * 播放器状态变化
-     * @param state MediaPlayer 播放状态
-     * @param reason MediaPlayer Error 信息
-     * @param isLocal 本地还是主唱端的 Player 信息
+     * Player state change
+     * @param state MediaPlayer playback state
+     * @param reason MediaPlayer error information
+     * @param isLocal Whether the Player information is from local or the main singer
      */
     open fun onMusicPlayerStateChanged(
         state: Constants.MediaPlayerState, reason: Constants.MediaPlayerReason, isLocal: Boolean
@@ -235,45 +251,47 @@ abstract class IKTVApiEventHandler {
     }
 
     /**
-     * ktvApi内部角色切换
-     * @param oldRole 老角色
-     * @param newRole 新角色
+     * Internal role switching in ktvApi
+     * @param oldRole Old role
+     * @param newRole New role
      */
     open fun onSingerRoleChanged(oldRole: KTVSingRole, newRole: KTVSingRole) {}
 
     /**
-     * rtm或合唱频道token将要过期回调，需要renew这个token
+     * Callback indicating that the rtm or chorus channel token is about to expire; needs to renew this token
      */
     open fun onTokenPrivilegeWillExpire() {}
 
     /**
-     * 合唱频道人声音量提示
-     * @param speakers 不同用户音量信息
-     * @param totalVolume 总音量
+     * Audio volume indication in the chorus channel
+     * @param speakers Information on the volume of different users
+     * @param totalVolume Total volume
      */
     open fun onChorusChannelAudioVolumeIndication(
         speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,
-        totalVolume: Int) {}
+        totalVolume: Int
+    ) {
+    }
 
     /**
-     * 播放进度回调
-     * @param position_ms 音乐播放的进度
+     * Playback progress callback
+     * @param position_ms Music playback progress
      */
     open fun onMusicPlayerPositionChanged(position_ms: Long, timestamp_ms: Long) {}
 }
 
 /**
- * 初始化KTVApi的配置
- * @param appId 用来初始化 Mcc Engine
- * @param rtmToken 创建 Mcc Engine 需要
- * @param engine RTC engine 对象
- * @param channelName 频道号，子频道名以基于主频道名 + "_ex" 固定规则生成频道号
- * @param localUid 创建 Mcc engine 和 加入子频道需要用到
- * @param chorusChannelName 子频道名 加入子频道需要用到
- * @param chorusChannelToken 子频道token 加入子频道需要用到
- * @param maxCacheSize 最大缓存歌曲数
- * @param type KTV场景
- * @param musicType 音乐类型
+ * Initialize KTVApi configuration
+ * @param appId Used to initialize the Mcc Engine
+ * @param rtmToken Required to create the Mcc Engine
+ * @param engine RTC engine object
+ * @param channelName Channel number; the sub-channel name is generated based on the main channel name + "_ex" fixed rule
+ * @param localUid Used for creating the Mcc engine and joining the sub-channel
+ * @param chorusChannelName Sub-channel name, required for joining the sub-channel
+ * @param chorusChannelToken Sub-channel token, required for joining the sub-channel
+ * @param maxCacheSize Maximum number of cached songs
+ * @param type KTV scene type
+ * @param musicType Music type
  */
 data class KTVApiConfig constructor(
     val appId: String,
@@ -289,20 +307,19 @@ data class KTVApiConfig constructor(
 )
 
 /**
- * 初始化KTVGiantChorusApi的配置
- * @param appId 用来初始化 Mcc Engine
- * @param rtmToken 创建 Mcc Engine 需要
- * @param engine RTC engine 对象
- * @param localUid 创建 Mcc engine 和 加入子频道需要用到
- * @param audienceChannelName 观众频道名 加入听众频道需要用到
- * @param chorusChannelToken 观众频道token 加入听众频道需要用到
- * @param chorusChannelName 演唱频道名 加入演唱频道需要用到
- * @param chorusChannelToken 演唱频道token 加入演唱频道需要用到
- * @param musicStreamUid 音乐Uid 主唱推入频道
- * @param musicStreamToken 音乐流token
- * @param maxCacheSize 最大缓存歌曲数
- * @param musicType 音乐类型
- * @param routeSelectionConfig 选路配置
+ * Initialize KTVGiantChorusApi configuration
+ * @param appId Used to initialize the Mcc Engine
+ * @param rtmToken Required to create the Mcc Engine
+ * @param engine RTC engine object
+ * @param localUid Used for creating the Mcc engine and joining the sub-channel
+ * @param audienceChannelName Audience channel name, required for joining the audience channel
+ * @param chorusChannelToken Audience channel token, required for joining the audience channel
+ * @param chorusChannelName Singing channel name, required for joining the singing channel
+ * @param chorusChannelToken Singing channel token, required for joining the singing channel
+ * @param musicStreamUid Music UID pushed by the lead singer into the channel
+ * @param musicStreamToken Music stream token
+ * @param maxCacheSize Maximum number of cached songs
+ * @param musicType Music type
  */
 data class KTVGiantChorusApiConfig constructor(
     val appId: String,
@@ -320,11 +337,11 @@ data class KTVGiantChorusApiConfig constructor(
 )
 
 /**
- * 加载歌曲的配置，不允许在一首歌没有load完成前（成功/失败均算完成）进行下一首歌的加载
- * @param songIdentifier 歌曲 id，通常由业务方给每首歌设置一个不同的SongId用于区分
- * @param mainSingerUid 主唱的 Uid，如果是伴唱，伴唱需要根据这个信息 mute 主频道主唱的声音
- * @param mode 歌曲加载的模式，默认为音乐和歌词均加载
- * @param needPrelude 播放切片歌曲情况下，是否播放
+ * Configuration for loading songs. Loading of the next song is not allowed until the current song has completed loading (both success and failure count as completion).
+ * @param songIdentifier Song ID, usually set by the business side to distinguish each song with a different SongId.
+ * @param mainSingerUid UID of the lead singer. If it's a backing singer, they need to mute the main singer's sound in the main channel based on this information.
+ * @param mode The mode for loading the song, defaulting to loading both music and lyrics.
+ * @param needPrelude Indicates whether to play in the case of a sliced song.
  */
 data class KTVLoadMusicConfiguration(
     val songIdentifier: String,
@@ -334,64 +351,71 @@ data class KTVLoadMusicConfiguration(
 )
 
 /**
- * 创建普通合唱KTVApi实例
+ * Creates an instance of the regular chorus KTVApi.
  */
 fun createKTVApi(config: KTVApiConfig): KTVApi = KTVApiImpl(config)
 
 /**
- * 创建大合唱KTVApi实例
+ * Creates an instance of the giant chorus KTVApi.
  */
 fun createKTVGiantChorusApi(config: KTVGiantChorusApiConfig): KTVApi = KTVGiantChorusApiImpl(config)
 
 /**
- * KTVApi 接口
+ * KTVApi Interface
  */
 interface KTVApi {
 
     companion object {
-        // 听到远端的音量
+        // Volume of the remote audio
         var remoteVolume: Int = 30
-        // 本地mpk播放音量
+
+        // Volume of the local MPK playback
         var mpkPlayoutVolume: Int = 50
-        // mpk发布音量
+
+        // Volume of the MPK publishing
         var mpkPublishVolume: Int = 50
 
-        // 是否使用音频自采集
+        // Whether to use custom audio source
         var useCustomAudioSource = false
-        // 调试使用，会输出更多的日志
+
+        // Debug mode, will output more logs
         var debugMode = false
-        // 内部测试使用，无需关注
+
+        // For internal testing purposes, no need to pay attention to this
         var mccDomain = ""
-        // 大合唱的选路策略
+
+        // Route selection strategy for giant chorus
         var routeSelectionConfig = GiantChorusRouteSelectionConfig(GiantChorusRouteSelectionType.BY_DELAY, 6)
     }
 
     /**
-     * 更新ktvapi内部使用的streamId，每次加入频道需要更新内部streamId
+     * Updates the internal streamId used by KTVApi; this needs to be updated each time joining a channel.
      */
     fun renewInnerDataStreamId()
 
     /**
-     * 订阅KTVApi事件, 支持多注册
-     * @param ktvApiEventHandler KTVApi事件接口实例
+     * Subscribes to KTVApi events, allowing multiple registrations.
+     * @param ktvApiEventHandler An instance of the KTVApi event interface.
      */
     fun addEventHandler(ktvApiEventHandler: IKTVApiEventHandler)
 
     /**
-     * 取消订阅KTVApi事件
-     * @param ktvApiEventHandler KTVApi事件接口实例
+     * Unsubscribes from KTVApi events.
+     * @param ktvApiEventHandler An instance of the KTVApi event interface.
      */
     fun removeEventHandler(ktvApiEventHandler: IKTVApiEventHandler)
 
     /**
-     * 清空内部变量/缓存，取消在initWithRtcEngine时的监听，以及取消网络请求等
+     * Clears internal variables/caches, cancels listeners set during initWithRtcEngine,
+     * and cancels network requests, etc.
      */
     fun release()
 
     /**
-     * 收到 IKTVApiEventHandler.onTokenPrivilegeWillExpire 回调时需要主动调用方法更新Token
-     * @param rtmToken musicContentCenter模块需要的rtm token
-     * @param chorusChannelRtcToken 合唱需要的频道rtc token
+     * When the IKTVApiEventHandler.onTokenPrivilegeWillExpire callback is received,
+     * this method needs to be called to actively update the token.
+     * @param rtmToken The RTM token required by the musicContentCenter module.
+     * @param chorusChannelRtcToken The RTC token required for the chorus channel.
      */
     fun renewToken(
         rtmToken: String,
@@ -399,24 +423,24 @@ interface KTVApi {
     )
 
     /**
-     * 获取歌曲榜单
-     * @param onMusicChartResultListener 榜单列表回调
+     * Fetches the music chart.
+     * @param onMusicChartResultListener Callback for the chart list results.
      */
     fun fetchMusicCharts(
         onMusicChartResultListener: (
             requestId: String?,
-            status: Int,        // status=2 时token过期
+            status: Int,        // status=2 token expired
             list: Array<out MusicChartInfo>?
         ) -> Unit
     )
 
     /**
-     * 根据歌曲榜单类型获取歌单
-     * @param musicChartId 榜单id
-     * @param page 歌曲列表回调
-     * @param pageSize 歌曲列表回调
-     * @param jsonOption 自定义过滤模式
-     * @param onMusicCollectionResultListener 歌曲列表回调
+     * Retrieves the song list based on the type of music chart.
+     * @param musicChartId The ID of the music chart.
+     * @param page The page number for the song list callback.
+     * @param pageSize The size of the page for the song list callback.
+     * @param jsonOption Custom filtering options.
+     * @param onMusicCollectionResultListener Callback for the song list results.
      */
     fun searchMusicByMusicChartId(
         musicChartId: Int,
@@ -425,7 +449,7 @@ interface KTVApi {
         jsonOption: String,
         onMusicCollectionResultListener: (
             requestId: String?,
-            status: Int,         // status=2 时token过期
+            status: Int,         // status=2 token expired
             page: Int,
             pageSize: Int,
             total: Int,
@@ -434,11 +458,12 @@ interface KTVApi {
     )
 
     /**
-     * 根据关键字搜索歌曲
-     * @param keyword 关键字
-     * @param page 歌曲列表回调
-     * @param jsonOption 自定义过滤模式
-     * @param onMusicCollectionResultListener 歌曲列表回调
+     * Searches for songs based on a keyword.
+     * @param keyword The keyword to search for.
+     * @param page The page number for the song list callback.
+     * @param pageSize The size of the page for the song list callback.
+     * @param jsonOption Custom filtering options.
+     * @param onMusicCollectionResultListener Callback for the song list results.
      */
     fun searchMusicByKeyword(
         keyword: String,
@@ -446,7 +471,7 @@ interface KTVApi {
         jsonOption: String,
         onMusicCollectionResultListener: (
             requestId: String?,
-            status: Int,         // status=2 时token过期
+            status: Int,         // status=2 token expired
             page: Int,
             pageSize: Int,
             total: Int,
@@ -455,18 +480,20 @@ interface KTVApi {
     )
 
     /**
-     * 异步加载歌曲，同时只能为一首歌loadSong，loadSong结果会通过回调通知业务层
-     * @param songCode 歌曲唯一编码
-     * @param config 加载歌曲配置
-     * @param musicLoadStateListener 加载歌曲结果回调
+     * Asynchronously loads a song; only one song can be loaded at a time.
+     * The result of loadSong will be notified to the business layer via a callback.
+     * @param songCode The unique code for the song.
+     * @param config The configuration for loading the song.
+     * @param musicLoadStateListener The callback for the song loading result.
      *
-     * 推荐调用：
-     * 歌曲开始时：
-     * 主唱 loadMusic(KTVLoadMusicConfiguration(mode=LOAD_MUSIC_AND_LRC, songCode, mainSingerUid)) switchSingerRole(SoloSinger)
-     * 观众 loadMusic(KTVLoadMusicConfiguration(mode=LOAD_LRC_ONLY, songCode, mainSingerUid))
-     * 加入合唱时：
-     * 准备加入合唱者：loadMusic(KTVLoadMusicConfiguration(mode=LOAD_MUSIC_ONLY, songCode, mainSingerUid))
-     * loadMusic成功后switchSingerRole(CoSinger)
+     * Recommended usage:
+     * At the start of the song:
+     * The main singer should call loadMusic(KTVLoadMusicConfiguration(mode=LOAD_MUSIC_AND_LRC, songCode, mainSingerUid))
+     * and then switchSingerRole(SoloSinger).
+     * Audience should call loadMusic(KTVLoadMusicConfiguration(mode=LOAD_LRC_ONLY, songCode, mainSingerUid)).
+     * When joining a chorus:
+     * The singer preparing to join the chorus should call loadMusic(KTVLoadMusicConfiguration(mode=LOAD_MUSIC_ONLY, songCode, mainSingerUid)).
+     * After loadMusic is successful, switchSingerRole(CoSinger).
      */
     fun loadMusic(
         songCode: Long,
@@ -475,23 +502,29 @@ interface KTVApi {
     )
 
     /**
-     * 取消加载歌曲，会打断加载歌曲的进程并移除歌曲缓存
-     * @param songCode 歌曲唯一编码
+     * Cancels the loading of a song. This will interrupt the loading process
+     * and remove the song from the cache.
+     * @param songCode The unique code for the song.
      */
     fun removeMusic(songCode: Long)
 
     /**
-     * 加载歌曲，同时只能为一首歌loadSong，同步调用， 一般使用此loadSong是歌曲已经preload成功（url为本地文件地址）
-     * @param url 歌曲地址
-     * @param config 加载歌曲配置
+     * Loads a song synchronously. Only one song can be loaded at a time.
+     * This method is typically used when the song has been preloaded
+     * successfully (the URL is a local file path).
      *
-     * 推荐调用：
-     * 歌曲开始时：
-     * 主唱 loadMusic(KTVLoadMusicConfiguration(mode=LOAD_MUSIC_AND_LRC, url, mainSingerUid)) switchSingerRole(SoloSinger)
-     * 观众 loadMusic(KTVLoadMusicConfiguration(mode=LOAD_LRC_ONLY, url, mainSingerUid))
-     * 加入合唱时：
-     * 准备加入合唱者：loadMusic(KTVLoadMusicConfiguration(mode=LOAD_MUSIC_ONLY, url, mainSingerUid))
-     * loadMusic成功后switchSingerRole(CoSinger)
+     * Recommended usage:
+     * When the song starts:
+     * - Main singer: loadMusic(KTVLoadMusicConfiguration(mode=LOAD_MUSIC_AND_LRC, url, mainSingerUid))
+     *   then switchSingerRole(SoloSinger).
+     * - Audience: loadMusic(KTVLoadMusicConfiguration(mode=LOAD_LRC_ONLY, url, mainSingerUid)).
+     *
+     * When joining a chorus:
+     * - For those preparing to join: loadMusic(KTVLoadMusicConfiguration(mode=LOAD_MUSIC_ONLY, url, mainSingerUid)).
+     * - After loadMusic is successful, switchSingerRole(CoSinger).
+     *
+     * @param url The address of the song.
+     * @param config Configuration for loading the song.
      */
     fun loadMusic(
         url: String,
@@ -499,19 +532,23 @@ interface KTVApi {
     )
 
     /**
-     * 加载歌曲，同时只能为一首歌loadSong，同步调用， 一般使用此loadSong是歌曲已经preload成功（url为本地文件地址）
-     * @param config 加载歌曲配置，默认播放url1
-     * @param url1 歌曲地址1
-     * @param url2 歌曲地址2
+     * Loads a song synchronously. Only one song can be loaded at a time.
+     * This method is typically used when the song has been preloaded
+     * successfully (the URLs are local file paths).
      *
+     * Recommended usage:
+     * When the song starts:
+     * - Main singer: loadMusic(KTVLoadMusicConfiguration(mode=LOAD_MUSIC_AND_LRC, url1, mainSingerUid))
+     *   then switchSingerRole(SoloSinger).
+     * - Audience: loadMusic(KTVLoadMusicConfiguration(mode=LOAD_LRC_ONLY, url1, mainSingerUid)).
      *
-     * 推荐调用：
-     * 歌曲开始时：
-     * 主唱 loadMusic(KTVLoadMusicConfiguration(mode=LOAD_MUSIC_AND_LRC, url, mainSingerUid)) switchSingerRole(SoloSinger)
-     * 观众 loadMusic(KTVLoadMusicConfiguration(mode=LOAD_LRC_ONLY, url, mainSingerUid))
-     * 加入合唱时：
-     * 准备加入合唱者：loadMusic(KTVLoadMusicConfiguration(mode=LOAD_MUSIC_ONLY, url, mainSingerUid))
-     * loadMusic成功后switchSingerRole(CoSinger)
+     * When joining a chorus:
+     * - For those preparing to join: loadMusic(KTVLoadMusicConfiguration(mode=LOAD_MUSIC_ONLY, url1, mainSingerUid)).
+     * - After loadMusic is successful, switchSingerRole(CoSinger).
+     *
+     * @param config Configuration for loading the song; defaults to playing url1.
+     * @param url1 The address of the first song.
+     * @param url2 The address of the second song.
      */
     fun load2Music(
         url1: String,
@@ -520,26 +557,30 @@ interface KTVApi {
     )
 
     /**
-     * 多文件切换播放资源
-     * @param url 需要切换的播放资源，需要为 load2Music 中 参数 url1，url2 中的一个
-     * @param syncPts 是否同步切换前后的起始播放位置: true 同步，false 不同步，从 0 开始
+     * Switches the playback resource between multiple files.
+     * The provided URL must be one of the parameters (url1 or url2) used in load2Music.
+     *
+     * @param url The playback resource to switch to, which must be either url1 or url2 from load2Music.
+     * @param syncPts Whether to synchronize the start position between the previous and new playback resources:
+     *                true for synchronization, false for no synchronization (starts from 0).
      */
     fun switchPlaySrc(url: String, syncPts: Boolean)
 
     /**
-     * 异步切换演唱身份，结果会通过回调通知业务层
-     * @param newRole 新演唱身份
-     * @param switchRoleStateListener 切换演唱身份结果
+     * Asynchronously switches the singing role, with the result notified to the business layer via a callback.
      *
-     * 允许的调用路径：
-     * 1、Audience -》SoloSinger 自己点的歌播放时
-     * 2、Audience -》LeadSinger 自己点的歌播放时， 且歌曲开始时就有合唱者加入
-     * 3、SoloSinger -》Audience 独唱结束时
-     * 4、Audience -》CoSinger   加入合唱时
-     * 5、CoSinger -》Audience   退出合唱时
-     * 6、SoloSinger -》LeadSinger 当前第一个合唱者加入合唱时，主唱由独唱切换成领唱
-     * 7、LeadSinger -》SoloSinger 最后一个合唱者退出合唱时，主唱由领唱切换成独唱
-     * 8、LeadSinger -》Audience 以领唱的身份结束歌曲时
+     * @param newRole The new singing role to switch to.
+     * @param switchRoleStateListener The listener to handle the result of the role switch.
+     *
+     * Allowed calling paths:
+     * 1. Audience -> SoloSinger when playing a song they selected.
+     * 2. Audience -> LeadSinger when playing a song they selected, and there are already singers joined when the song starts.
+     * 3. SoloSinger -> Audience when the solo performance ends.
+     * 4. Audience -> CoSinger when joining a duet.
+     * 5. CoSinger -> Audience when exiting the duet.
+     * 6. SoloSinger -> LeadSinger when the first duet singer joins, switching the main singer from solo to lead.
+     * 7. LeadSinger -> SoloSinger when the last duet singer exits, switching the main singer from lead to solo.
+     * 8. LeadSinger -> Audience when ending the song as the lead singer.
      */
     fun switchSingerRole(
         newRole: KTVSingRole,
@@ -547,74 +588,91 @@ interface KTVApi {
     )
 
     /**
-     * 播放歌曲
-     * @param songCode 歌曲唯一编码
-     * @param startPos 开始播放的位置
+     * Starts playing a song based on its unique code.
+     *
+     * @param songCode The unique identifier for the song.
+     * @param startPos The position (in milliseconds) to start playback.
      */
     fun startSing(songCode: Long, startPos: Long)
 
     /**
-     * 播放歌曲
-     * @param url 歌曲地址
-     * @param startPos 开始播放的位置
+     * Starts playing a song based on its URL.
+     *
+     * @param url The address of the song.
+     * @param startPos The position (in milliseconds) to start playback.
      */
     fun startSing(url: String, startPos: Long)
 
     /**
-     * 恢复播放
+     * Resumes playback of the currently playing song.
      */
     fun resumeSing()
 
     /**
-     * 暂停播放
+     * Pauses the playback of the current song.
      */
     fun pauseSing()
 
     /**
-     * 调整进度
+     * Adjusts the playback position to the specified time.
+     *
+     * @param time The target position (in milliseconds) to seek to.
      */
     fun seekSing(time: Long)
 
     /**
-     * 设置歌词组件，在任意时机设置都可以生效
-     * @param view 传入的歌词组件view， 需要继承ILrcView并实现ILrcView的三个接口
+     * Sets the lyrics component, which can be updated at any time.
+     *
+     * @param view The lyrics component view that needs to implement ILrcView and its three interfaces.
      */
     fun setLrcView(view: ILrcView)
 
     /**
-     * 开关麦
-     * @param mute true 关麦 false 开麦
+     * Toggles the microphone on or off.
+     *
+     * @param mute true to mute the microphone, false to unmute.
      */
     fun muteMic(mute: Boolean)
 
     /**
-     * 设置当前音频播放delay， 适用于音频自采集的情况
-     * @param audioPlayoutDelay 音频帧处理和播放的时间差
+     * Sets the current audio playback delay, applicable for scenarios with custom audio capture.
+     *
+     * @param audioPlayoutDelay The time difference between audio frame processing and playback.
      */
     fun setAudioPlayoutDelay(audioPlayoutDelay: Int)
 
     /**
-     * 获取mpk实例
+     * Sets the current audio playback delay, applicable for self-captured audio.
+     *
+     * @param audioPlayoutDelay The time difference between audio frame processing and playback (in milliseconds).
      */
-    fun getMediaPlayer() : IMediaPlayer
+    fun getMediaPlayer(): IMediaPlayer
 
     /**
-     * 获取mcc实例
+     * Retrieves the instance of the media player.
+     *
+     * @return An instance of IMediaPlayer.
      */
-    fun getMusicContentCenter() : IAgoraMusicContentCenter
+    fun getMusicContentCenter(): IAgoraMusicContentCenter
 
     /**
-     * 切换音轨, 原唱/伴奏/导唱
+     * Switches the audio track between the original singer, accompaniment, or guide vocals.
+     *
+     * @param mode The mode to switch to, defined by AudioTrackMode.
      */
     fun switchAudioTrack(mode: AudioTrackMode)
 
     /**
-     * 开启关闭专业模式，默认关
+     * Enables or disables professional mode. The default setting is off.
+     *
+     * @param enable true to enable professional mode, false to disable.
      */
     fun enableProfessionalStreamerMode(enable: Boolean)
 
     /**
-     * 开启 Multipathing, 默认开
+     * Enables or disables multipathing. The default setting is enabled.
+     *
+     * @param enable true to enable multipathing, false to disable.
      */
     fun enableMulitpathing(enable: Boolean)
 }

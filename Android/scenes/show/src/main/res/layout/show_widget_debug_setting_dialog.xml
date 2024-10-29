@@ -27,7 +27,7 @@
             android:textSize="16sp"
             android:textColor="@color/black"
             android:layout_gravity="center"
-            android:text="开发者模式设置"/>
+            android:text="@string/show_developer_mode_settings"/>
 
         <TextView
             android:id="@+id/tvSure"
@@ -37,7 +37,7 @@
             android:textColor="@color/blue_9F"
             android:layout_gravity="end|center_vertical"
             android:padding="12dp"
-            android:text="确定"/>
+            android:text="@string/confirm"/>
 
     </FrameLayout>
 
@@ -66,11 +66,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="采集帧率" />
+                    android:text="Capture Frame Rate" />
 
                 <EditText
                     android:id="@+id/etFpsCapture"
@@ -118,11 +118,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="采集分辨率" />
+                    android:text="Capture Resolution" />
 
                 <EditText
                     android:id="@+id/etResolutionWidthCapture"
@@ -185,11 +185,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="编码帧率" />
+                    android:text="Encoding Frame Rate" />
 
                 <EditText
                     android:id="@+id/etFps"
@@ -237,11 +237,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="编码分辨率" />
+                    android:text="Encoding Resolution" />
 
                 <EditText
                     android:id="@+id/etResolutionWidth"
@@ -304,11 +304,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="码率" />
+                    android:text="Bitrate" />
 
                 <EditText
                     android:id="@+id/etBitrate"
@@ -356,7 +356,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -390,11 +390,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="人脸对焦" />
+                    android:text="Face Focus" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/focusFaceSwitchCompat"
@@ -424,11 +424,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="曝光区域" />
+                    android:text="Exposure Area" />
 
                 <EditText
                     android:id="@+id/etExposureX"
@@ -489,11 +489,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="相机切换" />
+                    android:text="Camera Switch" />
 
                 <EditText
                     android:id="@+id/etSwitchCamera"
@@ -528,11 +528,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="颜色空间" />
+                    android:text="Color Space" />
 
                 <EditText
                     android:id="@+id/etvideoFullrangeExt"
@@ -593,11 +593,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="硬编/软编" />
+                    android:text="Hardware/Software Encoding" />
 
                 <Spinner
                     android:id="@+id/encoderRadioBox"
@@ -626,11 +626,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="编码器" />
+                    android:text="Encoder" />
 
                 <Spinner
                     android:id="@+id/codecRadioBox"
@@ -659,11 +659,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="镜像" />
+                    android:text="Mirror" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/mirrorSwitchCompat"
@@ -693,11 +693,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="渲染模式" />
+                    android:text="Rendering Mode" />
 
                 <Spinner
                     android:id="@+id/fixModeRadioBox"
@@ -726,11 +726,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="色彩增强" />
+                    android:text="Color Enhancement" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/colorSwitchCompat"
@@ -760,11 +760,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="暗光增强" />
+                    android:text="Low Light Enhancement" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/darkSwitchCompat"
@@ -794,11 +794,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#303553"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="视频降噪" />
+                    android:text="Video Denoising" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/noiseSwitchCompat"

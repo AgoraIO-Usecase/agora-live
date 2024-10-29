@@ -377,7 +377,7 @@ class VoiceSyncManagerServiceImp(
                         userAvatar = mCurrentUser.userAvatar
                     }
                     this.createTime = createAt
-                    this.customPayload[VoiceParameters.ROOM_USER_COUNT] = 2L // 两个机器人
+                    this.customPayload[VoiceParameters.ROOM_USER_COUNT] = 2L // Two robots.
                     this.customPayload[VoiceParameters.ROOM_SOUND_EFFECT] = inputModel.soundEffect
                     this.customPayload[VoiceParameters.PASSWORD] = inputModel.password
                     this.customPayload[VoiceParameters.IS_PRIVATE] = inputModel.password.isNotEmpty()

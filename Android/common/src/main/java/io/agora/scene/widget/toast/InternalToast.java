@@ -47,9 +47,9 @@ public final class InternalToast {
     private static Application mApp;
 
     /**
-     * 初始化吐司工具类.
+     * init
      *
-     * @param app 应用
+     * @param app the app
      */
     public static void init(@NonNull final Application app) {
         if (mApp == null) {
@@ -67,15 +67,15 @@ public final class InternalToast {
     }
 
     /**
-     * 私有构造
+     * private constructor.
      */
     private InternalToast() {
-        //避免初始化
+        //avoid initialization
         throw new UnsupportedOperationException("u can't instantiate me...");
     }
 
     /**
-     * 检查上下文不能为空，必须先进性初始化操作.
+     * Check that the context cannot be null; initialization must be performed first.
      */
     private static void checkContext() {
         if (mApp == null) {

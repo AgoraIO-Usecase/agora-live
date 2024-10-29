@@ -14,7 +14,7 @@ import io.agora.scene.base.utils.UiUtil;
 import io.agora.scene.ktv.databinding.KtvDialogCommonBinding;
 
 /**
- * 默认弹框
+ * default dialog
  */
 public class KtvCommonDialog extends BaseDialog<KtvDialogCommonBinding> {
     public KtvCommonDialog(@NonNull Context context) {

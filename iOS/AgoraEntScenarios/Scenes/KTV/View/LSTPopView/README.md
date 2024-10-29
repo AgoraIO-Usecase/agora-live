@@ -1,60 +1,60 @@
-# LSTPopView iOS万能弹窗
+# LSTPopView iOS universal pop-up window
 
 [![Platform](https://img.shields.io/badge/platform-iOS-red.svg)](https://developer.apple.com/iphone/index.action) [![Language](http://img.shields.io/badge/language-OC-yellow.svg?style=flat )](https://en.wikipedia.org/wiki/Objective-C) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://mit-license.org) [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/LSTPopView.svg)](https://img.shields.io/cocoapods/v/LSTPopView.svg)
 
-### LSTPopView 万能弹窗,功能强大,易于拓展,性能优化和内存控制让其运行更加的流畅和稳健, LSTPopView的出现,可以让我们更专注弹窗页面的布局. 省心省力 ! 提高开发效率 !
+### LSTPopView is an all-purpose pop-up window, powerful and easy to expand. Performance optimization and memory control make its operation more smooth and stable. The appearance of LSTPopView can make us focus more on the layout of pop-up pages. Save worry and effort! Improve development efficiency!
 
-## 前言
-- 考虑到笔者的精力问题,遇到问题请先查看 API、效仿Demo、阅读README、搜索 Issues。如果是BUG 或 Feature,最好是提Issue
-- 联系方式: LoSenTrad@163.com, QQ群:1045568246, 微信:a_LSTKit
-- 开发环境: Xcode12.3, iOS13.5, iPhone XS Max
+## Foreword
+- Considering the author's energy problem, please check the API, imitate Demo, read README, and search Issues first. If it's BUG or Feature, it's better to mention Issue.
+- Contact information: LoSenTrad@163.com, QQ group:1045568246, WeChat:a_LSTKit
+- Development environment: Xcode12.3, iOS13.5, iPhone XS Max
 
-## 博客地址
+## Blog address
 - github: [https://github.com/LoSenTrad/LSTPopView](https://github.com/LoSenTrad/LSTPopView)
 - CSDN: [https://blog.csdn.net/u012400600/article/details/106279654](https://blog.csdn.net/u012400600/article/details/106279654)
-- 简书: [https://www.jianshu.com/p/8023a85dc2a2](https://www.jianshu.com/p/8023a85dc2a2)
+- jianshu: [https://www.jianshu.com/p/8023a85dc2a2](https://www.jianshu.com/p/8023a85dc2a2)
 
-## 目录
-* [特性](#特性)   
-* [版本更新历史](#版本更新历史)  
-* [安装](#安装)  
-* [基本使用](#基本使用)  
-* [使用注意事项](#使用注意事项)  
-* [演示效果](#演示效果)  
-* [作者](#作者)  
-* [版权](#版权)  
+## Catalogue
+* [Characteristics] (#Characteristics)  
+* [Version Update History] (#Version Update History)  
+* [Installation] (#Installation)
+* [Basic Use] (#Basic Use) 
+* [Notes for Use] (#Notes for Use) 
+* [Demonstration Effect] (#Demonstration Effect)
+* [Author] (#Author)  
+* [Copyright] (#Copyright)  
 
-## 特性
-- 提供丰富的api,高度自定义弹窗,简单入手使用
-- 支持弹出动画,消失动画,主动动画等多重动画搭配
-- 支持点击,长按,拖拽,横扫手势交互
-- 支持多弹窗管理:编队,堆叠,优先级等
-- 支持指定弹窗父类,eg: UIWindow,self.view等
-- 安全且内存占用小,弹窗内存自动回收
-- 提供生命周期api,自定义动画控制
-- 自动规避键盘,防止被键盘遮挡
-- 支持定时器,多定时器机制
-- 支持纯代码/xib页面
-- 支持横竖屏切换
-- 支持多代理机制
-- 支持二次封装,比如组件LSTHUD,LSTAlertView等
+## Characteristic
+- Provide rich api, highly customized pop-up windows, easy to use
+- Support pop-up animation, disappearing animation, active animation and other multiple animation matching
+- Support click, long press, drag and drop, sweep gesture interaction
+- Support multi-pop-up window management: formation, stacking, priority, etc.
+- Support specifying pop-up parent classes, eg: UIWindow, self.view, etc.
+- Safe and small memory occupation, pop-up memory is automatically recycled
+- Provide life cycle api, custom animation control
+- Automatically avoid the keyboard to prevent being blocked by the keyboard
+- Support timer, multi-timer mechanism
+- Support pure code/xib page
+- Support horizontal and vertical screen switching
+- Support multi-agent mechanism
+- Support secondary packaging, such as components LSTHUD, LSTAlertView, etc.
 
-## 版本更新历史
-- [点我查看](https://github.com/LoSenTrad/LSTPopView/blob/master/UPDATE_HISTORY.md)
+## Version update history
+- [Click me to check](https://github.com/LoSenTrad/LSTPopView/blob/master/UPDATE_HISTORY.md)
 
-## 安装
-- OC版本安装 
-    - CocoaPods安装: 在podfile文件中添加以下描述,然后 `pod install` 或者 `pod update`
+## Installation
+- OC version installation
+    - CocoaPods installation: Add the following description to the podfile file, and then `pod install` or `pod update`
 
       ```
       pod 'LSTPopView'
       ```  
-    - Carthage安装:(暂时未适配)
-- Swift版本安装
-    - (计划开发中)
+    - Carthage installation: (not adapted for the time being)
+- Swift version installation
+    - (Planned to be developed)
 
-- 手动导入集成
-    - 1.拖动LSTPopView文件下5个文件到项目中
+- Manual import and integration
+    - 1. Drag 5 files under the LSTPopView file to the project
     
      ```objective-c
      LSTPopView.h
@@ -63,116 +63,116 @@
      UIView+LSTPV.m
      LSTPopViewProtocol.h
      ```  
-    - 2.在项目中podfile添加依赖库LSTTimer: https://github.com/LoSenTrad/LSTTimer
+    - 2.Add the dependency library LSTTimer to the podfile in the project: https://github.com/LoSenTrad/LSTTimer
      ```ruby
      pod 'LSTTimer'
      ```  
       
-## 基本使用
-- 代码示例
+## Basic use
+- Code example
 
     ```objective-c
-    //自定义view
+    //Custom view
     LSTPopViewTVView *customView = [[LSTPopViewTVView alloc] initWithFrame:CGRectMake(0, 0, 300,400)];
-   //创建弹窗PopViiew 指定父容器self.view, 不指定默认是app window
+   //Create a pop-up window PopViiew Specify the parent container self.view, do not specify the default is app window
     LSTPopView *popView = [LSTPopView initWithCustomView:customView
                                               parentView:self.view
                                                 popStyle:LSTPopStyleSmoothFromBottom
                                             dismissStyle:LSTDismissStyleSmoothToBottom];
-   //弹窗位置: 居中 贴顶 贴左 贴底 贴右 
+   //Pop-up window position: center, top, left, bottom, right
    popView.hemStyle = LSTHemStyleBottom;
    LSTPopViewWK(popView)
-   //点击背景触发
+   //Click the background to trigger
    popView.bgClickBlock = ^{ [wk_popView dismiss]; };
-   //弹窗显示
+   //Pop-up window display
   [popView pop];
   ```
   
-- 调试日志 
+- Debugging log
   ```objective-c
-  /** 调试日志类型 */
+  /** Debugging log type */
   typedef NS_ENUM(NSInteger, LSTPopViewLogStyle) {
-  LSTPopViewLogStyleNO = 0,          // 关闭调试信息(窗口和控制台日志输出)
-  LSTPopViewLogStyleWindow,          // 开启左上角小窗
-  LSTPopViewLogStyleConsole,         // 开启控制台日志输出
-  LSTPopViewLogStyleALL              // 开启小窗和控制台日志
+  LSTPopViewLogStyleNO = 0,          // Turn off debugging information (window and console log output)
+  LSTPopViewLogStyleWindow,          // Open the small window in the upper left corner
+  LSTPopViewLogStyleConsole,         // Turn on the console log output
+  LSTPopViewLogStyleALL              // Open the small window and console log
   };
   ```
-    - 调试小窗: S表示当前已经显示的弹窗数, R表示在移除队列的弹窗, S+R是表示当前所有的弹窗数
+    - Debugging small windows: S represents the number of pop-ups that have been displayed, R represents the pop-ups in the removal queue, and S+R represents all the current number of pop-ups.
   
   
 
   
 
-## 使用注意事项 
-#### (一定用weak修饰)
-- 解析: LSTPopView对每个弹窗都有自动内存销毁机制, 外部对弹窗的强引用对打破这种自动内存销毁机制, 比如成员变量用strong修饰,否则弹窗不能自动销毁,导致内存回收不了.
-- 类成员变量使用规范:
+## Precautions for use
+#### (Be sure to modify with weak)
+- Analysis: LSTPopView has an automatic memory destruction mechanism for each pop-up window. External strong references to pop-up windows break this automatic memory destruction mechanism. For example, member variables are modified with strong, otherwise the pop-up window cannot be automatically destroyed, resulting in memory recovery.
+- Specification for the use of class member variables:
 
   ```objective-c
-  //成员变量用weak修饰, 不可以用strong修饰
+  //Member variables can be modified with weak, but not with strong.
   @property (nonatomic,weak) LSTPopView *popView;
   ```
-- 成员变量的创建
+- The creation of member variables
   ```objective-c
   LSTPopViewTVView *customView = [[LSTPopViewTVView alloc] initWithFrame:CGRectMake(0, 0, 300,400)];
-  //弹窗实例创建
+  //Pop-up instance creation
   LSTPopView *popView = [LSTPopView initWithCustomView:customView
                                                 popStyle:LSTPopStyleSmoothFromBottom
                                             dismissStyle:LSTDismissStyleSmoothToBottom];
-  //这里赋值给成员变量self.popView
+  //Here, the value is assigned to the member variable self.popView
   self.popView = popView;
   [popView pop];
   ```
   
-- 错误使用: 
+- Wrong use:
   ```objective-c
-  //直接赋值给成员变量 导致成员变量为空, 请参考以上使用规范
+  //Directly assigning values to member variables causes member variables to be empty. Please refer to the above usage specifications.
   self.popView = [LSTPopView initWithCustomView:customView
                                          popStyle:LSTPopStyleSmoothFromBottom
                                      dismissStyle:LSTDismissStyleSmoothToBottom];
   ```
 
     
-## 演示效果
+## Demonstration effect
 
-- 应用市场常用的示例场景
+- Example scenarios commonly used in the application market
 
-|QQ,微信,UC,微博,抖音<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/base_demo.gif" width = "200" height = "424" alt="图片名称" align=center />|拖拽移除,横扫移除<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/drag_sweep.gif" width = "200" height = "424" alt="图片名称" align=center /> |
+|QQ, WeChat, UC, Weibo, TikTok<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/base_demo.gif" width = "200" height = "424" alt="The name of the picture" align=center />|Drag to remove, swipe to remove<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/drag_sweep.gif" width = "200" height = "424" alt="The name of the picture" align=center /> |
 |---|---|
 
-- 丰富的出入场动画, 拖拽, 横扫动画
+- Rich entry and exit animation, drag and drop, sweep animation
 
-|弹出动画,中间,自上,自左,自下,自左<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/pop.gif" width = "200" height = "424" alt="图片名称" align=center />|移除动画,中间,至上,至左,至下,至左<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/dismiss.gif" width = "200" height = "424" alt="图片名称" align=center /> |拖拽,横扫动画<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/dragSweep.gif" width = "200" height = "424" alt="图片名称" align=center /> |
+|Pop-up animation, middle, up, left, down, left<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/pop.gif" width = "200" height = "424" alt="The name of the picture" align=center />|Remove animation, middle, top, left, bottom, left<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/dismiss.gif" width = "200" height = "424" alt="The name of the picture" align=center /> |Drag and drop, sweep animation<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/dragSweep.gif" width = "200" height = "424" alt="The name of the picture" align=center /> |
 |---|---|---|
 
-- 弹窗位置
+- Pop-up window position
 
-|弹窗位置,中间,贴顶,贴左,贴底,贴右<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/hem_Style.gif" width = "200" height = "424" alt="图片名称" align=center />|X轴,Y轴调教,宽度和高度调教<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/x_y_w_h.gif" width = "200" height = "424" alt="图片名称" align=center /> |
+|Pop-up window position, middle, top, left, bottom, right<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/hem_Style.gif" width = "200" height = "424" alt="The name of the picture" align=center />|X-axis, Y-axis modulation, width and height modulation<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/x_y_w_h.gif" width = "200" height = "424" alt="The name of the picture" align=center /> |
 |---|---|
 
-- 自动规避键盘遮挡,指定容器,定时器
+- Automatically avoid keyboard cover, specify container, timer
 
-|自动规避键盘遮挡<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/keyboard.gif" width = "200" height = "424" alt="图片名称" align=center />|指定容器弹出<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/LSTPopView/%E6%8C%87%E5%AE%9A%E5%AE%B9%E5%99%A8.gif" width = "200" height = "424" alt="图片名称" align=center />|弹窗计时<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/LSTPopView/%E8%AE%A1%E6%97%B6%E5%99%A8.gif" width = "200" height = "424" alt="图片名称" align=center />|
+|Automatically avoid keyboard obstruction<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/keyboard.gif" width = "200" height = "424" alt="The name of the picture" align=center />|Specify the container to pop up<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/LSTPopView/%E6%8C%87%E5%AE%9A%E5%AE%B9%E5%99%A8.gif" width = "200" height = "424" alt="The name of the picture" align=center />|Pop-up window timing<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/LSTPopView/%E8%AE%A1%E6%97%B6%E5%99%A8.gif" width = "200" height = "424" alt="The name of the picture" align=center />|
 |---|---|---|
      
-- 多弹窗管理(优先级,编队)
+- Multi-pop-up management (priority, formation)
 
-|app启动多弹窗优先级显示<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/launch.gif" width = "200" height = "424" alt="图片名称" align=center />|多窗口编队使用<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/LSTPopView/%E7%AA%97%E5%8F%A3%E7%BC%96%E9%98%9F%E7%9A%84%E4%BD%BF%E7%94%A8.gif" width = "200" height = "424" alt="图片名称" align=center />|
+|App startup multi-pop-up priority display<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/uPic/launch.gif" width = "200" height = "424" alt="The name of the picture" align=center />|Multi-window formation use<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/LSTPopView/%E7%AA%97%E5%8F%A3%E7%BC%96%E9%98%9F%E7%9A%84%E4%BD%BF%E7%94%A8.gif" width = "200" height = "424" alt="The name of the picture" align=center />|
 |---|---|
      
- - 支持横竖屏
+ - Support horizontal and vertical screens
  
-|屏幕旋转<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/LSTPopView/%E5%B1%8F%E5%B9%95%E6%97%8B%E8%BD%AC.gif" width = "500" height = "500" alt="图片名称" align=center />|
+|Screen rotation<br><img src="https://raw.githubusercontent.com/5208171/LSTBlog/master/LSTPopView/%E5%B1%8F%E5%B9%95%E6%97%8B%E8%BD%AC.gif" width = "500" height = "500" alt="The name of the picture" align=center />|
 |---|
 
        
 
-## 作者
+## Author
 
-LoSenTrad@163.com, QQ群:1045568246, 微信:a_LSTKit
+LoSenTrad@163.com, QQ Group:1045568246, WeChat:a_LSTKit
 
-## 版权
+## Copyright
 
- 尊重劳动成果, 人人有责.
+ Everyone has a responsibility to respect the fruits of labor.
     

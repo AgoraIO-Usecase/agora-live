@@ -40,7 +40,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/iv_back_icon"
-        tools:text="返回" />
+        tools:text="Back" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_right_icon"

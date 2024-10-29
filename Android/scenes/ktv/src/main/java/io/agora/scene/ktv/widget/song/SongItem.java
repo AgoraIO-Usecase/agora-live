@@ -7,7 +7,7 @@ public class SongItem {
     /**
      * The Song no.
      */
-    public String songNo;// 歌曲的唯一标识
+    public String songNo;
     /**
      * The Song name.
      */
@@ -15,17 +15,16 @@ public class SongItem {
     /**
      * The Image url.
      */
-    public String imageUrl; // 歌曲封面
+    public String imageUrl;
     /**
      * The Singer.
      */
-    public String singer; // 歌手名
+    public String singer;
 
     /**
      * The Chooser.
      */
-// 已点歌曲信息
-    public String chooser; // 点歌人
+    public String chooser;
     /**
      * The Chooser id.
      */
@@ -33,9 +32,9 @@ public class SongItem {
     /**
      * The Is chosen.
      */
-    public boolean isChosen; // 是否已被点
+    public boolean isChosen;
 
-    public Boolean loading = false; //
+    public Boolean loading = false;
 
     /**
      * @param songNo
@@ -59,7 +58,6 @@ public class SongItem {
         this.chooserId = chooserId;
     }
 
-    // 用于存放原始数据
     private Object tag;
 
     /**

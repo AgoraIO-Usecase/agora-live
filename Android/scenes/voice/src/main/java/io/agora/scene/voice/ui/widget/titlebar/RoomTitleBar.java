@@ -152,13 +152,13 @@ public class RoomTitleBar extends RelativeLayout implements View.OnClickListener
     private void setTitlePosition(int titlePosition) {
         ViewGroup.LayoutParams params = titleView.getLayoutParams();
         if (params instanceof LayoutParams) {
-            if (titlePosition == 0) { //居中
+            if (titlePosition == 0) {
                 ((LayoutParams) params).addRule(RelativeLayout.CENTER_IN_PARENT);
-            } else if (titlePosition == 1) { //居左
+            } else if (titlePosition == 1) {
                 ((LayoutParams) params).addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                 ((LayoutParams) params).addRule(RelativeLayout.CENTER_VERTICAL);
                 ((LayoutParams) params).addRule(RelativeLayout.RIGHT_OF, leftLayout.getId());
-            } else { //居右
+            } else {
                 ((LayoutParams) params).addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 ((LayoutParams) params).addRule(RelativeLayout.CENTER_VERTICAL);
                 ((LayoutParams) params).addRule(LEFT_OF, rightLayout.getId());

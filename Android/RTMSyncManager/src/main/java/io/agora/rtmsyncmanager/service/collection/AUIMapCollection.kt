@@ -140,7 +140,7 @@ class AUIMapCollection(
     }
 
     /**
-     * 添加
+     * add MetaData
      *
      * @param value
      * @param callback

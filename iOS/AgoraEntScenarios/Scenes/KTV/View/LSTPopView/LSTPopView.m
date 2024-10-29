@@ -9,7 +9,7 @@
 #import <objc/runtime.h>
 
 
-static NSString *const LSTPopViewLogTitle = @"LSTPopView日志 ---> :";
+static NSString *const LSTPopViewLogTitle = @"LSTPopView Logger ---> :";
 static LSTPopViewLogStyle _logStyle;
 
 
@@ -196,14 +196,14 @@ LSTPopViewManager *LSTPopViewM() {
     }
 }
 
-#pragma mark - ***** Other 其他 *****
+#pragma mark - ***** Other  *****
 
 + (void)setInfoData {
     LSTPopViewM().infoView.text = [NSString stringWithFormat:@"S:%zd R:%zd",LSTPopViewM().popViewMarr.count,LSTPopViewM().removeList.allObjects.count];
 }
 
 + (void)setConsoleLog {
-    LSTPVLog(@"%@ S:%zd个 R:%zd个",LSTPopViewLogTitle,LSTPopViewM().popViewMarr.count,LSTPopViewM().removeList.allObjects.count);
+    LSTPVLog(@"%@ count of S:%zd count of R:%zd",LSTPopViewLogTitle,LSTPopViewM().popViewMarr.count,LSTPopViewM().removeList.allObjects.count);
 }
 
 //Bubbling sorting
@@ -326,9 +326,9 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 /** Custom View Sliding Gestures */
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
-//当前正在拖拽的是否是tableView
+//Is it that is being dragged at present? tableView
 @property (nonatomic, assign) BOOL isDragScrollView;
-/** 标记popView中是否有UIScrollView, UITableView, UICollectionView */
+/** Mark has a UIScrollView, UITableView, UICollectionView in popView*/
 @property (nonatomic, weak) UIScrollView *scrollerView;
 /** Record custom view original Frame */
 @property (nonatomic, assign) CGRect originFrame;
@@ -344,7 +344,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
 @implementation LSTPopView
 
 
-#pragma mark - ***** 初始化 *****
+#pragma mark - ***** Initialize *****
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
@@ -654,7 +654,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
             changeY = _adjustY;
         }
             break;
-        default://居中
+        default://Center
         {
             self.customView.pv_X = _backgroundView.pv_CenterX - _customView.pv_Size.width*0.5 + _adjustX;
             self.customView.pv_Y = _backgroundView.pv_CenterY - _customView.pv_Size.height*0.5 + _adjustY;
@@ -1015,7 +1015,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     LSTPopViewWK(self)
     [self dismissAnimationWithDismissStyle:dismissStyle duration:resDuration];
     
-    if (!self.isSingle && (isRemove && [LSTPopViewManager getAllPopViewForPopView:self].count >= 1)){//多显
+    if (!self.isSingle && (isRemove && [LSTPopViewManager getAllPopViewForPopView:self].count >= 1)){
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(resDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             //popView out stack
             if (!self.isStack && [LSTPopViewManager getAllPopViewForPopView:self].count >= 1) {
@@ -1048,7 +1048,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     }else if (dismissStyle == LSTPopStyleNO){
         wk_self.backgroundView.backgroundColor = [self getNewColorWith:self.bgColor alpha:0.0];
         wk_self.customView.alpha = 0.0f;
-    }else {//有动画
+    }else {//There are animations.
         [UIView animateWithDuration:duration*0.8 animations:^{
             wk_self.backgroundView.backgroundColor = [self getNewColorWith:self.bgColor alpha:0.0];
         }];
@@ -1139,7 +1139,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
         CGRect newFrame = CGRectNull;
         CGRect oldFrame = CGRectNull;
         if([object valueForKeyPath:keyPath] != [NSNull null]) {
-            //此处为获取新的frame
+            //Here is to get the new frame
             newFrame = [[object valueForKeyPath:keyPath] CGRectValue];
             oldFrame = [[change valueForKeyPath:@"old"] CGRectValue];
             if (!CGSizeEqualToSize(newFrame.size, oldFrame.size)) {
@@ -1575,7 +1575,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
                 return;
             }
             
-            if (isY_P==NO && isY_N==NO && self.sweepDismissStyle == LSTSweepDismissStyleSmooth) {//X轴可轻扫
+            if (isY_P==NO && isY_N==NO && self.sweepDismissStyle == LSTSweepDismissStyleSmooth) {//The X-axis can be swiped
                 if (velocity.x>0) {
                     [self dismissWithStyle:LSTDismissStyleSmoothToRight duration:self.dismissDuration];
                 } else {
@@ -1584,7 +1584,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
                 return;
             }
             
-            if (isX_P==NO && isX_N==NO && self.sweepDismissStyle == LSTSweepDismissStyleSmooth) {//Y轴可轻扫
+            if (isX_P==NO && isX_N==NO && self.sweepDismissStyle == LSTSweepDismissStyleSmooth) {//The Y axis can be swiped
                 if (velocity.y>0) {
                     [self dismissWithStyle:LSTDismissStyleSmoothToBottom duration:self.dismissDuration];
                 } else {
@@ -1603,7 +1603,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
         
         double velocityX =  sqrt(pow(velocity.x, 2));
         double velocityY =  sqrt(pow(velocity.y, 2));
-        if((velocityX >= self.swipeVelocity)||(velocityY >= self.swipeVelocity)) {//轻扫
+        if((velocityX >= self.swipeVelocity)||(velocityY >= self.swipeVelocity)) {//Swipe
             
             if (self.scrollerView.contentOffset.y>0) {
                 return;

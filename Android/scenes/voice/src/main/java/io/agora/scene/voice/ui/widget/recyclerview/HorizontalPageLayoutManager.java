@@ -91,7 +91,6 @@ public class HorizontalPageLayoutManager extends RecyclerView.LayoutManager impl
         LogTools.i("zzz", "itemCount=" + getItemCount() + " state itemCount=" + state.getItemCount() + " pageSize=" + pageSize);
         totalWidth = (pageSize - 1) * getWidth();
 
-        //分离view
         detachAndScrapAttachedViews(recycler);
 
         int count = getItemCount();

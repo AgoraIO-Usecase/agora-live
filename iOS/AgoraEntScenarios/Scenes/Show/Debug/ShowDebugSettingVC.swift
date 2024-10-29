@@ -61,7 +61,7 @@ class ShowDebugSettingVC: UIViewController {
     }
     
     private func configCustomNaviBar(){
-        naviBar.title = "开发者模式设置"
+        naviBar.title = "Developer mode settings"
         naviBar.backgroundColor = .white
         view.addSubview(naviBar)
         

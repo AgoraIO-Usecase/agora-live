@@ -63,25 +63,24 @@ class KTVApiImpl(
     private var localPlayerPosition: Long = 0
     private var localPlayerSystemTime: Long = 0
 
-    //歌词实时刷新
-    private var mReceivedPlayPosition: Long = 0 //播放器播放position，ms
+    private var mReceivedPlayPosition: Long = 0 // The position of the player playback, in milliseconds.
     private var mLastReceivedPlayPosTime: Long? = null
 
     // event
     private var ktvApiEventHandlerList = mutableListOf<IKTVApiEventHandler>()
     private var mainSingerHasJoinChannelEx: Boolean = false
 
-    // 合唱校准
+    // Chorus Calibration
     private var audioPlayoutDelay = 0
 
-    // 音高
+    // pitch
     private var pitch = 0.0
 
-    // 是否在麦上
+    // is on mic
     private var isOnMicOpen = false
     private var isRelease = false
 
-    // mpk状态
+    // mpk status
     private var mediaPlayerState: MediaPlayerState = MediaPlayerState.PLAYER_STATE_IDLE
 
     // multipath
@@ -89,21 +88,21 @@ class KTVApiImpl(
 
     private var professionalModeOpen = false
     private var audioRouting = 0
-    private var isPublishAudio = false // 通过是否发音频流判断
+    private var isPublishAudio = false // Determine by whether to send audio stream.
 
-    // 抢唱模式下是否需要prelude
+    // Whether prelude is needed in sing battle
     private var needPrelude = false
 
-    // 歌词信息是否来源于 dataStream
+    // Whether the lyrics information comes from dataStream
     private var recvFromDataStream = false
 
-    // 开始播放歌词
+    // Start playing lyrics
     private var mStopDisplayLrc = true
     private var displayLrcFuture: ScheduledFuture<*>? = null
     private val displayLrcTask = object : Runnable {
         override fun run() {
             if (!mStopDisplayLrc) {
-                if (singerRole == KTVSingRole.Audience && !recvFromDataStream) return  // audioMetaData方案观众return
+                if (singerRole == KTVSingRole.Audience && !recvFromDataStream) return  // audioMetaData audience return
                 val lastReceivedTime = mLastReceivedPlayPosTime ?: return
                 val curTime = System.currentTimeMillis()
                 val offset = curTime - lastReceivedTime
@@ -133,7 +132,7 @@ class KTVApiImpl(
         }
     }
 
-    // 音高同步
+    // sync pitch
     private var mStopSyncPitch = true
     private var mSyncPitchFuture :ScheduledFuture<*>? = null
     private val mSyncPitchTask = Runnable {
@@ -164,7 +163,7 @@ class KTVApiImpl(
             mMusicCenter.initialize(contentCenterConfiguration)
             mMusicCenter.registerEventHandler(this)
 
-            // ------------------ 初始化音乐播放器实例 ------------------
+            // ------------------ Initialize music player instance ------------------
             mPlayer = mMusicCenter.createMusicPlayer()
         } else {
             mPlayer = mRtcEngine.createMediaPlayer()
@@ -172,7 +171,7 @@ class KTVApiImpl(
         mPlayer.adjustPublishSignalVolume(KTVApi.mpkPublishVolume)
         mPlayer.adjustPlayoutVolume(KTVApi.mpkPlayoutVolume)
 
-        // 注册回调
+        // register handler
         mRtcEngine.addHandler(this)
         mPlayer.registerPlayerObserver(this)
 
@@ -188,13 +187,13 @@ class KTVApiImpl(
         mPlayer.setPlayerOption("play_pos_change_callback", 100)
     }
 
-    // 日志输出
+    // log printer
     private fun ktvApiLog(msg: String) {
         if (isRelease) return
         apiReporter.writeLog("[$tag][${ktvApiConfig.type}] $msg", LOG_LEVEL_INFO)
     }
 
-    // 日志输出
+    // log printer
     private fun ktvApiLogError(msg: String) {
         if (isRelease) return
         apiReporter.writeLog("[$tag][${ktvApiConfig.type}] $msg", LOG_LEVEL_ERROR)
@@ -226,7 +225,7 @@ class KTVApiImpl(
         mRtcEngine.setParameters("{\"che.audio.custom_bitrate\": 48000}")
         mRtcEngine.setParameters("{\"che.audio.uplink_apm_async_process\": true}")
 
-        // 标准音质
+        // Standard sound quality
         mRtcEngine.setParameters("{\"che.audio.aec.split_srate_for_48k\": 16000}")
 
         // ENT-901
@@ -240,7 +239,7 @@ class KTVApiImpl(
             mRtcEngine.setParameters("{\"che.audio.aiaec.working_mode\":1}")
         }
 
-        // 歌词强同步需要在audio4环境
+        // Strong synchronization of lyrics requires the audio4 environment.
         mRtcEngine.setParameters("{\"rtc.use_audio4\": true}")
 
         // mutipath
@@ -253,11 +252,11 @@ class KTVApiImpl(
 
     private fun resetParameters() {
         mRtcEngine.setAudioScenario(AUDIO_SCENARIO_GAME_STREAMING)
-        mRtcEngine.setParameters("{\"che.audio.custom_bitrate\": 80000}")     // 兼容之前的profile = 3设置
-        mRtcEngine.setParameters("{\"che.audio.max_mixed_participants\": 3}") // 正常3路下行流混流
-        mRtcEngine.setParameters("{\"che.audio.neteq.prebuffer\": false}")    // 关闭 接收端快速对齐模式
-        mRtcEngine.setParameters("{\"rtc.video.enable_sync_render_ntp\": false}") // 观众关闭 多端同步
-        mRtcEngine.setParameters("{\"rtc.video.enable_sync_render_ntp_broadcast\": false}") //主播关闭多端同步
+        mRtcEngine.setParameters("{\"che.audio.custom_bitrate\": 80000}")     // Compatible with the previous profile = 3 setting
+        mRtcEngine.setParameters("{\"che.audio.max_mixed_participants\": 3}") // Normal 3-path downstream stream mixing
+        mRtcEngine.setParameters("{\"che.audio.neteq.prebuffer\": false}")    // Disable fast alignment mode for the receiving end
+        mRtcEngine.setParameters("{\"rtc.video.enable_sync_render_ntp\": false}") // Disable multi-end synchronization for viewers
+        mRtcEngine.setParameters("{\"rtc.video.enable_sync_render_ntp_broadcast\": false}") // Disable multi-end synchronization for hosts
     }
 
     override fun addEventHandler(ktvApiEventHandler: IKTVApiEventHandler) {
@@ -313,21 +312,20 @@ class KTVApiImpl(
         processAudioProfessionalProfile()
     }
 
-    // 专业模式
+    // professional profile
     private fun processAudioProfessionalProfile() {
         ktvApiLog("processAudioProfessionalProfile: audioRouting: $audioRouting, professionalModeOpen: $professionalModeOpen， isPublishAudio：$isPublishAudio")
-        if (!isPublishAudio) return // 必须为麦上者
+        if (!isPublishAudio) return // must aduiO publisher
         if (professionalModeOpen) {
-            // 专业
             if (audioRouting == 0 || audioRouting == 2 || audioRouting == 5 || audioRouting == 6) {
-                // 耳机 关闭3A 关闭md
+                // Headphones: Disable 3A and disable MD
                 mRtcEngine.setParameters("{\"che.audio.aec.enable\": false}")
                 mRtcEngine.setParameters("{\"che.audio.agc.enable\": false}")
                 mRtcEngine.setParameters("{\"che.audio.ans.enable\": false}")
                 mRtcEngine.setParameters("{\"che.audio.md.enable\": false}")
                 mRtcEngine.setAudioProfile(AUDIO_PROFILE_MUSIC_HIGH_QUALITY_STEREO) // AgoraAudioProfileMusicHighQualityStereo
             } else {
-                // 非耳机 开启3A 关闭md
+                // Non-headphones: Enable 3A and disable MD
                 mRtcEngine.setParameters("{\"che.audio.aec.enable\": true}")
                 mRtcEngine.setParameters("{\"che.audio.agc.enable\": true}")
                 mRtcEngine.setParameters("{\"che.audio.ans.enable\": true}")
@@ -335,7 +333,7 @@ class KTVApiImpl(
                 mRtcEngine.setAudioProfile(AUDIO_PROFILE_MUSIC_HIGH_QUALITY_STEREO) // AgoraAudioProfileMusicHighQualityStereo
             }
         } else {
-            // 非专业 开启3A 关闭md
+            // Non-professional: Enable 3A and disable MD
             mRtcEngine.setParameters("{\"che.audio.aec.enable\": true}")
             mRtcEngine.setParameters("{\"che.audio.agc.enable\": true}")
             mRtcEngine.setParameters("{\"che.audio.ans.enable\": true}")
@@ -378,9 +376,9 @@ class KTVApiImpl(
 
     override fun renewToken(rtmToken: String, chorusChannelRtcToken: String) {
         apiReporter.reportFuncEvent("renewToken", mapOf(), mapOf())
-        // 更新RtmToken
+        // renew RtmToken
         mMusicCenter.renewToken(rtmToken)
-        // 更新合唱频道RtcToken
+        // renew chorus channel RtcToken
         if (subChorusConnection != null) {
             val channelMediaOption = ChannelMediaOptions()
             channelMediaOption.token = chorusChannelRtcToken
@@ -406,7 +404,7 @@ class KTVApiImpl(
         apiReporter.reportFuncEvent("switchSingerRole", mapOf("newRole" to newRole), mapOf())
         val oldRole = singerRole
 
-        // 调整开关麦状态
+        // Adjust the mute/unmute status.
         if (ktvApiConfig.type != KTVType.SingRelay) {
             if ((oldRole == KTVSingRole.LeadSinger || oldRole == KTVSingRole.SoloSinger) && (newRole == KTVSingRole.CoSinger || newRole == KTVSingRole.Audience) && !isOnMicOpen) {
                 mRtcEngine.muteLocalAudioStream(true)
@@ -574,7 +572,7 @@ class KTVApiImpl(
         apiReporter.reportFuncEvent("loadMusic", mapOf("songCode" to songCode, "config" to config), mapOf())
         ktvApiLog("loadMusic called: songCode $songCode")
 
-        // 设置到全局， 连续调用以最新的为准
+        // Set globally; the latest call takes precedence.
         this.songCode = songCode
         this.songIdentifier = config.songIdentifier
         this.mainSingerUid = config.mainSingerUid
@@ -587,21 +585,21 @@ class KTVApiImpl(
         }
 
         if (config.mode == KTVLoadMusicMode.LOAD_LRC_ONLY) {
-            // 只加载歌词
+            // only load lyrics.
             loadLyric(songCode) { song, lyricUrl ->
                 if (this.songCode != song) {
-                    // 当前歌曲已发生变化，以最新load歌曲为准
+                    // The current song has changed; the latest loaded song takes precedence.
                     ktvApiLogError("loadMusic failed: CANCELED")
                     musicLoadStateListener.onMusicLoadFail(song, KTVLoadMusicFailReason.CANCELED)
                     return@loadLyric
                 }
 
                 if (lyricUrl == null) {
-                    // 加载歌词失败
+                    // Failed to load lyrics.
                     ktvApiLogError("loadMusic failed: NO_LYRIC_URL")
                     musicLoadStateListener.onMusicLoadFail(song, KTVLoadMusicFailReason.NO_LYRIC_URL)
                 } else {
-                    // 加载歌词成功
+                    // Lyrics loaded successfully
                     ktvApiLog("loadMusic success")
                     lrcView?.onDownloadLrcData(lyricUrl)
                     if (this.ktvApiConfig.type != KTVType.SingBattle) {
@@ -622,32 +620,32 @@ class KTVApiImpl(
             return
         }
 
-        // 预加载歌曲
+        // Preload song.
         preLoadMusic(songCode) { song, percent, status, msg, lrcUrl ->
             if (status == 0) {
-                // 预加载歌曲成功
+                // Preload song successful.
                 if (this.songCode != song) {
-                    // 当前歌曲已发生变化，以最新load歌曲为准
+                    // The current song has changed; the latest loaded song takes precedence.
                     ktvApiLogError("loadMusic failed: CANCELED")
                     musicLoadStateListener.onMusicLoadFail(song, KTVLoadMusicFailReason.CANCELED)
                     return@preLoadMusic
                 }
                 if (config.mode == KTVLoadMusicMode.LOAD_MUSIC_AND_LRC) {
-                    // 需要加载歌词
+                    // Need to load lyrics.
                     loadLyric(song) { _, lyricUrl ->
                         if (this.songCode != song) {
-                            // 当前歌曲已发生变化，以最新load歌曲为准
+                            // The current song has changed; the latest loaded song takes precedence.
                             ktvApiLogError("loadMusic failed: CANCELED")
                             musicLoadStateListener.onMusicLoadFail(song, KTVLoadMusicFailReason.CANCELED)
                             return@loadLyric
                         }
 
                         if (lyricUrl == null) {
-                            // 加载歌词失败
+                            // Failed to load lyrics.
                             ktvApiLogError("loadMusic failed: NO_LYRIC_URL")
                             musicLoadStateListener.onMusicLoadFail(song, KTVLoadMusicFailReason.NO_LYRIC_URL)
                         } else {
-                            // 加载歌词成功
+                            // Lyrics loaded successfully.
                             ktvApiLog("loadMusic success")
                             lrcView?.onDownloadLrcData(lyricUrl)
                             musicLoadStateListener.onMusicLoadProgress(song, 100, MusicLoadStatus.COMPLETED, msg, lrcUrl)
@@ -667,7 +665,7 @@ class KTVApiImpl(
                         }
                     }
                 } else if (config.mode == KTVLoadMusicMode.LOAD_MUSIC_ONLY) {
-                    // 不需要加载歌词
+                    // No need to load lyrics.
                     ktvApiLog("loadMusic success")
                     musicLoadStateListener.onMusicLoadProgress(song, 100, MusicLoadStatus.COMPLETED, msg, lrcUrl)
                     if (this.ktvApiConfig.type != KTVType.SingBattle) {
@@ -685,13 +683,13 @@ class KTVApiImpl(
                     }
                 }
             } else if (status == 2) {
-                // 预加载歌曲加载中
+                // Preloading song is in progress.
                 musicLoadStateListener.onMusicLoadProgress(song, percent, MusicLoadStatus.values().firstOrNull { it.value == status } ?: MusicLoadStatus.FAILED, msg, lrcUrl)
             } else if (status == 3) {
-                // 主动停止下载
+                // Manually stop the download.
                 musicLoadStateListener.onMusicLoadFail(song, KTVLoadMusicFailReason.CANCELED)
             } else {
-                // 预加载歌曲失败
+                // Preloading the song failed.
                 ktvApiLogError("loadMusic failed: MUSIC_PRELOAD_FAIL")
                 musicLoadStateListener.onMusicLoadFail(song, KTVLoadMusicFailReason.MUSIC_PRELOAD_FAIL)
             }
@@ -751,7 +749,7 @@ class KTVApiImpl(
         }
         mRtcEngine.adjustPlaybackSignalVolume(KTVApi.remoteVolume)
 
-        // 导唱
+        // Lead singing
         mPlayer.setPlayerOption("enable_multi_audio_track", 1)
         val ret = (mPlayer as IAgoraMusicPlayer).open(songCode, startPos)
         if (ret != 0) {
@@ -772,7 +770,7 @@ class KTVApiImpl(
         }
         mRtcEngine.adjustPlaybackSignalVolume(KTVApi.remoteVolume)
 
-        // 导唱
+        // Lead singing
         mPlayer.setPlayerOption("enable_multi_audio_track", 1)
         val ret = mPlayer.open(url, startPos)
         if (ret != 0) {
@@ -842,7 +840,7 @@ class KTVApiImpl(
     // ------------------ inner KTVApi --------------------
     private fun becomeSoloSinger() {
         ktvApiLog("becomeSoloSinger called")
-        // 主唱进入合唱模式
+        // The lead singer enters chorus mode.
         mRtcEngine.setAudioScenario(AUDIO_SCENARIO_CHORUS)
         mRtcEngine.setParameters("{\"rtc.video.enable_sync_render_ntp_broadcast\":false}")
         mRtcEngine.setParameters("{\"che.audio.neteq.enable_stable_playout\":false}")
@@ -873,7 +871,7 @@ class KTVApiImpl(
                 channelMediaOption.publishMediaPlayerAudioTrack = false
                 mRtcEngine.updateChannelMediaOptions(channelMediaOption)
 
-                // 预加载歌曲成功
+                // Preloading the song was successful.
                 if (ktvApiConfig.musicType == KTVMusicType.SONG_CODE) {
                     mPlayer.setPlayerOption("enable_multi_audio_track", 0)
                     val ret = (mPlayer as IAgoraMusicPlayer).open(songCode, 0) // TODO open failed
@@ -888,13 +886,13 @@ class KTVApiImpl(
                     }
                 }
 
-                // 预加载成功后加入第二频道：预加载时间>>joinChannel时间
+                // After preloading successfully, join the second channel
                 joinChorus2ndChannel(newRole, token, mainSingerUid) { joinStatus ->
                     if (joinStatus == 0) {
-                        // 加入第二频道成功
+                        // Successfully join the second channel
                         onJoinChorusStateListener.onJoinChorusSuccess()
                     } else {
-                        // 加入第二频道失败
+                        // Failed to join the second channel
                         onJoinChorusStateListener.onJoinChorusFail(KTVJoinChorusFailReason.JOIN_CHANNEL_FAIL)
                     }
                 }
@@ -983,7 +981,7 @@ class KTVApiImpl(
         sendStreamMessageWithJsonObject(jsonMsg) {}
     }
 
-    // 合唱
+    // Co-Singer
     private var handlerEx :IRtcEngineEventHandler? = null
     private fun joinChorus2ndChannel(
         newRole: KTVSingRole,
@@ -1095,7 +1093,7 @@ class KTVApiImpl(
         }
     }
 
-    // ------------------ 同步新主唱 --------------------
+    // ------------------ Sync new lead singer. --------------------
     private fun syncNewLeadSinger(uid: Int) {
         val msg: MutableMap<String?, Any?> = java.util.HashMap()
         msg["cmd"] = "syncNewLeadSinger"
@@ -1104,14 +1102,14 @@ class KTVApiImpl(
         sendStreamMessageWithJsonObject(jsonMsg) {}
     }
 
-    // ------------------ 歌词播放、同步 ------------------
+    // ------------------ Lyrics playback and synchronization. ------------------
     private fun startDisplayLrc() {
         ktvApiLog("startDisplayLrc called")
         mStopDisplayLrc = false
         displayLrcFuture = scheduledThreadPool.scheduleAtFixedRate(displayLrcTask, 0,20, TimeUnit.MILLISECONDS)
     }
 
-    // 停止播放歌词
+    // Stop lyrics playback
     private fun stopDisplayLrc() {
         ktvApiLog("stopDisplayLrc called")
         mStopDisplayLrc = true
@@ -1122,7 +1120,7 @@ class KTVApiImpl(
         }
     }
 
-    // ------------------ 音高pitch同步 ------------------
+    // ------------------ Pitch synchronization. ------------------
     private fun sendSyncPitch(pitch: Double) {
         val msg: MutableMap<String?, Any?> = java.util.HashMap()
         msg["cmd"] = "setVoicePitch"
@@ -1131,13 +1129,13 @@ class KTVApiImpl(
         sendStreamMessageWithJsonObject(jsonMsg) {}
     }
 
-    // 开始同步音高
+    // Start pitch synchronization.
     private fun startSyncPitch() {
         mStopSyncPitch = false
         mSyncPitchFuture = scheduledThreadPool.scheduleAtFixedRate(mSyncPitchTask,0,50,TimeUnit.MILLISECONDS)
     }
 
-    // 停止同步音高
+    // Stop pitch synchronization.
     private fun stopSyncPitch() {
         mStopSyncPitch = true
         pitch = 0.0
@@ -1224,7 +1222,7 @@ class KTVApiImpl(
         try {
 
             val lrcTime = LrcTimeOuterClass.LrcTime.parseFrom(messageData)
-            if (lrcTime.type == LrcTimeOuterClass.MsgType.LRC_TIME) { //同步歌词
+            if (lrcTime.type == LrcTimeOuterClass.MsgType.LRC_TIME) { // Sync lyrics.
                 val realPosition = lrcTime.ts
                 val songId = lrcTime.songId
                 val curTs = if (this.songIdentifier == songId) realPosition else 0
@@ -1248,7 +1246,7 @@ class KTVApiImpl(
         try {
             val strMsg = String(messageData)
             jsonMsg = JSONObject(strMsg)
-            if (jsonMsg.getString("cmd") == "setLrcTime") { //同步歌词
+            if (jsonMsg.getString("cmd") == "setLrcTime") { // Sync lyrics
                 val position = jsonMsg.getLong("time")
                 val realPosition = jsonMsg.getLong("realTime")
                 val duration = jsonMsg.getLong("duration")
@@ -1257,11 +1255,11 @@ class KTVApiImpl(
                 val mpkState = jsonMsg.getInt("playerState")
 
                 if (isChorusCoSinger()) {
-                    // 本地BGM校准逻辑
+                    // Local BGM calibration logic.
                     if (this.mediaPlayerState == MediaPlayerState.PLAYER_STATE_OPEN_COMPLETED) {
-                        // 合唱者开始播放音乐前调小远端人声
+                        // Reduce the remote vocalist’s volume before the chorus member starts playing music.
                         mRtcEngine.adjustPlaybackSignalVolume(KTVApi.remoteVolume)
-                        // 收到leadSinger第一次播放位置消息时开启本地播放（先通过seek校准）
+                        // Start local playback (first calibrate through seeking) upon receiving the lead singer’s first playback position message.
                         val delta = getNtpTimeInMs() - remoteNtp
                         val expectPosition = position + delta + audioPlayoutDelay
                         if (expectPosition in 1 until duration) {
@@ -1271,9 +1269,9 @@ class KTVApiImpl(
                     } else if (this.mediaPlayerState == MediaPlayerState.PLAYER_STATE_PLAYING) {
                         val localNtpTime = getNtpTimeInMs()
                         val localPosition =
-                            localNtpTime - this.localPlayerSystemTime + this.localPlayerPosition // 当前副唱的播放时间
+                            localNtpTime - this.localPlayerSystemTime + this.localPlayerPosition // The current co-singer’s playback time.
                         val expectPosition =
-                            localNtpTime - remoteNtp + position + audioPlayoutDelay // 实际主唱的播放时间
+                            localNtpTime - remoteNtp + position + audioPlayoutDelay // The actual lead singer’s playback time.
                         val diff = expectPosition - localPosition
                         if (KTVApi.debugMode) {
                             ktvApiLog(
@@ -1281,7 +1279,7 @@ class KTVApiImpl(
                                         "  localPosition: " + localPosition + "  ntp diff: " + (localNtpTime - remoteNtp)
                             )
                         }
-                        if ((diff > 50 || diff < -50) && expectPosition < duration) { //设置阈值为50ms，避免频繁seek
+                        if ((diff > 50 || diff < -50) && expectPosition < duration) { // Set the threshold to 50ms to avoid frequent seeking.
                             ktvApiLog("player seek: $diff")
                             mPlayer.seek(expectPosition)
                         }
@@ -1304,12 +1302,12 @@ class KTVApiImpl(
                         }
                     }
                 } else {
-                    // 独唱观众
+                    // Solo performance audience.
                     if (jsonMsg.has("ver")) {
-                        // 发送端是新发送端, 歌词信息需要从 audioMetadata 里取
+                        // The sender is a new one, and the lyrics information needs to be extracted from the audioMetadata.
                         recvFromDataStream = false
                     } else {
-                        // 发送端是老发送端, 歌词信息需要从 dataStreamMessage 里取
+                        // The sender is an old one, and the lyrics information needs to be extracted from the dataStreamMessage.
                         recvFromDataStream = true
                         if (this.songIdentifier == songId) {
                             mLastReceivedPlayPosTime = System.currentTimeMillis()
@@ -1322,13 +1320,13 @@ class KTVApiImpl(
                     }
                 }
             } else if (jsonMsg.getString("cmd") == "Seek") {
-                // 伴唱收到原唱seek指令
+                // The co-singer has received the seek command from the lead singer.
                 if (isChorusCoSinger()) {
                     val position = jsonMsg.getLong("position")
                     mPlayer.seek(position)
                 }
             } else if (jsonMsg.getString("cmd") == "PlayerState") {
-                // 其他端收到原唱seek指令
+                // Other endpoints have received the seek command from the lead singer.
                 val state = jsonMsg.getInt("state")
                 val error = jsonMsg.getInt("error")
                 if (isChorusCoSinger()) {
@@ -1375,7 +1373,7 @@ class KTVApiImpl(
     override fun onAudioVolumeIndication(speakers: Array<out AudioVolumeInfo>?, totalVolume: Int) {
         super.onAudioVolumeIndication(speakers, totalVolume)
         val allSpeakers = speakers ?: return
-        // VideoPitch 回调, 用于同步各端音准
+        // VideoPitch callback, used to synchronize pitch accuracy across endpoints.
         if (this.ktvApiConfig.type == KTVType.SingRelay && !isOnMicOpen) {
             return
         }
@@ -1393,7 +1391,7 @@ class KTVApiImpl(
         }
     }
 
-    // 用于合唱校准
+    // Used for chorus calibration.
     override fun onLocalAudioStats(stats: LocalAudioStats?) {
         super.onLocalAudioStats(stats)
         if (KTVApi.useCustomAudioSource) return
@@ -1401,14 +1399,14 @@ class KTVApiImpl(
         audioPlayoutDelay = audioState.audioPlayoutDelay
     }
 
-    // 用于检测耳机状态
+    // Used to detect headphone status.
     override fun onAudioRouteChanged(routing: Int) { // 0\2\5 earPhone
         super.onAudioRouteChanged(routing)
         this.audioRouting = routing
         processAudioProfessionalProfile()
     }
 
-    // 用于检测收发流状态
+    // Used to detect the status of the send and receive streams.
     override fun onAudioPublishStateChanged(
         channel: String?,
         oldState: Int,
@@ -1438,7 +1436,7 @@ class KTVApiImpl(
             loadMusicCallbackMap.remove(songCode.toString())
         }
         if (errorCode == 2) {
-            // Token过期
+            // Token expired
             ktvApiEventHandlerList.forEach { it.onTokenPrivilegeWillExpire() }
         }
         callback.invoke(songCode, percent, status, RtcEngine.getErrorDescription(errorCode), lyricUrl)
@@ -1456,7 +1454,7 @@ class KTVApiImpl(
         val callback = musicCollectionCallbackMap[id] ?: return
         musicCollectionCallbackMap.remove(id)
         if (errorCode == 2) {
-            // Token过期
+            // Token expired
             ktvApiEventHandlerList.forEach { it.onTokenPrivilegeWillExpire() }
         }
         callback.invoke(requestId, errorCode, page, pageSize, total, list)
@@ -1467,7 +1465,7 @@ class KTVApiImpl(
         val callback = musicChartsCallbackMap[id] ?: return
         musicChartsCallbackMap.remove(id)
         if (errorCode == 2) {
-            // Token过期
+            // Token expired
             ktvApiEventHandlerList.forEach { it.onTokenPrivilegeWillExpire() }
         }
         callback.invoke(requestId, errorCode, list)
@@ -1483,7 +1481,7 @@ class KTVApiImpl(
         val songCode = lyricSongCodeMap[requestId] ?: return
         lyricCallbackMap.remove(lyricUrl)
         if (errorCode == 2) {
-            // Token过期
+            // Token expired
             ktvApiEventHandlerList.forEach { it.onTokenPrivilegeWillExpire() }
         }
         if (lyricUrl == null || lyricUrl.isEmpty()) {
@@ -1541,7 +1539,7 @@ class KTVApiImpl(
             MediaPlayerState.PLAYER_STATE_OPEN_COMPLETED -> {
                 duration = mPlayer.duration
                 this.localPlayerPosition = 0
-                // 伴奏
+                // Accompaniment.
                 if (this.singerRole == KTVSingRole.SoloSinger ||
                     this.singerRole == KTVSingRole.LeadSinger
                 ) {
@@ -1570,7 +1568,7 @@ class KTVApiImpl(
         ktvApiEventHandlerList.forEach { it.onMusicPlayerStateChanged(mediaPlayerState, mediaPlayerError, true) }
     }
 
-    // 同步播放进度
+    // Synchronize playback progress.
     override fun onPositionChanged(position_ms: Long, timestamp_ms: Long) {
         localPlayerPosition = position_ms
         localPlayerSystemTime = timestamp_ms
@@ -1581,7 +1579,7 @@ class KTVApiImpl(
             msg["ntp"] = timestamp_ms
             msg["duration"] = duration
             msg["time"] =
-                position_ms - audioPlayoutDelay // "position-audioDeviceDelay" 是计算出当前播放的真实进度
+                position_ms - audioPlayoutDelay // "position-audioDeviceDelay" Calculate the current playback progress accurately.
             msg["realTime"] = position_ms
             msg["playerState"] = MediaPlayerState.getValue(this.mediaPlayerState)
             msg["pitch"] = pitch

@@ -17,7 +17,7 @@ import io.agora.scene.ktv.widget.song.SongDialog;
 import io.agora.scene.ktv.widget.song.SongItem;
 
 /**
- * 点歌台 listener
+ * Song Request Station listener
  */
 public class SongActionListenerImpl implements OnSongActionListener {
     private final LifecycleOwner mLifecycleOwner;
@@ -42,7 +42,7 @@ public class SongActionListenerImpl implements OnSongActionListener {
 
     @Override
     public void onChooseSongRefreshing(@NonNull SongDialog dialog) {
-        // 点歌-列表刷新
+        // order- refresh song list
         LiveDataUtils.observerThenRemove(mLifecycleOwner, mViewModel.getSongList(), list -> {
             if (dialog.isVisible()) {
                 dialog.setChooseRefreshingResult(transSongModel(list));
@@ -52,11 +52,10 @@ public class SongActionListenerImpl implements OnSongActionListener {
 
     @Override
     public void onChooseSongChosen(@NonNull SongDialog dialog, @NonNull SongItem songItem) {
-        // 点歌
         LiveDataUtils.observerThenRemove(mLifecycleOwner, mViewModel.chooseSong(songItem, isChorus), success -> {
             if (success && dialog.isVisible()) {
                 dialog.setChooseSongItemStatus(songItem, true);
-            } else if (!success) { // 点歌失败
+            } else if (!success) { // order failed
                 songItem.loading = false;
                 dialog.setChooseSongItemStatus(songItem, false);
             }
@@ -65,14 +64,14 @@ public class SongActionListenerImpl implements OnSongActionListener {
 
     @Override
     public void onChosenSongDeleteClicked(@NonNull SongDialog dialog, @NonNull SongItem song) {
-        // 删歌
+        // delete song
         ChosenSongInfo songModel = song.getTag(ChosenSongInfo.class);
         mViewModel.deleteSong(songModel);
     }
 
     @Override
     public void onChosenSongTopClicked(@NonNull SongDialog dialog, @NonNull SongItem song) {
-        // 置顶
+        // pin song
         ChosenSongInfo songModel = song.getTag(ChosenSongInfo.class);
         mViewModel.pinSong(songModel);
     }

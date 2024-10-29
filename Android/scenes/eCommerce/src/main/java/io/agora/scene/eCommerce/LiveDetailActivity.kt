@@ -238,7 +238,7 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
                     ViewPager2.SCROLL_STATE_SETTLING -> binding.viewPager2.isUserInputEnabled = false
                     ViewPager2.SCROLL_STATE_IDLE -> binding.viewPager2.isUserInputEnabled = true
                     ViewPager2.SCROLL_STATE_DRAGGING -> {
-                        // TODO 暂不支持
+                        // TODO Not supported for now
                     }
                 }
                 super.onPageScrollStateChanged(state)
@@ -283,7 +283,6 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
         }
         onPageScrollEventHandler?.updateRoomList(list)
 
-        // 设置vp当前页面外的页面数
         binding.viewPager2.offscreenPageLimit = 1
         val fragmentAdapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = if (mScrollable) Int.MAX_VALUE else 1
@@ -314,14 +313,14 @@ class LiveDetailActivity : BaseViewBindingActivity<CommerceLiveDetailActivityBin
                                 anchorList
                             ),position == binding.viewPager2.currentItem)
                     } else {
-                        // 主播
+                        // broadcast
                         startLoadPageSafely()
                     }
                 }
             }
         }
         binding.viewPager2.adapter = fragmentAdapter
-        binding.viewPager2.isUserInputEnabled = mScrollable && mRoomInfoList.size != 1 // 只有一个房间时不允许滑动
+        binding.viewPager2.isUserInputEnabled = mScrollable && mRoomInfoList.size != 1 // Sliding is disabled when there is only one room.
         if (mScrollable) {
             binding.viewPager2.registerOnPageChangeCallback(onPageScrollEventHandler as OnPageChangeCallback)
             binding.viewPager2.setCurrentItem(

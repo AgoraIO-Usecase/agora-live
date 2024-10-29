@@ -9,7 +9,7 @@ import io.agora.scene.base.component.OnItemClickListener
 import io.agora.scene.ktv.databinding.KtvFragmentSongListBinding
 
 /**
- * 歌单列表
+ * playlist
  */
 class SongChooseFragment : BaseViewBindingFragment<KtvFragmentSongListBinding?>(), OnItemClickListener<SongItem?> {
 
@@ -32,7 +32,7 @@ class SongChooseFragment : BaseViewBindingFragment<KtvFragmentSongListBinding?>(
                 listener?.onRefresh(smartRefreshLayout)
             }
             smartRefreshLayout.autoRefresh(0, 50, 1.0f, false)
-            // 歌单一次性加载，没有更多数据
+            // The playlist is loaded all at once, and there is no more data.
             smartRefreshLayout.setEnableLoadMore(false)
         }
     }

@@ -60,7 +60,7 @@ class SoundCardEffectView: UIView {
         cancleView = UIButton()
         cancleView.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         cancleView.setTitleColor(.black, for: .normal)
-        cancleView.setTitle("取消", for: .normal)
+        cancleView.setTitle("Cancel", for: .normal)
         cancleView.backgroundColor = .white
         cancleView.addTarget(self, action: #selector(cancel), for: .touchUpInside)
         self.addSubview(cancleView)

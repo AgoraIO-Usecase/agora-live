@@ -71,7 +71,7 @@ public class BaseBottomSheetDialogFragment<B extends ViewBinding> extends Bottom
         if (context == null) {
             return;
         }
-        // 隐藏软键盘
+        // hide the soft keyboard
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }

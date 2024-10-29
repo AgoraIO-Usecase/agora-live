@@ -498,7 +498,7 @@ class ChatroomProtocolDelegate constructor(
         val memberBean = ChatroomCacheManager.cacheManager.getMember(chatUid)
         if (memberBean != null) {
             val index = getFirstFreeMic() ?: run {
-                // TODO: 本期暂无空闲麦位
+                // TODO: No available microphone positions for this session
                 return
             }
             if (micIndex != -1) {
@@ -618,7 +618,7 @@ class ChatroomProtocolDelegate constructor(
         val memberBean = ChatroomCacheManager.cacheManager.getMember(chatUid)
         if (memberBean != null) {
             val index = getFirstFreeMic() ?: run {
-                // TODO: 本期暂无空闲麦位
+                // TODO: No available microphone positions for this session
                 return
             }
             if (micIndex != -1) {

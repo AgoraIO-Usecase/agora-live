@@ -40,7 +40,7 @@ class VoiceBuddyImp : IVoiceBuddy {
     }
 
     override fun chatUserName(): String {
-        // 环信 chatUserName 由user.id 生成 与iOS 保持统一
+        // The chatUserName for (Huanxin) is generated from user.id to keep it consistent with iOS.
         return (UserManager.getInstance().user?.id ?: "").toString()
     }
 

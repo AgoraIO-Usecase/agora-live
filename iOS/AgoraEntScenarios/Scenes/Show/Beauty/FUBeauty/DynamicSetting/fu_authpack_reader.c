@@ -13,7 +13,7 @@
 char* parse_fu_auth_pack(const char *file_path, int *length) {
     FILE* file = fopen(file_path, "r");
     if (file == NULL) {
-        printf("无法打开文件\n");
+        printf("Unable to open the file\n");
         return NULL;
     }
 
@@ -28,7 +28,7 @@ char* parse_fu_auth_pack(const char *file_path, int *length) {
     // Find the integer array in brackets
     char* start = strchr(fileContent, '{');
     if (!start) {
-        printf("未找到'{'\n");
+        printf("Not found'{'\n");
         free(fileContent);
         fclose(file);
         return NULL;
@@ -37,7 +37,7 @@ char* parse_fu_auth_pack(const char *file_path, int *length) {
 
     char* end = strchr(start, '}');
     if (!end) {
-        printf("未找到'}'\n");
+        printf("Not found'}'\n");
         free(fileContent);
         fclose(file);
         return NULL;
