@@ -7,37 +7,37 @@
 
 import Foundation
 
-let SYNC_MANAGER_PARAM_KEY_ID = "defaultChannel"
+public let SYNC_MANAGER_PARAM_KEY_ID = "defaultChannel"
 /// Subroom name
-let SYNC_COLLECTION_SUB_ROOM = "SubRoom"
+public let SYNC_COLLECTION_SUB_ROOM = "SubRoom"
 
-let SYNC_MANAGER_PARAM_KEY_APPID = "appId"
+public let SYNC_MANAGER_PARAM_KEY_APPID = "appId"
 /// GIFT
-let SYNC_MANAGER_GIFT_INFO = "giftInfo"
+public let SYNC_MANAGER_GIFT_INFO = "giftInfo"
 /// PK Game Info
-let SYNC_MANAGER_GAME_APPLY_INFO = "gameApplyInfo"
+public let SYNC_MANAGER_GAME_APPLY_INFO = "gameApplyInfo"
 /// Audience game information
-let SYNC_MANAGER_GAME_INFO = "gameInfo"
+public let SYNC_MANAGER_GAME_INFO = "gameInfo"
 /// pk info
-let SYNC_MANAGER_PK_INFO = "pkInfo"
+public let SYNC_MANAGER_PK_INFO = "pkInfo"
 /// User Info
-let SYNC_MANAGER_AGORA_VOICE_USERS = "agoraVoiceUsers"
+public let SYNC_MANAGER_AGORA_VOICE_USERS = "agoraVoiceUsers"
 /// Club User Info
-let SYNC_MANAGER_AGORA_CLUB_USERS = "agoraClubUsers"
+public let SYNC_MANAGER_AGORA_CLUB_USERS = "agoraClubUsers"
 /// Message Info
-let SYNC_SCENE_ROOM_MESSAGE_INFO = "messageInfo"
+public let SYNC_SCENE_ROOM_MESSAGE_INFO = "messageInfo"
 /// List of users in the room
-let SYNC_SCENE_ROOM_USER_COLLECTION = "userCollection"
+public let SYNC_SCENE_ROOM_USER_COLLECTION = "userCollection"
 /// Commodity information
-let SYNC_SCENE_SHOPPING_INFO = "shoppingInfo"
+public let SYNC_SCENE_SHOPPING_INFO = "shoppingInfo"
 
-let APP_SCENARIO: Int = 100
-let SERVICE_TYPE: Int = 12
+public let APP_SCENARIO: Int = 100
+public let SERVICE_TYPE: Int = 12
 
-let chatViewWidth = ScreenWidth * (287 / 375.0)
+public let chatViewWidth = ScreenWidth * (287 / 375.0)
 
-enum UserInfo {
-    static var userId: String {
+public enum UserInfo {
+    public static var userId: String {
         return VLUserCenter.user.id
 
 //        let id = UserDefaults.standard.integer(forKey: "UserId")
@@ -55,7 +55,7 @@ enum UserInfo {
 }
 
 
-enum AgoraScene: String {
+public enum AgoraScene: String {
     case KTV
     case ChatRoom
     case LiveShow

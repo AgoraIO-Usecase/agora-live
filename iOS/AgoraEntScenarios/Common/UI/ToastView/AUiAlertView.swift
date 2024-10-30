@@ -7,7 +7,7 @@
 
 import UIKit
 
-class AUiAlertView: UIView {
+public class AUiAlertView: UIView {
     private var cancelClosure:(()->())?
     private var sureClosure:((String?)->())?
     private var rightClosure:(()->())?
@@ -74,7 +74,7 @@ class AUiAlertView: UIView {
     }()
     private lazy var leftButton: UIButton = {
         let button = UIButton()
-        button.setTitle("voice_cancel".voice_localized, for: .normal)
+        button.setTitle("voice_cancel".common_localized, for: .normal)
         button.setTitleColor(UIColor(red: 120/255.0, green: 0/255.0, blue: 255/255.0, alpha: 1.0), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17)
         button.layer.cornerRadius = 25
@@ -87,7 +87,7 @@ class AUiAlertView: UIView {
     }()
     private lazy var rightButton: UIButton = {
         let button = UIButton()
-        button.setTitle("voice_sure".voice_localized, for: .normal)
+        button.setTitle("voice_sure".common_localized, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17)
         button.layer.cornerRadius = 25
@@ -99,8 +99,12 @@ class AUiAlertView: UIView {
     }()
     private lazy var closeButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "xmark")?.withTintColor(.darkGray, renderingMode: .alwaysOriginal),
-                        for: .normal)
+        if #available(iOS 13.0, *) {
+            button.setImage(UIImage(systemName: "xmark")?.withTintColor(.darkGray, renderingMode: .alwaysOriginal),
+                            for: .normal)
+        } else {
+            // Fallback on earlier versions
+        }
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(clickCloseButton), for: .touchUpInside)
         button.isHidden = true
@@ -383,7 +387,7 @@ class AUiAlertView: UIView {
         textField.endEditing(true)
     }
     
-    static func showCustomAlert(title: String? = nil,
+    public static func showCustomAlert(title: String? = nil,
                                 message: String? = nil,
                                 confirmTitle: String? = NSLocalizedString("confirm", comment: ""),
                                 cancelTitle: String? = NSLocalizedString("cancel", comment: ""),

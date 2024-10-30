@@ -7,6 +7,7 @@
 import UIKit
 import Agora_Scene_Utils
 import AgoraRtcKit
+import AgoraCommon
 
 private func createLabel() -> AGELabel {
     let label = AGELabel(colorStyle: .white, fontStyle: .small)

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftyBeaver
+import AgoraCommon
 
 let kShowLogBaseContext = "AgoraKit"
 

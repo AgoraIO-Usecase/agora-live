@@ -8,6 +8,7 @@
 #import "VLLocalWebViewController.h"
 #import "VLMacroDefine.h"
 #import "AESMacro.h"
+#import "AgoraCommon-umbrella.h"
 
 @interface VLDiscoveryViewController ()<WKNavigationDelegate>
 

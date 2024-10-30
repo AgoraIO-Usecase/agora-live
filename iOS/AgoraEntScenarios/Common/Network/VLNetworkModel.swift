@@ -7,7 +7,7 @@
 
 import Foundation
 import KakaJSON
-//import Alamofire
+import YYCategories
 
 @objcMembers
 open class VLResponseData: NSObject, Convertible {
@@ -16,8 +16,14 @@ open class VLResponseData: NSObject, Convertible {
     public var requestId: String?
     public var data: Any?
     
-    override public required init() {}
-
+    override public required init() {
+        super.init()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public func kj_modelKey(from property: Property) -> ModelPropertyKey {
         property.name
     }
@@ -34,7 +40,13 @@ open class VLSceneConfigsModel: NSObject,Convertible {
     public var logUpload: Int = 0
     public var oneToOne: Int = 1200
     
-    override public required init() {}
+    override public required init() {
+        super.init()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     public func kj_modelKey(from property: Property) -> ModelPropertyKey {
         switch property.name{
@@ -47,10 +59,6 @@ open class VLSceneConfigsModel: NSObject,Convertible {
 @objcMembers
 open class VLCommonNetworkModel: AUINetworkModel {
     public var userId: String?
-    public override init() {
-        super.init()
-        host = KeyCenter.HostUrl
-    }
     
     func getToken() -> String {
         if VLUserCenter.shared().isLogin() {
@@ -97,6 +105,10 @@ open class VLUploadUserInfoNetworkModel: VLCommonNetworkModel {
         super.init()
         interfaceName = "/api-login/users/update"
     }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 
@@ -110,6 +122,10 @@ open class VLGetUserInfoNetworkModel: VLCommonNetworkModel {
         interfaceName = "/api-login/users/getUserInfo"
         method = .get
     }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 @objcMembers
@@ -121,6 +137,10 @@ open class VLDetoryUserInfoNetworkModel: VLCommonNetworkModel {
         super.init()
         interfaceName = "/api-login/users/cancellation"
         method = .get
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -145,6 +165,10 @@ open class VLUploadImageNetworkModel: AUIUploadNetworkModel {
         name = "file"
         fileName = "\(time)\(arc4random() % 1000).jpg"
         mimeType = "image/jpg"
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     public override func getHeaders() -> [String: String] {
@@ -186,6 +210,10 @@ open class VLLoginNetworkModel: VLCommonNetworkModel {
         interfaceName = "/api-login/users/login"
         method = .get
     }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 
@@ -199,6 +227,10 @@ open class VLVerifyCodeNetworkModel: VLCommonNetworkModel {
         interfaceName = "/api-login/users/verificationCode"
         method = .get
     }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 open class VLSceneConfigsNetworkModel: VLCommonNetworkModel {
@@ -208,6 +240,10 @@ open class VLSceneConfigsNetworkModel: VLCommonNetworkModel {
 //        host = "https://test-toolbox.bj2.shengwang.cn"
         interfaceName = "/v1/configs/scene"
         method = .get
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     public override func parse(data: Data?) throws -> Any? {

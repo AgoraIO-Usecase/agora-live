@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import RTMSyncManager
+import AgoraCommon
 
 let kEcommerceSceneId = "scene_ecommerce_1.3.0"
 

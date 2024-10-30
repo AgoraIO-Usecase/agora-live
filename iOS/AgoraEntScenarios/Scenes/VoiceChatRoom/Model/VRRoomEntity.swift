@@ -14,8 +14,14 @@ import RTMSyncManager
     public var cursor: String? //The cursor for the next room list request
     public var rooms: [VRRoomEntity]? //Room information array
 
-    override public required init() {}
-
+    override public required init() {
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public func kj_modelKey(from property: Property) -> ModelPropertyKey {
         property.name
     }
@@ -49,8 +55,14 @@ import RTMSyncManager
     public var musicIsOrigin: Bool = false 
     var backgroundMusic: VoiceMusicModel?
 
-    override public required init() {}
-
+    override public required init() {
+        super.init()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public func kj_modelKey(from property: Property) -> ModelPropertyKey {
         property.name
     }
@@ -115,8 +127,14 @@ enum VRRoomMicStatus: Int {
 
     var member: VRUser?
 
-    override public required init() {}
-
+    override public required init() {
+        super.init()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public func kj_modelKey(from property: Property) -> ModelPropertyKey {
         property.name
     }
@@ -129,8 +147,14 @@ enum VRRoomMicStatus: Int {
 @objc open class VRUsers: NSObject, Convertible {
     var ranking_list: [VRUser]?
 
-    override public required init() {}
-
+    override public required init() {
+        super.init()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public func kj_modelKey(from property: Property) -> ModelPropertyKey {
         property.name
     }
@@ -140,8 +164,14 @@ enum VRRoomMicStatus: Int {
     var room: VRRoomEntity?
     var mic_info: [VRRoomMic]?
 
-    override public required init() {}
-
+    override public required init() {
+        super.init()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public func kj_modelKey(from property: Property) -> ModelPropertyKey {
         property.name
     }

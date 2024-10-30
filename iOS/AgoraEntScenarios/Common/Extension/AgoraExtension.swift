@@ -6,10 +6,9 @@
 //  Copyright © 2019 Agora. All rights reserved.
 //
 
-import AgoraRtcKit
 import UIKit
 
-extension UIApplication {
+public extension UIApplication {
     static var kWindow: UIWindow? {
         // Get connected scenes
         if #available(iOS 13.0, *) {
@@ -33,7 +32,7 @@ extension UIApplication {
     }
 }
 
-extension UIViewController {
+public extension UIViewController {
     /// The visible view controller from a given view controller
     var visibleViewController: UIViewController? {
         if let navigationController = self as? UINavigationController {
@@ -48,7 +47,7 @@ extension UIViewController {
     }
 }
 
-extension OutputStream {
+public extension OutputStream {
     /// Write `String` to `OutputStream`
     ///
     /// - parameter string:                The `String` to write.
@@ -71,7 +70,7 @@ extension OutputStream {
     }
 }
 
-extension Date {
+public extension Date {
     func getFormattedDate(format: String) -> String {
         let dateformat = DateFormatter()
         dateformat.dateFormat = format
@@ -79,7 +78,7 @@ extension Date {
     }
 }
 
-extension UIView {
+public extension UIView {
     @discardableResult
     func setGradient(_ colors: [UIColor], _ points: [CGPoint]) -> Self {
         let gradientColors: [CGColor] = colors.map { $0.cgColor }

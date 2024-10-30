@@ -162,6 +162,11 @@ enum GiantChorusRouteSelectionType: Int {
     init(type: GiantChorusRouteSelectionType, streamNum: Int) {
         self.type = type
         self.streamNum = streamNum
+        super.init()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -210,6 +215,11 @@ enum GiantChorusRouteSelectionType: Int {
         self.musicChannelToken = musicChannelToken
         self.routeSelectionConfig = routeSelectionConfig
         self.mccDomain = mccDomain
+        super.init()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -249,6 +259,11 @@ enum GiantChorusRouteSelectionType: Int {
         self.maxCacheSize = maxCacheSize
         self.musicType = musicType
         self.mccDomain = mccDomain
+        super.init()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Bundle {
+public extension Bundle {
     static func localizedString(_ key: String, bundleName: String) -> String {
         guard let path = Bundle.main.path(forResource: bundleName, ofType: "bundle") else {
             return NSLocalizedString(key, comment: "")

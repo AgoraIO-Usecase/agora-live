@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension UIImage {
+public extension UIImage {
     func color(_ color: UIColor,
                width: CGFloat,
                height: CGFloat,

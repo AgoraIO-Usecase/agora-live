@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftUI
+import AgoraCommon
 
 class VMEQSettingView: UIView, UITextViewDelegate {
     private var screenWidth: CGFloat = UIScreen.main.bounds.size.width

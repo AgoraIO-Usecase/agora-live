@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AgoraCommon
 
 @objcMembers
 class VoiceChatBaseInfo: NSObject {

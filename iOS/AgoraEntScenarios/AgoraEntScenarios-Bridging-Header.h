@@ -3,12 +3,12 @@
 //
 
 #import "UIWindow+Router.h"
-#import "VLUserCenter.h"
-#import "VLBaseModel.h"
-#import "VLLoginModel.h"
+//#import "VLUserCenter.h"
+//#import "VLBaseModel.h"
+//#import "VLLoginModel.h"
 #import "VLHomeItemView.h"
 #import "VLHomeItemModel.h"
-#import "BaseViewController.h"
+//#import "BaseViewController.h"
 //#import "AEACategoryView.h"
 //#import "AEAListContainerView.h"
 @import YYModel;
@@ -19,6 +19,3 @@
 //#import "BytesBeautyRender.h"
 //#import "SenseBeautyRender.h"
 #import "FUBeautyRender.h"
-#import "VLCommonWebViewController.h"
-#import "VLURLPathConfig.h"
-#import "VLAPIRequest.h"

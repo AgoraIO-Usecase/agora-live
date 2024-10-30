@@ -6,8 +6,11 @@
 //
 import UIKit
 
-class GCDTimer {
-    typealias ActionBlock = (String, TimeInterval) -> Void
+public class GCDTimer {
+    public init() {
+        
+    }
+    public typealias ActionBlock = (String, TimeInterval) -> Void
     private var timerContainer = [String: DispatchSourceTimer]()
     private var currentDuration: TimeInterval = 0
 
@@ -19,7 +22,7 @@ class GCDTimer {
     /// -queue: indicates the thread
     /// -repeats: Repeats or not
     /// -action: indicates the action to be performed
-    func scheduledSecondsTimer(withName name: String?,
+    public func scheduledSecondsTimer(withName name: String?,
                                timeInterval: Int,
                                queue: DispatchQueue,
                                action: @escaping ActionBlock)
@@ -48,7 +51,7 @@ class GCDTimer {
     /// -queue: indicates the thread
     /// -repeats: Repeats or not
     /// -action: indicates the action to be performed
-    func scheduledTimer(withName name: String?,
+    public func scheduledTimer(withName name: String?,
                         timeInterval: Int,
                         queue: DispatchQueue,
                         action: @escaping ActionBlock)
@@ -73,7 +76,7 @@ class GCDTimer {
     /// -timeInterval: how many milliseconds is the callback time
     /// -queue: indicates the thread
     /// -action: callback
-    func scheduledMillisecondsTimer(withName name: String?,
+    public func scheduledMillisecondsTimer(withName name: String?,
                                     countDown: TimeInterval,
                                     milliseconds: TimeInterval,
                                     queue: DispatchQueue,
@@ -101,7 +104,7 @@ class GCDTimer {
     /// Destroy the timer named name
     ///
     /// -Parameter name: specifies the name of the timer
-    func destoryTimer(withName name: String?) {
+    public func destoryTimer(withName name: String?) {
         guard let name = name else { return }
         let timer = timerContainer[name]
         if timer == nil { return }
@@ -110,7 +113,7 @@ class GCDTimer {
     }
 
     /// Destroy all timers
-    func destoryAllTimer() {
+    public func destoryAllTimer() {
         timerContainer.forEach {
             destoryTimer(withName: $0.key)
         }
@@ -120,14 +123,14 @@ class GCDTimer {
     ///
     /// -Parameter name: specifies the name of the timer
     /// -Returns: Returns a bool value
-    func isExistTimer(withName name: String?) -> Bool {
+    public func isExistTimer(withName name: String?) -> Bool {
         guard let name = name else { return false }
         return timerContainer[name] != nil
     }
 }
 
 extension Date {
-    func timeString(ofStyle style: DateFormatter.Style = .medium) -> String {
+    public func timeString(ofStyle style: DateFormatter.Style = .medium) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.timeStyle = style
         dateFormatter.dateStyle = .none

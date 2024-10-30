@@ -10,6 +10,7 @@ import AgoraRtcKit
 import SwiftUI
 import VideoLoaderAPI
 import RTMSyncManager
+import AgoraCommon
 
 protocol ShowLiveViewControllerDelegate: NSObjectProtocol {
     func currentUserIsOnSeat()

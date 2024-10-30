@@ -7,6 +7,7 @@
 
 import Foundation
 import RTMSyncManager
+import AgoraCommon
 
 func toKtvLocalize(_ str: String) -> String {
     return str.toSceneLocalization(with: "KtvResource") as String

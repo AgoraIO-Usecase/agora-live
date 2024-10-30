@@ -8,6 +8,7 @@
 import UIKit
 import VideoLoaderAPI
 import MJRefresh
+import AgoraCommon
 
 class CommerceRoomListVC: UIViewController {
     

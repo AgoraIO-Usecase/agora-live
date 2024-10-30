@@ -7,6 +7,7 @@
 
 import Foundation
 import RTMSyncManager
+import AgoraCommon
 
 @objc enum VLSongPlayStatus: Int {
     case idle = 0 //未播放

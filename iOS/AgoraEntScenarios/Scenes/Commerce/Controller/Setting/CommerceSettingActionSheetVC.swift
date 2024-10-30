@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraCommon
 
 private let TableHeaderHeight: CGFloat = 58
 private let TableFooterHeight: CGFloat = 100

@@ -11,6 +11,8 @@
 #import "UIView+VL.h"
 #import "VLEffectView.h"
 #import "VLEarSettingView.h"
+#import "QMUICommonDefines.h"
+
 @implementation LSTPopView (KTVModal)
 
 #pragma mark private method

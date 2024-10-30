@@ -7,6 +7,7 @@
 
 import UIKit
 import AgoraRtcKit
+import AgoraCommon
 
 class ShowMusicEffectVC: UIViewController {
     

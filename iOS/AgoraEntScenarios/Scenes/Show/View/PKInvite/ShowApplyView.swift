@@ -7,6 +7,7 @@
 
 import UIKit
 import Agora_Scene_Utils
+import AgoraCommon
 
 class ShowApplyView: UIView {
     private var roomId: String

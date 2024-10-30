@@ -8,20 +8,20 @@
 import UIKit
 import ZSwiftBaseLib
 
-public class VerifyCodeView: UIView {
-    @objc var beginEdit: (() -> Void)?
+open class VerifyCodeView: UIView {
+    @objc public var beginEdit: (() -> Void)?
 
     /// Input value change
-    @objc var textValueChange: ((_ text: String) -> Void)?
+    @objc public var textValueChange: ((_ text: String) -> Void)?
 
     /// Input complete
-    @objc var inputFinish: ((_ text: String) -> Void)?
+    @objc public var inputFinish: ((_ text: String) -> Void)?
 
     /// Number of verification code input fields
-    @objc var inputTextNum: Int = 4
+    @objc public var inputTextNum: Int = 4
 
     /// Input field
-    @objc lazy var textFiled: VRVerifyCodeTextView = {
+    @objc public lazy var textFiled: VRVerifyCodeTextView = {
         let textFiled = VRVerifyCodeTextView(frame: CGRect(x: self.padding, y: 0, width: self.frame.width - 2 * self.padding, height: self.frame.height)).backgroundColor(.clear).textColor(.clear).delegate(self)
         textFiled.tintColor = .darkText
         textFiled.keyboardType = .decimalPad
@@ -34,19 +34,19 @@ public class VerifyCodeView: UIView {
     @objc var codeViews: [VRVerifyCodeNumberView] = []
 
     /// The margin between the two sides of the verification code input box
-    @objc var padding: CGFloat = 15
+    @objc public var padding: CGFloat = 15
 
     /// Each CAPTCHA input field spacing
-    @objc var spacing: CGFloat = 10
+    @objc public var spacing: CGFloat = 10
 
     /// Whether it is in input
-    @objc var isInput = true
+    @objc public var isInput = true
 
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
 
-    @objc convenience init(frame: CGRect, codeNumbers: Int, space: CGFloat, padding: CGFloat) {
+    @objc public convenience init(frame: CGRect, codeNumbers: Int, space: CGFloat, padding: CGFloat) {
         self.init(frame: frame)
         spacing = space
         self.padding = padding
@@ -73,7 +73,7 @@ public class VerifyCodeView: UIView {
     }
 
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

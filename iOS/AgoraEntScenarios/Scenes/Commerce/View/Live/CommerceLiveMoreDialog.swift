@@ -7,6 +7,7 @@
 
 import UIKit
 import Agora_Scene_Utils
+import AgoraCommon
 
 @objc public class CommerceLiveMoreDialog: UIView {
     var onClickDislikeClosure: (() -> Void)?

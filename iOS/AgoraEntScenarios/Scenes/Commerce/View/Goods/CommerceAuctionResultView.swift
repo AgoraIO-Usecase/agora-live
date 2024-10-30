@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraCommon
 
 class CommerceAuctionResultView: UIView {
     private lazy var avatarContainerView: UIImageView = {

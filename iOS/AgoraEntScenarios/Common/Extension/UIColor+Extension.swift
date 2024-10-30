@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension UIColor {
+public extension UIColor {
     static var blueColor: UIColor {
         .init(hex: "#2397FE") ?? .white
     }

@@ -8,6 +8,7 @@
 import Foundation
 import RTMSyncManager
 import AgoraRtmKit
+import AgoraCommon
 
 private let kSceneId = "overseas_show_1.3.0"
 private let kRoomPresenceChannelName = "overseas_show_1_3_0_9999999999"
@@ -73,6 +74,10 @@ public class ShowSyncManagerServiceImp: NSObject {
         
         AppContext.shared.agoraRTCToken = ""
         AppContext.shared.agoraRTMToken = ""
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

@@ -8,6 +8,7 @@
 import Foundation
 import YYModel
 import AFNetworking
+import AgoraCommon
 
 @objc class KTVSongModel: NSObject {
     @objc var lyric: String = ""
@@ -103,6 +104,10 @@ private class VLSongListNetworkModel: VLCommonNetworkModel {
         host = KeyCenter.releaseBaseServerUrl ?? ""
         interfaceName = "/ktv/songs"
         method = .get
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

@@ -9,6 +9,7 @@ import UIKit
 import AgoraRtcKit
 import SwiftUI
 import VideoLoaderAPI
+import AgoraCommon
 
 protocol CommerceLiveViewControllerDelegate: NSObjectProtocol {
     func currentUserIsOnSeat()

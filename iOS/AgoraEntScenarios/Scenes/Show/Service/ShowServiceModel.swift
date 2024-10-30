@@ -8,6 +8,7 @@
 import Foundation
 import VideoLoaderAPI
 import RTMSyncManager
+import AgoraCommon
 
 //@objc public enum ShowRoomStatus: Int {
 //    /// 直播中

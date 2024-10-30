@@ -18,6 +18,10 @@ import SSZipArchive
         self.sceneName = sceneName
         self.logFileMaxSize = logFileMaxSize
     }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 public func agoraDoMainThreadTask(_ task: (()->())?) {
@@ -168,12 +172,16 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
         //show uploading alert
         let uuid = UUID().uuidString
         VLLogToast.show(title:"uploading log file", message: "", confirmButtonTitle: "", cancelButtonTitle: "")
-        uploadLogHander(scene: scene) { logId, error in
-            if error != nil {
-                showRetryToast(retryScene: scene)
-            } else {
-                VLLogToast.show(title: "upload success", message: "\(logId ?? "")", confirmButtonTitle: "confirm", cancelButtonTitle: "")
+        if #available(iOS 13.0, *) {
+            uploadLogHander(scene: scene) { logId, error in
+                if error != nil {
+                    showRetryToast(retryScene: scene)
+                } else {
+                    VLLogToast.show(title: "upload success", message: "\(logId ?? "")", confirmButtonTitle: "confirm", cancelButtonTitle: "")
+                }
             }
+        } else {
+            // Fallback on earlier versions
         }
     }
     
@@ -199,6 +207,7 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
         }
     }
     
+    @available(iOS 13.0, *)
     static func uploadLogHander(scene: String, completion: @escaping (String?, Error?) -> Void) {
         let zipStart = DispatchTime.now()
         DispatchQueue.global().async {
@@ -214,7 +223,7 @@ public func agoraDoMainThreadTask(_ task: (()->())?) {
                 req.name = "file"
                 req.mimeType = "application/zip"
                 req.fileName = URL(fileURLWithPath: filePath).lastPathComponent
-                req.appId = KeyCenter.AppId
+                req.appId = AppContext.shared.appId
                 req.upload { progress in
                     
                 } completion: { err, content in

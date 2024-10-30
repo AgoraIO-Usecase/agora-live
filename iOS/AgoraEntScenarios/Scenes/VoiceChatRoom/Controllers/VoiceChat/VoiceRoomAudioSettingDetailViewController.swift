@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import AgoraCommon
+
 //View heights for different scenes
 public enum TV_TYPE_HEIGHT: CGFloat {
     case ANS = 920

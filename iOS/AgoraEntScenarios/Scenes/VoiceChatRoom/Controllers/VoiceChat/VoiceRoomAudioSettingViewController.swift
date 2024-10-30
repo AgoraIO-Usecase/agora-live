@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import AgoraCommon
+import ZSwiftBaseLib
 
 private enum AudioSettingRowType {
     case AINS

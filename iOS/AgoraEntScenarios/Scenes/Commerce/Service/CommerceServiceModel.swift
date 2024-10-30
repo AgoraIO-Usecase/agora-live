@@ -7,31 +7,31 @@
 
 import Foundation
 import VideoLoaderAPI
+import AgoraCommon
 
-
-@objc enum CommerceRoomStatus: Int {
+@objc public enum CommerceRoomStatus: Int {
     case activity = 0
     case end = 1
 }
 
 @objcMembers
-class CommerceBaseInfo: NSObject {
+public class CommerceBaseInfo: NSObject {
     var objectId: String? = UUID().uuidString
 }
 
 /// Room list information
 @objcMembers
-class CommerceRoomListModel: CommerceBaseInfo, IVideoLoaderRoomInfo {
+public class CommerceRoomListModel: CommerceBaseInfo, IVideoLoaderRoomInfo {
     
-    func channelName() -> String {
+    public func channelName() -> String {
         return roomId
     }
     
-    func userId() -> String {
+    public func userId() -> String {
         return ownerId
     }
     
-    var anchorInfoList: [AnchorInfo] {
+    public var anchorInfoList: [AnchorInfo] {
         get {
             let anchorInfo = AnchorInfo()
             anchorInfo.channelName = roomId

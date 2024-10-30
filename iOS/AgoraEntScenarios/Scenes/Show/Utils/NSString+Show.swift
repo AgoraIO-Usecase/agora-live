@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AgoraCommon
 
 extension String {
     var show_localized: String {

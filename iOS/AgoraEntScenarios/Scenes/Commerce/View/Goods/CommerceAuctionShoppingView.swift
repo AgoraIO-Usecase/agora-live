@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraCommon
 
 class CommerceAuctionShoppingView: UIView {
     var startBidGoodsClosure: (() -> Void)?

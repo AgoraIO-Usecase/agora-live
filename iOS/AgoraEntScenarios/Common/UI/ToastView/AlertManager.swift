@@ -10,13 +10,13 @@ import UIKit
 
 public let cl_screenWidht = UIScreen.main.bounds.width
 public let cl_screenHeight = UIScreen.main.bounds.height
-class AlertManager: NSObject {
+public class AlertManager: NSObject {
     private struct AlertViewCache {
         var view: UIView?
         var index: Int = 0
     }
 
-    enum AlertPosition {
+    public enum AlertPosition {
         case top
         case center
         case bottom
@@ -129,7 +129,7 @@ class AlertManager: NSObject {
         })
     }
 
-    static func hiddenView(all: Bool = true, completion: (() -> Void)? = nil) {
+    public static func hiddenView(all: Bool = true, completion: (() -> Void)? = nil) {
         if vc == nil {
             completion?()
             return
@@ -212,7 +212,7 @@ extension UIViewController {
         }
     }
 
-    static func cl_topViewController(_ viewController: UIViewController? = nil) -> UIViewController? {
+    public static func cl_topViewController(_ viewController: UIViewController? = nil) -> UIViewController? {
         let viewController = viewController ?? keyWindow?.rootViewController
 
         if let navigationController = viewController as? UINavigationController,

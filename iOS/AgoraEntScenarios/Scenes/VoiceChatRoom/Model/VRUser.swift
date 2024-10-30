@@ -21,8 +21,14 @@ import KakaJSON
     public var volume: Int = 0 //Microphone volume
     public var micStatus: Int = 1 //1 open microphone 0 autonomous quiet microphone
 
-    override public required init() {}
-
+    override public required init() {
+        super.init()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public func kj_modelKey(from property: Property) -> ModelPropertyKey {
         property.name
     }

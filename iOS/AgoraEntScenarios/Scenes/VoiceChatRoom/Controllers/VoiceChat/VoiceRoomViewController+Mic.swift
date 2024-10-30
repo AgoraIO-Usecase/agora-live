@@ -6,8 +6,8 @@
 //
 
 import Foundation
-
-// MARK: - about mic 
+import AgoraCommon
+// MARK: - about mic
 extension VoiceRoomViewController {
     
     //Prohibition of designated microphone positions

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AgoraCommon
 
 struct TemplateScene {
     enum SubscribeStatus {

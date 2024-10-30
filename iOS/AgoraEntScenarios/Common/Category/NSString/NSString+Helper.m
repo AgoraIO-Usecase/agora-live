@@ -12,7 +12,8 @@
 #import <CommonCrypto/CommonCryptor.h>
 #import <CommonCrypto/CommonDigest.h> // Need to import for CC_MD5 access
 #import "VLFontUtils.h"
-#import "AESMacro.h"
+#import "QMUICommonDefines.h"
+
 @import UIKit;
 
 #define     LocalStr_None           @""

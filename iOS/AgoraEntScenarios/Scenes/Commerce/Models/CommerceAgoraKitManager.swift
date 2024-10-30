@@ -10,6 +10,7 @@ import AgoraRtcKit
 import UIKit
 import YYCategories
 import VideoLoaderAPI
+import AgoraCommon
 
 class CommerceAgoraKitManager: NSObject {
     

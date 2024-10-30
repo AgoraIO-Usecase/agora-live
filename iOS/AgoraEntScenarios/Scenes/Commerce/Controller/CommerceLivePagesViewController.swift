@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import VideoLoaderAPI
+import AgoraCommon
 
 private let kPagesVCTag = "CommercePagesVC"
 class CommerceLivePagesViewController: ViewController {

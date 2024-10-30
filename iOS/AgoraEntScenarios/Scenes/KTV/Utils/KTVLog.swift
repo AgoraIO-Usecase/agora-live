@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import SwiftyBeaver
+import AgoraCommon
 
 @objc class KTVLog: NSObject {
     

@@ -8,10 +8,11 @@
 import UIKit
 @_exported import ZSwiftBaseLib
 
+@objcMembers
 public class BaseNavigationView: UIView {
-    lazy var back: UIButton = .init(type: .custom).frame(CGRect(x: 20, y: ZStatusBarHeight + 7, width: 30, height: 30))
+    public lazy var back: UIButton = .init(type: .custom).frame(CGRect(x: 20, y: ZStatusBarHeight + 7, width: 30, height: 30))
 
-    lazy var title: UILabel = .init(frame: CGRect(x: self.back.frame.maxX + 10, y: ZStatusBarHeight + 10, width: ScreenWidth - 120, height: 20)).font(UIFont.systemFont(ofSize: 16, weight: .semibold)).backgroundColor(.clear).textAlignment(.center)
+    public lazy var title: UILabel = .init(frame: CGRect(x: self.back.frame.maxX + 10, y: ZStatusBarHeight + 10, width: ScreenWidth - 120, height: 20)).font(UIFont.systemFont(ofSize: 16, weight: .semibold)).backgroundColor(.clear).textAlignment(.center)
 
     override public init(frame: CGRect) {
         super.init(frame: frame)

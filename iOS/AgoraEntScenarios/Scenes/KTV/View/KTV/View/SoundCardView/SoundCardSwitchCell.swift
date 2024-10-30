@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraCommon
 
 class SoundCardSwitchCell: UITableViewCell {
     var titleLabel: UILabel!

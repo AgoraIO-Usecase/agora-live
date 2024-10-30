@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraCommon
 
 private let kTableViewBottomOffset: CGFloat = Screen.safeAreaBottomHeight() + 54
 private let kChatInputViewHeight: CGFloat = 56

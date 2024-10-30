@@ -6,6 +6,8 @@
 #import "VLSettingAIAECSwitcherView.h"
 #import "AESMacro.h"
 #import "VLToast.h"
+#import "AgoraEntScenarios-Swift.h"
+
 @import Masonry;
 
 @interface VLSettingAIAECSwitcherView()<UITextFieldDelegate>

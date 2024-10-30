@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import AgoraCommon
 
 class VMSoundView: UIView {
     lazy var cover: UIView = {

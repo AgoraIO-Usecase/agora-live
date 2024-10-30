@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AgoraCommon
 
 @objc class VRSoundCardSettingView: UIView {
     var headIconView: UIView!

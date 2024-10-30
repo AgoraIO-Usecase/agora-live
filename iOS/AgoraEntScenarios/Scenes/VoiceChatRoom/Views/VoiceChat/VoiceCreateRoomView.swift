@@ -8,6 +8,8 @@
 import Foundation
 import UIKit
 import Masonry
+import AgoraCommon
+
 enum VRCreateRoomActionType: Int {
     case normal = 0
     case encrypt = 1

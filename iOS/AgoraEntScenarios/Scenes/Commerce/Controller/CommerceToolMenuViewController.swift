@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraCommon
 
 protocol CommerceToolMenuViewControllerDelegate: NSObjectProtocol {
     func onClickCameraButtonSelected(_ menu:CommerceToolMenuViewController, _ selected: Bool)

@@ -8,6 +8,8 @@
 #import "VLSongList.h"
 #import "VLHotSpotBtn.h"
 #import "AESMacro.h"
+#import "QMUICommonDefines.h"
+
 @interface VLPopSongList ()
 
 @property(nonatomic, weak) id <VLPopSongListDelegate>delegate;

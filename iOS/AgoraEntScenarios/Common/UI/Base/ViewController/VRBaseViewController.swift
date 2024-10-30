@@ -10,33 +10,38 @@ import ZSwiftBaseLib
 import SVProgressHUD
 
 @objcMembers
-class VRBaseViewController: UIViewController {
-    lazy var navigation: BaseNavigationView = .init(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: ZNavgationHeight))
+open class VRBaseViewController: UIViewController {
+    open lazy var navigation: BaseNavigationView = .init(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: ZNavgationHeight))
 
-    override public func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
     }
 
-    override public func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         view.backgroundColor = .white
         view.addSubview(navigation)
-        setupNavigationAttributes()
+        if #available(iOS 13.0, *) {
+            setupNavigationAttributes()
+        } else {
+            // Fallback on earlier versions
+        }
         navigation.back.addTarget(self, action: #selector(backAction), for: .touchUpInside)
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
+    open override var preferredStatusBarStyle: UIStatusBarStyle {
         .default
     }
 
-    override var title: String? {
+    open override var title: String? {
         didSet {
             navigation.title.text = title
         }
     }
     
+    @available(iOS 13.0, *)
     public func setupNavigationAttributes() {
         navigation.title.isHidden = !showTitle
         navigation.title.textColor = titleColor
@@ -44,7 +49,7 @@ class VRBaseViewController: UIViewController {
         navigation.backgroundColor = navBackgroundColor
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         SVProgressHUD.dismiss()
     }
@@ -53,13 +58,13 @@ class VRBaseViewController: UIViewController {
 extension VRBaseViewController {
     var showTitle: Bool { true }
 
-    var titleColor: UIColor { .darkText }
+    open var titleColor: UIColor { .darkText }
 
-    var backImageName: String { "chevron.left" }
+    open var backImageName: String { "chevron.left" }
 
-    var navBackgroundColor: UIColor { .clear }
+    open var navBackgroundColor: UIColor { .clear }
 
-    @objc func backAction() {
+    @objc public func backAction() {
         navigationController?.popViewController(animated: true)
     }
 }

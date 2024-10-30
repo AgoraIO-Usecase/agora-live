@@ -7,7 +7,7 @@
 
 import UIKit
 
-class VRVerifyCodeTextView: UITextField {
+public class VRVerifyCodeTextView: UITextField {
     // Whether to hide all menus
     var isHiddenAllMenu = false
 
@@ -29,7 +29,7 @@ class VRVerifyCodeTextView: UITextField {
     /// Delete - This closure is called twice when isTrigger = true to actually delete
     var deleteClouruse: ((_ isTrigger: Bool) -> Bool)?
 
-    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+    public override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         if isHiddenAllMenu {
             return false
         }

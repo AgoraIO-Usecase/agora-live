@@ -12,6 +12,7 @@ import SnapKit
 import SVGAPlayer
 import UIKit
 import ZSwiftBaseLib
+import AgoraCommon
 
 public enum ROLE_TYPE {
     case owner

@@ -13,8 +13,12 @@ open class NMCommonNetworkModel: AUINetworkModel {
     public var userId: String?
     public override init() {
         super.init()
-        host = KeyCenter.releaseBaseServerUrl!
+        host = AppContext.shared.releaseBaseUrl
         method = .post
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     func getToken() -> String {
@@ -56,8 +60,8 @@ open class NMCommonNetworkModel: AUINetworkModel {
 @objcMembers
 open class NMGenerateTokennNetworkModel: NMCommonNetworkModel {
     
-    var appCertificate: String? = KeyCenter.Certificate
-    var appId: String? = KeyCenter.AppId
+    var appCertificate: String? = AppContext.shared.certificate
+    var appId: String? = AppContext.shared.appId
     var src: String = "iOS"
     var ts: String? = "".timeStamp
     
@@ -68,6 +72,10 @@ open class NMGenerateTokennNetworkModel: NMCommonNetworkModel {
     
     public override init() {
         super.init()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     public override func parse(data: Data?) throws -> Any? {
@@ -85,6 +93,10 @@ open class NMGenerate006TokennNetworkModel: NMGenerateTokennNetworkModel {
         super.init()
         interfaceName = "v2/token006/generate"
     }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 @objcMembers
@@ -92,6 +104,10 @@ open class NMGenerate007TokennNetworkModel: NMGenerateTokennNetworkModel {
     public override init() {
         super.init()
         interfaceName = "v2/token/generate"
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -122,16 +138,16 @@ open class NMGenerateIMConfigNetworkModelUserParmas: NSObject {
 
 @objcMembers
 open class NMGenerateIMConfigNetworkModelIMParmas: NSObject {
-    var appKey: String? = KeyCenter.IMAppKey
-    var clientId: String? = KeyCenter.IMClientId
-    var clientSecret: String? = KeyCenter.IMClientSecret
+    var appKey: String? = AppContext.shared.imAppKey
+    var clientId: String? = AppContext.shared.imClientId
+    var clientSecret: String? = AppContext.shared.imClientSecret
 }
 
 
 @objcMembers
 open class NMGenerateIMConfigNetworkModel: NMCommonNetworkModel {
     
-    var appId: String? =  KeyCenter.AppId
+    var appId: String? =  AppContext.shared.appId
     var src: String? = "iOS"
     var traceId: String? = NSString.withUUID().md5()
     
@@ -153,7 +169,11 @@ open class NMGenerateIMConfigNetworkModel: NMCommonNetworkModel {
         super.init()
         interfaceName = "v1/webdemo/im/chat/create"
     }
-   
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 }
 
 
@@ -161,7 +181,7 @@ open class NMGenerateIMConfigNetworkModel: NMCommonNetworkModel {
 @objcMembers
 open class NMVoiceIdentifyNetworkModel: NMCommonNetworkModel {
    
-    var appId: String? = KeyCenter.AppId
+    var appId: String? = AppContext.shared.appId
     var src: String? = "iOS"
     var traceId: String? = UUID().uuidString.md5Encrypt
     
@@ -173,20 +193,24 @@ open class NMVoiceIdentifyNetworkModel: NMCommonNetworkModel {
         super.init()
         interfaceName = "v1/moderation/audio"
     }
-   
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 }
 
 @objcMembers
 open class NMStartCloudPlayerNetworkModel: NMCommonNetworkModel {
     
-    var appId: String? = KeyCenter.AppId
-    var appCert: String? = KeyCenter.Certificate ?? ""
+    var appId: String? = AppContext.shared.appId
+    var appCert: String? = AppContext.shared.certificate
     var traceId: String? = NSString.withUUID().md5() ?? ""
     var region: String? = "cn"
     var src: String? = "iOS"
     
     lazy var basicAuth: String? = {
-        createBasicAuth(key: KeyCenter.CloudPlayerKey ?? "", password: KeyCenter.CloudPlayerSecret ?? "")
+        createBasicAuth(key: AppContext.shared.cloudPlayerKey, password: AppContext.shared.cloudPlayerSecret)
     }()
     
     var channelName: String?
@@ -198,13 +222,17 @@ open class NMStartCloudPlayerNetworkModel: NMCommonNetworkModel {
         super.init()
         interfaceName = "v1/rte-cloud-player/start"
     }
-   
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 }
 
 @objcMembers
 open class NMCloudPlayerHeartbeatNetworkModel: NMCommonNetworkModel {
     
-    var appId: String? = KeyCenter.AppId
+    var appId: String? = AppContext.shared.appId
     var src: String? = "iOS"
     var traceId: String? = NSString.withUUID().md5() ?? ""
     
@@ -214,6 +242,10 @@ open class NMCloudPlayerHeartbeatNetworkModel: NMCommonNetworkModel {
     public override init() {
         super.init()
         interfaceName = "v1/heartbeat"
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -232,6 +264,10 @@ open class NMReportSceneClickNetworkModel: NMCommonNetworkModel {
         host = "https://report-ad.shengwang.cn/"
         interfaceName = "v1/report"
         sign = "src=\(src ?? "agora_ent_demo")&ts=\(ts)".md5Encrypt
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     func setProject(_ project: String){
@@ -257,8 +293,11 @@ open class NMReportDeviceInfoNetworkModel: NMCommonNetworkModel {
     
     public init(sceneId: String, userNo: String, appId: String) {
         super.init()
-        host = KeyCenter.HostUrl
         interfaceName = "/api-login/report/device?userNo=\(userNo)&sceneId=\(sceneId)&appId=\(appId)&projectId=agora_ent_demo"
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
 }
@@ -270,9 +309,12 @@ open class NMReportUserBehaviorNetworkModel: NMCommonNetworkModel {
     
     public init(sceneId: String, userNo: String, appId: String) {
         super.init()
-        host = KeyCenter.HostUrl
         interfaceName = "/api-login/report/action?userNo=\(userNo)&sceneId=\(sceneId)&appId=\(appId)&projectId=agora_ent_demo"
         action = sceneId
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
 }

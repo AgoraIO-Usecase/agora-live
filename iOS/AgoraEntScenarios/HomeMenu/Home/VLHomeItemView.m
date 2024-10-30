@@ -7,6 +7,8 @@
 #import "VLHomeItemModel.h"
 #import "VLMacroDefine.h"
 #import "AESMacro.h"
+#import "AgoraCommon-Swift.h"
+#import "AgoraCommon-umbrella.h"
 
 @interface VLHomeItemView ()
 

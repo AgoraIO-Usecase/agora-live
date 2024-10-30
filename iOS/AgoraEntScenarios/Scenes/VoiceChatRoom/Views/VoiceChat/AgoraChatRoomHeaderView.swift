@@ -7,6 +7,7 @@
 
 import SnapKit
 import UIKit
+import AgoraCommon
 
 public enum HEADER_ACTION {
     case back

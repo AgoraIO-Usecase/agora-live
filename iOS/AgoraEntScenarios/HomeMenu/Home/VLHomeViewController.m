@@ -11,6 +11,8 @@
 #import "VLToast.h"
 #import "VLOnLineListVC.h"
 #import "AgoraEntScenarios-Swift.h"
+#import <AgoraCommon/AgoraCommon-Swift.h>
+#import "DreamFlow/DreamFlow-Swift.h"
 
 @interface VLHomeViewController ()<VLHomeViewDelegate>
 
@@ -68,7 +70,7 @@
 
 
 - (void)itemClickAction:(int)tagValue {
-    NSArray* sceneNames = @[@"LiveShow", @"E-Commerce", @"VoiceChat", @"KTV"];
+    NSArray* sceneNames = @[@"LiveShow", @"E-Commerce", @"VoiceChat", @"KTV", @"Stylize"];
     [[NetworkManager shared] reportSceneClickWithSceneName:sceneNames[tagValue]];
     [[NetworkManager shared] reportDeviceInfoWithSceneName:sceneNames[tagValue]];
     [[NetworkManager shared] reportUserBehaviorWithSceneName:sceneNames[tagValue]];
@@ -92,6 +94,10 @@
         case 3: {
             VLOnLineListVC *vc = [[VLOnLineListVC alloc] init];
             [self.navigationController pushViewController:vc animated:YES];
+            break;
+        }
+        case 4: {
+            [AppContext dreamFlowSceneWithViewController:self];
             break;
         }
         default: break;

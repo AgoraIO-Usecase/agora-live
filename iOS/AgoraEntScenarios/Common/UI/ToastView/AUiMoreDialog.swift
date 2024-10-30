@@ -20,7 +20,7 @@ import UIKit
     private lazy var reportButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage.sceneImage(name: "report_icon", bundleName: "VoiceChatRoomResource"), for: .normal)
-        button.setTitle("voice_report".voice_localized, for: .normal)
+        button.setTitle("voice_report".common_localized, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         button.setTitleColor(.gray, for: .normal)
         button.contentHorizontalAlignment = .center;
@@ -63,14 +63,14 @@ import UIKit
         }
     }
     
-    @objc func show() {
+    @objc public func show() {
         contentView.bottom = 0
         UIView.animate(withDuration: 0.3, delay: 0) {
             self.contentView.top = 0
         }
     }
     
-    @objc func hidden() {
+    @objc public func hidden() {
         UIView.animate(withDuration: 0.3, delay: 0) {
             self.contentView.bottom = 0
         } completion: { flag in
@@ -81,7 +81,7 @@ import UIKit
     @objc private func onAction(_ sender: UIButton) {
         //TODO: mock success
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
-            ToastView.show(text: "voice_report_success".voice_localized)
+            ToastView.show(text: "voice_report_success".common_localized)
         }
     }
 }

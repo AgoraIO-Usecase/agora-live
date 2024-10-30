@@ -8,6 +8,8 @@
 #import "VLDebugView.h"
 #import "KTVDebugInfo.h"
 #import "AESMacro.h"
+#import "QMUICommonDefines.h"
+
 @interface VLDebugView()
 @property(nonatomic, weak) id <VLDebugViewDelegate>delegate;
 @property (nonatomic,strong) UISwitch *dumpSwitch;

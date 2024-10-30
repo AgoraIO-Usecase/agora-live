@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraCommon
 
 class DebugItem {
     var title: String

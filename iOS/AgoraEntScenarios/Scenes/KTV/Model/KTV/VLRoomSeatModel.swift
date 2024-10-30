@@ -7,6 +7,7 @@
 
 import Foundation
 import RTMSyncManager
+import AgoraCommon
 
 @objcMembers
 class VLRoomSeatModel: VLBaseModel {

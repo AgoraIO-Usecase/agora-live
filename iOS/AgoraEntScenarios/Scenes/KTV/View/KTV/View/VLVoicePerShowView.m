@@ -6,8 +6,10 @@
 //
 
 #import "VLVoicePerShowView.h"
-#import "AESMacro.h"
 #import "VLMacroDefine.h"
+#import "AESMacro.h"
+
+#import "QMUICommonDefines.h"
 
 @interface VLVoicePerShowView()
 @property(nonatomic, weak) id <VLVoicePerShowViewDelegate>delegate;

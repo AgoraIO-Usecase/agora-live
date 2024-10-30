@@ -8,16 +8,16 @@
 import Foundation
 import UIKit
 
-struct Screen {
-    static let width = UIScreen.main.bounds.width
-    static let height = UIScreen.main.bounds.height
-    static let kSeparatorHeight = 1.0 / UIScreen.main.scale
-    static var kNavHeight: CGFloat {
+public struct Screen {
+    public static let width = UIScreen.main.bounds.width
+    public static let height = UIScreen.main.bounds.height
+    public static let kSeparatorHeight = 1.0 / UIScreen.main.scale
+    public static var kNavHeight: CGFloat {
         44 + statusHeight()
     }
-    static let scaleSize: CGFloat = width / 375.0
+    public static let scaleSize: CGFloat = width / 375.0
     
-    static func safeHeight() -> CGFloat {
+    public static func safeHeight() -> CGFloat {
         guard let safeInserts = UIApplication.kWindow?.safeAreaInsets else {
             return 0
         }
@@ -25,11 +25,11 @@ struct Screen {
     }
 
     /// Proportional width
-    static func uiWidth(_ mywith: CGFloat) -> CGFloat {
+    public static func uiWidth(_ mywith: CGFloat) -> CGFloat {
         return mywith * scaleSize
     }
     
-    static var isFullScreen: Bool {
+    public static var isFullScreen: Bool {
         if #available(iOS 11, *) {
             guard let w = UIApplication.shared.delegate?.window, let unwrapedWindow = w else {
                 return false
@@ -43,7 +43,7 @@ struct Screen {
         return false
     }
 
-    static func statusHeight() -> CGFloat {
+    public static func statusHeight() -> CGFloat {
         var height: CGFloat = 0.0
         if #available(iOS 13.0, *) {
             let statusBarManager = UIApplication.kWindow?.windowScene?.statusBarManager
@@ -57,13 +57,13 @@ struct Screen {
     }
 
     /// tabbar height
-    static func tabbarHeight() -> CGFloat {
+    public static func tabbarHeight() -> CGFloat {
         let tabVc = UITabBarController()
         return tabVc.tabBar.frame.size.height
     }
 
     /// Safety zone bottom height
-    static func safeAreaBottomHeight() -> CGFloat {
+    public static func safeAreaBottomHeight() -> CGFloat {
         guard let safeInserts = UIApplication.kWindow?.safeAreaInsets else {
             return 0
         }
@@ -71,32 +71,32 @@ struct Screen {
     }
 
     /// Height at the top of the safe zone
-    static func safeAreaTopHeight() -> CGFloat {
+    public static func safeAreaTopHeight() -> CGFloat {
         guard let safeInserts = UIApplication.shared.windows.first?.safeAreaInsets else {
             return 0
         }
         return safeInserts.top
     }
 
-    static func contentPixel(pixel: CGFloat) -> CGFloat {
+    public static func contentPixel(pixel: CGFloat) -> CGFloat {
         return Screen.width * pixel / 375.0
     }
 }
 
 extension Int {
-    var fit: CGFloat {
+    public var fit: CGFloat {
         return Screen.scaleSize * CGFloat(self)
     }
 }
 
 extension CGFloat {
-    var fit: CGFloat {
+    public var fit: CGFloat {
         return Screen.scaleSize * CGFloat(self)
     }
 }
 
 extension Double {
-    var fit: CGFloat {
+    public var fit: CGFloat {
         return Screen.scaleSize * CGFloat(self)
     }
 }

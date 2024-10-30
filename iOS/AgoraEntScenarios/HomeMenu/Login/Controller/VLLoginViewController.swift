@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraCommon
 
 @objc
 class VLLoginViewController: VRBaseViewController {

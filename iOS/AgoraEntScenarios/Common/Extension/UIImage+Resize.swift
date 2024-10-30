@@ -1,7 +1,7 @@
 
 import UIKit
 
-extension UIImage {
+public extension UIImage {
     // Image compression
     func resetSizeOfImageData(maxSize: NSInteger) -> Data? {
         let sourceImage = self

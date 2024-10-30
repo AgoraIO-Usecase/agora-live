@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AgoraCommon
 
 ///UIViewController that complies with the PresentationViewType protocol
 public typealias PresentationViewController = UIViewController & PresentedViewType

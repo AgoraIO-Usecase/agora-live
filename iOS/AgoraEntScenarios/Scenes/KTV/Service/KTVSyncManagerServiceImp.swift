@@ -10,6 +10,7 @@ import RTMSyncManager
 import YYModel
 import SVProgressHUD
 import AgoraRtmKit
+import AgoraCommon
 
 private let kSceneId = "scene_ktv_1.3.0"
 
@@ -87,6 +88,10 @@ private let SYNC_MANAGER_CHORUS_INFO = "chorister_info"
         
         AppContext.shared.agoraRTCToken = ""
         AppContext.shared.agoraRTMToken = ""
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func currentUserId() -> String {

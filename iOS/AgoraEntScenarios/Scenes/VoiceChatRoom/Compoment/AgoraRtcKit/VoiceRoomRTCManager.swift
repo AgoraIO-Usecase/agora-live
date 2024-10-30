@@ -7,6 +7,7 @@
 
 import AgoraRtcKit
 import Foundation
+import AgoraCommon
 
 /**
  *User role enumeration

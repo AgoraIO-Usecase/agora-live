@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension Array {
+public extension Array {
     // duplicate removal
     func filterDuplicates<E: Equatable>(_ filter: (Element) -> E) -> [Element] {
         var result = [Element]()

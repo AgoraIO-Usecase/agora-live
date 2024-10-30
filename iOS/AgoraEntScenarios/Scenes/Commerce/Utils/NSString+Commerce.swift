@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AgoraCommon
 
 extension String {
     var commerce_localized: String {

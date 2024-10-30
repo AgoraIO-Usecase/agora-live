@@ -8,6 +8,7 @@
 import UIKit
 import WebKit
 import ZSwiftBaseLib
+import AgoraCommon
 
 class VoiceRoomHelpViewController: VRBaseViewController, WKNavigationDelegate {
     lazy var webView: WKWebView = {

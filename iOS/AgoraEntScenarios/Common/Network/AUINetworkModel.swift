@@ -12,6 +12,8 @@ import YYModel
 public enum AUINetworkMethod: Int {
     case get = 0
     case post
+    case patch
+    case delete
     
     func getAfMethod() -> String {
         switch self {
@@ -19,6 +21,10 @@ public enum AUINetworkMethod: Int {
             return "GET"
         case .post:
             return "POST"
+        case .patch:
+            return "PATCH"
+        case .delete:
+            return "DELETE"
         }
     }
 }
@@ -26,7 +32,7 @@ public enum AUINetworkMethod: Int {
 @objcMembers
 open class AUINetworkModel: NSObject {
     public var uniqueId: String = UUID().uuidString
-    public var host: String = KeyCenter.HostUrl
+    public var host: String = AppContext.shared.hostUrl
     public var interfaceName: String?
     public var method: AUINetworkMethod = .post
     
@@ -43,7 +49,7 @@ open class AUINetworkModel: NSObject {
         return param
     }
     
-    public func getHttpBody() -> Data? {
+    open func getHttpBody() -> Data? {
         return self.yy_modelToJSONData()
     }
     
@@ -51,14 +57,13 @@ open class AUINetworkModel: NSObject {
         AUINetworking.shared.request(model: self, completion: completion)
     }
     
-    
     public func parse(data: Data?) throws -> Any?  {
         guard let data = data,
               let dic = try? JSONSerialization.jsonObject(with: data) else {
             throw AUICommonError.networkParseFail.toNSError()
         }
         
-        if let dic = (dic as? [String: Any]), let code = dic["code"] as? Int, code != 0 {
+        if let dic = (dic as? [String: Any]), let code = dic["code"] as? Int, code != 0, code != 1 {
             let message = dic["message"] as? String ?? ""
             if code == 401 {
                 self.tokenExpired()
@@ -70,10 +75,10 @@ open class AUINetworkModel: NSObject {
     }
     
     func tokenExpired() {
-        VLUserCenter.shared().logout()
         DispatchQueue.main.async {
             if let window = UIApplication.shared.delegate?.window {
-                window?.configRootViewController()
+                VLUserCenter.shared().logout()
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "AGORAENTTOKENEXPIRED") , object: nil)
             }
         }
     }
@@ -96,13 +101,7 @@ open class AUIUploadNetworkModel: AUINetworkModel {
     public var fileName: String?
     public var mimeType: String?
     public var appId: String?
-    
-    public override init() {
-        super.init()
-        host = KeyCenter.debugBaseServerUrl!
-    }
 
-    
     public lazy var  boundary: String = {
         UUID().uuidString
     }()

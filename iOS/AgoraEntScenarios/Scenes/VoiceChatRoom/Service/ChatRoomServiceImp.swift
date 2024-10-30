@@ -11,6 +11,7 @@ import ZSwiftBaseLib
 import AgoraChat.AgoraChatError
 import RTMSyncManager
 import AgoraRtmKit
+import AgoraCommon
 
 private let kSceneId = "scene_chatRoom_1.3.0"
 
@@ -42,7 +43,7 @@ public class ChatRoomServiceImp: NSObject {
     private lazy var roomManager = AUIRoomManagerImpl(sceneId: kSceneId)
     private lazy var syncManager: AUISyncManager = {
         let config = AUICommonConfig()
-        config.appId = AppContext.shared.appId()
+        config.appId = AppContext.shared.appId
         config.owner = user
         config.host = KeyCenter.RTMHostUrl
         let logConfig = AgoraRtmLogConfig()
@@ -77,6 +78,10 @@ public class ChatRoomServiceImp: NSObject {
         
         AppContext.shared.agoraRTCToken = ""
         AppContext.shared.agoraRTMToken = ""
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     func cleanCache() {

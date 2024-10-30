@@ -4,9 +4,9 @@
 //
 //  Created by FanPengpeng on 2023/12/7.
 //
+import AgoraCommon
 
 private let kvrIsApmOn = "kvrIsApmOn"
-
 extension AppContext {
     
     var isVRApmOn: Bool {

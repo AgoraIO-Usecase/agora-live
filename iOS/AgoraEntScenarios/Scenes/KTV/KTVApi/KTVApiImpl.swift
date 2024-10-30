@@ -1551,8 +1551,13 @@ class KTVApiRTCDelegateHandler: NSObject, AgoraRtcEngineDelegate {
     var delegate: KTVApiRTCDelegate
     init(with delegate: KTVApiRTCDelegate) {
         self.delegate = delegate
+        super.init()
     }
-
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
         delegate.didJoinChannel(channel: channel, withUid: uid, elapsed: elapsed)
     }

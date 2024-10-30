@@ -51,7 +51,7 @@ struct ActionSheetSectionModel {
     var iconName: String?
 }
 
-class ActionSheetManager: UIView {
+public class ActionSheetManager: UIView {
     @objc var didCellItemClosure: ((IndexPath) -> Void)?
     @objc var didSliderValueChangeClosure: ((IndexPath, Double) -> Void)?
     @objc var didSwitchValueChangeClosure: ((IndexPath, Bool) -> Void)?

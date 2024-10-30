@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraCommon
 
 class CommerceSettingLabelCell: CommerceSettingBaseCell {
     private var cellDidSelectedAction: (()->())?

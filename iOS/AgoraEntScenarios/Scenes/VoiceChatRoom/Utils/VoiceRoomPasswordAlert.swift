@@ -7,6 +7,7 @@
 
 import UIKit
 import ZSwiftBaseLib
+import AgoraCommon
 
 @objc public class VoiceRoomPasswordAlert: UIView {
     /// 30 is cancel,other is confirm

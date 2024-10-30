@@ -20,6 +20,8 @@
 #import "MenuUtils.h"
 #import <Photos/Photos.h>
 #import "AgoraEntScenarios-Swift.h"
+#import "AgoraCommon-umbrella.h"
+
 #import "AESMacro.h"
 @import Masonry;
 @import LEEAlert;

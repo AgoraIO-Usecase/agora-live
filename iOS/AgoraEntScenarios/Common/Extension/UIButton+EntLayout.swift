@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - title insert
-extension UIButton {
+public extension UIButton {
     @objc var spacingBetweenImageAndTitle: CGFloat {
         set {
 //            self.set
@@ -38,12 +38,12 @@ extension UIButton {
 
 // MARK: - tap range expand
 private var expandSizeKey = "expandSizeKey"
-extension UIButton {
+public extension UIButton {
     private struct AssociatedKeys {
         static var touchAreaEdgeInsets = UIEdgeInsets.zero
     }
     /// Set the button by clicking on the edge of the response area
-    var touchAreaEdgeInsets: UIEdgeInsets {
+   @objc public var touchAreaEdgeInsets: UIEdgeInsets {
         get {
             if let value = objc_getAssociatedObject(self, &AssociatedKeys.touchAreaEdgeInsets) as? UIEdgeInsets {
                 return value

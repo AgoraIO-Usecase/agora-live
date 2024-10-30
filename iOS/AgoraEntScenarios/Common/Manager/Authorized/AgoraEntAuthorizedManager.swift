@@ -18,7 +18,7 @@ open class AgoraEntAuthorizedManager: NSObject {
         showAuthorizedFail(parent: parent, message: "The camera permission is not set. Please set the camera permission")
     }
     
-    @objc class func checkMediaAuthorized(parent: UIViewController, completion: ((Bool) -> Void)? = nil) {
+    @objc public class func checkMediaAuthorized(parent: UIViewController, completion: ((Bool) -> Void)? = nil) {
         var isPermission: Bool = true
         let group = DispatchGroup()
         group.enter()
@@ -42,7 +42,7 @@ open class AgoraEntAuthorizedManager: NSObject {
         }
     }
     
-    @objc class func checkAudioAuthorized(parent: UIViewController, completion: ((Bool) -> Void)? = nil) {
+    @objc public class func checkAudioAuthorized(parent: UIViewController, completion: ((Bool) -> Void)? = nil) {
         requestAudioSession { granted in
             if !granted {
                 showAudioAuthorizedFail(parent: parent)
@@ -51,7 +51,7 @@ open class AgoraEntAuthorizedManager: NSObject {
         }
     }
     
-    @objc class func checkCameraAuthorized(parent: UIViewController, completion: ((Bool) -> Void)? = nil) {
+    @objc public class func checkCameraAuthorized(parent: UIViewController, completion: ((Bool) -> Void)? = nil) {
         requestCapture { granted in
             if !granted {
                 showCameraAuthorizedFail(parent: parent)

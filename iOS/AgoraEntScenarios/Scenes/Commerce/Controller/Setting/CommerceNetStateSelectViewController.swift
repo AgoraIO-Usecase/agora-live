@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AgoraCommon
 
 private let CommercePresettingCellID = "CommercePresettingCellID"
 private let CommercePresettingHeaderViewID = "CommercePresettingHeaderViewID"

@@ -19,9 +19,9 @@ public enum AUICommonError {
     public func toNSError() -> NSError {
         switch self {
         case .httpError(let error, let msg):
-            if error == 10001 {
-                return NSError(domain: "AUIKit Error", code: Int(error), userInfo: [ NSLocalizedDescriptionKey : "the room has been destroyed"])
-            }
+//            if error == 10001 {
+//                return NSError(domain: "AUIKit Error", code: Int(error), userInfo: [ NSLocalizedDescriptionKey : "the room has been destroyed"])
+//            }
             return NSError(domain: "AUIKit Error", code: Int(error), userInfo: [ NSLocalizedDescriptionKey : msg])
         case .rtcError(let error):
             return NSError(domain: "AUIKit Error", code: Int(error), userInfo: [ NSLocalizedDescriptionKey : "rtc operation fail: \(error)"])

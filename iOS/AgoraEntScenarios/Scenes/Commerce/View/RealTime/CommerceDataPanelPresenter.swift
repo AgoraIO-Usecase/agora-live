@@ -7,6 +7,7 @@
 
 import Foundation
 import AgoraRtcKit
+import AgoraCommon
 
 struct CommercePanelData {
     let left: String

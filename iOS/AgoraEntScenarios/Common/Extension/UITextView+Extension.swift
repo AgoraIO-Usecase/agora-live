@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension UITextView {
+public extension UITextView {
     func setPlaceholder(text: String) {
         let placeholderLabel = UILabel()
         placeholderLabel.numberOfLines = 0

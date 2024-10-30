@@ -6,6 +6,8 @@
 #import "VLSearchEmptyView.h"
 #import "VLMacroDefine.h"
 #import "AESMacro.h"
+#import "QMUICommonDefines.h"
+
 @import YYCategories;
 
 @implementation VLSearchEmptyView

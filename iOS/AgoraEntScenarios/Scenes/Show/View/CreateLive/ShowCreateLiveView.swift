@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AgoraCommon
 
 protocol ShowCreateLiveViewDelegate: NSObjectProtocol {
     func onClickCameraBtnAction()

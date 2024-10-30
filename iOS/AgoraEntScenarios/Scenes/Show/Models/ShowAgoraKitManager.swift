@@ -8,8 +8,8 @@
 import Foundation
 import AgoraRtcKit
 import UIKit
-import YYCategories
 import VideoLoaderAPI
+import AgoraCommon
 
 class ShowAgoraKitManager: NSObject {
     private static var _sharedManager: ShowAgoraKitManager?

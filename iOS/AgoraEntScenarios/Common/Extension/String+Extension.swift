@@ -37,7 +37,7 @@ public extension String {
     }
 }
 
-extension String {
+public extension String {
     func size(font: UIFont, drawRange size: CGSize) -> CGSize {
         let attributes = [NSAttributedString.Key.font: font]
         let option = NSStringDrawingOptions.usesLineFragmentOrigin
@@ -49,7 +49,7 @@ extension String {
     }
 }
 
-extension String {
+public extension String {
     var timeStamp: String {
         let date = Date()
         let timeInterval = date.timeIntervalSince1970
@@ -70,7 +70,7 @@ extension String {
         return predicate.evaluate(with: str)
     }
 
-    func timeFormat(secounds: TimeInterval,
+    public func timeFormat(secounds: TimeInterval,
                     h: String = ":",
                     m: String = ":",
                     s: String = "",
@@ -104,5 +104,35 @@ public extension NSAttributedString {
             result.replaceCharacters(in: i.0, with: i.1)
         }
         return result.string
+    }
+}
+
+extension String {
+    var common_localized: String {
+        let cacheKey = "\(self)__commonResource"
+        if let ret = AppContext.shared.localizedCache[cacheKey] {
+            return ret
+        }
+        guard let bundlePath = Bundle.main.path(forResource: "CommonResource", ofType: "bundle"),
+              let bundle = Bundle(path: bundlePath)
+        else {
+            return self
+        }
+        
+        guard var lang = NSLocale.preferredLanguages.first else {
+            return self
+        }
+//        if lang.contains("zh") {
+//            lang = "zh-Hans"
+//        } else {
+            lang = "en"
+//        }
+        
+        guard let langPath = bundle.path(forResource: lang, ofType: "lproj") , let detailBundle = Bundle(path: langPath) else {
+            return self
+        }
+        let retStr = NSLocalizedString(self,tableName: "Localizable", bundle:detailBundle ,comment: "")
+        AppContext.shared.localizedCache[cacheKey] = retStr
+        return retStr
     }
 }

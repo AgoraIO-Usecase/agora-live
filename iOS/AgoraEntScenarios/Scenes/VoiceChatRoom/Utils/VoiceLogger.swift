@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import AgoraCommon
+
 public class VoiceLogger: NSObject {
     
     public static let kLogKey = "VoiceChat"
