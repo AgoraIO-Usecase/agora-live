@@ -72,7 +72,6 @@ TODO: Add long description of the pod here.
  s.dependency 'YYModel'
  s.dependency 'KakaJSON'
  s.dependency 'YYCategories'
- s.dependency 'AgoraSyncManager'
  s.dependency 'ZSwiftBaseLib'
  s.dependency 'SVProgressHUD'
  s.dependency 'SSZipArchive'

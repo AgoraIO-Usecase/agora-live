@@ -100,30 +100,30 @@
 - (NSArray *)itemsArray {
     if (!_itemsArray) {
         _itemsArray = @[
-            @{
-                @"bgImgStr":@"home_live_bg",
-                @"iconImgStr":@"home_live_icon",
-                @"titleStr":NSLocalizedString(@"app_show_live", nil),
-                @"subTitleStr":@""
-            },
-            @{
-                @"bgImgStr":@"home_commerce_bg",
-                @"iconImgStr":@"home_commerce_icon",
-                @"titleStr":NSLocalizedString(@"app_e_commerce", nil),
-                @"subTitleStr":@""
-            },
-            @{
-                @"bgImgStr":@"home_talk_bg",
-                @"iconImgStr":@"home_talk_icon",
-                @"titleStr":NSLocalizedString(@"app_voice_chat", nil),
-                @"subTitleStr":@""
-            },
-            @{
-                @"bgImgStr":@"home_KTV_bg",
-                @"iconImgStr":@"home_KTV_icon",
-                @"titleStr":NSLocalizedString(@"app_online_ktv", nil),
-                @"subTitleStr":@""
-            },
+//            @{
+//                @"bgImgStr":@"home_live_bg",
+//                @"iconImgStr":@"home_live_icon",
+//                @"titleStr":NSLocalizedString(@"app_show_live", nil),
+//                @"subTitleStr":@""
+//            },
+//            @{
+//                @"bgImgStr":@"home_commerce_bg",
+//                @"iconImgStr":@"home_commerce_icon",
+//                @"titleStr":NSLocalizedString(@"app_e_commerce", nil),
+//                @"subTitleStr":@""
+//            },
+//            @{
+//                @"bgImgStr":@"home_talk_bg",
+//                @"iconImgStr":@"home_talk_icon",
+//                @"titleStr":NSLocalizedString(@"app_voice_chat", nil),
+//                @"subTitleStr":@""
+//            },
+//            @{
+//                @"bgImgStr":@"home_KTV_bg",
+//                @"iconImgStr":@"home_KTV_icon",
+//                @"titleStr":NSLocalizedString(@"app_online_ktv", nil),
+//                @"subTitleStr":@""
+//            },
             @{
                 @"bgImgStr":@"home_dream_flow_bg",
                 @"iconImgStr":@"home_dream_flow_icon",
