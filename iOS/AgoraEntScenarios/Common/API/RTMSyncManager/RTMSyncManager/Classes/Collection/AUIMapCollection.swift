@@ -18,12 +18,14 @@ extension AUIMapCollection {
                                 valueCmd: String?,
                                 value: [String: Any],
                                 callback: ((NSError?)->())?) {
-        if let err = self.metadataWillAddClosure?(publisherId, valueCmd, value) {
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
+        if let err = self.metadataWillAddClosure?(publisherId, valueCmd, newValue) {
             callback?(err)
             return
         }
         
-        var map = value
+        var map = newValue
         if let attr = self.attributesWillSetClosure?(channelName,
                                                      observeKey,
                                                      valueCmd,
@@ -36,9 +38,7 @@ extension AUIMapCollection {
             return
         }
         aui_collection_log("rtmSetMetaData valueCmd: \(valueCmd ?? "") value: \(value)")
-        self.rtmManager.setBatchMetadata(channelName: channelName,
-                                         lockName: kRTM_Referee_LockName,
-                                         metadata: [observeKey: value]) { error in
+        setBatchMetadata(value) { error in
             aui_collection_log("rtmSetMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
@@ -50,13 +50,15 @@ extension AUIMapCollection {
                                    valueCmd: String?,
                                    value: [String: Any],
                                    callback: ((NSError?)->())?) {
-        if let err = self.metadataWillUpdateClosure?(publisherId, valueCmd, value, currentMap) {
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
+        if let err = self.metadataWillUpdateClosure?(publisherId, valueCmd, newValue, currentMap) {
             callback?(err)
             return
         }
         
         var map = currentMap
-        value.forEach { (key: String, value: Any) in
+        newValue.forEach { (key: String, value: Any) in
             map[key] = value
         }
         if let attr = self.attributesWillSetClosure?(channelName,
@@ -71,9 +73,7 @@ extension AUIMapCollection {
             return
         }
         aui_collection_log("rtmSetMetaData valueCmd: \(valueCmd ?? "") value: \(value)")
-        self.rtmManager.setBatchMetadata(channelName: channelName,
-                                         lockName: kRTM_Referee_LockName,
-                                         metadata: [observeKey: value]) { error in
+        setBatchMetadata(value) { error in
             aui_collection_log("rtmSetMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
@@ -85,12 +85,14 @@ extension AUIMapCollection {
                                   valueCmd: String?,
                                   value: [String: Any],
                                   callback: ((NSError?)->())?) {
-        if let err = self.metadataWillMergeClosure?(publisherId, valueCmd, value, currentMap) {
+        let newValue = self.valueWillChangeClosure?(publisherId, valueCmd, value) ?? value
+        
+        if let err = self.metadataWillMergeClosure?(publisherId, valueCmd, newValue, currentMap) {
             callback?(err)
             return
         }
         
-        var map = mergeMap(origMap: currentMap, newMap: value)
+        var map = mergeMap(origMap: currentMap, newMap: newValue)
         if let attr = self.attributesWillSetClosure?(channelName,
                                                      observeKey,
                                                      valueCmd,
@@ -103,9 +105,7 @@ extension AUIMapCollection {
             return
         }
         aui_collection_log("rtmMergeMetaData valueCmd: \(valueCmd ?? "") value: \(value)")
-        self.rtmManager.setBatchMetadata(channelName: channelName,
-                                         lockName: kRTM_Referee_LockName,
-                                         metadata: [observeKey: value]) { error in
+        setBatchMetadata(value) { error in
             aui_collection_log("rtmMergeMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
@@ -155,9 +155,7 @@ extension AUIMapCollection {
             return
         }
         aui_collection_log("rtmCalculateMetaData valueCmd: \(valueCmd ?? "") key: \(key), value: \(value)")
-        self.rtmManager.setBatchMetadata(channelName: channelName,
-                                         lockName: kRTM_Referee_LockName,
-                                         metadata: [observeKey: value]) { error in
+        setBatchMetadata(value) { error in
             aui_collection_log("rtmCalculateMetaData completion: \(error?.localizedDescription ?? "success")")
             callback?(error)
         }
@@ -179,9 +177,9 @@ extension AUIMapCollection {
 //MARK: override IAUICollection
 extension AUIMapCollection: IAUIMapCollection {
     
-    /// 更新，替换根节点
+    /// Update, replace the root node
     /// - Parameters:
-    ///   - valueCmd: 命令类型
+    ///   - valueCmd: Command type
     ///   - value: <#value description#>
     ///   - filter: <#objectId description#>
     ///   - callback: <#callback description#>
@@ -218,7 +216,7 @@ extension AUIMapCollection: IAUIMapCollection {
                                          completion: callback)
     }
     
-    /// 合并，替换所有子节点
+    /// Merge and replace all sub-nodes
     /// - Parameters:
     ///   - valueCmd: <#valueCmd description#>
     ///   - value: <#value description#>
@@ -258,7 +256,7 @@ extension AUIMapCollection: IAUIMapCollection {
     }
     
     
-    /// 添加，mapCollection等价于update metadata
+    /// Add, mapCollection is equivalent to update metadata
     /// - Parameter value: <#value description#>
     public func addMetaData(valueCmd: String?,
                             value: [String: Any],
@@ -293,7 +291,7 @@ extension AUIMapCollection: IAUIMapCollection {
                                          completion: callback)
     }
     
-    /// 移除，map collection不支持
+    /// Remove, map collection is not supported
     /// - Parameters:
     ///   - valueCmd: <#value description#>
     ///   - callback: <#callback description#>
@@ -342,7 +340,7 @@ extension AUIMapCollection: IAUIMapCollection {
                                          completion: callback)
     }
     
-    /// 清理，map collection就是删除该key
+    /// Clean up, map collection is to delete the key.
     /// - Parameter callback: <#callback description#>
     public func cleanMetaData(callback: ((NSError?)->())?) {
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false {
@@ -368,6 +366,18 @@ extension AUIMapCollection: IAUIMapCollection {
                                          uniqueId: message.uniqueId,
                                          completion: callback)
     }
+    
+    
+    public override func syncLocalMetaData() {
+        guard retryMetadata, let value = encodeToJsonStr(currentMap) else {
+            return
+        }
+        let observeKey = observeKey
+        aui_collection_log("syncLocalMetaData[\(observeKey)] start")
+        setBatchMetadata(value) { error in
+            aui_collection_log("syncLocalMetaData[\(observeKey)] completion: \(error?.localizedDescription ?? "success")")
+        }
+    }
 }
 
 
@@ -376,7 +386,7 @@ extension AUIMapCollection {
     public override func onAttributesDidChanged(channelName: String, key: String, value: Any) {
         guard channelName == self.channelName, key == self.observeKey else {return}
         guard let map = value as? [String: Any] else {return}
-        //如果是仲裁者，不更新，因为本地已经修改了，否则这里收到的消息可能是老的数据，例如update1->update2->resp1->resp2，那么resp1的数据比update2要老，会造成ui上短暂的回滚
+        //If it is an arbitrator, do not update it, because it has been modified locally, otherwise the message received here may be old data, such as update1->update2->resp1->resp2, then the data of resp1 is older than update2, which will cause a short rollback on ui.
         
         if AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() != true {
             currentMap = map
@@ -384,17 +394,20 @@ extension AUIMapCollection {
         
         self.attributesDidChangedClosure?(channelName, observeKey, AUIAttributesModel(map: map))
     }
+    
+    public override func getLocalMetaData() -> AUIAttributesModel? {
+        return AUIAttributesModel(map: currentMap)
+    }
 }
 
 //MARK: override AUIRtmMessageProxyDelegate
 extension AUIMapCollection {
     public override func onMessageReceive(publisher: String, channelName: String, message: String) {
-        guard let map = decodeToJsonObj(message) as? [String: Any],
-              let collectionMessage: AUICollectionMessage = decodeModel(map),
+        guard let collectionMessage: AUICollectionMessage = decodeModel(jsonStr: message),
               collectionMessage.sceneKey == observeKey else {
             return
         }
-        aui_collection_log("onMessageReceive: \(map)")
+        aui_collection_log("onMessageReceive: \(message)")
         let uniqueId = collectionMessage.uniqueId
         let channelName = collectionMessage.channelName
         guard channelName == self.channelName else {return}

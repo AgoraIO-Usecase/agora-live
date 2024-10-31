@@ -9,25 +9,26 @@ import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.agora.scene.base.component.BaseBindingFragment
 import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceFragmentHandsListLayoutBinding
 import io.agora.scene.voice.imkit.bean.ChatMessageData
 import io.agora.scene.voice.viewmodel.VoiceUserListViewModel
 import io.agora.scene.voice.model.VoiceMemberModel
-import io.agora.scene.voice.service.VoiceRoomSubscribeDelegate
+import io.agora.scene.voice.service.VoiceServiceListenerProtocol
 import io.agora.scene.voice.service.VoiceServiceProtocol
 import io.agora.scene.voice.ui.adapter.ChatroomInviteAdapter
 import io.agora.scene.voice.ui.dialog.ChatroomHandsDialog
-import io.agora.voice.common.ui.BaseUiFragment
 import io.agora.voice.common.ui.adapter.RoomBaseRecyclerViewAdapter
 import io.agora.voice.common.net.OnResourceParseCallback
 import io.agora.voice.common.net.Resource
+import io.agora.voice.common.ui.IParserSource
 import io.agora.voice.common.utils.LogTools.logD
 import io.agora.voice.common.utils.ThreadManager
 import io.agora.voice.common.utils.ToastTools
 
-class ChatroomInviteHandsFragment : BaseUiFragment<VoiceFragmentHandsListLayoutBinding>(),
-    ChatroomInviteAdapter.onActionListener {
+class ChatroomInviteHandsFragment : BaseBindingFragment<VoiceFragmentHandsListLayoutBinding>(),
+    ChatroomInviteAdapter.onActionListener, IParserSource {
     private lateinit var userListViewModel: VoiceUserListViewModel
     private val dataList: MutableList<VoiceMemberModel> = ArrayList()
     private var baseAdapter: RoomBaseRecyclerViewAdapter<VoiceMemberModel>? = null
@@ -37,11 +38,11 @@ class ChatroomInviteHandsFragment : BaseUiFragment<VoiceFragmentHandsListLayoutB
     private val map: MutableMap<String, Boolean> = HashMap()
     private var isRefreshing = false
     private var emptyView: View? = null
-    private val voiceServiceProtocol = VoiceServiceProtocol.getImplInstance()
+    private val voiceServiceProtocol = VoiceServiceProtocol.serviceProtocol
 
-    private var inviteMicIndex:Int = -1
+    private var inviteMicIndex: Int = -1
 
-    fun setInviteMicIndex(inviteMicIndex: Int){
+    fun setInviteMicIndex(inviteMicIndex: Int) {
         this.inviteMicIndex = inviteMicIndex
     }
 
@@ -69,7 +70,7 @@ class ChatroomInviteHandsFragment : BaseUiFragment<VoiceFragmentHandsListLayoutB
         initListener()
     }
 
-    private fun initView() {
+    override fun initView() {
         baseAdapter = ChatroomInviteAdapter()
         adapter = baseAdapter as ChatroomInviteAdapter
         binding.let {
@@ -92,29 +93,30 @@ class ChatroomInviteHandsFragment : BaseUiFragment<VoiceFragmentHandsListLayoutB
 
     private fun initViewModel() {
         userListViewModel = ViewModelProvider(this)[VoiceUserListViewModel::class.java]
-        userListViewModel.inviteListObservable().observe(requireActivity()){ response: Resource<List<VoiceMemberModel>> ->
-            parseResource(response, object : OnResourceParseCallback<List<VoiceMemberModel>>() {
-                override fun onSuccess(data: List<VoiceMemberModel>?) {
-                    finishRefresh()
-                    val total = data?.size ?: 0
-                    adapter?.data = data ?: mutableListOf()
-                    onFragmentListener?.getItemCount(total)
-                    isRefreshing = false
-                    adapter?.data?.let {
-                        for (datum in it) {
-                            if (map.containsKey(datum.chatUid)) {
-                                adapter?.setInvited(map)
+        userListViewModel.inviteListObservable()
+            .observe(requireActivity()) { response: Resource<List<VoiceMemberModel>> ->
+                parseResource(response, object : OnResourceParseCallback<List<VoiceMemberModel>>() {
+                    override fun onSuccess(data: List<VoiceMemberModel>?) {
+                        finishRefresh()
+                        val total = data?.size ?: 0
+                        adapter?.data = data ?: mutableListOf()
+                        onFragmentListener?.getItemCount(total)
+                        isRefreshing = false
+                        adapter?.data?.let {
+                            for (datum in it) {
+                                if (map.containsKey(datum.chatUid)) {
+                                    adapter?.setInvited(map)
+                                }
                             }
                         }
                     }
-                }
 
-                override fun onError(code: Int, message: String?) {
-                    super.onError(code, message)
-                    finishRefresh()
-                }
-            })
-        }
+                    override fun onError(code: Int, message: String?) {
+                        super.onError(code, message)
+                        finishRefresh()
+                    }
+                })
+            }
         userListViewModel.startMicSeatInvitationObservable().observe(requireActivity()) { response: Resource<Boolean> ->
             parseResource(response, object : OnResourceParseCallback<Boolean>() {
                 override fun onSuccess(data: Boolean?) {
@@ -129,10 +131,10 @@ class ChatroomInviteHandsFragment : BaseUiFragment<VoiceFragmentHandsListLayoutB
 
     }
 
-    private fun initListener() {
+    override fun initListener() {
         adapter?.setOnActionListener(this)
         binding?.swipeLayout?.setOnRefreshListener { reset() }
-        voiceServiceProtocol.subscribeEvent(object : VoiceRoomSubscribeDelegate{
+        voiceServiceProtocol.subscribeListener(object : VoiceServiceListenerProtocol {
             override fun onReceiveSeatInvitationRejected(
                 chatUid: String,
                 message: ChatMessageData?
@@ -158,7 +160,7 @@ class ChatroomInviteHandsFragment : BaseUiFragment<VoiceFragmentHandsListLayoutB
     override fun onItemActionClick(view: View, position: Int, chatUid: String) {
         map[chatUid] = true
         adapter?.setInvited(map)
-        userListViewModel.startMicSeatInvitation(chatUid,inviteMicIndex)
+        userListViewModel.startMicSeatInvitation(chatUid, inviteMicIndex)
     }
 
     fun setFragmentListener(listener: ChatroomHandsDialog.OnFragmentListener?) {
@@ -171,7 +173,7 @@ class ChatroomInviteHandsFragment : BaseUiFragment<VoiceFragmentHandsListLayoutB
     }
 
     fun micChanged(data: Map<Int, String>) {
-        if (!adapter?.data.isNullOrEmpty()){
+        if (!adapter?.data.isNullOrEmpty()) {
             adapter?.data?.let {
                 dataList.addAll(it)
                 for (key in data.keys) {

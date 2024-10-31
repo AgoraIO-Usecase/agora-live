@@ -34,14 +34,14 @@
 /// tabBar associated frame
 //#define TabBarHeight (IS_IPAD ? (IS_NOTCHED_SCREEN ? 65 : (IOS_VERSION >= 12.0 ? 50 : 49)) : (IS_LANDSCAPE ? PreferredValueForVisualDevice(49, 32) : 49) + SafeAreaInsetsConstantForDeviceWithNotch.bottom)
 
+#define NullToString(s) (s == NULL ? @"": s)
+
 #define KTVLocalizedString(s) ([s toSceneLocalization])
 
 #define KTVLogInfo(format, ...)  ([KTVLog infoWithText:[NSString stringWithFormat:(format), ##__VA_ARGS__] tag: @"KTV"])
 #define KTVLogError(format, ...)  ([KTVLog errorWithText:[NSString stringWithFormat:(format), ##__VA_ARGS__] tag: @"KTV"])
 #define KTVLogWarn(format, ...)  ([KTVLog warningWithText:[NSString stringWithFormat:(format), ##__VA_ARGS__] tag: @"KTV"])
 #define KTVLogDebug(format, ...)  ([KTVLog debugWithText:[NSString stringWithFormat:(format), ##__VA_ARGS__] tag: @"KTV"])
-
-
 
 #define UIColorMakeWithHex(s) [UIColor colorWithHexString:s]
 

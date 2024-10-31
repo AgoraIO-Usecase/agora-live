@@ -1,5 +1,6 @@
 package io.agora.scene.show
 
+import io.agora.rtc2.Constants
 import io.agora.rtc2.IRtcEngineEventHandler
 import io.agora.rtc2.RtcEngine
 import io.agora.rtc2.RtcEngineConfig
@@ -48,6 +49,8 @@ object RtcEngineInstance {
      */
     val debugSettingModel = DebugSettingModel().apply { }
 
+    var beautySoLoaded = false
+
     private val workingExecutor = Executors.newSingleThreadExecutor()
 
     private var innerBeautyProcessor: IBeautyProcessor? = null
@@ -60,7 +63,8 @@ object RtcEngineInstance {
             if (innerBeautyProcessor == null) {
                 innerBeautyProcessor =
                     BeautyProcessorImpl(
-                        AgoraApplication.the()
+                        AgoraApplication.the(),
+                        BuildConfig.BEAUTY_RESOURCE == ""
                     )
             }
             return innerBeautyProcessor!!
@@ -123,6 +127,7 @@ object RtcEngineInstance {
                 }
                 innerRtcEngine = (RtcEngine.create(config) as RtcEngineEx).apply {
                     enableVideo()
+                    setAudioScenario(Constants.AUDIO_SCENARIO_GAME_STREAMING)
                 }
                 //beautyProcessor.initialize(innerRtcEngine!!)
             }
@@ -139,7 +144,9 @@ object RtcEngineInstance {
 
     fun releaseBeautyProcessor() {
         innerBeautyProcessor?.let { processor ->
-            processor.release()
+            if (beautySoLoaded) {
+                processor.release()
+            }
             innerBeautyProcessor = null
         }
     }
@@ -156,7 +163,9 @@ object RtcEngineInstance {
             innerRtcEngine = null
         }
         innerBeautyProcessor?.let { processor ->
-            processor.release()
+            if (beautySoLoaded) {
+                processor.release()
+            }
             innerBeautyProcessor = null
         }
         debugSettingModel.apply {

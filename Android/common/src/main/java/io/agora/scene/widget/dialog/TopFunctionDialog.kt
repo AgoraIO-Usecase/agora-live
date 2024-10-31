@@ -1,6 +1,7 @@
 package io.agora.scene.widget.dialog
 
 import android.content.Context
+import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,9 @@ import io.agora.scene.widget.utils.StatusBarUtil
 /**
  * top function dialog.
  */
-class TopFunctionDialog constructor(context: Context) : BaseDialog<DialogTopFunctionBinding>(context) {
+class TopFunctionDialog constructor(context: Context, val showReportUser: Boolean = true) :
+    BaseDialog<DialogTopFunctionBinding>
+        (context) {
     override fun getViewBinding(inflater: LayoutInflater): DialogTopFunctionBinding {
         return DialogTopFunctionBinding.inflate(inflater)
     }
@@ -32,7 +35,6 @@ class TopFunctionDialog constructor(context: Context) : BaseDialog<DialogTopFunc
     override fun setContentView(view: View) {
         super.setContentView(view)
         window?.let { window ->
-            // fix 小米部分机型不能占用状态栏
             StatusBarUtil.hideStatusBar(window, 0xF2151325.toInt(), true)
             window.setBackgroundDrawableResource(android.R.color.transparent)
             window.setDimAmount(0f)
@@ -55,17 +57,23 @@ class TopFunctionDialog constructor(context: Context) : BaseDialog<DialogTopFunc
     }
 
     override fun initView() {
-        binding.reportContent.setOnClickListener {
+
+        binding.layoutReportContent.setOnClickListener {
             ToastUtils.showToast(context.getString(R.string.common_report_content_tips))
             reportContentCallback?.invoke()
             dismiss()
         }
 
-        binding.reportUser.setOnClickListener {
+        binding.layoutReportUser.setOnClickListener {
             ToastUtils.showToast(context.getString(R.string.common_report_user_tips))
             reportUserCallback?.invoke()
             dismiss()
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding.layoutReportUser.visibility = if (showReportUser) View.VISIBLE else View.GONE
     }
 
     override fun setGravity() {

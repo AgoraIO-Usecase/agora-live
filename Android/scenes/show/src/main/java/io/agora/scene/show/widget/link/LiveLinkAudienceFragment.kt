@@ -73,14 +73,12 @@ class LiveLinkAudienceFragment : BaseFragment() {
         binding.textLinking.setText(R.string.show_can_apply)
         binding.linkRequestList.adapter = linkRequestViewAdapter
         binding.iBtnStopLink.setOnClickListener {
-            // 观众停止连麦
-            mListener?.onStopLinkingChosen()
+            // Audience stops linking
+            mListener?.onStopLinkingChosen(it)
         }
         binding.iBtnCancelApply.setOnClickListener {
-            // 观众撤回申请
-            mListener?.onStopApplyingChosen()
-            binding.iBtnStopLink.isVisible = false
-            binding.iBtnCancelApply.isVisible = false
+            // Audience withdraws application
+            mListener?.onStopApplyingChosen(it)
         }
         binding.smartRefreshLayout.setOnRefreshListener {
             mListener?.onRequestRefreshing()
@@ -96,7 +94,7 @@ class LiveLinkAudienceFragment : BaseFragment() {
      */
     fun setOnSeatStatus(userName: String, status: Int?) {
         if (mBinding == null) return
-        if (status == ShowInteractionStatus.onSeat.value) {
+        if (status == ShowInteractionStatus.linking) {
             if (userName == UserManager.getInstance().user.name) {
                 binding.iBtnCancelApply.isVisible = false
                 binding.iBtnStopLink.isVisible = true
@@ -138,7 +136,7 @@ class LiveLinkAudienceFragment : BaseFragment() {
             }
         }
 
-        if (interactionInfo != null && interactionInfo.interactStatus == ShowInteractionStatus.onSeat.value &&
+        if (interactionInfo != null && interactionInfo.interactStatus == ShowInteractionStatus.linking &&
             interactionInfo.userId == UserManager.getInstance().user.id.toString()
         ) {
             binding.iBtnCancelApply.isVisible = false
@@ -174,12 +172,12 @@ class LiveLinkAudienceFragment : BaseFragment() {
          * On stop linking chosen
          *
          */
-        fun onStopLinkingChosen()
+        fun onStopLinkingChosen(view: View)
 
         /**
          * On stop applying chosen
          *
          */
-        fun onStopApplyingChosen()
+        fun onStopApplyingChosen(view: View)
     }
 }

@@ -114,7 +114,7 @@ public final class InternalToast {
             }
             Toast toast = new Toast(context);
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.N_MR1) {
-                //android 7.1.1 版本
+                //android version 7.1.1
                 InternalHookToast.hook(toast);
             }
 

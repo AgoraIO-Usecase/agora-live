@@ -9,7 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import io.agora.scene.base.SceneAliveTime
+import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
@@ -50,7 +50,7 @@ class RoomListActivity : AppCompatActivity() {
     /**
      * M service
      */
-    private val mService by lazy { ShowServiceProtocol.getImplInstance() }
+    private val mService by lazy { ShowServiceProtocol.get() }
 
     /**
      * M rtc engine
@@ -109,11 +109,8 @@ class RoomListActivity : AppCompatActivity() {
             initVideoSettings()
         }
 
-        SceneAliveTime.fetchShowAliveTime ({ show, pk ->
-            ShowLogger.d("RoomListActivity", "fetchShowAliveTime: show: $show, pk: $pk")
-            ShowServiceProtocol.ROOM_AVAILABLE_DURATION = show * 1000L
-            ShowServiceProtocol.PK_AVAILABLE_DURATION = pk * 1000L
-        })
+        ShowServiceProtocol.ROOM_AVAILABLE_DURATION = SceneConfigManager.showExpireTime * 1000L
+        ShowServiceProtocol.PK_AVAILABLE_DURATION = SceneConfigManager.showPkExpireTime * 1000L
     }
 
     /**
@@ -122,7 +119,8 @@ class RoomListActivity : AppCompatActivity() {
     private fun initView() {
         onRoomListScrollEventHandler = object: OnRoomListScrollEventHandler(mRtcEngine, UserManager.getInstance().user.id.toInt()) {}
         mBinding.titleView.setLeftClick {
-            mService.destroy()
+            mBinding.smartRefreshLayout.setOnRefreshListener(null)
+            ShowServiceProtocol.destroy()
             RtcEngineInstance.destroy()
             RtcEngineInstance.setupGeneralToken("")
             finish()
@@ -187,8 +185,8 @@ class RoomListActivity : AppCompatActivity() {
     private fun updateList(data: List<ShowRoomDetailModel>) {
         mBinding.tvTips1.isVisible = data.isEmpty()
         mBinding.ivBgMobile.isVisible = data.isEmpty()
-        mBinding.btnCreateRoom2.isVisible = data.isEmpty()
-        mBinding.btnCreateRoom.isVisible = data.isNotEmpty()
+        mBinding.btnCreateRoom2.isVisible = false
+        mBinding.btnCreateRoom.isVisible = true
         mBinding.rvRooms.isVisible = data.isNotEmpty()
         mRoomAdapter.resetAll(data)
 
@@ -205,7 +203,7 @@ class RoomListActivity : AppCompatActivity() {
         binding.tvRoomName.text = roomInfo.roomName
         binding.tvRoomId.text = getString(R.string.show_room_id, roomInfo.roomId)
         binding.ivCover.setImageResource(roomInfo.getThumbnailIcon())
-        binding.tvPureMode.isVisible = roomInfo.isPureMode == 1
+        binding.tvPureMode.isVisible = roomInfo.isPureMode
 
         val onTouchEventHandler = object : OnLiveRoomItemTouchEventHandler(
             mRtcEngine,
@@ -303,7 +301,8 @@ class RoomListActivity : AppCompatActivity() {
      *
      */
     override fun onBackPressed() {
-        mService.destroy()
+        mBinding.smartRefreshLayout.setOnRefreshListener(null)
+        ShowServiceProtocol.destroy()
         RtcEngineInstance.destroy()
         RtcEngineInstance.setupGeneralToken("")
         finish()
@@ -325,7 +324,7 @@ class RoomListActivity : AppCompatActivity() {
             TokenGenerator.TokenGeneratorType.Token007,
             TokenGenerator.AgoraTokenType.Rtc,
             success = {
-                ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
+                ShowLogger.d("RoomListActivity", "generateToken success, uid：$localUId")
                 RtcEngineInstance.setupGeneralToken(it)
                 success.invoke()
             },

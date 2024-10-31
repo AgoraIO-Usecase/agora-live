@@ -1,5 +1,6 @@
 package io.agora.rtmsyncmanager.service.collection
 
+import android.util.Log
 import com.google.gson.reflect.TypeToken
 import io.agora.rtmsyncmanager.service.rtm.AUIRtmException
 import io.agora.rtmsyncmanager.service.rtm.AUIRtmManager
@@ -25,7 +26,7 @@ class AUIMapCollection(
             channelName = channelName,
             completion = { error, metaData ->
                 if (error != null) {
-                    callback?.invoke(AUICollectionException.ErrorCode.unknown.toException(), null)
+                    callback?.invoke(AUICollectionException.ErrorCode.rtm.toException(error.code, error.message), null)
                     return@getMetadata
                 }
                 val data = metaData?.items?.find { it.key == observeKey }
@@ -84,7 +85,10 @@ class AUIMapCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(null, "$error")
+                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(
+                        code = error.code,
+                        msg = error.message
+                    )
                 )
             } else {
                 callback?.invoke(null)
@@ -125,7 +129,10 @@ class AUIMapCollection(
             uniqueId = uniqueId
         ) { error ->
             if (error != null) {
-                callback?.invoke(AUICollectionException.ErrorCode.recvErrorReceipt.toException(null, "$error"))
+                callback?.invoke(AUICollectionException.ErrorCode.recvErrorReceipt.toException(
+                    code = error.code,
+                    msg = error.message
+                ))
             } else {
                 callback?.invoke(null)
             }
@@ -133,7 +140,7 @@ class AUIMapCollection(
     }
 
     /**
-     * 添加
+     * add MetaData
      *
      * @param value
      * @param callback
@@ -172,7 +179,10 @@ class AUIMapCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(null, "$error")
+                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(
+                        code = error.code,
+                        msg = error.message
+                    )
                 )
             } else {
                 callback?.invoke(null)
@@ -235,7 +245,10 @@ class AUIMapCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(null, "$error")
+                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(
+                        code = error.code,
+                        msg = error.message
+                    )
                 )
             } else {
                 callback?.invoke(null)
@@ -273,7 +286,10 @@ class AUIMapCollection(
         ) { error ->
             if (error != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(null, "$error")
+                    AUICollectionException.ErrorCode.recvErrorReceipt.toException(
+                        code = error.code,
+                        msg = error.message
+                    )
                 )
             } else {
                 callback?.invoke(null)
@@ -310,13 +326,10 @@ class AUIMapCollection(
             return
         }
 
-        rtmManager.setBatchMetadata(
-            channelName,
-            metadata = mapOf(Pair(observeKey, data)),
-        ) { e ->
+        setBatchMetadata(data) { e ->
             if (e != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: $e")
+                    AUICollectionException.ErrorCode.rtm.toException(e.code, "rtm setBatchMetadata error: ${e.reason}")
                 )
             } else {
                 callback?.invoke(null)
@@ -357,13 +370,10 @@ class AUIMapCollection(
             return
         }
 
-        rtmManager.setBatchMetadata(
-            channelName,
-            metadata = mapOf(Pair(observeKey, data)),
-        ) { e ->
+        setBatchMetadata(data) { e ->
             if (e != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: $e")
+                    AUICollectionException.ErrorCode.rtm.toException(e.code, "rtm setBatchMetadata error: ${e.reason}")
                 )
             } else {
                 callback?.invoke(null)
@@ -401,13 +411,10 @@ class AUIMapCollection(
             return
         }
 
-        rtmManager.setBatchMetadata(
-            channelName,
-            metadata = mapOf(Pair(observeKey, data)),
-        ) { e ->
+        setBatchMetadata(data) { e ->
             if (e != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: $e")
+                    AUICollectionException.ErrorCode.rtm.toException(e.code, "rtm setBatchMetadata error: ${e.reason}")
                 )
             } else {
                 callback?.invoke(null)
@@ -465,13 +472,10 @@ class AUIMapCollection(
             return
         }
 
-        rtmManager.setBatchMetadata(
-            channelName,
-            metadata = mapOf(Pair(observeKey, data)),
-        ) { e ->
+        setBatchMetadata(data) { e ->
             if (e != null) {
                 callback?.invoke(
-                    AUICollectionException.ErrorCode.unknown.toException(null, "rtm setBatchMetadata error: $e")
+                    AUICollectionException.ErrorCode.rtm.toException(e.code, "rtm setBatchMetadata error: ${e.reason}")
                 )
             } else {
                 callback?.invoke(null)
@@ -487,12 +491,21 @@ class AUIMapCollection(
             fetchImmediately = false,
             completion = { error ->
                 if (error != null) {
-                    callback?.invoke(AUICollectionException.ErrorCode.unknown.toException(null, "rtm rtmCleanMetaData error: $error"))
+                    callback?.invoke(AUICollectionException.ErrorCode.rtm.toException(error.code, "rtm rtmCleanMetaData error: ${error.reason}"))
                 } else {
                     callback?.invoke(null)
                 }
             }
         )
+    }
+
+    override fun syncLocalMetaData() {
+        val data = GsonTools.beanToString(currentMap) ?: return
+        if (retryMetadata) {
+            setBatchMetadata(data) { e ->
+                Log.d("MapCollection", "syncLocalMetaData error:$e")
+            }
+        }
     }
 
     override fun onAttributeChanged(value: Any) {

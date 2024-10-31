@@ -40,41 +40,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-/**
- * The type Fu device utils.
- */
-public final class FuDeviceUtils {
+public class FuDeviceUtils {
 
-    private FuDeviceUtils() {
-
-    }
-
-    /**
-     * The constant TAG.
-     */
     public static final String TAG = "FuDeviceUtils";
 
-    /**
-     * The constant DEVICE_LEVEL_HIGH.
-     */
     public static final int DEVICE_LEVEL_HIGH = 2;
-    /**
-     * The constant DEVICE_LEVEL_MID.
-     */
     public static final int DEVICE_LEVEL_MID = 1;
-    /**
-     * The constant DEVICE_LEVEL_LOW.
-     */
     public static final int DEVICE_LEVEL_LOW = 0;
 
     /**
-     * The constant DEVICEINFO_UNKNOWN.
+     * The default return value of any method in this class when an
+     * error occurs or when processing fails (Currently set to -1). Use this to check if
+     * the information about the device in question was successfully obtained.
      */
     public static final int DEVICEINFO_UNKNOWN = -1;
 
-    /**
-     * The constant CPU_FILTER.
-     */
     private static final FileFilter CPU_FILTER = new FileFilter() {
         @Override
         public boolean accept(File pathname) {
@@ -94,10 +74,10 @@ public final class FuDeviceUtils {
 
 
     /**
-     * Gets total memory.
+     * Calculates the total RAM of the device through Android API or /proc/meminfo.
      *
-     * @param c the c
-     * @return the total memory
+     * @param c - Context object for current running activity.
+     * @return Total RAM that the device has, or DEVICEINFO_UNKNOWN = -1 in the event of an error.
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static long getTotalMemory(Context c) {
@@ -129,9 +109,10 @@ public final class FuDeviceUtils {
     }
 
     /**
-     * Gets cpu max freq k hz.
+     * Method for reading the clock speed of a CPU core on the device. Will read from either
+     * {@code /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq} or {@code /proc/cpuinfo}.
      *
-     * @return the cpu max freq k hz
+     * @return Clock speed of a core on the device, or -1 in the event of an error.
      */
     public static int getCPUMaxFreqKHz() {
         int maxFreq = DEVICEINFO_UNKNOWN;
@@ -167,9 +148,7 @@ public final class FuDeviceUtils {
                 try {
                     int freqBound = parseFileForValue("cpu MHz", stream);
                     freqBound *= 1024; //MHz -> kHz
-                    if (freqBound > maxFreq) {
-                        maxFreq = freqBound;
-                    }
+                    if (freqBound > maxFreq) maxFreq = freqBound;
                 } finally {
                     stream.close();
                 }
@@ -181,9 +160,11 @@ public final class FuDeviceUtils {
     }
 
     /**
-     * Gets number of cpu cores.
+     * Reads the number of CPU cores from the first available information from
+     * {@code /sys/devices/system/cpu/possible}, {@code /sys/devices/system/cpu/present},
+     * then {@code /sys/devices/system/cpu/}.
      *
-     * @return the number of cpu cores
+     * @return Number of CPU cores in the phone, or DEVICEINFO_UKNOWN = -1 in the event of an error.
      */
     public static int getNumberOfCPUCores() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
@@ -211,10 +192,10 @@ public final class FuDeviceUtils {
     }
 
     /**
-     * Gets cores from file info.
+     * Tries to read file contents from the file location to determine the number of cores on device.
      *
-     * @param fileLocation the file location
-     * @return the cores from file info
+     * @param fileLocation The location of the file with CPU information
+     * @return Number of CPU cores in the phone, or DEVICEINFO_UKNOWN = -1 in the event of an error.
      */
     private static int getCoresFromFileInfo(String fileLocation) {
         InputStream is = null;
@@ -238,10 +219,10 @@ public final class FuDeviceUtils {
     }
 
     /**
-     * Gets cores from file string.
+     * Converts from a CPU core information format to number of cores.
      *
-     * @param str the str
-     * @return the cores from file string
+     * @param str The CPU core information string, in the format of "0-N"
+     * @return The number of cores represented by this string
      */
     private static int getCoresFromFileString(String str) {
         if (str == null || !str.matches("0-[\\d]+$")) {
@@ -251,11 +232,12 @@ public final class FuDeviceUtils {
     }
 
     /**
-     * Parse file for value int.
+     * Helper method for reading values from system files, using a minimised buffer.
      *
-     * @param textToMatch the text to match
-     * @param stream      the stream
-     * @return the int
+     * @param textToMatch - Text in the system files to read for.
+     * @param stream      - FileInputStream of the system file being read from.
+     * @return A numerical value following textToMatch in specified the system file.
+     * -1 in the event of a failure.
      */
     private static int parseFileForValue(String textToMatch, FileInputStream stream) {
         byte[] buffer = new byte[1024];
@@ -263,9 +245,7 @@ public final class FuDeviceUtils {
             int length = stream.read(buffer);
             for (int i = 0; i < length; i++) {
                 if (buffer[i] == '\n' || i == 0) {
-                    if (buffer[i] == '\n') {
-                        i++;
-                    }
+                    if (buffer[i] == '\n') i++;
                     for (int j = i; j < length; j++) {
                         int textIndex = j - i;
                         //Text doesn't match query at some point.
@@ -287,11 +267,12 @@ public final class FuDeviceUtils {
     }
 
     /**
-     * Extract value int.
+     * Helper method used by {@link #parseFileForValue(String, FileInputStream) parseFileForValue}. Parses
+     * the next available number after the match in the file being read and returns it as an integer.
      *
-     * @param buffer the buffer
-     * @param index  the index
-     * @return the int
+     * @param index - The index in the buffer array to begin looking.
+     * @return The next number on that line in the buffer, returned as an int. Returns
+     * DEVICEINFO_UNKNOWN = -1 in the event that no more numbers exist on the same line.
      */
     private static int extractValue(byte[] buffer, int index) {
         while (index < buffer.length && buffer[index] != '\n') {
@@ -309,12 +290,6 @@ public final class FuDeviceUtils {
         return DEVICEINFO_UNKNOWN;
     }
 
-    /**
-     * Gets avail memory.
-     *
-     * @param context the context
-     * @return the avail memory
-     */
     public static long getAvailMemory(Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
@@ -322,29 +297,17 @@ public final class FuDeviceUtils {
         return mi.availMem;
     }
 
-    /**
-     * Gets brand.
-     *
-     * @return the brand
-     */
+
     public static String getBrand() {
         return Build.BRAND;
     }
 
-    /**
-     * Gets model.
-     *
-     * @return the model
-     */
+
     public static String getModel() {
         return Build.MODEL;
     }
 
-    /**
-     * Gets hard ware.
-     *
-     * @return the hard ware
-     */
+
     public static String getHardWare() {
         try {
             FileReader fr = new FileReader("/proc/cpuinfo");
@@ -368,17 +331,15 @@ public final class FuDeviceUtils {
 
 
     /**
-     * Judge device level int.
+     * Level judgement based on current memory and CPU.
      *
-     * @param context the context
-     * @return the int
+     * @param context - Context object.
+     * @return
      */
     public static int judgeDeviceLevel(Context context) {
         int level;
         int specialDevice = judgeDeviceLevelInDeviceName();
-        if (specialDevice >= 0) {
-            return specialDevice;
-        }
+        if (specialDevice >= 0) return specialDevice;
 
         int ramLevel = judgeMemory(context);
         int cpuLevel = judgeCPU();
@@ -391,30 +352,25 @@ public final class FuDeviceUtils {
                 level = DEVICE_LEVEL_MID;
             }
         }
-        LogUtils.d(TAG, "DeviceLevel: " + level);
+        LogUtils.d(TAG,"DeviceLevel: " + level);
         return level;
     }
 
-    /**
-     * Judge device level in device name int.
-     *
-     * @return the int
-     */
     private static int judgeDeviceLevelInDeviceName() {
         String currentDeviceName = getDeviceName();
-        for (String deviceName : UPSCALE_DEVICE) {
+        for (String deviceName:upscaleDevice) {
             if (deviceName.equals(currentDeviceName)) {
                 return DEVICE_LEVEL_HIGH;
             }
         }
 
-        for (String deviceName : MIDDLE_DEVICE) {
+        for (String deviceName:middleDevice) {
             if (deviceName.equals(currentDeviceName)) {
                 return DEVICE_LEVEL_MID;
             }
         }
 
-        for (String deviceName : LOW_DEVICE) {
+        for (String deviceName:lowDevice) {
             if (deviceName.equals(currentDeviceName)) {
                 return DEVICE_LEVEL_LOW;
             }
@@ -422,108 +378,83 @@ public final class FuDeviceUtils {
         return -1;
     }
 
-    /**
-     * The constant upscaleDevice.
-     */
-    public static final String[] UPSCALE_DEVICE = {"vivo X6S A", "MHA-AL00", "VKY-AL00", "V1838A"};
-    /**
-     * The constant lowDevice.
-     */
-    public static final String[] LOW_DEVICE = {};
-    /**
-     * The constant middleDevice.
-     */
-    public static final String[] MIDDLE_DEVICE = {"OPPO R11s", "PAR-AL00", "MI 8 Lite", "ONEPLUS A6000", "PRO 6", "PRO 7 Plus"};
+    public static final String[] upscaleDevice = {"vivo X6S A","MHA-AL00","VKY-AL00","V1838A"};
+    public static final String[] lowDevice = {};
+    public static final String[] middleDevice = {"OPPO R11s","PAR-AL00","MI 8 Lite","ONEPLUS A6000","PRO 6","PRO 7 Plus"};
 
-    /**
-     * Judge memory int.
-     *
-     * @param context the context
-     * @return the int
-     */
+
     private static int judgeMemory(Context context) {
         long ramMB = getTotalMemory(context) / (1024 * 1024);
         int level = -1;
-        if (ramMB <= 2000) { //2G
+        if (ramMB <= 2000) {
             level = 0;
-        } else if (ramMB <= 3000) { //2-3G
+        } else if (ramMB <= 3000) {
             level = 1;
-        } else if (ramMB <= 4000) { //4G
+        } else if (ramMB <= 4000) {
             level = 2;
-        } else if (ramMB <= 6000) { //6G
+        } else if (ramMB <= 6000) {
             level = 3;
-        } else { //6G
+        } else {
             level = 4;
         }
         return level;
     }
 
-    /**
-     * Judge cpu int.
-     *
-     * @return the int
-     */
     private static int judgeCPU() {
         int level = 0;
         String cpuName = getHardWare();
         int freqMHz = getCPUMaxFreqKHz() / 1024;
 
         if (!TextUtils.isEmpty(cpuName)) {
-            if (cpuName.contains("qcom") || cpuName.contains("Qualcomm")) { //高通骁龙
+            if (cpuName.contains("qcom") || cpuName.contains("Qualcomm")) {
                 return judgeQualcommCPU(cpuName, freqMHz);
-            } else if (cpuName.contains("hi") || cpuName.contains("kirin")) { //海思麒麟
+            } else if (cpuName.contains("hi") || cpuName.contains("kirin")) {
                 return judgeSkinCPU(cpuName, freqMHz);
             } else if (cpuName.contains("MT")) {
                 return judgeMTCPU(cpuName, freqMHz);
             }
         }
 
-        if (freqMHz <= 1600) { //1.5G
+        if (freqMHz <= 1600) {
             level = 0;
-        } else if (freqMHz <= 1950) { //2GHz
+        } else if (freqMHz <= 1950) {
             level = 1;
-        } else if (freqMHz <= 2500) { //2.2 2.3g
+        } else if (freqMHz <= 2500) {
             level = 2;
-        } else { //高端
+        } else {
             level = 3;
         }
         return level;
     }
 
-    /**
-     * Judge mtcpu int.
-     *
-     * @param cpuName the cpu name
-     * @param freqMHz the freq m hz
-     * @return the int
-     */
+
     private static int judgeMTCPU(String cpuName, int freqMHz) {
         int level = 0;
         int mtCPUVersion = getMTCPUVersion(cpuName);
         if (mtCPUVersion == -1) {
-            if (freqMHz <= 1600) { //1.5G
+            if (freqMHz <= 1600) {
                 level = 0;
-            } else if (freqMHz <= 2200) { //2GHz
+            } else if (freqMHz <= 2200) {
                 level = 1;
-            } else if (freqMHz <= 2700) { //2.2 2.3g
+            } else if (freqMHz <= 2700) {
                 level = 2;
             } else {
                 level = 3;
             }
         } else if (mtCPUVersion < 6771) {
-            if (freqMHz <= 1600) { //1.5G
+            if (freqMHz <= 1600) {
                 level = 0;
-            } else { //2GHz
+            } else {
                 level = 1;
             }
         } else {
-            if (freqMHz <= 1600) { //1.5G
+            if (freqMHz <= 1600) {
                 level = 0;
-            } else if (freqMHz <= 1900) { //2GHz
+            } else if (freqMHz <= 1900) {
                 level = 1;
-            } else if (freqMHz <= 2500) { //2.2 2.3g
+            } else if (freqMHz <= 2500) {
                 level = 2;
-            } else { //高端
+            } else {
                 level = 3;
             }
         }
@@ -531,12 +462,6 @@ public final class FuDeviceUtils {
         return level;
     }
 
-    /**
-     * Gets mtcpu version.
-     *
-     * @param cpuName the cpu name
-     * @return the mtcpu version
-     */
     private static int getMTCPUVersion(String cpuName) {
         int cpuVersion = -1;
         if (cpuName.length() > 5) {
@@ -551,58 +476,20 @@ public final class FuDeviceUtils {
         return cpuVersion;
     }
 
-    /**
-     * Judge qualcomm cpu int.
-     *
-     * @param cpuName the cpu name
-     * @param freqMHz the freq m hz
-     * @return the int
-     */
     private static int judgeQualcommCPU(String cpuName, int freqMHz) {
         int level = 0;
-        //7 8 xxx inc SDM710
         if (cpuName.contains("MSM")) {
-            if (freqMHz <= 1600) { //1.5G
+            if (freqMHz <= 1600) {
                 level = 0;
-            } else { //2GHz
-                level = 1;
-            }
-        } else {
-            if (freqMHz <= 1600) { //1.5G
-                level = 0;
-            } else if (freqMHz <= 2000) { //2GHz
-                level = 1;
-            } else if (freqMHz <= 2500) { //2.2 2.3g
-                level = 2;
             } else {
-                level = 3;
-            }
-        }
-
-        return level;
-    }
-
-    /**
-     * Judge skin cpu int.
-     *
-     * @param cpuName the cpu name
-     * @param freqMHz the freq m hz
-     * @return the int
-     */
-    private static int judgeSkinCPU(String cpuName, int freqMHz) {
-        int level = 0;
-        if (cpuName.startsWith("hi")) {
-            if (freqMHz <= 1600) { //1.5G
-                level = 0;
-            } else if (freqMHz <= 2000) { //2GHz
                 level = 1;
             }
         } else {
             if (freqMHz <= 1600) {
                 level = 0;
-            } else if (freqMHz <= 2000) { //2GHz
+            } else if (freqMHz <= 2000) {
                 level = 1;
-            } else if (freqMHz <= 2500) { //2.2 2.3g
+            } else if (freqMHz <= 2500) {
                 level = 2;
             } else {
                 level = 3;
@@ -612,22 +499,36 @@ public final class FuDeviceUtils {
         return level;
     }
 
-    /**
-     * The constant Nexus_6P.
-     */
-    public static final String NEXUS_6P = "Nexus 6P";
 
-    /**
-     * Gets device name.
-     *
-     * @return the device name
-     */
+    private static int judgeSkinCPU(String cpuName, int freqMHz) {
+        int level = 0;
+        if (cpuName.startsWith("hi")) {
+            if (freqMHz <= 1600) {
+                level = 0;
+            } else if (freqMHz <= 2000) {
+                level = 1;
+            }
+        } else {
+            if (freqMHz <= 1600) {
+                level = 0;
+            } else if (freqMHz <= 2000) {
+                level = 1;
+            } else if (freqMHz <= 2500) {
+                level = 2;
+            } else {
+                level = 3;
+            }
+        }
+
+        return level;
+    }
+
+    public static final String Nexus_6P = "Nexus 6P";
+
     public static String getDeviceName() {
         String deviceName = "";
-        if (Build.MODEL != null) {
-            deviceName = Build.MODEL;
-        }
-        LogUtils.e(TAG, "deviceName: " + deviceName);
+        if (Build.MODEL != null) deviceName = Build.MODEL;
+        LogUtils.e(TAG,"deviceName: " + deviceName);
         return deviceName;
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 import io.agora.scene.voice.model.GiftBean;
 
 /**
- * 用于获取本地礼物信息
+ * gift
  */
 public class GiftRepository {
     static int SIZE = 9;
@@ -28,6 +28,9 @@ public class GiftRepository {
             bean.setName(context.getString(nameId));
             bean.setId("VoiceRoomGift"+i);
             bean.setPrice(Price[i-1]);
+            if (i==1){
+                bean.setChecked(true);
+            }
             gifts.add(bean);
         }
         return gifts;

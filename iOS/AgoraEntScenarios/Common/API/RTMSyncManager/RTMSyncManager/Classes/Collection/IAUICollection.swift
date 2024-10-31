@@ -9,6 +9,10 @@ import Foundation
 
 public typealias AUICollectionGetClosure = (NSError?, Any?)-> Void
 
+
+//(publisher uid, valueCmd, new value of item) -> value[new value of edit item]
+public typealias AUICollectionValueWillChangeClosure = (String, String?, [String: Any]) -> [String: Any]?
+
 //(publisher uid, valueCmd, new value)
 public typealias AUICollectionAddClosure = (String, String?, [String: Any]) -> NSError?
 
@@ -29,11 +33,11 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
 
 @objc public class AUIAttributesModel: NSObject {
     private var attributes: Any?
-    required init(list: [[String: Any]]) {
+    public required init(list: [[String: Any]]) {
         self.attributes = list
         super.init()
     }
-    required init(map: [String: Any]) {
+    public required init(map: [String: Any]) {
         self.attributes = map
         super.init()
     }
@@ -51,44 +55,55 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
     
     init(channelName: String, observeKey: String, rtmManager: AUIRtmManager) 
     
-    /// 订阅即将添加新的节点的事件
+    /// The corresponding node object will be updated to ask whether it needs to be added or deleted locally (for example, updating a node needs to update the latest time again)
+    /// - Parameter callback: <#callback description#>
+    @objc optional func subsceibeValueWillChange(callback: AUICollectionValueWillChangeClosure?)
+    
+    /// Subscribe to the event that is about to add a new node
     /// - Parameter callback: <#callback description#>
     @objc optional func subscribeWillAdd(callback: AUICollectionAddClosure?)
     
-    /// 订阅即将替换某个节点的事件
+    /// Subscribe to the event that is about to replace a node
     /// - Parameter callback: <#callback description#>
     @objc optional func subscribeWillUpdate(callback: AUICollectionUpdateClosure?)
     
-    /// 订阅即将合并某个节点的事件回调
+    /// Subscribe to the event callback that is about to merge a node
     /// - Parameter callback: <#callback description#>
     @objc optional func subscribeWillMerge(callback: AUICollectionUpdateClosure?)
     
-    /// 订阅即将删除某个节点的事件回调
+    /// Subscribe to the event callback that is about to delete a node
     /// - Parameter callback: <#callback description#>
     @objc optional func subscribeWillRemove(callback: AUICollectionRemoveClosure?)
     
-    /// 订阅即将计算某个节点的事件回调
+    /// Subscribe to the event callback that is about to calculate a node
     /// - Parameter callback: <#callback description#>
     @objc optional func subscribeWillCalculate(callback: AUICollectionCalculateClosure?)
     
-    /// 即将写入meta data，上层是否需要修改
+    /// It is about to be written to meta data. Does the upper layer need to be modified?
     /// - Parameter callback: <#callback description#>
     func subscribeAttributesWillSet(callback: AUICollectionAttributesWillSetClosure?)
     
-    /// 收到的meta data变化
+    /// Changes in the metadata received
     /// - Parameter callback: <#callback description#>
     func subscribeAttributesDidChanged(callback: AUICollectionAttributesDidChangedClosure?)
     
-    /// 查询当前scene节点所有内容
+    /// Query all the contents of the current scene node
     /// - Parameter callback: <#callback description#>
     func getMetaData(callback: AUICollectionGetClosure?)
     
+    /// Obtain local metadata, the arbitrator is the local cache data (may be updated than the remote data), and the audience is the real remote data.
+    /// - Parameter attributes: <#attributes description#>
+    func getLocalMetaData() -> AUIAttributesModel?
+    
+    
+    /// Update local to remote
+    func syncLocalMetaData()
 }
 
 
 @objc public protocol IAUIMapCollection: IAUICollection {
     
-    /// 添加节点
+    /// Add nodes
     /// - Parameters:
     ///   - valueCmd: <#valueCmd description#>
     ///   - value: <#value description#>
@@ -97,16 +112,16 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
                      value: [String: Any],
                      callback: ((NSError?)->())?)
     
-    /// 更新节点
+    /// Update node
     /// - Parameters:
-    ///   - valueCmd: 命令类型
+    ///   - valueCmd: Command type
     ///   - value: <#value description#>
     ///   - callback: <#callback description#>
     func updateMetaData(valueCmd: String?,
                         value: [String: Any],
                         callback: ((NSError?)->())?)
     
-    /// 合并节点
+    /// Merge nodes
     /// - Parameters:
     ///   - valueCmd: <#valueCmd description#>
     ///   - value: <#value description#>
@@ -115,14 +130,14 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
                        value: [String: Any],
                        callback: ((NSError?)->())?)
     
-    /// 移除
+    /// Remove
     /// - Parameters:
     ///   - valueCmd: <#value description#>
     ///   - callback: <#callback description#>
     func removeMetaData(valueCmd: String?,
                         callback: ((NSError?)->())?)
     
-    /// 增加/减小节点(节点必须是Int)
+    /// Increase/decrease nodes (nodes must be Int)
     /// - Parameters:
     ///   - valueCmd: <#valueCmd description#>
     ///   - key: <#key description#>
@@ -137,7 +152,7 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
                            max: Int,
                            callback: ((NSError?)->())?)
     
-    /// 移除整个collection对应的key
+    /// Remove the key corresponding to the whole collection
     /// - Parameter callback: <#callback description#>
     func cleanMetaData(callback: ((NSError?)->())?)
 }
@@ -145,40 +160,40 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
 
 @objc public protocol IAUIListCollection: IAUICollection {
     
-    /// 添加节点
+    /// Add nodes
     /// - Parameters:
     ///   - valueCmd: <#valueCmd description#>
     ///   - value: <#value description#>
-    ///   - filter: 如果原始数据满足该filter，新增失败，为nil则无条件新增
+    ///   - filter: If the original data meets the filter, the addition fails. If it is nil, it will be added unconditionally.
     ///   - callback: <#callback description#>
     func addMetaData(valueCmd: String?,
                      value: [String: Any],
                      filter: [[String: Any]]?,
                      callback: ((NSError?)->())?)
     
-    /// 更新节点
+    /// Update nodes
     /// - Parameters:
-    ///   - valueCmd: 命令类型
-    ///   - value: <#value description#>
-    ///   - filter: 如果原始数据满足该filter，才会更新成功，为nil则更新全部
-    ///   - callback: <#callback description#>
+    /// - valueCmd: Command type
+    /// - value: <#value description#>
+    /// - filter: If the raw data meets the filter, it will be updated successfully, and if it is nil, it will be updated all.
+    /// - callback: <#callback description#>
     func updateMetaData(valueCmd: String?,
                         value: [String: Any],
                         filter: [[String: Any]]?,
                         callback: ((NSError?)->())?)
     
-    /// 合并节点
+    /// Merge nodes
     /// - Parameters:
-    ///   - valueCmd: <#valueCmd description#>
-    ///   - value: <#value description#>
-    ///   - filter: 如果原始数据满足该filter，才会合并成功，为nil则合并全部
-    ///   - callback: <#callback description#>
+    /// - valueCmd: <#valueCmd description#>
+    /// - value: <#value description#>
+    /// - filter: If the original data meets the filter, it will be merged successfully, and if it is nil, it will merge all
+    /// - callback: <#callback description#>
     func mergeMetaData(valueCmd: String?,
                        value: [String: Any],
                        filter: [[String: Any]]?,
                        callback: ((NSError?)->())?)
     
-    /// 移除
+    /// Remove
     /// - Parameters:
     ///   - valueCmd: <#value description#>
     ///   - filter: <#value description#>
@@ -187,7 +202,7 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
                         filter: [[String: Any]]?,
                         callback: ((NSError?)->())?)
     
-    /// 增加/减小节点(节点必须是Int)
+    /// Increase/decrease nodes (nodes must be Int)
     /// - Parameters:
     ///   - valueCmd: <#valueCmd description#>
     ///   - key: <#key description#>
@@ -204,7 +219,7 @@ public typealias AUICollectionAttributesDidChangedClosure = (String, String, AUI
                            filter: [[String: Any]]?,
                            callback: ((NSError?)->())?)
     
-    /// 移除整个collection对应的key
+    /// Remove the key corresponding to the whole collection
     /// - Parameter callback: <#callback description#>
     func cleanMetaData(callback: ((NSError?)->())?)
 }

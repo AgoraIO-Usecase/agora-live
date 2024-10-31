@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace 'io.agora.rtmsyncmanager'
-    compileSdk 33
+    compileSdk rootProject.ext.android.compileSdkVersion
 
     defaultConfig {
-        minSdk 24
-        targetSdk 33
+        minSdk rootProject.ext.android.minSdkVersion
+        targetSdk rootProject.ext.android.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -42,8 +42,6 @@ dependencies {
     implementation rootProject.ext.deps.retrofit2
     implementation rootProject.ext.deps.retrofit2_cov
 
-
-
     implementation rootProject.ext.deps.rtm
-    implementation rootProject.ext.deps.rtc
+    //implementation rootProject.ext.deps.rtc
 }

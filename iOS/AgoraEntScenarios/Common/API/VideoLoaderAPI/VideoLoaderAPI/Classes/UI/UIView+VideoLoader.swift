@@ -5,7 +5,7 @@
 //  Created by wushengtao on 2023/9/7.
 //
 
-import Foundation
+import UIKit
 
 private var ag_gestureId: String = ""
  
@@ -57,11 +57,11 @@ extension UIView {
         }
     }
     
-    public func ag_addPreloadTap(roomInfo: IVideoLoaderRoomInfo,
-                                 localUid: UInt,
-                                 enableProcess: @escaping ((UIGestureRecognizer.State)->Bool),
-                                 onRequireRenderVideo: ((AnchorInfo, VideoCanvasContainer)->UIView?)?,
-                                 completion: @escaping (()->())) {
+    @objc public func ag_addPreloadTap(roomInfo: IVideoLoaderRoomInfo,
+                                       localUid: UInt,
+                                       enableProcess: @escaping ((UIGestureRecognizer.State)->Bool),
+                                       onRequireRenderVideo: ((AnchorInfo, VideoCanvasContainer)->UIView?)?,
+                                       completion: @escaping (()->())) {
         let eventHandler = VideoLoaderViewEventHandler()
         eventHandler.roomInfo = roomInfo
         eventHandler.localUid = localUid
@@ -92,7 +92,7 @@ extension UIView {
         let unmanaged = Unmanaged.passUnretained(ges)
         let gestureId = "\(unmanaged.toOpaque())"
         
-        //只允许一个item被预加载到
+        //Only one item is allowed to be preloaded into
         guard ag_gestureId.count == 0 || ag_gestureId == gestureId else { return }
         
         switch ges.state {
@@ -130,7 +130,7 @@ extension UIView {
                 }
                 ag_eventHandler?.completion?()
                 
-                //上报耗时开始
+                //It takes time to report.
                 VideoLoaderApiImpl.shared.startMediaRenderingTracing(anchorId: roomInfo.channelName())
                 return
             }

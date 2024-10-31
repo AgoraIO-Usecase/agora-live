@@ -12,16 +12,15 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import io.agora.scene.voice.model.RoomKitBean
 import io.agora.voice.common.ui.dialog.BaseSheetDialog
 import io.agora.scene.voice.databinding.VoiceDialogRoomNoticeBinding
+import io.agora.scene.voice.model.VoiceRoomModel
 import io.agora.voice.common.utils.LogTools.logD
 import java.util.regex.Pattern
 
 /**
  * @author create by zhangwei03
  *
- * 公告
  */
 class RoomNoticeSheetDialog constructor() :
     BaseSheetDialog<VoiceDialogRoomNoticeBinding>() {
@@ -30,8 +29,8 @@ class RoomNoticeSheetDialog constructor() :
         const val KEY_ROOM_KIT_BEAN = "room_kit_bean"
     }
 
-    private val roomKitBean: RoomKitBean by lazy {
-        arguments?.getSerializable(KEY_ROOM_KIT_BEAN) as RoomKitBean
+    private val voiceRoomModel: VoiceRoomModel by lazy {
+        arguments?.getSerializable(KEY_ROOM_KIT_BEAN) as VoiceRoomModel
     }
 
     var confirmCallback: ((str: String) -> Unit)? = null
@@ -44,7 +43,7 @@ class RoomNoticeSheetDialog constructor() :
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
             setOnApplyWindowInsets(root)
-            mbEdit.isInvisible = !roomKitBean.isOwner
+            mbEdit.isInvisible = !voiceRoomModel.isOwner
             mtContent.text = contentText
             etInput.setText(contentText)
             val filters = arrayOf<InputFilter>(NameLengthFilter())

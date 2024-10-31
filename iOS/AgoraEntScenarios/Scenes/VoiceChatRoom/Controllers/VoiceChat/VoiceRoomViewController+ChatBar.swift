@@ -19,10 +19,8 @@ extension VoiceRoomViewController {
         audioSetVC.isAudience = !isOwner
         audioSetVC.ains_state = ains_state
         audioSetVC.isTouchAble = roomInfo?.room?.use_robot ?? false
+        audioSetVC.setSoundCardPresenter(self.soundcardPresenter)
         audioSetVC.soundOpen = self.soundOpen
-        audioSetVC.gainValue = self.gainValue
-        audioSetVC.typeValue = self.typeValue
-        audioSetVC.effectType = self.effectType
         audioSetVC.useRobotBlock = { [weak self] flag in
             if flag == true {
                 self?.roomInfo?.room?.use_robot = true
@@ -137,25 +135,6 @@ extension VoiceRoomViewController {
         audioSetVC.visitBlock = { [weak self] in
             let VC: VoiceRoomHelpViewController = .init()
             self?.navigationController?.pushViewController(VC, animated: true)
-        }
-        
-        audioSetVC.clicKBlock = {[weak self] effect in
-            self?.effectType = effect
-            self?.didUpdateEffectValue(effect)
-        }
-        audioSetVC.gainBlock = {[weak self] gain in
-            self?.gainValue = "\(gain)"
-            self?.didUpdateGainValue("\(gain)")
-        }
-        
-        audioSetVC.typeBlock = {[weak self] type in
-            self?.typeValue = type
-            self?.didUpdateTypeValue(type)
-        }
-        
-        audioSetVC.soundCardBlock = {[weak self] flag in
-            self?.soundOpen = flag
-            self?.didUpdateSoundSetting(flag)
         }
         
         let presentView: VoiceRoomPresentView = VoiceRoomPresentView.shared
@@ -297,7 +276,7 @@ extension VoiceRoomViewController {
     }
 
     func changeMicState() {
-        if chatBar.micState {
+        if chatBar.micState == .unSelected {
             checkAudioAuthorized()
         }
         guard let idx = local_index else {
@@ -313,9 +292,9 @@ extension VoiceRoomViewController {
             view.makeToast("voice_the_current_microphone_has_been_muted".voice_localized, point: view.center, title: nil, image: nil, completion: nil)
             return
         }
-        chatBar.micState = !chatBar.micState
-        chatBar.refresh(event: .mic, state: chatBar.micState ? .selected : .unSelected, asCreator: false)
-        let status = (chatBar.micState == true ? 0:1)
+        let micState: VoiceRoomChatBarState = (chatBar.micState == .selected) ? .unSelected : .selected
+        chatBar.refresh(event: .mic, state: micState, asCreator: self.isOwner)
+        let status = (chatBar.micState == .selected ? 0:1)
         VoiceRoomUserInfo.shared.user?.micStatus = status
         ChatRoomServiceImp.getSharedInstance().changeMicUserStatus(status: status) { [weak self] error, mic in
             guard let `self` = self else { return }

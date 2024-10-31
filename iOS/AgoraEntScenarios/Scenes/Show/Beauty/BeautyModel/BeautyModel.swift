@@ -9,19 +9,27 @@ import UIKit
 
 @objc
 enum BeautyFactoryType: Int {
-    // 字节
+    // byte
     case byte
-    // 商汤
+    // sense
     case sense
-    // 相芯
+    // fu
     case fu
+    
+    var title: String {
+        switch self {
+        case .byte: return "Byte"
+        case .sense: return "Sense"
+        case .fu: return "Fu"
+        }
+    }
 }
 
 class BeautyBaseModel: NSObject, Codable {
     var icon: String?
     var name: String?
     var isSelected: Bool = false
-    /// 是否双向调节
+    /// Whether to adjust in both directions
     var enableNegative: Bool = false
 }
 
@@ -29,11 +37,11 @@ class BeautyBaseModel: NSObject, Codable {
 class BeautyModel: BeautyBaseModel {
     @objc
     static var beautyType: BeautyFactoryType = .byte
-    /// 特效素材相对于 ComposeMakeup.bundle/ComposeMakeup 的路径
+    /// The path of special effects materials relative to ComposeMakeup.bundle/ComposeMakeup
     var path: String?
-    /// key 素材中的功能 key
+    /// Functions in the material key
     var key: String?
-    /// 特效强度 （0~1）
+    /// Special effect intensity (0~1)
     var value: CGFloat = 0
     
     static func createBeautyData() -> [BeautyModel] {

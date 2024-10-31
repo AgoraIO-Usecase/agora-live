@@ -16,7 +16,7 @@ import AgoraRtmKit
             notifyArbiterDidChange()
         }
     }
-    private var arbiterDelegates: NSHashTable<AUIArbiterDelegate> = NSHashTable<AUIArbiterDelegate>()
+    private var arbiterDelegates = NSHashTable<AUIArbiterDelegate>()
     
     deinit {
         aui_info("deinit AUIArbiter", tag: "AUIArbiter")
@@ -42,15 +42,19 @@ import AgoraRtmKit
         arbiterDelegates.remove(delegate)
     }
     
-    /// 创建锁
+    /// Create a lock
     public func create(completion: ((NSError?)-> ())? = nil) {
         rtmManager.setLock(channelName: channelName, lockName: kRTM_Referee_LockName) {[weak self] err in
+            guard let err = err, err.code != AgoraRtmErrorCode.lockAlreadyExist.rawValue else {
+                completion?(nil)
+                return
+            }
             self?.notifyError(error: err)
             completion?(err)
         }
     }
     
-    /// 销毁锁
+    /// Destroy the lock
     public func destroy(completion: ((NSError?)-> ())? = nil) {
         rtmManager.removeLock(channelName: channelName, lockName: kRTM_Referee_LockName) {[weak self] err in
             self?.notifyError(error: err)
@@ -58,7 +62,7 @@ import AgoraRtmKit
         }
     }
     
-    /// 获取锁
+    /// Get the lock
     public func acquire(completion: ((NSError?)-> ())? = nil) {
         rtmManager.acquireLock(channelName: channelName, lockName: kRTM_Referee_LockName) {[weak self] err in
             self?.notifyError(error: err)
@@ -66,7 +70,7 @@ import AgoraRtmKit
         }
     }
     
-    /// 释放锁
+    /// Release the lock
     public func release(completion: ((NSError?)-> ())? = nil) {
         rtmManager.releaseLock(channelName: channelName, lockName: kRTM_Referee_LockName) {[weak self] err in
             self?.notifyError(error: err)
@@ -102,10 +106,10 @@ extension AUIArbiter: AUIRtmLockProxyDelegate {
         aui_info("onReceiveLockDetail[\(channelName)]: \(lockDetail.owner)/\(currentUserInfo.userId)")
         guard channelName == self.channelName else {return}
         /*
-         下列两种情况需要刷新下metadata到最新
-         1. 如果lockOwnerId是自己，需要在通知外部锁转移前刷新下
-         2. 如果lockOwnerId不是自己，而之前lockOwnerId是自己，说明自己从仲裁者切换成非仲裁者了，需要通知外部后刷新下(因为collection认为是锁主的情况下是不会用远端数据的)，可能自己的本地数据没有到最新
-         */
+         In the following two cases, metadata needs to be refreshed to the latest version.
+         1. If lockOwnerId is your own, you need to refresh before notifying the external lock transfer.
+         Two. If lockOwnerId is not yourself, and lockOwnerId was yourself before, it means that you have switched from an arbitrator to a non-arbitrator. You need to notify the outside and refresh it (because the collection does not use remote data if it is the lock owner), maybe you The local data is not up to date.
+        */
         let gotLock = lockDetail.owner == currentUserInfo.userId
         let lossLockToOthers = lockOwnerId == currentUserInfo.userId && lockDetail.owner != currentUserInfo.userId
         if gotLock {
@@ -131,7 +135,7 @@ extension AUIArbiter: AUIRtmLockProxyDelegate {
         guard channelName == self.channelName else {return}
         rtmManager.acquireLock(channelName: channelName, lockName: kRTM_Referee_LockName) { err in
         }
-        //过期可能会在获取锁之后收到，导致把正确的锁主清理了，因此只在锁主是自己的时候才处理
+        //Expired dates may be received after obtaining the lock, resulting in the cleaning of the correct lock owner, so it will only be handled when the lock owner is himself.
         if eventType == .lockExpired, lockOwnerId == currentUserInfo.userId {
             self.lockOwnerId = ""
         }

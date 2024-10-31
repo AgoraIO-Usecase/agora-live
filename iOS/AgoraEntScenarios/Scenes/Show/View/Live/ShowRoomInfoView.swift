@@ -129,8 +129,8 @@ class ShowRoomInfoView: UIView {
         } else {
             headImgView.image = UIImage(named: avatar ?? "")
         }
-        nameLabel.text = name
-        idLabel.text = id
+        nameLabel.text = name ?? ""
+        idLabel.text = "\(id ?? "")"
         if let startTime = time {
             self.startTime = startTime
             updateTime()
@@ -145,5 +145,9 @@ class ShowRoomInfoView: UIView {
         let hours = duration / 3600
         let durationStr = String(format: "%02d:%02d:%02d", hours, minutes, seconds)
         timeLabel.text = durationStr
+    }
+    
+    func stopTimer() {
+        timer.invalidate()
     }
 }

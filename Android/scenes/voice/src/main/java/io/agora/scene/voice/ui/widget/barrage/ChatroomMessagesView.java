@@ -325,7 +325,7 @@ public class ChatroomMessagesView extends RelativeLayout{
     }
 
     /**
-     * 控制滑动速度的LinearLayoutManager
+     * LinearLayoutManager that controls the scrolling speed
      */
     public static class ScrollSpeedLinearLayoutManger extends LinearLayoutManager {
         private float MILLISECONDS_PER_INCH = 0.03f;

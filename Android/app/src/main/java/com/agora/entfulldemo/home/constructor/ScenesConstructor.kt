@@ -2,6 +2,7 @@ package com.agora.entfulldemo.home.constructor
 
 import android.content.Context
 import com.agora.entfulldemo.R
+import io.agora.scene.base.AgoraScenes
 
 /**
  * @author create by zhangwei03
@@ -40,6 +41,14 @@ object ScenesConstructor {
                 context.getString(R.string.app_chat_room),
                 R.mipmap.bg_btn_home3,
                 R.mipmap.bg_btn_home_chat,
+                true
+            ),
+            ScenesModel(
+                AgoraScenes.KTV,
+                "io.agora.scene.ktv.create.RoomListActivity",
+                context.getString(R.string.app_ktv),
+                R.mipmap.bg_btn_home1,
+                R.mipmap.bg_btn_home_ktv,
                 true
             )
         )

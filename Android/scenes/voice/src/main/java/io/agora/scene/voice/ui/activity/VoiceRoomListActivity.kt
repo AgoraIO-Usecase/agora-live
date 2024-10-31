@@ -14,23 +14,28 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
+import com.opensource.svgaplayer.SVGAParser
+import com.opensource.svgaplayer.SVGASoundManager
+import com.opensource.svgaplayer.utils.log.SVGALogger
+import io.agora.scene.base.SceneConfigManager
+import io.agora.scene.base.component.BaseBindingActivity
 import io.agora.scene.voice.BuildConfig
 import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceAgoraRoomListLayoutBinding
-import io.agora.scene.voice.global.VoiceConfigManager
+import io.agora.scene.voice.global.VoiceBuddyFactory
+import io.agora.scene.voice.imkit.manager.ChatroomConfigManager
+import io.agora.scene.voice.imkit.manager.ChatroomIMManager
 import io.agora.scene.voice.service.VoiceServiceProtocol
 import io.agora.scene.voice.ui.dialog.CreateRoomDialog
 import io.agora.scene.voice.ui.fragment.VoiceRoomListFragment
-import io.agora.voice.common.ui.BaseUiActivity
 import io.agora.voice.common.utils.*
 
-class VoiceRoomListActivity : BaseUiActivity<VoiceAgoraRoomListLayoutBinding>(){
+class VoiceRoomListActivity : BaseBindingActivity<VoiceAgoraRoomListLayoutBinding>(){
 
     private var title: TextView? = null
     private var index = 0
     private val titles = intArrayOf(R.string.voice_tab_layout_all)
 
-    private val voiceServiceProtocol = VoiceServiceProtocol.getImplInstance()
     override fun getViewBinding(inflater: LayoutInflater): VoiceAgoraRoomListLayoutBinding? {
         return VoiceAgoraRoomListLayoutBinding.inflate(inflater)
     }
@@ -38,13 +43,21 @@ class VoiceRoomListActivity : BaseUiActivity<VoiceAgoraRoomListLayoutBinding>(){
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         ResourcesTools.isZh(this)
-        voiceServiceProtocol.reset()
-        VoiceConfigManager.initMain()
+        ChatroomConfigManager.getInstance()
+            .initRoomConfig(
+                this,
+                VoiceBuddyFactory.get().getVoiceBuddy().chatAppKey()
+            )
+        SVGAParser.shareParser().init(this)
+        SVGALogger.setLogEnabled(true)
+        SVGASoundManager.init()
     }
 
     override fun onDestroy() {
+        ChatroomIMManager.getInstance().logout(true)
+        VoiceServiceProtocol.destroy()
+        VoiceBuddyFactory.destroy()
         super.onDestroy()
-        VoiceConfigManager.unInitMain()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,15 +65,16 @@ class VoiceRoomListActivity : BaseUiActivity<VoiceAgoraRoomListLayoutBinding>(){
         super.onCreate(savedInstanceState)
          if (BuildConfig.IM_APP_KEY.isEmpty()) {
              finish()
-             ToastTools.show(this, "IM_APP_KEY / IM_APP_CLIENT_ID / IM_APP_CLIENT_SECRET 未配置")
+             ToastTools.show(this, "IM_APP_KEY / IM_APP_CLIENT_ID / IM_APP_CLIENT_SECRET not set")
              return
          }
         binding.titleBar.title.typeface = Typeface.defaultFromStyle(Typeface.BOLD)
         setupWithViewPager()
         initListener()
+        VoiceServiceProtocol.ROOM_AVAILABLE_DURATION = SceneConfigManager.chatExpireTime * 1000L
     }
 
-    private fun initListener() {
+    override fun initListener() {
         binding.titleBar.setOnBackPressListener{
             finish()
         }
@@ -149,7 +163,6 @@ class VoiceRoomListActivity : BaseUiActivity<VoiceAgoraRoomListLayoutBinding>(){
     }
 
     override fun finish() {
-        voiceServiceProtocol.reset()
         super.finish()
     }
 

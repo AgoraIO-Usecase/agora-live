@@ -6,64 +6,77 @@
 //
 
 import Foundation
+import SwiftyBeaver
 
 let kShowLogBaseContext = "AgoraKit"
-let showLogger = AgoraEntLog.createLog(config: AgoraEntLogConfig(sceneName: "Show"))
 
 private let kShowRoomListKey = "kShowRoomListKey"
 private let kRtcTokenMapKey = "kRtcTokenMapKey"
 private let kRtcToken = "kRtcToken"
+private let kRtcTokenDate = "kRtcTokenDate"
 private let kDebugModeKey = "kDebugModeKey"
 
+public class ShowLogger: NSObject {
+    
+    public static let kLogKey = "Show"
+    
+    public static func info(_ text: String, context: String? = nil) {
+        agoraDoMainThreadTask {
+            AgoraEntLog.getSceneLogger(with: kLogKey).info(text, context: context)
+        }
+    }
+    
+    public static func warning(_ text: String, context: String? = nil) {
+        warn(text, context: context)
+    }
+
+    public static func warn(_ text: String, context: String? = nil) {
+        agoraDoMainThreadTask {
+            AgoraEntLog.getSceneLogger(with: kLogKey).warning(text, context: context)
+        }
+    }
+
+    public static func error(_ text: String, context: String? = nil) {
+        agoraDoMainThreadTask {
+            AgoraEntLog.getSceneLogger(with: kLogKey).error(text, context: context)
+        }
+    }
+}
+
 extension AppContext {
-    static private var _showServiceImpMap: [String: ShowSyncManagerServiceImp] = [String: ShowSyncManagerServiceImp]()
-    
-    static private var _showExpiredImp: [String] = [String]()
-    
-    static func showServiceImp(_ roomId: String) -> ShowServiceProtocol? {
-        if _showExpiredImp.contains(roomId) {
-            return nil
+    static private var _showServiceImp: ShowSyncManagerServiceImp?
+    static func showServiceImp() -> ShowServiceProtocol? {
+        if let service = _showServiceImp {
+            return service
         }
-        let showServiceImp = _showServiceImpMap[roomId]
-        guard let showServiceImp = showServiceImp else {
-            let imp = roomId.count == 6 ? ShowSyncManagerServiceImp() : ShowRobotSyncManagerServiceImp()
-            _showServiceImpMap[roomId] = imp
-            return imp
-        }
-        return showServiceImp
-    }
-    
-    static func expireShowImp(_ roomId: String) {
-        if !_showExpiredImp.contains(roomId) {
-            _showExpiredImp.append(roomId)
-        }
-    }
-    
-    static func unloadShowServiceImp(_ roomId: String) {
-        _showServiceImpMap.removeValue(forKey: roomId)
+        
+        _showServiceImp = ShowSyncManagerServiceImp(appId: KeyCenter.AppId,
+                                                    host: KeyCenter.RTMHostUrl)
+        
+        return _showServiceImp
     }
     
     static func unloadShowServiceImp() {
-        _showServiceImpMap = [String: ShowSyncManagerServiceImp]()
-        SyncUtilsWrapper.cleanScene()
-        _showExpiredImp.removeAll()
-    }
-    
-    public var showRoomList: [ShowRoomListModel]? {
-        set {
-            self.extDic[kShowRoomListKey] = newValue
-        }
-        get {
-            return self.extDic[kShowRoomListKey] as? [ShowRoomListModel]
-        }
+        _showServiceImp?.destroy()
+        _showServiceImp = nil
     }
     
     public var rtcToken: String? {
         set {
             self.extDic[kRtcToken] = newValue
+            self.tokenDate = Date()
         }
         get {
             return self.extDic[kRtcToken] as? String
+        }
+    }
+    
+    public var tokenDate: Date? {
+        set {
+            self.extDic[kRtcTokenDate] = newValue
+        }
+        get {
+            return self.extDic[kRtcTokenDate] as? Date
         }
     }
 }

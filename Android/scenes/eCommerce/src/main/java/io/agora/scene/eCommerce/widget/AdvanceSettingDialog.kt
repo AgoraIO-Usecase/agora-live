@@ -104,6 +104,8 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
          */
         const val ITEM_ID_SELECTOR_FRAME_RATE = ITEM_ID_SELECTOR_BASE + 2
 
+        const val ITEM_ID_SELECTOR_ENCODER = ITEM_ID_SELECTOR_BASE + 3
+
         private const val VIEW_TYPE_VIDEO_SETTING = 0
         private const val VIEW_TYPE_AUDIO_SETTING = 1
     }
@@ -135,10 +137,6 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
      * Default item values
      */
     private val defaultItemValues = mutableMapOf<Int, Int>().apply {
-        put(
-            ITEM_ID_SWITCH_QUALITY_ENHANCE,
-            VideoSetting.getCurrBroadcastSetting().video.H265.toInt()
-        )
         put(
             ITEM_ID_SWITCH_COLOR_ENHANCE,
             VideoSetting.getCurrBroadcastSetting().video.colorEnhance.toInt()
@@ -180,6 +178,10 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
         put(
             ITEM_ID_SELECTOR_FRAME_RATE,
             VideoSetting.getCurrBroadcastSetting().video.frameRate.toIndex()
+        )
+        put(
+            ITEM_ID_SELECTOR_ENCODER,
+            VideoSetting.getCurrBroadcastSetting().video.codecType.toIndex()
         )
     }
 
@@ -339,12 +341,6 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
      */
     private fun updateVideoSettingView(binding: CommerceSettingAdvanceVideoBinding) {
         setupSwitchItem(
-            ITEM_ID_SWITCH_QUALITY_ENHANCE,
-            binding.qualityEnhance,
-            R.string.commerce_setting_advance_quality_h265,
-            R.string.commerce_setting_advance_quality_h265_tip
-        )
-        setupSwitchItem(
             ITEM_ID_SWITCH_COLOR_ENHANCE,
             binding.colorEnhance,
             R.string.commerce_setting_advance_color_enhance,
@@ -362,14 +358,14 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
             R.string.commerce_setting_advance_video_noise_reduce,
             R.string.commerce_setting_advance_video_noise_reduce_tip
         )
-        // 码率节省
+        // Bitrate Saving
         setupSwitchItem(
             ITEM_ID_SWITCH_BITRATE_SAVE,
             binding.bitrateSave,
             R.string.commerce_setting_advance_bitrate_save,
             R.string.commerce_setting_advance_bitrate_save_tip
         )
-        // 编码分辨率
+        // Encoding Resolution
         setupSelectorItem(
             ITEM_ID_SELECTOR_RESOLUTION,
             binding.resolution,
@@ -377,13 +373,19 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
             R.string.commerce_setting_advance_encode_resolution_tip,
             VideoSetting.ResolutionList.map { "${it.width}x${it.height}" }
         )
-        // 编码帧率
+        // Encoding Frame Rate
         setupSelectorItem(
             ITEM_ID_SELECTOR_FRAME_RATE,
             binding.frameRate,
             R.string.commerce_setting_advance_encode_framerate,
             R.string.commerce_setting_advance_encode_framerate_tip,
             VideoSetting.FrameRateList.map { "${it.fps} fps" }
+        )
+        setupSelectorItem(
+            ITEM_ID_SELECTOR_ENCODER,
+            binding.encoder,
+            R.string.commerce_setting_advance_encoder,
+            selectList = VideoSetting.EncoderList.map { it.name.split("_")[2] }
         )
         setupSwitchAndSeekbarItem(
             ITEM_ID_SWITCH_BITRATE,
@@ -462,7 +464,7 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
         }
         val selectPosition = defaultItemValues[itemId] ?: 0
         binding.tvValue.text = selectList.getOrNull(selectPosition)
-        onSelectorChanged(itemId, selectPosition)
+        //onSelectorChanged(itemId, selectPosition)
         binding.root.setOnClickListener {
             if (!checkPresetMode()) {
                 BottomLightListDialog(context).apply {
@@ -577,11 +579,12 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
                 onSwitchChanged(itemIdSwitch, isChecked)
                 binding.slider.visibility = if (isChecked) View.GONE else View.VISIBLE
                 binding.tvValue.visibility = if (isChecked) View.GONE else View.VISIBLE
-                if (!isChecked) { // 关闭时候设置推荐默认值
+                if (!isChecked) { // Set recommended default values when closing
                     if (VideoSetting.getCurrBroadcastSetting().video.bitRate == 0) {
                         binding.slider.value =
                             VideoSetting.getCurrBroadcastSetting().video.bitRateRecommend.toFloat()
                         VideoSetting.updateBroadcastSetting(
+                            rtcConnection,
                             bitRate = VideoSetting.getCurrBroadcastSetting().video.bitRateRecommend
                         )
                     } else {
@@ -657,7 +660,6 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
      */
     private fun onSwitchChanged(itemId: Int, isChecked: Boolean) {
         when (itemId) {
-            ITEM_ID_SWITCH_QUALITY_ENHANCE -> VideoSetting.updateBroadcastSetting(h265 = isChecked)
             ITEM_ID_SWITCH_COLOR_ENHANCE -> VideoSetting.updateBroadcastSetting(colorEnhance = isChecked)
             ITEM_ID_SWITCH_DARK_ENHANCE -> VideoSetting.updateBroadcastSetting(lowLightEnhance = isChecked)
             ITEM_ID_SWITCH_VIDEO_NOISE_REDUCE -> VideoSetting.updateBroadcastSetting(videoDenoiser = isChecked)
@@ -700,13 +702,18 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
         if (index < 0) return
         when (itemId) {
             ITEM_ID_SELECTOR_RESOLUTION -> VideoSetting.updateBroadcastSetting(
+                rtcConnection = rtcConnection,
                 encoderResolution = VideoSetting.ResolutionList[index],
                 captureResolution = VideoSetting.ResolutionList[index]
             )
 
             ITEM_ID_SELECTOR_FRAME_RATE -> VideoSetting.updateBroadcastSetting(
-                captureResolution = VideoSetting.ResolutionList[index],
+                rtcConnection = rtcConnection,
                 frameRate = VideoSetting.FrameRateList[index]
+            )
+            ITEM_ID_SELECTOR_ENCODER -> VideoSetting.updateBroadcastSetting(
+                rtcConnection = rtcConnection,
+                codecType = VideoSetting.EncoderList[index]
             )
         }
     }

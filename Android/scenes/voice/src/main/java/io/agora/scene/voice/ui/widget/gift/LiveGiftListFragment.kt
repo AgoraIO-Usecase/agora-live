@@ -1,6 +1,5 @@
 package io.agora.scene.voice.ui.widget.gift
 
-import io.agora.voice.common.ui.BaseUiFragment
 import io.agora.scene.voice.model.GiftBean
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,11 +9,12 @@ import io.agora.scene.voice.ui.widget.recyclerview.HorizontalPageLayoutManager
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import androidx.recyclerview.widget.DividerItemDecoration
+import io.agora.scene.base.component.BaseBindingFragment
 import io.agora.scene.voice.databinding.VoiceFragmentGiftListLayoutBinding
 import io.agora.voice.common.ui.adapter.listener.OnAdapterItemClickListener
 import io.agora.voice.common.utils.DeviceTools
 
-class LiveGiftListFragment : BaseUiFragment<VoiceFragmentGiftListLayoutBinding>(),
+class LiveGiftListFragment : BaseBindingFragment<VoiceFragmentGiftListLayoutBinding>(),
     OnAdapterItemClickListener {
     private var adapter: GiftListAdapter? = null
     private var giftBean: GiftBean? = null
@@ -32,7 +32,7 @@ class LiveGiftListFragment : BaseUiFragment<VoiceFragmentGiftListLayoutBinding>(
         initView()
     }
 
-    private fun initView() {
+    override fun initView() {
         binding?.apply {
             val snapHelper =
                 PagingScrollHelper()
@@ -56,15 +56,30 @@ class LiveGiftListFragment : BaseUiFragment<VoiceFragmentGiftListLayoutBinding>(
             rvList.isHorizontalScrollBarEnabled = true
         }
         adapter?.setOnItemClickListener(this)
+        adapter?.data = GiftRepository.getGiftsByPage(context, position)
+        if (position == 0) {
+            if (!adapter?.data.isNullOrEmpty()) {
+                adapter?.setSelectedPosition(0)
+                listener?.onFirstItem(adapter?.getItem(0))
+            }
+        }
     }
+
+    var isSelect = false
+        set(value) {
+            field = value
+           if (!value){
+               adapter?.setSelectedPosition(-1)
+           }
+        }
 
     override fun onResume() {
         super.onResume()
         adapter?.data = GiftRepository.getGiftsByPage(context, position)
-        if (!adapter?.data.isNullOrEmpty()){
-            adapter?.setSelectedPosition(0)
-            listener?.onFirstItem(adapter?.getItem(0))
-        }
+//        if (!adapter?.data.isNullOrEmpty()){
+//            adapter?.setSelectedPosition(0)
+//            listener?.onFirstItem(adapter?.getItem(0))
+//        }
     }
 
     override fun onItemClick(view: View, position: Int) {

@@ -108,8 +108,8 @@ abstract class OnPageScrollEventHandler constructor(
                     )
                 }
                 mRtcEngine.startMediaRenderingTracingEx(RtcConnection(anchorInfo.channelId, localUid))
-                (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId).perceivedStartTime = System.currentTimeMillis()
-                (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId).reportExt = mutableMapOf("videoScrollMode" to videoScrollMode, "needPreJoin" to needPreJoin)
+                (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId, anchorInfo.anchorUid).perceivedStartTime = System.currentTimeMillis()
+                (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId, anchorInfo.anchorUid).reportExt = mutableMapOf("videoScrollMode" to videoScrollMode, "needPreJoin" to needPreJoin)
             }
 
 
@@ -247,13 +247,13 @@ abstract class OnPageScrollEventHandler constructor(
                 }
             }
 
-//            if (currLoadPosition != position) {
-//                leaveRoom(roomList[currLoadPosition] ?: return)
+            if (currLoadPosition != position) {
+                leaveRoom(roomList[currLoadPosition] ?: return)
 //                onPageLeft(currLoadPosition)
 //
 //                joinRoomWithoutAudio(position, roomList[position] ?: return, localUid)
 //                onPageStartLoading(position)
-//            }
+            }
         }
         currLoadPosition = position
         preLoadPosition = POSITION_NONE
@@ -307,8 +307,8 @@ abstract class OnPageScrollEventHandler constructor(
             }
 
             mRtcEngine.startMediaRenderingTracingEx(RtcConnection(anchorInfo.channelId, localUid))
-            (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId).perceivedStartTime = System.currentTimeMillis()
-            (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId).reportExt = mutableMapOf("videoScrollMode" to videoScrollMode.value, "needPreJoin" to needPreJoin)
+            (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId, anchorInfo.anchorUid).perceivedStartTime = System.currentTimeMillis()
+            (videoLoader as VideoLoaderImpl).getProfiler(anchorInfo.channelId, anchorInfo.anchorUid).reportExt = mutableMapOf("videoScrollMode" to videoScrollMode.value, "needPreJoin" to needPreJoin)
         }
     }
 
@@ -369,7 +369,7 @@ abstract class OnPageScrollEventHandler constructor(
         }
 
         VideoLoader.videoLoaderApiLog(tag, "switchRoomState, connPreLoaded: $roomPreLoaded")
-        // 非preJoin房间需要退出频道
+        // Non-preJoin rooms need to exit the channel.
         roomsForPreloading.forEach { room ->
             if (needPreJoin && videoLoader.getAnchorState(room.roomId, localUid) == AnchorState.PRE_JOINED && roomPreLoaded.none {room.roomId == it.roomId}) {
                 VideoLoader.videoLoaderApiLog(tag, "switchRoomState, remove: $room")

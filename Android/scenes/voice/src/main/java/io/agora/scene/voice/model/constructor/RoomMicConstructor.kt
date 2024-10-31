@@ -150,24 +150,24 @@ internal object RoomMicConstructor {
         return when (micInfo.micStatus) {
             MicStatus.Normal -> {
                 mutableListOf(
+                    MicManagerBean(context.getString(R.string.voice_room_off_stage), true, MicClickAction.OffStage),
                     if(micInfo.member?.micStatus == 0){
                         MicManagerBean(context.getString(R.string.voice_room_unmute), true, MicClickAction.UnMute)
                     }else{
                         MicManagerBean(context.getString(R.string.voice_room_mute), true, MicClickAction.Mute)
-                    },
-                    MicManagerBean(context.getString(R.string.voice_room_off_stage), true, MicClickAction.OffStage)
+                    }
                 )
             }
             MicStatus.Mute -> {
                 mutableListOf(
-                    MicManagerBean(context.getString(R.string.voice_room_unmute), true, MicClickAction.UnMute),
-                    MicManagerBean(context.getString(R.string.voice_room_off_stage), true, MicClickAction.OffStage)
+                    MicManagerBean(context.getString(R.string.voice_room_off_stage), true, MicClickAction.OffStage),
+                    MicManagerBean(context.getString(R.string.voice_room_unmute), true, MicClickAction.UnMute)
                 )
             }
             MicStatus.ForceMute -> {
                 mutableListOf(
-                    MicManagerBean(context.getString(R.string.voice_room_unmute), false, MicClickAction.UnForbidMic),
-                    MicManagerBean(context.getString(R.string.voice_room_off_stage), true, MicClickAction.OffStage)
+                    MicManagerBean(context.getString(R.string.voice_room_off_stage), true, MicClickAction.OffStage),
+                    MicManagerBean(context.getString(R.string.voice_room_unmute), false, MicClickAction.UnForbidMic)
                 )
             }
             else -> {

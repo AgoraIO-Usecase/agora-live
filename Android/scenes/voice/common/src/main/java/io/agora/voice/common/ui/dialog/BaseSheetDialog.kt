@@ -10,14 +10,17 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.FragmentManager
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-
 
 abstract class BaseSheetDialog<B : ViewBinding?> : BottomSheetDialogFragment() {
 
     var binding: B? = null
+
+    var onCancel = false
+        private set(value) {
+            field = value
+        }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = getViewBinding(inflater, container)
@@ -51,8 +54,7 @@ abstract class BaseSheetDialog<B : ViewBinding?> : BottomSheetDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-//        var bottomSheetBehavior = BottomSheetBehavior.from(view?.parent as View) //dialog的高度
-//        bottomSheetBehavior.isHideable = false
+        dialog?.window?.setDimAmount(0f)
     }
 
     override fun onDestroyView() {
@@ -64,5 +66,10 @@ abstract class BaseSheetDialog<B : ViewBinding?> : BottomSheetDialogFragment() {
 
     open fun onHandleOnBackPressed() {
         dismiss()
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        onCancel = true
     }
 }

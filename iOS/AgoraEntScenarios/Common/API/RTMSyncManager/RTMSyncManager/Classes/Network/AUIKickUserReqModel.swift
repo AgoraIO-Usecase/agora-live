@@ -2,7 +2,6 @@
 //  AUIKickUserReqModel.swift
 //  AUIKit
 //
-//  Created by 朱继超 on 2023/5/26.
 //
 
 import UIKit
@@ -14,12 +13,12 @@ import UIKit
         interfaceName = "/v1/users/kickOut"
     }
     
-    /// Description 当前api 调用者
+    /// Description Current api caller
     public var operatorId: String?
     
     public var roomId: String?
     
-    /// Description 被踢用户id
+    /// Description Kicked user id
     public var uid: Int = 0
     
     public override func parse(data: Data?) throws -> Any {

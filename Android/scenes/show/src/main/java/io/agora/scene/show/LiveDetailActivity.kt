@@ -15,6 +15,9 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import io.agora.scene.base.AgoraScenes
+import io.agora.scene.base.LogUploader
+import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.manager.UserManager
@@ -44,6 +47,7 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
         private const val EXTRA_ROOM_DETAIL_INFO_LIST_SELECTED_INDEX =
             "roomDetailInfoListSelectedIndex"
         private const val EXTRA_ROOM_DETAIL_INFO_LIST_SCROLLABLE = "roomDetailInfoListScrollable"
+        private const val EXTRA_ROOM_DETAIL_INFO_CREATE_ROOM = "roomDetailInfoCreateRoom"
 
 
         /**
@@ -53,7 +57,7 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
          * @param roomDetail
          */
         fun launch(context: Context, roomDetail: ShowRoomDetailModel) {
-            launch(context, arrayListOf(roomDetail), 0, false)
+            launch(context, arrayListOf(roomDetail), 0, false, true)
         }
 
         /**
@@ -68,12 +72,14 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
             context: Context,
             roomDetail: ArrayList<ShowRoomDetailModel>,
             selectedIndex: Int,
-            scrollable: Boolean
+            scrollable: Boolean,
+            createRoom: Boolean = false
         ) {
             context.startActivity(Intent(context, LiveDetailActivity::class.java).apply {
                 putExtra(EXTRA_ROOM_DETAIL_INFO_LIST, roomDetail)
                 putExtra(EXTRA_ROOM_DETAIL_INFO_LIST_SELECTED_INDEX, selectedIndex)
                 putExtra(EXTRA_ROOM_DETAIL_INFO_LIST_SCROLLABLE, scrollable)
+                putExtra(EXTRA_ROOM_DETAIL_INFO_CREATE_ROOM, createRoom)
             })
         }
     }
@@ -245,7 +251,7 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
                     ViewPager2.SCROLL_STATE_SETTLING -> binding.viewPager2.isUserInputEnabled = false
                     ViewPager2.SCROLL_STATE_IDLE -> binding.viewPager2.isUserInputEnabled = true
                     ViewPager2.SCROLL_STATE_DRAGGING -> {
-                        // TODO 暂不支持
+                        // TODO Not supported for now
                     }
                 }
                 super.onPageScrollStateChanged(state)
@@ -290,7 +296,6 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
         }
         onPageScrollEventHandler?.updateRoomList(list)
 
-        // 设置vp当前页面外的页面数
         binding.viewPager2.offscreenPageLimit = 1
         val fragmentAdapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = if (mScrollable) Int.MAX_VALUE else 1
@@ -303,7 +308,9 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
                 }
                 return LiveDetailFragment.newInstance(
                     roomInfo,
-                    onPageScrollEventHandler as OnPageScrollEventHandler, position
+                    onPageScrollEventHandler as OnPageScrollEventHandler,
+                    position,
+                    intent.getBooleanExtra(EXTRA_ROOM_DETAIL_INFO_CREATE_ROOM, false)
                 ).apply {
                     Log.d(tag, "position：$position, room:${roomInfo.roomId}")
                     vpFragments.put(position, this)
@@ -321,7 +328,6 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
                                 anchorList
                             ),position == binding.viewPager2.currentItem)
                     } else {
-                        // 主播
                         startLoadPageSafely()
                     }
                 }
@@ -358,5 +364,12 @@ class LiveDetailActivity : BaseViewBindingActivity<ShowLiveDetailActivityBinding
 
     override fun onBackPressed() {
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (SceneConfigManager.logUpload) {
+            LogUploader.uploadLog(AgoraScenes.LiveShow)
+        }
     }
 }

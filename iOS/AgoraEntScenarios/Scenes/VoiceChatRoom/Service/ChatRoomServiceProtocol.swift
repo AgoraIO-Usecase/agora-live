@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import AgoraSyncManager_overseas
 
 public enum updateRoomState {
     case activeAlien
@@ -132,6 +131,18 @@ public enum updateRoomState {
     ///- Ranking_ List: Ranking list
     ///- From Id: Operator userName
     func onContributionListChanged(roomId: String, ranking_list: [VRUser], from fromId: String)
+    
+    /// Description
+    /// - Parameters: watched count changed
+    ///   - roomId: Chat room ID
+    ///   - count: watched count
+    func onClickCountChanged(roomId: String, count: Int)
+    
+    /// Description
+    /// - Parameters: member in room count changed
+    ///   - roomId: Chat room ID
+    ///   - count: member count
+    func onMemberCountChanged(roomId: String, count: Int)
     
     ///Description member leaves
     /// - Parameters:
@@ -282,7 +293,7 @@ protocol ChatRoomServiceProtocol: NSObjectProtocol {
     /// - Parameters:
     ///- room: Room object information
     ///- completion: Complete callback (error message)
-    func createRoom(room: VRRoomEntity, completion: @escaping (SyncError?, VRRoomEntity?) -> Void)
+    func createRoom(room: VRRoomEntity, completion: @escaping (Error?, VRRoomEntity?) -> Void)
     
     ///Description Update Announcement
     /// - Parameters:
@@ -297,11 +308,6 @@ protocol ChatRoomServiceProtocol: NSObjectProtocol {
     ///Update robot volume in Description
     ///- Parameter value: Volume value
     func updateRobotVolume(value: Int,completion: @escaping (Error?) -> Void)
-    
-    ///Description: Get room background music
-    ///- Parameter roomId: Room ID
-    ///- Parameter completion: Callback
-    func fetchRoomBGM(roomId: String?, completion: @escaping (_ songName: String?, _ singerName: String?, _ isPlaying: Bool) -> Void)
     
     ///Update room background music in Description
     ///- Parameter songName: Song name

@@ -24,7 +24,7 @@ import io.agora.scene.show.databinding.ShowSettingAdvanceItemSwitchSeekbarBindin
 import io.agora.scene.show.databinding.ShowSettingAdvanceVideoBinding
 import io.agora.scene.show.utils.toInt
 import io.agora.scene.widget.basic.BindingViewHolder
-import java.util.*
+import java.util.Locale
 
 /**
  * Advance setting dialog
@@ -34,46 +34,41 @@ import java.util.*
  *
  * @param context
  */
-class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcConnection) :
+class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcConnection, val onMusicVolumeChange: (volume : Int) -> Unit) :
     BottomFullDialog(context) {
 
     companion object {
         private const val ITEM_ID_SWITCH_BASE = 0x00000001
 
         /**
-         * Item Id Switch Quality Enhance
-         */
-        const val ITEM_ID_SWITCH_QUALITY_ENHANCE = ITEM_ID_SWITCH_BASE + 1
-
-        /**
          * Item Id Switch Color Enhance
          */
-        const val ITEM_ID_SWITCH_COLOR_ENHANCE = ITEM_ID_SWITCH_BASE + 2
+        const val ITEM_ID_SWITCH_COLOR_ENHANCE = ITEM_ID_SWITCH_BASE + 1
 
         /**
          * Item Id Switch Dark Enhance
          */
-        const val ITEM_ID_SWITCH_DARK_ENHANCE = ITEM_ID_SWITCH_BASE + 3
+        const val ITEM_ID_SWITCH_DARK_ENHANCE = ITEM_ID_SWITCH_BASE + 2
 
         /**
          * Item Id Switch Video Noise Reduce
          */
-        const val ITEM_ID_SWITCH_VIDEO_NOISE_REDUCE = ITEM_ID_SWITCH_BASE + 4
+        const val ITEM_ID_SWITCH_VIDEO_NOISE_REDUCE = ITEM_ID_SWITCH_BASE + 3
 
         /**
          * Item Id Switch Bitrate Save
          */
-        const val ITEM_ID_SWITCH_BITRATE_SAVE = ITEM_ID_SWITCH_BASE + 5
+        const val ITEM_ID_SWITCH_BITRATE_SAVE = ITEM_ID_SWITCH_BASE + 4
 
         /**
          * Item Id Switch Ear Back
          */
-        const val ITEM_ID_SWITCH_EAR_BACK = ITEM_ID_SWITCH_BASE + 6
+        const val ITEM_ID_SWITCH_EAR_BACK = ITEM_ID_SWITCH_BASE + 5
 
         /**
          * Item Id Switch Bitrate
          */
-        const val ITEM_ID_SWITCH_BITRATE = ITEM_ID_SWITCH_BASE + 7
+        const val ITEM_ID_SWITCH_BITRATE = ITEM_ID_SWITCH_BASE + 6
 
         private const val ITEM_ID_SEEKBAR_BASE = ITEM_ID_SWITCH_BASE shl 8
 
@@ -103,6 +98,8 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
          * Item Id Selector Frame Rate
          */
         const val ITEM_ID_SELECTOR_FRAME_RATE = ITEM_ID_SELECTOR_BASE + 2
+
+        const val ITEM_ID_SELECTOR_ENCODER = ITEM_ID_SELECTOR_BASE + 3
 
         private const val VIEW_TYPE_VIDEO_SETTING = 0
         private const val VIEW_TYPE_AUDIO_SETTING = 1
@@ -135,10 +132,6 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
      * Default item values
      */
     private val defaultItemValues = mutableMapOf<Int, Int>().apply {
-        put(
-            ITEM_ID_SWITCH_QUALITY_ENHANCE,
-            VideoSetting.getCurrBroadcastSetting().video.H265.toInt()
-        )
         put(
             ITEM_ID_SWITCH_COLOR_ENHANCE,
             VideoSetting.getCurrBroadcastSetting().video.colorEnhance.toInt()
@@ -180,6 +173,10 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
         put(
             ITEM_ID_SELECTOR_FRAME_RATE,
             VideoSetting.getCurrBroadcastSetting().video.frameRate.toIndex()
+        )
+        put(
+            ITEM_ID_SELECTOR_ENCODER,
+            VideoSetting.getCurrBroadcastSetting().video.codecType.toIndex()
         )
     }
 
@@ -338,18 +335,12 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
      * @param binding
      */
     private fun updateVideoSettingView(binding: ShowSettingAdvanceVideoBinding) {
-        setItemInvisible(ITEM_ID_SWITCH_QUALITY_ENHANCE, VideoSetting.isPureMode)
         setItemInvisible(ITEM_ID_SWITCH_COLOR_ENHANCE, VideoSetting.isPureMode)
         setItemInvisible(ITEM_ID_SWITCH_DARK_ENHANCE, VideoSetting.isPureMode)
         setItemInvisible(ITEM_ID_SWITCH_VIDEO_NOISE_REDUCE, VideoSetting.isPureMode)
         setItemInvisible(ITEM_ID_SWITCH_BITRATE_SAVE, VideoSetting.isPureMode)
+        setItemInvisible(ITEM_ID_SELECTOR_ENCODER, VideoSetting.isPureMode)
 
-        setupSwitchItem(
-            ITEM_ID_SWITCH_QUALITY_ENHANCE,
-            binding.qualityEnhance,
-            R.string.show_setting_advance_quality_h265,
-            R.string.show_setting_advance_quality_h265_tip
-        )
         setupSwitchItem(
             ITEM_ID_SWITCH_COLOR_ENHANCE,
             binding.colorEnhance,
@@ -368,14 +359,14 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
             R.string.show_setting_advance_video_noise_reduce,
             R.string.show_setting_advance_video_noise_reduce_tip
         )
-        // 码率节省
+        // Bitrate Saving
         setupSwitchItem(
             ITEM_ID_SWITCH_BITRATE_SAVE,
             binding.bitrateSave,
             R.string.show_setting_advance_bitrate_save,
             R.string.show_setting_advance_bitrate_save_tip
         )
-        // 编码分辨率
+        // Encoding Resolution
         setupSelectorItem(
             ITEM_ID_SELECTOR_RESOLUTION,
             binding.resolution,
@@ -383,13 +374,19 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
             R.string.show_setting_advance_encode_resolution_tip,
             VideoSetting.ResolutionList.map { "${it.width}x${it.height}" }
         )
-        // 编码帧率
+        // Encoding Frame Rate
         setupSelectorItem(
             ITEM_ID_SELECTOR_FRAME_RATE,
             binding.frameRate,
             R.string.show_setting_advance_encode_framerate,
             R.string.show_setting_advance_encode_framerate_tip,
             VideoSetting.FrameRateList.map { "${it.fps} fps" }
+        )
+        setupSelectorItem(
+            ITEM_ID_SELECTOR_ENCODER,
+            binding.encoder,
+            R.string.show_setting_advance_encoder,
+            selectList = VideoSetting.EncoderList.map { it.name.split("_")[2] }
         )
         setupSwitchAndSeekbarItem(
             ITEM_ID_SWITCH_BITRATE,
@@ -468,7 +465,7 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
         }
         val selectPosition = defaultItemValues[itemId] ?: 0
         binding.tvValue.text = selectList.getOrNull(selectPosition)
-        onSelectorChanged(itemId, selectPosition)
+        //onSelectorChanged(itemId, selectPosition)
         binding.root.setOnClickListener {
             if (!checkPresetMode()) {
                 BottomLightListDialog(context).apply {
@@ -583,11 +580,12 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
                 onSwitchChanged(itemIdSwitch, isChecked)
                 binding.slider.visibility = if (isChecked) View.GONE else View.VISIBLE
                 binding.tvValue.visibility = if (isChecked) View.GONE else View.VISIBLE
-                if (!isChecked) { // 关闭时候设置推荐默认值
+                if (!isChecked) { // Set recommended default values when closing
                     if (VideoSetting.getCurrBroadcastSetting().video.bitRate == 0) {
                         binding.slider.value =
                             VideoSetting.getCurrBroadcastSetting().video.bitRateRecommend.toFloat()
                         VideoSetting.updateBroadcastSetting(
+                            rtcConnection,
                             bitRate = VideoSetting.getCurrBroadcastSetting().video.bitRateRecommend
                         )
                     } else {
@@ -663,7 +661,6 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
      */
     private fun onSwitchChanged(itemId: Int, isChecked: Boolean) {
         when (itemId) {
-            ITEM_ID_SWITCH_QUALITY_ENHANCE -> VideoSetting.updateBroadcastSetting(h265 = isChecked)
             ITEM_ID_SWITCH_COLOR_ENHANCE -> VideoSetting.updateBroadcastSetting(colorEnhance = isChecked)
             ITEM_ID_SWITCH_DARK_ENHANCE -> VideoSetting.updateBroadcastSetting(lowLightEnhance = isChecked)
             ITEM_ID_SWITCH_VIDEO_NOISE_REDUCE -> VideoSetting.updateBroadcastSetting(videoDenoiser = isChecked)
@@ -689,10 +686,13 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
                 recordingSignalVolume = value
             )
 
-            ITEM_ID_SEEKBAR_MUSIC_VOLUME -> VideoSetting.updateBroadcastSetting(
-                rtcConnection,
-                audioMixingVolume = value
-            )
+            ITEM_ID_SEEKBAR_MUSIC_VOLUME -> {
+                VideoSetting.updateBroadcastSetting(
+                    rtcConnection,
+                    audioMixingVolume = value
+                )
+                onMusicVolumeChange.invoke(value)
+            }
         }
     }
 
@@ -706,12 +706,18 @@ class AdvanceSettingDialog constructor(context: Context, val rtcConnection: RtcC
         if (index < 0) return
         when (itemId) {
             ITEM_ID_SELECTOR_RESOLUTION -> VideoSetting.updateBroadcastSetting(
+                rtcConnection,
                 encoderResolution = VideoSetting.ResolutionList[index],
                 captureResolution = VideoSetting.ResolutionList[index]
             )
 
             ITEM_ID_SELECTOR_FRAME_RATE -> VideoSetting.updateBroadcastSetting(
+                rtcConnection,
                 frameRate = VideoSetting.FrameRateList[index]
+            )
+            ITEM_ID_SELECTOR_ENCODER -> VideoSetting.updateBroadcastSetting(
+                rtcConnection,
+                codecType = VideoSetting.EncoderList[index]
             )
         }
     }

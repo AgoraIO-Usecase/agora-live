@@ -11,11 +11,21 @@ android {
         versionCode Integer.parseInt(project.APP_VERSION_CODE)
         versionName project.APP_VERSION_NAME
         applicationId "io.agora.livestreaming"
-        ndk.abiFilters 'arm64-v8a', 'armeabi-v7a'//, 'arm64-v8a'//, 'x86', 'x86-64'
+        ndk.abiFilters 'arm64-v8a', 'armeabi-v7a'//, 'x86', 'x86-64'
     }
 
     packagingOptions {
         pickFirst 'lib/*/libc++_shared.so'
+        pickFirst 'lib/*/libaosl.so'
+        exclude 'lib/*/libagora_lip_sync_extension.so'
+        exclude 'lib/*/libagora_screen_capture_extension.so'
+        exclude 'lib/*/libagora_face_capture_extension.so'
+        exclude 'lib/*/libagora_face_detection_extension.so'
+
+        if (BEAUTY_RESOURCE != "") {
+            exclude 'lib/*/libfuai.so'
+            exclude 'lib/*/libCNamaSDK.so'
+        }
     }
 
     lint {
@@ -95,7 +105,12 @@ dependencies {
         runtimeOnly project(chatRoomModule)
     }
 
-    //glide 图片加载
+    def ktvModule = ':scenes:ktv'
+    if (findProject(ktvModule) != null) {
+        runtimeOnly project(ktvModule)
+    }
+
+    //glide
     api rootProject.ext.deps.glide
     kapt rootProject.ext.deps.glide_compiler
 

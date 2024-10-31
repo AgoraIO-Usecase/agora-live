@@ -7,105 +7,79 @@
 
 import Foundation
 
-public enum ShowServiceConnectState: Int {
+@objc public enum ShowServiceConnectState: Int {
     case connecting = 0
     case open = 1
     case fail = 2
     case closed = 3
 }
 
-protocol ShowSubscribeServiceProtocol: NSObject {
+@objc public protocol ShowSubscribeServiceProtocol: NSObjectProtocol {
     
+    /// The room is expired.
+    func onRoomExpired(channelName: String)
     
-    /// Room expired
-    func onRoomExpired()
+    /// The room was destroyed.
+    /// - Parameter channelName: <#channelName description#>
+    func onRoomDestroy(channelName: String)
     
-    /// Live broadcast has ended
-    func onRoomDestroy(roomId: String)
-    
-    /// Network state change
+    /// Changes in network status
     /// - Parameter state: <#state description#>
-    func onConnectStateChanged(state: ShowServiceConnectState)
+    func onConnectStateChanged(channelName: String, state: ShowServiceConnectState)
     
-    /// The number of users in the room changes
+    /// Changes in the number of users in the room
     /// - Parameter userCount: <#userCount description#>
-    func onUserCountChanged(userCount: Int)
+    func onUserCountChanged(channelName: String, userCount: Int)
     
-    /// User join room
+    /// Users join the room
     /// - Parameter user: <#user description#>
-    func onUserJoinedRoom(user: ShowUser)
+    func onUserJoinedRoom(channelName: String, user: ShowUser)
     
-    /// User leaves room
+    /// The user leaves the room.
     /// - Parameter user: <#user description#>
-    func onUserLeftRoom(user: ShowUser)
+    func onUserLeftRoom(channelName: String, user: ShowUser)
     
     
     
-    /// A new message was received
+    /// Received new messages
     /// - Parameter message: <#message description#>
-    func onMessageDidAdded(message: ShowMessage)
+    func onMessageDidAdded(channelName: String, message: ShowMessage)
     
     
-    
-    /// The application for Line was received
+    /// Changes in the application list of Lianmai
     /// - Parameter apply: <#apply description#>
-    func onMicSeatApplyUpdated(apply: ShowMicSeatApply)
-    
-    /// Cancel the connection request
-    /// - Parameter apply: <#apply description#>
-    func onMicSeatApplyDeleted(apply: ShowMicSeatApply)
-    
-    /// Agree to Line's application
-    /// - Parameter apply: <#apply description#>
-    func onMicSeatApplyAccepted(apply: ShowMicSeatApply)
-    
-    /// The application for line was denied
-    /// - Parameter apply: <#apply description#>
-    func onMicSeatApplyRejected(apply: ShowMicSeatApply)
-    
-    
-    /// Received a Lien invitation/Invitation was updated
-    /// - Parameter invitation: <#invitation description#>
-    func onMicSeatInvitationUpdated(invitation: ShowMicSeatInvitation)
-    
-    /// Cancel the Link invitation
-    /// - Parameter invitation: <#invitation description#>
-    func onMicSeatInvitationDeleted(invitation: ShowMicSeatInvitation)
-    
-    /// Agree to Line's invitation
-    /// - Parameter invitation: <#invitation description#>
-    func onMicSeatInvitationAccepted(invitation: ShowMicSeatInvitation)
-    
-    /// Turn down an invitation to Line
-    /// - Parameter invitation: <#invitation description#>
-    func onMicSeatInvitationRejected(invitation: ShowMicSeatInvitation)
-    
-    
-    
-    /// PK invitation received/Invitation updated
-    /// - Parameter invitation: <#invitation description#>
-    func onPKInvitationUpdated(invitation: ShowPKInvitation)
+    func onMicSeatApplyUpdated(channelName: String, applies: [ShowMicSeatApply])
 
-    /// Agree to PK invitation
+    
+    /// Received on seat invitation/the invitation is updated
     /// - Parameter invitation: <#invitation description#>
-    func onPKInvitationAccepted(invitation: ShowPKInvitation)
+    func onMicSeatInvitationUpdated(channelName: String, invitation: ShowMicSeatInvitation)
     
-    /// Decline PK invitation
+    /// Agree to on seat invitation
     /// - Parameter invitation: <#invitation description#>
-    func onPKInvitationRejected(invitation: ShowPKInvitation)
+    func onMicSeatInvitationAccepted(channelName: String, invitation: ShowMicSeatInvitation)
+    
+    /// Refuse on seat invitation
+    /// - Parameter invitation: <#invitation description#>
+    func onMicSeatInvitationRejected(channelName: String, invitation: ShowMicSeatInvitation)
     
     
     
-    /// Receive a pk/ Lien interaction/update
+    /// Received PK invitation/the invitation was updated
+    /// - Parameter invitation: <#invitation description#>
+    func onPKInvitationUpdated(channelName: String, invitation: ShowPKInvitation)
+
+    /// Agree to the PK invitation
+    /// - Parameter invitation: <#invitation description#>
+    func onPKInvitationAccepted(channelName: String, invitation: ShowPKInvitation)
+    
+    /// Refuse PK invitation
+    /// - Parameter invitation: <#invitation description#>
+    func onPKInvitationRejected(channelName: String, invitation: ShowPKInvitation)
+    
+    
+    
+    /// pk/Lianmai interactive change
     /// - Parameter interation: <#interation description#>
-    func onInteractionBegan(interaction: ShowInteractionInfo)
-    
-    /// pk/ Connect is stopped
-    /// - Parameter interaction: <#interaction description#>
-    func onInterationEnded(interaction: ShowInteractionInfo)
-    
-    
-    /// pk/ Lien was updated (muted, etc.)
-    /// - Parameter interaction: <#interaction description#>
-    func onInterationUpdated(interaction: ShowInteractionInfo)
+    func onInteractionUpdated(channelName: String, interactions: [ShowInteractionInfo])
 }

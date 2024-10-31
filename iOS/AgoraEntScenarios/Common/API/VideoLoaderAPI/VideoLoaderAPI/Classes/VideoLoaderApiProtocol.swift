@@ -8,108 +8,92 @@
 import Foundation
 import AgoraRtcKit
 
-/// 加载状态
+/// Loading status
 @objc public enum AnchorState: Int {
-    case idle = 0                 //空闲
-    case prejoined                //预加载
-    case joinedWithVideo          //只加载视频
-    case joinedWithAudioVideo     //加载视频和音频
+    case idle = 0                 //Free
+    case prejoined                //Preload
+    case joinedWithVideo          //Only load videos
+    case joinedWithAudioVideo     //Load video and audio
 }
 
-/// 初始化配置信息
-@objc public class VideoLoaderConfig: NSObject {
-    public weak var rtcEngine: AgoraRtcEngineKit?    //rtc engine实例
+/// Initialize configuration information
+@objcMembers public class VideoLoaderConfig: NSObject {
+    public weak var rtcEngine: AgoraRtcEngineKit?    //rtc engine instance
 }
 
-//房间信息
+//Room information
 @objc public class AnchorInfo: NSObject {
-    public var channelName: String = ""   //频道名
-    public var uid: UInt = 0              //频道对应的uid
-    public var token: String = ""         //频道对应的token
+    public var channelName: String = ""   //Channel name
+    public var uid: UInt = 0              //The uid corresponding to the channel
+    public var token: String = ""         //Tokens corresponding to the channel
 }
 
 @objc public class VideoCanvasContainer: NSObject {
-    public var container: UIView?                          //需要渲染到的view
-    public var uid: UInt = 0                               //需要渲染的用户uid
-    public var setupMode: AgoraVideoViewSetupMode = .add   //画布模式
-    public var mirrorMode: AgoraVideoMirrorMode = .auto
-//    public var viewIndex: Int = 0
-//    public var renderMode: Int = Constants.RENDER_MODE_HIDDEN
+    public var container: UIView?                            //The view that needs to be rendered
+    public var uid: UInt = 0                                 //User uid that needs to be rendered
+    public var setupMode: AgoraVideoViewSetupMode = .add     //Canvas mode
+    public var mirrorMode: AgoraVideoMirrorMode = .disabled  //Mirror mode
 }
 
 @objc public protocol IVideoLoaderApiListener: NSObjectProtocol {
     
-    /// 状态变更回调
+    /// Status change callback
     /// - Parameters:
     ///   - newState: <#newState description#>
     ///   - oldState: <#oldState description#>
     ///   - channelName: <#channelName description#>
     @objc optional func onStateDidChange(newState: AnchorState, oldState: AnchorState, channelName: String)
     
-    /// 获取到首帧的回调(耗时计算为从设置joinedWithVideo/joinedWithAudioVideo到出图)
+    /// Get the callback to the first frame (the time-consuming calculation is from setting joinedWithVideo/joinedWithAudioVideo to the output of the picture)
     /// - Parameters:
-    ///   - channelName: 房间id
-    ///   - elapsed: 耗时
+    /// - channelName: room id
+    /// - elapsed: time-consuming
     @objc optional func onFirstFrameRecv(channelName: String, uid: UInt, elapsed: Int64)
 }
 
 @objc public protocol IVideoLoaderApi: NSObjectProtocol {
     
-    /// 初始化配置
+    /// Initialize the configuration
     /// - Parameters:
     ///   - config: <#config description#>
     func setup(config: VideoLoaderConfig)
     
-    
-    /// preload房间列表
-    /// - Parameter preloadAnchorList: preload的list
-    /// - Parameter userId: 当前用户的uid
+    /// preload room list
+    /// - Parameter preloadAnchorList: preload's list
+    /// - Parameter userId: The uid of the current user
     func preloadAnchor(preloadAnchorList: [AnchorInfo], uid: UInt)
     
-    /// 切换状态
+    /// Switch the state
     /// - Parameters:
-    ///   - newState: 目标状态
-    ///   - localUid: 本地用户id
-    ///   - anchorInfo: 频道对象
-    ///   - tagId: 标记操作频道依赖的标识，例如可能多个房间共用一路频道流，这里通过tagId来增加对单个频道的引用，如果设置多个tagId，清理的时候需要对多个tagId设置为idle，如果不需要，可以设置为nil
+    /// - newState: Target status
+    /// - localUid: local user id
+    /// - anchorInfo: Channel Object
+    /// - tagId: Mark the identification of the operation channel's dependence, for example, multiple rooms may share a channel stream. Here, tagId is used to add references to a single channel. If you set multiple tagIds, you need to set multiple tagIds to idle when cleaning, if not If necessary, it can be set to nil.
     func switchAnchorState(newState: AnchorState, localUid: UInt, anchorInfo: AnchorInfo, tagId: String?)
     
-    /// 获取当前频道状态
-    /// - Parameter anchorInfo: 频道对象
+    /// Get the current channel status
+    /// - Parameter anchorInfo: Channel Object
     /// - Returns: <#description#>
     func getAnchorState(anchorInfo: AnchorInfo) -> AnchorState
     
-    /// 获取所有频道的rtc connection map
+    /// Get the rtc connection map of all channels
     /// - Returns: <#description#>
     func getConnectionMap() -> [String: AgoraRtcConnection]
     
-    /// 渲染到指定画布上
+    /// Render to the specified canvas
     /// - Parameters:
-    ///   - anchorInfo: 频道对象
+    /// - anchorInfo: Channel Object
     ///   - container: <#container description#>
     func renderVideo(anchorInfo: AnchorInfo, container: VideoCanvasContainer)
     
-    /// 清除缓存
+    /// Clear the cache
     func cleanCache()
  
-    /// 添加api代理
+    /// Add api delegate
     /// - Parameter listener: <#listener description#>
     func addListener(listener: IVideoLoaderApiListener)
     
-    /// 移除api代理
+    /// Remove api delegate
     /// - Parameter listener: <#listener description#>
     func removeListener(listener: IVideoLoaderApiListener)
-    
-    /// 添加RTC代理
-    /// - Parameter listener: <#listener description#>
-    func addRTCListener(anchorId: String, listener: AgoraRtcEngineDelegate)
-    
-    /// 移除RTC代理
-    /// - Parameter listener: <#listener description#>
-    func removeRTCListener(anchorId: String, listener: AgoraRtcEngineDelegate)
-    
-    /// 获取rtc delegate
-    /// - Parameter anchorId: 对应频道的id
-    /// - Returns: <#description#>
-    func getRTCListener(anchorId: String) -> AgoraRtcEngineDelegate?
 }

@@ -36,59 +36,21 @@ import javax.microedition.khronos.egl.EGLSurface;
 
 import io.agora.beautyapi.faceunity.utils.LogUtils;
 
-/**
- * The type Egl context helper.
- */
 public class EGLContextHelper {
-    /**
-     * The constant DEBUG_TAG.
-     */
     private static final String DEBUG_TAG = "EGLContextManager";
-    /**
-     * The M red size.
-     */
     private final int mRedSize = 8;
-    /**
-     * The M green size.
-     */
     private final int mGreenSize = 8;
-    /**
-     * The M blue size.
-     */
     private final int mBlueSize = 8;
-    /**
-     * The M alpha size.
-     */
     private final int mAlphaSize = 0;
-    /**
-     * The M depth size.
-     */
     private final int mDepthSize = 16;
-    /**
-     * The M stencil size.
-     */
     private final int mStencilSize = 0;
-    /**
-     * The M render type.
-     */
     private final int mRenderType = 4;
+    public EGLContextHelper(){}
 
-    /**
-     * Instantiates a new Egl context helper.
-     */
-    public EGLContextHelper() {
-    }
-
-    /**
-     * Init egl.
-     *
-     * @param shareContext the share context
-     * @throws Exception the exception
-     */
     public void initEGL(EGLContext shareContext) throws Exception {
         mEGL = (EGL10) GLDebugHelper.wrap(EGLContext.getEGL(),
                 GLDebugHelper.CONFIG_CHECK_GL_ERROR
-                        | GLDebugHelper.CONFIG_CHECK_THREAD, null);
+                        | GLDebugHelper.CONFIG_CHECK_THREAD,  null);
 
         if (mEGL == null) {
             throw new Exception("Couldn't get EGL");
@@ -106,12 +68,12 @@ public class EGLContextHelper {
         LogUtils.i(DEBUG_TAG, "GL version = " + curGLVersion[0] + "."
                 + curGLVersion[1]);
 
-        int[] numConfig = new int[1];
-        if (!mEGL.eglChooseConfig(mGLDisplay, mConfigSpec, null, 1,
-                numConfig)) {
+        int[] num_config = new int[1];
+        if(!mEGL.eglChooseConfig(mGLDisplay, mConfigSpec, null, 1,
+                num_config)){
             throw new IllegalArgumentException("eglChooseConfig failed");
         }
-        int numConfigs = numConfig[0];
+        int numConfigs = num_config[0];
         if (numConfigs <= 0) {
             throw new IllegalArgumentException(
                     "No configs match configSpec");
@@ -119,7 +81,7 @@ public class EGLContextHelper {
 
         EGLConfig[] configs = new EGLConfig[numConfigs];
         if (!mEGL.eglChooseConfig(mGLDisplay, mConfigSpec, configs, numConfigs,
-                numConfig)) {
+                num_config)) {
             throw new IllegalArgumentException("eglChooseConfig#2 failed");
         }
         mGLConfig = chooseConfig(mEGL, mGLDisplay, configs);
@@ -138,9 +100,9 @@ public class EGLContextHelper {
             throw new Exception("Couldn't create new surface");
         }
 
-        int[] attribList = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE};
+        int[] attrib_list = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE};
         mGLContext = mEGL.eglCreateContext(mGLDisplay, mGLConfig,
-                shareContext, attribList);
+                shareContext, attrib_list);
 
         if (mGLContext == null) {
             throw new Exception("Couldn't create new context");
@@ -153,75 +115,32 @@ public class EGLContextHelper {
 
     }
 
-    /**
-     * Gets egl context.
-     *
-     * @return the egl context
-     */
     public EGLContext getEGLContext() {
         return mGLContext;
     }
 
-    /**
-     * Gets gl display.
-     *
-     * @return the gl display
-     */
     public EGLDisplay getGLDisplay() {
         return mGLDisplay;
     }
 
-    /**
-     * Gets gl config.
-     *
-     * @return the gl config
-     */
     public EGLConfig getGLConfig() {
         return mGLConfig;
     }
 
-    /**
-     * Gets gl surface.
-     *
-     * @return the gl surface
-     */
     public EGLSurface getGLSurface() {
         return mGLSurface;
     }
 
-    /**
-     * Gets egl.
-     *
-     * @return the egl
-     */
     public EGL10 getEGL() {
         return mEGL;
     }
 
-    /**
-     * The M egl.
-     */
     EGL10 mEGL;
-    /**
-     * The M gl display.
-     */
     EGLDisplay mGLDisplay;
-    /**
-     * The M gl config.
-     */
     EGLConfig mGLConfig;
-    /**
-     * The M gl surface.
-     */
     EGLSurface mGLSurface;
-    /**
-     * The M gl context.
-     */
     EGLContext mGLContext;
 
-    /**
-     * The M config spec.
-     */
     int[] mConfigSpec = new int[]{
             EGL10.EGL_RED_SIZE, mRedSize,
             EGL10.EGL_GREEN_SIZE, mGreenSize,
@@ -229,12 +148,9 @@ public class EGLContextHelper {
             EGL10.EGL_ALPHA_SIZE, mAlphaSize,
             EGL10.EGL_DEPTH_SIZE, mDepthSize,
             EGL10.EGL_STENCIL_SIZE, mStencilSize,
-            EGL10.EGL_RENDERABLE_TYPE, mRenderType, //egl版本  2.0
+            EGL10.EGL_RENDERABLE_TYPE, mRenderType,//egl version  2.0
             EGL10.EGL_NONE};
 
-    /**
-     * Release.
-     */
     public void release() {
         mEGL.eglMakeCurrent(mGLDisplay, EGL10.EGL_NO_SURFACE,
                 EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
@@ -245,37 +161,19 @@ public class EGLContextHelper {
         LogUtils.i(DEBUG_TAG, "GL Cleaned up");
     }
 
-    /**
-     * Egl make current boolean.
-     *
-     * @return the boolean
-     */
-    public boolean eglMakeCurrent() {
-        if (mGLContext == EGL10.EGL_NO_CONTEXT) {
+    public boolean eglMakeCurrent(){
+        if(mGLContext == EGL10.EGL_NO_CONTEXT){
             return false;
-        } else {
+        }else{
             return mEGL.eglMakeCurrent(mGLDisplay, mGLSurface, mGLSurface, mGLContext);
         }
     }
 
-    /**
-     * Egl make no current boolean.
-     *
-     * @return the boolean
-     */
-    public boolean eglMakeNoCurrent() {
+    public boolean eglMakeNoCurrent(){
         return mEGL.eglMakeCurrent(mGLDisplay, EGL10.EGL_NO_SURFACE,
                 EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
     }
 
-    /**
-     * Choose config egl config.
-     *
-     * @param egl     the egl
-     * @param display the display
-     * @param configs the configs
-     * @return the egl config
-     */
     private EGLConfig chooseConfig(EGL10 egl, EGLDisplay display,
                                    EGLConfig[] configs) {
         for (EGLConfig config : configs) {
@@ -283,7 +181,7 @@ public class EGLContextHelper {
                     EGL10.EGL_DEPTH_SIZE, 0);
             int s = findConfigAttrib(egl, display, config,
                     EGL10.EGL_STENCIL_SIZE, 0);
-            if (d >= mDepthSize && s >= mStencilSize) {
+            if ((d >= mDepthSize) && (s >= mStencilSize)) {
                 int r = findConfigAttrib(egl, display, config,
                         EGL10.EGL_RED_SIZE, 0);
                 int g = findConfigAttrib(egl, display, config,
@@ -292,8 +190,8 @@ public class EGLContextHelper {
                         EGL10.EGL_BLUE_SIZE, 0);
                 int a = findConfigAttrib(egl, display, config,
                         EGL10.EGL_ALPHA_SIZE, 0);
-                if (r == mRedSize && g == mGreenSize
-                        && b == mBlueSize && a == mAlphaSize) {
+                if ((r == mRedSize) && (g == mGreenSize)
+                        && (b == mBlueSize) && (a == mAlphaSize)) {
                     return config;
                 }
             }
@@ -301,16 +199,6 @@ public class EGLContextHelper {
         return null;
     }
 
-    /**
-     * Find config attrib int.
-     *
-     * @param egl          the egl
-     * @param display      the display
-     * @param config       the config
-     * @param attribute    the attribute
-     * @param defaultValue the default value
-     * @return the int
-     */
     private int findConfigAttrib(EGL10 egl, EGLDisplay display,
                                  EGLConfig config, int attribute, int defaultValue) {
         int[] value = new int[1];

@@ -27,6 +27,7 @@ ext {
 
             lifecycle         : 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1',
             lifecycle_runtime : 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1',
+            lifecycle_extensions: 'androidx.lifecycle:lifecycle-extensions:2.2.0',
             fragment_ktx      : 'androidx.navigation:navigation-fragment-ktx:2.4.1',
             ui_ktx            : 'androidx.navigation:navigation-ui-ktx:2.4.1',
             palette_ktx       : 'androidx.palette:palette-ktx:1.0.0',
@@ -40,10 +41,10 @@ ext {
             gson              : 'com.google.code.gson:gson:2.9.0',
             autosize          : 'com.github.JessYanCoding:AndroidAutoSize:v1.2.1',
 
-            rtc               : 'io.agora.rtc:agora-special-full:4.1.1.23',
-            rtm               : 'io.agora:agora-rtm:2.2.0',
+            rtc               : 'io.agora.rtc:agora-special-full:4.3.2.4',
+            rtm               : 'io.agora:agora-rtm:2.2.1',
             syncManager       : 'com.github.AgoraIO-Community:SyncManager-Android:2.2.11.1',
-            lyricsView        : 'com.github.AgoraIO-Community:LyricsView:1.1.1-beta.8',
+            lyricsView        : 'io.github.winskyan:Agora-LyricsViewEx:2.1.0-alpha.1',
 
             // android native libraries
             core_ktx           : "androidx.core:core-ktx:1.7.0",
@@ -52,13 +53,18 @@ ext {
 
             // im
             svga_player        : 'com.github.yyued:SVGAPlayer-Android:2.6.1',
-            agora_chat         : 'io.agora.rtc:chat-sdk:1.1.0',
+            agora_chat         : 'io.agora.rtc:chat-sdk:1.2.1',
             ok2curl            : 'com.github.mrmike:ok2curl:0.8.0',
+
+//            audiokit           : 'com.huawei.multimedia:audiokit:1.0.1',
+
+            protobuf_java      : 'com.google.protobuf:protobuf-java:3.19.3',
+            protobuf_java_util : 'com.google.protobuf:protobuf-java-util:3.19.3'
     ]
     android = [
-            compileSdkVersion: 31,
+            compileSdkVersion: 34,
             minSdkVersion    : 24,
-            targetSdkVersion : 33,
+            targetSdkVersion : 34,
     ]
 }
 

@@ -28,7 +28,6 @@ import io.agora.scene.voice.imkit.custorm.CustomMsgType;
 import io.agora.scene.voice.imkit.custorm.MsgConstant;
 import io.agora.scene.voice.imkit.custorm.OnCustomMsgReceiveListener;
 import io.agora.scene.voice.imkit.custorm.OnMsgCallBack;
-import io.agora.scene.voice.model.VoiceBgmModel;
 import io.agora.scene.voice.model.VoiceGiftModel;
 import io.agora.scene.voice.model.VoiceMemberModel;
 import io.agora.scene.voice.model.VoiceMicInfoModel;
@@ -43,7 +42,10 @@ import io.agora.voice.common.utils.ThreadManager;
 
 public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionListener {
     private static ChatroomIMManager instance;
-    private ChatroomIMManager(){}
+
+    private ChatroomIMManager() {
+    }
+
     private String chatroomId;
     private boolean isOwner;
     private ArrayList<ChatMessageData> data = new ArrayList<>();
@@ -54,9 +56,9 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
     private static final String TAG = "ChatroomIMManager";
 
     public static ChatroomIMManager getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             synchronized (ChatroomIMManager.class) {
-                if(instance == null) {
+                if (instance == null) {
                     instance = new ChatroomIMManager();
                 }
             }
@@ -64,30 +66,31 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         return instance;
     }
 
-    public void init(String chatroomId,boolean isOwner) {
+    public void init(String chatroomId, boolean isOwner) {
         this.chatroomId = chatroomId;
         this.isOwner = isOwner;
-        //设置消息监听
+        // Set message listener
         setCustomMsgListener();
-        //设置聊天室状态变化监听
+        // Set chat room status change listener
         setChatRoomChangeListener();
-        //设置连接监听
+        // Set connection listener
         setConnectionListener();
-        //设置相关的房间信息
+        // Set related room information
         CustomMsgHelper.getInstance().setChatRoomInfo(chatroomId);
-        //设置语聊房协议代理
+        // Set voice chat room protocol delegate
         delegate = new ChatroomProtocolDelegate(chatroomId);
         clearCache();
     }
 
-    public boolean isOwner(){
+    public boolean isOwner() {
         return this.isOwner;
     }
+
     public String getCurrentRoomId() {
         return this.chatroomId;
     }
 
-    private ChatRoomManager getChatRoomManager(){
+    private ChatRoomManager getChatRoomManager() {
         return ChatClient.getInstance().chatroomManager();
     }
 
@@ -95,27 +98,27 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         CustomMsgHelper.getInstance().init();
     }
 
-    public void setChatRoomChangeListener(){
+    public void setChatRoomChangeListener() {
         ChatClient.getInstance().chatroomManager().addChatRoomChangeListener(this);
     }
 
-    public void removeChatRoomChangeListener(){
+    public void removeChatRoomChangeListener() {
         ChatClient.getInstance().chatroomManager().removeChatRoomListener(this);
     }
 
-    public void setConnectionListener(){
+    public void setConnectionListener() {
         ChatClient.getInstance().addConnectionListener(this);
     }
 
-    public void removeChatRoomConnectionListener(){
+    public void removeChatRoomConnectionListener() {
         ChatClient.getInstance().removeConnectionListener(this);
     }
 
-    public void setChatRoomEventListener(OnChatroomEventReceiveListener listener){
+    public void setChatRoomEventListener(OnChatroomEventReceiveListener listener) {
         this.chatroomEventListener = listener;
     }
 
-    public void setChatRoomConnectionListener(OnChatroomConnectionListener listener){
+    public void setChatRoomConnectionListener(OnChatroomConnectionListener listener) {
         this.chatroomConnectionListener = listener;
     }
 
@@ -123,9 +126,9 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         CustomMsgHelper.getInstance().removeListener();
     }
 
-    public void sendTxtMsg(String content,String nickName, OnMsgCallBack callBack) {
+    public void sendTxtMsg(String content, String nickName, OnMsgCallBack callBack) {
         ChatMessage message = ChatMessage.createTextSendMessage(content, chatroomId);
-        message.setAttribute("userName",nickName);
+        message.setAttribute("userName", nickName);
         message.setChatType(ChatMessage.ChatType.ChatRoom);
         message.setMessageStatusCallback(new CallBack() {
             @Override
@@ -136,7 +139,7 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
 
             @Override
             public void onError(int i, String s) {
-                callBack.onError( i, s);
+                callBack.onError(i, s);
             }
 
             @Override
@@ -147,25 +150,25 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         ChatClient.getInstance().chatManager().sendMessage(message);
     }
 
-    public void saveWelcomeMsg(String content,String nick){
+    public void saveWelcomeMsg(String content, String nick) {
         ChatMessage message = ChatMessage.createSendMessage(ChatMessage.Type.TXT);
         message.setChatType(ChatMessage.ChatType.ChatRoom);
         message.setTo(chatroomId);
         TextMessageBody textMessageBody = new TextMessageBody(content);
         message.setBody(textMessageBody);
-        message.setAttribute("userName",nick);
+        message.setAttribute("userName", nick);
         ChatClient.getInstance().chatManager().saveMessage(message);
     }
 
-    public ArrayList<ChatMessageData> getMessageData(String chatroomId){
+    public ArrayList<ChatMessageData> getMessageData(String chatroomId) {
         data.clear();
         Conversation conversation = ChatClient.getInstance().chatManager().getConversation(chatroomId, Conversation.ConversationType.ChatRoom, true);
-        if (conversation != null){
-            EMLog.e("getMessageData",conversation.getAllMessages().size() + "");
+        if (conversation != null) {
+            EMLog.e("getMessageData", conversation.getAllMessages().size() + "");
             for (ChatMessage allMessage : conversation.getAllMessages()) {
                 if (allMessage.getBody() instanceof TextMessageBody
-                || allMessage.getBody() instanceof CustomMessageBody &&
-                (((CustomMessageBody) allMessage.getBody()).event()).equals(CustomMsgType.CHATROOM_SYSTEM.getName())){
+                        || allMessage.getBody() instanceof CustomMessageBody &&
+                        (((CustomMessageBody) allMessage.getBody()).event()).equals(CustomMsgType.CHATROOM_SYSTEM.getName())) {
                     data.add(parseChatMessage(allMessage));
                 }
             }
@@ -173,16 +176,16 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         return data;
     }
 
-    public ChatMessageData parseChatMessage(ChatMessage chatMessage){
+    public ChatMessageData parseChatMessage(ChatMessage chatMessage) {
         ChatMessageData chatMessageData = new ChatMessageData();
         chatMessageData.setForm(chatMessage.getFrom());
         chatMessageData.setTo(chatMessage.getTo());
         chatMessageData.setConversationId(chatMessage.conversationId());
         chatMessageData.setMessageId(chatMessage.getMsgId());
-        if (chatMessage.getBody() instanceof TextMessageBody){
+        if (chatMessage.getBody() instanceof TextMessageBody) {
             chatMessageData.setType("text");
             chatMessageData.setContent(((TextMessageBody) chatMessage.getBody()).getMessage());
-        }else if (chatMessage.getBody() instanceof CustomMessageBody){
+        } else if (chatMessage.getBody() instanceof CustomMessageBody) {
             chatMessageData.setType("custom");
             chatMessageData.setEvent(((CustomMessageBody) chatMessage.getBody()).event());
             chatMessageData.setCustomParams(((CustomMessageBody) chatMessage.getBody()).getParams());
@@ -195,30 +198,30 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         CustomMsgHelper.getInstance().setOnCustomMsgReceiveListener(listener);
     }
 
-    public String getUserName(ChatMessageData msg){
+    public String getUserName(ChatMessageData msg) {
         String userName = "";
-        Map<String,String> params = msg.getCustomParams();
-        if (params.containsKey("userName")){
+        Map<String, String> params = msg.getCustomParams();
+        if (params.containsKey("userName")) {
             userName = params.get("userName");
         }
-        if (TextUtils.isEmpty(userName)){
-            Map<String,Object> ext = msg.getExt();
-            if (ext.containsKey("userName")){
+        if (TextUtils.isEmpty(userName)) {
+            Map<String, Object> ext = msg.getExt();
+            if (ext.containsKey("userName")) {
                 userName = (String) ext.get("userName");
             }
         }
-        LogTools.d("Helper","getUserName: " + userName);
+        LogTools.d("Helper", "getUserName: " + userName);
         return userName;
     }
 
-    public String getSystemUserName(ChatMessageData msg){
+    public String getSystemUserName(ChatMessageData msg) {
         String jsonString = "";
         String userName = "";
-        Map<String,String> params = msg.getCustomParams();
-        if (params.containsKey("user")){
+        Map<String, String> params = msg.getCustomParams();
+        if (params.containsKey("user")) {
             jsonString = params.get("user");
-            LogTools.d("getSystemUserName","jsonString: " + jsonString);
-            if (!TextUtils.isEmpty(jsonString)){
+            LogTools.d("getSystemUserName", "jsonString: " + jsonString);
+            if (!TextUtils.isEmpty(jsonString)) {
                 try {
                     assert jsonString != null;
                     JSONObject jsonObject = new JSONObject(jsonString);
@@ -228,22 +231,22 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
                 }
             }
         }
-        LogTools.d("getSystemUserName","userName: " + userName);
+        LogTools.d("getSystemUserName", "userName: " + userName);
         return userName;
     }
 
-    public String getUserPortrait(ChatMessageData msg){
+    public String getUserPortrait(ChatMessageData msg) {
         String userPortrait = "";
-        Map<String,String> ext = msg.getCustomParams();
-        if (ext.containsKey("portrait")){
+        Map<String, String> ext = msg.getCustomParams();
+        if (ext.containsKey("portrait")) {
             userPortrait = ext.get("portrait");
         }
         return userPortrait;
     }
 
-    public VoiceGiftModel getGiftModel(ChatMessageData msg){
+    public VoiceGiftModel getGiftModel(ChatMessageData msg) {
         Map<String, String> giftMap = CustomMsgHelper.getInstance().getCustomMsgParams(msg);
-        if (giftMap != null){
+        if (giftMap != null) {
             VoiceGiftModel voiceGiftModel = new VoiceGiftModel();
             voiceGiftModel.setGift_id(giftMap.get(MsgConstant.CUSTOM_GIFT_KEY_ID));
             voiceGiftModel.setGift_count(giftMap.get(MsgConstant.CUSTOM_GIFT_KEY_NUM));
@@ -253,52 +256,53 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
             voiceGiftModel.setPortrait(giftMap.get(MsgConstant.CUSTOM_GIFT_PORTRAIT));
             return voiceGiftModel;
         }
-       return null;
+        return null;
     }
 
-    public VoiceMemberModel getVoiceMemberModel(ChatMessageData msg){
+    public VoiceMemberModel getVoiceMemberModel(ChatMessageData msg) {
         Map<String, String> map = CustomMsgHelper.getInstance().getCustomMsgParams(msg);
-        if (map.containsKey("user")){
-            return GsonTools.toBean(map.get("user"),VoiceMemberModel.class);
+        if (map.containsKey("user")) {
+            return GsonTools.toBean(map.get("user"), VoiceMemberModel.class);
         }
         return null;
     }
 
-    public VoiceRoomServiceKickedReason getKickReason(int reason){
-        switch (reason){
+    public VoiceRoomServiceKickedReason getKickReason(int reason) {
+        switch (reason) {
             case EMAChatRoomManagerListener.BE_KICKED:
                 return VoiceRoomServiceKickedReason.removed;
             case EMAChatRoomManagerListener.DESTROYED:
                 return VoiceRoomServiceKickedReason.destroyed;
             case EMAChatRoomManagerListener.BE_KICKED_FOR_OFFLINE:
                 return VoiceRoomServiceKickedReason.offLined;
-            default: return null;
+            default:
+                return null;
         }
     }
 
 
     @Override
     public void onChatRoomDestroyed(String roomId, String s1) {
-        if (chatroomEventListener != null && TextUtils.equals(roomId,chatroomId))
+        if (chatroomEventListener != null && TextUtils.equals(roomId, chatroomId))
             chatroomEventListener.onRoomDestroyed(roomId);
     }
 
     @Override
     public void onMemberJoined(String roomId, String s1) {
-        if (chatroomEventListener != null && TextUtils.equals(roomId,chatroomId))
-            chatroomEventListener.onMemberJoined(roomId,s1);
+        if (chatroomEventListener != null && TextUtils.equals(roomId, chatroomId))
+            chatroomEventListener.onMemberJoined(roomId, s1);
     }
 
     @Override
     public void onMemberExited(String roomId, String s1, String s2) {
-        if (chatroomEventListener != null && TextUtils.equals(roomId,chatroomId))
-            chatroomEventListener.onMemberExited(roomId,s1,s2);
+        if (chatroomEventListener != null && TextUtils.equals(roomId, chatroomId))
+            chatroomEventListener.onMemberExited(roomId, s1, s2);
     }
 
     @Override
     public void onRemovedFromChatRoom(int i, String roomId, String s1, String s2) {
-        if (chatroomEventListener != null && TextUtils.equals(roomId,chatroomId))
-            chatroomEventListener.onKicked(roomId,i);
+        if (chatroomEventListener != null && TextUtils.equals(roomId, chatroomId))
+            chatroomEventListener.onKicked(roomId, i);
     }
 
     @Override
@@ -343,20 +347,20 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
 
     @Override
     public void onAnnouncementChanged(String roomId, String announcement) {
-        if (chatroomEventListener != null && TextUtils.equals(roomId,chatroomId))
-            chatroomEventListener.onAnnouncementChanged(roomId,announcement);
+        if (chatroomEventListener != null && TextUtils.equals(roomId, chatroomId))
+            chatroomEventListener.onAnnouncementChanged(roomId, announcement);
     }
 
     @Override
     public void onAttributesUpdate(String roomId, Map<String, String> attributeMap, String from) {
-        if (chatroomEventListener != null && TextUtils.equals(roomId,chatroomId))
-            chatroomEventListener.onAttributesUpdate(roomId,attributeMap,from);
+        if (chatroomEventListener != null && TextUtils.equals(roomId, chatroomId))
+            chatroomEventListener.onAttributesUpdate(roomId, attributeMap, from);
     }
 
     @Override
     public void onAttributesRemoved(String roomId, List<String> keyList, String from) {
-        if (chatroomEventListener != null && TextUtils.equals(roomId,chatroomId))
-            chatroomEventListener.onAttributesRemoved(roomId,keyList,from);
+        if (chatroomEventListener != null && TextUtils.equals(roomId, chatroomId))
+            chatroomEventListener.onAttributesRemoved(roomId, keyList, from);
     }
 
     //////////////////////Connection///////////////////////////
@@ -385,15 +389,15 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
             chatroomConnectionListener.onTokenWillExpire();
     }
 
-    public void renewToken(String newToken){
+    public void renewToken(String newToken) {
         ChatClient.getInstance().renewToken(newToken);
     }
 
-    public boolean isLoggedIn(){
+    public boolean isLoggedIn() {
         return ChatClient.getInstance().isLoggedIn();
     }
 
-    public void login(String uid,String token,CallBack callBack){
+    public void login(String uid, String token, CallBack callBack) {
         ChatClient.getInstance().loginWithToken(uid, token, new CallBack() {
             @Override
             public void onSuccess() {
@@ -403,7 +407,7 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
                         callBack.onSuccess();
                     }
                 });
-                LogTools.d("ChatroomConfigManager","Login success");
+                LogTools.d("ChatroomConfigManager", "Login success");
             }
 
             @Override
@@ -411,7 +415,7 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
                 ThreadManager.getInstance().runOnMainThread(new Runnable() {
                     @Override
                     public void run() {
-                        callBack.onError(code,msg);
+                        callBack.onError(code, msg);
                     }
                 });
                 LogTools.e("ChatroomConfigManager", "Login onError code:" + code + " desc: " + msg);
@@ -419,11 +423,11 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         });
     }
 
-    public void login(String uid,String token){
+    public void login(String uid, String token) {
         ChatClient.getInstance().loginWithAgoraToken(uid, token, new CallBack() {
             @Override
             public void onSuccess() {
-                LogTools.d("ChatroomConfigManager","Login success");
+                LogTools.d("ChatroomConfigManager", "Login success");
             }
 
             @Override
@@ -433,7 +437,7 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         });
     }
 
-    public void logout(boolean unbind,CallBack callBack){
+    public void logout(boolean unbind, CallBack callBack) {
         ChatClient.getInstance().logout(unbind, new CallBack() {
             @Override
             public void onSuccess() {
@@ -442,26 +446,27 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
 
             @Override
             public void onError(int i, String s) {
-                callBack.onError(i,s);
+                callBack.onError(i, s);
             }
         });
     }
 
-    public void logout(boolean unbind){
+    public void logout(boolean unbind) {
+        if (!ChatClient.getInstance().isSdkInited()) return;
         ChatClient.getInstance().logout(unbind, new CallBack() {
             @Override
             public void onSuccess() {
-                EMLog.d(TAG,"logout onSuccess");
+                EMLog.d(TAG, "logout onSuccess");
             }
 
             @Override
             public void onError(int code, String desc) {
-                EMLog.e(TAG,"logout onError code: " + code + "  " + desc);
+                EMLog.e(TAG, "logout onError code: " + code + "  " + desc);
             }
         });
     }
 
-    public void joinRoom(String chatroomId, ValueCallBack<ChatRoom> callBack){
+    public void joinRoom(String chatroomId, ValueCallBack<ChatRoom> callBack) {
         ChatClient.getInstance().chatroomManager()
                 .joinChatRoom(chatroomId, new ValueCallBack<ChatRoom>() {
                     @Override
@@ -471,7 +476,7 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
                             public void run() {
                                 callBack.onSuccess(value);
                             }
-                        },200);
+                        }, 200);
                     }
 
                     @Override
@@ -479,18 +484,18 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
                         ThreadManager.getInstance().runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
-                                callBack.onError(error,errorMsg);
+                                callBack.onError(error, errorMsg);
                             }
                         });
                     }
                 });
     }
 
-    public void leaveChatRoom(String chatroomId){
+    public void leaveChatRoom(String chatroomId) {
         ChatClient.getInstance().chatroomManager().leaveChatRoom(chatroomId);
     }
 
-    public void asyncDestroyChatRoom(String chatroomId,CallBack callBack){
+    public void asyncDestroyChatRoom(String chatroomId, CallBack callBack) {
         ChatClient.getInstance().chatroomManager().asyncDestroyChatRoom(chatroomId, new CallBack() {
             @Override
             public void onSuccess() {
@@ -507,38 +512,37 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
                 ThreadManager.getInstance().runOnMainThread(new Runnable() {
                     @Override
                     public void run() {
-                        callBack.onError(code,error);
+                        callBack.onError(code, error);
                     }
                 });
             }
         });
     }
 
-    public VoiceMemberModel getMySelfModel(){
-       return delegate.getMySelfModel();
+    public VoiceMemberModel getMySelfModel() {
+        return delegate.getMySelfModel();
     }
 
-    public void clearCache(){
+    public void clearCache() {
         delegate.clearCache();
     }
 
-    public void initMicInfo(int roomType,CallBack callBack){
+    public void initMicInfo(CallBack callBack) {
         VoiceMemberModel voiceMemberModel = new VoiceMemberModel(
                 VoiceBuddyFactory.get().getVoiceBuddy().userId(),
                 VoiceBuddyFactory.get().getVoiceBuddy().chatUserName(),
                 VoiceBuddyFactory.get().getVoiceBuddy().nickName(),
                 VoiceBuddyFactory.get().getVoiceBuddy().headUrl(),
                 VoiceBuddyFactory.get().getVoiceBuddy().rtcUid(),
-                0,1);
-        LogTools.d(TAG,"initMicInfo:" + voiceMemberModel);
-        delegate.initMicInfo(roomType,voiceMemberModel,callBack);
+                0, 1);
+        LogTools.d(TAG, "initMicInfo:" + voiceMemberModel);
+        delegate.initMicInfo(voiceMemberModel, callBack);
     }
 
     public void fetchRoomDetail(VoiceRoomModel voiceRoomModel, ValueCallBack<VoiceRoomInfo> callBack) {
-        // 麦位信息
         VoiceMemberModel owner = voiceRoomModel.getOwner();
         if (owner != null && TextUtils.equals(owner.getUserId(), VoiceBuddyFactory.get().getVoiceBuddy().userId())) {
-            initMicInfo(voiceRoomModel.getRoomType(), new CallBack() {
+            initMicInfo(new CallBack() {
                 @Override
                 public void onSuccess() {
                     delegate.fetchRoomDetail(voiceRoomModel, callBack);
@@ -554,157 +558,181 @@ public class ChatroomIMManager implements ChatRoomChangeListener, ConnectionList
         }
     }
 
-    public void invitationMic(String chatUid,int micIndex,CallBack callBack){delegate.invitationMic(chatUid,micIndex,callBack);}
-
-
-    public void forbidMic(int micIndex,ValueCallBack<VoiceMicInfoModel> callBack){
-        delegate.forbidMic(micIndex,callBack);
+    public void invitationMic(String chatUid, int micIndex, CallBack callBack) {
+        delegate.invitationMic(chatUid, micIndex, callBack);
     }
 
-    public void unForbidMic(int micIndex,ValueCallBack<VoiceMicInfoModel> callBack){
-        delegate.unForbidMic(micIndex,callBack);
+
+    public void forbidMic(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack) {
+        delegate.forbidMic(micIndex, callBack);
     }
 
-    public void lockMic(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
-        delegate.lockMic(micIndex,callBack);
+    public void unForbidMic(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack) {
+        delegate.unForbidMic(micIndex, callBack);
     }
 
-    public void unLockMic(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
+    public void lockMic(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack) {
+        delegate.lockMic(micIndex, callBack);
+    }
+
+    public void unLockMic(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack) {
         delegate.unLockMic(micIndex, callBack);
     }
 
-    public void kickOff(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
+    public void kickOff(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack) {
         delegate.kickOff(micIndex, callBack);
     }
 
-    public void leaveMic(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
-        delegate.leaveMic(micIndex,callBack);
+    public void leaveMic(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack) {
+        delegate.leaveMic(micIndex, callBack);
     }
 
-    public void muteLocal(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
-        delegate.muteLocal(micIndex,callBack);
+    public void muteLocal(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack) {
+        delegate.muteLocal(micIndex, callBack);
     }
 
-    public void unMuteLocal(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
-        delegate.unMuteLocal(micIndex,callBack);
+    public void unMuteLocal(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack) {
+        delegate.unMuteLocal(micIndex, callBack);
     }
 
-    public void changeMic(int oldIndex,int newIndex,ValueCallBack<Map<Integer,VoiceMicInfoModel>> callBack){
-        delegate.changeMic(oldIndex,newIndex,callBack);
+    public void changeMic(int oldIndex, int newIndex, ValueCallBack<Map<Integer, VoiceMicInfoModel>> callBack) {
+        delegate.changeMic(oldIndex, newIndex, callBack);
     }
 
 
-    public void acceptMicSeatInvitation(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack){
-        delegate.acceptMicSeatInvitation(VoiceBuddyFactory.get().getVoiceBuddy().chatUserName(),micIndex,callBack);
+    public void acceptMicSeatInvitation(int micIndex, ValueCallBack<VoiceMicInfoModel> callBack) {
+        delegate.acceptMicSeatInvitation(VoiceBuddyFactory.get().getVoiceBuddy().chatUserName(), micIndex, callBack);
     }
 
-    public void refuseInvite(String chatUid,CallBack callBack){ delegate.refuseInviteToMic(chatUid,callBack);}
+    public void refuseInvite(String chatUid, CallBack callBack) {
+        delegate.refuseInviteToMic(chatUid, callBack);
+    }
 
-    public void startMicSeatApply(int micIndex, CallBack callBack){ delegate.startMicSeatApply(micIndex,callBack);}
+    public void startMicSeatApply(int micIndex, CallBack callBack) {
+        delegate.startMicSeatApply(micIndex, callBack);
+    }
 
     public void acceptMicSeatApply(int micIndex, String chatUid, ValueCallBack<VoiceMicInfoModel> callBack) {
         delegate.acceptMicSeatApply(chatUid, micIndex, callBack);
     }
 
-    public void cancelMicSeatApply(String chatroomId, String chatUid,CallBack callBack){
+    public void cancelMicSeatApply(String chatroomId, String chatUid, CallBack callBack) {
         delegate.cancelSubmitMic(chatroomId, chatUid, callBack);
     }
 
 
-    public void updateAnnouncement(String content,CallBack callBack){
+    public void updateAnnouncement(String content, CallBack callBack) {
         delegate.updateAnnouncement(content, callBack);
     }
 
-    public List<VoiceMemberModel> fetchRaisedList(){
+    public List<VoiceMemberModel> fetchRaisedList() {
         return delegate.fetchRaisedList();
     }
 
-    public void enableRobot(Boolean enable,ValueCallBack<Boolean> callBack){
-        delegate.enableRobot(enable,callBack);
+    public void enableRobot(Boolean enable, ValueCallBack<Boolean> callBack) {
+        delegate.enableRobot(enable, callBack);
     }
 
-    public void updateRobotVolume(int volume,CallBack callBack){
-        delegate.updateRobotVolume(volume,callBack);
+    public void updateRobotVolume(int volume, CallBack callBack) {
+        delegate.updateRobotVolume(volume, callBack);
     }
 
-    public List<VoiceMemberModel> fetchRoomInviteMembers(){
+    public List<VoiceMemberModel> fetchRoomInviteMembers() {
         return delegate.fetchRoomInviteMembers();
     }
 
-    public List<VoiceMemberModel> fetchRoomMembers(){
+    public List<VoiceMemberModel> fetchRoomMembers() {
         return delegate.fetchRoomMembers();
     }
 
-    public void updateRoomMembers(CallBack callBack){
-       delegate.updateRoomMember(cacheManager.getMemberList(),callBack);
+    public void updateRoomMembers(CallBack callBack) {
+        delegate.updateRoomMember(cacheManager.getMemberList(), callBack);
     }
 
-    public void fetchGiftContribute(ValueCallBack<List<VoiceRankUserModel>> callBack){
+    public void fetchGiftContribute(ValueCallBack<List<VoiceRankUserModel>> callBack) {
         delegate.fetchGiftContribute(callBack);
     }
 
-    public void updateRankList(String chatUid,VoiceGiftModel giftModel, CallBack callBack){
-        delegate.updateRankList(chatUid,giftModel,callBack);
+    public void updateRankList(String chatUid, VoiceGiftModel giftModel, CallBack callBack) {
+        delegate.updateRankList(chatUid, giftModel, callBack);
     }
 
-    public void updateMicInfoCache(Map<String,String> kvMap){
+    public void updateMicInfoCache(Map<String, String> kvMap) {
         delegate.updateMicInfoCache(kvMap);
     }
 
-    public void updateAmount(String chatUid,int amount,CallBack callBack){
-        delegate.updateGiftAmount(chatUid,amount,callBack);
+    public void updateAmount(String chatUid, int amount, CallBack callBack) {
+        delegate.updateGiftAmount(chatUid, amount, callBack);
     }
 
-    public void setGiftAmountCache(int amount){
+    /**
+     * click count
+     */
+    public void increaseClickCount(String chatUid, CallBack callBack) {
+        delegate.increaseClickCount(chatUid, callBack);
+    }
+
+    public void setGiftAmountCache(int amount) {
         cacheManager.setGiftAmountCache(amount);
     }
 
-    public int getGiftAmountCache(){
+    public int getGiftAmountCache() {
         return cacheManager.getGiftAmountCache();
     }
 
-    public void setSubmitMicList(VoiceMemberModel voiceMemberModel){
+    public void setClickCountCache(int count) {
+        cacheManager.setClickCountCache(count);
+    }
+
+    /**
+     * get click count
+     */
+    public int getClickCountCache() {
+        return cacheManager.getClickCountCache();
+    }
+
+    public void setSubmitMicList(VoiceMemberModel voiceMemberModel) {
         cacheManager.setSubmitMicList(voiceMemberModel);
     }
 
-    public void removeSubmitMember(String chatUid){
+    public void removeSubmitMember(String chatUid) {
         cacheManager.removeSubmitMember(chatUid);
     }
 
-    public void setMemberList(VoiceMemberModel voiceMemberModel){
+    public void setMemberList(VoiceMemberModel voiceMemberModel) {
         cacheManager.setMemberList(voiceMemberModel);
     }
 
-    public boolean checkMember(String chatUid){
-       return cacheManager.getSubmitMic(chatUid) != null;
+    public boolean checkMember(String chatUid) {
+        return cacheManager.getSubmitMic(chatUid) != null;
     }
 
-    public boolean checkInvitationMember(String chatUid){
+    public boolean checkInvitationMember(String chatUid) {
         return cacheManager.checkInvitationByChatUid(chatUid);
     }
 
-    public void removeMember(String chatUid){
+    public void removeMember(String chatUid) {
         cacheManager.removeMember(chatUid);
     }
 
-    public void setRankList(VoiceRankUserModel voiceRankUserModel){
+    public void setRankList(VoiceRankUserModel voiceRankUserModel) {
         cacheManager.setRankList(voiceRankUserModel);
     }
 
-    public List<VoiceRankUserModel> getRankList(){
+    public List<VoiceRankUserModel> getRankList() {
         return cacheManager.getRankList();
     }
 
-    public int getMicIndexByChatUid(String chatUid){
+    public int getMicIndexByChatUid(String chatUid) {
         VoiceMicInfoModel bean = cacheManager.getMicInfoByChatUid(chatUid);
-        if (bean != null){
+        if (bean != null) {
             return bean.getMicIndex();
-        }else {
+        } else {
             return -1;
         }
     }
 
-    public void removeMemberToRoom(List<String> userList,ValueCallBack<ChatRoom> callBack){
-        getChatRoomManager().asyncRemoveChatRoomMembers(chatroomId,userList,callBack);
+    public void removeMemberToRoom(List<String> userList, ValueCallBack<ChatRoom> callBack) {
+        getChatRoomManager().asyncRemoveChatRoomMembers(chatroomId, userList, callBack);
     }
 }

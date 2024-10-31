@@ -6,7 +6,7 @@ import groovy.transform.Field
 buildUtils = new agora.build.BuildUtils()
 
 compileConfig = [
-    "sourceDir": "agora-ent-scenarios",
+    "sourceDir": "agoralive",
     "docker": "hub.agoralab.co/server/aes_build_android:latest",
     "non-publish": [
         "command": "./ci/build/build_android.sh",
@@ -59,4 +59,4 @@ def doPublish(buildVariables) {
     sh "rm -rf *.apk || true"
 }
 
-pipelineLoad(this, "AES", "build", "android", "aes_android")
+pipelineLoad(this, "AGORA_LIVE", "build", "android", "apiexample_linux")

@@ -55,7 +55,6 @@ class PresetDialog constructor(context: Context, deviceScore: Int, rtcConnection
 
         mBinding.ivClose.isVisible = false
         mBinding.tvConfirm.setOnClickListener {
-            // 网络设置
             val networkSelectPosition = getGroupSelectedItem(
                 mBinding.basicChooseItemGoodNetwork,
                 mBinding.basicChooseItemNormalNetwork
@@ -68,7 +67,6 @@ class PresetDialog constructor(context: Context, deviceScore: Int, rtcConnection
                 return@setOnClickListener
             }
 
-            // 画质设置
             val broadcastStrategySelectPosition = getGroupSelectedItem(
                 mBinding.broadcastStrategyItemSmooth,
                 mBinding.broadcastStrategyItemClear
@@ -81,7 +79,6 @@ class PresetDialog constructor(context: Context, deviceScore: Int, rtcConnection
                 return@setOnClickListener
             }
 
-            // 机型设置
             if (AgoraApplication.the().isDebugModeOpen) {
                 val showSelectPosition = getGroupSelectedItem(
                     mBinding.showChooseItemLowDevice,
@@ -178,7 +175,7 @@ class PresetDialog constructor(context: Context, deviceScore: Int, rtcConnection
      */
     private fun onPresetNetworkModeSelected(networkLevel: Int, broadcastStrategyLevel: Int, device: Int?){
         if (networkLevel < 0 || broadcastStrategyLevel < 0) {
-            // 没有选择默认使用好网络配置
+            // Default to optimal network settings if none are selected.
             return
         }
 

@@ -15,8 +15,8 @@
             android:orientation="vertical">
 
             <include
-                android:id="@+id/qualityEnhance"
-                layout="@layout/commerce_setting_advance_item_switch"/>
+                android:id="@+id/encoder"
+                layout="@layout/commerce_setting_advance_item_selector"/>
 
             <include
                 android:id="@+id/colorEnhance"

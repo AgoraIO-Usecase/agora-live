@@ -19,7 +19,7 @@ object RoomSoundAudioConstructor {
     private const val GamingBuddy = "/05SoundSelectionGamingBuddy%1\$s"
     private const val ProfessionalBroadcaster = "/06SoundProfessionalBroadcaster%1\$s"
     private const val AINSIntroduce = "/07AINSIntroduce%1\$s"
-    //AI噪⾳ 08AINSTVSound/EN/High/08-01-B-CN-High.wav  1./08AINSTVSound/EN/High 2./08-01-B 3.CN 4.High.wav
+    //AI denoise 08AINSTVSound/EN/High/08-01-B-CN-High.wav  1./08AINSTVSound/EN/High 2./08-01-B 3.CN 4.High.wav
     private const val AINSSound = "%1\$s%2\$s-%3\$s-%4\$s"
     private const val AINS_TVSound = "/08AINSTVSound"
     private const val AINS_KitchenSound = "/09AINSKitchenSound"
@@ -484,7 +484,7 @@ object RoomSoundAudioConstructor {
             ConfigConstants.AINSMode.AINS_Medium -> "Medium.wav"
             else -> "None.wav"
         }
-        //AI噪⾳ 08AINSTVSound/EN/High/08-01-B-EN-High.wav  1./08AINSTVSound 2.CN 3.high 4.08-01-B 5.CN 6.High
+        //AI denoise 08AINSTVSound/EN/High/08-01-B-EN-High.wav  1./08AINSTVSound 2.CN 3.high 4.08-01-B 5.CN 6.High
         return BASE_URL + String.format(AINSSound,audioPathP, audioPath, local, ainsPath)
     }
 }

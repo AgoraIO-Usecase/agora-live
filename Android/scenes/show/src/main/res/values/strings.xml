@@ -4,7 +4,7 @@
     <string name="show_create_tips1">Welcome to Live Streaming!</string>
     <string name="show_living">LIVE</string>
     <string name="show_pure">PURE</string>
-    <string name="show_room_id">ID: %s</string>
+    <string name="show_room_id">%s</string>
     <string name="show_user_count">%d</string>
     <string name="show_app_name">Live Streaming</string>
     <string name="show_live_top_close">Close</string>
@@ -50,7 +50,7 @@
     <string name="show_live_prepare_rotate">Flip</string>
     <string name="show_live_prepare_beauty">Beautification</string>
     <string name="show_live_prepare_hd">Video Quality</string>
-    <string name="show_live_prepare_tip"> NOTE: This version allows you to livestream for up to 20 minutes. Please
+    <string name="show_live_prepare_tip"> NOTE: This version allows you to livestream for up to 10 minutes. Please
         ensure that the content of your livestream does not violate the Terms of Service you have agreed to, or the laws and regulations of your location, otherwise your livestream will be interrupted."</string>
     <string name="show_live_prepare_start_live">Go Live</string>
     <string name="show_live_prepare_room_empty">Room name cannot be empty!</string>
@@ -119,6 +119,7 @@
     <string name="show_statistic_down_loss_package">Downlink Packet Loss: %s ％</string>
     <string name="show_statistic_else">Others</string>
     <string name="show_statistic_quick_start_time">First Frame: %s ms</string>
+    <string name="show_statistic_encoder">Encoder: %s</string>
     <string name="show_device_grade">Device Level: %s</string>
     <string name="show_statistic_sr">Super Clarity: %s</string>
     <string name="show_statistic_pvc">PVC: %s</string>
@@ -170,6 +171,7 @@
 
     <string name="show_cannot_accept">You are currently engaged in an interaction. Please finish the interaction before accepting any request for co-host.</string>
     <string name="show_cannot_invite">You are currently engaged in an interaction. Please finish the interaction before inviting audience for co-host.</string>
+    <string name="show_cannot_invite_pk">You are currently engaged in an interaction. Please finish the interaction before inviting host for pk.</string>
     <string name="show_cannot_apply">You are currently engaged in an interaction. Please finish the interaction before applying for co-host.</string>
     <string name="show_ask_for_link">Host %s invites you to co-host.</string>
     <string name="show_ask_for_pk">Host %s invites you to co-host.</string>
@@ -208,6 +210,7 @@
     <string name="show_setting_advance_music_volume">Music Volume</string>
     <string name="show_bottom_list_cancel">Cancel</string>
     <string name="show_setting_advance_framerate">Frame Rate</string>
+    <string name="show_setting_advance_encoder">Encoder</string>
     <string name="show_setting_advance_encode_framerate">Encode FPS</string>
     <string name="show_setting_advance_encode_framerate_tip">To ensure the best video quality, frame rates of 15fps and below will be effective by default for mid-to-low-end devices. Frame rates exceeding 15fps will not be effective.</string>
     <string name="show_setting_preset_show_title">Live Streaming Mode</string>
@@ -226,6 +229,7 @@
     <string name="show_setting_preset_done">The settings have been updated to the \"Live Streaming\" optimal configuration.</string>
     <string name="show_setting_audience">Audience Settings</string>
     <string name="show_living_end_title">Live Ended</string>
+    <string name="show_living_end_title_error">Network issue. Please re-create a room.</string>
     <string name="show_living_end_back_room_list">Return to the room list</string>
     <string name="show_live_chat_coming">joined</string>
     <string name="show_live_chat_leaving">left</string>
@@ -262,6 +266,7 @@
     <string name="show_beauty_item_virtual_bg_mitao">Peach</string>
     <string name="show_beauty_green_screen_tip">To ensure the best virtual background effect, please make sure you have set up a green screen in your actual environment. Otherwise, the virtual background will not take effect.</string>
     <string name="show_live_detail_living_end">The live stream has ended.</string>
+    <string name="show_live_detail_living_end_error">Network issue. Please re-enter the room.</string>
     <string name="show_live_detail_try_to_move">Swipe to switch and try another host.</string>
     <string name="show_broadcast_header">Suggestions: </string>
     <string name="show_broadcast_tips">Please ensure that the network connection in the broadcasting environment is stable, and the upload bandwidth is equal to or greater than 3 Mbps.</string>
@@ -274,13 +279,26 @@
     <string name="show_video_quailty">Video Quality</string>
     <string name="show_video_quailty_smooth">Smooth First</string>
     <string name="show_video_quailty_clear">Clarity First</string>
-    <string name="show_video_pure_mode">Pure Mode</string>
+    <string name="show_video_pure_mode">Default</string>
     <string name="show_video_quailty_tips">Adaptive video quality strategies for different audience</string>
     <string name="show_video_device_result">Device Level: %s (%d)</string>
     <string name="show_video_device_high">High-end Device</string>
     <string name="show_video_device_middle">Mid-range Device</string>
     <string name="show_video_device_low">Low-end Device</string>
     <string name="show_broadcaster_bad_exit">Detected an abnormal exit from the last live broadcast, please create a new live room to start broadcasting again.</string>
+    <string name="show_error_apply_mic_seat">Network issue. Failed to apply for co-hosting. Error: %s</string>
+    <string name="show_error_accept_mic_seat">Network issue. Failed to grant co-hosting. Error: %s</string>
+    <string name="show_error_reject_mic_seat">Network issue. Failed to reject co-hosting. Error: %s</string>
+    <string name="show_error_invite_mic_seat">Network issue. Failed to invite for co-hosting. Error: %s</string>
+    <string name="show_error_accept_mic_seat_invite">Network issue. Failed to accept co-hosting. Error: %s</string>
+    <string name="show_error_invite_pk">Network issue. Failed to invite for PK. Error: %s</string>
+    <string name="show_error_accept_pk">Network issue. Failed to accept PK. Error: %s</string>
+    <string name="show_error_reject_pk">Network issue. Failed to reject PK. Error: %s</string>
+    <string name="show_error_cancel_mic_seat">Network issue. Failed to cancel apply. Error: %s</string>
+    <string name="show_beauty_loading">%s resource downloading: %s</string>
+    <string name="show_beauty_loading_failed">Download failed. Please ensure your network is functioning properly, exit and re-enter the preview page, and then restart the download.</string>
+
+    <string name="show_developer_mode_settings">Developer mode settings</string>
 
     <string-array name="show_encoder">
         <item>Hardware Encoder</item>

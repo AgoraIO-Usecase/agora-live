@@ -76,6 +76,11 @@
     self.backGroundImgView.image = UIImageMake(imageName) ? : [UIImage sceneImageWithName:imageName];
 }
 
+- (void)setBackgroundImage:(NSString *)imageName bundleName:(NSString *)name{
+    [self.view addSubview:self.backGroundImgView];
+    self.backGroundImgView.image = UIImageMake(imageName) ? : [UIImage sceneImageWithName:imageName bundleName:name];
+}
+
 - (void)setNaviTitleName:(NSString *)titleStr {
     [self.view addSubview:self.titleLabel];
     self.titleLabel.text = titleStr;

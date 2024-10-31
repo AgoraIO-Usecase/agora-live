@@ -65,7 +65,7 @@ enum CommerceAuctionStatus: Int {
 @objcMembers
 class CommerceGoodsModel: NSObject, YYModel {
     var imageName: String?
-    var title: String?
+    var title: String? = "Diamond Ring"
     var quantity: Int = 0
     var price: Int = 0
     var goodsId: String? = UUID().uuidString
@@ -83,7 +83,7 @@ class CommerceGoodsBuyModel: NSObject, YYModel {
         goodsModel.imageName = "commerce_shop_goods_0"
         goodsModel.price = 20
         goodsModel.quantity = 6
-        goodsModel.title = "Micro USB to USB-A 2.0 Cable, Nylon Braided Cord, 480Mbps Transfer Speed, Gold-Plated, 10 Foot, Dark Gray"
+        goodsModel.title = "Ear Ring"
         buyModel.goods = goodsModel
         buyModel.status = .idle
         dataArray.append(buyModel)
@@ -93,7 +93,7 @@ class CommerceGoodsBuyModel: NSObject, YYModel {
         goodsModel.imageName = "commerce_shop_goods_1"
         goodsModel.price = 5
         goodsModel.quantity = 0
-        goodsModel.title = "Meta Quest 2 - 128GB Holiday Bundle - Advanced All-In-One Virtual Reality Headset"
+        goodsModel.title = "Necklace"
         buyModel.goods = goodsModel
         buyModel.status = .idle
         dataArray.append(buyModel)
@@ -103,7 +103,7 @@ class CommerceGoodsBuyModel: NSObject, YYModel {
         goodsModel.imageName = "commerce_shop_goods_2"
         goodsModel.price = 12
         goodsModel.quantity = 6
-        goodsModel.title = "Meta Quest 2 - 128GB Holiday Bundle - Advanced All-In-One Virtual Reality Headset"
+        goodsModel.title = "Emerald Ring"
         buyModel.goods = goodsModel
         buyModel.status = .idle
         dataArray.append(buyModel)
@@ -111,6 +111,8 @@ class CommerceGoodsBuyModel: NSObject, YYModel {
         return dataArray
     }
 }
+
+let kDefaultAuctionGoodsName = "commerce_shop_goods_auction"
 
 @objcMembers
 class CommerceGoodsAuctionModel: NSObject, YYModel {

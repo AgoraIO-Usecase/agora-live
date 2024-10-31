@@ -1,22 +1,13 @@
 package io.agora.scene.voice.ui.dialog.soundcard
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.Typeface
-import android.media.AudioManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.text.style.TypefaceSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -26,9 +17,9 @@ import androidx.core.view.isVisible
 import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceDialogSoundCardBinding
 import io.agora.scene.voice.rtckit.*
-import io.agora.voice.common.ui.dialog.BaseSheetDialog
+import io.agora.voice.common.ui.dialog.BaseFixedHeightSheetDialog
 
-class SoundCardSettingDialog: BaseSheetDialog<VoiceDialogSoundCardBinding>() {
+class SoundCardSettingDialog: BaseFixedHeightSheetDialog<VoiceDialogSoundCardBinding>() {
 
     companion object {
         const val TAG: String = "SoundCardFragment"
@@ -45,11 +36,20 @@ class SoundCardSettingDialog: BaseSheetDialog<VoiceDialogSoundCardBinding>() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.attributes?.windowAnimations = R.style.voice_BottomSheetDialogAnimation
         mManager = AgoraRtcEngineController.get().soundCardManager() ?: run {
             dismiss()
             return
         }
         super.onViewCreated(view, savedInstanceState)
+        binding?.apply {
+            setOnApplyWindowInsets(root)
+        }
+        setupView()
+    }
+
+    fun updateView(){
         setupView()
     }
 
@@ -71,7 +71,7 @@ class SoundCardSettingDialog: BaseSheetDialog<VoiceDialogSoundCardBinding>() {
             }
             groupSoundCardAbnormal.isVisible = false
             mcbSoundCardSwitch.isChecked = mManager.isEnable()
-            ivBackIcon.setOnClickListener {
+            btnClose.setOnClickListener {
                 dismiss()
             }
             mcbSoundCardSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -96,7 +96,7 @@ class SoundCardSettingDialog: BaseSheetDialog<VoiceDialogSoundCardBinding>() {
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {}
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {
                     seekBar?.progress?.let { progress ->
-                        val gainValue: Float = progress / 10.0f
+                        val gainValue: Float = progress.toFloat()
                         etGainAdjust.setText(gainValue.toString())
                         mManager.setGainValue(gainValue)
                     }
@@ -127,15 +127,15 @@ class SoundCardSettingDialog: BaseSheetDialog<VoiceDialogSoundCardBinding>() {
                         if (currentWindowHeight < initialWindowHeight) {
                             Log.d(TAG, "current: $currentWindowHeight, initial: $initialWindowHeight, show: true")
                         } else {
-                            var value = 1f
+                            var value = 100f
                             try {
                                 val input = etGainAdjust.text.toString()
                                 value = input.toFloat()
                             } catch (e: NumberFormatException) {}
                             if (value < 0) {
-                                value = 1f
-                            } else if (value > 4) {
-                                value = 4f
+                                value = 100f
+                            } else if (value > 400) {
+                                value = 400f
                             }
                             setupGainView(value)
                             etGainAdjust.clearFocus()
@@ -149,7 +149,7 @@ class SoundCardSettingDialog: BaseSheetDialog<VoiceDialogSoundCardBinding>() {
 
     private fun setupGainView(gainValue: Float) {
         binding?.apply {
-            pbGainAdjust.progress = (gainValue * 10).toInt()
+            pbGainAdjust.progress = gainValue.toInt()
             etGainAdjust.setText(gainValue.toString())
         }
     }

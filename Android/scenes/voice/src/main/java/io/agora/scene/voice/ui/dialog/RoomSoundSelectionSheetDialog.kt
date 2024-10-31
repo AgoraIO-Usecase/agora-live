@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.agora.scene.base.component.BaseRecyclerViewAdapter
+import io.agora.scene.base.component.OnItemChildClickListener
+import io.agora.scene.base.component.OnItemClickListener
 import io.agora.scene.voice.model.SoundSelectionBean
-import io.agora.voice.common.ui.adapter.BaseRecyclerViewAdapter
-import io.agora.voice.common.ui.adapter.listener.OnItemChildClickListener
-import io.agora.voice.common.ui.adapter.listener.OnItemClickListener
 import io.agora.voice.common.ui.dialog.BaseFixedHeightSheetDialog
 import io.agora.voice.common.utils.ToastTools
 import io.agora.scene.voice.R
@@ -19,6 +19,7 @@ import io.agora.scene.voice.databinding.VoiceItemRoomSoundSelectionBinding
 import io.agora.scene.voice.model.constructor.RoomSoundSelectionConstructor
 import io.agora.scene.voice.ui.adapter.viewholder.RoomSoundSelectionFooterViewHolder
 import io.agora.scene.voice.ui.adapter.viewholder.RoomSoundSelectionViewHolder
+import io.agora.voice.common.ui.dialog.BaseSheetDialog
 
 class RoomSoundSelectionSheetDialog constructor(
     private val isEnable: Boolean = true,
@@ -44,7 +45,6 @@ class RoomSoundSelectionSheetDialog constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.attributes?.windowAnimations = R.style.voice_BottomSheetDialogAnimation
-        dialog?.setCanceledOnTouchOutside(false)
         arguments?.apply {
             val currentSelection: Int = getInt(KEY_CURRENT_SELECTION)
             soundSelectionList.addAll(
@@ -65,9 +65,7 @@ class RoomSoundSelectionSheetDialog constructor(
         soundSelectionAdapter =
             BaseRecyclerViewAdapter(
                 soundSelectionList,
-                object :
-                    OnItemClickListener<SoundSelectionBean> {
-
+                object : OnItemClickListener<SoundSelectionBean> {
                     override fun onItemClick(data: SoundSelectionBean, view: View, position: Int, viewType: Long) {
                         if (isEnable) {
                             soundSelectionListener.onSoundEffect(data, data.isCurrentUsing)

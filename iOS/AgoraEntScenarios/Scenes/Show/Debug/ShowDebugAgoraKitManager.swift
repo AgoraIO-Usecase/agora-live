@@ -8,7 +8,7 @@ import Foundation
 import AgoraRtcKit
 
 private let userDefaultKeyTag = "debug"
-// 存储编码配置的key
+// Store the key of coding configuration
 private let kEncodeWidth = "kEncodeWidth"
 private let kEncodeHeight = "kEncodeHeight"
 private let kEncodeFPS = "kEncodeFPS"
@@ -17,8 +17,8 @@ private let kEncodeBitrate = "kEncodeBitrate"
 
 enum ShowDebug1TFSettingKey: String {
     
-    case encodeFrameRate = "编码帧率"
-    case bitRate = "码率"
+    case encodeFrameRate = "Encoded frame rate"
+    case bitRate = "Bit rate"
     
     var unit: String {
         switch self {
@@ -31,9 +31,9 @@ enum ShowDebug1TFSettingKey: String {
 }
 
 enum ShowDebug2TFSettingKey: String {
-    case encodeVideoSize = "编码分辨率"
-    case exposureRange = "曝光区域"
-    case colorSpace = "颜色空间"
+    case encodeVideoSize = "Encoding resolution"
+    case exposureRange = "Exposure area"
+    case colorSpace = "Color space"
     
     var separator: String {
         switch self {
@@ -170,22 +170,22 @@ class ShowDebugAgoraKitManager {
         switch key {
         case .encodeFrameRate:
             guard let value = Int(text), let fps = AgoraVideoFrameRate(rawValue: value) else {
-                showLogger.info("***Debug*** 编码帧率参数为空 ")
+                ShowLogger.info("***Debug*** The encoding frame rate parameter is empty. ")
                 return
             }
             encoderConfig.frameRate = fps
             engine?.setVideoEncoderConfiguration(encoderConfig)
             saveVideoEncoderConfiguration()
-            showLogger.info("***Debug*** setVideoEncoderConfiguration.encodeFrameRate = \(encoderConfig.frameRate) ")
+            ShowLogger.info("***Debug*** setVideoEncoderConfiguration.encodeFrameRate = \(encoderConfig.frameRate) ")
         case .bitRate:
             guard let value = Int(text) else {
-                showLogger.info("***Debug*** 码率参数为空")
+                ShowLogger.info("***Debug*** The bit rate parameter is empty.")
                 return
             }
             encoderConfig.bitrate = value
             engine?.setVideoEncoderConfiguration(encoderConfig)
             saveVideoEncoderConfiguration()
-            showLogger.info("***Debug*** setVideoEncoderConfiguration.bitrate = \(encoderConfig.bitrate) ")
+            ShowLogger.info("***Debug*** setVideoEncoderConfiguration.bitrate = \(encoderConfig.bitrate) ")
         }
     }
     
@@ -199,7 +199,7 @@ class ShowDebugAgoraKitManager {
             encoderConfig.dimensions = CGSize(width: value1, height: value2)
             engine?.setVideoEncoderConfiguration(encoderConfig)
             saveVideoEncoderConfiguration()
-            showLogger.info("***Debug*** setVideoEncoderConfiguration.encodeVideoSize = \(encoderConfig.dimensions) ")
+            ShowLogger.info("***Debug*** setVideoEncoderConfiguration.encodeVideoSize = \(encoderConfig.dimensions) ")
         case .exposureRange:
             exposureRangeX = value1
             exposureRangeY = value2
@@ -211,8 +211,8 @@ class ShowDebugAgoraKitManager {
         }
     }
     
-    /// 更新设置
-    /// - Parameter key: 要更新的key
+    /// Update settings
+    /// - Parameter key: key to be updated
     func updateSettingForDebugkey(_ key: ShowDebugSettingKey, currentChannelId:String? = nil) {
         let isOn = key.boolValue
         let indexValue = key.intValue
@@ -226,28 +226,28 @@ class ShowDebugAgoraKitManager {
             engine?.setVideoDenoiserOptions(isOn, options: AgoraVideoDenoiserOptions())
         case .focusFace:
             engine?.setCameraAutoFocusFaceModeEnabled(isOn)
-            showLogger.info("***Debug*** setCameraAutoFocusFaceModeEnabled  \(isOn)")
+            ShowLogger.info("***Debug*** setCameraAutoFocusFaceModeEnabled  \(isOn)")
         case .encode:
             let index = indexValue % debugEncodeItems.count
             engine?.setParameters("{\"engine.video.enable_hw_encoder\":\"\(debugEncodeItems[index])\"}")
-            showLogger.info("***Debug*** engine.video.enable_hw_encoder  \(debugEncodeItems[index])")
+            ShowLogger.info("***Debug*** engine.video.enable_hw_encoder  \(debugEncodeItems[index])")
         case .codeCType:
             let index = indexValue % debugCodeCTypeItems.count
             engine?.setParameters("{\"engine.video.codec_type\":\"\(debugCodeCTypeItems[index])\"}")
-            showLogger.info("***Debug*** engine.video.codec_type  \(debugCodeCTypeItems[index])")
+            ShowLogger.info("***Debug*** engine.video.codec_type  \(debugCodeCTypeItems[index])")
 
         case .mirror, .renderMode:
             let index = ShowDebugSettingKey.renderMode.intValue % debugRenderModeItems.count
             let mirrorIsOn = ShowDebugSettingKey.mirror.boolValue
             engine?.setLocalRenderMode(debugRenderModeItems[index], mirror: mirrorIsOn ? .enabled : .disabled)
-            showLogger.info("***Debug*** setLocalRenderMode  mirror = \(mirrorIsOn ? AgoraVideoMirrorMode.enabled : AgoraVideoMirrorMode.disabled), rendermode = \(debugRenderModeItems[index])")
+            ShowLogger.info("***Debug*** setLocalRenderMode  mirror = \(mirrorIsOn ? AgoraVideoMirrorMode.enabled : AgoraVideoMirrorMode.disabled), rendermode = \(debugRenderModeItems[index])")
         case .debugSR, .debugSrType:
             let srIsOn = ShowDebugSettingKey.debugSR.boolValue
             let index = ShowDebugSettingKey.debugSrType.intValue % debugSrTypeItems.count
             setDebugSuperResolutionOn(srIsOn, srType: debugSrTypeItems[index])
         case .debugPVC:
             engine?.setParameters("{\"rtc.video.enable_pvc\":\(isOn)}")
-            showLogger.info("***Debug*** rtc.video.enable_pvc \(isOn)")
+            ShowLogger.info("***Debug*** rtc.video.enable_pvc \(isOn)")
         }
     }
 }
@@ -257,7 +257,7 @@ extension ShowDebugAgoraKitManager {
     private func setExposureRange() {
         if let x = exposureRangeX, let y = exposureRangeY {
             engine?.setCameraExposurePosition(CGPoint(x: x, y: y))
-            showLogger.info("***Debug*** setCameraExposurePosition = \(CGPoint(x: x, y: y)) ")
+            ShowLogger.info("***Debug*** setCameraExposurePosition = \(CGPoint(x: x, y: y)) ")
         }
     }
     
@@ -265,14 +265,14 @@ extension ShowDebugAgoraKitManager {
         if let v1 = videoFullrangeExt, let v2 = matrixCoefficientsExt {
             engine?.setParameters("{\"che.video.videoFullrangeExt\":\(v1)}")
             engine?.setParameters("{\"che.video.matrixCoefficientsExt\":\(v2)}")
-            showLogger.info("***Debug*** {\"che.video.videoFullrangeExt\":\(v1)} {\"che.video.matrixCoefficientsExt\":\(v2)} ")
+            ShowLogger.info("***Debug*** {\"che.video.videoFullrangeExt\":\(v1)} {\"che.video.matrixCoefficientsExt\":\(v2)} ")
         }
     }
     
-    /// 设置超分 不保存数据
+    /// Set the excess score and do not save the data
     /// - Parameters:
-    ///   - isOn: 开关
-    ///   - srType: 默认1.5倍
+    /// - isOn: Switch
+    /// - srType: 1.5 times by default
     func setDebugSuperResolutionOn(_ isOn: Bool, srType:ShowSRType = .none) {
         if srType == .none {
             engine?.setParameters("{\"rtc.video.enable_sr\":{\"enabled\":\(false), \"mode\": 2}}")
@@ -280,7 +280,7 @@ extension ShowDebugAgoraKitManager {
             engine?.setParameters("{\"rtc.video.enable_sr\":{\"enabled\":\(false), \"mode\": 2}}")
             engine?.setParameters("{\"rtc.video.sr_type\":\(srType.rawValue)}")
             engine?.setParameters("{\"rtc.video.sr_max_wh\":\(921598)}")
-            // enabled要放在srType之后 否则修改超分倍数可能不会立即生效
+            // Enabled should be placed after srType, otherwise the modification of the excess multiple may not take effect immediately.
             engine?.setParameters("{\"rtc.video.enable_sr\":{\"enabled\":\(isOn), \"mode\": 2}}")
         }
     }
@@ -317,16 +317,16 @@ enum ShowDebugSettingKey: String, CaseIterable {
         case label
     }
     
-    case lowlightEnhance        // 暗光增强
-    case colorEnhance           // 色彩增强
-    case videoDenoiser          // 降噪
-    case focusFace              // 人脸对焦
-    case encode                 // 硬编/软编
-    case codeCType                // 编码器
-    case mirror                 // 镜像
-    case renderMode             // 模式
-    case debugSrType            // 超分倍数
-    case debugSR                // debug超分开关
+    case lowlightEnhance        // Dark light enhancement
+    case colorEnhance           // Color enhancement
+    case videoDenoiser          // Reduce the noise
+    case focusFace              // Face focus
+    case encode                 // Hard editing/soft editing
+    case codeCType                // Encoder
+    case mirror                 // Mirror image
+    case renderMode             // Model
+    case debugSrType            // Excess multiple
+    case debugSR                // debug Over-spart switch
     case debugPVC               // pvc
     
     var title: String {
@@ -338,25 +338,25 @@ enum ShowDebugSettingKey: String, CaseIterable {
         case .videoDenoiser:
             return "show_advance_setting_videoDenoiser_title".show_localized
         case .focusFace:
-            return "人脸对焦"
+            return "Face focus"
         case .encode:
-            return "硬编/软编"
+            return "Hard editing/soft editing"
         case .codeCType:
-            return "编码器"
+            return "Encoder"
         case .mirror:
-            return "镜像"
+            return "Mirror image"
         case .renderMode:
             return "fit/hidden"
         case .debugSrType:
-            return "超分倍数"
+            return "Excess multiple"
         case .debugSR:
-            return "超分开关"
+            return "Over-spart switch"
         case .debugPVC:
             return "PVC"
         }
     }
     
-    // 类型
+    // Type
     var type: KeyType {
         switch self {
         case .lowlightEnhance:
@@ -384,7 +384,7 @@ enum ShowDebugSettingKey: String, CaseIterable {
         }
     }
     
-    // 弹窗提示文案
+    // Pop-up window prompt copywriting
     var tips: String {
         switch self {
         case .lowlightEnhance:
@@ -398,7 +398,7 @@ enum ShowDebugSettingKey: String, CaseIterable {
         }
     }
     
-    // 选项
+    // Be an option
     var items: [String] {
         switch self {
         case .encode:

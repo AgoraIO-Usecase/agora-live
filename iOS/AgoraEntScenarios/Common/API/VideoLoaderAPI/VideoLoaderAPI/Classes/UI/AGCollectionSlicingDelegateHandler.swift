@@ -5,27 +5,27 @@
 //  Created by wushengtao on 2023/8/30.
 //
 
-import Foundation
+import UIKit
 
-//触发时机
+//Trigger timing
 @objc public enum AGVideoSlicingType: Int {
-    case visible = 0   //显示时
-    case endDrag       //放手时
-    case endScroll     //滑动停止时
+    case visible = 0   //When it is displayed
+    case endDrag       //When you let go
+    case endScroll     //When the slide stops
 }
 
 @objc public enum AGAudioSlicingType: Int {
-    case endScroll     //滑动停止时
-    case never = 100   //不展示
+    case endScroll     //When the slide stops
+    case never = 100   //Don't show
 }
 
-//秒切CollectionView delegate handler
+//Fast Slicing CollectionView delegate handler
 @objcMembers
 open class AGCollectionSlicingDelegateHandler: AGBaseDelegateHandler {
-    public var videoSlicingType: AGVideoSlicingType = .visible      //视频展示时机
-    public var audioSlicingType: AGAudioSlicingType = .endScroll    //声音展示时机
+    public var videoSlicingType: AGVideoSlicingType = .visible      //The timing of video display
+    public var audioSlicingType: AGAudioSlicingType = .endScroll    //The timing of sound display
     public var onRequireRenderVideo:((AnchorInfo, VideoCanvasContainer, UICollectionViewCell, IndexPath)->UIView?)? = nil
-    private var needPrejoin: Bool = true    //是否需要秒切加速(上下未显示但是已经初始化的页面是否走默认join的策略)
+    private var needPrejoin: Bool = true    //Do you need to accelerate in seconds (whether the page that is not displayed up and down but has been initialized follows the default join policy)
     private var prejoinCount: Int = 1
     private var needReloadData: Bool = false
     #if DEBUG
@@ -55,11 +55,11 @@ open class AGCollectionSlicingDelegateHandler: AGBaseDelegateHandler {
             if let newValue = scrollView as? UICollectionView {
                 var visibleRoomInfos:[IVideoLoaderRoomInfo] = []
                 if newValue.isDragging == false, newValue.isDecelerating == false {
-                    //更新roomlist时，已经完全停止则重新走停止后更新当前状态和上下预加载屏幕的状态
+                    //When updating the roomlist, if it has been completely stopped, it will stop again and update the current status and the status of the up and down preloading screen.
                     let state: AnchorState = audioSlicingType == .never ? .joinedWithVideo : .joinedWithAudioVideo
                     visibleRoomInfos = showVisibleRoom(collectionView: newValue, state: state, prejoinEnable: true)
                 } else {
-                    //没有停止的时候都改成joinedWithVideo，⚠️会存在当前房间画面无声音，滑动停止的时候才能听到
+                    //When it is not stopped, it is changed to joinedWithVideo. ⚠️ There will be no sound in the current room screen, which can only be heard when it is stopped by sliding.
                     visibleRoomInfos = joinVideo()
                 }
                 //make diff
@@ -183,7 +183,6 @@ extension AGCollectionSlicingDelegateHandler {
             let renderView = self.onRequireRenderVideo?(anchorInfo, container, cell, indexPath)
             container.uid = anchorInfo.uid
             container.container = renderView
-            container.mirrorMode = .disabled
             if state == .idle {
                 container.setupMode = .remove
             }
@@ -255,7 +254,7 @@ extension AGCollectionSlicingDelegateHandler: UICollectionViewDelegate, UICollec
                         cell: cell,
                         indexPath: indexPath)
             
-            //上报开始计算秒切出图
+            //The report begins to calculate the second cut-out chart.
             VideoLoaderApiImpl.shared.startMediaRenderingTracing(anchorId: room.channelName())
         }
         needReloadData = false
@@ -288,7 +287,7 @@ extension AGCollectionSlicingDelegateHandler: UICollectionViewDelegate, UICollec
         let room = showVisibleRoom(collectionView: collectionView, state: state, prejoinEnable: false).first
         
         if let room = room {
-            //上报开始计算秒切出图
+            //The report begins to calculate the second cut-out chart.
             VideoLoaderApiImpl.shared.startMediaRenderingTracing(anchorId: room.channelName())
         }
     }
@@ -296,12 +295,12 @@ extension AGCollectionSlicingDelegateHandler: UICollectionViewDelegate, UICollec
     open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         guard let collectionView = scrollView as? UICollectionView else {return}
         cleanIdleRoom(collectionView: collectionView)
-        //停止之后永远是把可视的变成
+        //After stopping, it will always turn the visual into
         let state: AnchorState = audioSlicingType == .never ? .joinedWithVideo : .joinedWithAudioVideo
         let room = showVisibleRoom(collectionView: collectionView, state: state, prejoinEnable: true).first
         
         if videoSlicingType == .endScroll, let room = room {
-            //上报开始计算秒切出图
+            //The report begins to calculate the second cut-out chart.
             VideoLoaderApiImpl.shared.startMediaRenderingTracing(anchorId: room.channelName())
         }
     }

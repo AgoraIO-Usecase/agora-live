@@ -7,60 +7,22 @@
 
 import Foundation
 import VideoLoaderAPI
+import RTMSyncManager
 
-@objc enum ShowRoomStatus: Int {
-    case activity = 0
-    case end = 1
-}
-
-@objc enum ShowRoomRequestStatus: Int {
-    case idle = 0
-    case waitting = 1
-    case accepted = 2
-    case rejected = 3
-    case ended = 4
-}
-
-@objc enum ShowInteractionStatus: Int {
-    case idle = 0
-    case onSeat = 1
-    case pking = 2
-    
-    var toastTitle: String {
-        switch self {
-        case .idle: return ""
-        case .onSeat: return "show_end_broadcasting".show_localized
-        case .pking: return "show_end_pk".show_localized
-        }
-    }
-    
-    var isInteracting: Bool {
-        switch self {
-        case .onSeat, .pking:
-            return true
-        default:
-            return false
-        }
-    }
-}
-
-@objcMembers
-class ShowBaseInfo: NSObject {
-    var objectId: String?
-}
+typealias ShowInteractionStatus = InteractionType
 
 /// Room list information
 @objcMembers
-class ShowRoomListModel: ShowBaseInfo, IVideoLoaderRoomInfo {
-    func channelName() -> String {
+public class ShowRoomListModel: NSObject, IVideoLoaderRoomInfo {
+    public func channelName() -> String {
         return roomId
     }
     
-    func userId() -> String {
+    public func userId() -> String {
         return ownerId
     }
     
-    var anchorInfoList: [AnchorInfo] {
+    public var anchorInfoList: [AnchorInfo] {
         get {
             let anchorInfo = AnchorInfo()
             anchorInfo.channelName = roomId
@@ -73,122 +35,89 @@ class ShowRoomListModel: ShowBaseInfo, IVideoLoaderRoomInfo {
         }
     }
     
-    var interactionAnchorInfoList: [AnchorInfo] = []
+    public var interactionAnchorInfoList: [AnchorInfo] = []
     
-    var roomId: String = ""
-    var roomName: String?
-    var roomUserCount: Int = 1
-    var thumbnailId: String?
-    var ownerId: String = ""
-    var ownerAvatar: String?
-    var ownerName: String?
-    var roomStatus: ShowRoomStatus = .activity
-    var interactStatus: ShowInteractionStatus = .idle
-    var createdAt: Int64 = 0
-    var updatedAt: Int64 = 0
-    var isPureMode: Int64 = 0
+    public var roomId: String = ""                                //Room number
+    public var roomName: String?                              //Room name
+    public var roomUserCount: Int = 1                         //Number of people in the room
+    public var ownerId: String = ""                               //Owner user id (rtc uid)
+    public var ownerAvatar: String?                           //Owner avatar
+    public var ownerName: String?                             //Owner's name
+    public var createdAt: Int64 = 0                           //Creation time, the number of milliseconds compared with the time of 19700101
+    public var updatedAt: Int64 = 0                           //Update time
+    public var isPureMode: Int64 = 0
 }
 
-//PK Invite objects
-typealias ShowPKUserInfo = ShowRoomListModel
+//PK invitee
+typealias ShowPKUserInfo = RoomPresenceInfo
 
 
 /// Room details
-@objcMembers
-class ShowRoomDetailModel: ShowRoomListModel {
-}
+public typealias ShowRoomDetailModel = ShowRoomListModel
 
-@objcMembers
-class ShowUser: ShowBaseInfo {
-    var userId: String = ""
-    var avatar: String?
-    var userName: String?
-    var status: ShowRoomRequestStatus = .idle
-}
+///User information
+public typealias ShowUser = AUIUserInfo
 
+/// Chat messages
 @objcMembers
-class ShowMessage: ShowBaseInfo {
+public class ShowMessage: NSObject, Codable {
     var userId: String = ""
     var userName: String?
     var message: String?
-    var createAt: Int64 = 0
-}
-
-class ShowMicSeatApply: ShowUser {
-//    var userId: String?
-//    var avatar: String?
-//    var userName: String?
-//    var status: ShowRoomRequestStatus = .idle
-    var createdAt: Int64 = 0
+    var createAt: Int64 = 0    //Creation time, the number of milliseconds compared with the time of 19700101
     
-    #if DEBUG
-    override var description: String {
-        return "userId: \(userId) status: \(status) objectId: \(objectId ?? "")"
+    
+    enum CodingKeys: String, CodingKey {
+        case userId, userName, message, createAt
     }
-    #endif
 }
 
+/// on seat application
+public typealias ShowMicSeatApply = ApplyInfo
 
-typealias ShowMicSeatInvitation = ShowUser
 
-class ShowPKInvitation: ShowBaseInfo {
-    var userId: String = ""
-    var userName: String?
-    var roomId: String = ""
-    var fromUserId: String = ""
-    var fromName: String?
-    var fromRoomId: String = ""
-    var status: ShowRoomRequestStatus = .waitting
-    var userMuteAudio: Bool = false
-    var fromUserMuteAudio: Bool = false
-    var createdAt: Int64 = 0
-    
-    override func isEqual(_ object: Any?) -> Bool {
-        guard let info = object as? ShowPKInvitation,
-              userId == info.userId,
-              userName == info.userName,
-              roomId == info.roomId,
-              fromUserId == info.fromUserId,
-              fromName == info.fromName,
-              fromRoomId == info.fromRoomId,
-              status == info.status,
-              userMuteAudio == info.userMuteAudio,
-              fromUserMuteAudio == info.fromUserMuteAudio,
-              createdAt == info.createdAt else {
-            return false
+/// on seat invitation
+public typealias ShowMicSeatInvitation = InvitationInfo
+
+public typealias ShowPKInvitation = PKInfo
+
+//Mic seat/Pk Model
+public typealias ShowInteractionInfo = InteractionInfo
+
+extension AUIRoomInfo {
+    @objc var roomUserCount: Int {
+        set {
+            self.customPayload["roomUserCount"]  = newValue
+        } get {
+            return self.customPayload["roomUserCount"] as? Int ?? 0
         }
+    }
+    
+    func createShowServiceModel() -> ShowRoomListModel {
+        let model = ShowRoomListModel()
+        model.roomId = roomId
+        model.roomName = roomName
+        model.roomUserCount = customPayload["roomUserCount"] as? Int ?? 0
+        model.ownerId = owner?.userId ?? ""
+        model.ownerName = owner?.userName ?? ""
+        model.ownerAvatar = owner?.userAvatar ?? ""
+        model.createdAt = createTime
+        model.updatedAt = createTime
+        return model
+    }
+    
+    static func convertFromShowRoomListModel(_ model: ShowRoomListModel) -> AUIRoomInfo {
+        let roomInfo = AUIRoomInfo()
+        roomInfo.roomId = model.roomId
+        roomInfo.roomName = model.roomName ?? ""
+        roomInfo.roomUserCount = model.roomUserCount
+        let owner = AUIUserThumbnailInfo()
+        owner.userId = model.ownerId
+        owner.userName = model.ownerName ?? ""
+        owner.userAvatar = model.ownerAvatar ?? ""
+        roomInfo.owner = owner
+        roomInfo.createTime = model.createdAt
         
-        return true
-    }
-    
-    #if DEBUG
-    override var description: String {
-        return "userId: \(userId) roomId: \(roomId) fromUserId: \(fromUserId) fromRoomId: \(fromRoomId) status: \(status) objectId: \(objectId ?? "")"
-    }
-    #endif
-}
-
-class ShowInteractionInfo: ShowBaseInfo {
-    var userId: String = ""
-    var userName: String?
-    var roomId: String = ""
-    var interactStatus: ShowInteractionStatus = .idle
-    var muteAudio: Bool = false
-    var ownerMuteAudio: Bool = false
-    var createdAt: Int64 = 0                            
-    
-    override var description: String {
-        return "userId: \(userId) userName: \(userName ?? "") roomId: \(roomId) status: \(interactStatus.rawValue) objectId: \(objectId ?? "")"
-    }
-    
-    override func isEqual(_ object: Any?) -> Bool {
-        guard let info = object as? ShowInteractionInfo,
-              userId == info.userId,
-              roomId == info.roomId,
-              interactStatus == info.interactStatus else {
-            return false
-        }
-        
-        return true
+        return roomInfo
     }
 }

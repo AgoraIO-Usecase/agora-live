@@ -10,7 +10,7 @@ import YYModel
 
 @objc open class AUIUserServiceImpl: NSObject {
     public private(set) var userList: [AUIUserInfo] = []
-    private var respDelegates: NSHashTable<AnyObject> = NSHashTable<AnyObject>.weakObjects()
+    private var respDelegates = NSHashTable<AUIUserRespDelegate>.weakObjects()
     private var channelName: String
     private let rtmManager: AUIRtmManager
     
@@ -19,16 +19,18 @@ import YYModel
         rtmManager.unsubscribeUser(channelName: channelName, delegate: self)
     }
     
-    public init(channelName: String, rtmManager: AUIRtmManager) {
+    public init(channelName: String, rtmManager: AUIRtmManager, autoSetUserAttr: Bool = false) {
         self.rtmManager = rtmManager
         self.channelName = channelName
         super.init()
         aui_info("init AUIUserServiceImpl[\(channelName)]", tag: "AUIUserServiceImpl")
         self.rtmManager.subscribeUser(channelName: channelName, delegate: self)
-        //rtm2.2 支持预设置，在subscribe成功之后会更新
-//        _setupUserAttr(roomId: channelName) { _ in
-//            //TODO: retry
-//        }
+        //Rtm2.2 supports pre-setting and will be updated after successful subscription.
+        if autoSetUserAttr {
+            setUserAttr { _ in
+                //TODO: retry
+            }
+        }
     }
 }
 
@@ -37,6 +39,10 @@ extension AUIUserServiceImpl: AUIRtmUserProxyDelegate {
     public func onCurrentUserJoined(channelName: String) {
         guard channelName == self.channelName else {return}
         aui_info("onCurrentUserJoined[\(channelName)]", tag: "AUIUserServiceImpl")
+        let user = AUIUserInfo(thumbUser: AUIRoomContext.shared.currentUserInfo)
+        self.respDelegates.allObjects.forEach { obj in
+            obj.onRoomUserEnter(roomId: channelName, userInfo: user)
+        }
     }
     
     public func onUserDidUpdated(channelName: String, userId: String, userInfo: [String : Any]) {
@@ -52,7 +58,6 @@ extension AUIUserServiceImpl: AUIRtmUserProxyDelegate {
             if oldUser.muteAudio != user.muteAudio {
                 oldUser.muteAudio = user.muteAudio
                 self.respDelegates.allObjects.forEach { obj in
-                    guard let obj = obj as? AUIUserRespDelegate else {return}
                     obj.onUserAudioMute(userId: userId, mute: user.muteAudio)
                 }
             }
@@ -60,7 +65,6 @@ extension AUIUserServiceImpl: AUIRtmUserProxyDelegate {
             if oldUser.muteVideo != user.muteVideo {
                 oldUser.muteVideo = user.muteVideo
                 self.respDelegates.allObjects.forEach { obj in
-                    guard let obj = obj as? AUIUserRespDelegate else {return}
                     obj.onUserVideoMute(userId: userId, mute: user.muteVideo)
                 }
             }
@@ -68,7 +72,6 @@ extension AUIUserServiceImpl: AUIRtmUserProxyDelegate {
         
         self.userList.replaceSubrange(idx...idx, with: [user])
         self.respDelegates.allObjects.forEach { obj in
-            guard let obj = obj as? AUIUserRespDelegate else {return}
             obj.onRoomUserUpdate(roomId: channelName, userInfo: user)
         }
     }
@@ -80,7 +83,6 @@ extension AUIUserServiceImpl: AUIRtmUserProxyDelegate {
             return
         }
         self.respDelegates.allObjects.forEach { obj in
-            guard let obj = obj as? AUIUserRespDelegate else {return}
             self.userList = users
             obj.onRoomUserSnapshot(roomId: channelName, userList: users)
         }
@@ -98,18 +100,16 @@ extension AUIUserServiceImpl: AUIRtmUserProxyDelegate {
         user.userId = userId
         self.userList.append(user)
         self.respDelegates.allObjects.forEach { obj in
-            guard let obj = obj as? AUIUserRespDelegate else {return}
             obj.onRoomUserEnter(roomId: channelName, userInfo: user)
         }
     }
     
-    public func onUserDidLeaved(channelName: String, userId: String, userInfo: [String : Any]) {
+    public func onUserDidLeaved(channelName: String, userId: String, userInfo: [String : Any], reason: AUIRtmUserLeaveReason) {
         aui_info("onUserDidLeaved[\(channelName)]: \(userId) \(userInfo)", tag: "AUIUserServiceImpl")
         let user = userList.filter({$0.userId == userId}).first ?? AUIUserInfo.yy_model(withJSON: userInfo)!
         self.userList = userList.filter({$0.userId != userId})
         self.respDelegates.allObjects.forEach { obj in
-            guard let obj = obj as? AUIUserRespDelegate else {return}
-            obj.onRoomUserLeave(roomId: channelName, userInfo: user)
+            obj.onRoomUserLeave(roomId: channelName, userInfo: user, reason: reason)
         }
     }
     
@@ -118,7 +118,6 @@ extension AUIUserServiceImpl: AUIRtmUserProxyDelegate {
         let user = userList.filter({$0.userId == userId}).first ?? AUIUserInfo.yy_model(withJSON: userInfo)!
         self.userList = userList.filter({$0.userId != userId})
         self.respDelegates.allObjects.forEach { obj in
-            guard let obj = obj as? AUIUserRespDelegate else {return}
             obj.onUserBeKicked(roomId: channelName, userId: user.userId)
         }
     }
@@ -182,9 +181,8 @@ extension AUIUserServiceImpl: AUIUserServiceDelegate {
             
             callback(nil)
             
-            //自己状态不会更新，在这里手动回调
+            //Your status will not be updated. You can call back manually here.
             self.respDelegates.allObjects.forEach { obj in
-                guard let obj = obj as? AUIUserRespDelegate else {return}
                 obj.onUserAudioMute(userId: currentUserId, mute: isMute)
             }
         }
@@ -206,9 +204,8 @@ extension AUIUserServiceImpl: AUIUserServiceDelegate {
             
             callback(nil)
             
-            //自己状态不会更新，在这里手动回调
+            //Your status will not be updated. You can call back manually here.
             self.respDelegates.allObjects.forEach { obj in
-                guard let obj = obj as? AUIUserRespDelegate else {return}
                 obj.onUserVideoMute(userId: currentUserId, mute: isMute)
             }
         }
@@ -238,12 +235,12 @@ extension AUIUserServiceImpl {
                 return
             }
             
-            //rtm不会返回自己更新的数据，需要手动处理
+            //Rtm will not return its updated data and needs to be processed manually.
             self.onUserDidUpdated(channelName: roomId, userId: userId, userInfo: userAttr)
         }
     }
     
-    //设置用户属性到presence
+    //Set user attributes to presence
     func setUserAttr(completion: ((Error?) -> ())?) {
         let roomId = channelName
         let userId = AUIRoomContext.shared.currentUserInfo.userId
@@ -264,7 +261,7 @@ extension AUIUserServiceImpl {
                 return
             }
             
-            //rtm不会返回自己更新的数据，需要手动处理
+            //Rtm will not return its updated data and needs to be processed manually.
             self.onUserDidUpdated(channelName: roomId, userId: userId, userInfo: userAttr)
         }
     }

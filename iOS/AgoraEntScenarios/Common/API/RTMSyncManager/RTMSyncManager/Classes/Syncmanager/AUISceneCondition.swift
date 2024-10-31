@@ -7,34 +7,35 @@
 
 import Foundation
 
+private let kConditionKey = "AUICondition"
 
-/// 加入房间成功条件判断
+/// Judge the conditions for joining the room successfully
 class AUISceneEnterCondition: NSObject {
     private var channelName: String
     private var arbiter: AUIArbiter
     var enterCompletion: (()->())?
     var lockOwnerRetrived: Bool = false {
         didSet {
-            aui_info("set lockOwnerRetrived = \(lockOwnerRetrived)", tag: kSceneTag)
+            aui_info("set lockOwnerRetrived = \(lockOwnerRetrived)", tag: kConditionKey)
             checkRoomValid()
         }
     }
     var lockOwnerAcquireSuccess: Bool = false {
         didSet {
-            aui_info("set lockOwnerAcquireSuccess = \(lockOwnerAcquireSuccess)", tag: kSceneTag)
+            aui_info("set lockOwnerAcquireSuccess = \(lockOwnerAcquireSuccess)", tag: kConditionKey)
             checkRoomValid()
         }
     }
     var subscribeSuccess: Bool = false {
         didSet {
-            aui_info("set subscribeSuccess = \(subscribeSuccess)", tag: kSceneTag)
+            aui_info("set subscribeSuccess = \(subscribeSuccess)", tag: kConditionKey)
             checkRoomValid()
         }
     }
     
     var ownerId: String = "" {
         didSet {
-            aui_info("set ownerId = \(ownerId)", tag: kSceneTag)
+            aui_info("set ownerId = \(ownerId)", tag: kConditionKey)
             AUIRoomContext.shared.roomOwnerMap[channelName] = ownerId
             checkRoomValid()
         }
@@ -48,16 +49,16 @@ class AUISceneEnterCondition: NSObject {
     }
     
     /*
-     检查加入房间成功，需要以下条件全部满足：
-     1. subscribe成功
-     2. 获取到初始化信息(拿到ownerId房主uid)
-     3. 锁也获取成功(acquire的callback成功收到，收到callback写metadata才能成功，如果没有收到callback但是获取到锁主，哪怕锁住是自己，写metadata还是会失败)
-     4. 获取到锁主(修改metadata需要向锁主发消息)
+     To check the success of joining the room, all the following conditions need to be met:
+     1. Subscribe successfully
+     1. Get the initialization information (get the ownerId owner uid)
+     3. The lock is also successfully obtained (the callback of acquire is successfully received, and the callback can only be successfully written after receiving the callback. If the callback is not received but the lock owner is obtained, even if the lock is yourself, writing metadata will still fail)
+     4. Get the lock owner (to modify metadata, you need to send a message to the lock owner)
      */
     private func checkRoomValid() {
-        aui_info("checkRoomValid[\(channelName)] subscribeSuccess: \(subscribeSuccess), lockOwnerRetrived: \(lockOwnerRetrived), ownerId: \(ownerId) isArbiter: \(arbiter.isArbiter()), lockOwnerAcquireSuccess: \(lockOwnerAcquireSuccess)", tag: kSceneTag)
+        aui_info("checkRoomValid[\(channelName)] subscribeSuccess: \(subscribeSuccess), lockOwnerRetrived: \(lockOwnerRetrived), ownerId: \(ownerId) isArbiter: \(arbiter.isArbiter()), lockOwnerAcquireSuccess: \(lockOwnerAcquireSuccess)", tag: kConditionKey)
         guard subscribeSuccess, lockOwnerRetrived, !ownerId.isEmpty else { return }
-        //如果是锁主，需要判断有没有acquire成功回调，回调后有本地对比，没有成功回调前setmetadata会失败-12008
+        //If it is the lock owner, it is necessary to judge whether it has acquired a successful callback. After the callback, there is a local comparison. If there is no successful callback, setmetadata will fail-12008
         if arbiter.isArbiter(), lockOwnerAcquireSuccess == false {return}
         if let completion = self.enterCompletion {
             completion()
@@ -65,38 +66,44 @@ class AUISceneEnterCondition: NSObject {
     }
 }
 
-//房间过期条件判断
+//Judgment of room expiration conditions
 class AUISceneExpiredCondition: NSObject {
     private var roomExpiration: RoomExpirationPolicy
     private var channelName: String
     private var lastUpdateDate: Date?
     var roomDidExpired: (()->())?
     
+    var offlineTimestamp: UInt64 = 0 {
+        didSet {
+            aui_info("[\(channelName)]did offline: \(offlineTimestamp)", tag: kConditionKey)
+        }
+    }
+    
     var joinCompletion: Bool = false {
         didSet {
-            aui_info("set joinCompletion \(joinCompletion)", tag: kSceneTag)
+            aui_info("[\(channelName)]set joinCompletion \(joinCompletion)", tag: kConditionKey)
             checkRoomExpired()
         }
     }
     
     var createTimestemp: UInt64? {
         didSet {
-            aui_info("set createTimestemp \(createTimestemp ?? 0)", tag: kSceneTag)
+            aui_info("[\(channelName)]set createTimestemp \(createTimestemp ?? 0)", tag: kConditionKey)
             checkRoomExpired()
         }
     }
     
     var userSnapshotList: [AUIUserInfo]? {
         didSet {
-            aui_info("set userSnapshotList count = \(userSnapshotList?.count ?? 0)", tag: kSceneTag)
+            aui_info("[\(channelName)]set userSnapshotList count = \(userSnapshotList?.count ?? 0)", tag: kConditionKey)
             checkRoomExpired()
         }
     }
     
-    //房主曾经离开过房间
+    //The landlord once left the room (kill the app, non-disconnection)
     var ownerHasLeftRoom: Bool = false {
         didSet {
-            aui_info("set ownerHasLeftRoom = \(ownerHasLeftRoom)", tag: kSceneTag)
+            aui_info("[\(channelName)]set ownerHasLeftRoom = \(ownerHasLeftRoom)", tag: kConditionKey)
             checkRoomExpired()
         }
     }
@@ -104,7 +111,7 @@ class AUISceneExpiredCondition: NSObject {
     var lastUpdateTimestemp: UInt64? {
         didSet {
             self.lastUpdateDate = Date()
-            aui_info("set lastUpdateTimestemp = \(lastUpdateTimestemp ?? 0)", tag: kSceneTag)
+            aui_info("[\(channelName)]set lastUpdateTimestemp = \(lastUpdateTimestemp ?? 0)", tag: kConditionKey)
             checkRoomExpired()
         }
     }
@@ -115,15 +122,22 @@ class AUISceneExpiredCondition: NSObject {
         super.init()
     }
     
+    func reconnectNow(timestamp: UInt64) {
+        aui_info("[\(channelName)]reconnectNow: curentTs:\(timestamp), offlineTs:\(offlineTimestamp)", tag: kConditionKey)
+        guard offlineTimestamp > 0, roomExpiration.ownerReconnectMaxTime > 0 else { return }
+        guard timestamp - offlineTimestamp > roomExpiration.ownerReconnectMaxTime else { return }
+        offlineTimestamp = 0
+        roomDidExpired?()
+    }
     
     /*
-     检查房间过期，其中一个不满足表示过期,需要房间加入完成后检查（目前认为没有enter完成不做检查过期处理）：
-     1.房主加入需要检查房主在用户列表里(通过who now查询)
-     2.观众加入检查房主不在用户列表里
-     3.房间时间过期（动态配置，不可直接写死20min）
+     Check that the room has expired. If one of them is not satisfied, it means that it has expired. It needs to be checked after the room is added (at present, it is considered that if the enter is not completed, the inspection will not be processed):
+     1. To join the homeowner, you need to check whether the homeowner is in the user list (query through who now)
+     2. The audience joins to check that the homeowner is not in the user list.
+     3. The room time has expired (dynamic configuration, do not write directly for 20min)
      */
     private func checkRoomExpired() {
-        aui_info("checkRoomExpired[\(channelName)] joinCompletion: \(joinCompletion), userSnapshotList count: \(userSnapshotList?.count ?? 0), createTimestemp: \(createTimestemp ?? 0)", tag: kSceneTag)
+        aui_info("checkRoomExpired[\(channelName)] joinCompletion: \(joinCompletion), userSnapshotList count: \(userSnapshotList?.count ?? 0), createTimestemp: \(createTimestemp ?? 0)", tag: kConditionKey)
         guard joinCompletion, let userList = userSnapshotList, let createTs = createTimestemp else { return }
         
         if roomExpiration.isAssociatedWithOwnerOffline {
@@ -131,25 +145,25 @@ class AUISceneExpiredCondition: NSObject {
             if isRoomOwner {
                 //step 1
                 if ownerHasLeftRoom {
-                    aui_info("checkRoomExpired: room owner has left", tag: kSceneTag)
+                    aui_info("checkRoomExpired: room owner has left", tag: kConditionKey)
                     roomDidExpired?()
                 }
             } else {
                 //step 2
                 guard let _ = userList.filter({ AUIRoomContext.shared.isRoomOwner(channelName: channelName, userId: $0.userId)}).first else {
                     //room owner not found, clean room
-                    aui_info("checkRoomExpired: room owner leave", tag: kSceneTag)
+                    aui_info("checkRoomExpired: room owner leave", tag: kConditionKey)
                     roomDidExpired?()
                     return
                 }
             }
         }
         
-        //TODO: 目前检查只有enter room时，如果房主一直在房间内不会过期，是否需要内部检查，还是让上层处理
+        //TODO: At present, when the inspection is only enter the room, if the landlord has been in the room, it will not expire. Do you need an internal inspection or let the upper floor deal with it?
         //step 3
         if roomExpiration.expirationTime > 0, let updateTs = lastUpdateTimestemp {
             if Int64(updateTs) - Int64(createTs) > roomExpiration.expirationTime {
-                aui_info("checkRoomExpired: room is expired: \(updateTs) - \(createTs) > \(roomExpiration.expirationTime)", tag: kSceneTag)
+                aui_info("checkRoomExpired: room is expired: \(updateTs) - \(createTs) > \(roomExpiration.expirationTime)", tag: kConditionKey)
                 roomDidExpired?()
                 return
             }

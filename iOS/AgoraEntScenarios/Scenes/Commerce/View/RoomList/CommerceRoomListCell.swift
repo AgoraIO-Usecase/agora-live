@@ -34,7 +34,7 @@ class CommerceRoomListCell: UICollectionViewCell {
     func setBgImge(_ img: String, name: String?, id: String?, count: Int) {
         imageView.image = UIImage.commerce_sceneImage(name: "show_room_bg_\(img)")
         nameLabel.text = name
-        idLablel.text = "ID: \(id ?? "0")"
+        idLablel.text = "\(id ?? "0")"
         var attachment = NSTextAttachment()
         if #available(iOS 13.0, *) {
             attachment = NSTextAttachment(image: UIImage.commerce_sceneImage(name: "show_room_person")!)

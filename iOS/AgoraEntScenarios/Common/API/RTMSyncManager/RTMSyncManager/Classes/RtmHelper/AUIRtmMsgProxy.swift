@@ -10,27 +10,26 @@ import Foundation
 import AgoraRtmKit
 
 private let kAUIRtmMsgProxyKey = "AUIRtmMsgProxy"
+//TODO: change protocol name
 @objc public protocol AUIRtmErrorProxyDelegate: NSObjectProtocol {
     
-    /// 系统时间戳更新
+    /// System timestamp update
     /// - Parameters:
     ///   - timeStamp: <#timeStamp description#>
     @objc optional func onTimeStampsDidUpdate(timeStamp: UInt64)
     
-    /// token过期
+    /// Token expires
     /// - Parameter channelName: <#channelName description#>
     @objc optional func onTokenPrivilegeWillExpire(channelName: String?)
     
-    /// 网络状态变化
+    /// Changes in network status
     /// - Parameters:
     ///   - channelName: <#channelName description#>
     ///   - state: <#state description#>
     ///   - reason: <#reason description#>
-    @objc optional func onConnectionStateChanged(channelName: String,
-                                                 connectionStateChanged state: AgoraRtmClientConnectionState,
-                                                 result reason: AgoraRtmClientConnectionChangeReason)
+    @objc optional func didReceiveLinkStateEvent(event: AgoraRtmLinkStateEvent)
     
-    /// 收到的KV为空
+    /// The KV received is empty.
     /// - Parameter channelName: <#channelName description#>
     @objc optional func onMsgRecvEmpty(channelName: String)
 }
@@ -43,11 +42,16 @@ private let kAUIRtmMsgProxyKey = "AUIRtmMsgProxy"
     func onMessageReceive(publisher: String, channelName: String, message: String)
 }
 
+@objc public enum AUIRtmUserLeaveReason: Int {
+    case normal = 0
+    case timeout = 1
+}
+
 @objc public protocol AUIRtmUserProxyDelegate: NSObjectProtocol {
     func onCurrentUserJoined(channelName: String)
     func onUserSnapshotRecv(channelName: String, userId:String, userList: [[String: Any]])
     func onUserDidJoined(channelName: String, userId:String, userInfo: [String: Any])
-    func onUserDidLeaved(channelName: String, userId:String, userInfo: [String: Any])
+    func onUserDidLeaved(channelName: String, userId:String, userInfo: [String: Any], reason: AUIRtmUserLeaveReason)
     func onUserDidUpdated(channelName: String, userId:String, userInfo: [String: Any])
 }
 
@@ -56,16 +60,16 @@ private let kAUIRtmMsgProxyKey = "AUIRtmMsgProxy"
     func onReleaseLockDetail(channelName: String, lockDetail: AgoraRtmLockDetail, eventType: AgoraRtmLockEventType)
 }
 
-/// RTM消息转发器
+/// RTM message forwarder
 open class AUIRtmMsgProxy: NSObject {
     private var rtmChannelType: AgoraRtmChannelType!
     private var attributesDelegates:[String: NSHashTable<AUIRtmAttributesProxyDelegate>] = [:]
     private var attributesCacheAttr: [String: [String: String]] = [:]
     private var lockDelegates: [String: NSHashTable<AUIRtmLockProxyDelegate>] = [:]
     private var lockDetailCaches: [String: [AgoraRtmLockDetail]] = [:]
-    private var messageDelegates:NSHashTable<AUIRtmMessageProxyDelegate> = NSHashTable<AUIRtmMessageProxyDelegate>.weakObjects()
-    private var userDelegates: NSHashTable<AUIRtmUserProxyDelegate> = NSHashTable<AUIRtmUserProxyDelegate>.weakObjects()
-    private var errorDelegates: NSHashTable<AUIRtmErrorProxyDelegate> = NSHashTable<AUIRtmErrorProxyDelegate>.weakObjects()
+    private var messageDelegates = NSHashTable<AUIRtmMessageProxyDelegate>.weakObjects()
+    private var userDelegates: [String: NSHashTable<AUIRtmUserProxyDelegate>] = [:]
+    private var errorDelegates: [String: NSHashTable<AUIRtmErrorProxyDelegate>] = [:]
     
     required public init(rtmChannelType: AgoraRtmChannelType) {
         super.init()
@@ -121,25 +125,41 @@ open class AUIRtmMsgProxy: NSObject {
     }
     
     func subscribeUser(channelName: String, delegate: AUIRtmUserProxyDelegate) {
-        if userDelegates.contains(delegate) {
-            return
+        if let value = userDelegates[channelName] {
+            if !value.contains(delegate) {
+                value.add(delegate)
+            }
+        }else{
+            let weakObjects = NSHashTable<AUIRtmUserProxyDelegate>.weakObjects()
+            weakObjects.add(delegate)
+            userDelegates[channelName] = weakObjects
         }
-        userDelegates.add(delegate)
     }
     
     func unsubscribeUser(channelName: String, delegate: AUIRtmUserProxyDelegate) {
-        userDelegates.remove(delegate)
+        guard let value = userDelegates[channelName] else {
+            return
+        }
+        value.remove(delegate)
     }
     
     func subscribeError(channelName: String, delegate: AUIRtmErrorProxyDelegate) {
-        if errorDelegates.contains(delegate) {
-            return
+        if let value = errorDelegates[channelName] {
+            if !value.contains(delegate) {
+                value.add(delegate)
+            }
+        }else{
+            let weakObjects = NSHashTable<AUIRtmErrorProxyDelegate>.weakObjects()
+            weakObjects.add(delegate)
+            errorDelegates[channelName] = weakObjects
         }
-        errorDelegates.add(delegate)
     }
     
     func unsubscribeError(channelName: String, delegate: AUIRtmErrorProxyDelegate) {
-        errorDelegates.remove(delegate)
+        guard let value = errorDelegates[channelName] else {
+            return
+        }
+        value.remove(delegate)
     }
     
     func subscribeLock(channelName: String, lockName: String, delegate: AUIRtmLockProxyDelegate) {
@@ -178,7 +198,7 @@ open class AUIRtmMsgProxy: NSObject {
         var existKeys: [String] = []
         items.forEach { item in
 //            aui_info("\(item.key): \(item.value)", tag: kAUIRtmMsgProxyKey)
-            //判断value和缓存里是否一致，这里用string可能会不准，例如不同终端序列化的时候json obj不同kv的位置不一样会造成生成的json string不同
+            //To judge whether the value is consistent with the cache, the use of string here may not be accurate. For example, when serializing different terminals, different positions of json obj different kv will cause the generated json string to be different.
             existKeys.append(item.key)
             if cache[item.key] == item.value {
                 aui_info("processMetaData[\(channelName)] there are no changes of [\(item.key)]", tag: kAUIRtmMsgProxyKey)
@@ -201,7 +221,7 @@ open class AUIRtmMsgProxy: NSObject {
         let cacheKeys = cache.keys
         cacheKeys.forEach { key in
             if existKeys.contains(key) {return}
-            //远端已经不存在对应的key了，需要通知所有的delegate
+            //The corresponding key no longer exists in the remote end, and all delegates need to be notified.
             cache.removeValue(forKey: key)
             let delegateKey = "\(channelName)__\(key)"
             guard let value = self.attributesDelegates[delegateKey] else { return }
@@ -214,13 +234,15 @@ open class AUIRtmMsgProxy: NSObject {
         if items.count > 0 {
             return
         }
-        for element in errorDelegates.allObjects {
+        guard let elements = self.errorDelegates[channelName] else { return }
+        for element in elements.allObjects {
             element.onMsgRecvEmpty?(channelName: channelName)
         }
     }
     
-    func processTimeStampsDidUpdate(timeStamp: UInt64) {
-        for element in errorDelegates.allObjects {
+    func processTimeStampsDidUpdate(channelName: String, timeStamp: UInt64) {
+        guard let elements = self.errorDelegates[channelName] else { return }
+        for element in elements.allObjects {
             element.onTimeStampsDidUpdate?(timeStamp: timeStamp)
         }
     }
@@ -231,27 +253,29 @@ extension AUIRtmMsgProxy: AgoraRtmClientDelegate {
     public func rtmKit(_ rtmKit: AgoraRtmClientKit, tokenPrivilegeWillExpire channel: String?) {
         aui_info("onTokenPrivilegeWillExpire: \(channel ?? "")", tag: kAUIRtmMsgProxyKey)
         
-        for element in errorDelegates.allObjects {
+        guard let elements = self.errorDelegates[channel ?? ""] else { return }
+        for element in elements.allObjects {
             element.onTokenPrivilegeWillExpire?(channelName: channel)
         }
     }
     
-    public func rtmKit(_ kit: AgoraRtmClientKit,
-                       channel channelName: String,
-                       connectionChangedToState state: AgoraRtmClientConnectionState,
-                       reason: AgoraRtmClientConnectionChangeReason) {
-        aui_info("connectionStateChanged[\(channelName)] state: \(state.rawValue) reason: \(reason.rawValue) delegate count: \(errorDelegates.allObjects.count)", tag: kAUIRtmMsgProxyKey)
+    public func rtmKit(_ rtmKit: AgoraRtmClientKit, didReceiveLinkStateEvent event: AgoraRtmLinkStateEvent) {
+        aui_info("didReceiveLinkStateEvent currentState: \(event.currentState.rawValue) serviceType: \(event.serviceType.rawValue) operation: \(event.operation.rawValue) reason: \(event.reason ?? "") isResumed: \(event.isResumed)", tag: kAUIRtmMsgProxyKey)
         
-        for element in errorDelegates.allObjects {
-            element.onConnectionStateChanged?(channelName: channelName,
-                                              connectionStateChanged: state,
-                                              result: reason)
-        }
-        
-        if reason == .changedRejoinSuccess {
-            for element in userDelegates.allObjects {
-                element.onCurrentUserJoined(channelName: channelName)
+        for channelName in event.affectedChannels {
+            if let elements = self.errorDelegates[channelName] {
+                for element in elements.allObjects {
+                    element.didReceiveLinkStateEvent?(event: event)
+                }
             }
+            
+//            if event.currentState == .connected, event.operation == .reconnected {
+//                if let elements = self.userDelegates[channelName] {
+//                    for element in elements.allObjects {
+//                        element.onCurrentUserJoined(channelName: channelName)
+//                    }
+//                }
+//            }
         }
     }
     
@@ -262,18 +286,20 @@ extension AUIRtmMsgProxy: AgoraRtmClientDelegate {
         
         aui_info("didReceiveStorageEvent event: [\(event.target)] channelType: [\(event.channelType.rawValue)] eventType: [\(event.eventType.rawValue)] =======", tag: kAUIRtmMsgProxyKey)
         
-        processTimeStampsDidUpdate(timeStamp: event.timestamp)
-        
-        //key使用channelType__eventType，保证message channel/stream channel, user storage event/channel storage event共存
+        //Key uses channelType__eventType to ensure the coexistence of message channels/flow channels and user storage events/channel storage events.
         let channelName = event.target
+        
+        processTimeStampsDidUpdate(channelName: channelName, timeStamp: event.timestamp)
+        
         processMetaData(channelName: channelName, data: event.data)
         aui_info("storage event[\(channelName)] ========", tag: kAUIRtmMsgProxyKey)
     }
     
     public func rtmKit(_ rtmKit: AgoraRtmClientKit, didReceivePresenceEvent event: AgoraRtmPresenceEvent) {
-        aui_info("[\(event.channelName)] didReceivePresenceEvent event: [\(event.type.rawValue)] channel type: [\(event.channelType.rawValue)]] states: \(event.states.count) =======", tag: kAUIRtmMsgProxyKey)
+        let channelName = event.channelName
+        aui_info("[\(channelName)] didReceivePresenceEvent event: [\(event.type.rawValue)] channel type: [\(event.channelType.rawValue)]] states: \(event.states.count) =======", tag: kAUIRtmMsgProxyKey)
         
-        processTimeStampsDidUpdate(timeStamp: event.timestamp)
+        processTimeStampsDidUpdate(channelName:channelName, timeStamp: event.timestamp)
         
         guard event.channelType == rtmChannelType else {
             return
@@ -293,26 +319,35 @@ extension AUIRtmMsgProxy: AgoraRtmClientDelegate {
 //                return
 //            }
             
-            for element in userDelegates.allObjects {
-                element.onUserDidJoined(channelName: event.channelName, userId: userId, userInfo: map)
+            if let elements = self.userDelegates[event.channelName] {
+                for element in elements.allObjects {
+                    element.onUserDidJoined(channelName: event.channelName, userId: userId, userInfo: map)
+                }
             }
         } else if event.type == .remoteLeaveChannel || event.type == .remoteConnectionTimeout {
-            for element in userDelegates.allObjects {
-                element.onUserDidLeaved(channelName: event.channelName, userId: userId, userInfo: map)
+            let reason: AUIRtmUserLeaveReason = event.type == .remoteLeaveChannel ? .normal : .timeout
+            if let elements = self.userDelegates[event.channelName] {
+                for element in elements.allObjects {
+                    element.onUserDidLeaved(channelName: event.channelName, userId: userId, userInfo: map, reason: reason)
+                }
             }
         } else if event.type == .remoteStateChanged {
             if map.count == 0 {
                 aui_warn("update user fail, empty: userId: \(userId) \(map)", tag: kAUIRtmMsgProxyKey)
                 return
             }
-            for element in userDelegates.allObjects {
-                element.onUserDidUpdated(channelName: event.channelName, userId: userId, userInfo: map)
+            if let elements = self.userDelegates[event.channelName] {
+                for element in elements.allObjects {
+                    element.onUserDidUpdated(channelName: event.channelName, userId: userId, userInfo: map)
+                }
             }
         } else if event.type == .snapshot {
             let userList = event.snapshotList()
-            for element in userDelegates.allObjects {
-                element.onUserSnapshotRecv(channelName: event.channelName, userId: userId, userList: userList)
-                element.onCurrentUserJoined(channelName: event.channelName)
+            if let elements = self.userDelegates[event.channelName] {
+                for element in elements.allObjects {
+                    element.onUserSnapshotRecv(channelName: event.channelName, userId: userId, userList: userList)
+                    element.onCurrentUserJoined(channelName: event.channelName)
+                }
             }
         }
     }
@@ -320,7 +355,7 @@ extension AUIRtmMsgProxy: AgoraRtmClientDelegate {
     public func rtmKit(_ rtmKit: AgoraRtmClientKit, didReceiveMessageEvent event: AgoraRtmMessageEvent) {
         aui_info("[\(event.channelName)]didReceiveMessageEvent  =======", tag: kAUIRtmMsgProxyKey)
         
-        processTimeStampsDidUpdate(timeStamp: event.timestamp)
+        processTimeStampsDidUpdate(channelName: event.channelName, timeStamp: event.timestamp)
         
         var message: String = ""
         if let msg = event.message.stringData {
@@ -339,7 +374,7 @@ extension AUIRtmMsgProxy: AgoraRtmClientDelegate {
     public func rtmKit(_ rtmKit: AgoraRtmClientKit, didReceiveLockEvent event: AgoraRtmLockEvent) {
         aui_info("didReceiveLockEvent[\(event.channelName)]: type: \(event.eventType.rawValue) count: \(event.lockDetailList.count)")
         
-        processTimeStampsDidUpdate(timeStamp: event.timestamp)
+        processTimeStampsDidUpdate(channelName: event.channelName, timeStamp: event.timestamp)
         
         var addLockDetails: [AgoraRtmLockDetail] = []
         var removeLockDetails: [AgoraRtmLockDetail] = []

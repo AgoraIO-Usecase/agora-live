@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.annotation.StyleRes
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -20,16 +21,16 @@ abstract class BaseFixedHeightSheetDialog<B : ViewBinding?> : BaseSheetDialog<B>
     override fun onStart() {
         super.onStart()
         dialog?.window?.setDimAmount(0f)
-//        val h = (heightRadio * resources.displayMetrics.heightPixels).toInt()
-//        val viewRoot: FrameLayout? = dialog?.findViewById(com.google.android.material.R.id.design_bottom_sheet)
-//        viewRoot?.apply {
-//            layoutParams.width = -1
-//            layoutParams.height = h
-//        }
+        val h = (heightRadio * resources.displayMetrics.heightPixels).toInt()
+        val viewRoot: FrameLayout? = dialog?.findViewById(com.google.android.material.R.id.design_bottom_sheet)
+        viewRoot?.apply {
+            layoutParams.width = -1
+            layoutParams.height = h
+        }
 
-        var bottomSheetBehavior = BottomSheetBehavior.from(view?.parent as View) //dialog的高度
-//        bottomSheetBehavior.isHideable = false
-//        bottomSheetBehavior.peekHeight = h
+        var bottomSheetBehavior = BottomSheetBehavior.from(view?.parent as View)
+        bottomSheetBehavior.isHideable = false
+        bottomSheetBehavior.peekHeight = h
     }
 }
 

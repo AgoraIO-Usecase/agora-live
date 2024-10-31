@@ -17,7 +17,6 @@ import org.json.JSONObject
 /**
  * @author create by zhangwei03
  *
- * 打点api
  */
 object ReportApi {
 
@@ -77,10 +76,10 @@ object ReportApi {
             put(ptsObject)
         }
 
-        val src = "agora_ent_demo"
+        val src = "agora_live_demo"
         val ts = System.currentTimeMillis()
         postBody.put("pts", ptsArray)
-        postBody.put("src", src) // 声动互娱src
+        postBody.put("src", src) // agora live src
         postBody.put("ts", ts)
         postBody.put("sign", UUIDUtil.uuid("src=$src&ts=$ts").lowercase())
 

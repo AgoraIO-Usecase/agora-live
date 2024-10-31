@@ -11,7 +11,6 @@ import io.agora.scene.show.databinding.ShowLiveLinkRequestMessageListBinding
 import io.agora.scene.show.service.ShowInteractionInfo
 import io.agora.scene.show.service.ShowInteractionStatus
 import io.agora.scene.show.service.ShowMicSeatApply
-import io.agora.scene.show.service.ShowRoomRequestStatus
 
 /**
  * Live link request fragment
@@ -47,9 +46,8 @@ class LiveLinkRequestFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         linkRequestViewAdapter.setClickListener(object : LiveLinkRequestViewAdapter.OnClickListener {
-            override fun onClick(seatApply: ShowMicSeatApply, position: Int) {
-                // 主播接受连麦
-                mListener?.onAcceptMicSeatItemChosen(seatApply, position)
+            override fun onClick(view: View, seatApply: ShowMicSeatApply, position: Int) {
+                mListener?.onAcceptMicSeatItemChosen(view, seatApply, position)
             }
         })
     }
@@ -77,8 +75,7 @@ class LiveLinkRequestFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.linkRequestList.adapter = linkRequestViewAdapter
         binding.iBtnStopLink.setOnClickListener {
-            // 主播停止连麦
-            mListener?.onStopLinkingChosen()
+            mListener?.onStopLinkingChosen(it)
         }
         binding.smartRefreshLayout.setOnRefreshListener {
             mListener?.onRequestRefreshing()
@@ -106,7 +103,7 @@ class LiveLinkRequestFragment : BaseFragment() {
         if (status == null) {
             binding.iBtnStopLink.isVisible = false
             binding.textLinking.isVisible = false
-        } else if (status == ShowInteractionStatus.onSeat.value) {
+        } else if (status == ShowInteractionStatus.linking) {
             binding.textLinking.isVisible = true
             binding.iBtnStopLink.isVisible = true
             binding.textLinking.text = getString(R.string.show_link_to, userName)
@@ -138,35 +135,6 @@ class LiveLinkRequestFragment : BaseFragment() {
     }
 
     /**
-     * Set seat apply item status
-     *
-     * @param seatApply
-     */
-    fun setSeatApplyItemStatus(seatApply: ShowMicSeatApply) {
-        if (seatApply.status != ShowRoomRequestStatus.accepted.value) {
-            return
-        }
-        val itemCount: Int = linkRequestViewAdapter.itemCount
-        for (i in 0 until itemCount) {
-            linkRequestViewAdapter.getItem(i)?.let {
-                if (it.userId == seatApply.userId) {
-                    linkRequestViewAdapter.replace(
-                        i, ShowMicSeatApply(
-                            it.userId,
-                            it.avatar,
-                            it.userName,
-                            seatApply.status,
-                            it.createAt
-                        )
-                    )
-                    linkRequestViewAdapter.notifyItemChanged(i)
-                    return
-                }
-            }
-        }
-    }
-
-    /**
      * Set listener
      *
      * @param listener
@@ -187,7 +155,7 @@ class LiveLinkRequestFragment : BaseFragment() {
          * @param seatApply
          * @param position
          */
-        fun onAcceptMicSeatItemChosen(seatApply: ShowMicSeatApply, position: Int)
+        fun onAcceptMicSeatItemChosen(view: View, seatApply: ShowMicSeatApply, position: Int)
 
         /**
          * On request refreshing
@@ -199,7 +167,7 @@ class LiveLinkRequestFragment : BaseFragment() {
          * On stop linking chosen
          *
          */
-        fun onStopLinkingChosen()
+        fun onStopLinkingChosen(view: View)
     }
 
     /**
@@ -209,7 +177,7 @@ class LiveLinkRequestFragment : BaseFragment() {
      * @param status
      */
     private fun updateUI(userName: String, status: Int?) {
-        if (status == ShowInteractionStatus.onSeat.value) {
+        if (status == ShowInteractionStatus.linking) {
             binding.textLinking.isVisible = true
             binding.iBtnStopLink.isVisible = true
             binding.textLinking.text = getString(R.string.show_link_to, userName)

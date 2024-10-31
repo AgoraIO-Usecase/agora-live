@@ -7,31 +7,29 @@
 
 import Foundation
 
-/// Scene操作对应的响应
+/// Response corresponding to Scene operation
 @objc public protocol AUISceneRespDelegate: NSObjectProtocol {
     
-    /// 即将更新metadata
+    /// Metadata is about to be updated
     /// - Parameter channelName: <#channelName description#>
-    /// - Returns: 返回的map对象[key: value]，key: collection id，value：初始化结构，为map则是map collection，为array则是list collection
+    /// - Returns: Returned map object [key: value], key: collection id, value: initialization structure, map is map collection, array is list Collection
     @objc optional func onWillInitSceneMetadata(channelName: String) -> [String: Any]?
     
-    
-    /// token即将过期
+    /// Token is about to expire.
     /// - Parameter channelName: <#channelName description#>
     @objc optional func onTokenPrivilegeWillExpire(channelName: String?)
 
-    /// 房间过期的回调
+    /// The callback of the expired room
     /// - Parameter channelName: <#channelName description#>
     @objc optional func onSceneExpire(channelName: String)
     
-    /// 房间被销毁的回调
-    /// - Parameter channelName: 房间id
+    /// The callback of the destroyed room
+    /// - Parameter channelName: Room id
     @objc optional func onSceneDestroy(channelName: String)
     
-    /// Description 房间用户被踢出房间
-    ///
+    /// Description The room is abnormal and needs to be exited
     /// - Parameters:
-    ///   - channelName: 房间id
-    ///   - userId: 用户id
-    @objc optional func onSceneUserBeKicked(channelName: String, userId: String)
+    /// - channelName: room id
+    /// - reason: Abnormal reason
+    @objc optional func onSceneFailed(channelName: String, reason: String)
 }

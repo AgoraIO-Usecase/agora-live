@@ -18,7 +18,6 @@ import io.agora.scene.show.R
 import io.agora.scene.show.databinding.ShowLiveLinkDialogBinding
 import io.agora.scene.show.service.ShowInteractionInfo
 import io.agora.scene.show.service.ShowMicSeatApply
-import io.agora.scene.show.service.ShowRoomRequestStatus
 import io.agora.scene.show.service.ShowUser
 
 /**
@@ -93,7 +92,6 @@ class LiveLinkDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 设置背景透明
         WindowCompat.setDecorFitsSystemWindows(requireDialog().window!!, false)
         requireDialog().setOnShowListener {
             (view.parent as ViewGroup).setBackgroundColor(
@@ -114,30 +112,30 @@ class LiveLinkDialog : BottomSheetDialogFragment() {
 
         if (isRoomOwner) {
             linkFragment.setListener(object: LiveLinkRequestFragment.Listener {
-                override fun onAcceptMicSeatItemChosen(seatApply: ShowMicSeatApply, position: Int) {
-                    linkDialogListener?.onAcceptMicSeatApplyChosen(this@LiveLinkDialog, seatApply)
+                override fun onAcceptMicSeatItemChosen(view: View, seatApply: ShowMicSeatApply, position: Int) {
+                    linkDialogListener?.onAcceptMicSeatApplyChosen(this@LiveLinkDialog, seatApply, view)
                 }
 
                 override fun onRequestRefreshing() {
                     linkDialogListener?.onRequestMessageRefreshing(this@LiveLinkDialog)
                 }
 
-                override fun onStopLinkingChosen() {
-                    linkDialogListener?.onStopLinkingChosen(this@LiveLinkDialog)
+                override fun onStopLinkingChosen(view: View) {
+                    linkDialogListener?.onStopLinkingChosen(this@LiveLinkDialog, view)
                 }
             })
 
             onlineUserFragment.setListener(object: LiveLinkInvitationFragment.Listener {
-                override fun onInviteMicSeatItemChosen(userItem: ShowUser) {
-                    linkDialogListener?.onOnlineAudienceInvitation(this@LiveLinkDialog, userItem)
+                override fun onInviteMicSeatItemChosen(view: View, userItem: ShowUser) {
+                    linkDialogListener?.onOnlineAudienceInvitation(this@LiveLinkDialog, userItem, view)
                 }
 
                 override fun onRequestRefreshing() {
                     linkDialogListener?.onOnlineAudienceRefreshing(this@LiveLinkDialog)
                 }
 
-                override fun onStopLinkingChosen() {
-                    linkDialogListener?.onStopLinkingChosen(this@LiveLinkDialog)
+                override fun onStopLinkingChosen(view: View) {
+                    linkDialogListener?.onStopLinkingChosen(this@LiveLinkDialog, view)
                 }
             })
 
@@ -175,12 +173,12 @@ class LiveLinkDialog : BottomSheetDialogFragment() {
                     linkDialogListener?.onRequestMessageRefreshing(this@LiveLinkDialog)
                 }
 
-                override fun onStopLinkingChosen() {
-                    linkDialogListener?.onStopLinkingChosen(this@LiveLinkDialog)
+                override fun onStopLinkingChosen(view: View) {
+                    linkDialogListener?.onStopLinkingChosen(this@LiveLinkDialog, view)
                 }
 
-                override fun onStopApplyingChosen() {
-                    linkDialogListener?.onStopApplyingChosen(this@LiveLinkDialog)
+                override fun onStopApplyingChosen(view: View) {
+                    linkDialogListener?.onStopApplyingChosen(this@LiveLinkDialog, view)
                 }
             })
 
@@ -255,8 +253,7 @@ class LiveLinkDialog : BottomSheetDialogFragment() {
         if (isRoomOwner) {
             linkFragment.setSeatApplyList(interactionInfo, list)
         } else {
-            val waitList = list.filter { it.status == ShowRoomRequestStatus.waitting.value }
-            audienceFragment.setSeatApplyList(interactionInfo, waitList)
+            audienceFragment.setSeatApplyList(interactionInfo, list)
         }
     }
 
@@ -268,14 +265,6 @@ class LiveLinkDialog : BottomSheetDialogFragment() {
         audienceFragment.setOnApplySuccess()
     }
 
-    /**
-     * Set seat apply item status
-     *
-     * @param applyItem
-     */
-    fun setSeatApplyItemStatus(applyItem: ShowMicSeatApply) {
-        linkFragment.setSeatApplyItemStatus(applyItem)
-    }
 
     /**
      * Set seat invitation list

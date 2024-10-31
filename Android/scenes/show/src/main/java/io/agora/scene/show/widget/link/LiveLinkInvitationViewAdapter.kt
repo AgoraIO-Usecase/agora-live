@@ -4,7 +4,7 @@ import android.view.View
 import io.agora.scene.base.GlideApp
 import io.agora.scene.show.R
 import io.agora.scene.show.databinding.ShowLiveLinkInvitationMessageBinding
-import io.agora.scene.show.service.ShowRoomRequestStatus
+import io.agora.scene.show.service.ShowInteractionStatus
 import io.agora.scene.show.service.ShowUser
 import io.agora.scene.widget.basic.BindingSingleAdapter
 import io.agora.scene.widget.basic.BindingViewHolder
@@ -36,27 +36,17 @@ class LiveLinkInvitationViewAdapter: BindingSingleAdapter<ShowUser, ShowLiveLink
             .transform(CenterCropRoundCornerTransform(10))
             .into(binding.coverUserIcon)
         when (userItem.status) {
-            ShowRoomRequestStatus.accepted.value -> {
+            ShowInteractionStatus.linking -> {
                 binding.btnItemInvite.isEnabled = false
                 binding.btnItemInvite.setText(R.string.show_is_onseat)
                 binding.btnItemInvite.setOnClickListener(null)
             }
-            ShowRoomRequestStatus.idle.value -> {
+            else -> {
                 binding.btnItemInvite.isEnabled = true
                 binding.btnItemInvite.setText(R.string.show_application)
                 binding.btnItemInvite.setOnClickListener {
-                    onClickListener.onClick(userItem, position)
+                    onClickListener.onClick(it, userItem, position)
                 }
-            }
-            ShowRoomRequestStatus.waitting.value -> {
-                binding.btnItemInvite.isEnabled = false
-                binding.btnItemInvite.setText(R.string.show_application_waitting)
-                binding.btnItemInvite.setOnClickListener(null)
-            }
-            ShowRoomRequestStatus.rejected.value -> {
-                binding.btnItemInvite.isEnabled = false
-                binding.btnItemInvite.setText(R.string.show_reject_onseat)
-                binding.btnItemInvite.setOnClickListener(null)
             }
         }
     }
@@ -78,7 +68,7 @@ class LiveLinkInvitationViewAdapter: BindingSingleAdapter<ShowUser, ShowLiveLink
          * @param userItem
          * @param position
          */
-        fun onClick(userItem: ShowUser, position: Int)
+        fun onClick(view: View, userItem: ShowUser, position: Int)
     }
 
     /**

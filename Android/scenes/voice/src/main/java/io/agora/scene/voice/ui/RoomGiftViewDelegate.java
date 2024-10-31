@@ -62,6 +62,8 @@ public class RoomGiftViewDelegate {
             dialog = (GiftBottomDialog) activity.getSupportFragmentManager().findFragmentByTag("live_gift");
             if (dialog == null) {
                 dialog = GiftBottomDialog.getNewInstance();
+            }else {
+                dialog.dismissAllowingStateLoss();
             }
             dialog.show(activity.getSupportFragmentManager(), "live_gift");
             dialog.setOnConfirmClickListener(new OnSendClickListener() {

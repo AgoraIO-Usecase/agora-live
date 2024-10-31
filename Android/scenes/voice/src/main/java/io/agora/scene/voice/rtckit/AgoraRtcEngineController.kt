@@ -2,11 +2,12 @@ package io.agora.scene.voice.rtckit
 
 import android.content.Context
 import android.util.Log
-import io.agora.mediaplayer.Constants.MediaPlayerError
+import io.agora.mediaplayer.Constants.MediaPlayerReason
 import io.agora.mediaplayer.Constants.MediaPlayerState
 import io.agora.mediaplayer.IMediaPlayer
+import io.agora.mediaplayer.data.CacheStatistics
+import io.agora.mediaplayer.data.PlayerPlaybackStats
 import io.agora.rtc2.*
-import io.agora.scene.base.AudioModeration
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.voice.global.VoiceBuddyFactory
 import io.agora.scene.voice.model.SoundAudioBean
@@ -39,8 +40,6 @@ class AgoraRtcEngineController {
 
     private var mLocalUid = 0
 
-    private var mBgmManager: AgoraBGMManager? = null
-
     private var mEarBackManager: AgoraEarBackManager? = null
 
     private var mSoundCardManager: AgoraSoundCardManager? = null
@@ -67,31 +66,17 @@ class AgoraRtcEngineController {
                 TokenGenerator.AgoraTokenType.Rtm
             ),
             { ret ->
-                mRtmToken = ret[TokenGenerator.AgoraTokenType.Rtm] ?: ""
+                mRtmToken = ret
 
                 initRtcEngine(context)
                 this.mLocalUid = rtcUid
                 this.joinCallback = joinCallback
                 VoiceBuddyFactory.get().rtcChannelTemp.broadcaster = broadcaster
                 checkJoinChannel(channelId, rtcUid, soundEffect, broadcaster)
-                AudioModeration.moderationAudio(channelId, rtcUid.toLong(),
-                    AudioModeration.AgoraChannelType.broadcast, "voice", {})
             },{
                 joinCallback?.onError(Constants.ERR_FAILED, "get token error")
             }
         )
-    }
-
-    fun bgmManager(): AgoraBGMManager {
-        if (mBgmManager == null) {
-            mBgmManager = AgoraBGMManager(
-                rtcEngine!!,
-                VoiceBuddyFactory.get().getVoiceBuddy().rtcAppId(),
-                mLocalUid,
-                mRtmToken
-            )
-        }
-        return mBgmManager!!
     }
 
     fun earBackManager(): AgoraEarBackManager? {
@@ -199,7 +184,6 @@ class AgoraRtcEngineController {
                     setAudioScenario(Constants.AUDIO_SCENARIO_GAME_STREAMING)
                     setParameters("{\"che.audio.custom_payload_type\":73}")
                     setParameters("{\"che.audio.custom_bitrate\":128000}")
-                    // setRecordingDeviceVolume(128)
                     setParameters("{\"che.audio.input_channels\":2}")
                 }
             }
@@ -356,9 +340,6 @@ class AgoraRtcEngineController {
     fun destroy() {
         VoiceBuddyFactory.get().rtcChannelTemp.reset()
 
-        mBgmManager?.release()
-        mBgmManager = null
-
         mEarBackManager = null
         mSoundCardManager = null
 
@@ -379,7 +360,7 @@ class AgoraRtcEngineController {
     private var mediaPlayer:IMediaPlayer?=null
 
     private val firstMediaPlayerObserver = object : MediaPlayerObserver() {
-        override fun onPlayerStateChanged(state: MediaPlayerState?, error: MediaPlayerError?) {
+        override fun onPlayerStateChanged(state: MediaPlayerState?, error: MediaPlayerReason?) {
             "firstMediaPlayerObserver onPlayerStateChanged state:$state error:$error".logD(TAG)
 
             when (state) {
@@ -405,10 +386,21 @@ class AgoraRtcEngineController {
 
         override fun onPositionChanged(position_ms: Long, timestamp_ms: Long) {
         }
+
+        override fun onPlayerCacheStats(stats: CacheStatistics?) {
+
+        }
+
+        override fun onPlayerPlaybackStats(stats: PlayerPlaybackStats?) {
+        }
     }
 
     private fun openMediaPlayer(url: String, soundSpeaker: Int = ConfigConstants.BotSpeaker.BotBlue) {
         mediaPlayer?.open(url, 0)
         this.soundSpeakerType = soundSpeaker
+    }
+
+    fun renewRtcToken(rtcToken: String){
+        rtcEngine?.renewToken(rtcToken)
     }
 }
