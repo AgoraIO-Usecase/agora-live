@@ -843,7 +843,7 @@ class LiveDetailFragment : Fragment() {
                 bottomLayout.flPK.isVisible = true
                 bottomLayout.flLinking.isVisible = true
                 bottomLayout.ivLinking.imageTintList =
-                    ColorStateList.valueOf(context.resources.getColor(R.color.grey_7e))
+                    ColorStateList.valueOf(context.resources.getColor(io.agora.scene.base.R.color.grey_7e))
                 mSettingDialog.apply {
                     resetSettingsItem()
                 }
@@ -875,7 +875,7 @@ class LiveDetailFragment : Fragment() {
 
                 bottomLayout.flLinking.isVisible = true
                 bottomLayout.ivLinking.imageTintList =
-                    ColorStateList.valueOf(context.resources.getColor(R.color.grey_7e))
+                    ColorStateList.valueOf(context.resources.getColor(io.agora.scene.base.R.color.grey_7e))
             }
         }
     }
@@ -1485,8 +1485,8 @@ class LiveDetailFragment : Fragment() {
         mMicInvitationDialog = AlertDialog.Builder(requireContext(), R.style.show_alert_dialog).apply {
             setCancelable(false)
             setTitle(getString(R.string.show_ask_for_link, mRoomInfo.ownerName))
-            setPositiveButton(R.string.accept, null)
-            setNegativeButton(R.string.decline) { dialog, which ->
+            setPositiveButton(io.agora.scene.base.R.string.accept, null)
+            setNegativeButton(io.agora.scene.base.R.string.decline) { dialog, which ->
                 updateIdleMode()
                 val button = (dialog as? AlertDialog)?.getButton(which)
                 button?.isEnabled = false
@@ -1524,14 +1524,14 @@ class LiveDetailFragment : Fragment() {
             }
         }
         mMicInvitationDialog?.show()
-        if (mLinkInvitationCountDownLatch != null) {
-            mLinkInvitationCountDownLatch!!.cancel()
+        mLinkInvitationCountDownLatch?.let {
+            it.cancel()
             mLinkInvitationCountDownLatch = null
         }
         mLinkInvitationCountDownLatch = object : CountDownTimer(15 * 1000 - 1, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 mMicInvitationDialog?.getButton(DialogInterface.BUTTON_NEGATIVE)?.text =
-                    "${getString(R.string.decline)}(" + millisUntilFinished / 1000 + "s)"
+                    "${getString(io.agora.scene.base.R.string.decline)}(" + millisUntilFinished / 1000 + "s)"
             }
 
             override fun onFinish() {
@@ -1649,8 +1649,8 @@ class LiveDetailFragment : Fragment() {
         mPKInvitationDialog = AlertDialog.Builder(requireContext(), R.style.show_alert_dialog).apply {
             setCancelable(false)
             setTitle(getString(R.string.show_ask_for_pk, name))
-            setPositiveButton(R.string.accept, null)
-            setNegativeButton(R.string.decline) { dialog, which ->
+            setPositiveButton(io.agora.scene.base.R.string.accept, null)
+            setNegativeButton(io.agora.scene.base.R.string.decline) { dialog, which ->
                 updateIdleMode()
                 val button = (dialog as? AlertDialog)?.getButton(which)
                 button?.isEnabled = false
@@ -1693,7 +1693,7 @@ class LiveDetailFragment : Fragment() {
         mPKInvitationCountDownLatch = object : CountDownTimer(15 * 1000 - 1, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 mPKInvitationDialog?.getButton(DialogInterface.BUTTON_NEGATIVE)?.text =
-                    "${getString(R.string.decline)}(${millisUntilFinished / 1000}s)"
+                    "${getString(io.agora.scene.base.R.string.decline)}(${millisUntilFinished / 1000}s)"
             }
 
             override fun onFinish() {

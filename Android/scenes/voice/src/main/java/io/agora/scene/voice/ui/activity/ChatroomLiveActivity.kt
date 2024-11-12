@@ -354,7 +354,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                     if (reason == VoiceRoomServiceKickedReason.destroyed) {
                         innerRelease()
                         roomObservableDelegate.onTimeUpExitRoom(
-                            getString(R.string.room_has_close), finishBack = {
+                            getString(io.agora.scene.base.R.string.room_has_close), finishBack = {
                                 finish()
                             })
                     } else if (reason == VoiceRoomServiceKickedReason.removed) {
@@ -413,7 +413,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                 ThreadManager.getInstance().runOnMainThread {
                     innerRelease()
                     roomObservableDelegate.onTimeUpExitRoom(
-                        getString(R.string.room_has_close), finishBack = {
+                        getString(io.agora.scene.base.R.string.room_has_close), finishBack = {
                             finish()
                         })
                 }
@@ -429,7 +429,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
             override fun onSyncRoomDestroy() {
                 innerRelease()
                 roomObservableDelegate.onTimeUpExitRoom(
-                    getString(R.string.room_has_close), finishBack = {
+                    getString(io.agora.scene.base.R.string.room_has_close), finishBack = {
                         finish()
                     })
             }

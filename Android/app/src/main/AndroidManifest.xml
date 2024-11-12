@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.agora.entfulldemo">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -12,8 +11,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-
-<!--    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />-->
 
     <!-- read and write permissions for external storage -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -76,7 +73,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <service android:name="io.agora.scene.widget.uploader.FloatMonkService"/>
+        <service android:name="io.agora.scene.base.uploader.FloatMonkService"/>
     </application>
 
 </manifest>

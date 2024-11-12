@@ -48,7 +48,7 @@ class CreateRoomDialog constructor(
 
     private fun setTips(tips: String) {
         mBinding.apply {
-            val icon = ContextCompat.getDrawable(root.context, R.mipmap.ic_tip_error)
+            val icon = ContextCompat.getDrawable(root.context, io.agora.scene.base.R.mipmap.ic_tip_error)
             icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
             val spannableString = SpannableString("  $tips")
             val imageSpan = ImageSpan(icon!!, ImageSpan.ALIGN_BASELINE)
@@ -152,7 +152,7 @@ class CreateRoomDialog constructor(
     private fun addLoadingView() {
         if (this.loadingView == null) {
             val rootView = window?.decorView?.findViewById<ViewGroup>(android.R.id.content)?.getChildAt(0) as ViewGroup
-            this.loadingView = LayoutInflater.from(context).inflate(R.layout.view_base_loading, rootView, false)
+            this.loadingView = LayoutInflater.from(context).inflate(io.agora.scene.base.R.layout.view_base_loading, rootView, false)
             rootView.addView(
                 this.loadingView,
                 ViewGroup.LayoutParams(-1, -1)
