@@ -39,8 +39,16 @@ CLOUD_PLAYER_SECRET=<Your Agora Customer Secret>
 ```
 
 6. Obtain beauty resources and certificate files from FaceUnity:
-   * Copy beauty certificate file `authpack.java` to `scenes/show/src/main/java/io/agora/scene/show/beauty` directory
-   * Copy beauty resource files to `scenes/show/src/main/assets/beauty_faceunity` directory
+- Configure the package name applicationId corresponding to the certificate in [app/build.gradle](../../app/build.gradle).
+       
+- Put the FaceUnity beauty resources into the corresponding path.
+
+   | FaceUnity Beauty Resources          | Location                                                                  |
+   |-------------------------------------|---------------------------------------------------------------------------|
+   | makeup resource (e.g. naicha.bundle) | scenes/show/src/main/assets/beauty_faceunity/makeup                               |
+   | sticker resource (e.g. fashi.bundle) | scenes/show/src/main/assets/beauty_faceunity/sticker                              |
+   | animoji resource (e.g. kaola.bundle) | scenes/show/src/main/assets/beauty_faceunity/animoji                              |
+   | authpack.java                       | scenes/show/src/main/java/io/agora/scene/show/beauty/authpack.java  |
 ```json
 If this step is not executed, you will not be able to experience the beauty feature.
 ```
