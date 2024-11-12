@@ -9,13 +9,12 @@
 
 ## Prerequisites
 
-- Xcode 14 or higher.
-- A mobile device that runs iPhone 13.0 or higher.
-- FU beauty authpack file.
+- Xcode 14 or higher
+- A mobile device that runs iPhone 13.0 or higher
 
 ## Project Setup
 
-1. Follow [The Account Document](https://docs.agora.io/en/video-calling/reference/manage-agora-account) to get the **App ID** and **App Certificate(if enable token)**.
+1. Follow [The Account Document](https://docs.agora.io/en/video-calling/reference/manage-agora-account) to get the **App ID** and **App Certificate (if token is enabled)**.
 2. Follow [Signaling Beginner's guide](https://docs.agora.io/en/signaling/get-started/beginners-guide?platform=ios) to enable signaling in Agora Console.You should enable the following:
 * Using storage
 * User attribute callback
@@ -30,7 +29,7 @@
 	```
 5. Now you can run the project with Xcode to experience the application.
 
-## Source Code sitemap
+## Source Code Sitemap
 
 | Path(iOS/AgoraEntScenarios/Scenes/Commerce) | Description                                                                          |
 |--------------------------------------------------|--------------------------------------------------------------------------------------|
@@ -46,13 +45,13 @@
 
 If you have any problems or suggestions regarding the sample projects, feel free to file an issue.
 
-## Related resources
+## Related Resources
 
 - Check our [FAQ](https://docs.agora.io/en/faq) to see if your issue has been recorded.
 - Dive into [Agora SDK Samples](https://github.com/AgoraIO) to see more tutorials.
-- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated real use case.
+- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated real use cases.
 - Repositories managed by developer communities can be found at [Agora Community](https://github.com/AgoraIO-Community).
-- If you encounter problems during integration, feel free to ask questions in [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io).
+- If you encounter problems during integration, feel free to ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io).
 
 ## License
 

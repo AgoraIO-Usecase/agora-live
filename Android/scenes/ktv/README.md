@@ -9,9 +9,9 @@
 
 ## 1. Prerequisites
 
-- <mark>Minimum compatibility with Android 7.0</mark>(SDK API Level 24).
-- Android SDK API Level 21 or higher.
-- A mobile device that runs Android 5.0 or higher.
+- Android Studio 4.0 or higher
+- Android SDK API Level 24 or higher
+- A mobile device that runs Android 7.0 or higher
 
 ---
 
@@ -230,13 +230,13 @@
 
 If you have any problems or suggestions regarding the sample projects, feel free to file an issue.
 
-## Related resources
+## Related Resources
 
 - Check our [FAQ](https://docs.agora.io/en/faq) to see if your issue has been recorded.
 - Dive into [Agora SDK Samples](https://github.com/AgoraIO) to see more tutorials.
-- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated real use case.
+- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated real use cases.
 - Repositories managed by developer communities can be found at [Agora Community](https://github.com/AgoraIO-Community).
-- If you encounter problems during integration, feel free to ask questions in [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io).
+- If you encounter problems during integration, feel free to ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io).
 
 ## License
 
