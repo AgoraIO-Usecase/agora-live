@@ -1,11 +1,8 @@
-# Live Streaming[README.md](..%2F..%2F..%2FREADME.md)
+# Live Streaming
 
-> This document introduces how to quickly run through <mark>Live Streaming</mark> sample project.
+This document introduces how to quickly run through Live Streaming sample project.
 
-<figure class="third">
-  <img src="https://download.agora.io/demo/release/LiveStreamingShot01.png" width="300" height="640" />
-  <img src="https://download.agora.io/demo/release/LiveStreamingShot02.png" width="300" height="640" />
-</figure>
+<img src="https://download.agora.io/demo/release/LiveStreamingShot01.png" width="300" height="640" /><img src="https://download.agora.io/demo/release/LiveStreamingShot02.png" width="300" height="640" />
 
 ## Prerequisites
 

@@ -1,8 +1,10 @@
 # Audio Chatroom
 
-> This document introduces how to quickly run through <mark>Audio Chatroom</mark> sample project.
+This document introduces how to quickly run through Audio Chatroom sample project.
 
->  <img src="https://download.agora.io/demo/release/VoiceChatShot01.png" width="300" height="640" /><img src="https://download.agora.io/demo/release/VoiceChatShot02.png" width="300" height="640" />
+Demo effect:
+
+<img src="https://download.agora.io/demo/release/VoiceChatShot01.png" width="300" height="640" /><img src="https://download.agora.io/demo/release/VoiceChatShot02.png" width="300" height="640" />
   
 ## Prerequisites
 

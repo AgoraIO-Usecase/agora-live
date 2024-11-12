@@ -1,11 +1,10 @@
 # E-Commerce
 
-> This document introduces how to quickly run through <mark>E-Commerce</mark> sample project.
+This document introduces how to quickly run through E-Commerce sample project.
 
-<figure class="third">
-  <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/agora-live/readme/images/commerce/v1.2.0/screenshot_ios_01.png" width="300" height="640" />
-  <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/agora-live/readme/images/commerce/v1.2.0/screenshot_ios_02.png" width="300" height="640" />
-</figure>
+Demo effect:
+
+<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/agora-live/readme/images/commerce/v1.2.0/screenshot_ios_01.png" width="300" height="640" /><img src="https://fullapp.oss-cn-beijing.aliyuncs.com/agora-live/readme/images/commerce/v1.2.0/screenshot_ios_02.png" width="300" height="640" />
 
 ## Prerequisites
 

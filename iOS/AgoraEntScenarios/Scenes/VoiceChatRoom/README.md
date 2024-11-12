@@ -1,10 +1,10 @@
 # Audio Chatroom
 
-> This document introduces how to quickly run through <mark>Audio Chatroom</mark> sample project.
+This document introduces how to quickly run through Audio Chatroom sample project.
 
+Demo effect:
 
-<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/agora-live/readme/images/voicechat/v1.2.0/screenshot_ios_01.png" width="300" height="640">
-<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/agora-live/readme/images/voicechat/v1.2.0/screenshot_ios_02.png" width="300" height="640">
+<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/agora-live/readme/images/voicechat/v1.2.0/screenshot_ios_01.png" width="300" height="640"><img src="https://fullapp.oss-cn-beijing.aliyuncs.com/agora-live/readme/images/voicechat/v1.2.0/screenshot_ios_02.png" width="300" height="640">
 
 ---
 

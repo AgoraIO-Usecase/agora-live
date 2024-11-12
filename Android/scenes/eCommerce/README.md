@@ -1,6 +1,8 @@
 # E-Commerce
 
-This document introduces how to quickly run through the E-Commerce sample project.
+This document introduces how to quickly run through E-Commerce sample project.
+
+Demo effect:
 
 <img src="https://download.agora.io/demo/release/CommerceShot01.png" width="300" height="640" /> <img src="https://download.agora.io/demo/release/CommerceShot02.png" width="300" height="640" />
 

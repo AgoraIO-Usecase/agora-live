@@ -1,10 +1,10 @@
 # Online KTV
 
-> This document mainly explains how to quickly run through the <mark> Online KTV </mark> sample project.
->
-> Demo effect:
-> 
-> <img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/ktv_130_1.png" width="300" height="640"><img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/ktv_130_2.png" width="300" height="640">
+This document mainly explains how to quickly run through Online KTV sample project.
+
+Demo effect:
+
+<img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/ktv_130_1.png" width="300" height="640"><img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/ktv_130_2.png" width="300" height="640">
 ---
 
 ## 1. Prerequisites

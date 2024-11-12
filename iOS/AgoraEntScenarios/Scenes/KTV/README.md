@@ -1,10 +1,10 @@
 # Online KTV
 
-> This document mainly introduces how to quickly run through the <mark>online KTV</mark> sample project
-> 
-> Demo Effect:
-> 
-> <img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/agora-live/ktv_create_room.png" width="300" height="640"><img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/agora-live/ktv_room_detail.png" width="300" height="640">
+This document mainly introduces how to quickly run through the online KTV sample project
+
+Demo effect:
+
+<img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/agora-live/ktv_create_room.png" width="300" height="640"><img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/agora-live/ktv_room_detail.png" width="300" height="640">
 
 ## Prerequisites
 
