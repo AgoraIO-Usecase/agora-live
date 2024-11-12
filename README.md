@@ -18,8 +18,7 @@
 
 * Demo Screenshots:
 
-<img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/agora-live/home_page_1.png?" width="320" height="640">
-<img src="https://download.agora.io/demo/release/AgoraLiveShot02.png" width="320" height="640" />
+<img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/agora-live/home_page_1.png?" width="320" height="640"><img src="https://download.agora.io/demo/release/AgoraLiveShot02.png" width="320" height="640" />
 
 ## Feedback
 
