@@ -38,7 +38,9 @@ CLOUD_PLAYER_KEY=<Your Agora Customer ID>
 CLOUD_PLAYER_SECRET=<Your Agora Customer Secret>
 ```
 
-6. Obtain the beauty authpack file from FaceUnity, and then copy the beauty authpack file `authpack.java` to `scenes/show/src/main/java/io/agora/scene/show/beauty` direction.
+6. Obtain beauty resources and certificate files from FaceUnity:
+   * Copy beauty certificate file `authpack.java` to `scenes/show/src/main/java/io/agora/scene/show/beauty` directory
+   * Copy beauty resource files to `scenes/show/src/main/assets/beauty_faceunity` directory
 ```json
 If this step is not executed, you will not be able to experience the beauty feature.
 ```

@@ -57,7 +57,7 @@ dependencies {
 
     implementation rootProject.ext.deps.rtm
 
-    if (BEAUTY_RESOURCE = "") {
+    if (BEAUTY_RESOURCE == "") {
         implementation 'com.faceunity:model:8.7.0'
     }
     implementation 'com.faceunity:core:8.7.0'
