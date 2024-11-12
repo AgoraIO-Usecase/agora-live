@@ -2,13 +2,15 @@
 
 This document introduces how to quickly run through Live Streaming sample project.
 
+Demo effect:
+
 <img src="https://download.agora.io/demo/release/LiveStreamingShot01.png" width="300" height="640" /><img src="https://download.agora.io/demo/release/LiveStreamingShot02.png" width="300" height="640" />
 
 ## Prerequisites
 
-- Xcode 14 or higher.
-- A mobile device that runs iPhone 13.0 or higher.
-- FU beauty authpack file.
+- Xcode 14 or higher
+- A mobile device that runs iPhone 13.0 or higher
+- FU beauty authpack file
 
 ## Project Setup
 
