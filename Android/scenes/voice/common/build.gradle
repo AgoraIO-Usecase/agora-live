@@ -1,9 +1,12 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
+}
 
 android {
-    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    namespace 'io.agora.voice.common'
+    compileSdk rootProject.ext.android.compileSdkVersion
     defaultConfig {
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
@@ -22,10 +25,14 @@ android {
     }
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
     resourcePrefix "voice_"
 }

@@ -48,7 +48,7 @@ public class HomeMineFragment extends BaseViewBindingFragment<AppFragmentHomeMin
                 .transform(new CenterCropRoundCornerTransform(999))
                 .into(getBinding().ivUserAvatar);
         getBinding().tvUserMobile.setText(user.name);
-        getBinding().tvUserID.setText(getString(R.string.id_is_, user.userNo));
+        getBinding().tvUserID.setText(getString(io.agora.scene.base.R.string.id_is_, user.userNo));
     }
 
     @SuppressLint("SetTextI18n")
@@ -83,7 +83,7 @@ public class HomeMineFragment extends BaseViewBindingFragment<AppFragmentHomeMin
             debugModeDialog = new CommonDialog(requireContext());
             debugModeDialog.setDialogTitle(getString(R.string.app_exit_debug));
             debugModeDialog.setDescText(getString(R.string.app_exit_debug_tip));
-            debugModeDialog.setDialogBtnText(getString(R.string.cancel), getString(R.string.app_exit));
+            debugModeDialog.setDialogBtnText(getString(io.agora.scene.base.R.string.cancel), getString(R.string.app_exit));
             debugModeDialog.setOnButtonClickListener(new OnButtonClickListener() {
                 @Override
                 public void onLeftButtonClick() {

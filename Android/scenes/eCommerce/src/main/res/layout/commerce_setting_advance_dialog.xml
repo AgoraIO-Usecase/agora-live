@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_gravity="bottom"
-        android:background="@color/show_deliver"/>
+        android:background="@color/commerce_deliver"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager2"

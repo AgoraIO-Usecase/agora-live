@@ -168,7 +168,7 @@ class AboutUsActivity : BaseViewBindingActivity<AppActivityAboutUsBinding>() {
         dialog.setDialogTitle(getString(R.string.app_exit_debug))
         dialog.setDescText(getString(R.string.app_exit_debug_tip))
         dialog.setDialogBtnText(
-            getString(R.string.cancel),
+            getString(io.agora.scene.base.R.string.cancel),
             getString(R.string.app_exit)
         )
         dialog.onButtonClickListener = object : OnButtonClickListener {
