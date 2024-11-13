@@ -33,6 +33,21 @@ If this step is not executed, you will not be able to see the video in robot roo
 	```
 5. Now you can run the project with Xcode to experience the application.
 
+6. Reach out to FaceUnity for the latest Beauty SDK, resources, and certificate. Extract and add the following files to your project:
+
+| Resource Files | Project Path |
+|----------------|--------------|
+| [Model Files](https://github.com/Faceunity/FULiveDemo/tree/master/FURenderKit/Resources/model) | `iOS/FULib/Resources/model/*.bundle` |
+| [Graphics Files](https://github.com/Faceunity/FULiveDemo/tree/master/FURenderKit/Resources/graphics) | `iOS/FULib/Resources/graphics/*.bundle` |
+| Makeup Resources (e.g., naicha.bundle) | `iOS/FULib/Resources/makeup/*.bundle` |
+| Sticker Resources (e.g., fashi.bundle) | `iOS/FULib/Resources/stickers/*.bundle` |
+| `authpack.h` | `iOS/BeautyAPi/FUBeauty/authpack.h` |
+
+Update your Podfile with:
+    ```ruby
+    pod 'fuLib', :path => 'fu.podspec'
+    ```
+
 ## Source Code Sitemap
 
 | Path(iOS/AgoraEntScenarios/Scenes/Show) | Description                                                                          |
