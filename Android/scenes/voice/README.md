@@ -1,14 +1,16 @@
 # Audio Chatroom
 
-> This document introduces how to quickly run through <mark>Audio Chatroom</mark> sample project.
+This document introduces how to quickly run through Audio Chatroom sample project.
 
->  <img src="https://download.agora.io/demo/release/VoiceChatShot01.png" width="300" height="640" /><img src="https://download.agora.io/demo/release/VoiceChatShot02.png" width="300" height="640" />
+Demo effect:
+
+<img src="https://download.agora.io/demo/release/VoiceChatShot01.png" width="300" height="640" /><img src="https://download.agora.io/demo/release/VoiceChatShot02.png" width="300" height="640" />
   
 ## Prerequisites
 
-- Android Studio 3.5 or higher.
-- Android SDK API Level 21 or higher.
-- A mobile device that runs Android 5.0 or higher.
+- Android Studio 4.0 or higher
+- Android SDK API Level 24 or higher
+- A mobile device that runs Android 7.0 or higher
 
 ## Project Setup
 
@@ -47,13 +49,13 @@ IM_APP_CLIENT_SECRET=
 
 If you have any problems or suggestions regarding the sample projects, feel free to file an issue.
 
-## Related resources
+## Related Resources
 
 - Check our [FAQ](https://docs.agora.io/en/faq) to see if your issue has been recorded.
 - Dive into [Agora SDK Samples](https://github.com/AgoraIO) to see more tutorials.
-- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated real use case.
+- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated real use cases.
 - Repositories managed by developer communities can be found at [Agora Community](https://github.com/AgoraIO-Community).
-- If you encounter problems during integration, feel free to ask questions in [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io).
+- If you encounter problems during integration, feel free to ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io).
 
 ## License
 
