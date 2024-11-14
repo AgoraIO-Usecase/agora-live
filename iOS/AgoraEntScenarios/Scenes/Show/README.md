@@ -41,7 +41,7 @@ If this step is not executed, you will not be able to see the video in robot roo
 | [Graphics Files](https://github.com/Faceunity/FULiveDemo/tree/master/FURenderKit/Resources/graphics) | `iOS/FULib/Resources/graphics/*.bundle` |
 | Makeup Resources (e.g., naicha.bundle) | `iOS/FULib/Resources/makeup/*.bundle` |
 | Sticker Resources (e.g., fashi.bundle) | `iOS/FULib/Resources/stickers/*.bundle` |
-| `authpack.h` | `iOS/BeautyAPi/FUBeauty/authpack.h` |
+| `authpack.h` | `iOS/FULib/authpack.h` |
 
 Update your Podfile with:
     ```ruby
