@@ -15,8 +15,13 @@ Demo effect:
 ## Project Setup
 
 1. Follow [The Account Document](https://docs.agora.io/en/video-calling/reference/manage-agora-account) to get the **App ID** and **App Certificate**.
-2. Follow [Enable and configure Chat](https://docs.agora.io/en/agora-chat/get-started/enable?platform=android) to enable Chat in Agora Console and get the **IM_APP_KEY**, **IM_APP_CLIENT_ID** and **IM_APP_CLIENT_SECRET**.
-3. Open the `Android` project and fill in properties got above to the root [gradle.properties](../gradle.properties) file.
+2. Follow [Signaling Beginner's Guide](https://docs.agora.io/en/signaling/get-started/beginners-guide?platform=android) to enable signaling in Agora Console. You should enable the following:
+* Using storage
+* User attribute callback
+* Channel attribute callback
+* Distributed lock
+3. Follow [Enable and configure Chat](https://docs.agora.io/en/agora-chat/get-started/enable?platform=android) to enable Chat in Agora Console and get the **IM_APP_KEY**, **IM_APP_CLIENT_ID** and **IM_APP_CLIENT_SECRET**.
+4. Open the `Android` project and fill in properties got above to the root [gradle.properties](../gradle.properties) file.
 
 ``` 
 # RTC SDK key Config
