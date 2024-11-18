@@ -74,6 +74,18 @@ class VLLoginViewController: VRBaseViewController {
         button.layer.cornerRadius = 26
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
+//        button.addTarget(self, action: #selector(onClickLoginButton(sender:)), for: .touchUpInside)
+        return button
+    }()
+    private lazy var ssoLoginButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Login", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 26
+        button.layer.masksToBounds = true
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(onClickLoginButton(sender:)), for: .touchUpInside)
         return button
     }()
@@ -101,12 +113,19 @@ class VLLoginViewController: VRBaseViewController {
         backgroundTextImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         backgroundTextImageView.topAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
+        view.addSubview(ssoLoginButton)
+        ssoLoginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        ssoLoginButton.heightAnchor.constraint(equalToConstant: 52).isActive = true
+        ssoLoginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 35).isActive = true
+        ssoLoginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -35).isActive = true
+        ssoLoginButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50).isActive = true
+        
         view.addSubview(loginButton)
         loginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         loginButton.heightAnchor.constraint(equalToConstant: 52).isActive = true
         loginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 35).isActive = true
         loginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -35).isActive = true
-        loginButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50).isActive = true
+        loginButton.bottomAnchor.constraint(equalTo: ssoLoginButton.topAnchor, constant: -20).isActive = true
                 
         view.addSubview(policyContailerView)
         policyContailerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -153,16 +172,40 @@ class VLLoginViewController: VRBaseViewController {
             }
             return
         }
-        let model = VLLoginModel()
-        model.userNo = "\(Int.random(in: 10000...9999999))"
-        model.chat_uid = model.userNo
-        model.rtc_uid = model.userNo
-        model.id = model.userNo
-        let names = ["Ezra", "Pledge", "Bonnie", "Seeds", "Shannon", "Red-Haired", "Montague", "Primavera", "Lucille", "Tess"]
-        model.name = names.randomElement() ?? ""
-        model.headUrl = "avatar_\(Int.random(in: 1...4))"
-        VLUserCenter.shared().storeUserInfo(model)
-        UIApplication.shared.delegate?.window??.configRootViewController()
+//        let model = VLLoginModel()
+//        model.userNo = "\(Int.random(in: 10000...9999999))"
+//        model.chat_uid = model.userNo
+//        model.rtc_uid = model.userNo
+//        model.id = model.userNo
+//        let names = ["Ezra", "Pledge", "Bonnie", "Seeds", "Shannon", "Red-Haired", "Montague", "Primavera", "Lucille", "Tess"]
+//        model.name = names.randomElement() ?? ""
+//        model.headUrl = "avatar_\(Int.random(in: 1...4))"
+//        VLUserCenter.shared().storeUserInfo(model)
+//        UIApplication.shared.delegate?.window??.configRootViewController()
+        let ssoWebVC = SSOWebViewController()
+        let baseUrl = KeyCenter.debugBaseServerUrl ?? ""
+        ssoWebVC.urlString = "\(baseUrl)/sso/login"
+        ssoWebVC.completionHandler = { token in
+            if let token = token {
+                print("Received token: \(token)")
+                let model = VLLoginModel()
+                model.userNo = "\(Int.random(in: 10000...9999999))"
+                model.chat_uid = model.userNo
+                model.rtc_uid = model.userNo
+                model.id = model.userNo
+                model.token = token
+                let names = ["Ezra", "Pledge", "Bonnie", "Seeds", "Shannon", "Red-Haired", "Montague", "Primavera", "Lucille", "Tess"]
+                model.name = names.randomElement() ?? ""
+                model.headUrl = "avatar_\(Int.random(in: 1...4))"
+                VLUserCenter.shared().storeUserInfo(model)
+
+                UIApplication.shared.delegate?.window??.configRootViewController()
+                // 处理获取到的token
+            } else {
+                print("Failed to get token")
+            }
+        }
+        navigationController?.pushViewController(ssoWebVC, animated: true)
     }
     
     private func pushToWebView(url: String) {
