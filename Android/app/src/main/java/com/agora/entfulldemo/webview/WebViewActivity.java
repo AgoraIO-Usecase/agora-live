@@ -29,7 +29,7 @@ import io.agora.scene.base.utils.GsonUtils;
  *
  */
 public class WebViewActivity extends BaseViewBindingActivity<AppActivityWebviewBinding> {
-    private static final String EXTRA_URL = "url";
+    public static final String EXTRA_URL = "url";
 
     /**
      * h5 url.
@@ -47,7 +47,6 @@ public class WebViewActivity extends BaseViewBindingActivity<AppActivityWebviewB
         intent.putExtra(EXTRA_URL, url);
         context.startActivity(intent);
     }
-
     @Override
     protected AppActivityWebviewBinding getViewBinding(@NonNull LayoutInflater layoutInflater) {
         return AppActivityWebviewBinding.inflate(layoutInflater);

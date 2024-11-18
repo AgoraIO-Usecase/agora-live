@@ -17,3 +17,24 @@ open class BaseResponse<T> : Serializable {
 }
 
 data class UploadLogResponse constructor(val logId: String): BaseResponse<UploadLogResponse>()
+
+data class SSOUserInfo constructor(
+    val accountUid: String,
+    val accountType: String,
+    val email: String,
+    val verifyPhone: String,
+    val companyId: Int,
+    val profileId: Int,
+    val displayName: String,
+    val companyName: String,
+    val companyCountry: String
+): BaseResponse<UploadLogResponse>(){
+
+    companion object{
+
+        @JvmStatic
+        fun emptyUser(): SSOUserInfo {
+            return SSOUserInfo("", "", "", "", 0, 0, "", "", "")
+        }
+    }
+}

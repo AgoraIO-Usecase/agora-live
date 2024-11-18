@@ -52,6 +52,10 @@
         <activity
             android:name="com.agora.entfulldemo.webview.WebViewActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.agora.entfulldemo.webview.SSOWebViewActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.agora.entfulldemo.home.mine.AboutUsActivity"
             android:screenOrientation="portrait" />

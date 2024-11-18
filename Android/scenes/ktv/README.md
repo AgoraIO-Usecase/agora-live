@@ -18,7 +18,12 @@
 ## 2.Project Setup
 
 1. Follow [The Account Document](https://docs.agora.io/en/video-calling/reference/manage-agora-account) to get the **App ID** and **App Certificate**.
-2. Open the `Android` project and fill in properties got above to the root [gradle.properties](../../gradle.properties) file.
+2. Follow [Signaling Beginner's Guide](https://docs.agora.io/en/signaling/get-started/beginners-guide?platform=android) to enable signaling in Agora Console. You should enable the following:
+* Using storage
+* User attribute callback
+* Channel attribute callback
+* Distributed lock
+3. Open the `Android` project and fill in properties got above to the root [gradle.properties](../../gradle.properties) file.
 
   ``` 
     # RTC SDK key Config
