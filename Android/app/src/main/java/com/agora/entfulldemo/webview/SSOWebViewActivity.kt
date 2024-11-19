@@ -9,6 +9,8 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
+import androidx.core.view.isVisible
+import com.agora.entfulldemo.R
 
 class SSOWebViewActivity : WebViewActivity() {
 
@@ -20,17 +22,32 @@ class SSOWebViewActivity : WebViewActivity() {
         super.onCreate(savedInstanceState)
 
         binding?.apply {
+            titleView.setTitle(getString(R.string.app_name))
             webView.webViewClient = object : CustomWebView.MyWebViewClient() {
+                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                    val url = request?.url.toString()
+
+                    if (url.contains("v1/sso/callback") && !url.contains("redirect_uri")) {
+                        Log.d(TAG, "start login url = $url")
+                        viewEmpty.isVisible = true
+                        showLoadingView()
+                        return false
+                    }
+                    return super.shouldOverrideUrlLoading(view, request)
+                }
+
                 override fun onPageFinished(view: WebView, url: String) {
                     super.onPageFinished(view, url)
-                    view.title?.let { title ->
-                        binding?.titleView?.setTitle(title)
+                    if (url.contains("v1/sso/callback") && !url.contains("redirect_uri")) {
+                        Log.d(TAG, "onPageFinished url = $url")
+                        injectJavaScript()
                     }
-                    injectJavaScript()
                 }
 
                 override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
                     super.onReceivedError(view, request, error)
+                    hideLoadingView()
+                    binding.viewEmpty.isVisible = false
                     Log.e(TAG, "onReceivedError ${error?.description}")
                 }
             }
@@ -74,13 +91,18 @@ class SSOWebViewActivity : WebViewActivity() {
 
             // If it's a token, perform the corresponding action
             if (!response.startsWith("Error")) {
+                Log.d(TAG, "handleResponse success response = $response")
                 // Process the token, e.g., save it to SharedPreferences
                 Log.d(TAG, "Token: $response")
                 // Here you can save the token or perform other actions
+                hideLoadingView()
                 setResult(Activity.RESULT_OK, Intent().putExtra("token", response))
                 finish()
             } else {
+                Log.d(TAG, "handleResponse error response = $response")
                 // Handle error messages
+                hideLoadingView()
+                binding.viewEmpty.isVisible = false
                 Log.e(TAG, response)
             }
         }
