@@ -1,7 +1,5 @@
 package io.agora.scene.base.manager;
 
-import android.text.TextUtils;
-
 import java.util.Random;
 
 import io.agora.scene.base.Constant;
@@ -41,8 +39,12 @@ public final class UserManager {
 
         User user = new User();
         user.headUrl = getOrRandomAvatar();
-        user.name = ssoUserInfo.getDisplayName();
-        user.id = (long) ssoUserInfo.getProfileId();
+        String displayName = ssoUserInfo.getDisplayName();
+        if (displayName == null || displayName.isEmpty()) {
+            displayName = getOrRandomNickname();
+        }
+        user.name = displayName;
+        user.id = (long) ssoUserInfo.getAccountUid().hashCode();
         user.userNo = user.id + "";
 
         mUser = user;
@@ -56,9 +58,13 @@ public final class UserManager {
      * @return the string
      */
     public String updateUserName(String name) {
-//        mUser.name = name;
-//        saveUserInfo(mUser);
-        return mUser.name;
+        if (mUser != null) {
+            mUser.name = name;
+            SPUtil.putString(Constant.CURRENT_NICKNAME, name);
+            return mUser.name;
+        }
+        return "";
+
     }
 
     /**
@@ -84,6 +90,22 @@ public final class UserManager {
         return avatar;
     }
 
+    private String randomName() {
+        String[] names = new String[]{"Ezra", "Pledge", "Bonnie", "Seeds", "Shannon", "Red-Haired", "Montague", "Primavera", "Lucille", "Tess"};
+        int index = new Random().nextInt(100) % names.length;
+        return names[index];
+    }
+
+    private String getOrRandomNickname() {
+        String nickname = SPUtil.getString(Constant.CURRENT_NICKNAME, "");
+        if (nickname.isEmpty()) {
+            nickname = randomName();
+            SPUtil.putString(Constant.CURRENT_NICKNAME, nickname);
+        }
+        return nickname;
+    }
+
+
     /**
      * Gets instance.
      *
@@ -98,5 +120,9 @@ public final class UserManager {
             }
         }
         return instance;
+    }
+
+    public void clear() {
+        mUser = null;
     }
 }

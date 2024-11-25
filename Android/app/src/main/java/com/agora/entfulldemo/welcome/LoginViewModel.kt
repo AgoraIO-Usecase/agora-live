@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.agora.scene.base.api.ApiManager
 import io.agora.scene.base.api.ApiManagerService
+import io.agora.scene.base.api.InvitationLoginReq
 import io.agora.scene.base.api.SSOUserInfo
 import io.agora.scene.base.manager.SSOUserManager
 import io.agora.scene.widget.toast.CustomToast
@@ -28,18 +29,65 @@ class LoginViewModel : ViewModel() {
     }
 
     fun getUserInfoByToken(token: String) {
+        if (SSOUserManager.isInvitationUser()) {
+            viewModelScope.launch {
+                runCatching {
+                    apiService.invitationUserInfo("Bearer $token")
+                }.onSuccess { result ->
+                    if (result.isSuccess && result.data != null) {
+                        SSOUserManager.saveUser(result.data!!)
+                        _userInfoLiveData.postValue(result.data)
+                    } else {
+                        SSOUserManager.logout()
+                        _userInfoLiveData.postValue(null)
+                    }
+                }.onFailure {
+                    SSOUserManager.logout()
+                    _userInfoLiveData.postValue(null)
+                    CustomToast.show("Get User data error:${it.message}")
+                    it.printStackTrace()
+                }
+            }
+        } else {
+            viewModelScope.launch {
+                runCatching {
+                    apiService.ssoUserInfo("Bearer $token")
+                }.onSuccess { result ->
+                    if (result.isSuccess && result.data != null) {
+                        SSOUserManager.saveUser(result.data!!)
+                        _userInfoLiveData.postValue(result.data)
+                    } else {
+                        SSOUserManager.logout()
+                        _userInfoLiveData.postValue(null)
+                    }
+                }.onFailure {
+                    SSOUserManager.logout()
+                    _userInfoLiveData.postValue(null)
+                    CustomToast.show("Get User data error:${it.message}")
+                    it.printStackTrace()
+                }
+            }
+        }
+    }
+
+    fun invitationLogin(invitationCode: String) {
+        val accountUid = SSOUserManager.getOrCreateAccountUid()
         viewModelScope.launch {
             runCatching {
-                apiService.ssoUserInfo("Bearer $token")
+                apiService.invitationLogin(InvitationLoginReq(invitationCode, accountUid))
             }.onSuccess { result ->
                 if (result.isSuccess && result.data != null) {
-                    SSOUserManager.saveUser(result.data!!)
-                    _userInfoLiveData.postValue(result.data)
+                    val token = result.data?.token ?: ""
+                    SSOUserManager.setInvitationUser(true)
+                    SSOUserManager.saveToken(token)
+                    _tokenLiveData.postValue(token)
                 } else {
-                    _userInfoLiveData.postValue(null)
+                    _tokenLiveData.postValue(null)
+                    CustomToast.show("Invalid Code. Please try again.")
                 }
             }.onFailure {
-                CustomToast.showError("Get User data error:${it.message}")
+                _tokenLiveData.postValue(null)
+                CustomToast.show("Invalid Code. Please try again.")
                 it.printStackTrace()
             }
         }
