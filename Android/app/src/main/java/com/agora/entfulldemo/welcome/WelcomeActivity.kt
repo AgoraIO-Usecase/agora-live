@@ -173,7 +173,6 @@ class WelcomeActivity : BaseViewBindingActivity<AppActivityWelcomeBinding>() {
                 }
             }
         }
-
         mLoginViewModel.tokenLiveData.observe(this) { token ->
             if (!token.isNullOrEmpty()) {
                 gotoHomeActivity()
@@ -199,6 +198,7 @@ class WelcomeActivity : BaseViewBindingActivity<AppActivityWelcomeBinding>() {
 
     private fun gotoHomeActivity() {
         startActivity(Intent(this@WelcomeActivity, MainActivity::class.java))
+        overridePendingTransition(0,0)
         finish()
     }
 
