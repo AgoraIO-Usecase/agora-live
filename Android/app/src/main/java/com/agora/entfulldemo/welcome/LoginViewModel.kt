@@ -1,5 +1,6 @@
 package com.agora.entfulldemo.welcome
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,8 +12,11 @@ import io.agora.scene.base.api.SSOUserInfo
 import io.agora.scene.base.manager.SSOUserManager
 import io.agora.scene.widget.toast.CustomToast
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class LoginViewModel : ViewModel() {
+
+    private val TAG = "LoginViewModel"
 
     private val apiService by lazy {
         ApiManager.getApi(ApiManagerService::class.java)
@@ -40,12 +44,15 @@ class LoginViewModel : ViewModel() {
                     } else {
                         SSOUserManager.logout()
                         _userInfoLiveData.postValue(null)
+                        CustomToast.show("Login expired")
                     }
-                }.onFailure {
+                }.onFailure { e ->
                     SSOUserManager.logout()
                     _userInfoLiveData.postValue(null)
-                    CustomToast.show("Get User data error:${it.message}")
-                    it.printStackTrace()
+                    CustomToast.show("Login expired")
+                    if ((e is HttpException) && e.code() == 401) {
+                        Log.e(TAG, "Login timeout, please log in again.")
+                    }
                 }
             }
         } else {
@@ -59,12 +66,15 @@ class LoginViewModel : ViewModel() {
                     } else {
                         SSOUserManager.logout()
                         _userInfoLiveData.postValue(null)
+                        CustomToast.show("Login expired")
                     }
-                }.onFailure {
+                }.onFailure { e ->
                     SSOUserManager.logout()
                     _userInfoLiveData.postValue(null)
-                    CustomToast.show("Get User data error:${it.message}")
-                    it.printStackTrace()
+                    CustomToast.show("Login expired")
+                    if ((e is HttpException) && e.code() == 401) {
+                        Log.e(TAG, "Login timeout, please log in again.")
+                    }
                 }
             }
         }

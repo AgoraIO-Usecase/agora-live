@@ -13,11 +13,6 @@ public final class Constant {
     }
 
     /**
-     * The constant CURRENT_USER.
-     */
-//    public static final String CURRENT_USER = "current_user";
-
-    /**
      * The constant CURRENT_AVATAR.
      */
     public static final String CURRENT_AVATAR = "current_avatar";

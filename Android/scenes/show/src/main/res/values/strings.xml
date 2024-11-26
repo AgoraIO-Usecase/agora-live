@@ -264,6 +264,8 @@
     <string name="show_beauty_strength">Intensity</string>
     <string name="show_beauty_item_virtual_bg_blur">Blur</string>
     <string name="show_beauty_item_virtual_bg_mitao">Peach</string>
+    <string name="show_beauty_item_virtual_bg_office">Office</string>
+    <string name="show_beauty_item_virtual_bg_beach">Beach</string>
     <string name="show_beauty_green_screen_tip">To ensure the best virtual background effect, please make sure you have set up a green screen in your actual environment. Otherwise, the virtual background will not take effect.</string>
     <string name="show_live_detail_living_end">The live stream has ended.</string>
     <string name="show_live_detail_living_end_error">Network issue. Please re-enter the room.</string>

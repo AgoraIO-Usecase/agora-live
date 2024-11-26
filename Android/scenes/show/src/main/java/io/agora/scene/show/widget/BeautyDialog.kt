@@ -64,9 +64,11 @@ import io.agora.scene.show.beauty.ITEM_ID_EFFECT_TIANMEI
 import io.agora.scene.show.beauty.ITEM_ID_STICKER_CAT
 import io.agora.scene.show.beauty.ITEM_ID_STICKER_ELK
 import io.agora.scene.show.beauty.ITEM_ID_STICKER_NONE
+import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_BEACH
 import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_BLUR
 import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_MITAO
 import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_NONE
+import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_OFFICE
 import io.agora.scene.show.databinding.ShowWidgetBeautyDialogBottomBinding
 import io.agora.scene.show.databinding.ShowWidgetBeautyDialogItemBinding
 import io.agora.scene.show.databinding.ShowWidgetBeautyDialogPageBinding
@@ -383,6 +385,16 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                     R.string.show_beauty_item_virtual_bg_mitao,
                     R.mipmap.show_beauty_ic_virtual_bg_mitao
                 ),
+                ItemInfo(
+                    ITEM_ID_VIRTUAL_BG_OFFICE,
+                    R.string.show_beauty_item_virtual_bg_office,
+                    R.mipmap.show_beauty_ic_virtual_bg_mitao
+                ),
+                ItemInfo(
+                    ITEM_ID_VIRTUAL_BG_BEACH,
+                    R.string.show_beauty_item_virtual_bg_beach,
+                    R.mipmap.show_beauty_ic_virtual_bg_mitao
+                )
             ),
             when (RtcEngineInstance.virtualBackgroundSource.backgroundSourceType) {
                 VirtualBackgroundSource.BACKGROUND_BLUR -> 1
@@ -688,6 +700,26 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                             RtcEngineInstance.virtualBackgroundSource.apply {
                                 backgroundSourceType = VirtualBackgroundSource.BACKGROUND_IMG
                                 source = FileUtils.copyFileFromAssets(context, "virtualbackgroud_mitao.jpg", context.externalCacheDir!!.absolutePath)
+                            },
+                            SegmentationProperty(if (greenScreen) SegmentationProperty.SEG_MODEL_GREEN else SegmentationProperty.SEG_MODEL_AI, greenScreenStrength)
+                        )
+                    }
+                    ITEM_ID_VIRTUAL_BG_OFFICE -> {
+                        RtcEngineInstance.rtcEngine.enableVirtualBackground(
+                            true,
+                            RtcEngineInstance.virtualBackgroundSource.apply {
+                                backgroundSourceType = VirtualBackgroundSource.BACKGROUND_IMG
+                                source = FileUtils.copyFileFromAssets(context, "virtualbackgroud_office.png", context.externalCacheDir!!.absolutePath)
+                            },
+                            SegmentationProperty(if (greenScreen) SegmentationProperty.SEG_MODEL_GREEN else SegmentationProperty.SEG_MODEL_AI, greenScreenStrength)
+                        )
+                    }
+                    ITEM_ID_VIRTUAL_BG_BEACH -> {
+                        RtcEngineInstance.rtcEngine.enableVirtualBackground(
+                            true,
+                            RtcEngineInstance.virtualBackgroundSource.apply {
+                                backgroundSourceType = VirtualBackgroundSource.BACKGROUND_IMG
+                                source = FileUtils.copyFileFromAssets(context, "virtualbackgroud_beach.png", context.externalCacheDir!!.absolutePath)
                             },
                             SegmentationProperty(if (greenScreen) SegmentationProperty.SEG_MODEL_GREEN else SegmentationProperty.SEG_MODEL_AI, greenScreenStrength)
                         )

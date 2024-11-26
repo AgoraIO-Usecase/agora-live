@@ -44,7 +44,7 @@ public final class UserManager {
             displayName = getOrRandomNickname();
         }
         user.name = displayName;
-        user.id = (long) ssoUserInfo.getAccountUid().hashCode();
+        user.id = (long) Math.abs(ssoUserInfo.getAccountUid().hashCode());
         user.userNo = user.id + "";
 
         mUser = user;

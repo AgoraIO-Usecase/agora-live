@@ -10,12 +10,14 @@ import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.util.TypedValue.COMPLEX_UNIT_SP
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
 import android.view.inputmethod.InputMethodManager
+import android.webkit.CookieManager
 import android.widget.CompoundButton
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -202,7 +204,20 @@ class WelcomeActivity : BaseViewBindingActivity<AppActivityWelcomeBinding>() {
         finish()
     }
 
+   private fun clearCookies() {
+        val cookieManager = CookieManager.getInstance()
+        cookieManager.removeAllCookies { success ->
+            if (success) {
+                Log.d("clearCookies","Cookies successfully removed")
+            } else {
+                Log.d("clearCookies","Failed to remove cookies")
+            }
+        }
+        cookieManager.flush()
+    }
+
     private fun startSSOLogin() {
+        clearCookies()
         val intent = Intent(this, SSOWebViewActivity::class.java)
         intent.putExtra(WebViewActivity.EXTRA_URL, BuildConfig.TOOLBOX_SERVER_HOST + "/v1/sso/login")
         activityResultLauncher.launch(intent)
