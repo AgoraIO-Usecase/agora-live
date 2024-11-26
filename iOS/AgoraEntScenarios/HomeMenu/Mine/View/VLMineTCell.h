@@ -7,10 +7,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+
+typedef void(^VLMineCellTapCallBack)(void);
 @interface VLMineTCell : UITableViewCell
 
 @property (nonatomic, strong) NSDictionary *dict;
-
+@property (nonatomic, copy) VLMineCellTapCallBack tapCallback;
 @property (nonatomic, strong) UIImageView *iconImgView;
 @property (nonatomic, strong) UILabel *itemTitleLabel;
 @property (nonatomic, strong) UIImageView *arrowImgView;

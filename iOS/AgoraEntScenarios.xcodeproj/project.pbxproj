@@ -582,8 +582,13 @@
 		F70CAB912C76E1DD000B0F61 /* GradientProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB8F2C76E1DC000B0F61 /* GradientProgressBar.swift */; };
 		F70CAB922C76E1DD000B0F61 /* LRCLodingProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB902C76E1DD000B0F61 /* LRCLodingProgressView.swift */; };
 		F7426C352CEAE028008384BF /* SSOWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7426C342CEAE028008384BF /* SSOWebViewController.swift */; };
+		F7426C9C2CF060D0008384BF /* CodeLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7426C9B2CF060D0008384BF /* CodeLoginViewController.swift */; };
+		F7426C9E2CF08C0A008384BF /* InviteCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7426C9D2CF08C0A008384BF /* InviteCodeViewController.swift */; };
+		F7426CA62CF56FBE008384BF /* LoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7426CA52CF56FBE008384BF /* LoginManager.swift */; };
+		F7426CAA2CF59FB4008384BF /* LoginRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7426CA92CF59FB4008384BF /* LoginRequestModel.swift */; };
 		F7533F932C62184100108911 /* VLLogToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7533F922C62184100108911 /* VLLogToast.swift */; };
 		F7533F972C62249E00108911 /* VoiceLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7533F962C62249E00108911 /* VoiceLogger.swift */; };
+		F762DDB72CF5AB3A00505157 /* LoginApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F762DDB62CF5AB3A00505157 /* LoginApiService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1327,8 +1332,13 @@
 		F70CAB8F2C76E1DC000B0F61 /* GradientProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientProgressBar.swift; sourceTree = "<group>"; };
 		F70CAB902C76E1DD000B0F61 /* LRCLodingProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LRCLodingProgressView.swift; sourceTree = "<group>"; };
 		F7426C342CEAE028008384BF /* SSOWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSOWebViewController.swift; sourceTree = "<group>"; };
+		F7426C9B2CF060D0008384BF /* CodeLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeLoginViewController.swift; sourceTree = "<group>"; };
+		F7426C9D2CF08C0A008384BF /* InviteCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteCodeViewController.swift; sourceTree = "<group>"; };
+		F7426CA52CF56FBE008384BF /* LoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginManager.swift; sourceTree = "<group>"; };
+		F7426CA92CF59FB4008384BF /* LoginRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRequestModel.swift; sourceTree = "<group>"; };
 		F7533F922C62184100108911 /* VLLogToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLLogToast.swift; sourceTree = "<group>"; };
 		F7533F962C62249E00108911 /* VoiceLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceLogger.swift; sourceTree = "<group>"; };
+		F762DDB62CF5AB3A00505157 /* LoginApiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginApiService.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -2221,6 +2231,7 @@
 				DD619C0329E3E81D008F63E4 /* AboutAgoraEntertainmentViewController.swift */,
 				DD8416C829090C520026B624 /* VLMineViewController.h */,
 				DD8416C929090C520026B624 /* VLMineViewController.m */,
+				F7426C9D2CF08C0A008384BF /* InviteCodeViewController.swift */,
 				F70CAB7E2C75D823000B0F61 /* DebugModeViewController.swift */,
 			);
 			path = ViewController;
@@ -2240,6 +2251,8 @@
 		DD8416D029090C520026B624 /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				F7426CA42CF56F89008384BF /* Manager */,
+				F7426C9F2CF56CA2008384BF /* Service */,
 				DD8416D129090C520026B624 /* Controller */,
 				DD8416D429090C520026B624 /* Model */,
 			);
@@ -2250,6 +2263,7 @@
 			isa = PBXGroup;
 			children = (
 				E72F624C2A8097DF00C963D2 /* VLLoginViewController.swift */,
+				F7426C9B2CF060D0008384BF /* CodeLoginViewController.swift */,
 				F7426C342CEAE028008384BF /* SSOWebViewController.swift */,
 			);
 			path = Controller;
@@ -3408,6 +3422,23 @@
 			path = Progress;
 			sourceTree = "<group>";
 		};
+		F7426C9F2CF56CA2008384BF /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				F7426CA92CF59FB4008384BF /* LoginRequestModel.swift */,
+				F762DDB62CF5AB3A00505157 /* LoginApiService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		F7426CA42CF56F89008384BF /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				F7426CA52CF56FBE008384BF /* LoginManager.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -3746,6 +3777,7 @@
 				E732CD282B47EC6D004D6FB9 /* AgoraChatRoomBaseAlienCollectionViewCell.swift in Sources */,
 				DD84177D29090C520026B624 /* VLHomeItemModel.m in Sources */,
 				F7533F972C62249E00108911 /* VoiceLogger.swift in Sources */,
+				F762DDB72CF5AB3A00505157 /* LoginApiService.swift in Sources */,
 				DD84178429090C520026B624 /* VLDiscoveryViewController.m in Sources */,
 				DD3610C629B70CDC00CE7984 /* ShowToolMenuView.swift in Sources */,
 				DDA199F628FFE579009D3E61 /* UIImage+Color.swift in Sources */,
@@ -3884,6 +3916,7 @@
 				A84C2D152B4FB01700D6EFCF /* CommerceDebugPrivateParamsVC.swift in Sources */,
 				A84C2D4D2B4FB01700D6EFCF /* CommerceAuctionResultView.swift in Sources */,
 				DD84178829090C520026B624 /* VLMineViewController.m in Sources */,
+				F7426C9E2CF08C0A008384BF /* InviteCodeViewController.swift in Sources */,
 				DD619C0A29E3E84D008F63E4 /* ContactInfoCell.swift in Sources */,
 				A8F904952B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift in Sources */,
 				A84C2D552B4FB01700D6EFCF /* CommerceDebugSetting1TFCell.swift in Sources */,
@@ -3969,6 +4002,7 @@
 				E732CD392B47EC6D004D6FB9 /* VoiceMusicListView.swift in Sources */,
 				DDDDDC3728FFD78C005F4E8B /* AppContext.swift in Sources */,
 				DDA19A0228FFE579009D3E61 /* UIGestureRecognizer+VL.m in Sources */,
+				F7426C9C2CF060D0008384BF /* CodeLoginViewController.swift in Sources */,
 				E732CCE02B47EC6D004D6FB9 /* HeadSetUtil.swift in Sources */,
 				E732CD0F2B47EC6D004D6FB9 /* VoiceRoomAudioSettingDetailViewController.swift in Sources */,
 				A84C2D4F2B4FB01700D6EFCF /* CommerceSettingActionSheetFooterView.swift in Sources */,
@@ -3978,6 +4012,7 @@
 				E732CCFC2B47EC6D004D6FB9 /* VRRoomEntity.swift in Sources */,
 				E732CCDD2B47EC6D004D6FB9 /* VoiceRoomBusinessRequest.swift in Sources */,
 				DD36108D29B70CDC00CE7984 /* ShowSelectQualityVC.swift in Sources */,
+				F7426CAA2CF59FB4008384BF /* LoginRequestModel.swift in Sources */,
 				E732CD802B47F654004D6FB9 /* VLNetworkModel.swift in Sources */,
 				DD36108E29B70CDC00CE7984 /* ShowBeautySettingVC.swift in Sources */,
 				DDCBEAFE2C33BD4D00A64FCC /* VLKTVSliderView.m in Sources */,
@@ -4171,6 +4206,7 @@
 				E732CD0D2B47EC6D004D6FB9 /* VoiceRoomAlertViewController.swift in Sources */,
 				E732CD2F2B47EC6D004D6FB9 /* VRSoundCardMicCell.swift in Sources */,
 				E732CD252B47EC6D004D6FB9 /* VMUserListView.swift in Sources */,
+				F7426CA62CF56FBE008384BF /* LoginManager.swift in Sources */,
 				A8F904922B4BDE1700A4C5A7 /* ShowDebugPrivateParamsVC.swift in Sources */,
 				DD3610B429B70CDC00CE7984 /* ShowPresettingFooterView.swift in Sources */,
 				DD3610D029B70F3800CE7984 /* VLMineCellModel.m in Sources */,

@@ -811,6 +811,22 @@ class BeautyModel: BeautyBaseModel {
         model.value = 0.5
         dataArray.append(model)
         
+        model = BeautyModel()
+        model.key = "show_live_vb-office"
+        model.path = "show_live_vb-office"
+        model.name = "show_beauty_item_filter_office".show_localized
+        model.icon = "show_bg_peach"
+        model.value = 0.5
+        dataArray.append(model)
+        
+        model = BeautyModel()
+        model.key = "show_live_vb-beach"
+        model.path = "show_live_vb-beach"
+        model.name = "show_beauty_item_filter_beach".show_localized
+        model.icon = "show_bg_peach"
+        model.value = 0.5
+        dataArray.append(model)
+        
         return dataArray
     }
 }

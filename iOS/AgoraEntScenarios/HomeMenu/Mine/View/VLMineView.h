@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef enum : NSUInteger {
     VLMineViewClickTypeUserProtocol = 0,   // User agreement
     VLMineViewClickTypeAboutUS,            // About us
+    VLMineViewClickTypeInviteCode,         // Invite code
     VLMineViewClickTypeDebug               //  Debug mode
 } VLMineViewClickType;
 

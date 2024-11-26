@@ -318,7 +318,10 @@ class ShowAgoraKitManager: NSObject {
     func seVirtualtBackgoundImage(imagePath: String?, isOn: Bool, greenCapacity: Float = 0) {
         guard let bundlePath = Bundle.main.path(forResource: "showResource", ofType: "bundle"),
               let bundle = Bundle(path: bundlePath) else { return }
-        let imgPath = bundle.path(forResource: imagePath, ofType: "jpg")
+        var imgPath = bundle.path(forResource: imagePath, ofType: "jpg")
+        if imgPath == nil {
+            imgPath = bundle.path(forResource: imagePath, ofType: "png")
+        }
         let source = AgoraVirtualBackgroundSource()
         source.backgroundSourceType = .img
         source.source = imgPath

@@ -7,6 +7,58 @@
 
 import UIKit
 
+class GradientView: UIView {
+    private let gradientLayer = CAGradientLayer()
+    private let button: UIButton
+
+    init(buttonTitle: String) {
+        self.button = UIButton(type: .system)
+        super.init(frame: .zero)
+        setupView(buttonTitle: buttonTitle)
+    }
+    
+    override init(frame: CGRect) {
+        self.button = UIButton(type: .system)
+        super.init(frame: frame)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupView(buttonTitle: String) {
+        gradientLayer.colors = [UIColor(red: 208/255, green: 146/255, blue: 255/255, alpha: 1).cgColor,
+                                UIColor.white.cgColor,
+                                UIColor(red: 66/255, green: 255/255, blue: 249/255, alpha: 1).cgColor]
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
+        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
+        layer.addSublayer(gradientLayer)
+
+        button.setTitle(buttonTitle, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+        button.backgroundColor = UIColor(hex: "#7B52F2")
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(button)
+        
+        button.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(1)
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        gradientLayer.frame = bounds
+        button.layer.cornerRadius = CGRectGetHeight(self.bounds) / 2.0
+        button.layer.masksToBounds = true
+    }
+    
+    func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
+        button.addTarget(target, action: action, for: controlEvents)
+    }
+}
+
 @objc
 class VLLoginViewController: VRBaseViewController {
     private lazy var backgroundIconImageView: UIImageView = {
@@ -17,12 +69,6 @@ class VLLoginViewController: VRBaseViewController {
     }()
     private lazy var backgroundHalfImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "login_background_image_half"))
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    private lazy var backgroundTextImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "login_background_text"))
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -65,29 +111,24 @@ class VLLoginViewController: VRBaseViewController {
         button.alpha = 0
         return button
     }()
-    private lazy var loginButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Enter now", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
-        button.backgroundColor = .white
-        button.layer.cornerRadius = 26
-        button.layer.masksToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.addTarget(self, action: #selector(onClickLoginButton(sender:)), for: .touchUpInside)
-        return button
-    }()
     private lazy var ssoLoginButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Login", for: .normal)
+        button.setTitle("Agora Console SSO", for: .normal)
         button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
         button.backgroundColor = .white
         button.layer.cornerRadius = 26
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(onClickLoginButton(sender:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(onClickSSOLoginButton(sender:)), for: .touchUpInside)
         return button
+    }()
+    private lazy var codeLoginButton: GradientView = {
+        let view = GradientView(buttonTitle: "Login with a code")
+        view.layer.cornerRadius = 26
+        view.layer.masksToBounds = true
+        view.addTarget(self, action: #selector(onClickCodeLoginButton(sender:)), for: .touchUpInside)
+        return view
     }()
     
     override func viewDidLoad() {
@@ -99,51 +140,60 @@ class VLLoginViewController: VRBaseViewController {
         view.layer.contents = UIImage(named: "login_background_image")?.cgImage
         
         view.addSubview(backgroundIconImageView)
-        backgroundIconImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        backgroundIconImageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        backgroundIconImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        backgroundIconImageView.snp.makeConstraints { (make) in
+            make.leading.equalTo(view.snp.leading)
+            make.top.equalTo(view.snp.top)
+            make.trailing.equalTo(view.snp.trailing)
+        }
         
         view.addSubview(backgroundHalfImageView)
-        backgroundHalfImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        backgroundHalfImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        backgroundHalfImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        backgroundHalfImageView.snp.makeConstraints { (make) in
+            make.leading.equalTo(view.snp.leading)
+            make.bottom.equalTo(view.snp.bottom)
+            make.trailing.equalTo(view.snp.trailing)
+        }
         
-        view.addSubview(backgroundTextImageView)
-        backgroundTextImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        backgroundTextImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        backgroundTextImageView.topAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
-        view.addSubview(ssoLoginButton)
-        ssoLoginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        ssoLoginButton.heightAnchor.constraint(equalToConstant: 52).isActive = true
-        ssoLoginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 35).isActive = true
-        ssoLoginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -35).isActive = true
-        ssoLoginButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50).isActive = true
-        
-        view.addSubview(loginButton)
-        loginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        loginButton.heightAnchor.constraint(equalToConstant: 52).isActive = true
-        loginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 35).isActive = true
-        loginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -35).isActive = true
-        loginButton.bottomAnchor.constraint(equalTo: ssoLoginButton.topAnchor, constant: -20).isActive = true
-                
         view.addSubview(policyContailerView)
-        policyContailerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        policyContailerView.bottomAnchor.constraint(equalTo: loginButton.topAnchor, constant: -18).isActive = true
+        policyContailerView.snp.makeConstraints { (make) in
+            make.centerX.equalTo(view.snp.centerX)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-53)
+        }
         
         policyContailerView.addSubview(agreeButton)
-        agreeButton.leadingAnchor.constraint(equalTo: policyContailerView.leadingAnchor).isActive = true
-        agreeButton.topAnchor.constraint(equalTo: policyContailerView.topAnchor).isActive = true
-        agreeButton.bottomAnchor.constraint(equalTo: policyContailerView.bottomAnchor).isActive = true
+        agreeButton.snp.makeConstraints { (make) in
+            make.leading.equalTo(policyContailerView.snp.leading)
+            make.top.equalTo(policyContailerView.snp.top)
+            make.bottom.equalTo(policyContailerView.snp.bottom)
+        }
         
         policyContailerView.addSubview(policyButton)
-        policyButton.leadingAnchor.constraint(equalTo: agreeButton.trailingAnchor).isActive = true
-        policyButton.centerYAnchor.constraint(equalTo: policyContailerView.centerYAnchor).isActive = true
-        policyButton.trailingAnchor.constraint(equalTo: policyContailerView.trailingAnchor).isActive = true
+        policyButton.snp.makeConstraints { (make) in
+            make.leading.equalTo(agreeButton.snp.trailing)
+            make.centerY.equalTo(policyContailerView.snp.centerY)
+            make.trailing.equalTo(policyContailerView.snp.trailing)
+        }
+                
+        view.addSubview(codeLoginButton)
+        codeLoginButton.snp.makeConstraints { (make) in
+            make.height.equalTo(52)
+            make.leading.equalTo(view.snp.leading).offset(35)
+            make.trailing.equalTo(view.snp.trailing).offset(-35)
+            make.bottom.equalTo(policyContailerView.snp.top).offset(-30)
+        }
+        
+        view.addSubview(ssoLoginButton)
+        ssoLoginButton.snp.makeConstraints { (make) in
+            make.height.equalTo(52)
+            make.leading.equalTo(view.snp.leading).offset(35)
+            make.trailing.equalTo(view.snp.trailing).offset(-35)
+            make.bottom.equalTo(codeLoginButton.snp.top).offset(-20)
+        }
         
         view.addSubview(policyTipsButton)
-        policyTipsButton.leadingAnchor.constraint(equalTo: agreeButton.leadingAnchor, constant: -20).isActive = true
-        policyTipsButton.bottomAnchor.constraint(equalTo: policyContailerView.topAnchor).isActive = true
+        policyTipsButton.snp.makeConstraints { (make) in
+            make.leading.equalTo(agreeButton.snp.leading).offset(-20)
+            make.bottom.equalTo(policyContailerView.snp.top)
+        }
     }
     
     @objc
@@ -154,8 +204,9 @@ class VLLoginViewController: VRBaseViewController {
     private func onClickPolicyButton(sender: UIButton) {
         pushToWebView(url: kURLPathH5TermsOfService)
     }
+    
     @objc
-    private func onClickLoginButton(sender: UIButton) {
+    private func onClickCodeLoginButton(sender: UIButton) {
         if agreeButton.isSelected == false {
             policyTipsButton.alpha = 1.0
             let shakeAnimation = CAKeyframeAnimation(keyPath: "position")
@@ -172,16 +223,35 @@ class VLLoginViewController: VRBaseViewController {
             }
             return
         }
-//        let model = VLLoginModel()
-//        model.userNo = "\(Int.random(in: 10000...9999999))"
-//        model.chat_uid = model.userNo
-//        model.rtc_uid = model.userNo
-//        model.id = model.userNo
-//        let names = ["Ezra", "Pledge", "Bonnie", "Seeds", "Shannon", "Red-Haired", "Montague", "Primavera", "Lucille", "Tess"]
-//        model.name = names.randomElement() ?? ""
-//        model.headUrl = "avatar_\(Int.random(in: 1...4))"
-//        VLUserCenter.shared().storeUserInfo(model)
-//        UIApplication.shared.delegate?.window??.configRootViewController()
+        
+        let codeLoginVC = CodeLoginViewController()
+        codeLoginVC.modalPresentationStyle = .overFullScreen
+        codeLoginVC.view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        codeLoginVC.loginCompletedCallback = {
+            UIApplication.shared.delegate?.window??.configRootViewController()
+        }
+        self.present(codeLoginVC, animated: false)
+    }
+    
+    @objc
+    private func onClickSSOLoginButton(sender: UIButton) {
+        if agreeButton.isSelected == false {
+            policyTipsButton.alpha = 1.0
+            let shakeAnimation = CAKeyframeAnimation(keyPath: "position")
+            shakeAnimation.duration = 0.1
+            shakeAnimation.repeatCount = 2
+            shakeAnimation.values = [
+                NSValue(cgPoint: CGPoint(x: policyTipsButton.center.x - 2.0, y: policyTipsButton.center.y)),
+                NSValue(cgPoint: CGPoint(x: policyTipsButton.center.x + 2.0, y: policyTipsButton.center.y))
+            ]
+            shakeAnimation.autoreverses = true
+            policyTipsButton.layer.add(shakeAnimation, forKey: nil)
+            UIView.animate(withDuration: 0.25, delay: 2.5) {
+                self.policyTipsButton.alpha = 0
+            }
+            return
+        }
+        
         let ssoWebVC = SSOWebViewController()
         let baseUrl = KeyCenter.debugBaseServerUrl ?? ""
         ssoWebVC.urlString = "\(baseUrl)/sso/login"
@@ -189,25 +259,24 @@ class VLLoginViewController: VRBaseViewController {
             if let token = token {
                 print("Received token: \(token)")
                 let model = VLLoginModel()
-                model.userNo = "\(Int.random(in: 10000...9999999))"
-                model.chat_uid = model.userNo
-                model.rtc_uid = model.userNo
-                model.id = model.userNo
                 model.token = token
-                let names = ["Ezra", "Pledge", "Bonnie", "Seeds", "Shannon", "Red-Haired", "Montague", "Primavera", "Lucille", "Tess"]
-                model.name = names.randomElement() ?? ""
-                model.headUrl = "avatar_\(Int.random(in: 1...4))"
+                model.type = .SSOLOGIN
                 VLUserCenter.shared().storeUserInfo(model)
-
-                UIApplication.shared.delegate?.window??.configRootViewController()
-                // 处理获取到的token
+                LoginApiService.getUserInfo { error in
+                    if let err = error {
+                        VLUserCenter.shared().logout()
+                        ToastView.showWait(text: err.localizedDescription)
+                    } else {
+                        UIApplication.shared.delegate?.window??.configRootViewController()
+                    }
+                }
             } else {
                 print("Failed to get token")
             }
         }
         navigationController?.pushViewController(ssoWebVC, animated: true)
     }
-    
+        
     private func pushToWebView(url: String) {
         let webVC = VLCommonWebViewController()
         webVC.urlString = url

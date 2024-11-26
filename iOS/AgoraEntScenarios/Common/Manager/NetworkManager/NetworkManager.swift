@@ -99,6 +99,11 @@ class NetworkManager:NSObject {
     }
     
     @objc
+    public func getUserInfo(token: String) {
+        
+    }
+    
+    @objc
     public func generateToken(channelName: String,
                               uid: String,
                               types: [NSNumber],

@@ -29,6 +29,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self requestUserInfo];
     
     [self setViewControllers:[self tabViewControllers]];
     
@@ -39,6 +40,10 @@
 
     [self.tabBar setBackgroundImage:[UIImage new]];
 
+}
+
+- (void)requestUserInfo {
+    [LoginApiService getUserInfoWithCallback:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

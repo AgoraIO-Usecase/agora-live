@@ -13,6 +13,7 @@
 #import "VLMineCellModel.h"
 #import "AgoraEntScenarios-Bridging-Header.h"
 #import "AESMacro.h"
+#import "VLUserCenter.h"
 
 @import SDWebImage;
 
@@ -23,6 +24,9 @@ static NSString * const kDefaultCellID = @"kDefaultCellID";
 
 @property(nonatomic, weak) id <VLMineViewDelegate>delegate;
 @property (nonatomic, strong) UIView *mineTopView;
+@property (nonatomic, strong) VLMineTCell *mineTopCell;
+@property (nonatomic, strong) UIView *mineTopBackgroundView;
+
 @property (nonatomic, strong) UIImageView *avatarImgView;
 @property (nonatomic, strong) UILabel *nickNameLabel;
 @property (nonatomic, strong) UILabel *IDLabel;
@@ -46,12 +50,27 @@ static NSString * const kDefaultCellID = @"kDefaultCellID";
 }
 
 - (void)setupView {
-    [self addSubview:self.mineTopView];
+    [self addSubview:self.mineTopBackgroundView];
+    [self.mineTopBackgroundView addSubview:self.mineTopView];
     [self.mineTopView addSubview:self.avatarImgView];
     [self.mineTopView addSubview:self.nickNameLabel];
     [self.mineTopView addSubview:self.IDLabel];
     [self.mineTopView addSubview:self.editBtn];
     [self addSubview:self.mineTable];
+    if ([VLUserCenter user].type == SSOLOGIN) {
+        [self.mineTopBackgroundView addSubview:self.mineTopCell];
+        self.mineTopBackgroundView.frame = CGRectMake(20, kTopNavHeight+VLREALVALUE_WIDTH(35), self.width-40, VLREALVALUE_WIDTH(60)+50 + 60);
+        self.mineTopCell.frame = CGRectMake(0, self.mineTopView.bottom, self.mineTopBackgroundView.width, 60);
+        self.mineTopCell.backgroundColor = [UIColor clearColor];
+        self.mineTopCell.contentView.backgroundColor = [UIColor clearColor];
+        [self.mineTopCell setIconImageName:@"mine_screct_icon" title:@"app_user_agreement"];
+        __weak typeof(self) weakSelf = self;
+        self.mineTopCell.tapCallback = ^{
+            [weakSelf.delegate mineViewDidCick:VLMineViewClickTypeInviteCode];
+        };
+    } else {
+        self.mineTopBackgroundView.frame = CGRectMake(20, kTopNavHeight+VLREALVALUE_WIDTH(35), self.width-40, VLREALVALUE_WIDTH(60)+50);
+    }
 }
 
 - (void)setupData {
@@ -61,7 +80,7 @@ static NSString * const kDefaultCellID = @"kDefaultCellID";
         VLMineCellModel *model = [VLMineCellModel modelWithItemImg:@"mine_debug_icon" title:NSLocalizedString(@"app_debug_mode", nil) style:VLMineCellStyleSwitch];
         [self.dataArray addObject:model];
     }
-    _mineTable.frame = CGRectMake(20, _mineTopView.bottom+VLREALVALUE_WIDTH(15), SCREEN_WIDTH-40, VLREALVALUE_WIDTH(58)* self.dataArray.count + 10);
+    _mineTable.frame = CGRectMake(20, _mineTopBackgroundView.bottom+VLREALVALUE_WIDTH(15), SCREEN_WIDTH-40, VLREALVALUE_WIDTH(58)* self.dataArray.count + 10);
 }
 
 - (void)editButtonClickEvent {
@@ -112,14 +131,31 @@ static NSString * const kDefaultCellID = @"kDefaultCellID";
     }
 }
 
+- (VLMineTCell *)mineTopCell {
+    if (!_mineTopCell) {
+        _mineTopCell = [VLMineTCell new];
+    }
+    return _mineTopCell;
+}
+
 - (UIView *)mineTopView {
     if (!_mineTopView) {
-        _mineTopView = [[UIView alloc]initWithFrame:CGRectMake(20, kTopNavHeight+VLREALVALUE_WIDTH(35), self.width-40, VLREALVALUE_WIDTH(60)+50)];
+        _mineTopView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.width-40, VLREALVALUE_WIDTH(60)+50)];
         _mineTopView.layer.cornerRadius = 10;
         _mineTopView.layer.masksToBounds = YES;
         _mineTopView.backgroundColor = UIColorWhite;
     }
     return _mineTopView;
+}
+
+- (UIView *)mineTopBackgroundView {
+    if (!_mineTopBackgroundView) {
+        _mineTopBackgroundView = [[UIView alloc]initWithFrame:CGRectMake(20, kTopNavHeight+VLREALVALUE_WIDTH(35), self.width-40, VLREALVALUE_WIDTH(60)+50)];
+        _mineTopBackgroundView.layer.cornerRadius = 10;
+        _mineTopBackgroundView.layer.masksToBounds = YES;
+        _mineTopBackgroundView.backgroundColor = [UIColor colorWithHexString:@"#F2FFFC"];
+    }
+    return _mineTopBackgroundView;
 }
 
 - (UIImageView *)avatarImgView {
@@ -170,6 +206,7 @@ static NSString * const kDefaultCellID = @"kDefaultCellID";
         _editBtn = [[VLHotSpotBtn alloc]initWithFrame:CGRectMake(self.width-40-15-20, _nickNameLabel.centerY-10, 20, 20)];
         [_editBtn setImage:UIImageMake(@"mine_edit_icon") forState:UIControlStateNormal];
         [_editBtn addTarget:self action:@selector(editButtonClickEvent) forControlEvents:UIControlEventTouchUpInside];
+        _editBtn.hidden = VLUserCenter.user.type == SSOLOGIN;
     }
     return _editBtn;
 }

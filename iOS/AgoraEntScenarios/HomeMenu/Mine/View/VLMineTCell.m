@@ -15,9 +15,18 @@
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.contentView.backgroundColor = UIColorWhite;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickAction)];
+        [self.contentView addGestureRecognizer:tap];
+        self.contentView.userInteractionEnabled = YES;
         [self setUpView];
     }
     return self;
+}
+
+- (void)clickAction {
+    if (self.tapCallback) {
+        self.tapCallback();
+    }
 }
 
 - (void)setUpView {
