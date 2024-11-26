@@ -236,6 +236,9 @@
     <string name="commerce_out_bid">You were outbid.</string>
     <string name="commerce_send_chat_message_failed">Failed to send the message. Error: %s</string>
     <string name="commerce_user_joined">%s joined 👋</string>
+    <string name="commerce_You_are_disconnected_error">You are disconnected. Error:%1$s</string>
+    <string name="commerce_Fetch_token_failed">Fetch Token Failed</string>
+    <string name="commerce_generate_token_failure">generate token failure</string>
 
     <string-array name="commerce_encoder">
         <item>Hardware Encoder</item>
