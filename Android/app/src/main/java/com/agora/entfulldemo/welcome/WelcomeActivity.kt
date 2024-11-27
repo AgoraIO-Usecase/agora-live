@@ -176,6 +176,7 @@ class WelcomeActivity : BaseViewBindingActivity<AppActivityWelcomeBinding>() {
             }
         }
         mLoginViewModel.tokenLiveData.observe(this) { token ->
+            hideLoadingView()
             if (!token.isNullOrEmpty()) {
                 gotoHomeActivity()
             }
@@ -224,6 +225,7 @@ class WelcomeActivity : BaseViewBindingActivity<AppActivityWelcomeBinding>() {
     }
 
     private fun startInviteCodeLogin(inviteCode: String) {
+        showLoadingView()
         mLoginViewModel.invitationLogin(inviteCode)
     }
 

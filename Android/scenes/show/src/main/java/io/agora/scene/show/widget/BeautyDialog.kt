@@ -384,12 +384,6 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                     R.mipmap.show_beauty_ic_virtual_blur_off
                 ),
                 ItemInfo(
-                    ITEM_ID_VIRTUAL_BG_MITAO,
-                    R.string.show_beauty_item_virtual_bg_mitao,
-                    R.mipmap.show_beauty_ic_virtual_mitao,
-                    R.mipmap.show_beauty_ic_virtual_mitao_off
-                ),
-                ItemInfo(
                     ITEM_ID_VIRTUAL_BG_OFFICE,
                     R.string.show_beauty_item_virtual_bg_office,
                     R.mipmap.show_beauty_ic_virtual_office,
@@ -400,6 +394,12 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                     R.string.show_beauty_item_virtual_bg_beach,
                     R.mipmap.show_beauty_ic_virtual_beach,
                     R.mipmap.show_beauty_ic_virtual_beach_off
+                ),
+                ItemInfo(
+                    ITEM_ID_VIRTUAL_BG_MITAO,
+                    R.string.show_beauty_item_virtual_bg_mitao,
+                    R.mipmap.show_beauty_ic_virtual_mitao,
+                    R.mipmap.show_beauty_ic_virtual_mitao_off
                 )
             ),
             selectedIndex = when (RtcEngineInstance.virtualBackgroundSource.backgroundSourceType) {
@@ -407,9 +407,9 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                 VirtualBackgroundSource.BACKGROUND_BLUR -> 1
                 VirtualBackgroundSource.BACKGROUND_IMG -> {
                     when (RtcEngineInstance.virtualImgItem) {
-                        ITEM_ID_VIRTUAL_BG_MITAO -> 2
-                        ITEM_ID_VIRTUAL_BG_OFFICE -> 3
-                        ITEM_ID_VIRTUAL_BG_BEACH -> 4
+                        ITEM_ID_VIRTUAL_BG_OFFICE -> 2
+                        ITEM_ID_VIRTUAL_BG_BEACH -> 3
+                        ITEM_ID_VIRTUAL_BG_MITAO -> 4
                         else -> 0
                     }
                 }
@@ -719,16 +719,6 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                             SegmentationProperty(if (greenScreen) SegmentationProperty.SEG_MODEL_GREEN else SegmentationProperty.SEG_MODEL_AI, greenScreenStrength)
                         )
                     }
-                    ITEM_ID_VIRTUAL_BG_MITAO -> {
-                        RtcEngineInstance.rtcEngine.enableVirtualBackground(
-                            true,
-                            RtcEngineInstance.virtualBackgroundSource.apply {
-                                backgroundSourceType = VirtualBackgroundSource.BACKGROUND_IMG
-                                source = FileUtils.copyFileFromAssets(context, "virtualbackgroud_mitao.jpg", context.externalCacheDir!!.absolutePath)
-                            },
-                            SegmentationProperty(if (greenScreen) SegmentationProperty.SEG_MODEL_GREEN else SegmentationProperty.SEG_MODEL_AI, greenScreenStrength)
-                        )
-                    }
                     ITEM_ID_VIRTUAL_BG_OFFICE -> {
                         RtcEngineInstance.rtcEngine.enableVirtualBackground(
                             true,
@@ -745,6 +735,16 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                             RtcEngineInstance.virtualBackgroundSource.apply {
                                 backgroundSourceType = VirtualBackgroundSource.BACKGROUND_IMG
                                 source = FileUtils.copyFileFromAssets(context, "virtualbackgroud_beach.png", context.externalCacheDir!!.absolutePath)
+                            },
+                            SegmentationProperty(if (greenScreen) SegmentationProperty.SEG_MODEL_GREEN else SegmentationProperty.SEG_MODEL_AI, greenScreenStrength)
+                        )
+                    }
+                    ITEM_ID_VIRTUAL_BG_MITAO -> {
+                        RtcEngineInstance.rtcEngine.enableVirtualBackground(
+                            true,
+                            RtcEngineInstance.virtualBackgroundSource.apply {
+                                backgroundSourceType = VirtualBackgroundSource.BACKGROUND_IMG
+                                source = FileUtils.copyFileFromAssets(context, "virtualbackgroud_mitao.jpg", context.externalCacheDir!!.absolutePath)
                             },
                             SegmentationProperty(if (greenScreen) SegmentationProperty.SEG_MODEL_GREEN else SegmentationProperty.SEG_MODEL_AI, greenScreenStrength)
                         )
