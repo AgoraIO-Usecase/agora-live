@@ -88,9 +88,9 @@ cd Android
 
 # config android environment
 source ~/.bashrc
-export ANDROID_HOME=/usr/lib/android_sdk
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ls ~/.gradle || mkdir -p /tmp/.gradle && ln -s /tmp/.gradle ~/.gradle && touch ~/.gradle/ln_$(date "+%y%m%d%H") && ls ~/.gradle
-echo ANDROID_HOME: $ANDROID_HOME
+echo JAVA_HOME: $JAVA_HOME
 java --version
 
 # download native sdk if need
