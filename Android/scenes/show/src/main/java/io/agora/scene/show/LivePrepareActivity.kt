@@ -432,8 +432,10 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                             "0%"
                         )
 
+                    val newUrl =  resource.url.replace("cn-beijing", "accelerate-overseas")
+                    val newResource = resource.copy(url = newUrl)
                     beautyResource.downloadAndUnZipResource(
-                        resource = resource,
+                        resource = newResource,
                         progressHandler = {
                             binding.pbLoading.progress = it
                             binding.tvContent.text = String.format(

@@ -545,8 +545,15 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 CustomToast.show(R.string.ktv_get_songs_failed, error.message ?: "")
                 completion.invoke(error)
             } else {
-                songList.clear()
-                songList.addAll(musicList)
+                songList.apply {
+                    clear()
+                    addAll(musicList.map { musicItem ->
+                        musicItem.copy(
+                            music = musicItem.music.replace("cn-beijing", "accelerate-overseas"),
+                            lyric = musicItem.lyric.replace("cn-beijing", "accelerate-overseas")
+                        )
+                    })
+                }
                 completion.invoke(null)
             }
         }
@@ -562,8 +569,15 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 CustomToast.show(R.string.ktv_get_songs_failed, error.message ?: "")
             } else {
                 if (musicList.isNotEmpty()) {
-                    songList.clear()
-                    songList.addAll(musicList)
+                    songList.apply {
+                        clear()
+                        addAll(musicList.map { musicItem ->
+                            musicItem.copy(
+                                music = musicItem.music.replace("cn-beijing", "accelerate-overseas"),
+                                lyric = musicItem.lyric.replace("cn-beijing", "accelerate-overseas")
+                            )
+                        })
+                    }
                 }
             }
             // Need to call another interface to get the currently selected song list to supplement the list information. >_<

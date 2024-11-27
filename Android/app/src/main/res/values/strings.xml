@@ -56,4 +56,17 @@
     <string name="app_policy_accept">I accept the #Terms of Service#</string>
     <string name="app_check_tip">Please check</string>
 
+    <string name="app_console_sso">Agora Console SSO</string>
+    <string name="app_login_with_a_code">Login with a code</string>
+    <string name="app_invite_code">Invite Code</string>
+    <string name="app_my_invite_code">My Invite Code</string>
+    <string name="app_generate_a_code_to_friends">Generate a code to your friends</string>
+    <string name="app_generate_a_code">Generate A Code</string>
+    <string name="app_share_invite_code">Share to your friends</string>
+    <string name="app_copy">Copy</string>
+    <string name="app_copy_succeed">Copy Succeed</string>
+    <string name="app_input_invite_code">Input Your Invite Code</string>
+    <string name="app_login_expired">Login expired</string>
+    <string name="app_invalid_invite_code">Invalid Code. Please try again.</string>
+
 </resources>

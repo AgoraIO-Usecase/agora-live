@@ -13,6 +13,7 @@ import com.agora.entfulldemo.R;
 import com.agora.entfulldemo.databinding.AppFragmentHomeMineBinding;
 import com.agora.entfulldemo.home.constructor.URLStatics;
 import com.agora.entfulldemo.home.mine.AboutUsActivity;
+import com.agora.entfulldemo.home.mine.InviteCodeActivity;
 import com.agora.entfulldemo.webview.WebViewActivity;
 
 import io.agora.scene.base.GlideApp;
@@ -20,6 +21,7 @@ import io.agora.scene.base.bean.User;
 import io.agora.scene.base.component.AgoraApplication;
 import io.agora.scene.base.component.BaseViewBindingFragment;
 import io.agora.scene.base.component.OnButtonClickListener;
+import io.agora.scene.base.manager.SSOUserManager;
 import io.agora.scene.base.manager.UserManager;
 import io.agora.scene.base.utils.ToastUtils;
 import io.agora.scene.widget.dialog.CommonDialog;
@@ -49,6 +51,14 @@ public class HomeMineFragment extends BaseViewBindingFragment<AppFragmentHomeMin
                 .into(getBinding().ivUserAvatar);
         getBinding().tvUserMobile.setText(user.name);
         getBinding().tvUserID.setText(getString(io.agora.scene.base.R.string.id_is_, user.userNo));
+
+        if (SSOUserManager.isInvitationUser()) {
+            getBinding().ivToEdit.setVisibility(View.VISIBLE);
+            getBinding().tvInviteCode.setVisibility(View.GONE);
+        } else {
+            getBinding().ivToEdit.setVisibility(View.GONE);
+            getBinding().tvInviteCode.setVisibility(View.VISIBLE);
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -61,21 +71,27 @@ public class HomeMineFragment extends BaseViewBindingFragment<AppFragmentHomeMin
             startActivity(new Intent(getActivity(), AboutUsActivity.class));
         });
         getBinding().vToEdit.setOnClickListener(view -> {
-            if (editNameDialog == null) {
-                editNameDialog = new EditNameDialog(getContext());
-                editNameDialog.setOnDefineClickListener(name -> {
-                    UserManager.getInstance().updateUserName(name);
-                    getBinding().tvUserMobile.setText(name);
-                });
+            if (SSOUserManager.isInvitationUser()) {
+                if (editNameDialog == null) {
+                    editNameDialog = new EditNameDialog(getContext());
+                    editNameDialog.setOnDefineClickListener(name -> {
+                        UserManager.getInstance().updateUserName(name);
+                        getBinding().tvUserMobile.setText(name);
+                    });
+                }
+                editNameDialog.show();
             }
-            editNameDialog.show();
         });
         getBinding().tvDebugMode.setOnClickListener(v -> showDebugModeCloseDialog());
         if (AgoraApplication.the().isDebugModeOpen()) {
             getBinding().tvDebugMode.setVisibility(View.VISIBLE);
         }
+        getBinding().tvInviteCode.setOnClickListener(view -> {
+            if (!SSOUserManager.isInvitationUser()) {
+                startActivity(new Intent(getContext(), InviteCodeActivity.class));
+            }
+        });
     }
-
 
 
     private void showDebugModeCloseDialog() {

@@ -1,12 +1,10 @@
 package io.agora.scene.base.manager;
 
-import android.text.TextUtils;
-
 import java.util.Random;
 
 import io.agora.scene.base.Constant;
+import io.agora.scene.base.api.SSOUserInfo;
 import io.agora.scene.base.bean.User;
-import io.agora.scene.base.utils.GsonUtils;
 import io.agora.scene.base.utils.SPUtil;
 
 /**
@@ -37,26 +35,20 @@ public final class UserManager {
         if (mUser != null) {
             return mUser;
         }
-        readingUserInfoFromPrefs();
+        SSOUserInfo ssoUserInfo = SSOUserManager.getUser();
+
+        User user = new User();
+        user.headUrl = getOrRandomAvatar();
+        String displayName = ssoUserInfo.getDisplayName();
+        if (displayName == null || displayName.isEmpty()) {
+            displayName = getOrRandomNickname();
+        }
+        user.name = displayName;
+        user.id = (long) Math.abs(ssoUserInfo.getAccountUid().hashCode());
+        user.userNo = user.id + "";
+
+        mUser = user;
         return mUser;
-    }
-
-    /**
-     * Login with random user info.
-     */
-    public void loginWithRandomUserInfo() {
-        saveUserInfo(randomUserInfo());
-    }
-
-    /**
-     * Update random avatar string.
-     *
-     * @return the string
-     */
-    public String updateRandomAvatar() {
-        mUser.headUrl = randomAvatar();
-        saveUserInfo(mUser);
-        return mUser.getFullHeadUrl();
     }
 
     /**
@@ -66,9 +58,13 @@ public final class UserManager {
      * @return the string
      */
     public String updateUserName(String name) {
-        mUser.name = name;
-        saveUserInfo(mUser);
-        return mUser.name;
+        if (mUser != null) {
+            mUser.name = name;
+            SPUtil.putString(Constant.CURRENT_NICKNAME, name);
+            return mUser.name;
+        }
+        return "";
+
     }
 
     /**
@@ -84,100 +80,31 @@ public final class UserManager {
         return "file:///android_asset/" + headUrl + ".png";
     }
 
-    /**
-     * Logout.
-     */
-    public void logout() {
-        writeUserInfoToPrefs(true);
+    private String getOrRandomAvatar() {
+        String avatar = SPUtil.getString(Constant.CURRENT_AVATAR, "");
+        if (avatar.isEmpty()) {
+            int index = new Random().nextInt(100) % 4 + 1;
+            avatar = "avatar_" + index;
+            SPUtil.putString(Constant.CURRENT_AVATAR, avatar);
+        }
+        return avatar;
     }
 
-
-    /**
-     * Save user info.
-     *
-     * @param user the user
-     */
-    private void saveUserInfo(User user) {
-        mUser = user;
-        writeUserInfoToPrefs(false);
-    }
-
-    /**
-     * Random user info user.
-     *
-     * @return the user
-     */
-    private User randomUserInfo() {
-        User user = new User();
-        user.headUrl = randomAvatar();
-        user.name = randomName();
-        user.id = (long) randomId();
-        user.userNo = user.id + "";
-        return user;
-    }
-
-    /**
-     * Random avatar string.
-     *
-     * @return the string
-     */
-    private static String randomAvatar() {
-        int index = new Random().nextInt(100) % 4 + 1;
-        return "avatar_" + index;
-    }
-
-    /**
-     * Random name string.
-     *
-     * @return the string
-     */
-    private static String randomName() {
+    private String randomName() {
         String[] names = new String[]{"Ezra", "Pledge", "Bonnie", "Seeds", "Shannon", "Red-Haired", "Montague", "Primavera", "Lucille", "Tess"};
         int index = new Random().nextInt(100) % names.length;
         return names[index];
     }
 
-    /**
-     * Random id int.
-     *
-     * @return the int
-     */
-    private static int randomId() {
-        return new Random().nextInt(1000) + 10000;
-    }
-
-    /**
-     * Write user info to prefs.
-     *
-     * @param isLogOut the is log out
-     */
-    private void writeUserInfoToPrefs(boolean isLogOut) {
-        if (isLogOut) {
-            mUser = null;
-            SPUtil.putString(Constant.CURRENT_USER, "");
-        } else {
-            SPUtil.putString(Constant.CURRENT_USER, getUserInfoJson());
+    private String getOrRandomNickname() {
+        String nickname = SPUtil.getString(Constant.CURRENT_NICKNAME, "");
+        if (nickname.isEmpty()) {
+            nickname = randomName();
+            SPUtil.putString(Constant.CURRENT_NICKNAME, nickname);
         }
+        return nickname;
     }
 
-    /**
-     * Reading user info from prefs.
-     */
-    private void readingUserInfoFromPrefs() {
-        String userInfo = SPUtil.getString(Constant.CURRENT_USER, "");
-        if (!TextUtils.isEmpty(userInfo)) {
-            mUser = GsonUtils.getGson().fromJson(userInfo, User.class);
-        }
-    }
-
-    /**
-     * Gets user info json.
-     *
-     * @return the user info json
-     */
-    private String getUserInfoJson() {
-        return GsonUtils.getGson().toJson(mUser);
-    }
 
     /**
      * Gets instance.
@@ -195,17 +122,7 @@ public final class UserManager {
         return instance;
     }
 
-    /**
-     * Is login boolean.
-     *
-     * @return the boolean
-     */
-    public boolean isLogin() {
-        if (mUser == null) {
-            readingUserInfoFromPrefs();
-            return mUser != null && !TextUtils.isEmpty(mUser.userNo);
-        }
-        return true;
+    public void clear() {
+        mUser = null;
     }
-
 }

@@ -4,7 +4,7 @@
 >
 > Demo effect:
 > 
-> <img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/ktv_130_1.png" width="300" height="640"><img src="https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/ktv_130_2.png" width="300" height="640">
+> <img src="https://accktvpic.oss-accelerate-overseas.aliyuncs.com/pic/github_readme/ktv/ktv_130_1.png" width="300" height="640"><img src="https://accktvpic.oss-accelerate-overseas.aliyuncs.com/pic/github_readme/ktv/ktv_130_2.png" width="300" height="640">
 ---
 
 ## 1. Prerequisites
@@ -18,7 +18,12 @@
 ## 2.Project Setup
 
 1. Follow [The Account Document](https://docs.agora.io/en/video-calling/reference/manage-agora-account) to get the **App ID** and **App Certificate**.
-2. Open the `Android` project and fill in properties got above to the root [gradle.properties](../../gradle.properties) file.
+2. Follow [Signaling Beginner's Guide](https://docs.agora.io/en/signaling/get-started/beginners-guide?platform=android) to enable signaling in Agora Console. You should enable the following:
+* Using storage
+* User attribute callback
+* Channel attribute callback
+* Distributed lock
+3. Open the `Android` project and fill in properties got above to the root [gradle.properties](../../gradle.properties) file.
 
   ``` 
     # RTC SDK key Config
@@ -86,7 +91,7 @@
 >
 > #### KTV scene API
 >
-> ![xxx](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/ktv_130_4.png)
+> ![xxx](https://accktvpic.oss-accelerate-overseas.aliyuncs.com/pic/github_readme/ktv/ktv_130_4.png)
 >
 > KTV scene API is a module that helps you quickly integrate the KTV capability of Agora, with which you can easily obtain song list information, load songs, switch singing roles, control music playback, etc. Through [**KTVApi**](src/main/java/io/agora/scene/ktv/live/KTVApi.kt), you can define the protocol, and through [**KTVApiImp**](src/main/java/io/agora/scene/ktv/live/KTVApiImp.kt) to implement, you can directly copy these two files to your project for use, quickly integrating the KTV capability of Agora
 >
@@ -198,7 +203,7 @@
 >
 > #### Business server interaction module
 >
-> ![xxx](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/ktv/ktv_130_3.png)
+> ![xxx](https://accktvpic.oss-accelerate-overseas.aliyuncs.com/pic/github_readme/ktv/ktv_130_3.png)
 >
 > The interaction between the scenario and the business server mainly involves room changes, such as creating, joining, or leaving a room.，[**RoomService**](../../RTMSyncManager/src/main/java/io/agora/rtmsyncmanager/RoomService.kt) 
 >

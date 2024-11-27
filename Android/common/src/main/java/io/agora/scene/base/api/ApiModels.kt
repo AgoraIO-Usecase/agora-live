@@ -1,6 +1,7 @@
 package io.agora.scene.base.api
 
 import com.google.gson.annotations.SerializedName
+import io.agora.meta.ILocalUserAvatar
 import java.io.Serializable
 
 open class BaseResponse<T> : Serializable {
@@ -16,4 +17,26 @@ open class BaseResponse<T> : Serializable {
     val isSuccess: Boolean get() = 0 == code
 }
 
-data class UploadLogResponse constructor(val logId: String): BaseResponse<UploadLogResponse>()
+data class UploadLogResponse constructor(val logId: String) : BaseResponse<UploadLogResponse>()
+
+data class SSOUserInfo constructor(
+    val accountUid: String,
+    val accountType: String = "",
+    val email: String = "",
+    val verifyPhone: String = "",
+    val companyId: Int = 0,
+    val profileId: Int = 0,
+    var displayName: String = "",
+    val companyName: String = "",
+    val companyCountry: String = "",
+    val invitationCode: String = ""
+) : BaseResponse<SSOUserInfo>()
+
+data class InvitationLoginReq(
+    val invitationCode: String,
+    val accountUid: String
+)
+
+data class InvitationLoginResp(
+    val token: String
+)
