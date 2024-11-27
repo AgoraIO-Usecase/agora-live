@@ -43,7 +43,12 @@
 }
 
 - (void)requestUserInfo {
-    [LoginApiService getUserInfoWithCallback:nil];
+    LoginType type = [VLUserCenter user].type;
+    if (type == SSOLOGIN) {
+        [LoginApiService getUserInfoWithCallback:nil];
+    } else {
+        [LoginApiService getInvitationCodeUserInfoWithCallback:nil];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {

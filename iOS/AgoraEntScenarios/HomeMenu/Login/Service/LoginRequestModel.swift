@@ -24,6 +24,12 @@ class LoginCommonModel: AUINetworkModel {
         guard let dic = dic as? [String: Any] else {
             throw AUICommonError.networkParseFail.toNSError()
         }
+        
+        let message = dic["message"] as? String ?? ""
+        if message == "unauthorized" {
+            self.tokenExpired()
+            throw AUICommonError.httpError(401, message).toNSError()
+        }
         return dic["data"]
     }
 }

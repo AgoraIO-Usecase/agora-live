@@ -63,11 +63,7 @@ static NSString * const kDefaultCellID = @"kDefaultCellID";
         self.mineTopCell.frame = CGRectMake(0, self.mineTopView.bottom, self.mineTopBackgroundView.width, 60);
         self.mineTopCell.backgroundColor = [UIColor clearColor];
         self.mineTopCell.contentView.backgroundColor = [UIColor clearColor];
-        [self.mineTopCell setIconImageName:@"mine_screct_icon" title:@"app_user_agreement"];
-        __weak typeof(self) weakSelf = self;
-        self.mineTopCell.tapCallback = ^{
-            [weakSelf.delegate mineViewDidCick:VLMineViewClickTypeInviteCode];
-        };
+        [self.mineTopCell setIconImageName:@"mine_invite_code_icon" title:NSLocalizedString(@"app_mine_invite_code", nil)];
     } else {
         self.mineTopBackgroundView.frame = CGRectMake(20, kTopNavHeight+VLREALVALUE_WIDTH(35), self.width-40, VLREALVALUE_WIDTH(60)+50);
     }
@@ -131,9 +127,16 @@ static NSString * const kDefaultCellID = @"kDefaultCellID";
     }
 }
 
+- (void)codeCellClickAction {
+    [self.delegate mineViewDidCick:VLMineViewClickTypeInviteCode];
+}
+
 - (VLMineTCell *)mineTopCell {
     if (!_mineTopCell) {
         _mineTopCell = [VLMineTCell new];
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(codeCellClickAction)];
+        [_mineTopCell.contentView addGestureRecognizer:tap];
+        _mineTopCell.contentView.userInteractionEnabled = YES;
     }
     return _mineTopCell;
 }

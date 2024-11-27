@@ -10,15 +10,18 @@ import UIKit
 class GradientView: UIView {
     private let gradientLayer = CAGradientLayer()
     private let button: UIButton
+    private let imageView: UIImageView
 
     init(buttonTitle: String) {
-        self.button = UIButton(type: .system)
+        self.button = UIButton(type: .custom)
+        self.imageView = UIImageView(image: UIImage(named: "login_invite_btn_icon"))
         super.init(frame: .zero)
         setupView(buttonTitle: buttonTitle)
     }
     
     override init(frame: CGRect) {
         self.button = UIButton(type: .system)
+        self.imageView = UIImageView(image: UIImage(named: "login_invite_btn_icon"))
         super.init(frame: frame)
     }
     
@@ -45,6 +48,13 @@ class GradientView: UIView {
         button.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(1)
         }
+        
+        addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.left.equalTo(12)
+            make.centerY.equalTo(self)
+            make.width.height.equalTo(32)
+        }
     }
     
     override func layoutSubviews() {
@@ -52,6 +62,12 @@ class GradientView: UIView {
         gradientLayer.frame = bounds
         button.layer.cornerRadius = CGRectGetHeight(self.bounds) / 2.0
         button.layer.masksToBounds = true
+        
+        let titleWidth = button.titleLabel?.intrinsicContentSize.width ?? 0
+        let imageWidth = button.imageView?.intrinsicContentSize.width ?? 0
+        let spacing: CGFloat = 10
+        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: spacing, bottom: 0, right: -imageWidth)
+        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: spacing + imageWidth)
     }
     
     func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
@@ -103,7 +119,7 @@ class VLLoginViewController: VRBaseViewController {
     private lazy var policyTipsButton: UIButton = {
         let button = UIButton()
         button.setBackgroundImage(UIImage(named: "login_policy_tips"), for: .normal)
-        button.setTitle("  Please check  ", for: .normal)
+        button.setTitle(NSLocalizedString("please_check", comment: ""), for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 14)
         button.titleEdgeInsets(UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0))
@@ -111,9 +127,11 @@ class VLLoginViewController: VRBaseViewController {
         button.alpha = 0
         return button
     }()
-    private lazy var ssoLoginButton: UIButton = {
+    private lazy var ssoLoginButton: UIView = {
+        let view = UIView()
+        
         let button = UIButton()
-        button.setTitle("Agora Console SSO", for: .normal)
+        button.setTitle(NSLocalizedString("agora_console_sso", comment: ""), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
         button.backgroundColor = .white
@@ -121,13 +139,32 @@ class VLLoginViewController: VRBaseViewController {
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(onClickSSOLoginButton(sender:)), for: .touchUpInside)
-        return button
+        
+        view.addSubview(button)
+        button.snp.makeConstraints { make in
+            make.left.top.right.bottom.equalTo(0)
+        }
+        
+        let imageView = UIImageView(image: UIImage(named: "login_sso_btn_icon"))
+        view.addSubview(imageView)
+        
+        imageView.snp.makeConstraints { make in
+            make.left.equalTo(12)
+            make.centerY.equalTo(view)
+            make.width.height.equalTo(32)
+        }
+        return view
     }()
     private lazy var codeLoginButton: GradientView = {
-        let view = GradientView(buttonTitle: "Login with a code")
+        let view = GradientView(buttonTitle: NSLocalizedString("login_with_a_code", comment: ""))
         view.layer.cornerRadius = 26
         view.layer.masksToBounds = true
         view.addTarget(self, action: #selector(onClickCodeLoginButton(sender:)), for: .touchUpInside)
+        return view
+    }()
+    private lazy var agoraLogoImageView: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "login_logo_icon")
         return view
     }()
     
@@ -187,6 +224,13 @@ class VLLoginViewController: VRBaseViewController {
             make.leading.equalTo(view.snp.leading).offset(35)
             make.trailing.equalTo(view.snp.trailing).offset(-35)
             make.bottom.equalTo(codeLoginButton.snp.top).offset(-20)
+        }
+        
+        view.addSubview(agoraLogoImageView)
+        agoraLogoImageView.snp.makeConstraints { make in
+            make.left.equalTo(26)
+            make.right.equalTo(-26)
+            make.bottom.equalTo(ssoLoginButton.snp.top).offset(-36)
         }
         
         view.addSubview(policyTipsButton)

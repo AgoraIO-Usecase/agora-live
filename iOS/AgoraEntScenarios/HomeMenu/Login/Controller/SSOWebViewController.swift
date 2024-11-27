@@ -10,18 +10,24 @@ import WebKit
 import SVProgressHUD
 
 class SSOWebViewController: UIViewController {
-    // MARK: - Properties
     var urlString: String = ""
     private var webView: WKWebView!
     var completionHandler: ((String?) -> Void)?
     
-    // MARK: - Lifecycle
+    lazy var emptyView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupWebView()
+        view.addSubview(emptyView)
+        emptyView.frame = view.bounds
+        emptyView.isHidden = true
     }
     
-    // MARK: - Setup
     private func setupWebView() {
         // Config WKWebView
         let configuration = WKWebViewConfiguration()
@@ -77,6 +83,17 @@ class SSOWebViewController: UIViewController {
 extension SSOWebViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         SVProgressHUD.show()
+    }
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if let url = navigationAction.request.url {
+            if url.absoluteString.contains("v1/sso/callback") && !url.absoluteString.contains("redirect_uri") {
+                emptyView.isHidden = false
+            }
+        }
+        
+        // 允许加载
+        decisionHandler(.allow)
     }
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

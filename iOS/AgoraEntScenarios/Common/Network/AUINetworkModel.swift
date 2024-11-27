@@ -60,7 +60,7 @@ open class AUINetworkModel: NSObject {
         
         if let dic = (dic as? [String: Any]), let code = dic["code"] as? Int, code != 0 {
             let message = dic["message"] as? String ?? ""
-            if code == 401 {
+            if code == 401 || message == "unauthorized" {
                 self.tokenExpired()
             }
             throw AUICommonError.httpError(code, message).toNSError()

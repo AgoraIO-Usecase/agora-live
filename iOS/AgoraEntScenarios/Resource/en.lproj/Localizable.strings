@@ -45,6 +45,7 @@
 "app_about_official_website"="Official Website";
 "app_about_phone_cancel"="Cancel";
 "app_mine_current_version"="Current Version: %s";
+"app_mine_invite_code"="My Invite Code";
 
 "app_debug_open"="Debug Mode On";
 "app_debug_off"="Debug Mode Off";
@@ -68,11 +69,21 @@
 "agree" = "Agree";
 "disagree" = "Disagree";
 "confirm" = "Confirm";
-
+"copy"="Copy";
+"generate_a_code"="Generate A Code";
+"my_invite_code"="My invite code";
+"invite_code_title"="Invite Code";
+"invite_code_generate_tips"="Generate a code to your friends";
+"invite_code_share_code_tips"="Share to your friends";
 "edit_name" = "Edit Nickname";
 "input_edit_name" = "Please provide your nickname.";
 "input_password" = "Please enter the room password.";
-
+"input_your_invite_code"="Input Your Invite Code";
+"enter_now"="Enter Now";
+"welcome_to_agora"="Welcome to Agora";
+"agora_console_sso"="Agora Console SSO";
+"login_with_a_code"="Login with a code";
+"please_check"="  Please check  ";
 "i_know" = "Acknowledged";
 
 "avatar" = "Avatar";

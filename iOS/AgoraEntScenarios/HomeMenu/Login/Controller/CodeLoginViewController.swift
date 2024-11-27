@@ -37,7 +37,7 @@ class InputView: UIView {
     lazy var text: UITextField = {
         let textField = UITextField()
         let placeholderAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 16)]
-        textField.attributedPlaceholder = NSAttributedString(string: "input your invite code", attributes: placeholderAttributes)
+        textField.attributedPlaceholder = NSAttributedString(string: NSLocalizedString("input_your_invite_code", comment: ""), attributes: placeholderAttributes)
         textField.font = UIFont.boldSystemFont(ofSize: 16)
         textField.textAlignment = .center
         textField.textColor = .black
@@ -96,7 +96,7 @@ class RadiusView: UIView {
 
     lazy var text: UILabel = {
         let label = UILabel()
-        label.text = "Enter Now"
+        label.text = NSLocalizedString("enter_now", comment: "")
         label.font = UIFont.systemFont(ofSize: 16)
         label.textAlignment = .center
         label.textColor = .white

@@ -49,7 +49,7 @@ class InviteCodeViewController: UIViewController {
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "invite code"
+        label.text = NSLocalizedString("invite_code_title", comment: "")
         label.font = UIFont.systemFont(ofSize: 20, weight: .medium)
         label.textAlignment = .center
         label.textColor = .black
@@ -59,7 +59,7 @@ class InviteCodeViewController: UIViewController {
     
     lazy var subTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "My invite code"
+        label.text = NSLocalizedString("my_invite_code", comment: "")
         label.font = UIFont.systemFont(ofSize: 20, weight: .medium)
         label.textAlignment = .center
         label.textColor = .black
@@ -69,7 +69,7 @@ class InviteCodeViewController: UIViewController {
 
     lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Generate a code to your friends"
+        label.text = NSLocalizedString("invite_code_generate_tips", comment: "")
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.textAlignment = .center
         label.textColor = .black
@@ -89,7 +89,7 @@ class InviteCodeViewController: UIViewController {
     
     lazy var generateButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle("Generate A Code", for: .normal)
+        button.setTitle(NSLocalizedString("generate_a_code", comment: ""), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.setTitleColor(.black, for: .selected)
         button.layer.cornerRadius = 52 / 2
@@ -136,9 +136,11 @@ class InviteCodeViewController: UIViewController {
         codeLabel.text = result ? code : "******"
         generateButton.isSelected = result
         if generateButton.isSelected {
-            generateButton.setTitle("Copy", for: .normal)
+            generateButton.setTitle(NSLocalizedString("copy", comment: ""), for: .normal)
+            descriptionLabel.text = NSLocalizedString("invite_code_share_code_tips", comment: "")
         } else {
-            generateButton.setTitle("Generate A Code", for: .normal)
+            generateButton.setTitle(NSLocalizedString("generate_a_code", comment: ""), for: .normal)
+            descriptionLabel.text = NSLocalizedString("invite_code_generate_tips", comment: "")
         }
 
     }
