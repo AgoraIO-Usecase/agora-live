@@ -1150,7 +1150,11 @@ class LiveDetailFragment : Fragment() {
                 override fun onFinish() {
                     if (isRoomOwner) {
                         mService.stopInteraction(mRoomInfo.roomId, error = {
-                            ToastUtils.showToast("stop interaction error: ${it.message}")
+                            ToastUtils.showToast(
+                                getString(
+                                    R.string.show_stop_interaction_error,
+                                    it.message
+                                ))
                         })
                     }
                 }
@@ -1404,7 +1408,7 @@ class LiveDetailFragment : Fragment() {
                     seatApply.userId,
                     success = {
                         view.isEnabled = true
-                        ToastUtils.showToast("accept apply successfully!")
+                        ToastUtils.showToast(getString(R.string.show_accept_apply_successfully))
                     },
                     error = {
                         view.isEnabled = true
@@ -1431,7 +1435,7 @@ class LiveDetailFragment : Fragment() {
                     userItem.userId,
                     success = {
                         view.isEnabled = true
-                        ToastUtils.showToast("invite successfully!")
+                        ToastUtils.showToast(getString(R.string.show_invite_successfully))
                     },
                     error = {
                         view.isEnabled = true
@@ -1446,7 +1450,11 @@ class LiveDetailFragment : Fragment() {
                     view.isEnabled = true
                 }, error = {
                     view.isEnabled = true
-                    ToastUtils.showToast("stop interaction error: ${it.message}")
+                    ToastUtils.showToast(
+                        getString(
+                            R.string.show_stop_interaction_error,
+                            it.message
+                        ))
                 })
             }
 
@@ -1457,7 +1465,7 @@ class LiveDetailFragment : Fragment() {
                     success = {
                         view.isEnabled = true
                         mLinkDialog.dismiss()
-                        ToastUtils.showToast("cancel apply successfully!")
+                        ToastUtils.showToast(getString(R.string.show_cancel_apply_successfully))
                     },
                     error = {
                         view.isEnabled = true
@@ -1496,7 +1504,7 @@ class LiveDetailFragment : Fragment() {
                     success = {
                         button?.isEnabled = true
                         dismissMicInvitaionDialog()
-                        ToastUtils.showToast("reject invitation successfully!")
+                        ToastUtils.showToast(getString(R.string.show_reject_invitation_successfully))
                     },
                     error = { error ->
                         button?.isEnabled = true
@@ -1513,7 +1521,7 @@ class LiveDetailFragment : Fragment() {
                     invitation.id,
                     success = {
                         btn.isEnabled = true
-                        ToastUtils.showToast("accept invitation successfully!")
+                        ToastUtils.showToast(getString(R.string.show_accept_invitation_successfully))
                         dismissMicInvitaionDialog()
                     },
                     error = { error ->
@@ -1604,7 +1612,7 @@ class LiveDetailFragment : Fragment() {
                         roomDetail.roomId,
                         success = {
                             view.isEnabled = true
-                            ToastUtils.showToast("invite successfully!")
+                            ToastUtils.showToast(getString(R.string.show_invite_successfully))
                         },
                         error = {
                             view.isEnabled = true
@@ -1621,7 +1629,12 @@ class LiveDetailFragment : Fragment() {
                     },
                     error = {
                         view.isEnabled = true
-                        ToastUtils.showToast("stop Interaction error: ${it.message}")
+                        ToastUtils.showToast(
+                            getString(
+                                R.string.show_stop_interaction_error,
+                                it.message
+                            )
+                        )
                     })
             }
         })
@@ -1663,7 +1676,7 @@ class LiveDetailFragment : Fragment() {
                     },
                     error = {
                         button?.isEnabled = true
-                        ToastUtils.showToast("reject message failed!")
+                        ToastUtils.showToast(getString(R.string.show_reject_message_failed))
                     }
                 )
                 isPKCompetition = false
@@ -1676,7 +1689,7 @@ class LiveDetailFragment : Fragment() {
                     btn.isEnabled = false
                     mService.acceptPKInvitation(mRoomInfo.roomId, invitation.id, {
                         btn.isEnabled = true
-                        ToastUtils.showToast("accept message successfully!")
+                        ToastUtils.showToast(getString(R.string.show_accept_message_successfully))
                         dismissPKInvitationDialog()
                     }) {
                         btn.isEnabled = true
@@ -1745,7 +1758,12 @@ class LiveDetailFragment : Fragment() {
                                 // success
                                 dismiss()
                             }, error = {
-                                ToastUtils.showToast("stop interaction error: ${it.message}")
+                                ToastUtils.showToast(
+                                    getString(
+                                        R.string.show_stop_interaction_error,
+                                        it.message
+                                    )
+                                )
                             })
                         }
                     }
@@ -2819,18 +2837,29 @@ class LiveDetailFragment : Fragment() {
                         object : IRtcEngineEventHandler() {
                             override fun onError(err: Int) {
                                 super.onError(err)
-                                ToastUtils.showToast("startAudioMixing joinChannelEx onError, error code: $err, ${RtcEngine.getErrorDescription(err)}")
+                                ToastUtils.showToast(
+                                    getString(
+                                        R.string.show_audio_mixing,
+                                        err.toString(),
+                                        RtcEngine.getErrorDescription(err)
+                                    )
+                                )
                             }
                         }
                     )
                     if(ret != Constants.ERR_OK){
-                        ToastUtils.showToast("startAudioMixing joinChannelEx failed, error code: $ret, ${RtcEngine.getErrorDescription(ret)}")
+                        ToastUtils.showToast(
+                            getString(
+                                R.string.show_audio_mixing_failed,
+                                ret.toString(),
+                                RtcEngine.getErrorDescription(ret)
+                            ))
                     }
                 },
                 failure = {
                     ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
                     mAudioMxingChannel = null
-                    ToastUtils.showToast(it?.message ?: "generate token failure")
+                    ToastUtils.showToast(it?.message ?: getString(R.string.show_generate_token_failure))
                 })
         }
     }

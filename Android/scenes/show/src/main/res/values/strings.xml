@@ -301,6 +301,18 @@
     <string name="show_beauty_loading_failed">Download failed. Please ensure your network is functioning properly, exit and re-enter the preview page, and then restart the download.</string>
 
     <string name="show_developer_mode_settings">Developer mode settings</string>
+    <string name="show_fetch_token_failed">Fetch Token Failed</string>
+    <string name="show_stop_interaction_error">stop interaction error: %1$s</string>
+    <string name="show_accept_apply_successfully">accept apply successfully!</string>
+    <string name="show_invite_successfully">invite successfully!</string>
+    <string name="show_cancel_apply_successfully">cancel apply successfully!</string>
+    <string name="show_reject_invitation_successfully">reject invitation successfully!</string>
+    <string name="show_accept_invitation_successfully">accept invitation successfully!</string>
+    <string name="show_reject_message_failed">reject message failed!</string>
+    <string name="show_accept_message_successfully">accept message successfully!</string>
+    <string name="show_audio_mixing">startAudioMixing joinChannelEx onError, error code: %1$s, %2$s</string>
+    <string name="show_audio_mixing_failed">startAudioMixing joinChannelEx failed, error code: %1$s, %2$s</string>
+    <string name="show_generate_token_failure">generate token failure</string>
 
     <string-array name="show_encoder">
         <item>Hardware Encoder</item>

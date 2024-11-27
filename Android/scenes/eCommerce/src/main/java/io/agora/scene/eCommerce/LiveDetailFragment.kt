@@ -905,7 +905,11 @@ class LiveDetailFragment : Fragment() {
                 error = { e ->
                     runOnUiThread {
                         CommerceLogger.d(TAG, "join room error!:${e.message}")
-                        ToastUtils.showToast("You are disconnected. Error:${e.message}")
+                         ToastUtils.showToast(
+                            getString(
+                                R.string.commerce_You_are_disconnected_error,
+                                e.message
+                            ))
                         destroy(false)
                         activity?.finish()
                     }
