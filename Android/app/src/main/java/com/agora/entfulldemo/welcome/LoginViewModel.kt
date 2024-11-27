@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.agora.entfulldemo.R
 import io.agora.scene.base.api.ApiManager
 import io.agora.scene.base.api.ApiManagerService
 import io.agora.scene.base.api.InvitationLoginReq
@@ -44,12 +45,12 @@ class LoginViewModel : ViewModel() {
                     } else {
                         SSOUserManager.logout()
                         _userInfoLiveData.postValue(null)
-                        CustomToast.show("Login expired")
+                        CustomToast.show(R.string.app_login_expired)
                     }
                 }.onFailure { e ->
                     SSOUserManager.logout()
                     _userInfoLiveData.postValue(null)
-                    CustomToast.show("Login expired")
+                    CustomToast.show(R.string.app_login_expired)
                     if ((e is HttpException) && e.code() == 401) {
                         Log.e(TAG, "Login timeout, please log in again.")
                     }
@@ -66,14 +67,14 @@ class LoginViewModel : ViewModel() {
                     } else {
                         SSOUserManager.logout()
                         _userInfoLiveData.postValue(null)
-                        CustomToast.show("Login expired")
+                        CustomToast.show(R.string.app_login_expired)
                     }
                 }.onFailure { e ->
                     SSOUserManager.logout()
                     _userInfoLiveData.postValue(null)
-                    CustomToast.show("Login expired")
+                    CustomToast.show(R.string.app_login_expired)
                     if ((e is HttpException) && e.code() == 401) {
-                        Log.e(TAG, "Login timeout, please log in again.")
+                        Log.e(TAG, "Token expired, please log in again.")
                     }
                 }
             }
@@ -93,11 +94,11 @@ class LoginViewModel : ViewModel() {
                     _tokenLiveData.postValue(token)
                 } else {
                     _tokenLiveData.postValue(null)
-                    CustomToast.show("Invalid Code. Please try again.")
+                    CustomToast.show(R.string.app_invalid_invite_code)
                 }
             }.onFailure {
                 _tokenLiveData.postValue(null)
-                CustomToast.show("Invalid Code. Please try again.")
+                CustomToast.show(R.string.app_invalid_invite_code)
                 it.printStackTrace()
             }
         }

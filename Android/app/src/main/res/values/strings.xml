@@ -66,5 +66,7 @@
     <string name="app_copy">Copy</string>
     <string name="app_copy_succeed">Copy Succeed</string>
     <string name="app_input_invite_code">Input Your Invite Code</string>
+    <string name="app_login_expired">Login expired</string>
+    <string name="app_invalid_invite_code">Invalid Code. Please try again.</string>
 
 </resources>
