@@ -1,6 +1,7 @@
 package com.agora.entfulldemo.home;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.agora.entfulldemo.home.constructor.URLStatics;
 import com.agora.entfulldemo.home.mine.AboutUsActivity;
 import com.agora.entfulldemo.home.mine.InviteCodeActivity;
 import com.agora.entfulldemo.webview.WebViewActivity;
+import com.agora.entfulldemo.welcome.WelcomeActivity;
 
 import io.agora.scene.base.GlideApp;
 import io.agora.scene.base.bean.User;
@@ -91,8 +93,36 @@ public class HomeMineFragment extends BaseViewBindingFragment<AppFragmentHomeMin
                 startActivity(new Intent(getContext(), InviteCodeActivity.class));
             }
         });
+        getBinding().tvLogout.setOnClickListener(view -> {
+            Context context = getContext();
+            if (context != null) {
+                showLogoutDialog(context);
+            }
+        });
     }
 
+    private void showLogoutDialog(Context context) {
+        CommonDialog dialog = new CommonDialog(context);
+        dialog.setDialogTitle(getString(R.string.app_logout));
+        dialog.setDescText(getString(R.string.app_logout_tips));
+        dialog.setDialogBtnText(
+                getString(io.agora.scene.base.R.string.cancel),
+                getString(R.string.app_exit)
+        );
+        dialog.setOnButtonClickListener(new OnButtonClickListener() {
+            @Override
+            public void onLeftButtonClick() {
+                // do nothing
+            }
+
+            @Override
+            public void onRightButtonClick() {
+                SSOUserManager.logout();
+                startActivity(new Intent(context, WelcomeActivity.class));
+            }
+        });
+        dialog.show();
+    }
 
     private void showDebugModeCloseDialog() {
         if (debugModeDialog == null) {
