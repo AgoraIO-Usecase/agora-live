@@ -91,9 +91,12 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
      * @property id
      * @property name
      * @property icon
+     * @property iconSelect
      * @constructor Create empty Item info
      */
-    private data class ItemInfo(val id: Int, @StringRes val name: Int, @DrawableRes val icon: Int)
+    private data class ItemInfo(
+        val id: Int, @StringRes val name: Int, @DrawableRes val icon: Int, @DrawableRes val iconOff: Int = 0
+    )
 
     /**
      * Group info
@@ -109,9 +112,7 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
         @StringRes val name: Int,
         val itemList: List<ItemInfo>,
         var selectedIndex: Int = itemList.indexOfFirst {
-            it.id == BeautyCache.getLastOperationItemId(
-                id
-            )
+            it.id == BeautyCache.getLastOperationItemId(id)
         }
     )
 
@@ -373,32 +374,46 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                 ItemInfo(
                     ITEM_ID_VIRTUAL_BG_NONE,
                     R.string.show_beauty_item_none,
-                    R.mipmap.show_beauty_ic_none
+                    R.mipmap.show_beauty_ic_none,
+                    R.mipmap.show_beauty_ic_none_off,
                 ),
                 ItemInfo(
                     ITEM_ID_VIRTUAL_BG_BLUR,
                     R.string.show_beauty_item_virtual_bg_blur,
-                    R.mipmap.show_beauty_ic_virtual_bg_blur
+                    R.mipmap.show_beauty_ic_virtual_blur,
+                    R.mipmap.show_beauty_ic_virtual_blur_off
                 ),
                 ItemInfo(
                     ITEM_ID_VIRTUAL_BG_MITAO,
                     R.string.show_beauty_item_virtual_bg_mitao,
-                    R.mipmap.show_beauty_ic_virtual_bg_mitao
+                    R.mipmap.show_beauty_ic_virtual_mitao,
+                    R.mipmap.show_beauty_ic_virtual_mitao_off
                 ),
                 ItemInfo(
                     ITEM_ID_VIRTUAL_BG_OFFICE,
                     R.string.show_beauty_item_virtual_bg_office,
-                    R.mipmap.show_beauty_ic_virtual_bg_mitao
+                    R.mipmap.show_beauty_ic_virtual_office,
+                    R.mipmap.show_beauty_ic_virtual_office_off
                 ),
                 ItemInfo(
                     ITEM_ID_VIRTUAL_BG_BEACH,
                     R.string.show_beauty_item_virtual_bg_beach,
-                    R.mipmap.show_beauty_ic_virtual_bg_mitao
+                    R.mipmap.show_beauty_ic_virtual_beach,
+                    R.mipmap.show_beauty_ic_virtual_beach_off
                 )
             ),
-            when (RtcEngineInstance.virtualBackgroundSource.backgroundSourceType) {
+            selectedIndex = when (RtcEngineInstance.virtualBackgroundSource.backgroundSourceType) {
+                VirtualBackgroundSource.BACKGROUND_NONE -> 0
                 VirtualBackgroundSource.BACKGROUND_BLUR -> 1
-                VirtualBackgroundSource.BACKGROUND_IMG -> 2
+                VirtualBackgroundSource.BACKGROUND_IMG -> {
+                    when (RtcEngineInstance.virtualImgItem) {
+                        ITEM_ID_VIRTUAL_BG_MITAO -> 2
+                        ITEM_ID_VIRTUAL_BG_OFFICE -> 3
+                        ITEM_ID_VIRTUAL_BG_BEACH -> 4
+                        else -> 0
+                    }
+                }
+
                 else -> 0
             }
         )
@@ -472,11 +487,20 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                         ) {
                             val itemInfo = getItem(position) ?: return
 
-                            holder.binding.ivIcon.isActivated = position == groupItem.selectedIndex
+                            val isCurrentSelected = position == groupItem.selectedIndex
+                            holder.binding.ivIcon.isActivated = isCurrentSelected
+
+                            val iconToLoad = if (isCurrentSelected) {
+                                itemInfo.icon
+                            } else {
+                                itemInfo.iconOff.takeIf { it != 0 } ?: itemInfo.icon
+                            }
+
                             GlideApp.with(holder.binding.ivIcon)
-                                .load(itemInfo.icon)
+                                .load(iconToLoad)
                                 .transform(RoundedCorners(999))
                                 .into(holder.binding.ivIcon)
+
                             if (groupItem.selectedIndex == position && mBottomBinding.tabLayout.selectedTabPosition == groupPosition) {
                                 refreshTopLayout(groupItem.id, itemInfo.id)
                             }
@@ -679,6 +703,7 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
         val greenScreen = beautyProcessor?.let { it.greenScreen() } ?: false
         when (groupId) {
             GROUP_ID_VIRTUAL_BG -> {
+                RtcEngineInstance.virtualImgItem = itemId
                 when (itemId) {
                     ITEM_ID_VIRTUAL_BG_NONE -> {
                         RtcEngineInstance.rtcEngine.enableVirtualBackground(
