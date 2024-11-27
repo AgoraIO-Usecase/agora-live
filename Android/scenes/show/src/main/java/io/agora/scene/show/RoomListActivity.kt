@@ -230,7 +230,7 @@ class RoomListActivity : AppCompatActivity() {
                             if (RtcEngineInstance.generalToken() == "") {
                                 fetchUniversalToken({
                                 }, {
-                                    ToastUtils.showToast("Fetch Token Failed")
+                                    ToastUtils.showToast(R.string.show_fetch_token_failed)
                                 })
                             } else {
                                 if (RtcEngineInstance.rtcEngine.queryDeviceScore() < 75) {
@@ -330,7 +330,7 @@ class RoomListActivity : AppCompatActivity() {
             },
             failure = {
                 ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
-                ToastUtils.showToast(it?.message ?: "generate token failure")
+                ToastUtils.showToast(it?.message ?: getString(R.string.show_generate_token_failure))
                 error?.invoke(it)
             })
     }

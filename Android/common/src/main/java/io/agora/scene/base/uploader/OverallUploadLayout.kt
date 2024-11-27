@@ -61,7 +61,7 @@ class OverallUploadLayout : ConstraintLayout {
         binding.tvTaskUuid.setOnClickListener {
             val cm: ClipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             cm.setPrimaryClip(ClipData.newPlainText(null, binding.tvTaskUuid.text?.toString()))
-            ToastUtils.showToast("Copy Succeed")
+            ToastUtils.showToast(context.getString(R.string.copy_succeed))
         }
     }
 
