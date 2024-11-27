@@ -63,6 +63,7 @@ object SSOUserManager {
         return accountUid
     }
 
+    @JvmStatic
     fun logout() {
         this.mToken = ""
         this.mUserIfo = null
