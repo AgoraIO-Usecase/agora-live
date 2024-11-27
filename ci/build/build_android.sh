@@ -88,8 +88,11 @@ cd Android
 
 # config android environment
 source ~/.bashrc
-# export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+# 将 JDK 的 bin 目录添加到 PATH
+export PATH="$JAVA_HOME/bin:$PATH"
+
+ls -l /usr/lib/jvm
 ls -l /usr/lib/jvm/java-17-openjdk-amd64
 ls ~/.gradle || mkdir -p /tmp/.gradle && ln -s /tmp/.gradle ~/.gradle && touch ~/.gradle/ln_$(date "+%y%m%d%H") && ls ~/.gradle
 echo JAVA_HOME: $JAVA_HOME
