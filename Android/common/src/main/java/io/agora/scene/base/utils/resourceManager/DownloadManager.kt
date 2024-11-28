@@ -1,8 +1,8 @@
 package io.agora.scene.base.utils.resourceManager
 
 import android.util.Log
+import io.agora.scene.base.api.SecureOkHttpClient
 import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.BufferedOutputStream
 import java.io.File
@@ -14,7 +14,7 @@ import java.util.zip.ZipInputStream
 
 class DownloadManager private constructor() {
 
-    private val okHttpClient = OkHttpClient.Builder()
+    private val okHttpClient = SecureOkHttpClient.create()
         .connectTimeout(20, TimeUnit.SECONDS)
         .writeTimeout(10, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)

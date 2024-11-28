@@ -67,7 +67,7 @@
         android:insetBottom="0dp"
         android:paddingVertical="14dp"
         android:paddingStart="12dp"
-        android:text="@string/app_console_sso"
+        android:text="@string/app_login_with_a_code"
         android:textColor="@android:color/white"
         android:textSize="16sp"
         app:backgroundTint="@null"
