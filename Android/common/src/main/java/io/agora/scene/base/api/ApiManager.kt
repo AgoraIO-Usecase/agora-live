@@ -17,6 +17,7 @@ import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
+import java.net.URI
 import java.util.concurrent.TimeUnit
 
 object ApiManager {
@@ -56,9 +57,14 @@ object ApiManager {
         builder.build()
     }
 
+    private fun extractBaseUrl(url: String): String {
+        val uri = URI(url)
+        return "${uri.scheme}://${uri.host}/"
+    }
+
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://service-staging.agora.io/")
+            .baseUrl(extractBaseUrl(BuildConfig.TOOLBOX_SERVER_HOST))
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

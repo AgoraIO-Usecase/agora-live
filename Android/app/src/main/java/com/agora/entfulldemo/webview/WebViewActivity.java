@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -67,6 +70,23 @@ public class WebViewActivity extends BaseViewBindingActivity<AppActivityWebviewB
         } else if (url.contains("ent-scenarios/pages/manifest")) {
             getBinding().titleView.setTitle(getString(R.string.app_personal_info_collection_checklist));
         }
+
+        getBinding().webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                Log.d("zhangw","newProgress:"+newProgress);
+                if (newProgress == 100) {
+                    getBinding().progressBar.setVisibility(View.GONE);
+                } else {
+                    if (getBinding().progressBar.getVisibility() == View.GONE) {
+                        getBinding().progressBar.setVisibility(View.VISIBLE);
+                    }
+                    getBinding().progressBar.setProgress(newProgress);
+                }
+                super.onProgressChanged(view, newProgress);
+            }
+        });
+
         getBinding().webView.loadUrl(url);
 
         getBinding().titleView.setLeftClick(v -> {
