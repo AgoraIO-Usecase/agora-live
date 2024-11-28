@@ -10,9 +10,7 @@ import com.google.gson.stream.JsonWriter
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Logger
 import io.agora.scene.base.BuildConfig
-import io.agora.scene.base.ServerConfig
 import okhttp3.Interceptor
-import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
@@ -41,7 +39,7 @@ object ApiManager {
             .create()
 
     private val okHttpClient by lazy {
-        val builder = OkHttpClient.Builder()
+        val builder = SecureOkHttpClient.create()
             .addInterceptor(DynamicConnectTimeout())
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)

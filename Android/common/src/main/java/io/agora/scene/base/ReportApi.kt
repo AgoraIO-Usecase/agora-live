@@ -1,13 +1,13 @@
 package io.agora.scene.base
 
 import android.os.Build
+import io.agora.scene.base.api.SecureOkHttpClient
 import io.agora.scene.base.utils.UUIDUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -22,7 +22,7 @@ object ReportApi {
 
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
     private val okHttpClient by lazy {
-        val builder = OkHttpClient.Builder()
+        val builder = SecureOkHttpClient.create()
 
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))

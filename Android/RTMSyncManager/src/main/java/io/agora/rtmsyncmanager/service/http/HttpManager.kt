@@ -9,7 +9,7 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Logger
-import okhttp3.OkHttpClient
+import io.agora.scene.base.api.SecureOkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import retrofit2.Retrofit
@@ -37,7 +37,7 @@ object HttpManager {
         baseUrl = url
         retrofit = Retrofit.Builder()
             .client(
-                OkHttpClient.Builder()
+                SecureOkHttpClient.create()
                     .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                     .addInterceptor(CurlInterceptor(object : Logger {
                         override fun log(message: String) {
