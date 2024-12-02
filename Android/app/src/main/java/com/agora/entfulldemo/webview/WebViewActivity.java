@@ -50,6 +50,7 @@ public class WebViewActivity extends BaseViewBindingActivity<AppActivityWebviewB
         intent.putExtra(EXTRA_URL, url);
         context.startActivity(intent);
     }
+
     @Override
     protected AppActivityWebviewBinding getViewBinding(@NonNull LayoutInflater layoutInflater) {
         return AppActivityWebviewBinding.inflate(layoutInflater);
@@ -59,7 +60,7 @@ public class WebViewActivity extends BaseViewBindingActivity<AppActivityWebviewB
     public void initView(@Nullable Bundle savedInstanceState) {
         setOnApplyWindowInsetsListener(getBinding().superLayout);
         url = getIntent().getStringExtra(EXTRA_URL);
-        if (url.contains("privacy/service")) {
+        if (url.contains("privacy/service") || url.contains("terms-of-service")) {
             getBinding().titleView.setTitle(getString(R.string.app_user_agreement));
         } else if (url.contains("about-us")) {
             getBinding().titleView.setTitle(getString(R.string.app_about_us));
@@ -74,7 +75,7 @@ public class WebViewActivity extends BaseViewBindingActivity<AppActivityWebviewB
         getBinding().webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                Log.d("zhangw","newProgress:"+newProgress);
+                Log.d("zhangw", "newProgress:" + newProgress);
                 if (newProgress == 100) {
                     getBinding().progressBar.setVisibility(View.GONE);
                 } else {

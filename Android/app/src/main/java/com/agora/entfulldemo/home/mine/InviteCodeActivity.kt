@@ -3,10 +3,14 @@ package com.agora.entfulldemo.home.mine
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import androidx.activity.viewModels
 import com.agora.entfulldemo.R
 import com.agora.entfulldemo.databinding.AppActivityInviteBinding
+import com.agora.entfulldemo.welcome.LoginViewModel
+import com.agora.entfulldemo.welcome.WelcomeActivity
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.manager.SSOUserManager
 import io.agora.scene.base.utils.ToastUtils
@@ -18,6 +22,8 @@ import io.agora.scene.base.utils.ToastUtils
  */
 class InviteCodeActivity : BaseViewBindingActivity<AppActivityInviteBinding>() {
 
+    private val mLoginViewModel: LoginViewModel by viewModels()
+
     override fun getViewBinding(inflater: LayoutInflater): AppActivityInviteBinding {
         return AppActivityInviteBinding.inflate(inflater)
     }
@@ -27,15 +33,11 @@ class InviteCodeActivity : BaseViewBindingActivity<AppActivityInviteBinding>() {
             titleView.setLeftClick {
                 finish()
             }
-            if (SSOUserManager.isGenerateCode()) {
-                tvInviteCode.text = SSOUserManager.getUser().invitationCode
-                tvGenerateCodeTips.text = getString(R.string.app_share_invite_code)
-                btnGenerateCode.text = getString(R.string.app_copy)
-            } else {
-                tvInviteCode.text = "******"
-                tvGenerateCodeTips.text = getString(R.string.app_generate_a_code_to_friends)
-                btnGenerateCode.text = getString(R.string.app_generate_a_code)
+            if (SSOUserManager.getUser().invitationCode.isEmpty()){
+                mLoginViewModel.getUserInfoByToken(SSOUserManager.getToken())
             }
+
+            setupInviteText()
             btnGenerateCode.setOnClickListener {
                 if (SSOUserManager.isGenerateCode()) {
                     copyToClipboard(tvInviteCode.text.toString())
@@ -43,12 +45,24 @@ class InviteCodeActivity : BaseViewBindingActivity<AppActivityInviteBinding>() {
                     tvInviteCode.text = SSOUserManager.getUser().invitationCode
                     tvGenerateCodeTips.text = getString(R.string.app_share_invite_code)
                     btnGenerateCode.text = getString(R.string.app_copy)
-
                     SSOUserManager.setGenerateCode(true)
                 }
             }
         }
+    }
 
+    private fun setupInviteText(){
+        binding?.apply {
+            if (SSOUserManager.isGenerateCode()) {
+                tvInviteCode.text = SSOUserManager.getUser().invitationCode
+                tvGenerateCodeTips.text = getString(R.string.app_share_invite_code)
+                btnGenerateCode.text = getString(R.string.app_copy)
+            } else {
+                tvInviteCode.text = "******"
+                tvGenerateCodeTips.text = getString(R.string.app_generate_a_code_for_friends)
+                btnGenerateCode.text = getString(R.string.app_generate_a_code)
+            }
+        }
     }
 
     private fun copyToClipboard(text: String) {
@@ -58,7 +72,14 @@ class InviteCodeActivity : BaseViewBindingActivity<AppActivityInviteBinding>() {
     }
 
     override fun initListener() {
-        binding?.apply {
+        mLoginViewModel.userInfoLiveData.observe(this) { userInfo ->
+            if (userInfo != null) {
+                setupInviteText()
+            }else{
+                val intent = Intent(this@InviteCodeActivity, WelcomeActivity::class.java)
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
         }
     }
 

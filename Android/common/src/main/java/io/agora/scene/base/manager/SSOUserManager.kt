@@ -79,6 +79,7 @@ object SSOUserManager {
             CommonBaseLogger.e("SSOUserManager", io.message ?: "parse error")
             ""
         }
+        CommonBaseLogger.d("SSOUserManager", "$userString")
         SPUtil.putString(Constant.CURRENT_SSO_USER, userString)
     }
 

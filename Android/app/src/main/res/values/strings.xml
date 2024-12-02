@@ -60,7 +60,7 @@
     <string name="app_login_with_a_code">Login with a code</string>
     <string name="app_invite_code">Invite Code</string>
     <string name="app_my_invite_code">My Invite Code</string>
-    <string name="app_generate_a_code_to_friends">Generate a code to your friends</string>
+    <string name="app_generate_a_code_for_friends">Generate a code for your friends</string>
     <string name="app_generate_a_code">Generate A Code</string>
     <string name="app_share_invite_code">Share to your friends</string>
     <string name="app_copy">Copy</string>
