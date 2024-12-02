@@ -40,9 +40,9 @@ public final class UserManager {
         User user = new User();
         user.headUrl = getOrRandomAvatar();
         String displayName = ssoUserInfo.getDisplayName();
-        if (displayName == null || displayName.isEmpty()) {
-            displayName = getOrRandomNickname();
-        }
+//        if (displayName == null || displayName.isEmpty()) {
+//            displayName = getOrRandomNickname();
+//        }
         user.name = displayName;
         user.id = (long) Math.abs(ssoUserInfo.getAccountUid().hashCode());
         user.userNo = user.id + "";
