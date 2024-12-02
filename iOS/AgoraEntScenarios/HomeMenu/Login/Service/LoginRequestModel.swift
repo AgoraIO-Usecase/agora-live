@@ -11,7 +11,7 @@ import Foundation
 class LoginCommonModel: AUINetworkModel {
     override init() {
         super.init()
-        host = KeyCenter.debugBaseServerUrl ?? ""
+        host = KeyCenter.releaseBaseServerUrl ?? ""
     }
     
     public override func parse(data: Data?) throws -> Any? {

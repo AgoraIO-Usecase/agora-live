@@ -14,6 +14,7 @@
 #import "AgoraEntScenarios-Bridging-Header.h"
 #import "AESMacro.h"
 #import "VLUserCenter.h"
+#import "VLAlert.h"
 
 @import SDWebImage;
 
@@ -26,6 +27,7 @@ static NSString * const kDefaultCellID = @"kDefaultCellID";
 @property (nonatomic, strong) UIView *mineTopView;
 @property (nonatomic, strong) VLMineTCell *mineTopCell;
 @property (nonatomic, strong) UIView *mineTopBackgroundView;
+@property (nonatomic, strong) UIButton *logoutButton;
 
 @property (nonatomic, strong) UIImageView *avatarImgView;
 @property (nonatomic, strong) UILabel *nickNameLabel;
@@ -67,6 +69,13 @@ static NSString * const kDefaultCellID = @"kDefaultCellID";
     } else {
         self.mineTopBackgroundView.frame = CGRectMake(20, kTopNavHeight+VLREALVALUE_WIDTH(35), self.width-40, VLREALVALUE_WIDTH(60)+50);
     }
+    
+    [self addSubview:self.logoutButton];
+}
+
+- (void)layoutSubviews {
+    self.logoutButton.frame = CGRectMake(20, self.mineTable.bottom + 20, self.width-40, 51);
+    [super layoutSubviews];
 }
 
 - (void)setupData {
@@ -129,6 +138,32 @@ static NSString * const kDefaultCellID = @"kDefaultCellID";
 
 - (void)codeCellClickAction {
     [self.delegate mineViewDidCick:VLMineViewClickTypeInviteCode];
+}
+
+- (void)logoutAction {
+    [[VLAlert shared] showAlertWithFrame:UIScreen.mainScreen.bounds title:@"Logout" message:NSLocalizedString(@"logout_message", nil) placeHolder:@"" type:ALERTYPENORMAL buttonTitles:@[NSLocalizedString(@"cancel", nil), NSLocalizedString(@"exit", nil)] completion:^(bool flag, NSString * _Nullable text) {
+        if(flag == YES){
+            [[VLUserCenter center] logout];
+            [SSOWebViewController clearWebViewCache];
+            [[UIApplication sharedApplication].delegate.window configRootViewController];
+        }
+
+        [[VLAlert shared] dismiss];
+    }];
+}
+
+- (UIButton *)logoutButton {
+    if (!_logoutButton) {
+        _logoutButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _logoutButton.backgroundColor = [UIColor colorWithWhite:1 alpha:0.7];
+        _logoutButton.layer.cornerRadius = 10;
+        _logoutButton.layer.masksToBounds = YES;
+        [_logoutButton setTitle:@"Logout" forState:UIControlStateNormal];
+        _logoutButton.titleLabel.font = [UIFont systemFontOfSize:15];
+        [_logoutButton setTitleColor:UIColorMakeWithHex(@"#727272") forState:UIControlStateNormal];
+        [_logoutButton addTarget:self action:@selector(logoutAction) forControlEvents: UIControlEventTouchUpInside];
+    }
+    return _logoutButton;
 }
 
 - (VLMineTCell *)mineTopCell {

@@ -487,7 +487,7 @@ class ShowAgoraKitManager: NSObject {
         }
         let canvas = AgoraRtcVideoCanvas()
         canvas.view = canvasView
-        canvas.mirrorMode = mirrorMode
+//        canvas.mirrorMode = mirrorMode
         engine.setupLocalVideo(canvas)
         engine.startPreview()
         engine.setDefaultAudioRouteToSpeakerphone(true)

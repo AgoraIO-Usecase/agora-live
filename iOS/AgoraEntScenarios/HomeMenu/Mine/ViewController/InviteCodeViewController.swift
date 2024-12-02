@@ -115,7 +115,7 @@ class InviteCodeViewController: UIViewController {
     private func generateAction() {
         if generateButton.isSelected {
             UIPasteboard.general.string = VLUserCenter.user.invitationCode
-            ToastView.show(text: "Coped")
+            ToastView.show(text: "Copied")
             return
         }
         generateButton.isSelected.toggle()

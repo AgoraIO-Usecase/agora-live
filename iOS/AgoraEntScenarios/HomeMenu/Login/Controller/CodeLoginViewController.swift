@@ -11,47 +11,70 @@ import SVProgressHUD
 
 private var maxLengthKey: Int = 0
 
-extension UITextField {
+extension UITextView {
     @IBInspectable var maxLength: Int {
         get {
             return objc_getAssociatedObject(self, &maxLengthKey) as? Int ?? Int.max
         }
         set {
             objc_setAssociatedObject(self, &maxLengthKey, newValue, .OBJC_ASSOCIATION_RETAIN)
-            addTarget(self, action: #selector(checkMaxLength), for: .editingChanged)
+            NotificationCenter.default.addObserver(self, 
+                selector: #selector(checkMaxLength), 
+                name: UITextView.textDidChangeNotification, 
+                object: self)
         }
     }
     
-    @objc private func checkMaxLength(textField: UITextField) {
-        guard let prospectiveText = textField.text, prospectiveText.count > maxLength else {
+    @objc private func checkMaxLength() {
+        guard let text = self.text, text.count > maxLength else {
             return
         }
         
         let selection = selectedTextRange
-        text = String(prospectiveText.prefix(maxLength))
+        self.text = String(text.prefix(maxLength))
         selectedTextRange = selection
     }
 }
 
 class InputView: UIView {
-    lazy var text: UITextField = {
-        let textField = UITextField()
-        let placeholderAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 16)]
-        textField.attributedPlaceholder = NSAttributedString(string: NSLocalizedString("input_your_invite_code", comment: ""), attributes: placeholderAttributes)
-        textField.font = UIFont.boldSystemFont(ofSize: 16)
-        textField.textAlignment = .center
-        textField.textColor = .black
-        textField.borderStyle = .roundedRect
-        textField.maxLength = 10
-        return textField
+    lazy var text: UITextView = {
+        let textView = UITextView()
+        textView.font = UIFont.boldSystemFont(ofSize: 16)
+        textView.textAlignment = .center
+        textView.textColor = .black
+        textView.maxLength = 10
+        textView.textContainerInset = UIEdgeInsets(top: 16, left: 8, bottom: 16, right: 8)
+        textView.backgroundColor = .clear
+        textView.layer.cornerRadius = 5
+        textView.layer.borderWidth = 0.5
+        textView.layer.borderColor = UIColor.systemGray4.cgColor
+        return textView
     }()
-
+    
+    lazy var placeholderLabel: UILabel = {
+        let label = UILabel()
+        label.text = NSLocalizedString("input_your_invite_code", comment: "")
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = UIColor.lightGray
+        label.textAlignment = .center
+        return label
+    }()
+    
+    func setupTextView() {
+        text.delegate = self
+        addSubview(placeholderLabel)
+        placeholderLabel.snp.makeConstraints { make in
+            make.edges.equalTo(text)
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = UIColor(red: 0.95, green: 0.96, blue: 0.98, alpha: 1.00)
         self.layer.cornerRadius = 3333
         setupSubviews()
         setupConstraints()
+        setupTextView()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -69,6 +92,18 @@ class InputView: UIView {
     func setupConstraints() {
         text.snp.makeConstraints { make in
             make.edges.equalTo(UIEdgeInsets.zero)
+        }
+    }
+}
+
+extension InputView: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        placeholderLabel.isHidden = !textView.text.isEmpty
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            placeholderLabel.isHidden = false
         }
     }
 }
@@ -215,7 +250,11 @@ class CodeLoginViewController: UIViewController {
             LoginApiService.loginWithInvitationCode(code: code) { [weak self] error in
                 if let err = error {
                     SVProgressHUD.dismiss()
-                    ToastView.show(text: err.localizedDescription)
+                    var msg = err.localizedDescription
+                    if msg.isEmpty {
+                        msg = "Invalid Code. Please try again."
+                    }
+                    ToastView.show(text: msg)
                 } else {
                     self?.getUserInfo()
                 }
