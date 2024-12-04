@@ -147,11 +147,15 @@ class RoomLivingActivity : BaseViewBindingActivity<KtvActivityRoomLivingBinding>
                 toggleAudioRun = Runnable {
                     roomLivingViewModel.initData()
                     roomLivingViewModel.setLrcView(binding.lrcControlView)
+
+                    roomLivingViewModel.reportEnterRoom()
                 }
                 requestRecordPermission()
             } else {
                 roomLivingViewModel.initData()
                 roomLivingViewModel.setLrcView(binding.lrcControlView)
+
+                roomLivingViewModel.reportEnterRoom()
             }
         }
         val roomModel = roomLivingViewModel.mRoomInfo

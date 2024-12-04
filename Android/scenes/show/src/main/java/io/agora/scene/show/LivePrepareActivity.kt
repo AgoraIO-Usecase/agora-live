@@ -421,9 +421,6 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
 
             manifest?.files?.forEach { resource ->
                 if (resource.uri == "beauty_faceunity") {
-
-                    ShowLogger.d(tag, "Processing ${resource.url}")
-
                     binding.pbLoading.progress = 0
                     binding.tvContent.text =
                         String.format(
@@ -434,6 +431,8 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
 
                     val newUrl =  resource.url.replace("cn-beijing", "accelerate-overseas")
                     val newResource = resource.copy(url = newUrl)
+
+                    ShowLogger.d(tag, "Processing ${newResource.url}")
                     beautyResource.downloadAndUnZipResource(
                         resource = newResource,
                         progressHandler = {

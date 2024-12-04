@@ -36,11 +36,14 @@ import io.agora.rtc2.RtcEngine
 import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoCanvas
 import io.agora.rtc2.video.VideoEncoderConfiguration.VIDEO_CODEC_TYPE
+import io.agora.scene.base.AgoraScenes
 import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.component.AgoraApplication
+import io.agora.scene.base.manager.SSOUserManager
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.base.utils.ToastUtils
+import io.agora.scene.base.utils.reportRoom
 import io.agora.scene.show.databinding.ShowLiveDetailFragmentBinding
 import io.agora.scene.show.databinding.ShowLiveDetailMessageItemBinding
 import io.agora.scene.show.databinding.ShowLivingEndDialogBinding
@@ -534,6 +537,9 @@ class LiveDetailFragment : Fragment() {
             }
         }
         refreshStatisticInfo()
+
+        mRtcEngine.reportRoom(SSOUserManager.getUser().accountUid,AgoraScenes.LiveShow)
+        ShowLogger.d("reportRoom","reportEnterRoom")
     }
 
     /**
@@ -2103,7 +2109,6 @@ class LiveDetailFragment : Fragment() {
 
             }
         }
-
         if (activity is LiveDetailActivity) {
             (activity as LiveDetailActivity).toggleSelfVideo(isRoomOwner || isMeLinking(), callback = {
                 joinChannel(eventListener)
@@ -2114,7 +2119,6 @@ class LiveDetailFragment : Fragment() {
             })
         }
     }
-
 
     /**
      * Destroy rtc engine
