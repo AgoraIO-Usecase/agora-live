@@ -123,7 +123,7 @@ struct InvitationCodeLoginResponse: Codable {
                     let model = VLLoginModel()
                     let hashValue = abs(userInfo.accountUid.hashValue)
                     let hashString = String(hashValue)
-                    let uid = String(hashString.suffix(4))
+                    let uid = String(hashString.suffix(9))
                     model.token = VLUserCenter.user.token
                     model.name = userInfo.displayName
                     model.headUrl = LoginManager.shared.getRandomAvatar()

@@ -589,6 +589,7 @@
 		F7533F932C62184100108911 /* VLLogToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7533F922C62184100108911 /* VLLogToast.swift */; };
 		F7533F972C62249E00108911 /* VoiceLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7533F962C62249E00108911 /* VoiceLogger.swift */; };
 		F762DDB72CF5AB3A00505157 /* LoginApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F762DDB62CF5AB3A00505157 /* LoginApiService.swift */; };
+		F762DDBB2D00052C00505157 /* ReportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F762DDBA2D00052C00505157 /* ReportManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1339,6 +1340,7 @@
 		F7533F922C62184100108911 /* VLLogToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLLogToast.swift; sourceTree = "<group>"; };
 		F7533F962C62249E00108911 /* VoiceLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceLogger.swift; sourceTree = "<group>"; };
 		F762DDB62CF5AB3A00505157 /* LoginApiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginApiService.swift; sourceTree = "<group>"; };
+		F762DDBA2D00052C00505157 /* ReportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportManager.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -2664,6 +2666,7 @@
 			isa = PBXGroup;
 			children = (
 				F70CAB7A2C75A0B7000B0F61 /* VirtualSoundcardPresenter.swift */,
+				F762DDBA2D00052C00505157 /* ReportManager.swift */,
 				DD91E1F32C553C0C0028E966 /* StateManager */,
 				DD6199CA29E3D36D008F63E4 /* Authorized */,
 				DDA1994E28FFE579009D3E61 /* NetworkManager */,
@@ -4162,6 +4165,7 @@
 				DDA19A0628FFE579009D3E61 /* NSObject+JKAutoCoding.m in Sources */,
 				ABE4B37A2A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift in Sources */,
 				E732CD362B47EC6D004D6FB9 /* VoiceRoomChatCell.swift in Sources */,
+				F762DDBB2D00052C00505157 /* ReportManager.swift in Sources */,
 				A89E49E22B62349B005E6B45 /* ShowRoomOwnerExpiredView.swift in Sources */,
 				A84C2D502B4FB01700D6EFCF /* CommercePresettingCell.swift in Sources */,
 				E3735C9C2A5E7E75004737EF /* BundleUtil.m in Sources */,

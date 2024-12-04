@@ -25,8 +25,6 @@ PODS:
   - AGResourceManager (0.1.0):
     - AFNetworking
     - SSZipArchive
-  - fuLib (1.0):
-    - FURenderKit
   - FURenderKit (8.11.1)
   - JXCategoryView (1.6.1)
   - KakaJSON (1.1.2)
@@ -76,7 +74,6 @@ DEPENDENCIES:
   - AgoraRtcEngine_Special_iOS (= 4.3.2.4)
   - AgoraRtm (from `AgoraRtm.podspec`)
   - AGResourceManager (from `AgoraEntScenarios/Common/API/AGResourceManager`)
-  - fuLib (from `fu.podspec`)
   - FURenderKit (from `FURenderKit.podspec`)
   - JXCategoryView (= 1.6.1)
   - KakaJSON
@@ -133,8 +130,6 @@ EXTERNAL SOURCES:
     :path: AgoraRtm.podspec
   AGResourceManager:
     :path: AgoraEntScenarios/Common/API/AGResourceManager
-  fuLib:
-    :path: fu.podspec
   FURenderKit:
     :path: FURenderKit.podspec
   RTMSyncManager:
@@ -151,7 +146,6 @@ SPEC CHECKSUMS:
   AgoraRtcEngine_Special_iOS: 4c91dc189fcd45f4fe0080d171349a35e9792e83
   AgoraRtm: 021fe357e5e6629a35dff013e84e2a06c84f5e0c
   AGResourceManager: e6616ad4d9d0461c84d9582ef1118004fa534e5c
-  fuLib: 43b6990d34caa47e0f12a61db57fe9bd2372f584
   FURenderKit: f6e65256a551ca84848e2bfcce35ad2dd3b213ec
   JXCategoryView: 7b1ee69ede4843c581688afe84d0f047723262f2
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
@@ -176,6 +170,6 @@ SPEC CHECKSUMS:
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
   ZSwiftBaseLib: f5d039af0c4be833bb86c6d382930775c4087ab9
 
-PODFILE CHECKSUM: 95e7e4070eadc83098174a1e174e819fb2451ed3
+PODFILE CHECKSUM: 730b6f9131ac3435283f803177e7c0a345393b8f
 
 COCOAPODS: 1.16.2
