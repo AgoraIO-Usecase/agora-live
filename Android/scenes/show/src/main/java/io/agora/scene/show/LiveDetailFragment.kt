@@ -498,7 +498,7 @@ class LiveDetailFragment : Fragment() {
             val roomLeftTime =
                 ShowServiceProtocol.ROOM_AVAILABLE_DURATION - (TimeUtils.currentTimeMillis() - mRoomInfo.createdAt.toLong())
             if (roomLeftTime > 0) {
-                mBinding.root.postDelayed(timerRoomEndRun, ShowServiceProtocol.ROOM_AVAILABLE_DURATION)
+                mBinding.root.postDelayed(timerRoomEndRun, roomLeftTime)
                 initRtcEngine()
                 initServiceWithJoinRoom()
             }

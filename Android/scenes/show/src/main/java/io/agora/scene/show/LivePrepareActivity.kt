@@ -423,7 +423,7 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                 if (resource.uri == "beauty_faceunity") {
 
                     ShowLogger.d(tag, "Processing ${resource.url}")
-                    binding.statusPrepareViewLrc.isVisible = true
+
                     binding.pbLoading.progress = 0
                     binding.tvContent.text =
                         String.format(
@@ -438,6 +438,10 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                         resource = newResource,
                         progressHandler = {
                             binding.pbLoading.progress = it
+                            if (!binding.statusPrepareViewLrc.isVisible){
+                                binding.statusPrepareViewLrc.isVisible = true
+                            }
+
                             binding.tvContent.text = String.format(
                                 resources.getString(R.string.show_beauty_loading),
                                 "faceunity",
