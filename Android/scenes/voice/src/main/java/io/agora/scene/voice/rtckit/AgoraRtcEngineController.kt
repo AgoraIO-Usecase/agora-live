@@ -166,7 +166,7 @@ class AgoraRtcEngineController {
     }
 
     private fun checkJoinChannel(channelId: String, rtcUid: Int, soundEffect: Int, isBroadcaster: Boolean): Boolean {
-        "joinChannel $channelId,${VoiceBuddyFactory.get().getVoiceBuddy().rtcToken()}:$rtcUid".logD(TAG)
+        "checkJoinChannel $channelId, rtcUid:$rtcUid".logD(TAG)
         if (channelId.isEmpty() || rtcUid < 0) {
             joinCallback?.onError(Constants.ERR_FAILED, "roomId or rtcUid illegal!")
             return false

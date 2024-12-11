@@ -40,3 +40,8 @@ data class InvitationLoginReq(
 data class InvitationLoginResp(
     val token: String
 )
+
+object ApiError {
+    const val INVALID_INVITE_CODE = 142
+    const val TOO_MANY_ATTEMPTS = 145
+}

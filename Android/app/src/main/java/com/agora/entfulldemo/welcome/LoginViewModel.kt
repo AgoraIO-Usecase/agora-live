@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.agora.entfulldemo.R
+import io.agora.scene.base.api.ApiError
 import io.agora.scene.base.api.ApiManager
 import io.agora.scene.base.api.ApiManagerService
 import io.agora.scene.base.api.InvitationLoginReq
@@ -94,7 +95,11 @@ class LoginViewModel : ViewModel() {
                     _tokenLiveData.postValue(token)
                 } else {
                     _tokenLiveData.postValue(null)
-                    CustomToast.show(R.string.app_invalid_invite_code)
+                    if (result.code == ApiError.TOO_MANY_ATTEMPTS) {
+                        CustomToast.show(R.string.app_too_many_attempts)
+                    } else {
+                        CustomToast.show(R.string.app_invalid_invite_code)
+                    }
                 }
             }.onFailure {
                 _tokenLiveData.postValue(null)

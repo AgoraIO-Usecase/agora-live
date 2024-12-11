@@ -68,6 +68,7 @@
     <string name="app_input_invite_code">Input Your Invite Code</string>
     <string name="app_login_expired">Login expired</string>
     <string name="app_invalid_invite_code">Invalid Code. Please try again.</string>
+    <string name="app_too_many_attempts">Too many attempts. Please try it later.</string>
     <string name="app_logout_tips">Are you sure you want to logout?</string>
 
 </resources>
