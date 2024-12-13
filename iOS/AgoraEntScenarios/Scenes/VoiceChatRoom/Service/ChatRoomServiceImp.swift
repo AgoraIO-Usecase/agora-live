@@ -733,7 +733,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         let user = self.applicants.first(where: {
             $0.member?.chat_uid ?? "" == chatUid
         })
-        if user?.index ?? 0 < 1 {
+        if let i = user?.index, (i < 1 || self.mics[safe: i]?.member != nil) {
             mic_index = self.findMicIndex()
         } else {
             mic_index = user?.index ?? 1
