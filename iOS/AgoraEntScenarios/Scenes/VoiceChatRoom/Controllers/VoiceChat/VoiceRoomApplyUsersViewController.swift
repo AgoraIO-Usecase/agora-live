@@ -90,7 +90,6 @@ extension VoiceRoomApplyUsersViewController {
             if self.agreeApply != nil,let mic = mic {
                 self.agreeApply!(mic)
             }
-            let ap = ChatRoomServiceImp.getSharedInstance().applicants
             self.tableView.reloadData()
             let warningMessage = error == nil ? "voice_agree_success".voice_localized : "voice_agree_failed".voice_localized
             self.view.makeToast(warningMessage)

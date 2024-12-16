@@ -180,6 +180,10 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
         self.refreshApplicants(chat_uid: userName)
         ChatRoomServiceImp.getSharedInstance().userList = self.roomInfo?.room?.member_list ?? []
         if isOwner {
+            if let index = ChatRoomServiceImp.getSharedInstance().mics.firstIndex(where: { $0.member?.name ?? "" == userName}) {
+                ChatRoomServiceImp.getSharedInstance().leaveMic(mic_index: index) { error, mic in
+                }
+            }
             ChatRoomServiceImp.getSharedInstance().updateRoomMembers { error in
                 if error != nil {
 //                    self.view.makeToast("\(error?.localizedDescription ?? "")")
