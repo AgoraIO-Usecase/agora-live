@@ -19,6 +19,7 @@ import com.agora.entfulldemo.home.holder.HomeIndexHolder;
 import java.util.List;
 
 import io.agora.scene.base.ReportApi;
+import io.agora.scene.base.ServerConfig;
 import io.agora.scene.base.component.BaseRecyclerViewAdapter;
 import io.agora.scene.base.component.BaseViewBindingFragment;
 import io.agora.scene.base.component.OnItemClickListener;
@@ -65,6 +66,12 @@ public class HomeIndexFragment extends BaseViewBindingFragment<AppFragmentHomeIn
                 }
             }, HomeIndexHolder.class);
             getBinding().rvScenes.setAdapter(homeIndexAdapter);
+
+            if (ServerConfig.getEnvRelease()){
+                getBinding().tvDevEnv.setVisibility(View.GONE);
+            }else {
+                getBinding().tvDevEnv.setVisibility(View.VISIBLE);
+            }
         }
     }
 

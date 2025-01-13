@@ -6,7 +6,7 @@ import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import io.agora.scene.base.BuildConfig
+import io.agora.scene.base.ServerConfig
 import okhttp3.Interceptor
 import okhttp3.Response
 import org.json.JSONObject
@@ -52,7 +52,7 @@ object ApiManager {
 
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(extractBaseUrl(BuildConfig.TOOLBOX_SERVER_HOST))
+            .baseUrl(extractBaseUrl(ServerConfig.toolBoxUrl))
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
