@@ -130,3 +130,5 @@
 "logout_tips" = "After logging out, we will continue to retain your account data. Remember to come back and experience our services again!";
 "not_allowed" = "Do not allow";
 "requset_ok" = "Allow";
+"code_login_invalid_code" = "Invalid Code. Please try again.";
+"code_login_counts_limited" = "Too many attempts. Please try it later.";

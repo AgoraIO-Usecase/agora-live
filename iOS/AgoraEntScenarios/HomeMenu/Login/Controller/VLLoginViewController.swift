@@ -297,7 +297,7 @@ class VLLoginViewController: VRBaseViewController {
         }
         
         let ssoWebVC = SSOWebViewController()
-        let baseUrl = KeyCenter.debugBaseServerUrl ?? ""
+        let baseUrl = KeyCenter.releaseBaseServerUrl ?? ""
         ssoWebVC.urlString = "\(baseUrl)/sso/login"
         ssoWebVC.completionHandler = { token in
             if let token = token {
