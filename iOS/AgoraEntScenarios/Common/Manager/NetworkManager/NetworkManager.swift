@@ -119,9 +119,14 @@ class NetworkManager:NSObject {
                       "uid": uid] as [String: Any]
 //        ToastView.showWait(text: "loading...", view: nil)
         let serverUrl = baseServerUrl.replacingOccurrences(of: "v1", with: "v2")
-        let url = "\(serverUrl)token/generate"
+        let url = "\(serverUrl)/sso/token/generate"
+        let headers = [
+            "Authorization": "Bearer \(VLUserCenter.user.token)",
+            "Content-Type": "application/json"
+        ]
         NetworkManager.shared.postRequest(urlString: url,
                                           params: params,
+                                          headers: headers,
                                           success: { response in
             let data = response["data"] as? [String: String]
             let token = data?["token"]
@@ -303,9 +308,9 @@ class NetworkManager:NSObject {
         }
     }
 
-    func postRequest(urlString: String, params: [String: Any]?, success: SuccessClosure?, failure: FailClosure?) {
+    func postRequest(urlString: String, params: [String: Any]?, headers: [String: String]? = nil, success: SuccessClosure?, failure: FailClosure?) {
         DispatchQueue.global().async {
-            self.request(urlString: urlString, params: params, method: .POST, success: success, failure: failure)
+            self.request(urlString: urlString, params: params, method: .POST, headers: headers, success: success, failure: failure)
         }
     }
 
@@ -322,6 +327,7 @@ class NetworkManager:NSObject {
     private func request(urlString: String,
                          params: [String: Any]?,
                          method: HTTPMethods,
+                         headers: [String: String]? = nil,
                          success: SuccessClosure?,
                          failure: FailClosure?)
     {
@@ -329,6 +335,7 @@ class NetworkManager:NSObject {
         guard let request = getRequest(urlString: urlString,
                                        params: params,
                                        method: method,
+                                       headers: headers,
                                        success: success,
                                        failure: failure) else { return }
         session.dataTask(with: request) { data, response, error in
@@ -341,19 +348,27 @@ class NetworkManager:NSObject {
     private func getRequest(urlString: String,
                             params: [String: Any]?,
                             method: HTTPMethods,
+                            headers: [String: String]? = nil,
                             success: SuccessClosure?,
-                            failure: FailClosure?) -> URLRequest?
-    {
+                            failure: FailClosure?) -> URLRequest? {
         let string = urlString.hasPrefix("http") ? urlString : baseUrl.appending(urlString)
         guard let url = URL(string: string) else {
             return nil
         }
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
+        
+        if let headers = headers {
+            for (key, value) in headers {
+                request.setValue(value, forHTTPHeaderField: key)
+            }
+        }
+        
         if method == .POST {
             request.httpBody = try? JSONSerialization.data(withJSONObject: params ?? [],
-                                                           options: .sortedKeys) // convertParams(params: params).data(using: .utf8)
+                                                           options: .sortedKeys)
         }
+        
         let curl = request.cURL(pretty: true)
         #if DEBUG
         debugPrint("curl == \(curl)")
