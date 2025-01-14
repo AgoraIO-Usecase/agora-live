@@ -221,6 +221,8 @@
         app:cardBackgroundColor="@color/show_black_85_percent"
         app:cardCornerRadius="12dp"
         app:cardElevation="0dp"
+        android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

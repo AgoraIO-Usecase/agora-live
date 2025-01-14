@@ -3,19 +3,17 @@ package io.agora.scene.eCommerce.service
 import android.os.CountDownTimer
 import android.util.Base64
 import android.util.Log
-import com.moczul.ok2curl.CurlInterceptor
-import com.moczul.ok2curl.logger.Logger
 import io.agora.scene.base.BuildConfig
+import io.agora.scene.base.api.HttpLogger
+import io.agora.scene.base.api.SecureOkHttpClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import java.util.UUID
 
@@ -44,15 +42,8 @@ class CloudPlayerService {
      * Ok http client
      */
     private val okHttpClient by lazy {
-        val builder = OkHttpClient.Builder()
-        if (BuildConfig.DEBUG) {
-            builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                .addInterceptor(CurlInterceptor(object : Logger {
-                    override fun log(message: String) {
-                        Log.d(tag, message)
-                    }
-                }))
-        }
+        val builder = SecureOkHttpClient.create()
+            .addInterceptor(HttpLogger())
         builder.build()
     }
 

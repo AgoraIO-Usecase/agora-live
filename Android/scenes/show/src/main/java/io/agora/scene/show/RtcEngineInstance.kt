@@ -38,6 +38,11 @@ object RtcEngineInstance {
     }
 
     /**
+     * Virtual img item
+     */
+    var virtualImgItem: Int = 0
+
+    /**
      * Video capture configuration
      */
     val videoCaptureConfiguration = CameraCapturerConfiguration(CameraCapturerConfiguration.CaptureFormat()).apply {

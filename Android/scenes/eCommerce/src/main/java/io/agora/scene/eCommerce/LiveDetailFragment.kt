@@ -33,10 +33,12 @@ import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoCanvas
 import io.agora.rtc2.video.VideoEncoderConfiguration
+import io.agora.scene.base.AgoraScenes
+import io.agora.scene.base.manager.SSOUserManager
 import io.agora.scene.base.manager.UserManager
-import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.base.utils.UiUtil
+import io.agora.scene.base.utils.reportRoom
 import io.agora.scene.eCommerce.databinding.CommerceLiveDetailFragmentBinding
 import io.agora.scene.eCommerce.databinding.CommerceLiveDetailMessageItemBinding
 import io.agora.scene.eCommerce.databinding.CommerceLivingEndDialogBinding
@@ -905,7 +907,11 @@ class LiveDetailFragment : Fragment() {
                 error = { e ->
                     runOnUiThread {
                         CommerceLogger.d(TAG, "join room error!:${e.message}")
-                        ToastUtils.showToast("You are disconnected. Error:${e.message}")
+                         ToastUtils.showToast(
+                            getString(
+                                R.string.commerce_You_are_disconnected_error,
+                                e.message
+                            ))
                         destroy(false)
                         activity?.finish()
                     }
@@ -1100,6 +1106,9 @@ class LiveDetailFragment : Fragment() {
                 // nothing
             })
         }
+
+        mRtcEngine.reportRoom(SSOUserManager.getUser().accountUid, AgoraScenes.ECommerce)
+        CommerceLogger.d("reportRoom","reportEnterRoom")
     }
 
 

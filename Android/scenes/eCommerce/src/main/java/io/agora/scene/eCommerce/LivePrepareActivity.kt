@@ -278,7 +278,7 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
                 complete?.invoke(null)
             },
             failure = {
-                ToastUtils.showToast(it?.message ?: "generate token failure")
+                ToastUtils.showToast(it?.message ?: getString(R.string.commerce_generate_token_failure))
                 complete?.invoke(it)
             })
     }

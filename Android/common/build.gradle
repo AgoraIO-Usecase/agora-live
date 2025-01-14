@@ -94,7 +94,6 @@ dependencies {
     implementation rootProject.ext.deps.material
     implementation rootProject.ext.deps.constraintlayout
     implementation rootProject.ext.deps.glide
-    api rootProject.ext.deps.ok2curl
 
     if (USE_LOCAL_SDK) {
         api fileTree(dir: "${localsdkPath}", include: ['*.jar'])

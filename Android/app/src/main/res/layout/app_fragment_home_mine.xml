@@ -19,87 +19,107 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/userBg"
+    <LinearLayout
+        android:id="@+id/layoutTop"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="62dp"
-        android:background="@drawable/bg_full_radius_white_10"
-        android:paddingVertical="8dp"
+        android:background="@drawable/bg_full_radius_ffc_10"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivUserAvatar"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="20dp"
-            android:src="@mipmap/userimage"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/userBg"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:background="@drawable/bg_full_radius_white_10"
+            android:paddingVertical="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivUserAvatar"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:src="@mipmap/userimage"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvUserMobile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:textColor="@color/def_text_color_040"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@id/tvUserID"
+                app:layout_constraintStart_toEndOf="@id/ivUserAvatar"
+                app:layout_constraintTop_toTopOf="@id/ivUserAvatar"
+                tools:text="AaBb" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvUserID"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="6dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/def_text_grey_6c7"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/ivUserAvatar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tvUserMobile" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivToEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginEnd="15dp"
+                android:src="@mipmap/ic_edit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tvUserMobile" />
+
+            <View
+                android:id="@+id/vToEdit"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/ivUserAvatar"
+                app:layout_constraintEnd_toEndOf="@id/ivToEdit"
+                app:layout_constraintStart_toEndOf="@id/ivUserAvatar"
+                app:layout_constraintTop_toTopOf="@id/ivUserAvatar" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvUserMobile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:textColor="@color/def_text_color_040"
-            android:textSize="18sp"
-            tools:text="AaBb"
-            app:layout_constraintStart_toEndOf="@id/ivUserAvatar"
-            app:layout_constraintTop_toTopOf="@id/ivUserAvatar"
-            app:layout_constraintBottom_toTopOf="@id/tvUserID"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvUserID"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="6dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:textColor="@color/def_text_grey_6c7"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@id/ivUserAvatar"
-            app:layout_constraintStart_toStartOf="@id/tvUserMobile" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivToEdit"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginEnd="15dp"
-            android:src="@mipmap/ic_edit"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvUserMobile" />
-
-        <View
-            android:id="@+id/vToEdit"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/ivUserAvatar"
-            app:layout_constraintEnd_toEndOf="@id/ivToEdit"
-            app:layout_constraintStart_toEndOf="@id/ivUserAvatar"
-            app:layout_constraintTop_toTopOf="@id/ivUserAvatar" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+            android:id="@+id/tvInviteCode"
+            style="@style/app_tv_mine_style"
+            android:layout_width="match_parent"
+            android:layout_marginVertical="4dp"
+            android:drawableStart="@mipmap/ic_user_invite"
+            android:text="@string/app_my_invite_code"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clBtnList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="18dp"
         android:background="@drawable/bg_full_radius_white_10"
         android:paddingVertical="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/userBg">
+        app:layout_constraintTop_toBottomOf="@id/layoutTop">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvUserAgreement"
@@ -127,6 +147,31 @@
             android:text="@string/app_debug_mode"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/tvAbout"
+            tools:ignore="MissingConstraints" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_full_radius_white70_10"
+        android:paddingVertical="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clBtnList">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvLogout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:textColor="#727272"
+            android:textSize="15sp"
+            android:text="@string/app_logout"
             tools:ignore="MissingConstraints" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

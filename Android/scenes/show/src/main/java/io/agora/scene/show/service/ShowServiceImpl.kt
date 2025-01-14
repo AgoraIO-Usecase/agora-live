@@ -591,10 +591,14 @@ class ShowServiceImpl(context: Context) : ShowServiceProtocol {
             .addApply(
                 UserManager.getInstance().user.id.toString(),
                 success = {
-                    success?.invoke(it.toShowApplyInfo())
+                    ThreadManager.getInstance().runOnMainThread {
+                        success?.invoke(it.toShowApplyInfo())
+                    }
                 },
                 failure = {
-                    error?.invoke(RuntimeException(it))
+                    ThreadManager.getInstance().runOnMainThread {
+                        error?.invoke(RuntimeException(it))
+                    }
                 })
     }
 

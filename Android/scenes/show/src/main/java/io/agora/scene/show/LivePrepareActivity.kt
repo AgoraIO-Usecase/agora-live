@@ -339,7 +339,7 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
             },
             failure = {
                 ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
-                ToastUtils.showToast(it?.message ?: "generate token failure")
+                ToastUtils.showToast(it?.message ?: getString(R.string.show_generate_token_failure))
             })
     }
 
@@ -421,9 +421,6 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
 
             manifest?.files?.forEach { resource ->
                 if (resource.uri == "beauty_faceunity") {
-
-                    ShowLogger.d(tag, "Processing ${resource.url}")
-                    binding.statusPrepareViewLrc.isVisible = true
                     binding.pbLoading.progress = 0
                     binding.tvContent.text =
                         String.format(
@@ -432,10 +429,18 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                             "0%"
                         )
 
+                    val newUrl =  resource.url.replace("cn-beijing", "accelerate-overseas")
+                    val newResource = resource.copy(url = newUrl)
+
+                    ShowLogger.d(tag, "Processing ${newResource.url}")
                     beautyResource.downloadAndUnZipResource(
-                        resource = resource,
+                        resource = newResource,
                         progressHandler = {
                             binding.pbLoading.progress = it
+                            if (!binding.statusPrepareViewLrc.isVisible){
+                                binding.statusPrepareViewLrc.isVisible = true
+                            }
+
                             binding.tvContent.text = String.format(
                                 resources.getString(R.string.show_beauty_loading),
                                 "faceunity",

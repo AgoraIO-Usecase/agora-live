@@ -68,5 +68,6 @@
     <string name="comm_upload_logging_error">Log upload error</string>
     <string name="comm_upload_logging_complete">Log upload success</string>
     <string name="comm_upload_repeat">Retry</string>
+    <string name="copy_succeed">Copy Succeed</string>
 
 </resources>
