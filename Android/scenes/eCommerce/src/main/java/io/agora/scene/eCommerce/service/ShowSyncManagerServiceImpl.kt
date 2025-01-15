@@ -19,6 +19,7 @@ import io.agora.rtmsyncmanager.service.rtm.AUIRtmUserLeaveReason
 import io.agora.rtmsyncmanager.utils.AUILogger
 import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.scene.base.BuildConfig
+import io.agora.scene.base.ServerConfig
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.eCommerce.CommerceLogger
@@ -67,7 +68,7 @@ class ShowSyncManagerServiceImpl constructor(
     }
 
     init {
-        HttpManager.setBaseURL(BuildConfig.ROOM_MANAGER_SERVER_HOST)
+        HttpManager.setBaseURL(ServerConfig.roomManagerUrl)
         AUILogger.initLogger(AUILogger.Config(context, "eCommerce", logCallback = object: AUILogger.AUILogCallback {
             override fun onLogDebug(tag: String, message: String) {
                 CommerceLogger.d(tag, message)
@@ -94,7 +95,7 @@ class ShowSyncManagerServiceImpl constructor(
         owner.userName = UserManager.getInstance().user.name
         owner.userAvatar = UserManager.getInstance().user.headUrl
         commonConfig.owner = owner
-        commonConfig.host = BuildConfig.ROOM_MANAGER_SERVER_HOST
+        commonConfig.host = ServerConfig.roomManagerUrl
         AUIRoomContext.shared().setCommonConfig(commonConfig)
         syncManager = SyncManager(context, null, commonConfig)
 

@@ -14,6 +14,7 @@ import com.agora.entfulldemo.welcome.LoginViewModel
 import com.agora.entfulldemo.welcome.WelcomeActivity
 import io.agora.scene.base.SceneConfigManager.fetchSceneConfig
 import io.agora.scene.base.SceneConfigManager.logUpload
+import io.agora.scene.base.TokenGenerator
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.manager.SSOUserManager
 import io.agora.scene.base.uploader.OverallLayoutController
@@ -50,6 +51,15 @@ class MainActivity : BaseViewBindingActivity<AppActivityMainBinding?>() {
             if (userInfo != null) {
                 // nothing
             } else {
+                val intent = Intent(this@MainActivity, WelcomeActivity::class.java)
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+        }
+
+        TokenGenerator.tokenErrorCompletion = {
+            if (it!=null){
+                SSOUserManager.logout()
                 val intent = Intent(this@MainActivity, WelcomeActivity::class.java)
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)

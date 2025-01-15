@@ -9,8 +9,10 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import io.agora.scene.base.AgoraTokenType
 import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.TokenGenerator
+import io.agora.scene.base.TokenGeneratorType
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.eCommerce.databinding.CommerceRoomItemBinding
@@ -295,10 +297,10 @@ class RoomListActivity : AppCompatActivity() {
         }
         val localUId = UserManager.getInstance().user.id
         TokenGenerator.generateTokens("", localUId.toString(),
-            TokenGenerator.TokenGeneratorType.Token007,
+            TokenGeneratorType.Token007,
             arrayOf(
-                TokenGenerator.AgoraTokenType.Rtc,
-                TokenGenerator.AgoraTokenType.Rtm
+                AgoraTokenType.Rtc,
+                AgoraTokenType.Rtm
             ),
             success = {
                 //ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")

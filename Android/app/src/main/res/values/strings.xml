@@ -46,7 +46,12 @@
 
     <string name="app_debug_open">Debug Mode on</string>
     <string name="app_debug_off">Debug Mode Off</string>
-    <string name="app_exit_debug">Are you sure you want to exit debug mode?</string>
+    <string name="app_debug_switch">Switch</string>
+    <string name="app_debug_switch_env">Switch server</string>
+    <string name="app_release_env">Production</string>
+    <string name="app_dev_env">Test</string>
+    <string name="app_exit_debug">Exit debug mode</string>
+    <string name="app_exit_debug_title">Are you sure you want to exit debug mode?</string>
     <string name="app_exit_debug_tip">After exiting debug mode, the settings page will return to its normal state.</string>
     <string name="app_agree_tip">Please agree to the User Agreement and Privacy Policy.</string>
     <string name="app_login_success_tip">Login Succeeded</string>

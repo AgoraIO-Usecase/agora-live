@@ -37,7 +37,9 @@ import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoCanvas
 import io.agora.rtc2.video.VideoEncoderConfiguration.VIDEO_CODEC_TYPE
 import io.agora.scene.base.AgoraScenes
+import io.agora.scene.base.AgoraTokenType
 import io.agora.scene.base.TokenGenerator
+import io.agora.scene.base.TokenGeneratorType
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.manager.SSOUserManager
 import io.agora.scene.base.manager.UserManager
@@ -2827,8 +2829,8 @@ class LiveDetailFragment : Fragment() {
             mediaOptions.enableAudioRecordingOrPlayout = false
 
             TokenGenerator.generateToken(channel.channelId, channel.localUid.toString(),
-                TokenGenerator.TokenGeneratorType.Token007,
-                TokenGenerator.AgoraTokenType.Rtc,
+                TokenGeneratorType.Token007,
+                AgoraTokenType.Rtc,
                 success = {
                     ShowLogger.d("RoomListActivity", "generateToken success， uid：${channel.localUid}")
                     if (!mAudioMixing) {

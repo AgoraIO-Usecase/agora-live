@@ -4,8 +4,12 @@ import io.agora.scene.base.utils.SPUtil
 
 object ServerConfig {
 
+    private const val TOOLBOX_SERVER_HOST: String = "https://service.agora.io/toolbox-overseas"
+    private const val TOOLBOX_SERVER_HOST_DEV: String = "https://service-staging.agora.io/toolbox-overseas"
+
     const val Env_Mode = "env_mode"
 
+    @JvmStatic
     var envRelease: Boolean = SPUtil.getBoolean(Env_Mode, true)
         set(newValue) {
             field = newValue
@@ -15,18 +19,14 @@ object ServerConfig {
     val toolBoxUrl: String
         get() {
             return if (envRelease) {
-                BuildConfig.TOOLBOX_SERVER_HOST
+                TOOLBOX_SERVER_HOST
             } else {
-                BuildConfig.TOOLBOX_SERVER_HOST
+                TOOLBOX_SERVER_HOST_DEV
             }
         }
 
     val roomManagerUrl: String
         get() {
-            return if (envRelease) {
-                BuildConfig.ROOM_MANAGER_SERVER_HOST
-            } else {
-                BuildConfig.ROOM_MANAGER_SERVER_HOST
-            }
+            return toolBoxUrl.replace("toolbox", "room-manager")
         }
 }

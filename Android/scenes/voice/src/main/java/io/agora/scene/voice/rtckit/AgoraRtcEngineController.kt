@@ -9,7 +9,9 @@ import io.agora.mediaplayer.data.CacheStatistics
 import io.agora.mediaplayer.data.PlayerPlaybackStats
 import io.agora.rtc2.*
 import io.agora.scene.base.AgoraScenes
+import io.agora.scene.base.AgoraTokenType
 import io.agora.scene.base.TokenGenerator
+import io.agora.scene.base.TokenGeneratorType
 import io.agora.scene.base.manager.SSOUserManager
 import io.agora.scene.base.utils.reportRoom
 import io.agora.scene.voice.global.VoiceBuddyFactory
@@ -65,9 +67,9 @@ class AgoraRtcEngineController {
         TokenGenerator.generateTokens(
             channelId,
             rtcUid.toString(),
-            TokenGenerator.TokenGeneratorType.Token006,
+            TokenGeneratorType.Token007,
             arrayOf(
-                TokenGenerator.AgoraTokenType.Rtm
+                AgoraTokenType.Rtm
             ),
             { ret ->
                 mRtmToken = ret

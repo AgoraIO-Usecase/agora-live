@@ -29,7 +29,7 @@ import com.agora.entfulldemo.home.MainActivity
 import com.agora.entfulldemo.home.constructor.URLStatics
 import com.agora.entfulldemo.webview.SSOWebViewActivity
 import com.agora.entfulldemo.webview.WebViewActivity
-import io.agora.scene.base.BuildConfig
+import io.agora.scene.base.ServerConfig
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.manager.SSOUserManager
 import io.agora.scene.base.utils.dp
@@ -220,7 +220,7 @@ class WelcomeActivity : BaseViewBindingActivity<AppActivityWelcomeBinding>() {
     private fun startSSOLogin() {
         clearCookies()
         val intent = Intent(this, SSOWebViewActivity::class.java)
-        intent.putExtra(WebViewActivity.EXTRA_URL, BuildConfig.TOOLBOX_SERVER_HOST + "/v1/sso/login")
+        intent.putExtra(WebViewActivity.EXTRA_URL, ServerConfig.toolBoxUrl + "/v1/sso/login")
         activityResultLauncher.launch(intent)
     }
 

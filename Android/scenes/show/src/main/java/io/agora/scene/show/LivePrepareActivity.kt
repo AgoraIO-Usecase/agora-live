@@ -28,7 +28,9 @@ import com.faceunity.wrapper.faceunity
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.VideoCanvas
+import io.agora.scene.base.AgoraTokenType
 import io.agora.scene.base.TokenGenerator
+import io.agora.scene.base.TokenGeneratorType
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.manager.UserManager
@@ -99,10 +101,6 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
      */
     override fun getViewBinding(inflater: LayoutInflater): ShowLivePrepareActivityBinding {
         return ShowLivePrepareActivityBinding.inflate(inflater)
-    }
-
-    override fun onBackPressed() {
-
     }
 
     private fun setTips(tips: String) {
@@ -330,8 +328,8 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
         }
         val localUId = UserManager.getInstance().user.id
         TokenGenerator.generateToken("", localUId.toString(),
-            TokenGenerator.TokenGeneratorType.Token007,
-            TokenGenerator.AgoraTokenType.Rtc,
+            TokenGeneratorType.Token007,
+            AgoraTokenType.Rtc,
             success = {
                 ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
                 RtcEngineInstance.setupGeneralToken(it)

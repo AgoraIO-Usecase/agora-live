@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import android.util.Base64
 import android.util.Log
 import io.agora.scene.base.BuildConfig
+import io.agora.scene.base.ServerConfig
 import io.agora.scene.base.api.SecureOkHttpClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,11 +17,10 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.util.UUID
 
-
 class CloudPlayerService {
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
     private val tag = "CloudPlayerService"
-    private val baseUrl = "${BuildConfig.TOOLBOX_SERVER_HOST}/v1/"
+    private val baseUrl = "${ServerConfig.toolBoxUrl}/v1/"
     private val okHttpClient by lazy {
         val builder = SecureOkHttpClient.create()
         builder.build()

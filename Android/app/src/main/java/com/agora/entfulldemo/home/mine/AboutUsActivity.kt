@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -58,7 +59,7 @@ class AboutUsActivity : BaseViewBindingActivity<AppActivityAboutUsBinding>() {
      */
     private val adapter = AboutUsAdapter()
 
-    private val debugClickCount = 5
+    private val debugClickCount = 7
 
     /**
      * Get view binding
@@ -165,7 +166,7 @@ class AboutUsActivity : BaseViewBindingActivity<AppActivityAboutUsBinding>() {
      */
     private fun showDebugModeCloseDialog() {
         val dialog = CommonDialog(this)
-        dialog.setDialogTitle(getString(R.string.app_exit_debug))
+        dialog.setDialogTitle(getString(R.string.app_exit_debug_title))
         dialog.setDescText(getString(R.string.app_exit_debug_tip))
         dialog.setDialogBtnText(
             getString(io.agora.scene.base.R.string.cancel),

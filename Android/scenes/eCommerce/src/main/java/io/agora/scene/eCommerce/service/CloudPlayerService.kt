@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import android.util.Base64
 import android.util.Log
 import io.agora.scene.base.BuildConfig
+import io.agora.scene.base.ServerConfig
 import io.agora.scene.base.api.HttpLogger
 import io.agora.scene.base.api.SecureOkHttpClient
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +37,7 @@ class CloudPlayerService {
     /**
      * Base url
      */
-    private val baseUrl = "${BuildConfig.TOOLBOX_SERVER_HOST}/v1/"
+    private val baseUrl = "${ServerConfig.toolBoxUrl}/v1/"
 
     /**
      * Ok http client
