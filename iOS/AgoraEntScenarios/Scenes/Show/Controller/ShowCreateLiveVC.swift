@@ -26,7 +26,12 @@ class ShowCreateLiveVC: UIViewController {
         configNaviBar()
 
         ShowAgoraKitManager.shared.resetBroadcasterProfile()
-        ShowAgoraKitManager.shared.setupLocalVideo(canvasView: self.localView)
+        if setupFuResource() {
+            ShowAgoraKitManager.shared.setupLocalVideo(canvasView: self.localView)
+        } else {
+            ShowAgoraKitManager.shared.setupLocalVideo(mirrorMode: .enabled, canvasView: self.localView)
+        }
+       
     }
     
     func configNaviBar() {

@@ -6,6 +6,10 @@
 #import "VLBaseModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
+typedef NS_ENUM(NSUInteger, LoginType) {
+    SSOLOGIN,
+    CODELOGIN,
+};
 
 @interface VLLoginModel : VLBaseModel
 @property (nonatomic, copy) NSString *openId;
@@ -34,6 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSString *im_token;
 @property (nonatomic) NSString *authorization;
 @property (nonatomic) BOOL hasVoiceRoomUserInfo;
+
+@property (nonatomic, copy) NSString *invitationCode;
+@property (nonatomic, assign) LoginType type;
 
 //Extended fields reserved for each scenario
 @property (nonatomic, strong, readonly) NSMutableDictionary* extraDic;

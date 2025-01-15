@@ -246,6 +246,12 @@ typedef void (^CompletionBlock)(BOOL isSuccess, NSInteger songCode);
     if(self.lazyLoadAndPlaySong) {
         [self loadAndPlaySong];
     }
+    
+    [self reportMessage];
+}
+
+- (void)reportMessage {
+    [ReportManager messageReportWithRtcEngine:self.RTCkit type:3];
 }
 
 -(void)showDebug {

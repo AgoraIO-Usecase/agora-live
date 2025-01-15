@@ -50,11 +50,12 @@ public class VoiceRoomApplyUsersViewController: UITableViewController {
         }
         // Configure the cell...
         cell?.selectionStyle = .none
-        cell?.refresh(item: ChatRoomServiceImp.getSharedInstance().applicants[safe: indexPath.row])
+        let item = ChatRoomServiceImp.getSharedInstance().applicants[safe: indexPath.row]
+        cell?.refresh(item: item)
         cell?.agreeClosure = { [weak self] in
             self?.agreeUserApply(user: $0) { err in
                 if let _ = err {return}
-                ChatRoomServiceImp.getSharedInstance().applicants[safe: indexPath.row]?.member?.invited = true
+                item?.member?.invited = true
             }
         }
         return cell ?? VoiceRoomApplyCell()

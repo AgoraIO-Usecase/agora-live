@@ -147,8 +147,9 @@ public enum updateRoomState {
     ///Description member leaves
     /// - Parameters:
     ///- roomId: Huanxin IMSDK chat room ID
-    ///- userName: The ID of the outgoing environmental information user
-    func onUserLeftRoom(roomId: String, userName: String)
+    ///- uid: uid of leaving user
+    ///- index: index of leaving user
+    func onUserLeftRoom(roomId: String, uid: String, index: Int)
     
 }
 

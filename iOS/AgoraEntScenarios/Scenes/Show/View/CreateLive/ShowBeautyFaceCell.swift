@@ -23,7 +23,11 @@ class ShowBeautyFaceCell: UICollectionViewCell {
     
     func setupModel(model: BeautyModel) {
         nameLabel.text = model.name
-        imageView.image = UIImage.show_beautyImage(name: model.icon)
+        var iconName = model.icon
+        if let selectedIcon = model.selectedIcon {
+            iconName = model.isSelected ? model.selectedIcon : model.icon
+        }
+        imageView.image = UIImage.show_beautyImage(name: iconName)
         indicatorImgView.isHidden = !model.isSelected
         nameLabel.font = model.isSelected ? .show_M_12 : .show_R_11
         nameLabel.textColor = model.isSelected ? .show_main_text : .show_beauty_deselect

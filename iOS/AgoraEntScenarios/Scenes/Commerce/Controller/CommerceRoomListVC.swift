@@ -78,6 +78,14 @@ class CommerceRoomListVC: UIViewController {
         checkDevice()
     }
     
+    private func reportMessage() {
+        guard let rtcEngine = CommerceAgoraKitManager.shared.engine else {
+            return
+        }
+        
+        ReportManager.messageReport(rtcEngine: rtcEngine, type: 1)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         guard roomList.isEmpty else { return }
