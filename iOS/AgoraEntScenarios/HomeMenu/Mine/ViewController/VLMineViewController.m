@@ -69,6 +69,9 @@ typedef NS_ENUM(NSUInteger, AVAuthorizationRequestType){
         case VLMineViewClickTypeAboutUS:
             [self about];
             break;
+        case VLMineViewClickTypeInviteCode:
+            [self gotoInviteCodePage];
+            break;
         case VLMineViewClickTypeDebug:
             [self gotoDebugMode];
         default:
@@ -101,6 +104,11 @@ typedef NS_ENUM(NSUInteger, AVAuthorizationRequestType){
     DebugModeViewController *VC = [DebugModeViewController new];
     VC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:VC animated:YES];
+}
+
+- (void)gotoInviteCodePage {
+    InviteCodeViewController *vc = [InviteCodeViewController new];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)userLogout {

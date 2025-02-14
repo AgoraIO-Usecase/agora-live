@@ -21,8 +21,11 @@ import io.agora.rtc2.RtcEngineEx
 import io.agora.rtc2.video.VideoCanvas
 import io.agora.rtmsyncmanager.model.AUIRoomInfo
 import io.agora.rtmsyncmanager.model.AUIUserThumbnailInfo
+import io.agora.scene.base.AgoraScenes
 import io.agora.scene.base.component.AgoraApplication
+import io.agora.scene.base.manager.SSOUserManager
 import io.agora.scene.base.utils.DownloadManager
+import io.agora.scene.base.utils.reportRoom
 import io.agora.scene.ktv.KTVLogger
 import io.agora.scene.ktv.KtvCenter
 import io.agora.scene.ktv.KtvCenter.rtcChorusChannelName
@@ -185,6 +188,12 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
         initSettings()
         initRTCPlayer()
         initRoom()
+    }
+
+    // after init rtcPlayer
+    fun reportEnterRoom(){
+        mRtcEngine?.reportRoom(SSOUserManager.getUser().accountUid, AgoraScenes.KTV)
+        KTVLogger.d("reportRoom","reportEnterRoom")
     }
 
     /**
@@ -545,8 +554,15 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 CustomToast.show(R.string.ktv_get_songs_failed, error.message ?: "")
                 completion.invoke(error)
             } else {
-                songList.clear()
-                songList.addAll(musicList)
+                songList.apply {
+                    clear()
+                    addAll(musicList.map { musicItem ->
+                        musicItem.copy(
+                            music = musicItem.music.replace("cn-beijing", "accelerate-overseas"),
+                            lyric = musicItem.lyric.replace("cn-beijing", "accelerate-overseas")
+                        )
+                    })
+                }
                 completion.invoke(null)
             }
         }
@@ -562,8 +578,15 @@ class RoomLivingViewModel constructor(val mRoomInfo: AUIRoomInfo) : ViewModel() 
                 CustomToast.show(R.string.ktv_get_songs_failed, error.message ?: "")
             } else {
                 if (musicList.isNotEmpty()) {
-                    songList.clear()
-                    songList.addAll(musicList)
+                    songList.apply {
+                        clear()
+                        addAll(musicList.map { musicItem ->
+                            musicItem.copy(
+                                music = musicItem.music.replace("cn-beijing", "accelerate-overseas"),
+                                lyric = musicItem.lyric.replace("cn-beijing", "accelerate-overseas")
+                            )
+                        })
+                    }
                 }
             }
             // Need to call another interface to get the currently selected song list to supplement the list information. >_<

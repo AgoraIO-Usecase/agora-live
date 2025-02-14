@@ -22,4 +22,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_view" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:progressDrawable="@drawable/app_web_progress_bar"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/title_view"
+        tools:progress="50"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/viewEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/webView"
+        app:layout_constraintTop_toTopOf="@id/webView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

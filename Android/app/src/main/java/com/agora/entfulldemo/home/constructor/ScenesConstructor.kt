@@ -23,15 +23,15 @@ object ScenesConstructor {
                 AgoraScenes.LiveShow,
                 "io.agora.scene.show.RoomListActivity",
                 context.getString(R.string.app_show_live),
-                R.mipmap.bg_btn_home2,
-                R.mipmap.bg_btn_home_live,
+                io.agora.scene.base.R.mipmap.bg_btn_home2,
+                io.agora.scene.base.R.mipmap.bg_btn_home_live,
                 true
             ),
             ScenesModel(
                 AgoraScenes.ECommerce,
                 "io.agora.scene.eCommerce.RoomListActivity",
                 context.getString(R.string.app_e_commerce),
-                R.mipmap.bg_btn_home_e_commerce,
+                io.agora.scene.base.R.mipmap.bg_btn_home_e_commerce,
                 0,
                 true
             ),
@@ -39,16 +39,16 @@ object ScenesConstructor {
                 AgoraScenes.ChatRoom,
                 "io.agora.scene.voice.ui.activity.VoiceRoomListActivity",
                 context.getString(R.string.app_chat_room),
-                R.mipmap.bg_btn_home3,
-                R.mipmap.bg_btn_home_chat,
+                io.agora.scene.base.R.mipmap.bg_btn_home3,
+                io.agora.scene.base.R.mipmap.bg_btn_home_chat,
                 true
             ),
             ScenesModel(
                 AgoraScenes.KTV,
                 "io.agora.scene.ktv.create.RoomListActivity",
                 context.getString(R.string.app_ktv),
-                R.mipmap.bg_btn_home1,
-                R.mipmap.bg_btn_home_ktv,
+                io.agora.scene.base.R.mipmap.bg_btn_home1,
+                io.agora.scene.base.R.mipmap.bg_btn_home_ktv,
                 true
             )
         )

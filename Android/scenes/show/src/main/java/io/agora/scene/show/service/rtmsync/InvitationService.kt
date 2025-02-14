@@ -120,11 +120,11 @@ class InvitationService(
             userId = invitationInfo.userId,
             success = {
                 AUILogger.logger().d(tag, "startLinkingInteraction success")
-                success?.invoke()
+//                success?.invoke()
             },
             failure = {
                 AUILogger.logger().d(tag, "startLinkingInteraction error: $it")
-                failure?.invoke(it)
+//                failure?.invoke(it)
             }
         )
     }

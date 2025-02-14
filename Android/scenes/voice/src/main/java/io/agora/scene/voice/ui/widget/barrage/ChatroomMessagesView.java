@@ -246,13 +246,13 @@ public class ChatroomMessagesView extends RelativeLayout{
                     span1.setSpan(new CenteredImageSpan(mContext, R.drawable.voice_icon_owner,0,10),0,1,0);
                     span1.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.voice_color_8bb3ff)),
                             0, nickName.length()+4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    span1.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.voice_white)),
+                    span1.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), io.agora.scene.base.R.color.white)),
                             nickName.length() + 4, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     span1.setSpan(new StyleSpan(Typeface.BOLD),0,nickName.length()+4,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }else {
                     span1.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.voice_color_8bb3ff)),
                             0, nickName.length()+3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    span1.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.voice_white)),
+                    span1.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), io.agora.scene.base.R.color.white)),
                             nickName.length() + 3, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     span1.setSpan(new StyleSpan(Typeface.BOLD),0,nickName.length()+3,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
@@ -265,13 +265,13 @@ public class ChatroomMessagesView extends RelativeLayout{
                 span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.voice_color_8bb3ff)),
                         0, nickName.length()+4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 span.setSpan(new StyleSpan(Typeface.BOLD),0,nickName.length()+4,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.voice_white)),
+                span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), io.agora.scene.base.R.color.white)),
                         nickName.length() + 4, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }else {
                 span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.voice_color_8bb3ff)),
                         0, nickName.length()+3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 span.setSpan(new StyleSpan(Typeface.BOLD),0,nickName.length()+3,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.voice_white)),
+                span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), io.agora.scene.base.R.color.white)),
                         nickName.length() + 3, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             con.setText(span, TextView.BufferType.SPANNABLE);

@@ -24,6 +24,7 @@ import io.agora.scene.base.SceneConfigManager
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.component.OnItemClickListener
+import io.agora.scene.base.manager.SSOUserManager
 import io.agora.scene.voice.R
 import io.agora.scene.voice.databinding.VoiceActivityChatroomBinding
 import io.agora.scene.voice.global.VoiceBuddyFactory
@@ -33,6 +34,7 @@ import io.agora.scene.voice.imkit.custorm.OnMsgCallBack
 import io.agora.scene.voice.imkit.manager.ChatroomIMManager
 import io.agora.scene.voice.model.*
 import io.agora.scene.voice.model.constructor.RoomInfoConstructor.convertByRoomInfo
+import io.agora.scene.voice.rtckit.AgoraRtcEngineController
 import io.agora.scene.voice.service.VoiceRoomServiceKickedReason
 import io.agora.scene.voice.service.VoiceServiceListenerProtocol
 import io.agora.scene.voice.service.VoiceServiceProtocol
@@ -99,6 +101,11 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
     override fun onStart() {
         super.onStart()
         isActivityStop = false
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        AgoraRtcEngineController.get().reportEnterRoom(this)
     }
 
     override fun initView(savedInstanceState: Bundle?) {
@@ -354,7 +361,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                     if (reason == VoiceRoomServiceKickedReason.destroyed) {
                         innerRelease()
                         roomObservableDelegate.onTimeUpExitRoom(
-                            getString(R.string.room_has_close), finishBack = {
+                            getString(io.agora.scene.base.R.string.room_has_close), finishBack = {
                                 finish()
                             })
                     } else if (reason == VoiceRoomServiceKickedReason.removed) {
@@ -413,7 +420,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
                 ThreadManager.getInstance().runOnMainThread {
                     innerRelease()
                     roomObservableDelegate.onTimeUpExitRoom(
-                        getString(R.string.room_has_close), finishBack = {
+                        getString(io.agora.scene.base.R.string.room_has_close), finishBack = {
                             finish()
                         })
                 }
@@ -429,7 +436,7 @@ class ChatroomLiveActivity : BaseViewBindingActivity<VoiceActivityChatroomBindin
             override fun onSyncRoomDestroy() {
                 innerRelease()
                 roomObservableDelegate.onTimeUpExitRoom(
-                    getString(R.string.room_has_close), finishBack = {
+                    getString(io.agora.scene.base.R.string.room_has_close), finishBack = {
                         finish()
                     })
             }

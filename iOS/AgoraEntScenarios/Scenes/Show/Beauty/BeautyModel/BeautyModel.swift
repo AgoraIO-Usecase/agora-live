@@ -27,6 +27,7 @@ enum BeautyFactoryType: Int {
 
 class BeautyBaseModel: NSObject, Codable {
     var icon: String?
+    var selectedIcon: String?
     var name: String?
     var isSelected: Bool = false
     /// Whether to adjust in both directions
@@ -801,6 +802,25 @@ class BeautyModel: BeautyBaseModel {
         model.value = 0.5
         model.name = "show_beauty_item_beauty_xuhua".show_localized
         model.icon = "show_bg_blur"
+        model.selectedIcon = "show_bg_blur_s"
+        dataArray.append(model)
+        
+        model = BeautyModel()
+        model.key = "show_live_vb-office"
+        model.path = "show_live_vb-office"
+        model.name = "show_beauty_item_filter_office".show_localized
+        model.icon = "show_bg_office"
+        model.selectedIcon = "show_bg_office_s"
+        model.value = 0.5
+        dataArray.append(model)
+        
+        model = BeautyModel()
+        model.key = "show_live_vb-beach"
+        model.path = "show_live_vb-beach"
+        model.name = "show_beauty_item_filter_beach".show_localized
+        model.icon = "show_bg_beach"
+        model.selectedIcon = "show_bg_beach_s"
+        model.value = 0.5
         dataArray.append(model)
         
         model = BeautyModel()

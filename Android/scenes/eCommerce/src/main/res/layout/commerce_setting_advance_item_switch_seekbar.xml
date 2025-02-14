@@ -71,7 +71,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/show_deliver"
+        android:background="@color/commerce_deliver"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 

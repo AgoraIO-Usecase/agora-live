@@ -22,11 +22,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "17"
     }
 }
 
@@ -36,7 +36,6 @@ dependencies {
     implementation rootProject.ext.deps.annotation
     implementation rootProject.ext.deps.retrofit2
     implementation rootProject.ext.deps.logger
-    implementation rootProject.ext.deps.ok2curl
     implementation rootProject.ext.deps.okhttp
     implementation rootProject.ext.deps.okhttp_logger
     implementation rootProject.ext.deps.retrofit2

@@ -1,17 +1,13 @@
 package io.agora.scene.ktv.service.api
 
-import android.util.Log
 import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
 import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import com.moczul.ok2curl.CurlInterceptor
-import com.moczul.ok2curl.logger.Logger
 import io.agora.rtmsyncmanager.service.callback.AUIException
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
+import io.agora.scene.base.api.SecureOkHttpClient
 import org.json.JSONObject
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -55,13 +51,7 @@ internal object KTVHttpManager {
         baseUrl = url
         retrofit = Retrofit.Builder()
             .client(
-                OkHttpClient.Builder()
-                    .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                    .addInterceptor(CurlInterceptor(object : Logger {
-                        override fun log(message: String) {
-                            Log.v("Ok2Curl", message)
-                        }
-                    }))
+                SecureOkHttpClient.create()
                     .build()
             )
             .baseUrl("$url/$version/")

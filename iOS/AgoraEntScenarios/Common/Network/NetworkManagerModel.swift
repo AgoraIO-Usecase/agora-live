@@ -88,16 +88,6 @@ open class NMGenerate006TokennNetworkModel: NMGenerateTokennNetworkModel {
 }
 
 @objcMembers
-open class NMGenerate007TokennNetworkModel: NMGenerateTokennNetworkModel {
-    public override init() {
-        super.init()
-        interfaceName = "v2/token/generate"
-    }
-}
-
-
-
-@objcMembers
 open class NMGenerateIMConfigNetworkModelChatParams: NSObject {
     var name: String?
     var desc: String?

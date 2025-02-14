@@ -1,15 +1,13 @@
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
+}
 
 final def VERSION_SCENE_VOICE = "3.1.0"
 android {
+    namespace 'io.agora.scene.voice'
     compileSdkVersion rootProject.ext.android.compileSdkVersion
-
-    buildFeatures {
-        viewBinding true
-    }
-
     defaultConfig {
         minSdkVersion rootProject.ext.android.minSdkVersion
         ndk {
@@ -25,6 +23,17 @@ android {
         main {
             manifest.srcFile 'src/main/AndroidManifest.xml'
         }
+    }
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
 }
 

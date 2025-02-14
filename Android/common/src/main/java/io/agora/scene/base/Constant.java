@@ -13,9 +13,37 @@ public final class Constant {
     }
 
     /**
-     * The constant CURRENT_USER.
+     * The constant CURRENT_AVATAR.
      */
-    public static final String CURRENT_USER = "current_user";
+    public static final String CURRENT_AVATAR = "current_avatar";
+
+    public static final String CURRENT_NICKNAME = "current_nickname";
+
+    /**
+     * The constant CURRENT_SSO_TOKEN.
+     */
+    public static final String CURRENT_SSO_TOKEN = "current_sso_token";
+
+    /**
+     * The constant CURRENT_SSO_USER.
+     */
+    public static final String CURRENT_SSO_USER = "current_sso_user";
+
+    /**
+     * The constant IS_INVITATION_USER.
+     */
+    public static final String IS_INVITATION_USER = "is_invitation_user";
+
+    /**
+     * The constant IS_GENERATE_CODE.
+     */
+    public static final String IS_GENERATE_CODE = "is_generate_code";
+
+    /**
+     * The constant INVITATION_ACCOUNT_UID.
+     */
+    public static final String INVITATION_ACCOUNT_UID = "invitation_account_uid";
+
     /**
      * The constant URL.
      */

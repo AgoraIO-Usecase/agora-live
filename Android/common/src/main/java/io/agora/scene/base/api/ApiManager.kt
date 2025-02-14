@@ -1,24 +1,19 @@
 package io.agora.scene.base.api
 
-import android.util.Log
 import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
 import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import com.moczul.ok2curl.CurlInterceptor
-import com.moczul.ok2curl.logger.Logger
-import io.agora.scene.base.BuildConfig
 import io.agora.scene.base.ServerConfig
 import okhttp3.Interceptor
-import okhttp3.OkHttpClient
 import okhttp3.Response
-import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
+import java.net.URI
 import java.util.concurrent.TimeUnit
 
 object ApiManager {
@@ -41,26 +36,23 @@ object ApiManager {
             .create()
 
     private val okHttpClient by lazy {
-        val builder = OkHttpClient.Builder()
+        val builder = SecureOkHttpClient.create()
             .addInterceptor(DynamicConnectTimeout())
+            .addInterceptor(HttpLogger())
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
-
-        if (BuildConfig.DEBUG) {
-            builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                .addInterceptor(CurlInterceptor(object : Logger {
-                    override fun log(message: String) {
-                        Log.d("CurlInterceptor", message)
-                    }
-                }))
-        }
         builder.build()
+    }
+
+    private fun extractBaseUrl(url: String): String {
+        val uri = URI(url)
+        return "${uri.scheme}://${uri.host}/"
     }
 
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://service-staging.agora.io/")
+            .baseUrl(extractBaseUrl(ServerConfig.toolBoxUrl))
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

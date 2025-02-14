@@ -21,7 +21,7 @@ def all_pods
   pod 'JXCategoryView', '1.6.1'
 
   # FU
-  pod 'fuLib', :path => 'fu.podspec'
+  #pod 'fuLib', :path => 'fu.podspec'
   pod 'FURenderKit', :path => 'FURenderKit.podspec'
 
   pod 'RTMSyncManager', :path => 'AgoraEntScenarios/Common/API/RTMSyncManager'

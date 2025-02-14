@@ -28,7 +28,9 @@ import com.faceunity.wrapper.faceunity
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.VideoCanvas
+import io.agora.scene.base.AgoraTokenType
 import io.agora.scene.base.TokenGenerator
+import io.agora.scene.base.TokenGeneratorType
 import io.agora.scene.base.component.AgoraApplication
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.manager.UserManager
@@ -99,10 +101,6 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
      */
     override fun getViewBinding(inflater: LayoutInflater): ShowLivePrepareActivityBinding {
         return ShowLivePrepareActivityBinding.inflate(inflater)
-    }
-
-    override fun onBackPressed() {
-
     }
 
     private fun setTips(tips: String) {
@@ -330,8 +328,8 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
         }
         val localUId = UserManager.getInstance().user.id
         TokenGenerator.generateToken("", localUId.toString(),
-            TokenGenerator.TokenGeneratorType.Token007,
-            TokenGenerator.AgoraTokenType.Rtc,
+            TokenGeneratorType.Token007,
+            AgoraTokenType.Rtc,
             success = {
                 ShowLogger.d("RoomListActivity", "generateToken success：$it， uid：$localUId")
                 RtcEngineInstance.setupGeneralToken(it)
@@ -339,7 +337,7 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
             },
             failure = {
                 ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
-                ToastUtils.showToast(it?.message ?: "generate token failure")
+                ToastUtils.showToast(it?.message ?: getString(R.string.show_generate_token_failure))
             })
     }
 
@@ -421,9 +419,6 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
 
             manifest?.files?.forEach { resource ->
                 if (resource.uri == "beauty_faceunity") {
-
-                    ShowLogger.d(tag, "Processing ${resource.url}")
-                    binding.statusPrepareViewLrc.isVisible = true
                     binding.pbLoading.progress = 0
                     binding.tvContent.text =
                         String.format(
@@ -432,10 +427,18 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
                             "0%"
                         )
 
+                    val newUrl =  resource.url.replace("cn-beijing", "accelerate-overseas")
+                    val newResource = resource.copy(url = newUrl)
+
+                    ShowLogger.d(tag, "Processing ${newResource.url}")
                     beautyResource.downloadAndUnZipResource(
-                        resource = resource,
+                        resource = newResource,
                         progressHandler = {
                             binding.pbLoading.progress = it
+                            if (!binding.statusPrepareViewLrc.isVisible){
+                                binding.statusPrepareViewLrc.isVisible = true
+                            }
+
                             binding.tvContent.text = String.format(
                                 resources.getString(R.string.show_beauty_loading),
                                 "faceunity",

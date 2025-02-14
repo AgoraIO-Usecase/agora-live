@@ -247,12 +247,13 @@ extension ChatRoomServiceImp: VoiceRoomIMDelegate {
     }
     
     public func memberLeave(roomId: String, userName: String) {
-        if self.roomServiceDelegate != nil,self.roomServiceDelegate!.responds(to: #selector(ChatRoomServiceSubscribeDelegate.onUserLeftRoom(roomId:userName:))) {
+        if self.roomServiceDelegate != nil,
+           self.roomServiceDelegate!.responds(to: #selector(ChatRoomServiceSubscribeDelegate.onUserLeftRoom(roomId:uid:index:))) {
+            let index = ChatRoomServiceImp.getSharedInstance().mics.firstIndex(where: { $0.member?.chat_uid ?? "" == userName}) ?? -1
             self.mics.first { $0.member?.chat_uid ?? "" == userName }?.member = nil
-            self.roomServiceDelegate?.onUserLeftRoom(roomId: roomId, userName: userName)
+            self.roomServiceDelegate?.onUserLeftRoom(roomId: roomId, uid: userName, index: index)
         }
     }
-    
 }
 
 //MARK: ChatRoomServiceProtocol
@@ -513,11 +514,11 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
     }
     
     func kickOff(mic_index: Int, completion: @escaping (Error?, VRRoomMic?) -> Void) {
-        let mic = VRRoomMic()
-        guard let oldMic = self.mics[safe: mic_index] else { return }
+        guard let mic = self.mics[safe: mic_index] else { return }
         mic.mic_index = mic_index
-        mic.status = (oldMic.status == 2 ? 2:-1)
-        self.cleanUserMicIndex(mic: oldMic)
+        mic.status = (mic.status == 2 ? 2:-1)
+        self.cleanUserMicIndex(mic: mic)
+        mic.member = nil
         VoiceRoomIMManager.shared?.setChatroomAttributes( attributes: ["mic_\(mic_index)":mic.kj.JSONString()], completion: { error in
             if error == nil {
                 self.mics[mic_index] = mic
@@ -733,7 +734,7 @@ extension ChatRoomServiceImp: ChatRoomServiceProtocol {
         let user = self.applicants.first(where: {
             $0.member?.chat_uid ?? "" == chatUid
         })
-        if user?.index ?? 0 < 1 {
+        if let i = user?.index, (i < 1 || self.mics[safe: i]?.member != nil) {
             mic_index = self.findMicIndex()
         } else {
             mic_index = user?.index ?? 1

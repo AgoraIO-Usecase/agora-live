@@ -36,11 +36,16 @@ import io.agora.rtc2.RtcEngine
 import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoCanvas
 import io.agora.rtc2.video.VideoEncoderConfiguration.VIDEO_CODEC_TYPE
+import io.agora.scene.base.AgoraScenes
+import io.agora.scene.base.AgoraTokenType
 import io.agora.scene.base.TokenGenerator
+import io.agora.scene.base.TokenGeneratorType
 import io.agora.scene.base.component.AgoraApplication
+import io.agora.scene.base.manager.SSOUserManager
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.base.utils.ToastUtils
+import io.agora.scene.base.utils.reportRoom
 import io.agora.scene.show.databinding.ShowLiveDetailFragmentBinding
 import io.agora.scene.show.databinding.ShowLiveDetailMessageItemBinding
 import io.agora.scene.show.databinding.ShowLivingEndDialogBinding
@@ -498,7 +503,7 @@ class LiveDetailFragment : Fragment() {
             val roomLeftTime =
                 ShowServiceProtocol.ROOM_AVAILABLE_DURATION - (TimeUtils.currentTimeMillis() - mRoomInfo.createdAt.toLong())
             if (roomLeftTime > 0) {
-                mBinding.root.postDelayed(timerRoomEndRun, ShowServiceProtocol.ROOM_AVAILABLE_DURATION)
+                mBinding.root.postDelayed(timerRoomEndRun, roomLeftTime)
                 initRtcEngine()
                 initServiceWithJoinRoom()
             }
@@ -534,6 +539,9 @@ class LiveDetailFragment : Fragment() {
             }
         }
         refreshStatisticInfo()
+
+        mRtcEngine.reportRoom(SSOUserManager.getUser().accountUid,AgoraScenes.LiveShow)
+        ShowLogger.d("reportRoom","reportEnterRoom")
     }
 
     /**
@@ -843,7 +851,7 @@ class LiveDetailFragment : Fragment() {
                 bottomLayout.flPK.isVisible = true
                 bottomLayout.flLinking.isVisible = true
                 bottomLayout.ivLinking.imageTintList =
-                    ColorStateList.valueOf(context.resources.getColor(R.color.grey_7e))
+                    ColorStateList.valueOf(context.resources.getColor(io.agora.scene.base.R.color.grey_7e))
                 mSettingDialog.apply {
                     resetSettingsItem()
                 }
@@ -875,7 +883,7 @@ class LiveDetailFragment : Fragment() {
 
                 bottomLayout.flLinking.isVisible = true
                 bottomLayout.ivLinking.imageTintList =
-                    ColorStateList.valueOf(context.resources.getColor(R.color.grey_7e))
+                    ColorStateList.valueOf(context.resources.getColor(io.agora.scene.base.R.color.grey_7e))
             }
         }
     }
@@ -1150,7 +1158,11 @@ class LiveDetailFragment : Fragment() {
                 override fun onFinish() {
                     if (isRoomOwner) {
                         mService.stopInteraction(mRoomInfo.roomId, error = {
-                            ToastUtils.showToast("stop interaction error: ${it.message}")
+                            ToastUtils.showToast(
+                                getString(
+                                    R.string.show_stop_interaction_error,
+                                    it.message
+                                ))
                         })
                     }
                 }
@@ -1294,13 +1306,13 @@ class LiveDetailFragment : Fragment() {
                     stopAudioMixing()
                 }
                 MusicEffectDialog.ITEM_ID_BACK_MUSIC_JOY -> {
-                    startAudioMixing("https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/ent/music/happy.mp3", false, -1)
+                    startAudioMixing("https://accktvpic.oss-accelerate-overseas.aliyuncs.com/pic/ent/music/happy.mp3", false, -1)
                 }
                 MusicEffectDialog.ITEM_ID_BACK_MUSIC_ROMANTIC -> {
-                    startAudioMixing("https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/ent/music/romantic.mp3", false, -1)
+                    startAudioMixing("https://accktvpic.oss-accelerate-overseas.aliyuncs.com/pic/ent/music/romantic.mp3", false, -1)
                 }
                 MusicEffectDialog.ITEM_ID_BACK_MUSIC_JOY2 -> {
-                    startAudioMixing("https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/ent/music/relax.mp3", false, -1)
+                    startAudioMixing("https://accktvpic.oss-accelerate-overseas.aliyuncs.com/pic/ent/music/relax.mp3", false, -1)
                 }
 
                 MusicEffectDialog.ITEM_ID_BEAUTY_VOICE_ORIGINAL -> {
@@ -1404,7 +1416,7 @@ class LiveDetailFragment : Fragment() {
                     seatApply.userId,
                     success = {
                         view.isEnabled = true
-                        ToastUtils.showToast("accept apply successfully!")
+                        ToastUtils.showToast(getString(R.string.show_accept_apply_successfully))
                     },
                     error = {
                         view.isEnabled = true
@@ -1431,7 +1443,7 @@ class LiveDetailFragment : Fragment() {
                     userItem.userId,
                     success = {
                         view.isEnabled = true
-                        ToastUtils.showToast("invite successfully!")
+                        ToastUtils.showToast(getString(R.string.show_invite_successfully))
                     },
                     error = {
                         view.isEnabled = true
@@ -1446,7 +1458,11 @@ class LiveDetailFragment : Fragment() {
                     view.isEnabled = true
                 }, error = {
                     view.isEnabled = true
-                    ToastUtils.showToast("stop interaction error: ${it.message}")
+                    ToastUtils.showToast(
+                        getString(
+                            R.string.show_stop_interaction_error,
+                            it.message
+                        ))
                 })
             }
 
@@ -1457,7 +1473,7 @@ class LiveDetailFragment : Fragment() {
                     success = {
                         view.isEnabled = true
                         mLinkDialog.dismiss()
-                        ToastUtils.showToast("cancel apply successfully!")
+                        ToastUtils.showToast(getString(R.string.show_cancel_apply_successfully))
                     },
                     error = {
                         view.isEnabled = true
@@ -1485,8 +1501,8 @@ class LiveDetailFragment : Fragment() {
         mMicInvitationDialog = AlertDialog.Builder(requireContext(), R.style.show_alert_dialog).apply {
             setCancelable(false)
             setTitle(getString(R.string.show_ask_for_link, mRoomInfo.ownerName))
-            setPositiveButton(R.string.accept, null)
-            setNegativeButton(R.string.decline) { dialog, which ->
+            setPositiveButton(io.agora.scene.base.R.string.accept, null)
+            setNegativeButton(io.agora.scene.base.R.string.decline) { dialog, which ->
                 updateIdleMode()
                 val button = (dialog as? AlertDialog)?.getButton(which)
                 button?.isEnabled = false
@@ -1496,7 +1512,7 @@ class LiveDetailFragment : Fragment() {
                     success = {
                         button?.isEnabled = true
                         dismissMicInvitaionDialog()
-                        ToastUtils.showToast("reject invitation successfully!")
+                        ToastUtils.showToast(getString(R.string.show_reject_invitation_successfully))
                     },
                     error = { error ->
                         button?.isEnabled = true
@@ -1513,7 +1529,7 @@ class LiveDetailFragment : Fragment() {
                     invitation.id,
                     success = {
                         btn.isEnabled = true
-                        ToastUtils.showToast("accept invitation successfully!")
+                        ToastUtils.showToast(getString(R.string.show_accept_invitation_successfully))
                         dismissMicInvitaionDialog()
                     },
                     error = { error ->
@@ -1524,14 +1540,14 @@ class LiveDetailFragment : Fragment() {
             }
         }
         mMicInvitationDialog?.show()
-        if (mLinkInvitationCountDownLatch != null) {
-            mLinkInvitationCountDownLatch!!.cancel()
+        mLinkInvitationCountDownLatch?.let {
+            it.cancel()
             mLinkInvitationCountDownLatch = null
         }
         mLinkInvitationCountDownLatch = object : CountDownTimer(15 * 1000 - 1, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 mMicInvitationDialog?.getButton(DialogInterface.BUTTON_NEGATIVE)?.text =
-                    "${getString(R.string.decline)}(" + millisUntilFinished / 1000 + "s)"
+                    "${getString(io.agora.scene.base.R.string.decline)}(" + millisUntilFinished / 1000 + "s)"
             }
 
             override fun onFinish() {
@@ -1604,7 +1620,7 @@ class LiveDetailFragment : Fragment() {
                         roomDetail.roomId,
                         success = {
                             view.isEnabled = true
-                            ToastUtils.showToast("invite successfully!")
+                            ToastUtils.showToast(getString(R.string.show_invite_successfully))
                         },
                         error = {
                             view.isEnabled = true
@@ -1621,7 +1637,12 @@ class LiveDetailFragment : Fragment() {
                     },
                     error = {
                         view.isEnabled = true
-                        ToastUtils.showToast("stop Interaction error: ${it.message}")
+                        ToastUtils.showToast(
+                            getString(
+                                R.string.show_stop_interaction_error,
+                                it.message
+                            )
+                        )
                     })
             }
         })
@@ -1649,8 +1670,8 @@ class LiveDetailFragment : Fragment() {
         mPKInvitationDialog = AlertDialog.Builder(requireContext(), R.style.show_alert_dialog).apply {
             setCancelable(false)
             setTitle(getString(R.string.show_ask_for_pk, name))
-            setPositiveButton(R.string.accept, null)
-            setNegativeButton(R.string.decline) { dialog, which ->
+            setPositiveButton(io.agora.scene.base.R.string.accept, null)
+            setNegativeButton(io.agora.scene.base.R.string.decline) { dialog, which ->
                 updateIdleMode()
                 val button = (dialog as? AlertDialog)?.getButton(which)
                 button?.isEnabled = false
@@ -1663,7 +1684,7 @@ class LiveDetailFragment : Fragment() {
                     },
                     error = {
                         button?.isEnabled = true
-                        ToastUtils.showToast("reject message failed!")
+                        ToastUtils.showToast(getString(R.string.show_reject_message_failed))
                     }
                 )
                 isPKCompetition = false
@@ -1676,7 +1697,7 @@ class LiveDetailFragment : Fragment() {
                     btn.isEnabled = false
                     mService.acceptPKInvitation(mRoomInfo.roomId, invitation.id, {
                         btn.isEnabled = true
-                        ToastUtils.showToast("accept message successfully!")
+                        ToastUtils.showToast(getString(R.string.show_accept_message_successfully))
                         dismissPKInvitationDialog()
                     }) {
                         btn.isEnabled = true
@@ -1693,7 +1714,7 @@ class LiveDetailFragment : Fragment() {
         mPKInvitationCountDownLatch = object : CountDownTimer(15 * 1000 - 1, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 mPKInvitationDialog?.getButton(DialogInterface.BUTTON_NEGATIVE)?.text =
-                    "${getString(R.string.decline)}(${millisUntilFinished / 1000}s)"
+                    "${getString(io.agora.scene.base.R.string.decline)}(${millisUntilFinished / 1000}s)"
             }
 
             override fun onFinish() {
@@ -1745,7 +1766,12 @@ class LiveDetailFragment : Fragment() {
                                 // success
                                 dismiss()
                             }, error = {
-                                ToastUtils.showToast("stop interaction error: ${it.message}")
+                                ToastUtils.showToast(
+                                    getString(
+                                        R.string.show_stop_interaction_error,
+                                        it.message
+                                    )
+                                )
                             })
                         }
                     }
@@ -2085,7 +2111,6 @@ class LiveDetailFragment : Fragment() {
 
             }
         }
-
         if (activity is LiveDetailActivity) {
             (activity as LiveDetailActivity).toggleSelfVideo(isRoomOwner || isMeLinking(), callback = {
                 joinChannel(eventListener)
@@ -2096,7 +2121,6 @@ class LiveDetailFragment : Fragment() {
             })
         }
     }
-
 
     /**
      * Destroy rtc engine
@@ -2805,8 +2829,8 @@ class LiveDetailFragment : Fragment() {
             mediaOptions.enableAudioRecordingOrPlayout = false
 
             TokenGenerator.generateToken(channel.channelId, channel.localUid.toString(),
-                TokenGenerator.TokenGeneratorType.Token007,
-                TokenGenerator.AgoraTokenType.Rtc,
+                TokenGeneratorType.Token007,
+                AgoraTokenType.Rtc,
                 success = {
                     ShowLogger.d("RoomListActivity", "generateToken success， uid：${channel.localUid}")
                     if (!mAudioMixing) {
@@ -2819,18 +2843,29 @@ class LiveDetailFragment : Fragment() {
                         object : IRtcEngineEventHandler() {
                             override fun onError(err: Int) {
                                 super.onError(err)
-                                ToastUtils.showToast("startAudioMixing joinChannelEx onError, error code: $err, ${RtcEngine.getErrorDescription(err)}")
+                                ToastUtils.showToast(
+                                    getString(
+                                        R.string.show_audio_mixing,
+                                        err.toString(),
+                                        RtcEngine.getErrorDescription(err)
+                                    )
+                                )
                             }
                         }
                     )
                     if(ret != Constants.ERR_OK){
-                        ToastUtils.showToast("startAudioMixing joinChannelEx failed, error code: $ret, ${RtcEngine.getErrorDescription(ret)}")
+                        ToastUtils.showToast(
+                            getString(
+                                R.string.show_audio_mixing_failed,
+                                ret.toString(),
+                                RtcEngine.getErrorDescription(ret)
+                            ))
                     }
                 },
                 failure = {
                     ShowLogger.e("RoomListActivity", it, "generateToken failure：$it")
                     mAudioMxingChannel = null
-                    ToastUtils.showToast(it?.message ?: "generate token failure")
+                    ToastUtils.showToast(it?.message ?: getString(R.string.show_generate_token_failure))
                 })
         }
     }

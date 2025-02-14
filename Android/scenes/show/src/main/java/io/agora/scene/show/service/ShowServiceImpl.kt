@@ -19,8 +19,11 @@ import io.agora.rtmsyncmanager.service.rtm.AUIRtmUserLeaveReason
 import io.agora.rtmsyncmanager.utils.AUILogger
 import io.agora.rtmsyncmanager.utils.GsonTools
 import io.agora.rtmsyncmanager.utils.ThreadManager
+import io.agora.scene.base.AgoraTokenType
 import io.agora.scene.base.BuildConfig
+import io.agora.scene.base.ServerConfig
 import io.agora.scene.base.TokenGenerator
+import io.agora.scene.base.TokenGeneratorType
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.TimeUtils
 import io.agora.scene.show.ShowLogger
@@ -78,7 +81,7 @@ class ShowServiceImpl(context: Context) : ShowServiceProtocol {
         owner.userName = UserManager.getInstance().user.name
         owner.userAvatar = UserManager.getInstance().user.headUrl
         config.owner = owner
-        config.host = BuildConfig.TOOLBOX_SERVER_HOST
+        config.host = ServerConfig.roomManagerUrl
         AUIRoomContext.shared().setCommonConfig(config)
         SyncManager(context, null, config)
     }
@@ -93,7 +96,7 @@ class ShowServiceImpl(context: Context) : ShowServiceProtocol {
             RoomExpirationPolicy().apply {
                 expirationTime = ShowServiceProtocol.ROOM_AVAILABLE_DURATION
             },
-            roomHostUrl = BuildConfig.ROOM_MANAGER_SERVER_HOST,
+            roomHostUrl = ServerConfig.roomManagerUrl,
             loggerConfig = AUILogger.Config(
                 context,
                 "ShowLiveSyncExtensions",
@@ -123,8 +126,8 @@ class ShowServiceImpl(context: Context) : ShowServiceProtocol {
         TokenGenerator.generateToken(
             "",
             UserManager.getInstance().user.id.toString(),
-            TokenGenerator.TokenGeneratorType.Token007,
-            TokenGenerator.AgoraTokenType.Rtm,
+            TokenGeneratorType.Token007,
+            AgoraTokenType.Rtm,
             success = {
                 syncManager.login(it) { ex ->
                     if (ex != null) {
@@ -591,10 +594,14 @@ class ShowServiceImpl(context: Context) : ShowServiceProtocol {
             .addApply(
                 UserManager.getInstance().user.id.toString(),
                 success = {
-                    success?.invoke(it.toShowApplyInfo())
+                    ThreadManager.getInstance().runOnMainThread {
+                        success?.invoke(it.toShowApplyInfo())
+                    }
                 },
                 failure = {
-                    error?.invoke(RuntimeException(it))
+                    ThreadManager.getInstance().runOnMainThread {
+                        error?.invoke(RuntimeException(it))
+                    }
                 })
     }
 

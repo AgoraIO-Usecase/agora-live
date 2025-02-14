@@ -8,13 +8,19 @@ import io.agora.mediaplayer.IMediaPlayer
 import io.agora.mediaplayer.data.CacheStatistics
 import io.agora.mediaplayer.data.PlayerPlaybackStats
 import io.agora.rtc2.*
+import io.agora.scene.base.AgoraScenes
+import io.agora.scene.base.AgoraTokenType
 import io.agora.scene.base.TokenGenerator
+import io.agora.scene.base.TokenGeneratorType
+import io.agora.scene.base.manager.SSOUserManager
+import io.agora.scene.base.utils.reportRoom
 import io.agora.scene.voice.global.VoiceBuddyFactory
 import io.agora.scene.voice.model.SoundAudioBean
 import io.agora.scene.voice.rtckit.listener.MediaPlayerObserver
 import io.agora.scene.voice.rtckit.listener.RtcMicVolumeListener
 import io.agora.voice.common.constant.ConfigConstants
 import io.agora.voice.common.net.callback.VRValueCallBack
+import io.agora.voice.common.utils.LogTools
 import io.agora.voice.common.utils.LogTools.logD
 import io.agora.voice.common.utils.LogTools.logE
 import io.agora.voice.common.utils.ThreadManager
@@ -61,9 +67,9 @@ class AgoraRtcEngineController {
         TokenGenerator.generateTokens(
             channelId,
             rtcUid.toString(),
-            TokenGenerator.TokenGeneratorType.Token006,
+            TokenGeneratorType.Token007,
             arrayOf(
-                TokenGenerator.AgoraTokenType.Rtm
+                AgoraTokenType.Rtm
             ),
             { ret ->
                 mRtmToken = ret
@@ -162,7 +168,7 @@ class AgoraRtcEngineController {
     }
 
     private fun checkJoinChannel(channelId: String, rtcUid: Int, soundEffect: Int, isBroadcaster: Boolean): Boolean {
-        "joinChannel $channelId,${VoiceBuddyFactory.get().getVoiceBuddy().rtcToken()}:$rtcUid".logD(TAG)
+        "checkJoinChannel $channelId, rtcUid:$rtcUid".logD(TAG)
         if (channelId.isEmpty() || rtcUid < 0) {
             joinCallback?.onError(Constants.ERR_FAILED, "roomId or rtcUid illegal!")
             return false
@@ -402,5 +408,11 @@ class AgoraRtcEngineController {
 
     fun renewRtcToken(rtcToken: String){
         rtcEngine?.renewToken(rtcToken)
+    }
+
+    fun reportEnterRoom(context: Context){
+        initRtcEngine(context)
+        rtcEngine?.reportRoom(SSOUserManager.getUser().accountUid, AgoraScenes.ChatRoom)
+        LogTools.d("reportRoom","reportEnterRoom")
     }
 }

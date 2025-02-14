@@ -19,13 +19,14 @@ import androidx.core.view.WindowInsetsCompat
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.VideoCanvas
+import io.agora.scene.base.AgoraTokenType
 import io.agora.scene.base.TokenGenerator
+import io.agora.scene.base.TokenGeneratorType
 import io.agora.scene.base.component.BaseViewBindingActivity
 import io.agora.scene.base.manager.UserManager
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.eCommerce.databinding.CommerceLivePrepareActivityBinding
 import io.agora.scene.eCommerce.service.ShowServiceProtocol
-import io.agora.scene.eCommerce.widget.PictureQualityDialog
 import io.agora.scene.eCommerce.widget.PresetDialog
 import io.agora.scene.widget.dialog.PermissionLeakDialog
 import io.agora.scene.widget.utils.StatusBarUtil
@@ -79,10 +80,6 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
      */
     override fun getViewBinding(inflater: LayoutInflater): CommerceLivePrepareActivityBinding {
         return CommerceLivePrepareActivityBinding.inflate(inflater)
-    }
-
-    override fun onBackPressed() {
-
     }
 
     private fun setTips(tips: String) {
@@ -267,10 +264,10 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
         }
         val localUId = UserManager.getInstance().user.id
         TokenGenerator.generateTokens("", localUId.toString(),
-            TokenGenerator.TokenGeneratorType.Token007,
+            TokenGeneratorType.Token007,
             arrayOf(
-                TokenGenerator.AgoraTokenType.Rtc,
-                TokenGenerator.AgoraTokenType.Rtm
+                AgoraTokenType.Rtc,
+                AgoraTokenType.Rtm
             ),
             success = {
                 RtcEngineInstance.setupGeneralRtcToken(it)
@@ -278,7 +275,7 @@ class LivePrepareActivity : BaseViewBindingActivity<CommerceLivePrepareActivityB
                 complete?.invoke(null)
             },
             failure = {
-                ToastUtils.showToast(it?.message ?: "generate token failure")
+                ToastUtils.showToast(it?.message ?: getString(R.string.commerce_generate_token_failure))
                 complete?.invoke(it)
             })
     }

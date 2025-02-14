@@ -581,8 +581,15 @@
 		F70CAB8D2C76E0F0000B0F61 /* fu_authpack_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB892C76E0EF000B0F61 /* fu_authpack_reader.c */; };
 		F70CAB912C76E1DD000B0F61 /* GradientProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB8F2C76E1DC000B0F61 /* GradientProgressBar.swift */; };
 		F70CAB922C76E1DD000B0F61 /* LRCLodingProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70CAB902C76E1DD000B0F61 /* LRCLodingProgressView.swift */; };
+		F7426C352CEAE028008384BF /* SSOWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7426C342CEAE028008384BF /* SSOWebViewController.swift */; };
+		F7426C9C2CF060D0008384BF /* CodeLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7426C9B2CF060D0008384BF /* CodeLoginViewController.swift */; };
+		F7426C9E2CF08C0A008384BF /* InviteCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7426C9D2CF08C0A008384BF /* InviteCodeViewController.swift */; };
+		F7426CA62CF56FBE008384BF /* LoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7426CA52CF56FBE008384BF /* LoginManager.swift */; };
+		F7426CAA2CF59FB4008384BF /* LoginRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7426CA92CF59FB4008384BF /* LoginRequestModel.swift */; };
 		F7533F932C62184100108911 /* VLLogToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7533F922C62184100108911 /* VLLogToast.swift */; };
 		F7533F972C62249E00108911 /* VoiceLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7533F962C62249E00108911 /* VoiceLogger.swift */; };
+		F762DDB72CF5AB3A00505157 /* LoginApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F762DDB62CF5AB3A00505157 /* LoginApiService.swift */; };
+		F762DDBB2D00052C00505157 /* ReportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F762DDBA2D00052C00505157 /* ReportManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1325,8 +1332,15 @@
 		F70CAB8B2C76E0F0000B0F61 /* fu_authpack_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fu_authpack_reader.h; sourceTree = "<group>"; };
 		F70CAB8F2C76E1DC000B0F61 /* GradientProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientProgressBar.swift; sourceTree = "<group>"; };
 		F70CAB902C76E1DD000B0F61 /* LRCLodingProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LRCLodingProgressView.swift; sourceTree = "<group>"; };
+		F7426C342CEAE028008384BF /* SSOWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSOWebViewController.swift; sourceTree = "<group>"; };
+		F7426C9B2CF060D0008384BF /* CodeLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeLoginViewController.swift; sourceTree = "<group>"; };
+		F7426C9D2CF08C0A008384BF /* InviteCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteCodeViewController.swift; sourceTree = "<group>"; };
+		F7426CA52CF56FBE008384BF /* LoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginManager.swift; sourceTree = "<group>"; };
+		F7426CA92CF59FB4008384BF /* LoginRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRequestModel.swift; sourceTree = "<group>"; };
 		F7533F922C62184100108911 /* VLLogToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLLogToast.swift; sourceTree = "<group>"; };
 		F7533F962C62249E00108911 /* VoiceLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceLogger.swift; sourceTree = "<group>"; };
+		F762DDB62CF5AB3A00505157 /* LoginApiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginApiService.swift; sourceTree = "<group>"; };
+		F762DDBA2D00052C00505157 /* ReportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportManager.swift; sourceTree = "<group>"; };
 		FA1922429382BABB488B6495 /* Pods_AgoraEntScenarios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraEntScenarios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -2219,6 +2233,7 @@
 				DD619C0329E3E81D008F63E4 /* AboutAgoraEntertainmentViewController.swift */,
 				DD8416C829090C520026B624 /* VLMineViewController.h */,
 				DD8416C929090C520026B624 /* VLMineViewController.m */,
+				F7426C9D2CF08C0A008384BF /* InviteCodeViewController.swift */,
 				F70CAB7E2C75D823000B0F61 /* DebugModeViewController.swift */,
 			);
 			path = ViewController;
@@ -2238,6 +2253,8 @@
 		DD8416D029090C520026B624 /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				F7426CA42CF56F89008384BF /* Manager */,
+				F7426C9F2CF56CA2008384BF /* Service */,
 				DD8416D129090C520026B624 /* Controller */,
 				DD8416D429090C520026B624 /* Model */,
 			);
@@ -2248,6 +2265,8 @@
 			isa = PBXGroup;
 			children = (
 				E72F624C2A8097DF00C963D2 /* VLLoginViewController.swift */,
+				F7426C9B2CF060D0008384BF /* CodeLoginViewController.swift */,
+				F7426C342CEAE028008384BF /* SSOWebViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2647,6 +2666,7 @@
 			isa = PBXGroup;
 			children = (
 				F70CAB7A2C75A0B7000B0F61 /* VirtualSoundcardPresenter.swift */,
+				F762DDBA2D00052C00505157 /* ReportManager.swift */,
 				DD91E1F32C553C0C0028E966 /* StateManager */,
 				DD6199CA29E3D36D008F63E4 /* Authorized */,
 				DDA1994E28FFE579009D3E61 /* NetworkManager */,
@@ -3405,6 +3425,23 @@
 			path = Progress;
 			sourceTree = "<group>";
 		};
+		F7426C9F2CF56CA2008384BF /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				F7426CA92CF59FB4008384BF /* LoginRequestModel.swift */,
+				F762DDB62CF5AB3A00505157 /* LoginApiService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		F7426CA42CF56F89008384BF /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				F7426CA52CF56FBE008384BF /* LoginManager.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -3417,7 +3454,6 @@
 				DD2A43C428FFCEE7004CEDCF /* Frameworks */,
 				DD2A43C528FFCEE7004CEDCF /* Resources */,
 				AD4E4CC20B1F880834B4962F /* [CP] Embed Pods Frameworks */,
-				D0C112A11886F1B3495E06CE /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -3611,23 +3647,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D0C112A11886F1B3495E06CE /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AgoraEntScenarios/Pods-AgoraEntScenarios-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AgoraEntScenarios/Pods-AgoraEntScenarios-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AgoraEntScenarios/Pods-AgoraEntScenarios-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -3716,6 +3735,7 @@
 				E732CD072B47EC6D004D6FB9 /* VoiceRoomApplyUsersViewController.swift in Sources */,
 				E732CD6F2B47F4A4004D6FB9 /* SAAlertViewController.swift in Sources */,
 				E72F62562A822D3500C963D2 /* FUManager.m in Sources */,
+				F7426C352CEAE028008384BF /* SSOWebViewController.swift in Sources */,
 				DDCBEB132C33BD4D00A64FCC /* VLEarSettingView.m in Sources */,
 				DD36105C29B70CDC00CE7984 /* UIViewController+Show.swift in Sources */,
 				DDCBEADF2C33BD4D00A64FCC /* VLSongListCell.m in Sources */,
@@ -3742,6 +3762,7 @@
 				E732CD282B47EC6D004D6FB9 /* AgoraChatRoomBaseAlienCollectionViewCell.swift in Sources */,
 				DD84177D29090C520026B624 /* VLHomeItemModel.m in Sources */,
 				F7533F972C62249E00108911 /* VoiceLogger.swift in Sources */,
+				F762DDB72CF5AB3A00505157 /* LoginApiService.swift in Sources */,
 				DD84178429090C520026B624 /* VLDiscoveryViewController.m in Sources */,
 				DD3610C629B70CDC00CE7984 /* ShowToolMenuView.swift in Sources */,
 				DDA199F628FFE579009D3E61 /* UIImage+Color.swift in Sources */,
@@ -3880,6 +3901,7 @@
 				A84C2D152B4FB01700D6EFCF /* CommerceDebugPrivateParamsVC.swift in Sources */,
 				A84C2D4D2B4FB01700D6EFCF /* CommerceAuctionResultView.swift in Sources */,
 				DD84178829090C520026B624 /* VLMineViewController.m in Sources */,
+				F7426C9E2CF08C0A008384BF /* InviteCodeViewController.swift in Sources */,
 				DD619C0A29E3E84D008F63E4 /* ContactInfoCell.swift in Sources */,
 				A8F904952B4BE02B00A4C5A7 /* ShowThumnbnailCanvasView.swift in Sources */,
 				A84C2D552B4FB01700D6EFCF /* CommerceDebugSetting1TFCell.swift in Sources */,
@@ -3965,6 +3987,7 @@
 				E732CD392B47EC6D004D6FB9 /* VoiceMusicListView.swift in Sources */,
 				DDDDDC3728FFD78C005F4E8B /* AppContext.swift in Sources */,
 				DDA19A0228FFE579009D3E61 /* UIGestureRecognizer+VL.m in Sources */,
+				F7426C9C2CF060D0008384BF /* CodeLoginViewController.swift in Sources */,
 				E732CCE02B47EC6D004D6FB9 /* HeadSetUtil.swift in Sources */,
 				E732CD0F2B47EC6D004D6FB9 /* VoiceRoomAudioSettingDetailViewController.swift in Sources */,
 				A84C2D4F2B4FB01700D6EFCF /* CommerceSettingActionSheetFooterView.swift in Sources */,
@@ -3974,6 +3997,7 @@
 				E732CCFC2B47EC6D004D6FB9 /* VRRoomEntity.swift in Sources */,
 				E732CCDD2B47EC6D004D6FB9 /* VoiceRoomBusinessRequest.swift in Sources */,
 				DD36108D29B70CDC00CE7984 /* ShowSelectQualityVC.swift in Sources */,
+				F7426CAA2CF59FB4008384BF /* LoginRequestModel.swift in Sources */,
 				E732CD802B47F654004D6FB9 /* VLNetworkModel.swift in Sources */,
 				DD36108E29B70CDC00CE7984 /* ShowBeautySettingVC.swift in Sources */,
 				DDCBEAFE2C33BD4D00A64FCC /* VLKTVSliderView.m in Sources */,
@@ -4141,6 +4165,7 @@
 				DDA19A0628FFE579009D3E61 /* NSObject+JKAutoCoding.m in Sources */,
 				ABE4B37A2A68DA8E0014C5FA /* ShowNetStateSelectViewController.swift in Sources */,
 				E732CD362B47EC6D004D6FB9 /* VoiceRoomChatCell.swift in Sources */,
+				F762DDBB2D00052C00505157 /* ReportManager.swift in Sources */,
 				A89E49E22B62349B005E6B45 /* ShowRoomOwnerExpiredView.swift in Sources */,
 				A84C2D502B4FB01700D6EFCF /* CommercePresettingCell.swift in Sources */,
 				E3735C9C2A5E7E75004737EF /* BundleUtil.m in Sources */,
@@ -4167,6 +4192,7 @@
 				E732CD0D2B47EC6D004D6FB9 /* VoiceRoomAlertViewController.swift in Sources */,
 				E732CD2F2B47EC6D004D6FB9 /* VRSoundCardMicCell.swift in Sources */,
 				E732CD252B47EC6D004D6FB9 /* VMUserListView.swift in Sources */,
+				F7426CA62CF56FBE008384BF /* LoginManager.swift in Sources */,
 				A8F904922B4BDE1700A4C5A7 /* ShowDebugPrivateParamsVC.swift in Sources */,
 				DD3610B429B70CDC00CE7984 /* ShowPresettingFooterView.swift in Sources */,
 				DD3610D029B70F3800CE7984 /* VLMineCellModel.m in Sources */,
@@ -4396,11 +4422,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -4420,7 +4446,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -4572,7 +4598,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = AgoraLive_dis;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -4589,11 +4615,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgoraEntScenarios/Info.plist;
@@ -4613,7 +4639,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -4765,7 +4791,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.livestreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = AgoraLive_dis;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AgoraEntScenarios/AgoraEntScenarios-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -4778,18 +4804,16 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.agora.ent.scenarios.AgoraEntScenariosTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4802,18 +4826,16 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.agora.ent.scenarios.AgoraEntScenariosTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4825,17 +4847,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.agora.ent.scenarios.AgoraEntScenariosUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4847,17 +4867,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.agora.ent.scenarios.AgoraEntScenariosUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

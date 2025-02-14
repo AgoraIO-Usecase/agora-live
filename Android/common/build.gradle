@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.library'
-    id 'kotlin-android'
-    id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
 }
 
 if (project.property("AGORA_APP_ID").toString().isEmpty()) {
@@ -19,6 +19,7 @@ final def USE_LOCAL_SDK = properties.getProperty("USE_LOCAL_SDK").toBoolean()
 def localsdkPath = "agora-sdk"
 
 android {
+    namespace 'io.agora.scene.base'
     compileSdk rootProject.ext.android.compileSdkVersion
 
     defaultConfig {
@@ -29,27 +30,28 @@ android {
         buildConfigField "String", "APP_VERSION_NAME", "\"${APP_VERSION_NAME}\""
         buildConfigField "String", "APP_VERSION_CODE", "\"${APP_VERSION_CODE}\""
 
-        buildConfigField "String", "TOOLBOX_SERVER_HOST", "\"${TOOLBOX_SERVER_HOST}\""
-        buildConfigField "String", "ROOM_MANAGER_SERVER_HOST", "\"${ROOM_MANAGER_SERVER_HOST}\""
-
         buildConfigField "String", "AGORA_APP_ID", "\"${AGORA_APP_ID}\""
         buildConfigField "String", "AGORA_APP_CERTIFICATE", "\"${AGORA_APP_CERTIFICATE}\""
     }
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             consumerProguardFiles 'proguard-rules.pro'
         }
     }
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
 
     if (USE_LOCAL_SDK) {
@@ -89,7 +91,6 @@ dependencies {
     implementation rootProject.ext.deps.material
     implementation rootProject.ext.deps.constraintlayout
     implementation rootProject.ext.deps.glide
-    api rootProject.ext.deps.ok2curl
 
     if (USE_LOCAL_SDK) {
         api fileTree(dir: "${localsdkPath}", include: ['*.jar'])

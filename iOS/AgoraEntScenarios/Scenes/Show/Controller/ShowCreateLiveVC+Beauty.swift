@@ -15,7 +15,7 @@ private let kDownloadingAlreadyErr = -100001
 
 
 @discardableResult
-private func setupFuResource() -> Bool {
+func setupFuResource() -> Bool {
     let manager = AGResourceManager.shared
     guard let fuLicResource = manager.getResource(uri: kFuLicUri),
           manager.getStatus(resource: fuLicResource) == .downloaded,

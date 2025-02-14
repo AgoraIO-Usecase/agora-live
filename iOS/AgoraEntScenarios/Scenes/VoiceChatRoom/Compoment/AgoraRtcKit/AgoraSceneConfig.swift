@@ -8,7 +8,7 @@
 import Foundation
 
 public enum AgoraConfig {
-    private static let VMBaseUrl = "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/meta/demo/fulldemochat/aisound"
+    private static let VMBaseUrl = "https://accktvpic.oss-accelerate-overseas.aliyuncs.com/pic/meta/demo/fulldemochat/aisound"
     public static let CreateCommonRoom = "\(AgoraConfig.VMBaseUrl)/01CreateRoomCommonChatroom"
     public static let CreateSpatialRoom = "\(AgoraConfig.VMBaseUrl)/02CeateRoomSpaticalChatroom"
     public static let SetAINSIntroduce = "\(AgoraConfig.VMBaseUrl)/07AINSIntroduce"

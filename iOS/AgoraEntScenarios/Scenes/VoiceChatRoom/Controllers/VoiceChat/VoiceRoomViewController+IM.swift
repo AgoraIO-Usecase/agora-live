@@ -158,13 +158,13 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
         self.headerView.updateHeader(with: self.roomInfo?.room)
     }
     
-    func onUserLeftRoom(roomId: String, userName: String) {
+    func onUserLeftRoom(roomId: String, uid: String, index: Int) {
         let info = roomInfo
         headerView.updateHeader(with: info?.room)
         if let micInfos = info?.mic_info {
             for mic in micInfos {
                 if let user: VRUser = mic.member {
-                    if user.rtc_uid == userName {
+                    if user.rtc_uid == uid {
                         let memeber = mic
                         memeber.member = nil
                         memeber.status = -1
@@ -175,11 +175,14 @@ extension VoiceRoomViewController: ChatRoomServiceSubscribeDelegate {
             }
         }
         self.roomInfo?.room?.member_list = self.roomInfo?.room?.member_list?.filter({
-            $0.chat_uid != userName
+            $0.chat_uid != uid
         })
-        self.refreshApplicants(chat_uid: userName)
+        self.refreshApplicants(chat_uid: uid)
         ChatRoomServiceImp.getSharedInstance().userList = self.roomInfo?.room?.member_list ?? []
         if isOwner {
+            if index != -1 {
+                self.leaveMic(with: index)
+            }
             ChatRoomServiceImp.getSharedInstance().updateRoomMembers { error in
                 if error != nil {
 //                    self.view.makeToast("\(error?.localizedDescription ?? "")")

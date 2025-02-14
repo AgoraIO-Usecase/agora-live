@@ -29,6 +29,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self requestUserInfo];
     
     [self setViewControllers:[self tabViewControllers]];
     
@@ -39,6 +40,15 @@
 
     [self.tabBar setBackgroundImage:[UIImage new]];
 
+}
+
+- (void)requestUserInfo {
+    LoginType type = [VLUserCenter user].type;
+    if (type == SSOLOGIN) {
+        [LoginApiService getUserInfoWithCallback:nil];
+    } else {
+        [LoginApiService getInvitationCodeUserInfoWithCallback:nil];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {

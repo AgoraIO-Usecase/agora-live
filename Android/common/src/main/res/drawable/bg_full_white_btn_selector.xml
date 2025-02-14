@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:drawable="@drawable/bg_full_radius_light_grey_32" />
+    <item android:drawable="@drawable/bg_full_radius_white_32" />
+</selector>

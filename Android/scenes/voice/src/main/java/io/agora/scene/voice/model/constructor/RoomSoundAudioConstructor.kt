@@ -9,8 +9,8 @@ import io.agora.voice.common.constant.ConfigConstants
  */
 object RoomSoundAudioConstructor {
 
-    // https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/meta/demo/fulldemochat/aisound/01CreateRoomCommonChatroom/EN/01-01-B-EN.wav
-    private const val BASE_URL = "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/meta/demo/fulldemochat/aisound"
+    // https://accktvpic.oss-accelerate-overseas.aliyuncs.com/pic/meta/demo/fulldemochat/aisound/01CreateRoomCommonChatroom/EN/01-01-B-EN.wav
+    private const val BASE_URL = "https://accktvpic.oss-accelerate-overseas.aliyuncs.com/pic/meta/demo/fulldemochat/aisound"
 
     private const val EN = "EN"
     private const val CreateCommonRoom = "/01CreateRoomCommonChatroom%1\$s"

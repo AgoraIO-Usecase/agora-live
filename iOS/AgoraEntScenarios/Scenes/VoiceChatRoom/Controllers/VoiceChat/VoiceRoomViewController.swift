@@ -163,6 +163,12 @@ class VoiceRoomViewController: VRBaseViewController {
         } else {
             musicView.eventHandler(roomId: roomInfo?.room?.room_id)
         }
+        
+        reportMessage()
+    }
+    
+    private func reportMessage() {
+        ReportManager.messageReport(rtcEngine: self.rtckit.rtcKit, type: 2)
     }
     
 //    private func subscribeSceneRoom() {

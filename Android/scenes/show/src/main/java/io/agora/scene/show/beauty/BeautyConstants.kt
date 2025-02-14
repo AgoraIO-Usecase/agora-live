@@ -232,19 +232,29 @@ const val ITEM_ID_VIRTUAL_BG_NONE    = GROUP_ID_VIRTUAL_BG
 const val ITEM_ID_VIRTUAL_BG_BLUR    = GROUP_ID_VIRTUAL_BG + 1
 
 /**
+ * Item Id Virtual Bg Office
+ */
+const val ITEM_ID_VIRTUAL_BG_OFFICE   = GROUP_ID_VIRTUAL_BG + 2
+
+/**
+ * Item Id Virtual Bg Beach
+ */
+const val ITEM_ID_VIRTUAL_BG_BEACH   = GROUP_ID_VIRTUAL_BG + 3
+
+/**
  * Item Id Virtual Bg Mitao
  */
-const val ITEM_ID_VIRTUAL_BG_MITAO   = GROUP_ID_VIRTUAL_BG + 2
+const val ITEM_ID_VIRTUAL_BG_MITAO   = GROUP_ID_VIRTUAL_BG + 4
 
 /**
  * Item Id Virtual Bg Green Screen
  */
-const val ITEM_ID_VIRTUAL_BG_GREEN_SCREEN    = GROUP_ID_VIRTUAL_BG + 3
+const val ITEM_ID_VIRTUAL_BG_GREEN_SCREEN    = GROUP_ID_VIRTUAL_BG + 5
 
 /**
  * Item Id Virtual Bg Green Screenstrength
  */
-const val ITEM_ID_VIRTUAL_BG_GREEN_SCREENSTRENGTH   = GROUP_ID_VIRTUAL_BG + 4
+const val ITEM_ID_VIRTUAL_BG_GREEN_SCREENSTRENGTH   = GROUP_ID_VIRTUAL_BG + 6
 
 /**
  * Group Id Style

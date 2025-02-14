@@ -64,9 +64,11 @@ import io.agora.scene.show.beauty.ITEM_ID_EFFECT_TIANMEI
 import io.agora.scene.show.beauty.ITEM_ID_STICKER_CAT
 import io.agora.scene.show.beauty.ITEM_ID_STICKER_ELK
 import io.agora.scene.show.beauty.ITEM_ID_STICKER_NONE
+import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_BEACH
 import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_BLUR
 import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_MITAO
 import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_NONE
+import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_OFFICE
 import io.agora.scene.show.databinding.ShowWidgetBeautyDialogBottomBinding
 import io.agora.scene.show.databinding.ShowWidgetBeautyDialogItemBinding
 import io.agora.scene.show.databinding.ShowWidgetBeautyDialogPageBinding
@@ -89,9 +91,12 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
      * @property id
      * @property name
      * @property icon
+     * @property iconSelect
      * @constructor Create empty Item info
      */
-    private data class ItemInfo(val id: Int, @StringRes val name: Int, @DrawableRes val icon: Int)
+    private data class ItemInfo(
+        val id: Int, @StringRes val name: Int, @DrawableRes val icon: Int, @DrawableRes val iconOff: Int = 0
+    )
 
     /**
      * Group info
@@ -107,9 +112,7 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
         @StringRes val name: Int,
         val itemList: List<ItemInfo>,
         var selectedIndex: Int = itemList.indexOfFirst {
-            it.id == BeautyCache.getLastOperationItemId(
-                id
-            )
+            it.id == BeautyCache.getLastOperationItemId(id)
         }
     )
 
@@ -371,22 +374,46 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                 ItemInfo(
                     ITEM_ID_VIRTUAL_BG_NONE,
                     R.string.show_beauty_item_none,
-                    R.mipmap.show_beauty_ic_none
+                    R.mipmap.show_beauty_ic_none,
+                    R.mipmap.show_beauty_ic_none_off,
                 ),
                 ItemInfo(
                     ITEM_ID_VIRTUAL_BG_BLUR,
                     R.string.show_beauty_item_virtual_bg_blur,
-                    R.mipmap.show_beauty_ic_virtual_bg_blur
+                    R.mipmap.show_beauty_ic_virtual_blur,
+                    R.mipmap.show_beauty_ic_virtual_blur_off
+                ),
+                ItemInfo(
+                    ITEM_ID_VIRTUAL_BG_OFFICE,
+                    R.string.show_beauty_item_virtual_bg_office,
+                    R.mipmap.show_beauty_ic_virtual_office,
+                    R.mipmap.show_beauty_ic_virtual_office_off
+                ),
+                ItemInfo(
+                    ITEM_ID_VIRTUAL_BG_BEACH,
+                    R.string.show_beauty_item_virtual_bg_beach,
+                    R.mipmap.show_beauty_ic_virtual_beach,
+                    R.mipmap.show_beauty_ic_virtual_beach_off
                 ),
                 ItemInfo(
                     ITEM_ID_VIRTUAL_BG_MITAO,
                     R.string.show_beauty_item_virtual_bg_mitao,
-                    R.mipmap.show_beauty_ic_virtual_bg_mitao
-                ),
+                    R.mipmap.show_beauty_ic_virtual_mitao,
+                    R.mipmap.show_beauty_ic_virtual_mitao_off
+                )
             ),
-            when (RtcEngineInstance.virtualBackgroundSource.backgroundSourceType) {
+            selectedIndex = when (RtcEngineInstance.virtualBackgroundSource.backgroundSourceType) {
+                VirtualBackgroundSource.BACKGROUND_NONE -> 0
                 VirtualBackgroundSource.BACKGROUND_BLUR -> 1
-                VirtualBackgroundSource.BACKGROUND_IMG -> 2
+                VirtualBackgroundSource.BACKGROUND_IMG -> {
+                    when (RtcEngineInstance.virtualImgItem) {
+                        ITEM_ID_VIRTUAL_BG_OFFICE -> 2
+                        ITEM_ID_VIRTUAL_BG_BEACH -> 3
+                        ITEM_ID_VIRTUAL_BG_MITAO -> 4
+                        else -> 0
+                    }
+                }
+
                 else -> 0
             }
         )
@@ -460,11 +487,20 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                         ) {
                             val itemInfo = getItem(position) ?: return
 
-                            holder.binding.ivIcon.isActivated = position == groupItem.selectedIndex
+                            val isCurrentSelected = position == groupItem.selectedIndex
+                            holder.binding.ivIcon.isActivated = isCurrentSelected
+
+                            val iconToLoad = if (isCurrentSelected) {
+                                itemInfo.icon
+                            } else {
+                                itemInfo.iconOff.takeIf { it != 0 } ?: itemInfo.icon
+                            }
+
                             GlideApp.with(holder.binding.ivIcon)
-                                .load(itemInfo.icon)
+                                .load(iconToLoad)
                                 .transform(RoundedCorners(999))
                                 .into(holder.binding.ivIcon)
+
                             if (groupItem.selectedIndex == position && mBottomBinding.tabLayout.selectedTabPosition == groupPosition) {
                                 refreshTopLayout(groupItem.id, itemInfo.id)
                             }
@@ -667,6 +703,7 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
         val greenScreen = beautyProcessor?.let { it.greenScreen() } ?: false
         when (groupId) {
             GROUP_ID_VIRTUAL_BG -> {
+                RtcEngineInstance.virtualImgItem = itemId
                 when (itemId) {
                     ITEM_ID_VIRTUAL_BG_NONE -> {
                         RtcEngineInstance.rtcEngine.enableVirtualBackground(
@@ -679,6 +716,26 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                         RtcEngineInstance.rtcEngine.enableVirtualBackground(
                             true,
                             RtcEngineInstance.virtualBackgroundSource.apply { backgroundSourceType = VirtualBackgroundSource.BACKGROUND_BLUR },
+                            SegmentationProperty(if (greenScreen) SegmentationProperty.SEG_MODEL_GREEN else SegmentationProperty.SEG_MODEL_AI, greenScreenStrength)
+                        )
+                    }
+                    ITEM_ID_VIRTUAL_BG_OFFICE -> {
+                        RtcEngineInstance.rtcEngine.enableVirtualBackground(
+                            true,
+                            RtcEngineInstance.virtualBackgroundSource.apply {
+                                backgroundSourceType = VirtualBackgroundSource.BACKGROUND_IMG
+                                source = FileUtils.copyFileFromAssets(context, "virtualbackgroud_office.png", context.externalCacheDir!!.absolutePath)
+                            },
+                            SegmentationProperty(if (greenScreen) SegmentationProperty.SEG_MODEL_GREEN else SegmentationProperty.SEG_MODEL_AI, greenScreenStrength)
+                        )
+                    }
+                    ITEM_ID_VIRTUAL_BG_BEACH -> {
+                        RtcEngineInstance.rtcEngine.enableVirtualBackground(
+                            true,
+                            RtcEngineInstance.virtualBackgroundSource.apply {
+                                backgroundSourceType = VirtualBackgroundSource.BACKGROUND_IMG
+                                source = FileUtils.copyFileFromAssets(context, "virtualbackgroud_beach.png", context.externalCacheDir!!.absolutePath)
+                            },
                             SegmentationProperty(if (greenScreen) SegmentationProperty.SEG_MODEL_GREEN else SegmentationProperty.SEG_MODEL_AI, greenScreenStrength)
                         )
                     }

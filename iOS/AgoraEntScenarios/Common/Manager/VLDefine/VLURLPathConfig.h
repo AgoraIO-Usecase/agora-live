@@ -19,7 +19,7 @@ static NSString * const kURLPathUploadUserInfo = @"/api-login/users/update";  //
 static NSString * const kURLPathH5TermsOfService = @"https://www.agora.io/en/terms-of-service/";
 static NSString * const kURLPathH5UserAgreement = @"https://agora.io/en/compliance/";
 static NSString * const kURLPathH5AboutUS = @"https://www.agora.io/cn/about-us/";
-static NSString * const kURLPathH5PersonInfo = @"http://fullapp.oss-cn-beijing.aliyuncs.com/ent-scenarios/pages/manifest/index.html";
-static NSString * const kURLPathH5ThirdInfoShared = @"https://fullapp.oss-cn-beijing.aliyuncs.com/scenarios/libraries.html";
+static NSString * const kURLPathH5PersonInfo = @"http://fullapp.oss-accelerate-overseas.aliyuncs.com/ent-scenarios/pages/manifest/index.html";
+static NSString * const kURLPathH5ThirdInfoShared = @"https://fullapp.oss-accelerate-overseas.aliyuncs.com/scenarios/libraries.html";
 
 #endif /* VLURLPathConfig_h */

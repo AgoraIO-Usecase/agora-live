@@ -115,6 +115,14 @@ class ShowRoomListVC: UIViewController {
         present(preNC, animated: true)
     }
     
+    private func messageReport() {
+        guard let rtcEngine = ShowAgoraKitManager.shared.engine else {
+            return
+        }
+        
+        ReportManager.messageReport(rtcEngine: rtcEngine, type: 0)
+    }
+    
     private func checkDevice() {
         let score = ShowAgoraKitManager.shared.engine?.queryDeviceScore() ?? 0
         if (score < 85) {// (0, 85)
