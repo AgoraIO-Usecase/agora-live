@@ -7,7 +7,6 @@ buildUtils = new agora.build.BuildUtils()
 
 compileConfig = [
     "sourceDir": "agoralive",
-    "docker": "hub.agoralab.co/server/aes_build_android:latest",
     "non-publish": [
         "command": "./ci/build/build_android.sh",
         "extraArgs": "",
@@ -59,4 +58,4 @@ def doPublish(buildVariables) {
     sh "rm -rf *.apk || true"
 }
 
-pipelineLoad(this, "AGORA_LIVE", "build", "android", "apiexample_linux")
+pipelineLoad(this, "AGORA_LIVE", "build", "android", "Scenarios-Demo")
