@@ -137,6 +137,13 @@ ls ~/.gradle || mkdir -p /tmp/.gradle && ln -s /tmp/.gradle ~/.gradle && touch ~
 echo ANDROID_HOME: $ANDROID_HOME
 java --version
 
+# ensure dev_env_config_url contains https:// prefix
+if [[ "${beauty_sources}" != *"https://"* ]]; then
+  # if URL doesn't contain https:// prefix, add it
+  beauty_sources="https://${beauty_sources}"
+  echo "Added https prefix to config file URL: ${beauty_sources}"
+fi
+
 # download native sdk if need
 if [[ ! -z ${sdk_url} && "${sdk_url}" != 'none' ]]; then
     zip_name=${sdk_url##*/}
