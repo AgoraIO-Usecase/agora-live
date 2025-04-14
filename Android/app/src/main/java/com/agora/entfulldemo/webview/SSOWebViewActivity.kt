@@ -25,6 +25,9 @@ class SSOWebViewActivity : WebViewActivity() {
             titleView.setTitle(getString(R.string.app_name))
             webView.clearCache(true)
             webView.clearHistory()
+            webView.settings.apply {
+                userAgentString = "Mozilla/5.0 (Linux; Android10) AppleWebKit/537.36 (KHTML, likeGecko) Chrome/110.0.0.0 Mobile Safari/537.36"
+            }
             webView.webViewClient = object : CustomWebView.MyWebViewClient() {
                 override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                     val url = request?.url.toString()
