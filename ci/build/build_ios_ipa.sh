@@ -1,4 +1,14 @@
+export PATH=$PATH:/opt/homebrew/bin
+export LANG=en_US.UTF-8
+
 CURRENT_PATH=$PWD
+if [ -z "$WORKSPACE" ]; then
+    export WORKSPACE="${CURRENT_PATH}/ci/iosExport"
+    export LOCALPACKAGE="true"
+    mkdir -p "${WORKSPACE}"
+elif [ -f "/Users/admin/jenkins/bin/activate" ]; then
+    source /Users/admin/jenkins/bin/activate
+fi
 
 # 获取项目目录
 PROJECT_PATH="${CURRENT_PATH}/iOS"
@@ -60,7 +70,7 @@ echo KEYCENTER_PATH: $KEYCENTER_PATH
 echo APP_PATH: $APP_PATH
 
 #修改Keycenter文件
-python3 /tmp/jenkins/agora-ent-scenarios/ci/build/modify_ios_keycenter.py $KEYCENTER_PATH 0
+python3 "${CURRENT_PATH}/ci/build/modify_ios_keycenter.py" "$KEYCENTER_PATH" 0
 
 # Xcode clean
 xcodebuild clean -workspace "${APP_PATH}" -configuration "${CONFIGURATION}" -scheme "${TARGET_NAME}" -quiet
@@ -127,6 +137,6 @@ ls $WORKSPACE
 echo "Debug info *** end"
 
 # 复原Keycenter文件
-python3 /tmp/jenkins/agora-ent-scenarios/ci/build/modify_ios_keycenter.py $KEYCENTER_PATH 1
+python3 "${CURRENT_PATH}/ci/build/modify_ios_keycenter.py" "$KEYCENTER_PATH" 1
 
 echo 'reset keycenter down'
