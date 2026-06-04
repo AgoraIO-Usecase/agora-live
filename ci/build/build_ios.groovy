@@ -6,7 +6,7 @@ import groovy.transform.Field
 buildUtils = new agora.build.BuildUtils()
 
 compileConfig = [
-    "sourceDir": "agora-ent-scenarios",
+    "sourceDir": "agoralive",
     "non-publish": [
         "command": "./ci/build/build_ios.sh",
         "extraArgs": "",
@@ -43,7 +43,7 @@ def doPublish(buildVariables) {
         [
           "type": "ARTIFACTORY",
           "archivePattern": "*.zip",
-          "serverPath": "AES/${shortVersion}/${buildVariables.buildDate}/${env.platform}",
+          "serverPath": "AGORA_LIVE/${shortVersion}/${buildVariables.buildDate}/${env.platform}",
           "serverRepo": "ACCS_repo" // ATTENTIONS: Update the artifactoryRepo if needed.
         ]
     ]
@@ -57,4 +57,4 @@ def doPublish(buildVariables) {
     sh "rm -rf *.zip || true"
 }
 
-pipelineLoad(this, "AES", "build", "ios", "apiexample_mac")
+pipelineLoad(this, "AGORA_LIVE", "build", "ios", "Scenarios-Demo")
