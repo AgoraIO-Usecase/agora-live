@@ -57,4 +57,4 @@ def doPublish(buildVariables) {
     sh "rm -rf *.zip || true"
 }
 
-pipelineLoad(this, "AGORA_LIVE", "build", "ios", "apiexample_mac")
+pipelineLoad(this, "AGORA_LIVE", "build", "ios", "Scenarios-Demo")
