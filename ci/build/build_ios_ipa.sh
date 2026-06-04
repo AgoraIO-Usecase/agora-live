@@ -73,7 +73,25 @@ ARCHIVE_PATH="${WORKSPACE}/${TARGET_NAME}_${BUILD_NUMBER}.xcarchive"  #"${PROJEC
 # 编译环境
 
 # plist路径
-PLIST_PATH="${CURRENT_PATH}/ci/build/ExportOptions_${method}.plist"
+BASE_PLIST_PATH="${CURRENT_PATH}/ci/build/ExportOptions_${method}.plist"
+PLIST_PATH="${WORKSPACE}/ExportOptions_${method}_${BUILD_NUMBER}.plist"
+cp "${BASE_PLIST_PATH}" "${PLIST_PATH}"
+
+EXPORT_PROJECT=${project:-AGORA_LIVE}
+EXPORT_TEAM_ID="48TB6ZZL5S"
+EXPORT_PROFILE_NAME="AgoraLive_dis"
+EXPORT_SIGNING_CERTIFICATE="Apple Distribution"
+if [[ ! -z "$result" ]]
+then
+    EXPORT_PROFILE_NAME="AgoraLive_dev"
+    EXPORT_SIGNING_CERTIFICATE="Apple Development"
+fi
+
+/usr/libexec/PlistBuddy -c "Set :teamID ${EXPORT_TEAM_ID}" "${PLIST_PATH}"
+/usr/libexec/PlistBuddy -c "Set :signingCertificate ${EXPORT_SIGNING_CERTIFICATE}" "${PLIST_PATH}"
+/usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" "${PLIST_PATH}" 2>/dev/null || true
+/usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" "${PLIST_PATH}"
+/usr/libexec/PlistBuddy -c "Add :provisioningProfiles:${packageName} string ${EXPORT_PROFILE_NAME}" "${PLIST_PATH}"
 
 echo PLIST_PATH: $PLIST_PATH
 
@@ -84,7 +102,7 @@ cd ${WORKSPACE}
 # 压缩archive
 7za a -tzip "${TARGET_NAME}_${BUILD_NUMBER}.xcarchive.zip" "${ARCHIVE_PATH}"
 
-sh export "${TARGET_NAME}_${BUILD_NUMBER}.xcarchive.zip" --project AES --plist "${PLIST_PATH}"
+sh export "${TARGET_NAME}_${BUILD_NUMBER}.xcarchive.zip" --project "${EXPORT_PROJECT}" --plist "${PLIST_PATH}"
 
 PAYLOAD_PATH="${TARGET_NAME}_${BUILD_NUMBER}_Payload"
 # 上传IPA
@@ -112,5 +130,3 @@ echo "Debug info *** end"
 python3 /tmp/jenkins/agora-ent-scenarios/ci/build/modify_ios_keycenter.py $KEYCENTER_PATH 1
 
 echo 'reset keycenter down'
-
-
