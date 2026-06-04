@@ -6,7 +6,7 @@ import groovy.transform.Field
 buildUtils = new agora.build.BuildUtils()
 
 compileConfig = [
-    "sourceDir": "agora-live",
+    "sourceDir": "agoralive",
     "non-publish": [
         "command": "./ci/build/build_ios.sh",
         "extraArgs": "",
