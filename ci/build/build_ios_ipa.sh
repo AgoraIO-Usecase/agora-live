@@ -50,6 +50,19 @@ if [ -z "$method" ]; then
     export method="development"
 fi
 
+if [ -z "$IOS_APPSTORE_DEVELOPER_DIR" ]; then
+    export IOS_APPSTORE_DEVELOPER_DIR="/Applications/Xcode_26.3.app/Contents/Developer"
+fi
+
+if [ "$method" = "app-store" ] && [ -z "$DEVELOPER_DIR" ]; then
+    if [ -d "$IOS_APPSTORE_DEVELOPER_DIR" ]; then
+        export DEVELOPER_DIR="$IOS_APPSTORE_DEVELOPER_DIR"
+    else
+        echo "Error: app-store build requires Xcode 26 or later, but IOS_APPSTORE_DEVELOPER_DIR was not found: $IOS_APPSTORE_DEVELOPER_DIR"
+        exit 1
+    fi
+fi
+
 export release_version=$(grep "MARKETING_VERSION" "${PROJECT_PATH}/${PROJECT_NAME}.xcodeproj/project.pbxproj" | head -n 1 | cut -d "=" -f2 | tr -d ' ";')
 if [ -z "$release_version" ]; then
     echo "Error: Unable to read version number from project configuration"
@@ -61,6 +74,7 @@ export ARTIFACT_NAME="${APP_NAME}_for_iOS_v${release_version}_${BUILD_VERSION}"
 echo "Artifact name: ${ARTIFACT_NAME}"
 
 echo "Checking iOS build environment variables:"
+echo "DEVELOPER_DIR: ${DEVELOPER_DIR:-default xcode-select}"
 echo "Xcode version: $(xcodebuild -version | head -n 1)"
 echo "Swift version: $(swift --version | head -n 1)"
 echo "Ruby version: $(ruby --version)"
